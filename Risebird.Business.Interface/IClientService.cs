@@ -1,6 +1,7 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
 {
@@ -20,5 +21,6 @@ namespace Risebird.Business.Interface
         string AddWalletPoints(int ClientId, string emailid, int points, string comment);
         string ResetCandidate(int Clientjdid, string candidateEmail, string emailid);
         string DeleteClientJd(int assessmentid);
+        Task<int> GetClientRoleByEmailId(string emailId);
     }
 }

@@ -789,7 +789,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult AllMeetings(int? Page, string searchValue)
+        public async Task<IActionResult> AllMeetings(int? Page, string searchValue)
         {
             try
             {
@@ -801,6 +801,10 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
+                        var role = await _clientService.GetClientRoleByEmailId(emailid);
+
+                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+
                         var meetings = _meetingService.GetClientMeetingList(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
@@ -883,7 +887,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
 
@@ -891,7 +895,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult AllMeetings(InterviewFilter filter, int? Page, string searchValue)
+        public async Task<IActionResult> AllMeetings(InterviewFilter filter, int? Page, string searchValue)
         {
             try
             {
@@ -907,6 +911,9 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("AllPriorityClientMeetingsfilters", JsonConvert.SerializeObject(filter));
                         }
+                        var role = await _clientService.GetClientRoleByEmailId(emailid);
+
+                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                         var meetings = _meetingService.GetClientMeetingList(emailid);
 
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -976,7 +983,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
 
@@ -1227,7 +1234,7 @@ namespace Risebird.Web.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet]
-        public FileContentResult AllPriorityExporttoExcel()
+        public async Task<FileContentResult> AllPriorityExporttoExcel()
         {
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
@@ -1237,6 +1244,8 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+
+                var roleId = await _clientService.GetClientRoleByEmailId(emailid);
 
                 var selectedMeeting = new List<MeetingVM>();
                 var meetings = _meetingService.GetClientMeetingList(emailid);
@@ -1272,13 +1281,19 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Candidate name";
                 Sheet.Cells[1, 3].Value = "Candidate Email";
                 Sheet.Cells[1, 4].Value = "Client HR";
-                Sheet.Cells[1, 5].Value = "End Client Name";
-                Sheet.Cells[1, 6].Value = "Primary Skill";
-                Sheet.Cells[1, 7].Value = "Confirmation Status";
-                Sheet.Cells[1, 8].Value = "Meeting Status";
-                Sheet.Cells[1, 9].Value = "Interview Status";
-                Sheet.Cells[1, 10].Value = "Video Link";
-                Sheet.Cells[1, 11].Value = "Interviewer Comment";
+                Sheet.Cells[1, 5].Value = "Confirmation Status";
+                Sheet.Cells[1, 6].Value = "Meeting Status";
+                if (roleId != (int)ClientRoleEnum.RestrictedIRFowner)
+                {
+                    Sheet.Cells[1, 7].Value = "End Client Name";
+                    Sheet.Cells[1, 8].Value = "Primary Skill";
+                    Sheet.Cells[1, 9].Value = "Interview Status";
+                    Sheet.Cells[1, 10].Value = "Video Link";
+                    Sheet.Cells[1, 11].Value = "Interviewer Comment";
+                }
+                
+
+                
                 //Sheet.Cells[1, 11].Value = "Report Link";
 
                 int i = 2;
@@ -1292,101 +1307,106 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 2].Value = item.candidateName;
                         Sheet.Cells[i, 3].Value = item.candidateEmail;
                         Sheet.Cells[i, 4].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 5].Value = item.ClientName;
-                        Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
-                        Sheet.Cells[i, 7].Value = item.confirmationStatus;
-
-
-                        //if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                        //{
-                        //    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                        //    {
-                        //        Sheet.Cells[i, 7].Value = "Status Pending";
-
-                        //    }
-                        //    else
-                        //    {
-                        //        Sheet.Cells[i, 7].Value = item.MeetingStatusStatusDesc;
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    Sheet.Cells[i, 7].Value = string.Empty;
-                        //}
-
-
+                        Sheet.Cells[i, 5].Value = item.confirmationStatus;
                         if (!string.IsNullOrEmpty(item.MeetingStatusStatusDesc))
                         {
-                            Sheet.Cells[i, 8].Value = item.MeetingStatusStatusDesc;
+                            Sheet.Cells[i, 6].Value = item.MeetingStatusStatusDesc;
                         }
                         else
                         {
-                            Sheet.Cells[i, 8].Value = string.Empty;
+                            Sheet.Cells[i, 6].Value = string.Empty;
                         }
-                        //Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
-
-                        //if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                        //{
-                        //    Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
-                        //}
-                        //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0 || item.QCStatus==2))
-                        //{
-                        //    Sheet.Cells[i, 8].Value = "QC Pending";
-
-                        //}
-                        //else
-                        //{
-                        //    Sheet.Cells[i, 8].Value = string.Empty;
-
-                        //}
-
-                        if (!string.IsNullOrEmpty(item.intervieweStatusStatDesc))
+                        if (roleId != (int)ClientRoleEnum.RestrictedIRFowner)
                         {
-                            Sheet.Cells[i, 9].Value = item.intervieweStatusStatDesc;
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 9].Value = string.Empty;
-                        }
+                            Sheet.Cells[i, 7].Value = item.ClientName;
+                            Sheet.Cells[i, 8].Value = item.JDTiltle.Split("|")[0];
+
+
+                            //if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                            //{
+                            //    if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                            //    {
+                            //        Sheet.Cells[i, 7].Value = "Status Pending";
+
+                            //    }
+                            //    else
+                            //    {
+                            //        Sheet.Cells[i, 7].Value = item.MeetingStatusStatusDesc;
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    Sheet.Cells[i, 7].Value = string.Empty;
+                            //}
 
 
 
-                        //if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                        //{
-                        //    Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
-                        //}
-                        //else
-                        //{
-                        //    Sheet.Cells[i, 8].Value = "";
-                        //}
+                            //Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
 
-                        if (!string.IsNullOrEmpty(item.VideoLink) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                        {
-                            try
+                            //if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                            //{
+                            //    Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
+                            //}
+                            //else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && (item.QCStatus == null || item.QCInterview == 0 || item.QCStatus==2))
+                            //{
+                            //    Sheet.Cells[i, 8].Value = "QC Pending";
+
+                            //}
+                            //else
+                            //{
+                            //    Sheet.Cells[i, 8].Value = string.Empty;
+
+                            //}
+
+                            if (!string.IsNullOrEmpty(item.intervieweStatusStatDesc))
                             {
-                                Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 10].Value = "Video Link";
-                                Sheet.Cells[i, 10].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 9].Value = item.intervieweStatusStatDesc;
                             }
-                            catch (Exception)
+                            else
+                            {
+                                Sheet.Cells[i, 9].Value = string.Empty;
+                            }
+
+
+
+                            //if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                            //{
+                            //    Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
+                            //}
+                            //else
+                            //{
+                            //    Sheet.Cells[i, 8].Value = "";
+                            //}
+
+                            if (!string.IsNullOrEmpty(item.VideoLink) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 10].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 10].Value = "Video Link";
+                                    Sheet.Cells[i, 10].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 10].Value = "No Video";
+                                }
+                            }
+                            else
                             {
                                 Sheet.Cells[i, 10].Value = "No Video";
                             }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 10].Value = "No Video";
-                        }
 
-                        if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                        {
-                            Sheet.Cells[i, 11].Value = item.InterviewerComment;
+                            if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                            {
+                                Sheet.Cells[i, 11].Value = item.InterviewerComment;
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 11].Value = "";
+                            }
                         }
-                        else
-                        {
-                            Sheet.Cells[i, 11].Value = "";
-                        }
+                        
 
 
                         //Sheet.Cells[i, 10].Value = item.InterviewerComment;
@@ -3420,6 +3440,8 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
+                            var role = await _clientService.GetClientRoleByEmailId(emailid);
+                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
@@ -3575,6 +3597,8 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
+                            var role = await _clientService.GetClientRoleByEmailId(emailid);
+                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
@@ -3664,6 +3688,8 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
+                            var role = await _clientService.GetClientRoleByEmailId(emailid);
+                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
@@ -3763,6 +3789,8 @@ namespace Risebird.Web.Controllers
                         }
                         if (profileName == "Client")
                         {
+                            var role = await _clientService.GetClientRoleByEmailId(emailid);
+                            ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                         }
