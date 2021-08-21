@@ -151,5 +151,6 @@ namespace Risebird.Repository.Interface
         Task<bool> DumpCalendlyResourceURI(DataTable calendlyDt);
         Task<IEnumerable<IRF>> GetPendingCalendlyResourceUriUpdateIRF();
         Task<string> GetIRFCalendlyResourceUri(int irfId);
+        Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
     }
 }

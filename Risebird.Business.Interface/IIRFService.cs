@@ -93,6 +93,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId);
         Task<string> GetInterviewerSkillsByUserId(int userId);
         IEnumerable<Skill> GetSkills();
+        Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
 
     }
 }
