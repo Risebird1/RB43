@@ -229,6 +229,12 @@ namespace Risebird.Entities.ViewModel
         public string AssignStatus { get; set; }
         public string AssessmentGroupId { get; set; }
         public int BillingOwner { get; set; }
+        public string BillingOwnerEmailId { get; set; }
         public string RisebirdHREmail { get; set; }
+        public int CandidateCount { get; set; }
+        public int CompletedInterviews { get; set; }
+        public int RejectedMeetings { get; set; }
+        public int NotScheduledCount { get; set; }
+        public int ReScheduledCount { get; set; }
     }
 }

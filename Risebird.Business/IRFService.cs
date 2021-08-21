@@ -2029,6 +2029,19 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+        public async Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return await _irfRepository.GetAllIRFDetails(startDate, endDate);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
