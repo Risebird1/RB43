@@ -82,6 +82,7 @@ namespace Risebird.Repository
             {
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meeting.id);
                 parameters.Add("@InstaRequestName", meeting.InstaRequestName);
                 parameters.Add("@AssessmentGroup", meeting.AssessmentGroup);
                 parameters.Add("@JDLink", meeting.JDLink);

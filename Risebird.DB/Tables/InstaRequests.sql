@@ -5,7 +5,7 @@ BEGIN
 
 CREATE TABLE [dbo].[InstaRequests](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[InstaRequestName] [varchar](15) NULL,
+	[InstaRequestName] [varchar](50) NULL,
 	[AssessmentGroup] [int] NULL,
 	[JDLink] [varchar](1000) NULL,
 	[RequestedBy] [varchar](150) NULL,
