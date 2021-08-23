@@ -38,10 +38,10 @@ namespace Risebird.Web.Controllers
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IClientService _clientService;
+        private readonly ICalendlyHelper _calendlyHelper;
 
         //private static string Searchvalue;
-
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, IClientService clientService)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -54,6 +54,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _whatsAppHelper = whatsAppHelper;
             _sasUrlHelper = sasUrlHelper;
+            _calendlyHelper = calendlyHelper;
             _clientService = clientService;
         }
         public async Task<IActionResult> CandidateTimeline()
@@ -2830,9 +2831,13 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
             var model = await _candidateService.CancelInterviewDetails(id, CandidateEmail);
+
             if (model.Contains("Successfully"))
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                string oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(result.irfIntId).Result;
+
+
                 List<string> interviewers = new List<string>();
                 if (!String.IsNullOrEmpty(result.interviewer))
                 {
@@ -2850,7 +2855,14 @@ namespace Risebird.Web.Controllers
                 _whatsapp.InterviewDate = result.interviewDate.ToString();
                 _whatsapp.Header = result.ClientName;
                 _whatsapp.MessageValue = result.JDTiltle;
-                _whatsapp.buttonlink = !String.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
+                if(!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                {
+                    _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
+                }
+                else
+                {
+                    _whatsapp.buttonlink = !String.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
+                }
                 _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);

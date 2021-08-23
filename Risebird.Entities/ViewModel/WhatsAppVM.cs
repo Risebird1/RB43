@@ -40,6 +40,7 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string CandidateName { get; set; }
         public string IRFId { get; set; }
+        public int irfIntId { get; set; }
     }
 }
 
