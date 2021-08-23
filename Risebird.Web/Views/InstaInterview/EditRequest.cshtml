@@ -1,12 +1,12 @@
 ﻿@model Risebird.Entities.ViewModel.InstaMeetingVM
 
 @{
-    ViewData["Title"] = "Create Request";
+    ViewData["Title"] = "Edit Request";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
-    var Header = "<a href='/InstaInterview/InstaIRF'>Insta Requests</a>&nbsp;/&nbsp;Create Request";
+    var Header = "<a href='/InstaInterview/InstaIRF'>Insta Requests</a>&nbsp;/&nbsp;Edit Request";
     $('#txtpageHeader').empty().html(Header);
 </script>
 
@@ -21,7 +21,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bg-white">
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("CreateRequest", "InstaInterview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
+                        @using (Html.BeginForm("EditRequest", "InstaInterview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
                         {
 
                             @Html.AntiForgeryToken()
@@ -39,7 +39,7 @@
                                         <div class="form-group">
                                             @Html.HiddenFor(model => model.id)
                                             @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.AssessmentGroup, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @readonly = "readonly" })
+                                            @Html.DropDownListFor(model => model.AssessmentGroup, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@
                                     <div class="col-lg-4  col-md-4 col-sm-4 pr-1 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InstaRequestName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(model => model.InstaRequestName, new { @class = "form-control", @required = "required", @readonly = "readonly" })
+                                            @Html.TextBoxFor(model => model.InstaRequestName, new { @class = "form-control", @required = "required" })
                                             @Html.ValidationMessageFor(model => model.InstaRequestName, "", new { @class = "text-danger" })
                                         </div>
                                     </div>

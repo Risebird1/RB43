@@ -33,7 +33,13 @@
     <div class="content dataloading client">
         <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="interviewgenerate_pdf" value="Generate PDF" onclick="getPDF()"></div>
+                <div class="pull-right">
+                    @if (ViewBag.isAdminHR)
+                    {
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
+                    }
+                </div>
             </div>
         </div>
         <div class="row bl-bg">
@@ -141,93 +147,95 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Video</h2>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="videoConplayer">
-                                            @Html.HiddenFor(x => Model.VideoLink)
-                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                            {
-                                                var src = Model.VideoLink + "#t=120";
-                                                <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                    <source src='@src' type="video/mp4">
-                                                </video>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="proctor">
-
-                                    <input class="toggle-box" id="identifier-1" type="checkbox">
-                                    <label for="identifier-1">
-                                        <div class="multiple_row">
-                                            <h2>Upload Video & Thumbnail</h2>
-                                        </div>
-                                    </label>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6" style="margin-top:20px;">
-                                                <div class="card">
-                                                    <div class="mdc-card-wrapper__text-section">
-                                                        <div class="choose-file ">
-                                                            <label class="file-lable"> Upload Video File</label>
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
-                                                                </div>
-                                                            </div>
-                                                            Add a link
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="" style="display:none" id="linkDiv">
-                                                                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                                                                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                                            </div>
-
-                                                            <div class="" id="uploadDiv">
-                                                                @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                                @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
-                                                                <div class="mtop-15">
-                                                                    @{
-                                                                        if (Model.VideoLink != null)
-                                                                        {
-                                                                            <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
-                                                                        }
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
+                                @if (ViewBag.PageReport != "Insta")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Interview Video</h2>
                                             </div>
                                         </div>
 
-                                    </div><!--end of col-md-12-->
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="videoConplayer">
+                                                @Html.HiddenFor(x => Model.VideoLink)
+                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                {
+                                                    var src = Model.VideoLink + "#t=120";
+                                                    <video width="600" controls="controls" preload="metadata" class="vjs-tech">
+                                                        <source src='@src' type="video/mp4">
+                                                    </video>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                </div>
+                                    <div class="proctor">
 
+                                        <input class="toggle-box" id="identifier-1" type="checkbox">
+                                        <label for="identifier-1">
+                                            <div class="multiple_row">
+                                                <h2>Upload Video & Thumbnail</h2>
+                                            </div>
+                                        </label>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6" style="margin-top:20px;">
+                                                    <div class="card">
+                                                        <div class="mdc-card-wrapper__text-section">
+                                                            <div class="choose-file ">
+                                                                <label class="file-lable"> Upload Video File</label>
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+                                                                Add a link
+                                                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="" style="display:none" id="linkDiv">
+                                                                    @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                    @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                                                </div>
+
+                                                                <div class="" id="uploadDiv">
+                                                                    @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                                    @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
+                                                                    <div class="mtop-15">
+                                                                        @{
+                                                                            if (Model.VideoLink != null)
+                                                                            {
+                                                                                <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ", "%20")>Uploaded Video</a>
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                }
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -239,11 +247,9 @@
                                             <table class="table table-bordered mbn" id="SkillTable">
                                                 <thead>
                                                     <tr>
-                                                        <th width="10%">Required Level</th>
-                                                        <th width="40%">Skill Name</th>
-                                                        <th width="20%">Actual Level</th>
-                                                        <th width="15%">Required Weightage</th>
-                                                        <th width="15%">Actual Weightage</th>
+                                                        <th>Required Level</th>
+                                                        <th>Skill Name</th>
+                                                        <th>Actual Level</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -286,12 +292,18 @@
                                 @Html.HiddenFor(m => m.RequiredSkill)
 
                                 <div class="card-footer ">
-                                    <div class="row">
-                                        <div class="col-md-12 mc-button-area">
-                                            @Html.ActionLink("Back to List", "MyInterview", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
+                                    @if (ViewBag.PageStatus != "Public")
+                                    {
+                                        <div class="row">
+                                            <div class="col-md-12 mc-button-area">
+                                                @Html.ActionLink("Back to List", "MyInterview", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @if (!ViewBag.isAdminHR)
+                                                {
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
                             </div>
                         </form>
@@ -307,7 +319,41 @@
     </div>
 
 </div>
-
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 nopad">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
 
     $(document).ready(function () {
@@ -702,11 +748,33 @@
             else {
                 document.getElementById("interviewStatus_Error").innerHTML = '';
             }
-
         }
         return true;
     }
-
+    function GeneratePublicUrl(index) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+         if (index == 2) {
+             urlcurrent = urlcurrent.replace("AddReport", "PublicReport");
+        }
+        else {
+            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+        }
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
 </script>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>

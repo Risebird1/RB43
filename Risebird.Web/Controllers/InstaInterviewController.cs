@@ -53,10 +53,10 @@ namespace Risebird.Web.Controllers
                         var model = new List<InstaMeetingVM>();
                         var irfList = _instaInterviewService.GetAllInstaRequests(emailid, profileName);
                         model = (List<InstaMeetingVM>)irfList;
-                        if (TempData["SuccessErrorMessage"] != null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
                         }
                         if (HttpContext.Session.GetString("InstaRequestfilters") != null)
                         {
@@ -152,12 +152,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Request Created Successfully";
+                                TempData["SuccessErrorMessageInterview"] = "Request Created Successfully.";
                                 return RedirectToAction("InstaIRF");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to Craete request.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to Create request.";
                                 return RedirectToAction("InstaIRF");
                             }
 
@@ -182,7 +182,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
+                TempData["SuccessErrorMessageInterview"] = "Failed to Create request!";
                 return RedirectToAction("Index");
             }
         }
@@ -257,13 +257,13 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorMessageInterview"] = "Request updated Successfully.";
+                                return RedirectToAction("InstaIRF");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorMessageInterview"] = "Failed to update the request.";
+                                return RedirectToAction("InstaIRF");
                             }
 
                         }
@@ -271,7 +271,7 @@ namespace Risebird.Web.Controllers
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                            return View("Add", meeting);
+                            return View("EditRequest", meeting);
                         }
                     }
                     else
@@ -287,8 +287,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
-                return RedirectToAction("Index");
+                TempData["SuccessErrorMessageInterview"] = "Failed to update the request!";
+                return RedirectToAction("InstaIRF");
             }
         }
         public async Task<IActionResult> Index(int id)
@@ -900,7 +900,7 @@ namespace Risebird.Web.Controllers
                     if (profileName != null)
                     {
                         profileName = profileName.Replace("\"", "");
-                        if (profileName == "Admin" || profileName == "HR")
+                        if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                         {
                             isAdminHR = true;
                         }
@@ -928,7 +928,7 @@ namespace Risebird.Web.Controllers
                                           select new { ID = (int)s, Name = s.GetDescription() };
                     model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                    ViewBag.IsClient = isClient;
+                    ViewBag.isAdminHR = isAdminHR;
                     //model.IsInterviewer = isInterviewer;
                     //model.PreviousMeetingStatus = model.MeetingStatus;
                     return View(model);
@@ -1019,6 +1019,62 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Report was not saved.";
                 return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public IActionResult PublicReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
+        {
+            try
+            {
+                bool isAdminHR = false;
+                ViewBag.actiontype = actiontype;
+                string profileName = HttpContext.Session.GetString("profileName");
+                ViewBag.Profile = profileName.Replace("\"", "");
+                ViewBag.PageStatus = "Public";
+                ViewBag.PageReport = "";
+                var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+                var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+                model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                ViewBag.isAdminHR = isAdminHR;
+                return View("AddReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
+        [HttpGet]
+        public IActionResult InstaAddReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
+        {
+            try
+            {
+                bool isAdminHR = false;
+                ViewBag.actiontype = actiontype;
+                string profileName = HttpContext.Session.GetString("profileName");
+                ViewBag.Profile = profileName.Replace("\"", "");
+                ViewBag.PageStatus = "Public";
+                ViewBag.PageReport = "Insta";
+                var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+                var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+                model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                ViewBag.isAdminHR = isAdminHR;
+                return View("AddReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
             }
         }
     }

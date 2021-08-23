@@ -54,6 +54,9 @@ namespace Risebird.Entities.ViewModel
         public string VideoLink { get; set; }
         public string PageVideoLink { get; set; }
         public IFormFile VideoFile { get; set; }
+        public int TotalCandidate { get; set; }
+        public int CompletedInterview { get; set; }
+        public int SelectedCandidate { get; set; }
     }
     public class InstaTechSkill
     {
