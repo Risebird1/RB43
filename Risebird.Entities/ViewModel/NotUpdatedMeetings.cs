@@ -29,5 +29,6 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         public DateTime interviewDate { get; set; }
         public string ClientHrContact { get; set; }
+        public int irfId { get; set; }
     }
 }

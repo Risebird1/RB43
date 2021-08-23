@@ -1057,7 +1057,14 @@ namespace Risebird.Business
                     _whatsapp.Header = client.Name;
                     _whatsapp.Event = "Interview Schedule";
                     _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
-                    _whatsapp.buttonlink = !String.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
+                    if(!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                    {
+                        _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
+                    }
+                    else
+                    {
+                        _whatsapp.buttonlink = !string.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
+                    }
                     _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
                     {
