@@ -15,6 +15,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using RestSharp;
+
 namespace Risebird.Web.Controllers
 {
     public class InstaInterviewController : Controller
@@ -503,12 +508,12 @@ namespace Risebird.Web.Controllers
                                 if (_instaInterviewService.AddInstaMeeting(meeting))
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
-                                    return RedirectToAction("Index");
+                                    return RedirectToAction("Index", new { id = meeting.RequestId });
                                 }
                                 else
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
-                                    return RedirectToAction("Index");
+                                    return RedirectToAction("Index", new { id = meeting.RequestId });
                                 }
                             }
                         }
@@ -688,7 +693,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
-        public async Task<IActionResult> AssignYourself(int id, string InterviewDate)
+        public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateName, string Role)
         {
             try
             {
@@ -701,6 +706,26 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Interviewer" || profileName == "Quality Controller")
                     {
                         var result = _instaInterviewService.InstaAssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
+                        if (result.Contains("Successfully"))
+                        {
+                            InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
+                            _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
+                            var zoomlink = CreateZoomMeetings(_zoommetingobject);
+                            var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url);
+                            //Send Mail to Client And Interviewer
+                            string to = emailid;
+                            if (clientname != "Failed" && !String.IsNullOrEmpty(clientname))
+                            {
+                                to = to + ";" + clientname;
+                            }
+                            Mail _mail = new Mail
+                            {
+                                TO = to,
+                                Subject = "Risebird: Insta interview sechudeled for " + CandidateName
+                            };
+                            var emailsend = _notificationHelper.InstaInterviewwithzoomlink(_mail, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
+
+                        }
                         TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
@@ -1077,5 +1102,53 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+        public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject)
+        {
+            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, INDIAN_ZONE);
+            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+            _zoommetingobject.type = 2;
+            _zoommetingobject.duration = 60;
+            _zoommetingobject.timezone = "Asia/Calcutta";
+            _zoommetingobject.settings.host_video = true;
+            _zoommetingobject.settings.participant_video = true;
+            _zoommetingobject.settings.join_before_host = true;
+            _zoommetingobject.settings.jbh_time = 5;
+            _zoommetingobject.settings.auto_recording = "cloud";
+            string token = ZoomToken();
+
+            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/me/meetings"));
+
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("authorization", "Bearer " + token);
+            var body = JsonConvert.SerializeObject(_zoommetingobject);
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            var content = response.Content;
+            var convertedResponse = JsonConvert.DeserializeObject<InstaZoomMeetingResponse>(content);
+            convertedResponse.InterviewDate = indianTime;
+            return convertedResponse;
+        }
+        private string ZoomToken()
+        {
+            DateTime Expiry = DateTime.UtcNow.AddDays(1);
+            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
+            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
+            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var header = new JwtHeader(credentials);
+            var payload = new JwtPayload
+            {
+                { "iss", ApiKey},
+                { "exp", ts },
+            };
+            var secToken = new JwtSecurityToken(header, payload);
+            var handler = new JwtSecurityTokenHandler();
+            var tokenString = handler.WriteToken(secToken);
+            return tokenString;
+        }
+
     }
 }

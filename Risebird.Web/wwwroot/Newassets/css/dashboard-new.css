@@ -4501,14 +4501,16 @@ ul.panel-controls > li > .dropdown-menu {
 .f1 .input-error {
     border-color: #f35b3f;
 }
-
+.instareport #SkillTable.table-bordered td:nth-child(3) {
+    border-right: 0px !important;
+}
 td.detail-row {
     background-image: url(../../Newassets/img/details_open.png);
     background-repeat: no-repeat;
     width: 20px;
     height: 20px;
     background-color: #cccccc47;
-    background-position: center 19px;
+    background-position: center 30px;
     padding: 12px 6.5px !important;
 }
 

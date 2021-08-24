@@ -332,7 +332,40 @@
                                                     </td>
                                                     <td> @item.RequestedDate </td>
                                                     <td>@item.CandidateName</td>
-                                                    <td> @item.RequiredSkill </td>
+                                                    <td class="interview-com">
+                                                        <div id="section">
+                                                            @if (item.RequiredSkill != null && item.RequiredSkill != "")
+                                                            {
+                                                                @if (item.RequiredSkill.Length > 26)
+                                                                {
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.RequiredSkill.Substring(0, 26)
+                                                                        </p>
+                                                                        <p class="moretext_@item.id moretext">
+                                                                            @item.RequiredSkill.Substring(26, @item.RequiredSkill.Length - 26)
+                                                                        </p>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length - 1)
+                                                                        </p>
+                                                                    </div>
+                                                                }}
+                                                            else
+                                                            { <div></div>}
+
+                                                            <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+
+
+                                                        </div>
+
+                                                    </td>
+                                                    
                                                     <td> @item.AssessmentGroup</td>
                                                     <td>@item.Interviewer</td>
                                                     @if (item.ZoomLink != null && item.ZoomLink != "")

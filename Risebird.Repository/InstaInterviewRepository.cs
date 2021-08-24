@@ -437,5 +437,31 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public string UpdateInstaZoomLink(int meetingid, string Zoomlink)
+        {
+            try
+            {
+                var query = "Select ir.RequestedBy from InstaInterviewMeetings im join InstaRequests ir on ir.id=im.RequestId where im.id=@id";
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "update [dbo].[InstaInterviewMeetings] set ZoomLink=@value where id = @meetingid", new { value = Zoomlink, meetingid }, commandType: Text);
+                    var result = con.Query<string>(query, parameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Failed";
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Failed";
+            }
+        }
     }
 }
