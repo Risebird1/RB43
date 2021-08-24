@@ -21,5 +21,6 @@ namespace Risebird.Business.Interface
         List<InstaMeetingVM> GetAllInstaAssignedInterviews(string emailID);
         Task<InstaMeetingVM> GetInstaInteviewReport(int interviewId);
         Task<bool> AddInstaInterviewReport(InstaMeetingVM reportModel, string emailId);
+        string UpdateInstaZoomLink(int meetingid, string Zoomlink);
     }
 }

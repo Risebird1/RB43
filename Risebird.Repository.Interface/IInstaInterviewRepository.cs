@@ -22,5 +22,6 @@ namespace Risebird.Repository.Interface
         List<string> FetchInstaIntervieweByAssessmentGroup(string Assessmentgroupid);
         Task<InstaMeetingVM> GetInstaInteviewReport(int interviewid);
         Task<bool> AddInstaInterviewReport(InstaMeetingVM reportDetails);
+        string UpdateInstaZoomLink(int meetingid, string Zoomlink);
     }
 }

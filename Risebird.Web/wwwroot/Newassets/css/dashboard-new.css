@@ -236,7 +236,7 @@ table tr:hover, .table-striped tbody tr:nth-of-type(even):hover {
     background-color: #42A5F6 !important;
     position: absolute !important;
     bottom: 100px !important;
-    right: -495% !important;
+    right: -445% !important;
 }
 
 .skillnext-btn {
@@ -247,7 +247,14 @@ table tr:hover, .table-striped tbody tr:nth-of-type(even):hover {
     bottom: 62px !important;
     right: -48% !important;
 }
-
+.insta-next-btn {
+    border-radius: 5px !important;
+    font-size: 12px !important;
+    background-color: #42A5F6 !important;
+    position: absolute !important;
+    bottom: 130px !important;
+    right: 0% !important;
+}
 .risetubenext-btn {
     border-radius: 5px !important;
     font-size: 12px !important;
@@ -265,16 +272,30 @@ table tr:hover, .table-striped tbody tr:nth-of-type(even):hover {
     bottom: 150px !important;
     right: -45% !important;
 }
-
+.staffclose-btn {
+    border-radius: 5px !important;
+    font-size: 12px !important;
+    background-color: #42A5F6 !important;
+    position: absolute !important;
+    bottom: 132px !important;
+    right: -400% !important;
+}
 .ntschnext-btn {
     border-radius: 5px !important;
     font-size: 12px !important;
     background-color: #42A5F6 !important;
     position: absolute !important;
     bottom: 130px !important;
-    right: -445% !important;
+    right: -400% !important;
 }
-
+.staffntschnext-btn {
+    border-radius: 5px !important;
+    font-size: 12px !important;
+    background-color: #42A5F6 !important;
+    position: absolute !important;
+    bottom: 130px !important;
+    right: -400% !important;
+}
 .jumbotron {
     background: none !important;
     margin: 0px !important;
@@ -4480,14 +4501,16 @@ ul.panel-controls > li > .dropdown-menu {
 .f1 .input-error {
     border-color: #f35b3f;
 }
-
+.instareport #SkillTable.table-bordered td:nth-child(3) {
+    border-right: 0px !important;
+}
 td.detail-row {
     background-image: url(../../Newassets/img/details_open.png);
     background-repeat: no-repeat;
     width: 20px;
     height: 20px;
     background-color: #cccccc47;
-    background-position: center 19px;
+    background-position: center 30px;
     padding: 12px 6.5px !important;
 }
 
@@ -4815,7 +4838,14 @@ button.btn {
 .notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label, .resume div.dataTables_wrapper div.dataTables_filter label {
     position: relative;
 }
-
+.instanext-btn {
+    border-radius: 5px !important;
+    font-size: 12px !important;
+    background-color: #42A5F6 !important;
+    position: absolute !important;
+    bottom: 325px !important;
+    right: -260% !important;
+}
 #IRFList_filter #search {
     right: 65px;
     top: 12px;
@@ -4995,13 +5025,24 @@ button.btn {
         position: absolute;
         right: -6px !important;
     }
-
+    .staffclose-btn {
+        border-radius: 5px !important;
+        font-size: 12px !important;
+        background-color: #42A5F6 !important;
+        position: absolute !important;
+        bottom: 132px !important;
+        right: -660% !important;
+    }
     [data-id="candidatetimeline"] .allmeetingnext-btn {
         right: -653% !important;
         bottom: 135px !important;
     }
+    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+        right: -400% !important;
+        bottom: 138px !important;
+    }
 
-    [data-id="candidatefeedback_table"] .allmeetingnext-btn {
+        [data-id="candidatefeedback_table"] .allmeetingnext-btn {
         bottom: 90px !important;
         right: -653% !important;
     }
@@ -5021,7 +5062,10 @@ button.btn {
         bottom: 62px !important;
         right: -48% !important;
     }
-
+    .skillnext-btn {
+        bottom: 130px !important;
+        right: 0% !important;
+    }
     .risetubenext-btn {
         bottom: 60px !important;
         right: -200% !important;
@@ -5033,6 +5077,10 @@ button.btn {
     }
 
     .ntschnext-btn {
+        bottom: 130px !important;
+        right: -655% !important;
+    }
+    .staffntschnext-btn {
         bottom: 130px !important;
         right: -655% !important;
     }
@@ -5131,6 +5179,11 @@ button.btn {
         width: 30%
     }
     .tab-teaser{max-width:100%}
+    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+        right: -400% !important;
+        bottom: 138px !important;
+    }
+
     [data-id="candidatetimeline"] .allmeetingnext-btn {
         right: -458% !important;
         bottom: 138px !important;
@@ -5172,6 +5225,9 @@ button.btn {
 
     .selectedmeeting .candidate-details {
         width: 30%
+    }
+    .instanext-btn {
+        right: -270% !important;
     }
     .skillnext-btn {
         bottom: 66px !important;

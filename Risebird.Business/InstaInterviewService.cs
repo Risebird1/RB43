@@ -238,5 +238,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public string UpdateInstaZoomLink(int meetingid, string Zoomlink)
+        {
+            try
+            {
+                return _instaInterviewRepository.UpdateInstaZoomLink(meetingid, Zoomlink);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed";
+            }
+        }
     }
 }
