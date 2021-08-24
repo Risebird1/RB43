@@ -54,6 +54,24 @@
 
 
 }
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
+{
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NNotScheduleCandidate") != null)
+    {
+
+    }
+    else
+    {
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="~/Newassets/js/chardinjs.js"></script>
+        <script src="~/Newassets/js/demo.js"></script>
+        HttpContextAccessor.HttpContext.Session.SetString("NNotScheduleCandidate", "1");
+
+    }
+
+
+}
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
         <div class="pt30">
@@ -139,7 +157,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        @if (ViewBag.Profile != "Client" || (ViewBag.Profile=="Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                        @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                         {
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">
@@ -215,141 +233,280 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div id="notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of Not Scheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Send Invite button to Send Invite &  Call button to Call the Candidate.<br/><a href='/Candidate/CandidateTimeline' class='btn btn-primary ntschnext-btn'>NEXT</a>" data-position="top">
-                                <div class="dataloading">
-                                    <div class="toolbar">
-                                        <div id="tableID">
-                                            <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                                <div class="clearfix"></div>
-                                                <div class="col-sm-12 nopad">
-                                                    <div class="table-responsive">
-                                                        <div class="notschedulemeeting">
-                                                            <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th id='start'>Added Date</th>
-                                                                        <th style="border-left: 0px !important;">JD Title</th>
-                                                                        <th>Candidate Detail</th>
-                                                                        <th>Resume</th>
-                                                                        <th>Client HR</th>
-                                                                        @if (ViewBag.Profile != "Client")
-                                                                        {
-                                                                            <th>Client</th>
-                                                                        }
-                                                                        <th>Action</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                    <tr>
-                                                                        <th id='start'>Added Date</th>
-                                                                        <th style="border-left: 0px !important;">JD Title</th>
-                                                                        <th>Candidate Detail</th>
-                                                                        <th>Resume</th>
-                                                                        <th class="candidate-hr">Client HR</th>
-                                                                        @if (ViewBag.Profile != "Client")
-                                                                        {
-                                                                            <th>Client</th>
-                                                                        }
-                                                                        <th>Action</th>
-                                                                    </tr>
-                                                                </tfoot>
-                                                                <tbody>
-
-                                                                    @foreach (var item in Model)
-                                                                    {
-                                                                        <tr data-changes="1">
-                                                                            <td>@item.dtCreatedOn</td>
-                                                                            <td class="candidate-details">
-                                                                                @if (item.JDTiltle != null && item.JDTiltle != "")
-                                                                                {
-                                                                                    <div class="mtop-5">@item.JDTiltle</div>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                }
-                                                                            </td>
-                                                                            <td class="candidate-details">
-                                                                                @if (item.candidateName != null && item.candidateName != "")
-                                                                                {
-                                                                                    <div class="mtop-5">@item.candidateName</div>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                }
-                                                                                @if (item.candidateEmail != null && item.candidateEmail != "")
-                                                                                {
-                                                                                    <div class="mtop-5"><strong>Email:</strong> @item.candidateEmail</div>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                }
-                                                                                <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
-                                                                            </td>
-
-
-                                                                            @if (!String.IsNullOrEmpty(item.resumeLink))
+                            @if (HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
+                            {
+                                <div id="staffing_notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of Not Scheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Send Invite button to Send Invite &  Call button to Call the Candidate.<br/><a href='/Client/ReScheduleMeetings' class='btn btn-primary staffntschnext-btn'>NEXT</a>" data-position="top">
+                                    <div class="dataloading">
+                                        <div class="toolbar">
+                                            <div id="tableID">
+                                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                                    <div class="clearfix"></div>
+                                                    <div class="col-sm-12 nopad">
+                                                        <div class="table-responsive">
+                                                            <div class="notschedulemeeting">
+                                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th id='start'>Added Date</th>
+                                                                            <th style="border-left: 0px !important;">JD Title</th>
+                                                                            <th>Candidate Detail</th>
+                                                                            <th>Resume</th>
+                                                                            <th>Client HR</th>
+                                                                            @if (ViewBag.Profile != "Client")
                                                                             {
-                                                                                <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
+                                                                                <th>Client</th>
                                                                             }
-                                                                            else
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tfoot>
+                                                                        <tr>
+                                                                            <th id='start'>Added Date</th>
+                                                                            <th style="border-left: 0px !important;">JD Title</th>
+                                                                            <th>Candidate Detail</th>
+                                                                            <th>Resume</th>
+                                                                            <th class="candidate-hr">Client HR</th>
+                                                                            @if (ViewBag.Profile != "Client")
                                                                             {
-                                                                                <td></td>
+                                                                                <th>Client</th>
                                                                             }
-                                                                            <td class="candidate-hr">
-                                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                                                {
-                                                                                    @if (item.ClientHrContact.Length > 13)
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </tfoot>
+                                                                    <tbody>
+
+                                                                        @foreach (var item in Model)
+                                                                        {
+                                                                            <tr data-changes="1">
+                                                                                <td>@item.dtCreatedOn</td>
+                                                                                <td class="candidate-details">
+                                                                                    @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                     {
-                                                                                        <a onclick="" data-tooltip="@item.ClientHrContact"><span class="chrname"> @item.ClientHrContact</span> </a>
+                                                                                        <div class="mtop-5">@item.JDTiltle</div>
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <a onclick=""> @item.ClientHrContact </a>
                                                                                     }
+                                                                                </td>
+                                                                                <td class="candidate-details">
+                                                                                    @if (item.candidateName != null && item.candidateName != "")
+                                                                                    {
+                                                                                        <div class="mtop-5">@item.candidateName</div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                    }
+                                                                                    @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                                    {
+                                                                                        <div class="mtop-5"><strong>Email:</strong> @item.candidateEmail</div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                    }
+                                                                                    <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
+                                                                                </td>
 
 
-
+                                                                                @if (!String.IsNullOrEmpty(item.resumeLink))
+                                                                                {
+                                                                                    <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
                                                                                 }
                                                                                 else
                                                                                 {
-
+                                                                                    <td></td>
                                                                                 }
-                                                                            </td>
-                                                                            @if (ViewBag.Profile != "Client")
-                                                                            {
-                                                                                <td>@item.ClientName</td>
-                                                                            }
+                                                                                <td class="candidate-hr">
+                                                                                    @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                                                    {
+                                                                                        @if (item.ClientHrContact.Length > 13)
+                                                                                        {
+                                                                                            <a onclick="" data-tooltip="@item.ClientHrContact"><span class="chrname"> @item.ClientHrContact</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a onclick=""> @item.ClientHrContact </a>
+                                                                                        }
 
-                                                                        <td class="text-left">
 
-                                                                            @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
-                                                                            {
-                                                                                <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                                                    <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink,type=1})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                                                </button>
-                                                                            }
-                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
 
-                                                                            @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
-                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                            {
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -10px; position: relative; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
-                                                                            }
-                                                                        </td>
-                                                                        </tr>
-                                                                    }
-                                                                </tbody>
-                                                            </table>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+
+                                                                                    }
+                                                                                </td>
+                                                                                @if (ViewBag.Profile != "Client")
+                                                                                {
+                                                                                    <td>@item.ClientName</td>
+                                                                                }
+
+                                                                                <td class="text-left">
+
+                                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                                    {
+                                                                                        <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                                                            <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink,type=1})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                                        </button>
+                                                                                    }
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
+
+                                                                                    @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -10px; position: relative; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+                                                                                    }
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
+                            else
+                            {
+                                <div id="notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of Not Scheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Send Invite button to Send Invite &  Call button to Call the Candidate.<br/><a href='/Candidate/CandidateTimeline' class='btn btn-primary ntschnext-btn'>NEXT</a>" data-position="top">
+                                    <div class="dataloading">
+                                        <div class="toolbar">
+                                            <div id="tableID">
+                                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                                    <div class="clearfix"></div>
+                                                    <div class="col-sm-12 nopad">
+                                                        <div class="table-responsive">
+                                                            <div class="notschedulemeeting">
+                                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th id='start'>Added Date</th>
+                                                                            <th style="border-left: 0px !important;">JD Title</th>
+                                                                            <th>Candidate Detail</th>
+                                                                            <th>Resume</th>
+                                                                            <th>Client HR</th>
+                                                                            @if (ViewBag.Profile != "Client")
+                                                                            {
+                                                                                <th>Client</th>
+                                                                            }
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tfoot>
+                                                                        <tr>
+                                                                            <th id='start'>Added Date</th>
+                                                                            <th style="border-left: 0px !important;">JD Title</th>
+                                                                            <th>Candidate Detail</th>
+                                                                            <th>Resume</th>
+                                                                            <th class="candidate-hr">Client HR</th>
+                                                                            @if (ViewBag.Profile != "Client")
+                                                                            {
+                                                                                <th>Client</th>
+                                                                            }
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </tfoot>
+                                                                    <tbody>
+
+                                                                        @foreach (var item in Model)
+                                                                        {
+                                                                            <tr data-changes="1">
+                                                                                <td>@item.dtCreatedOn</td>
+                                                                                <td class="candidate-details">
+                                                                                    @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                                                    {
+                                                                                        <div class="mtop-5">@item.JDTiltle</div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                    }
+                                                                                </td>
+                                                                                <td class="candidate-details">
+                                                                                    @if (item.candidateName != null && item.candidateName != "")
+                                                                                    {
+                                                                                        <div class="mtop-5">@item.candidateName</div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                    }
+                                                                                    @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                                    {
+                                                                                        <div class="mtop-5"><strong>Email:</strong> @item.candidateEmail</div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                    }
+                                                                                    <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
+                                                                                </td>
+
+
+                                                                                @if (!String.IsNullOrEmpty(item.resumeLink))
+                                                                                {
+                                                                                    <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
+                                                                                <td class="candidate-hr">
+                                                                                    @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                                                    {
+                                                                                        @if (item.ClientHrContact.Length > 13)
+                                                                                        {
+                                                                                            <a onclick="" data-tooltip="@item.ClientHrContact"><span class="chrname"> @item.ClientHrContact</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a onclick=""> @item.ClientHrContact </a>
+                                                                                        }
+
+
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+
+                                                                                    }
+                                                                                </td>
+                                                                                @if (ViewBag.Profile != "Client")
+                                                                                {
+                                                                                    <td>@item.ClientName</td>
+                                                                                }
+
+                                                                                <td class="text-left">
+
+                                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
+                                                                                    {
+                                                                                        <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                                                            <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink,type=1})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                                        </button>
+                                                                                    }
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
+
+                                                                                    @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -10px; position: relative; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+                                                                                    }
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
