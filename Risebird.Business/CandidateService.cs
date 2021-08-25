@@ -220,5 +220,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateStaffingAgencyAndClientHRByInterviewId(interviewId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

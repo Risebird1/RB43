@@ -101,7 +101,7 @@ namespace Risebird.Business
                     var emailsend = _notificationHelper.InstaClientNotification(_mail, RequiredSkill);
                     //meeting.RequestedBy
                     //Send mail to Interviewers
-                    var Interviewers = _instaInterviewRepository.FetchInstaIntervieweByAssessmentGroup(meeting.AssessmentGroup);
+                    var Interviewers = _instaInterviewRepository.FetchInstaIntervieweByAssessmentGroup(model.Result.AssessmentGroup);
                     Mail _mail1 = new Mail
                     {
                         TO = string.Join(";", Interviewers),

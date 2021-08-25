@@ -27,8 +27,9 @@ namespace Risebird.Business
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly IInterviewerRepository _interviewerRepository;
+        private readonly ICandidateRepository _candidateRepository;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,6 +43,7 @@ namespace Risebird.Business
             _activityTrackerRepository = activityTrackerRepository;
             _whatsAppHelper = whatsAppHelper;
             _interviewerRepository = interviewerRepository;
+            _candidateRepository = candidateRepository;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -555,7 +557,7 @@ namespace Risebird.Business
                     {
                         if (summary.Length > 0)
                         {
-                            if(!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
+                            if (!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
                             {
                                 summary.Append("; Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
                             }
@@ -936,8 +938,8 @@ namespace Risebird.Business
                 {
                     //send mail to the HRs
                     var interviewers = _meetingRespository.ListInterviewersMail(candidateEmail, interviewDate);
-
-                    _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate);
+                    var irfOwnersAndRestrictedOwners = _candidateRepository.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid).Result;
+                    _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate, irfOwnersAndRestrictedOwners?.ToList());
                     return true;
                 }
                 return false;
@@ -2955,6 +2957,19 @@ namespace Risebird.Business
             {
                 var meetings = _meetingRespository.GetCallCatalogueList(profile, Emailid).Result.ToList();
                 return meetings ?? new List<CallCatalogueVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<string> FetchClientListByIRFID(int IRFID)
+        {
+            try
+            {
+                var meetings = _meetingRespository.FetchClientListByIRFID(IRFID).Result.ToList();
+                return meetings ?? new List<string>();
             }
             catch (Exception ex)
             {

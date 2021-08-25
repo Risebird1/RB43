@@ -2835,6 +2835,7 @@ namespace Risebird.Web.Controllers
             if (model.Contains("Successfully"))
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                 string oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(result.irfIntId).Result;
 
 
@@ -2847,7 +2848,7 @@ namespace Risebird.Web.Controllers
                 {
                     interviewers.Add(result.EmailId);
                 }
-                _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
+                _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
