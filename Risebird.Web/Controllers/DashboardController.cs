@@ -61,20 +61,15 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(progressDate))
                         {
                             model.ProgressDate = Convert.ToDateTime(progressDate);
-
                             TempData.Keep("ProgressDate");
                         }
                         else
                         {
                             model.ProgressDate = DateTime.Now;
                         }
-
-
                         model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate));
-
                         model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount();
                         model.CandidatesCountObj = await _dashboardService.GetCandidatesCount();
-
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                         model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
@@ -95,7 +90,6 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-
                 }
                 else
                 {
@@ -1205,5 +1199,6 @@ namespace Risebird.Web.Controllers
             var modelList = await _dashboardService.FetchZoomMeetingHistory(meetingid);
             return Json(modelList);
         }
+        
     }
 }

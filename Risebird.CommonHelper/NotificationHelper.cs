@@ -1538,10 +1538,11 @@ namespace Risebird.CommonHelper
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = model.Subject;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, null));
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 object[] parameters = new object[] { RequiredSkill };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewerRequestNotification.html");
@@ -1561,10 +1562,12 @@ namespace Risebird.CommonHelper
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = model.Subject;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, null));
+
                 var toMails = model.TO.Split(";");
                 foreach (var mail in toMails)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
                 object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotification.html");
