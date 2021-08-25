@@ -3640,8 +3640,8 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             DateTime StartDate = DateTime.Now.AddMonths(-1);
-                            DateTime EndDate = DateTime.Now.AddDays(1);
-                            meetings = meetings.Where(t => t.dtCreatedOn >= StartDate && t.dtCreatedOn <= EndDate).ToList();
+                            
+                            meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
                         }
                         return View(meetings);
                     }

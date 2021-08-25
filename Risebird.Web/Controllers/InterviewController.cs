@@ -784,7 +784,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement")
                     {
                         ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -1133,7 +1133,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement")
                     {
                         var modelList = _meetingService.GetMeetingList();
 
@@ -3168,7 +3168,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller")
+                        profileName == "Quality Controller" || profileName == "InterviewerManagement")
                     {
                         var result = _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                         TempData["SuccessErrorMessage"] = result;
@@ -3243,7 +3243,7 @@ namespace Risebird.Web.Controllers
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller")
+                        profileName == "Quality Controller" || profileName == "InterviewerManagement")
                     {
                         if (_meetingService.UnassignYourself(id, email.ToLower(), isPenalty))
                         {
