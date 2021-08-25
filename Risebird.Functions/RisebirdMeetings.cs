@@ -56,6 +56,7 @@ namespace Risebird.Functions
             string currentEmployerName = string.Empty;
             string textreminder = string.Empty;
             long zoommeetingId = 0;
+            int interviewId = 0;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
@@ -250,8 +251,13 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));
+                SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
+                outPutVal.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outPutVal);
+
 
                 cmd.ExecuteScalar();
+                interviewId = (int)cmd.Parameters["@interviewIdOutput"].Value;
 
                 log.Info("Interview update in database ended.");
             }
@@ -343,10 +349,11 @@ namespace Risebird.Functions
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
-                        SqlCommand cmd = new SqlCommand(
-                            "usp_ListOfIRFClientHRs", conn);
+                        //SqlCommand cmd = new SqlCommand("usp_ListOfIRFClients", conn);
+                        SqlCommand cmd = new SqlCommand("usp_GetCandidateStaffingAgencyAndClientHRByInterviewId", conn);
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                        //cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                        cmd.Parameters.Add(new SqlParameter("@interviewId", interviewId));
                         var reader = cmd.ExecuteReader();
                         masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())

@@ -1105,7 +1105,7 @@ namespace Risebird.Web.Controllers
         public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject)
         {
             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, INDIAN_ZONE);
+            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddMinutes(15), INDIAN_ZONE);
             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
             _zoommetingobject.type = 2;
             _zoommetingobject.duration = 60;
