@@ -5551,7 +5551,7 @@ namespace Risebird.Web.Controllers
                     var irfList = new List<IRF>();
                     if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now)).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
 
                     }
                     else 
@@ -5563,7 +5563,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now)).ToList();
+                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
                         }
 
                     }
@@ -5607,7 +5607,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now)).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
                     }
                     return View(irfList);
 
