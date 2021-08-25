@@ -216,7 +216,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail)
+        public string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null)
         {
             try
             {
@@ -232,12 +232,16 @@ namespace Risebird.CommonHelper
                     {
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
                     }
+                    if (!string.IsNullOrEmpty(staffingAgency) && !clientUsers.Any(x => x.EmailId == staffingAgency))
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
+                    }
                 }
                 else if (!string.IsNullOrEmpty(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
-
+               
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -280,7 +284,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendInterviewCancelledMail(List<string> interviewers, string interviewDate)
+        public string SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null)
         {
             try
             {
@@ -293,7 +297,13 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-
+                if(irfOwnersAndRestrictedIrfOwners != null && irfOwnersAndRestrictedIrfOwners.Count!=0)
+                {
+                    foreach (var clientEmail in irfOwnersAndRestrictedIrfOwners)
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
+                    }
+                }
                 StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
@@ -1002,7 +1012,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null)
+        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null)
         {
             try
             {
@@ -1018,6 +1028,11 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(clientHREmail))
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
+
+                }
+                if (!string.IsNullOrEmpty(staffingAgency))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
 
                 }
 

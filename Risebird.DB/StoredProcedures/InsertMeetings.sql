@@ -28,7 +28,8 @@ Create PROCEDURE [dbo].[InsertMeetings]
 @interviewOnDevice varchar(500),
 @currentEmployerName varchar(200),
 @textreminder nvarchar(200),
-@zoomMeetingId bigint
+@zoomMeetingId bigint,
+@interviewIdOutput int out
 AS
 Begin
 declare @InterviewId int; 
@@ -88,6 +89,7 @@ GETUTCDATE(),
 )
 
 set @InterviewId=SCOPE_IDENTITY()
+set @interviewIdOutput = @InterviewId
 
 
 End
@@ -98,6 +100,7 @@ ELSE
 Begin
 
 set @InterviewId = (select id from InterviewMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)
+set @interviewIdOutput = @InterviewId
 
  UPDATE [dbo].[InterviewMeetings]
    SET [interviewDate] = @interviewDate
@@ -256,6 +259,7 @@ GETUTCDATE()
 )
 
 set @InterviewId=SCOPE_IDENTITY()
+set @interviewIdOutput = @InterviewId
 
 
 End
@@ -266,6 +270,7 @@ ELSE
 Begin
 
 set @InterviewId = (select id from UnapprovedInterviewerMeetings where candidateEmail = @candidateEmail and interviewDate=@interviewDate and ISCId= @IRFId)
+set @interviewIdOutput = @InterviewId
 
  UPDATE [dbo].[UnapprovedInterviewerMeetings]
    SET [confirmationStatus] = @comfirmationStatus
