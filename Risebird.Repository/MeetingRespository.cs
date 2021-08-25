@@ -4857,5 +4857,24 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<string>> FetchClientListByIRFID(int IRFID)
+        {
+            try
+            {
+                var queryfinal = "Select ul.Emailid from TransClientUser tc join ClientUser cu on cu.id=tc.ClientUserid join UserList ul on cu.Userid=ul.id where ClientRoleId in(1,2,6) and IRFID=@IRFID";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dpfinal = new DynamicParameters();
+                    dpfinal.Add("@IRFID", IRFID);
+                    var result = await con.QueryAsync<string>(queryfinal, dpfinal);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

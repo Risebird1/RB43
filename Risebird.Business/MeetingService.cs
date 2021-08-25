@@ -555,7 +555,7 @@ namespace Risebird.Business
                     {
                         if (summary.Length > 0)
                         {
-                            if(!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
+                            if (!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
                             {
                                 summary.Append("; Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
                             }
@@ -2955,6 +2955,19 @@ namespace Risebird.Business
             {
                 var meetings = _meetingRespository.GetCallCatalogueList(profile, Emailid).Result.ToList();
                 return meetings ?? new List<CallCatalogueVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<string> FetchClientListByIRFID(int IRFID)
+        {
+            try
+            {
+                var meetings = _meetingRespository.FetchClientListByIRFID(IRFID).Result.ToList();
+                return meetings ?? new List<string>();
             }
             catch (Exception ex)
             {
