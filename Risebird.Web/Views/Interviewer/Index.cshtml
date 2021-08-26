@@ -1161,26 +1161,15 @@
             }
 
             html += '  <td>' + data[i].mobileNumber + '</td>';
-            html += '<td class="interview-com">';
-            html += ' <div id="section">';
-            if (data[i].primarySkill != null && data[i].primarySkill != "") {
-                if (data[i].primarySkill.length > 20) {
-                    html += '  <div class="article">';
-                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 20) + '</p>';
-                    html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(20, data[i].primarySkill.length - 20) + '</p>';
-                    html += '</div>';
-                }
-                else {
-                    html += '<div class="article"><p>' + data[i].primarySkill.substring(0, data[i].primarySkill.length) + '</p></div>';
-                }
-            }
-            else {
-                html += '<div></div>';
-            }
-            html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
-            html += '</div>';
-            html += ' </td>';
-
+            if (data[i].isinstaavailable)
+                                                        {
+                html += '    <td>Yes</td>';
+                                                        }
+                                                        else
+                                                        {
+                html += '   <td>No</td>';
+                                                        }
+            
             html += '<td class="interview-com">';
             html += ' <div id="section">';
             if (data[i].assessmentGroupId != null && data[i].assessmentGroupId != "") {
