@@ -236,5 +236,7 @@ namespace Risebird.Entities.ViewModel
         public int RejectedMeetings { get; set; }
         public int NotScheduledCount { get; set; }
         public int ReScheduledCount { get; set; }
+        public int FutureScheduledMeetings { get; set; }
+
     }
 }

@@ -3942,7 +3942,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {
@@ -4068,7 +4068,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {
@@ -5538,7 +5538,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
-        public async Task<IActionResult>  SkillChannelDetails()
+        public async Task<IActionResult> SkillChannelDetails()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -5551,19 +5551,19 @@ namespace Risebird.Web.Controllers
                     var irfList = new List<IRF>();
                     if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
 
                     }
-                    else 
+                    else
                     {
                         var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value)).ToList();
+                            irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
                         }
                         else
                         {
-                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
+                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
                         }
 
                     }
@@ -5603,11 +5603,11 @@ namespace Risebird.Web.Controllers
                     var irfList = new List<IRF>();
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value)).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
                     }
                     else
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
                     }
                     return View(irfList);
 
