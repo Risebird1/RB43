@@ -5551,7 +5551,7 @@ namespace Risebird.Web.Controllers
                     var irfList = new List<IRF>();
                     if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
 
                     }
                     else 
@@ -5559,11 +5559,11 @@ namespace Risebird.Web.Controllers
                         var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value)).ToList();
+                            irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
                         }
                         else
                         {
-                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
+                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
                         }
 
                     }
@@ -5603,11 +5603,11 @@ namespace Risebird.Web.Controllers
                     var irfList = new List<IRF>();
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value)).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
                     }
                     else
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7))).ToList();
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
                     }
                     return View(irfList);
 
