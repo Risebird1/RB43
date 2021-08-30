@@ -3431,7 +3431,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
@@ -3512,7 +3512,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
                         {
@@ -3588,7 +3588,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
@@ -3675,7 +3675,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (filter != null)
                         {
@@ -3776,7 +3776,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (filter != null)
                         {

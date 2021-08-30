@@ -34,7 +34,7 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-
+                //emailId = "prashantindoliyaa@gmail.com";
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
@@ -72,11 +72,11 @@ namespace Risebird.Web.Controllers
                     int role = 0;
                     if (menus.FirstOrDefault()?.profileName == "Client")
                     {
-                        role =  _clientService.GetClientRoleByEmailId(emailId).Result;
+                        role = _clientService.GetClientRoleByEmailId(emailId).Result;
                     }
                     HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty);
-                     HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
-                   // HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));
+                    HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
+                    // HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));
                     HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
                     HttpContext.Session.SetString("UserLogedIn", "Yes");
                     HttpContext.Session.SetString("UserLogedInVedioId", "");

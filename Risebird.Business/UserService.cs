@@ -56,13 +56,17 @@ namespace Risebird.Business
             try
             {
                 var user = _userRepository.GetUser(id);
-
+                var userClients = _userRepository.GetUserClients(id);
                 if (user == null)
+                {
                     return null;
+                }
                 else
+                {
+                    user.Result.ClientsArray = userClients.ToArray();
                     return user.Result;
+                }
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

@@ -64,8 +64,26 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,
                         commandType: CommandType.StoredProcedure);
+                    user.Id = result.FirstOrDefault();
+                    DataTable UserclientDt = new DataTable();
+                    UserclientDt.Columns.Add("IRFId", typeof(int));
+                    UserclientDt.Columns.Add("ClientUserId", typeof(int));
+                    foreach (var item in user.ClientsArray)
+                    {
+                        UserclientDt.Rows.Add(user.Id, item);
+                    }
+
+                    SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                    cmdClientUser.CommandType = CommandType.StoredProcedure;
+                    cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                    cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                    con.Open();
+                    if (cmdClientUser.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
                     return true;
                 }
             }
@@ -118,6 +136,23 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateUser", parameters,
                         commandType: CommandType.StoredProcedure);
+                    DataTable UserclientDt = new DataTable();
+                    UserclientDt.Columns.Add("IRFId", typeof(int));
+                    UserclientDt.Columns.Add("ClientUserId", typeof(int));
+                    foreach (var item in user.ClientsArray)
+                    {
+                        UserclientDt.Rows.Add(user.Id, item);
+                    }
+
+                    SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                    cmdClientUser.CommandType = CommandType.StoredProcedure;
+                    cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                    cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                    con.Open();
+                    if (cmdClientUser.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
                     return true;
                 }
             }
@@ -1318,6 +1353,25 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public List<string> GetUserClients(int id)
+        {
+            try
+            {
+                var query = "Select Clientid From SeniorHR where Userid=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, dynamicParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<string>();
         }
     }
 }
