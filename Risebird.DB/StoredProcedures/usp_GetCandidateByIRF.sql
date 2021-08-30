@@ -18,7 +18,7 @@ Create PROCEDURE [dbo].[usp_GetCandidateByIRF]
 AS
 Begin  
   
-select ca.id, ca.CandidateMasterId, ca.IRFId, ca.ClientHRAttemptContact, ca.TotalInvites, 
+select ca.id, ca.CandidateMasterId, ca.IRFId, ca.ClientHRAttemptContact, ca.TotalInvites, ca.ProfileSource, 
 case 
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
