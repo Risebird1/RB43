@@ -836,21 +836,19 @@
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
 {
-    @*<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>*@
-    <script src="~/Newassets/js/chardinjs.js"></script>
-    <script src="~/Newassets/js/demo.js"></script>
-    @*@if (HttpContextAccessor.HttpContext.Session.GetString("NReschedule") != null)
+    
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NReschedule") != null)
     {
 
     }
     else
     {
-        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        @*<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>*@
         <script src="~/Newassets/js/chardinjs.js"></script>
         <script src="~/Newassets/js/demo.js"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NReschedule", "1");
 
-    }*@
+    }
 
 
 }
