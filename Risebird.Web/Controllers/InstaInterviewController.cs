@@ -708,10 +708,15 @@ namespace Risebird.Web.Controllers
                         var result = _instaInterviewService.InstaAssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                         if (result.Contains("Successfully"))
                         {
+
                             InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
                             _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
-                            var zoomlink = CreateZoomMeetings(_zoommetingobject);
-                            var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url);
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddMinutes(15), INDIAN_ZONE);
+                            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+                            var accountEmail = await _instaInterviewService.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
+                            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+                            var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url, indianTime, indianTime.AddMinutes(60), accountEmail);
                             //Send Mail to Client And Interviewer
                             string to = emailid;
                             if (clientname != "Failed" && !String.IsNullOrEmpty(clientname))
@@ -1103,11 +1108,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
-        public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject)
+        public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
         {
-            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddMinutes(15), INDIAN_ZONE);
-            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
             _zoommetingobject.type = 2;
             _zoommetingobject.duration = 60;
             _zoommetingobject.timezone = "Asia/Calcutta";
@@ -1118,7 +1120,7 @@ namespace Risebird.Web.Controllers
             _zoommetingobject.settings.auto_recording = "cloud";
             string token = ZoomToken();
 
-            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/me/meetings"));
+            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 
             var request = new RestRequest(Method.POST);
             request.AddHeader("content-type", "application/json");
@@ -1131,7 +1133,7 @@ namespace Risebird.Web.Controllers
             convertedResponse.InterviewDate = indianTime;
             return convertedResponse;
         }
-        private string ZoomToken()
+        public string ZoomToken()
         {
             DateTime Expiry = DateTime.UtcNow.AddDays(1);
             string ApiKey = _configuration["ZoomAppDetails:apiKey"];

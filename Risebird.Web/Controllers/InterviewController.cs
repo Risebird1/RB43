@@ -3552,7 +3552,7 @@ namespace Risebird.Web.Controllers
                                 //find all IRFowner and Users
                                 var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
                                 var maillist = String.Join(";", clientlist);
-                                string sendreporturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
+                                string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport/" + model.InterviewId;
                                 Mail _mail1 = new Mail
                                 {
                                     TO = maillist,

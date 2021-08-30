@@ -725,5 +725,44 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+        {
+            try
+            {
+                return _userRepository.FetchInstaZoomAccounts();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool DeleteInstaZoomAccount(int Accountid)
+        {
+            try
+            {
+                return _userRepository.DeleteInstaZoomAccount(Accountid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public bool AddInstaZoomAccount(string AccountEmail)
+        {
+            try
+            {
+                return _userRepository.AddInstaZoomAccount(AccountEmail);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

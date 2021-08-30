@@ -238,16 +238,30 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public string UpdateInstaZoomLink(int meetingid, string Zoomlink)
+        public string UpdateInstaZoomLink(int meetingid, string Zoomlink, DateTime starttime, DateTime endtime, string accountEmail)
         {
             try
             {
-                return _instaInterviewRepository.UpdateInstaZoomLink(meetingid, Zoomlink);
+                var result = _instaInterviewRepository.UpdateInstaZoomLink(meetingid, Zoomlink);
+                var succeresult = _instaInterviewRepository.UpdateInstaZoomDetails(starttime, endtime, accountEmail);
+                return result;
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed";
+            }
+        }
+        public async Task<string> CheckInstaMeetingAccount(DateTime startTime, DateTime endTime)
+        {
+            try
+            {
+                return await _instaInterviewRepository.CheckInstaMeetingAccount(startTime, endTime);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
             }
         }
     }

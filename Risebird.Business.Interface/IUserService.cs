@@ -58,5 +58,8 @@ namespace Risebird.Business.Interface
         string FetchNameByEmail(string Emailid);
         string SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
         List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid);
+        List<ZoomAccountDetailsVM> FetchInstaZoomAccounts();
+        bool DeleteInstaZoomAccount(int Accountid);
+        bool AddInstaZoomAccount(string AccountEmail);
     }
 }

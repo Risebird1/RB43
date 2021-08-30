@@ -463,5 +463,56 @@ namespace Risebird.Repository
                 return "Failed";
             }
         }
+        public async Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", starttime);
+                    parameters.Add("@enddate", endtime);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_CheckInstaOnlineMettings", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    if (result != null && result.Count() > 0)
+                    {
+                        return (result.FirstOrDefault());
+                    }
+                    else
+                        return "";
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", starttime);
+                    parameters.Add("@enddate", endtime);
+                    parameters.Add("@Accountemail", Accountemail);
+                    var result = SqlMapper.Query<string>(con, "usp_UpdateInstaOnlineMettings", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    return "success";
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

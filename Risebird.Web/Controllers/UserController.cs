@@ -1941,6 +1941,46 @@ namespace Risebird.Web.Controllers
             }
             model.ClientList = _ClientList;
         }
+        #region InstaZoomAccounts
+        public IActionResult InstaZoomAccounts()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    List<ZoomAccountDetailsVM> model = new List<ZoomAccountDetailsVM>();
+                    var resultset = _userService.FetchInstaZoomAccounts();
+                    if (resultset != null)
+                    {
+                        model = resultset;
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public JsonResult DeleteInstaZoomAccount(int Accountid)
+        {
+            var resultset = _userService.DeleteInstaZoomAccount(Accountid);
+            return Json(resultset);
+        }
+        [HttpPost]
+        public JsonResult AddInstaZoomAccount(string AccountEmail)
+        {
+            var resultset = _userService.AddInstaZoomAccount(AccountEmail);
+            return Json(resultset);
+        }
+        #endregion
     }
 }
 

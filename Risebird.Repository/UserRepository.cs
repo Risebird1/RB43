@@ -70,19 +70,22 @@ namespace Risebird.Repository
                     DataTable UserclientDt = new DataTable();
                     UserclientDt.Columns.Add("IRFId", typeof(int));
                     UserclientDt.Columns.Add("ClientUserId", typeof(int));
-                    foreach (var item in user.ClientsArray)
+                    if (user.ClientsArray != null)
                     {
-                        UserclientDt.Rows.Add(user.Id, item);
-                    }
+                        foreach (var item in user.ClientsArray)
+                        {
+                            UserclientDt.Rows.Add(user.Id, item);
+                        }
 
-                    SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
-                    cmdClientUser.CommandType = CommandType.StoredProcedure;
-                    cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
-                    cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
-                    con.Open();
-                    if (cmdClientUser.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
+                        SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
                     return true;
                 }
@@ -139,19 +142,21 @@ namespace Risebird.Repository
                     DataTable UserclientDt = new DataTable();
                     UserclientDt.Columns.Add("IRFId", typeof(int));
                     UserclientDt.Columns.Add("ClientUserId", typeof(int));
-                    foreach (var item in user.ClientsArray)
+                    if (user.ClientsArray != null)
                     {
-                        UserclientDt.Rows.Add(user.Id, item);
-                    }
-
-                    SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
-                    cmdClientUser.CommandType = CommandType.StoredProcedure;
-                    cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
-                    cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
-                    con.Open();
-                    if (cmdClientUser.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
+                        foreach (var item in user.ClientsArray)
+                        {
+                            UserclientDt.Rows.Add(user.Id, item);
+                        }
+                        SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
                     return true;
                 }
@@ -1372,6 +1377,62 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return new List<string>();
+        }
+        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+        {
+            try
+            {
+                var query = "Select * From InstaZoomMeetingAccounts";
+                var dynamicParameters = new DynamicParameters();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<ZoomAccountDetailsVM>(query, dynamicParameters);
+                    return (List<ZoomAccountDetailsVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public bool DeleteInstaZoomAccount(int Accountid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", Accountid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<int>(con, "usp_DeleteInstaZoomAccount", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public bool AddInstaZoomAccount(string AccountEmail)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@AccountEmail", AccountEmail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_InsertInstaZoomAccount", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }
