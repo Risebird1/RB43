@@ -10,54 +10,53 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO 
     
-      
-Create PROCEDURE [dbo].[usp_AddUser]      
-      
-@selectedProfileId int,      
-@userFirstName varchar(150),      
-@userLastName varchar(150),      
-@userEmailId varchar(150),      
-@userMobileNumber nvarchar(200),
-@WhatsappNumber varchar(15)
-      
-AS      
-Begin      
-      
-declare @generatedUserId int;      
-    INSERT INTO [dbo].[UserList]      
-         (      
-       [idProfile]      
-         ,[FirstName]           
-         ,[LastName]      
-         ,[EmailId]      
-         ,[IsActive]      
-         ,[MobileNumber],
-		 [WhatsappNumber]
-         )      
-        VALUES      
-         (      
-       @selectedProfileId      
-         ,@userFirstName      
-         ,@userLastName      
-         ,@userEmailId      
-         ,1      
-         ,@userMobileNumber,
-		 @WhatsappNumber
-         )   
-  
- set @generatedUserId=SCOPE_IDENTITY()  
-  
---check if HR     
- if(@selectedProfileId=2)  
-  Begin  
-   insert into HR values(@generatedUserId)  
-  End  
-      
-      
-      
-End      
-      
-      
+            
+        
+Create PROCEDURE [dbo].[usp_AddUser]        
+        
+@selectedProfileId int,        
+@userFirstName varchar(150),        
+@userLastName varchar(150),        
+@userEmailId varchar(150),        
+@userMobileNumber nvarchar(200),  
+@WhatsappNumber varchar(15)  
+        
+AS        
+Begin        
+        
+declare @generatedUserId int;        
+    INSERT INTO [dbo].[UserList]        
+         (        
+       [idProfile]        
+         ,[FirstName]             
+         ,[LastName]        
+         ,[EmailId]        
+         ,[IsActive]        
+         ,[MobileNumber],  
+   [WhatsappNumber]  
+         )        
+        VALUES        
+         (        
+       @selectedProfileId        
+         ,@userFirstName        
+         ,@userLastName        
+         ,@userEmailId        
+         ,1        
+         ,@userMobileNumber,  
+   @WhatsappNumber  
+         )     
+    
+ set @generatedUserId=SCOPE_IDENTITY()    
+    
+--check if HR       
+ if(@selectedProfileId=2)    
+  Begin    
+   insert into HR values(@generatedUserId)    
+  End    
+        
+ Select  @generatedUserId      
+        
+End        
     
 GO
 

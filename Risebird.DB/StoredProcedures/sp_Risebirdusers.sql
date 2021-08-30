@@ -17,7 +17,7 @@ select ul.id,ul.idprofile,ul.FirstName,ul.LastName
 ,ul.EmailId,ul.MobileNumber,ul.isactive, pf.[Name] as ProfileName   
 from [dbo].[UserList] ul  
 join [dbo].[Profile] pf on ul.idprofile = pf.id  
-where pf.Name in('Admin','HR','Finance','InterviewerManagement','SeniorInterviewerManagement') order by pf.Name  
+where pf.Name in('Admin','HR','Finance','InterviewerManagement','SeniorInterviewerManagement','SeniorHR') order by pf.Name  
   
 END  
 GO 

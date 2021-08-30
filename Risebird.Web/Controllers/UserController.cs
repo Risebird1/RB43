@@ -87,7 +87,7 @@ namespace Risebird.Web.Controllers
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
-
+                    GetClientsSelectList(model);
                     return View("UserAdd", model);
                 }
                 else
@@ -137,7 +137,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
-
+                        GetClientsSelectList(user);
                         return View("UserAdd", user);
                     }
                 }
@@ -171,6 +171,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
+                        GetClientsSelectList(user);
                         return View("UserUpdate", user);
                     }
                     else
@@ -224,7 +225,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
-
+                        GetClientsSelectList(user);
                         return View("UserUpdate", user);
                     }
                 }
@@ -400,7 +401,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin")
+                    if (profileName == "Admin" || profileName == "SeniorHR")
                     {
                         if (_userService.DeleteClientUser(id))
                         {
@@ -1923,6 +1924,22 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(ex);
             }
+        }
+        private void GetClientsSelectList(UserList model)
+        {
+            var Clients = _clientService.GetClients();
+            var _ClientList = new List<SelectListItem>();
+            foreach (var item in Clients)
+            {
+                bool selected = false;
+                if (model.ClientsArray != null && model.ClientsArray.Contains(item.id.ToString()))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
+                _ClientList.Add(selectItem);
+            }
+            model.ClientList = _ClientList;
         }
     }
 }

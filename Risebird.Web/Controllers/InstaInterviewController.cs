@@ -1021,12 +1021,13 @@ namespace Risebird.Web.Controllers
                         if (_instaInterviewService.AddInstaInterviewReport(model, emailid).Result)
                         {
                             TempData["SuccessErrorMessage"] = "Report saved Successfully";
-                            return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
+                            //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
+                            return RedirectToAction("MyInterview");
                         }
                         else
                         {
                             TempData["SuccessErrorMessage"] = "Report was not saved.";
-                            return RedirectToAction("Index");
+                            return RedirectToAction("MyInterview");
                         }
                     }
                     else
@@ -1043,7 +1044,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Report was not saved.";
-                return RedirectToAction("Index");
+                return RedirectToAction("MyInterview");
             }
         }
         [HttpGet]

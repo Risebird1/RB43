@@ -65,7 +65,7 @@ namespace Risebird.Web.Controllers
             emailid = emailid.Replace("\"", "");
             try
             {
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                 {
 
                     var model = new List<CandidateTimelineVM>();
@@ -320,7 +320,7 @@ namespace Risebird.Web.Controllers
             emailid = emailid.Replace("\"", "");
             try
             {
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                 {
                     var model = new List<CandidateTimelineVM>();
 
@@ -942,7 +942,7 @@ namespace Risebird.Web.Controllers
 
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
@@ -1106,7 +1106,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         var model = new Candidate
                         {
@@ -1148,7 +1148,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         if (!string.IsNullOrEmpty(model.EmailId))
                         {
@@ -1195,7 +1195,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         var model = await _irfService.GetCandidate(id, Convert.ToInt32(irfId));
                         model.IRFName = irfName;
@@ -1236,7 +1236,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         if (!string.IsNullOrEmpty(model.EmailId))
                         {
@@ -1502,7 +1502,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         if (endDate < DateTime.Now)
                         {
@@ -1552,7 +1552,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
 
                         if (await _irfService.CancelInvite(irfId, emailId))
@@ -1594,7 +1594,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter" || profileName == "SeniorHR")
                 {
                     var model = await _evaluatorService.GetCandidate(candidateId, irfId);
                     model.CandidateAudios = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).Where(x => x.IsVoiceBiometric == true).ToList();
@@ -1649,7 +1649,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         if (model.AudioFile != null)
                         {
@@ -1720,7 +1720,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                 {
                     var model = await _evaluatorService.GetEvaluatorReport(candidateId, irfId);
                     model.HRReport = await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId);
@@ -1757,7 +1757,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
 
                         if (await _evaluatorService.AddSelectabilityReport(model))
