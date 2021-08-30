@@ -1,0 +1,272 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model IEnumerable<Risebird.Entities.ViewModel.ZoomAccountDetailsVM>
+@{
+    ViewData["Title"] = "Insta Zoom Accounts";
+    ViewBag.PageHeader = "Insta Zoom Accounts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/irf.css?v=8" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Insta Zoom Accounts</h4></div>
+                </div>
+                <div class="pull-right">
+                    <div>
+                        @*<a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to create assessment group" onclick="AddInstaZoomAccount()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Create Assessment Group </font></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                            </div>
+                            <div style="clear:both;padding:10px"></div>
+                            <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Zoom Account</th>
+                                        <th>Active</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="table-h">@item.AccountEmailid</td>
+                                            @if (item.Active)
+                                            {
+                                                <td><input type="checkbox" value="@item.Active" checked disabled /></td>
+                                            }
+                                            else
+                                            {
+                                                <td><input type="checkbox" value="@item.Active" disabled /></td>
+                                            }
+                                            <td class="text-right four">
+                                                <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete Zoom Account">
+                                                    <span title="Click here to delete Zoom Account" onclick="javascript:DeleteAccount(@item.id);" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div style="clear:both"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="AddZoomAccountModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Zoom Account</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAddZoomAccountModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 nopad">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Emailid:  <b id="txtvideoUrls"> </b></label>
+                        <input type="text" class="form-control" id="txtZoomAccountid" />
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closeAddZoomAccountModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="AddZoomAccount()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Add">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function searchResult() {
+        $('#meeting').DataTable();
+    }
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+
+    });
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+    function DeleteAccount(id, accountname) {
+        swal.fire({
+            title: 'Are you sure you want to delete zoom account: ' + accountname + '?',
+            text: "It will be permanently deleted!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/User/DeleteInstaZoomAccount',
+                        data: { 'Accountid': id },
+                        type: 'Delete',
+                        method: 'POST',
+                        success: function (result) {
+                            if (result == true) {
+                                resolve(result)
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The account has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/User/InstaZoomAccounts";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
+    }
+    function closeAddZoomAccountModel() {
+        var modal = document.getElementById("AddZoomAccountModel");
+        modal.style.display = "none";
+    }
+    function AddInstaZoomAccount() {
+        var modal = document.getElementById("AddZoomAccountModel");
+        modal.style.display = "block";
+    }
+    function AddZoomAccount() {
+        if ($("#txtZoomAccountid").val().trim() != "") {
+            $.ajax({
+                url: '/User/AddInstaZoomAccount',
+                data: { 'AccountEmail': $("#txtZoomAccountid").val() },
+                method: 'POST',
+                success: function (result) {
+                    if (result == true) {
+                        swal.fire("success", "Added Successfully", "success").then(function () {
+                            window.location = "/User/InstaZoomAccounts";
+                        });
+                    }
+                    else {
+                        swal.fire("Error deleting!", "Please try again", "error");
+                    }
+                }
+            });
+        } else {
+            swal.fire("Please add email address.");
+        }
+    }
+</script>
