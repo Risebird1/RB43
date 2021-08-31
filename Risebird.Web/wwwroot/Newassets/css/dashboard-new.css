@@ -4912,6 +4912,7 @@ button.btn {
 
 .indexemp #search, #skillLevel_filter #search, #risebirduser_filter #search, #clientduser_filter #search, #skill_filter #search, #questionsTable_filter #search {
     right: 45px;
+    z-index:0;
 }
 
 #statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search, #meeting_filter #search, #irfTable_filter #search {
