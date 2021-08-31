@@ -65,9 +65,7 @@ td.detail-row {
 .child-section {
     background: #e5e5e5;
 }
-.instainterview .form-group {
-    box-shadow: 2px 4px #e8f0f9;
-}
+
 .pagination .page-item.active > .page-link,
 .pagination .page-item.active > .page-link:focus,
 .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
@@ -517,11 +515,37 @@ textarea::-webkit-scrollbar-thumb {
     border-bottom: 0px !important;
 }
 
-.mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #e6e6e6ad;
-    color: #888 !important;
+.instainterview .multiple_row > h2:before {
+    background-color: rgb(84 165 245);
+    border-right: 30px solid rgb(84 165 245);
 }
 
+.instainterview .table-bordered {
+    border: 2px solid #54a5f5 !important;
+}
+    .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
+    background: #f7f7f7;
+    color: #888 !important;
+}
+.instainterview .multiple_row > h2 span {
+    color: #ffffff;
+    position: absolute;
+    text-transform: uppercase;
+}
+.instainterview .form-group label.upload {
+    color: #959596;
+}
+.instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
+    background: #f7f7f7 !important;
+}
+.instainterview .upload-area {
+    background: #f7f7f7;
+}
+.instainterview label.upload {
+    border: 1px #54a5f58f solid;
+    color: #54a5f5!important;
+    border-radius: 0rem!important;
+}
     .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
         border: 0px !important;
         border-bottom: 2px rgb(75 146 249) solid !important;

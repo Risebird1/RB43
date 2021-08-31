@@ -4971,14 +4971,25 @@ button.btn {
     right: 35px;
     top: 11px;
 }
-
-/***** Media queries *****/
-.copy-btn {
-    background: none;
-    border: 0;
-    position: relative;
-    margin: -10px 0px 0px 0px !important;
+#divclientname .btn-group > .btn.dropdown-toggle {
+    border: 0px;
+    background: #eee !important;
 }
+    #divclientname .btn-group > .btn.dropdown-toggle:focus, #divclientname .btn-group > .btn.dropdown-toggle:hover, #divclientname .dropdown-toggle:hover, #divclientname .btn-group:hover{
+        border: 0px !important;
+        box-shadow:none!important;
+        background: #eeeeee !important;
+    }
+        #divclientname .btn-group:hover .multiselect-selected-text {
+            color: #383737;
+        }
+        /***** Media queries *****/
+        .copy-btn {
+            background: none;
+            border: 0;
+            position: relative;
+            margin: -10px 0px 0px 0px !important;
+        }
 
 .special-text svg {
     fill: rgb(83, 165, 245)
@@ -9512,8 +9523,7 @@ button.close {
 .instainterview .form-group {
     display: inline-block;
     padding: 3px;
-    border: 1px rgba(0, 0, 0, 0.29) solid;
-    margin-bottom: 30px;
+  /*  margin-bottom: 30px;*/
     min-height: 56px;
     border-radius: 4px;
     width: 100%;
@@ -9522,25 +9532,38 @@ button.close {
 .instainterview #SkillTable.table-bordered td:nth-child(3) {
     border-right: 0px !important
 }
+
+
+
 #SelectabilityTable.table-bordered td:nth-child(6) {
     border-right: 0px !important
 }
 .instainterview .form-group input.form-control.text-box.single-line {
     width: calc(100% - 10px);
 }
-
+.instainterview #meeting.table-bordered {
+    border: 1px solid #dee2e6 !important;
+}
+.br-g {
+    border-bottom: 1px #ccccccfc solid!important;
+}
 .instainterview .form-group label {
     /* display: block; */
     font-size: 12px;
     color: blue;
     position: relative;
     background: #fff;
-    top: -20px;
-    left: 40px;
+    top: -22px;
     width: auto;
     font-size: 15px !important;
 }
-
+.instainterview #txtAssessmentSkills{
+    background:none!important;
+    border:0px!important;
+}
+.instainterview #SkillTable.table-bordered td:hover{
+    box-shadow:none!important;
+}
 .instainterview #uploadDiv input[type=file], .instainterview #codeduploadDiv input[type=file] {
     z-index: 0;
 }
@@ -9548,7 +9571,74 @@ button.close {
 .instainterview .stats-bttm-btn button {
     height: 30px;
 }
+.instainterview .upload-area {
+    position: relative;
+    top: -25px;
+    left: -1px;
+    border: 1px #bdbfc152 solid;
+    border-radius: 0px;
+    padding: 5px 5px 0px 5px;
+}
+.instainterview label.upload {
+  
+    padding: 0.2rem 0.3rem;
+    font-family: sans-serif;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin-top: 0rem;
+    position: relative;
+    top: 0px !important;
+    font-weight: 600;
+    left: 10px !important;
+}
+.instainterview .multiple_row > h2 {
+    height: 35px;
+    position: relative;
+    background: none !important;
+    color: #FFF !important;
+    width: 100%;
+    top: 1PX;
+    font-size: 18px;
+    z-index: 0 !important;
+}
+.instainterview .table-bordered th{
+    background:none!important;
+}
+.instainterview .table-responsive-sm .table > thead > tr > th {
+    font-size: 16px;
+    border-left: 0;
+    border-top: 0;
+    border-bottom: 0;
+    border-right: 1px solid #dee2e6;
+}
+    .instainterview .table-responsive-sm .table > thead > tr > th:last-child, .instainterview table #SkillTable {
+        border: 0px !important
+    }
+    .instainterview .multiple_row > h2:before {
+        content: '';
+        position: absolute;
+        top: 0 !important;
+        right: 0 !important;
+        width: 100%;
+        height: 100%;
+        -webkit-transform-origin: 100% 100%;
+        -ms-transform-origin: 100% 100%;
+        transform-origin: 100% 100%;
+        -webkit-transform: skewX( 30deg );
+        -ms-transform: skewX(30deg);
+        transform: skewX( 30deg );
+        color: #fff !important;
+    }
 
+.instainterview .multiple_row > h2 {
+    position: relative;
+    overflow: hidden;
+}
+        
+        #file-chosen {
+            margin-left: 0.3rem;
+            font-family: sans-serif;
+        }
 .insta-icon {
     position: relative;
     top: 12px;
@@ -9579,7 +9669,8 @@ button.close {
     position: absolute;
     top: 3px;
     left: -1px;
-    background: #eee;
+    border: 1px #bdbfc152 solid;
+    border-radius: 0px;
 }		
 			
 h4 .card-title {
@@ -9959,7 +10050,7 @@ tbody.collapse.in {
 }
 
 #file-chosen {
-    margin-left: 0.3rem;
+    margin-left: 0.8rem;
     font-family: sans-serif;
 }
 

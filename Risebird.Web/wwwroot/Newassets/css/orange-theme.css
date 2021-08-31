@@ -162,10 +162,35 @@ textarea::-webkit-scrollbar {
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #d6d6d6ad;
+    background: #f7f7f7;
     color: #888 !important;
 }
-
+.instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
+    background: #f7f7f7 !important;
+}
+.instainterview .upload-area {
+    background: #f7f7f7;
+}
+.instainterview .multiple_row > h2:before {
+    background-color: rgb(233 112 39);
+    border-right: 30px solid rgb(233 112 39);
+}
+.instainterview .multiple_row > h2 span {
+    color: #ffffff;
+    position: absolute;
+    text-transform: uppercase;
+}
+.instainterview .form-group label.upload {
+    color: #e97027;
+}
+.instainterview .table-bordered {
+    border: 2px solid #e97027 !important;
+}
+.instainterview label.upload {
+    border: 1px #b8b9b98f solid;
+    color: #908c8c;
+    border-radius: 0rem;
+}
 .dob [type="date"] {
     background: #ebecee url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 4.2% !important;
@@ -872,9 +897,7 @@ input[type="radio"]:checked {
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
-.instainterview .form-group {
-    box-shadow: 2px 4px #ffc4a287;
-}
+
 .send-btn {
     background: #fff;
     color: #ec772a;
