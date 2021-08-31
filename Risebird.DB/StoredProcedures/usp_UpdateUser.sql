@@ -50,7 +50,7 @@ else if(@selectedProfileId != 2 and ((select id from HR where UserId=@id) is not
   delete from TransHR where HRId = (select id from HR where UserId=@id)    
   delete from HR where id = (select id from HR where UserId=@id)    
  End    
-    
+    Delete from SeniorHR where Userid=@id  
 End
     
   

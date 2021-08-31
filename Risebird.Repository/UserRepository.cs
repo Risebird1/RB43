@@ -231,13 +231,15 @@ namespace Risebird.Repository
         /// Get all the Client Users
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ClientUserVM> GetClientUsers()
+        public IEnumerable<ClientUserVM> GetClientUsers(string EmailId)
         {
             try
             {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", null,
+                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", dp,
                         commandType: StoredProcedure);
                 }
             }

@@ -120,11 +120,11 @@ namespace Risebird.Business
 
         #region Client User Service Functions
 
-        public List<ClientUserVM> GetClientUsers()
+        public List<ClientUserVM> GetClientUsers(string EmailId)
         {
             try
             {
-                return _userRepository.GetClientUsers().ToList();
+                return _userRepository.GetClientUsers(EmailId).ToList();
             }
             catch (Exception e)
             {

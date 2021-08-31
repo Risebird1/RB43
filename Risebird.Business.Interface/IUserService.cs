@@ -9,7 +9,7 @@ namespace Risebird.Business.Interface
     {
         List<Menu> GetMenuBasedOnUserEmailld(string emailId);
         List<UserList> GetRisebirdUsers();
-        List<ClientUserVM> GetClientUsers();
+        List<ClientUserVM> GetClientUsers(string EmailId);
         List<InterviewerVM> GetInterviewers();
         List<InterviewerVM> GetInterviewersDetails();
 
