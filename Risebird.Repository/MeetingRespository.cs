@@ -4876,5 +4876,55 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoInstantMeetings()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeEnd", DateTime.Now);
+                    parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
+                    var result = SqlMapper.Query<PendingVideoMeetingsData>(con, "usp_GetPendingVideoInstantMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateUploadedVideoLinkForInstaInterview(int interviewId, string videoLink)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@videoLink", videoLink);
+                    //parameters.Add("@videoDuration", videoDuration);
+                    var result = SqlMapper.Query(con, "usp_UpdateUploadedVideoLinkForInstaInterview", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

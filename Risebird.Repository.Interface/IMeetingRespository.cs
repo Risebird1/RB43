@@ -184,5 +184,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid);
         Task<IEnumerable<CallCatalogueVM>> GetCallCatalogueList(string profile, string Emailid);
         Task<IEnumerable<string>> FetchClientListByIRFID(int IRFID);
+        Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoInstantMeetings();
+        Task<bool> UpdateUploadedVideoLinkForInstaInterview(int interviewId, string videoLink);
     }
 }
