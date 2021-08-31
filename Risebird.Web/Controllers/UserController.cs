@@ -294,8 +294,9 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageClientUser");
 
                     }
-
-                    return View(_userService.GetClientUsers());
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    return View(_userService.GetClientUsers(emailid));
                 }
                 else
                 {
