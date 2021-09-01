@@ -56,7 +56,7 @@ body {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: darkgray;
 }
-table tr td:hover, .table-striped tbody tr:nth-of-type(even):hover {
+table tr td:hover, .table-striped tbody tr:hover {
     box-shadow: 3px 4px 8px 2px rgb(0 0 0 / 5%), 0 6px 20px 0 rgb(0 0 0 / 19%);
 }
     .fa-clock:before {
@@ -74,13 +74,16 @@ table tr td:hover, .table-striped tbody tr:nth-of-type(even):hover {
     position: absolute;
     left: 17px;
 }
+.openinstaint tr td:hover, .myinstaint tr td:hover {
+    box-shadow: none !important
+}
 
-    .user-icon:after {
-        content: "\f007";
-        position: absolute;
-        left: -10px;
-        font-weight:normal;
-    }
+.user-icon:after {
+    content: "\f007";
+    position: absolute;
+    left: -10px;
+    font-weight: normal;
+}
 .chardinjs-tooltiptext {
     font-family: 'Architects Daughter', cursive;
     font-size: 13px;
@@ -4891,7 +4894,8 @@ button.btn {
     width: 200px;
     margin: 0px auto !important;
 }
-
+#reportForm table tr td:hover{box-shadow:none!important}
+#reportForm table{background:#fff}
 .jumbotron .statusImg img {
     height: 126px !important;
     max-height: 126px !important;
@@ -4902,7 +4906,7 @@ button.btn {
     max-height: 100px !important;
 }
 
-.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus {
+.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus {
     background: #FFF !important;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -4915,11 +4919,11 @@ button.btn {
     z-index:0;
 }
 
-#statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search, #meeting_filter #search, #irfTable_filter #search {
+#statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search, #meeting_filter #search, #irfTable_filter #search, #MyInterviewList_filter #search, #OpeninterviewList_filter #search {
     right: 55px;
 }
 
-.indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update {
+.indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update {
     right: 20px;
 }
 
@@ -9510,7 +9514,7 @@ button.close {
     right: 40px;
 }
 .instainterview #meeting_filter #search {
-    right: 52px;
+    right: 52px;z-index:0;
 }
 
 .search-field #meeting_filter #search {
@@ -9629,6 +9633,9 @@ button.close {
         transform: skewX( 30deg );
         color: #fff !important;
     }
+.instainterview .table > tbody > tr > td:hover{
+    box-shadow:none!important;
+}
 
 .instainterview .multiple_row > h2 {
     position: relative;
