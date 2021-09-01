@@ -28,14 +28,24 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public IEnumerable<Client> GetClients()
+        public IEnumerable<Client> GetClients(string emailid, string profilename)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Client>(
-                        con, "select * from Client", null, commandType: Text);
+                    if (profilename == "SeniorHR")
+                    {
+                        DynamicParameters dp = new DynamicParameters();
+                        dp.Add("@Emailid", emailid);
+                        return SqlMapper.Query<Client>(
+                            con, "Select cl.* From SeniorHR sh join Client cl on cl.id=sh.Clientid join Userlist ul on ul.id=sh.userid where ul.Emailid=@Emailid", dp, commandType: Text);
+                    }
+                    else
+                    {
+                        return SqlMapper.Query<Client>(
+                            con, "select * from Client", null, commandType: Text);
+                    }
                 }
             }
             catch (SqlException ex)

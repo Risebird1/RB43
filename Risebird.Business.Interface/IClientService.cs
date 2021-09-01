@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
 {
     public interface IClientService
     {
-        List<Client> GetClients();
+        List<Client> GetClients(string emailid,string profilename);
         bool AddClient(Client client);
         bool UpdateClient(Client client);
         Client GetClient(int id);

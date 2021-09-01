@@ -15,12 +15,26 @@ CREATE TABLE [dbo].[InstaInterviewMeetings](
 	[RequestId] [int] NULL,
 	[TechSkillComments] [varchar](500) NULL,
 	[InterviewerComment] [varchar](500) NULL,
-	[VideoLink] [varchar](1000) NULL
+	[VideoLink] [varchar](1000) NULL,
+	[AccountEmail] [varchar](150) NULL
  CONSTRAINT [PK_InstaInterviewMeetings] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+ELSE
+BEGIN
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AccountEmail')
+      AND Object_ID = Object_ID(N'InstaInterviewMeetings'))
+BEGIN
+    ALTER TABLE InstaInterviewMeetings
+    Add AccountEmail INT NOT NULL DEFAULT 0
+END
 END
 GO
 
