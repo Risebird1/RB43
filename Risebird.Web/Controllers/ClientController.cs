@@ -19,7 +19,6 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
     public class ClientController : Controller
     {
         private IInterviewerService _interviewerService;
@@ -57,9 +56,12 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
                         TempData.Remove("SuccessErrorMessage");
-
                     }
-                    return View(_clientService.GetClients());
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                    profilename = profilename.Replace("\"", "");
+                    return View(_clientService.GetClients(emailid, profilename));
                 }
                 else
                 {
@@ -787,9 +789,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AllMeetings(int? Page, string searchValue)
+        public async Task<IActionResult> AllMeetings(int? Page, string searchValue, string Emailid)
         {
             try
             {
@@ -799,6 +800,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.Emailid = "";
                     if (profileName == "Client")
                     {
                         var role = await _clientService.GetClientRoleByEmailId(emailid);
@@ -873,12 +875,87 @@ namespace Risebird.Web.Controllers
                         }
                         _modelDetails = meetings;
                         ViewBag.Date = DateTime.Now;
+                        ViewBag.PageType = "Private";
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
+                }
+                else if (!String.IsNullOrEmpty(Emailid))
+                {
+                    var emailid = Emailid;
+                    ViewBag.Emailid = Emailid;
+                    var role = await _clientService.GetClientRoleByEmailId(emailid);
+                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                    var meetings = _meetingService.GetClientMeetingList(emailid);
+                    meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                    if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
+                    SetMeetingsProperties(meetings);
+                    if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
+                        meetings = ApplyAllMeetingsFilter(filter, meetings);
+                    }
+                    ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct();
+                    ViewBag.ClientNameList = meetings.Select(x => x.ClientName).Distinct();
+                    ViewBag.IRFList = meetings.Select(x => x.IRFId).Distinct();
+                    ViewBag.PrimarySkills = meetings.Select(x => x.JDTiltle).Distinct();
+                    ViewBag.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).Distinct();
+                    ViewBag.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).Distinct();
+                    ViewBag.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).Distinct();
+                    ViewBag.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).Distinct();
+                    ViewBag.FinalSelection = meetings.Select(x => x.FinalSelectionStat).Distinct();
+                    ViewBag.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).Distinct();
+                    ViewBag.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).Distinct();
+
+                    ViewBag.Searchvalue = searchValue;
+                    if (!String.IsNullOrEmpty(searchValue))
+                    {
+                        searchValue = searchValue.ToUpper().Trim();
+                        meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                     || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
+                     || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
+                    }
+                    ViewBag.TotalCount = meetings.Count;
+                    ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                    int a = meetings.Count / 10;
+                    if (meetings.Count % 10 == 0)
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                    else
+                    {
+                        a = a + 1;
+                        if (a == Page || 10 >= meetings.Count)
+                        {
+                            ViewBag.PageEndCount = meetings.Count;
+                        }
+                        else
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                    }
+                    if (meetings.Count == 0)
+                    {
+                        ViewBag.PageStartCount = 0;
+                        ViewBag.PageEndCount = 0;
+                    }
+                    _modelDetails = meetings;
+                    ViewBag.Date = DateTime.Now;
+                    ViewBag.PageType = "Private";
+                    var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    if (menus != null)
+                    {
+                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                        HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                    }
+                    return View(meetings.ToPagedList(Page ?? 1, 10));
+                    //return RedirectToAction("SignOut", "Session");
                 }
                 else
                 {
@@ -893,9 +970,8 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AllMeetings(InterviewFilter filter, int? Page, string searchValue)
+        public async Task<IActionResult> AllMeetings(InterviewFilter filter, int? Page, string searchValue, string Emailid)
         {
             try
             {
@@ -905,6 +981,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.Emailid = "";
                     if (profileName == "Client")
                     {
                         if (filter != null)
@@ -976,6 +1053,73 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("SignOut", "Session");
                     }
                 }
+                else if (!String.IsNullOrEmpty(Emailid))
+                {
+                    var emailid = Emailid;
+                    ViewBag.Emailid = Emailid;
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("AllPriorityClientMeetingsfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    var role = await _clientService.GetClientRoleByEmailId(emailid);
+                    ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                    var meetings = _meetingService.GetClientMeetingList(emailid);
+                    meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                    SetMeetingsProperties(meetings);
+                    meetings = ApplyAllMeetingsFilter(filter, meetings);
+                    ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct();
+                    ViewBag.ClientNameList = meetings.Select(x => x.ClientName).Distinct();
+                    ViewBag.IRFList = meetings.Select(x => x.IRFId).Distinct();
+                    ViewBag.PrimarySkills = meetings.Select(x => x.JDTiltle).Distinct();
+                    ViewBag.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).Distinct();
+                    ViewBag.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).Distinct();
+                    ViewBag.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).Distinct();
+                    ViewBag.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).Distinct();
+                    ViewBag.FinalSelection = meetings.Select(x => x.FinalSelectionStat).Distinct();
+                    ViewBag.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).Distinct();
+                    ViewBag.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).Distinct();
+                    if (!String.IsNullOrEmpty(searchValue))
+                    {
+                        searchValue = searchValue.ToUpper().Trim();
+                        meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                        || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                        || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                    }
+                    ViewBag.TotalCount = meetings.Count;
+                    ViewBag.Searchvalue = searchValue;
+                    ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                    int a = meetings.Count / 10;
+                    if (meetings.Count % 10 == 0)
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                    else
+                    {
+                        a = a + 1;
+                        if (a == Page || 10 >= meetings.Count)
+                        {
+                            ViewBag.PageEndCount = meetings.Count;
+                        }
+                        else
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                    }
+                    if (meetings.Count == 0)
+                    {
+                        ViewBag.PageStartCount = 0;
+                        ViewBag.PageEndCount = 0;
+                    }
+                    _modelDetails = meetings;
+                    ViewBag.Date = DateTime.Now;
+                    var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    if (menus != null)
+                    {
+                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                        HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                    }
+                    return View(meetings.ToPagedList(Page ?? 1, 10));
+                }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
@@ -986,7 +1130,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
-
         }
 
 
@@ -1100,7 +1243,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult AllPriorityClientMeetingsJson(string searchValue)
+        public JsonResult AllPriorityClientMeetingsJson(string searchValue, string Emailid)
         {
             try
             {
@@ -1109,6 +1252,7 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.Emailid = "";
                     var meetings = _meetingService.GetClientMeetingList(emailid);
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                     if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
@@ -1195,7 +1339,90 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return Json("failed");
+                    var emailid = Emailid;
+                    ViewBag.Emailid = Emailid;
+                    var meetings = _meetingService.GetClientMeetingList(emailid);
+                    meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                    if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") == null)
+                    {
+                        meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                    }
+
+                    SetMeetingsProperties(meetings);
+
+                    if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                        }
+
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+                        filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
+                        filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
+                        filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                        filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+                        filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                        filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                        filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                        filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
+                        //filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+
+
+                        meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                        && filter.RFID.Contains(c.IRFId)
+                        && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
+                        && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
+                        && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
+                        && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                        && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                        && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                        && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
+
+
+                    }
+                    if (!String.IsNullOrEmpty(searchValue))
+                    {
+                        searchValue = searchValue.ToUpper().Trim();
+                        meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")
+                         || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == " ")
+                         || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == " ")).ToList();
+                    }
+                    int totalcount = meetings.Count;
+                    int Pagestart = 0;
+                    int Pageend = 0;
+                    ViewBag.TotalCount = meetings.Count;
+
+                    Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                    int a = meetings.Count / 10;
+                    if (meetings.Count % 10 == 0)
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                    }
+                    else
+                    {
+                        a = a + 1;
+                        if (a == Page)
+                        {
+                            Pageend = meetings.Count;
+                        }
+                        else
+                        {
+                            Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                        }
+                    }
+                    if (meetings.Count == 0)
+                    {
+                        Pagestart = 0;
+                        Pageend = 0;
+                    }
+                    return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
                 }
             }
             catch (Exception ex)
@@ -1205,19 +1432,12 @@ namespace Risebird.Web.Controllers
             }
         }
         [Authorize]
-        public async Task<IActionResult> ResetAllPriorityClientMeetingsFilter()
+        public async Task<IActionResult> ResetAllPriorityClientMeetingsFilter(string Emailid)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    HttpContext.Session.Remove("AllPriorityClientMeetingsfilters");
-                    return RedirectToAction("AllMeetings", "Client", new { @Page = 1, @searchValue = string.Empty });
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                HttpContext.Session.Remove("AllPriorityClientMeetingsfilters");
+                return RedirectToAction("AllMeetings", "Client", new { @Page = 1, @searchValue = string.Empty, Emailid = Emailid });
             }
             catch (Exception ex)
             {
@@ -1291,9 +1511,9 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, 10].Value = "Video Link";
                     Sheet.Cells[1, 11].Value = "Interviewer Comment";
                 }
-                
 
-                
+
+
                 //Sheet.Cells[1, 11].Value = "Report Link";
 
                 int i = 2;
@@ -1406,7 +1626,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 11].Value = "";
                             }
                         }
-                        
+
 
 
                         //Sheet.Cells[i, 10].Value = item.InterviewerComment;
@@ -3640,7 +3860,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             DateTime StartDate = DateTime.Now.AddMonths(-1);
-                            
+
                             meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
                         }
                         return View(meetings);
@@ -3890,6 +4110,43 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
+            }
+        }
+        public async Task<IActionResult> PublicAllMeetings()
+        {
+            int? Page = 1;
+            var meetings = new List<MeetingVM>();
+            ViewBag.PageType = "Public";
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct();
+            ViewBag.ClientNameList = meetings.Select(x => x.ClientName).Distinct();
+            ViewBag.IRFList = meetings.Select(x => x.IRFId).Distinct();
+            ViewBag.PrimarySkills = meetings.Select(x => x.JDTiltle).Distinct();
+            ViewBag.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).Distinct();
+            ViewBag.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).Distinct();
+            ViewBag.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).Distinct();
+            ViewBag.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).Distinct();
+            ViewBag.FinalSelection = meetings.Select(x => x.FinalSelectionStat).Distinct();
+            ViewBag.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).Distinct();
+            ViewBag.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).Distinct();
+            return View("AllMeetings", meetings.ToPagedList(Page ?? 1, 10));
+        }
+        [HttpPost]
+        public async Task<JsonResult> PublicAllMeetings(string Emailid)
+        {
+            var role = await _clientService.GetClientRoleByEmailId(Emailid);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have Client access.");
             }
         }
     }

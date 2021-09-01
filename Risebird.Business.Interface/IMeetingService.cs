@@ -156,5 +156,6 @@ namespace Risebird.Business.Interface
         List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid);
         List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
         List<string> FetchClientListByIRFID(int IRFID);
+        IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
     }
 }

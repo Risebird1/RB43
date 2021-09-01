@@ -314,12 +314,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                    profilename = profilename.Replace("\"", "");
                     var model = new ClientUserVM();
-                    model.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
-
-
+                    model.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                     model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                     return View("ClientUserAdd", model);
                 }
@@ -368,14 +370,14 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("ClientUsers");
                         }
                     }
-
                     else
                     {
-
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                        profilename = profilename.Replace("\"", "");
                         var model = new ClientUserVM();
-                        model.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
-
-
+                        model.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                         model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserAdd", model);
                     }
@@ -447,7 +449,11 @@ namespace Risebird.Web.Controllers
 
                     if (clientUserVM != null)
                     {
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                        profilename = profilename.Replace("\"", "");
+                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                         clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserUpdate", clientUserVM);
                     }
@@ -506,7 +512,11 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                        profilename = profilename.Replace("\"", "");
+                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                         clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserUpdate", clientUserVM);
                     }
@@ -1928,19 +1938,26 @@ namespace Risebird.Web.Controllers
         }
         private void GetClientsSelectList(UserList model)
         {
-            var Clients = _clientService.GetClients();
-            var _ClientList = new List<SelectListItem>();
-            foreach (var item in Clients)
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                bool selected = false;
-                if (model.ClientsArray != null && model.ClientsArray.Contains(item.id.ToString()))
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                profilename = profilename.Replace("\"", "");
+                var Clients = _clientService.GetClients(emailid, profilename);
+                var _ClientList = new List<SelectListItem>();
+                foreach (var item in Clients)
                 {
-                    selected = true;
+                    bool selected = false;
+                    if (model.ClientsArray != null && model.ClientsArray.Contains(item.id.ToString()))
+                    {
+                        selected = true;
+                    }
+                    var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
+                    _ClientList.Add(selectItem);
                 }
-                var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
-                _ClientList.Add(selectItem);
+                model.ClientList = _ClientList;
             }
-            model.ClientList = _ClientList;
         }
         #region InstaZoomAccounts
         public IActionResult InstaZoomAccounts()

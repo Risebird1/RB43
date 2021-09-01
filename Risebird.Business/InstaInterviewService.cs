@@ -96,7 +96,7 @@ namespace Risebird.Business
                     Mail _mail = new Mail
                     {
                         TO = model.Result.RequestedBy,
-                        Subject = "Risebird: Insta interview request"
+                        Subject = "Risebird: Insta interview request for " + meeting.CandidateName
                     };
                     var emailsend = _notificationHelper.InstaClientNotification(_mail, RequiredSkill);
                     //meeting.RequestedBy
@@ -105,7 +105,7 @@ namespace Risebird.Business
                     Mail _mail1 = new Mail
                     {
                         TO = string.Join(";", Interviewers),
-                        Subject = "Risebird: Insta interview request"
+                        Subject = "Risebird: Insta interview request for " + meeting.CandidateName
                     };
                     var emailsent = _notificationHelper.InstaInterviewerNotification(_mail1, meeting.RequiredSkill);
                     return true;
@@ -185,13 +185,12 @@ namespace Risebird.Business
                 {
                     return "Failed! You already have an interview scheduled at this time. Please contact Risebird HR.";
                 }
-                var clashingInterviews = assignedMeeting.Where(x => (x.interviewDate > interviewDate && x.interviewDate <= interviewDate.AddMinutes(30)) || (x.interviewDate < interviewDate && interviewDate.AddMinutes(-30) <= x.interviewDate));
+                var clashingInterviews = assignedMeeting.Where(x => (x.interviewDate > interviewDate && x.interviewDate < interviewDate.AddMinutes(60)) || (x.interviewDate < interviewDate && interviewDate.AddMinutes(-60) < x.interviewDate));
                 if (clashingInterviews != null && clashingInterviews.Count() > 0)
                 {
-                    return "Failed! You already have an interview scheduled within 30 minutes. Please contact Risebird HR.";
+                    return "Failed! You already have an interview scheduled within 60 minutes. Please contact Risebird HR.";
                 }
                 return _instaInterviewRepository.InstaAssignYourself(meetingid, interviewerMail);
-
             }
             catch (Exception ex)
             {
@@ -242,7 +241,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _instaInterviewRepository.UpdateInstaZoomLink(meetingid, Zoomlink);
+                var result = _instaInterviewRepository.UpdateInstaZoomLink(meetingid, Zoomlink, accountEmail);
                 var succeresult = _instaInterviewRepository.UpdateInstaZoomDetails(starttime, endtime, accountEmail);
                 return result;
             }

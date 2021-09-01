@@ -22,7 +22,7 @@ namespace Risebird.Repository.Interface
         List<string> FetchInstaIntervieweByAssessmentGroup(string Assessmentgroupid);
         Task<InstaMeetingVM> GetInstaInteviewReport(int interviewid);
         Task<bool> AddInstaInterviewReport(InstaMeetingVM reportDetails);
-        string UpdateInstaZoomLink(int meetingid, string Zoomlink);
+        string UpdateInstaZoomLink(int meetingid, string Zoomlink,string accountEmail);
         Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime);
         string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accoruntemail);
     }

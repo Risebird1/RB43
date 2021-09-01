@@ -28,7 +28,7 @@
     string[] OfferStatus = new string[] { };
     //string[] Interviewer = new string[] { };
     string[] ClientName = new string[] { };
-
+    string emailidsession = ViewBag.Emailid;
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
@@ -63,7 +63,7 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
 {
 
-   @if (HttpContextAccessor.HttpContext.Session.GetString("NAllMeeting") != null)
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NAllMeeting") != null)
     {
 
     }
@@ -94,7 +94,7 @@
     }
 
 }
-
+<input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
 <input id="hidcilentrole" type="hidden" value="@ViewBag.ClientRole" />
 <input id="hidclientdes" type="hidden" value="@ClientRoleEnum.RestrictedIRFowner.GetDescription()" />
 <div class="main-panel" id="main-panel">
@@ -159,6 +159,7 @@
                             <div class="loader text-center">
                                 <img src="~/Newassets/img/lazyload.gif" />
                             </div>
+
                             @if (HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
                             {
                                 <div id="staffallinterview_table" data-intro="<span style='font-size:16px;'>Overview the summary of Meeting details:</span><hr class='btop' />1. Candidate Details( Candidate Name, Email, JD Title )<br/> 2. Confirmation Status<br/> 3. Meeting Status<br/><a href='/Candidate/CandidateTimeline' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
@@ -181,7 +182,7 @@
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
 
-                                                    <form action="@Url.Action("AllMeetings","Client")" method="post" id="form">
+                                                    <form action="@Url.Action("AllMeetings","Client",new {Emailid=ViewBag.Emailid })" method="post" id="form">
 
                                                         <div class="modal-body">
                                                             <div class="row">
@@ -857,7 +858,7 @@
                                                 </div>
 
                                                 <div class="col-sm-7 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                                    @Html.PagedListPager(Model, Page => Url.Action("AllMeetings", new { Page = Page, searchValue = ViewBag.Searchvalue }))
+                                                    @Html.PagedListPager(Model, Page => Url.Action("AllMeetings", new { Page = Page, searchValue = ViewBag.Searchvalue, Emailid = ViewBag.Emailid }))
                                                 </div>
 
                                             </div>
@@ -888,7 +889,7 @@
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
 
-                                                    <form action="@Url.Action("AllMeetings","Client")" method="post" id="form">
+                                                    <form action="@Url.Action("AllMeetings","Client",new {Emailid=ViewBag.Emailid })" method="post" id="form">
 
                                                         <div class="modal-body">
                                                             <div class="row">
@@ -1564,7 +1565,7 @@
                                                 </div>
 
                                                 <div class="col-sm-7 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                                    @Html.PagedListPager(Model, Page => Url.Action("AllMeetings", new { Page = Page, searchValue = ViewBag.Searchvalue }))
+                                                    @Html.PagedListPager(Model, Page => Url.Action("AllMeetings", new { Page = Page, searchValue = ViewBag.Searchvalue, Emailid = ViewBag.Emailid }))
                                                 </div>
 
                                             </div>
@@ -1573,6 +1574,7 @@
                                     </div>
                                 </div>
                             }
+
                         </div>
                     </div>
 
@@ -1584,10 +1586,40 @@
     </div>
 </div>
 
+<div id="PublicShareVideo" class="modal modal-bg">
+    @if (ViewBag.PageType == "Public")
+    {
+        <div class="blk-bg"></div>
+    }
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                <div class="text-areadiv">
+                    <input type="text" id="txtvideoemailid" class="form-control" />
+                </div>
+                <div class="col-md-12 text-right">
+                    <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
     $(document).ready(function () {
+        if ($("#txtVideostatus").val() == "Public") {
+            var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
+        }
         $("#ResetFilter").click(function () {
                 ResetFilter();
             })
@@ -1709,7 +1741,7 @@
         $.ajax({
             type: "POST",
             url: "/Client/AllPriorityClientMeetingsJson",
-            data: { 'searchValue': $('#txtmeeting_filter').val() },
+            data: { 'searchValue': $('#txtmeeting_filter').val(), 'Emailid': $("#txtvideoemailid").val() },
             success: function (data) {
                 if (data != "failed") {
                     bindtableData(data.result);
@@ -1907,6 +1939,7 @@
         $("#tblbodyPriority").empty().html(html);
     }
     function bindPages(pagecount, startpage, endpage, totalcount) {
+        var emailidsessiona = @Html.Raw(Json.Serialize(emailidsession));
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
@@ -1914,18 +1947,18 @@
             if (i == 1) {
                 html += '   <li class="active"><span>1</span></li>';
             } else if (i <= 10) {
-                html += '<li><a href="/Client/AllMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+                html += '<li><a href="/Client/AllMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '&Emailid=' + emailidsessiona +' ">' + i + '</a></li>';
             } else if (i == 11) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Client/AllMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Client/AllMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Client/AllMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '&Emailid=' + emailidsessiona+'" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Client/AllMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '&Emailid=' + emailidsessiona+'">&gt;&gt;</a></li>';
             } else {
                 break;
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                html += '<li class="PagedList-skipToNext"><a href="/Client/AllMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-                html += '<li class="PagedList-skipToLast"><a href="/Client/AllMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Client/AllMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '&Emailid=' + emailidsessiona+'" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Client/AllMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '&Emailid=' + emailidsessiona+'">&gt;&gt;</a></li>';
             }
         }
         html += '</ul>';
@@ -1937,7 +1970,7 @@
 
     }
     function ResetFilter() {
-        window.location.href = "/Client/ResetAllPriorityClientMeetingsFilter";
+        window.location.href = "/Client/ResetAllPriorityClientMeetingsFilter?Emailid=" + $("#txtvideoemailid").val();
 
     }
         function ApplySessionFilter() {
@@ -1973,7 +2006,22 @@
             var form = $("#form").serialize();
 
     }
-
+    function SubmitEmail() {
+        if ($("#txtvideoemailid").val() != "") {
+            $.ajax({
+                type: "POST",
+                url: "/Client/PublicAllMeetings",
+                data: { Emailid: $("#txtvideoemailid").val() },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location = "/Client/AllMeetings?Emailid=" + $("#txtvideoemailid").val();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
+    }
 </script>
 <script>
     $(document).ready(function () {

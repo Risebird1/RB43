@@ -186,5 +186,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> FetchClientListByIRFID(int IRFID);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoInstantMeetings();
         Task<bool> UpdateUploadedVideoLinkForInstaInterview(int interviewId, string videoLink);
+        IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
     }
 }

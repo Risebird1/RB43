@@ -437,7 +437,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public string UpdateInstaZoomLink(int meetingid, string Zoomlink)
+        public string UpdateInstaZoomLink(int meetingid, string Zoomlink, string accountEmail)
         {
             try
             {
@@ -447,7 +447,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
-                        con, "update [dbo].[InstaInterviewMeetings] set ZoomLink=@value where id = @meetingid", new { value = Zoomlink, meetingid }, commandType: Text);
+                        con, "update [dbo].[InstaInterviewMeetings] set ZoomLink=@value,AccountEmail=@accountEmail where id = @meetingid", new { value = Zoomlink, accountEmail = accountEmail, meetingid }, commandType: Text);
                     var result = con.Query<string>(query, parameters);
                     return result.FirstOrDefault();
                 }

@@ -2977,6 +2977,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchAllInterviewidBySeniorHR(emailid);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

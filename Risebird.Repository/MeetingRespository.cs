@@ -4861,7 +4861,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var queryfinal = "Select ul.Emailid from TransClientUser tc join ClientUser cu on cu.id=tc.ClientUserid join UserList ul on cu.Userid=ul.id where ClientRoleId in(1,2,6) and IRFID=@IRFID";
+                var queryfinal = "Select cu.Emailid from TransClientUser tc join UserList cu on cu.id=tc.ClientUserid where ClientRoleId in(1,2) and IRFID=@IRFID";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DynamicParameters dpfinal = new DynamicParameters();
@@ -4925,6 +4925,25 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid)
+        {
+            try
+            {
+                var query = "Select distinct im.id from IRF join InterviewMeetings im on im.IRFId=IRF.IRFId join SeniorHR sh on IRF.ClientId=sh.Clientid join Userlist ul on ul.id=Sh.Userid Where ul.Emailid=@Emailid and im.confirmationStatus=1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

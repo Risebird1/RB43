@@ -29,7 +29,7 @@ Begin
 --  where RequestedDate >= @startDate AND RequestedDate < @endDate      
 -- End                
     Select DISTINCT im.id,im.RequestedDate,im.CandidateName,ResumeLink,ir.JDLink,ir.RequestedBy,    
-ConfirmationStatus,MeetingStatus,InterviewStatus,Interviewer,ZoomLink,RequestId,ag.AssessmentGroup,
+ConfirmationStatus,MeetingStatus,InterviewStatus,Interviewer,ZoomLink,RequestId,ag.AssessmentGroup,im.AccountEmail,  
 RequiredSkill=STUFF((SELECT DISTINCT ', ' + CAST(SkillId AS VARCHAR(MAX)) FROM TransInstaSkills t2 WHERE t2.IRFId = tis.IRFId FOR XML PATH('')),1,1,'')       
 from InstaInterviewMeetings im join InstaRequests ir on im.RequestId=ir.id    
 join AssessmentGroup ag on ag.id=ir.AssessmentGroup
