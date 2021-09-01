@@ -16,35 +16,38 @@ Returns bit
 as
 Begin
 
-declare @isReScheduled bit, @isCancelled bit, @isProxyOrNoShowOrDropped bit, @isSelectedorRejectedorBorderLine bit
-set @isReScheduled=0
-set @isCancelled=0
-set @isProxyOrNoShowOrDropped=0
-set @isSelectedorRejectedorBorderLine=0
+declare @interviewId int
+set @interviewId = 0
+set @interviewId = (select top 1 id from InterviewMeetings where candidateEmail =@candidateEmail and IRFId =@irfId and interviewDate >= @startDate order by interviewDate desc)
 
 
 
-if exists(select id from InterviewMeetings where candidateEmail =@candidateEmail and IRFId =@irfId and confirmationStatus=2 and interviewDate >= @startDate)
+declare @isReSchedule bit, @confirmationStatus int, @meetingStatus int
+set @isReSchedule =  0
+
+
+if(@interviewId is not null and @interviewId!=0)
 begin
-	set @isCancelled =1
+	set @confirmationStatus = (select confirmationStatus from InterviewMeetings where id = @interviewId)
+	if(@confirmationStatus =2)
+	begin
+		 set @isReSchedule=1
+		 return @isReSchedule
+	end
+	set @meetingStatus = (select MeetingStatus from InterviewComments where InterviewId = @interviewId)
+	if(@meetingStatus in (1,3,5))
+	begin
+		set @isReSchedule=1
+		return @isReSchedule
+	end
+
 end
 
-if exists(select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where candidateEmail =@candidateEmail and IRFId =@irfId and confirmationStatus=1 and interviewDate >= @startDate and (ic.MeetingStatus in (1,3) or ic.InterviewStatus=1))
-begin
-	set @isProxyOrNoShowOrDropped =1
+return @isReSchedule
+
 end
 
-if exists(select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where candidateEmail =@candidateEmail and IRFId =@irfId and confirmationStatus=1 and interviewDate >= @startDate and ic.InterviewStatus in (2,4))
-begin
-	set @isSelectedorRejectedorBorderLine =1
-end
-
-if((@isCancelled=1 or @isProxyOrNoShowOrDropped=1) and @isSelectedorRejectedorBorderLine=0)
-begin
-	set @isReScheduled=1
-end
- return @isReScheduled
 
 
 
-End
+
