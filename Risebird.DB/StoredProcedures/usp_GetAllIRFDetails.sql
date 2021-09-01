@@ -29,9 +29,15 @@ select distinct IRFId from CandidateStatus where [Status] =12 and [Date]<=@endDa
 
 
 
+--DECLARE @TemporaryCandidateTableVariable AS tempCandidate_TableType  
+--INSERT INTO @TemporaryCandidateTableVariable    
+--select ca.id from  Candidate ca join CandidateStatus cs on (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId) where cs.[Status] =12 and [Date]<=@endDate and [Date] >= @startDate 
+
 DECLARE @TemporaryCandidateTableVariable AS tempCandidate_TableType  
 INSERT INTO @TemporaryCandidateTableVariable    
-select ca.id from  Candidate ca join CandidateStatus cs on (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId) where cs.[Status] =12 and [Date]<=@endDate and [Date] >= @startDate 
+select min(ca.id) from  Candidate ca join CandidateStatus cs on (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId) where cs.[Status] =12 and [Date]<=@endDate and [Date] >= @startDate group by ca.IRFId, ca.CandidateMasterId
+
+
 
 
 	select irf.id, irf.IRFId, irf.JDTiltle, cl.[Name] as ClientCompName, irf.JobCountry, IsNULL(ulb.EmailId, '') as BillingOwnerEmailId, ul.EmailId as RisebirdHrEmail, 

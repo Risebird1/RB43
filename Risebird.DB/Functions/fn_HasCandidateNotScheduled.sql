@@ -20,7 +20,7 @@ Begin
 declare @isNotScheduled int
 set @isNotScheduled=0
 
-if not exists(select id from InterviewMeetings where candidateEmail =@candidateEmail and IRFId =@irfId and confirmationStatus=1 and interviewDate >= @startDate )
+if not exists(select id from InterviewMeetings where candidateEmail =@candidateEmail and IRFId =@irfId and interviewDate >= @startDate )-- and confirmationStatus=1
 begin
 	set @isNotScheduled=1
 end
