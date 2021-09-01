@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
@@ -11,6 +12,7 @@ using System.Linq;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class ChatController : Controller
     {
         private IConfiguration _configuration;
