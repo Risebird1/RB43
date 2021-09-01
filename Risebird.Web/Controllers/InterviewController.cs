@@ -3546,33 +3546,33 @@ namespace Risebird.Web.Controllers
                         }
                         if (_meetingService.AddInterviewReport(model, emailid).Result)
                         {
-                            if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
-                            {
-                                //Send mail to client for report
-                                //find all IRFowner and Users
-                                var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
-                                var maillist = String.Join(";", clientlist);
-                                string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport/" + model.InterviewId;
-                                Mail _mail1 = new Mail
-                                {
-                                    TO = maillist,
-                                    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.JobLevelName
-                                };
-                                var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
-                                //send mail to candiate or interviewer
-                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
-                                Mail _mail = new Mail
-                                {
-                                    TO = model.CandidateEmail,
-                                    Subject = "Risebird: Feedback form"
-                                };
-                                var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
-                                WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                                _whatsAppVM.Emailid = model.CandidateEmail;
-                                _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
-                                _whatsAppVM.Event = "Feedback Remainder";
-                                _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
-                            }
+                            //if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
+                            //{
+                            //    //Send mail to client for report
+                            //    //find all IRFowner and Users
+                            //    var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+                            //    var maillist = String.Join(";", clientlist);
+                            //    string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport/" + model.InterviewId;
+                            //    Mail _mail1 = new Mail
+                            //    {
+                            //        TO = maillist,
+                            //        Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
+                            //    };
+                            //    var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                            //    //send mail to candiate or interviewer
+                            //    string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
+                            //    Mail _mail = new Mail
+                            //    {
+                            //        TO = model.CandidateEmail,
+                            //        Subject = "Risebird: Feedback form"
+                            //    };
+                            //    var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                            //    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                            //    _whatsAppVM.Emailid = model.CandidateEmail;
+                            //    _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                            //    _whatsAppVM.Event = "Feedback Remainder";
+                            //    _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                            //}
                             TempData["SuccessErrorMessageInterview"] = "Report saved successfully";
                             if (profileName == "Admin" || profileName == "HR")
                             {
