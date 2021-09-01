@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class TemplateController : Controller
     {
         private readonly ITemplateService _templateService;

@@ -15,6 +15,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using RestSharp;
+
 namespace Risebird.Web.Controllers
 {
     public class InstaInterviewController : Controller
@@ -48,15 +53,15 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new List<InstaMeetingVM>();
                         var irfList = _instaInterviewService.GetAllInstaRequests(emailid, profileName);
                         model = (List<InstaMeetingVM>)irfList;
-                        if (TempData["SuccessErrorMessage"] != null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
                         }
                         if (HttpContext.Session.GetString("InstaRequestfilters") != null)
                         {
@@ -91,7 +96,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new InstaMeetingVM();
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
@@ -133,7 +138,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -152,12 +157,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Request Created Successfully";
+                                TempData["SuccessErrorMessageInterview"] = "Request Created Successfully.";
                                 return RedirectToAction("InstaIRF");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to Craete request.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to Create request.";
                                 return RedirectToAction("InstaIRF");
                             }
 
@@ -182,7 +187,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
+                TempData["SuccessErrorMessageInterview"] = "Failed to Create request!";
                 return RedirectToAction("Index");
             }
         }
@@ -195,7 +200,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
@@ -238,7 +243,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -257,13 +262,13 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorMessageInterview"] = "Request updated Successfully.";
+                                return RedirectToAction("InstaIRF");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorMessageInterview"] = "Failed to update the request.";
+                                return RedirectToAction("InstaIRF");
                             }
 
                         }
@@ -271,7 +276,7 @@ namespace Risebird.Web.Controllers
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                            return View("Add", meeting);
+                            return View("EditRequest", meeting);
                         }
                     }
                     else
@@ -287,8 +292,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
-                return RedirectToAction("Index");
+                TempData["SuccessErrorMessageInterview"] = "Failed to update the request!";
+                return RedirectToAction("InstaIRF");
             }
         }
         public async Task<IActionResult> Index(int id)
@@ -301,7 +306,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -371,7 +376,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         ViewBag.profile = profileName;
                         if (filter != null)
@@ -430,7 +435,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new InstaMeetingVM();
                         model.RequestId = Requestedid;
@@ -465,7 +470,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -503,12 +508,12 @@ namespace Risebird.Web.Controllers
                                 if (_instaInterviewService.AddInstaMeeting(meeting))
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
-                                    return RedirectToAction("Index");
+                                    return RedirectToAction("Index", new { id = meeting.RequestId });
                                 }
                                 else
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
-                                    return RedirectToAction("Index");
+                                    return RedirectToAction("Index", new { id = meeting.RequestId });
                                 }
                             }
                         }
@@ -545,7 +550,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         InstaMeetingVM meetingToUpdate = await _instaInterviewService.GetInstaMeeting(id);
                         TempData["ResumeLink"] = meetingToUpdate.ResumeLink;
@@ -581,7 +586,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (ModelState.IsValid)
                         {
@@ -688,7 +693,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
-        public async Task<IActionResult> AssignYourself(int id, string InterviewDate)
+        public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateName, string Role)
         {
             try
             {
@@ -701,6 +706,32 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Interviewer" || profileName == "Quality Controller")
                     {
                         var result = _instaInterviewService.InstaAssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
+                        if (result.Contains("Successfully"))
+                        {
+
+                            InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
+                            _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddMinutes(15), INDIAN_ZONE);
+                            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+                            var accountEmail = await _instaInterviewService.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
+                            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+                            var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url, indianTime, indianTime.AddMinutes(60), accountEmail);
+                            //Send Mail to Client And Interviewer
+                            Mail _mail = new Mail
+                            {
+                                TO = emailid,
+                                Subject = "Risebird: Insta interview has been scheduled for " + CandidateName
+                            };
+                            var emailsend = _notificationHelper.InstaInterviewwithzoomlink(_mail, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
+                            Mail _mail1 = new Mail
+                            {
+                                TO = clientname,
+                                Subject = "Risebird: Insta interview has been scheduled for " + CandidateName
+                            };
+                            var emailsend1 = _notificationHelper.InstaClientInterviewwithzoomlink(_mail1, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
+
+                        }
                         TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
@@ -900,7 +931,7 @@ namespace Risebird.Web.Controllers
                     if (profileName != null)
                     {
                         profileName = profileName.Replace("\"", "");
-                        if (profileName == "Admin" || profileName == "HR")
+                        if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                         {
                             isAdminHR = true;
                         }
@@ -928,7 +959,7 @@ namespace Risebird.Web.Controllers
                                           select new { ID = (int)s, Name = s.GetDescription() };
                     model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                    ViewBag.IsClient = isClient;
+                    ViewBag.isAdminHR = isAdminHR;
                     //model.IsInterviewer = isInterviewer;
                     //model.PreviousMeetingStatus = model.MeetingStatus;
                     return View(model);
@@ -959,7 +990,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     ViewBag.PageStatus = "Mainurl";
                     ViewBag.Profile = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
                     {
                         var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -996,12 +1027,13 @@ namespace Risebird.Web.Controllers
                         if (_instaInterviewService.AddInstaInterviewReport(model, emailid).Result)
                         {
                             TempData["SuccessErrorMessage"] = "Report saved Successfully";
-                            return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
+                            //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
+                            return RedirectToAction("MyInterview");
                         }
                         else
                         {
                             TempData["SuccessErrorMessage"] = "Report was not saved.";
-                            return RedirectToAction("Index");
+                            return RedirectToAction("MyInterview");
                         }
                     }
                     else
@@ -1018,8 +1050,109 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Report was not saved.";
-                return RedirectToAction("Index");
+                return RedirectToAction("MyInterview");
             }
         }
+        [HttpGet]
+        public IActionResult PublicReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
+        {
+            try
+            {
+                bool isAdminHR = false;
+                ViewBag.actiontype = actiontype;
+                string profileName = HttpContext.Session.GetString("profileName");
+                ViewBag.Profile = profileName.Replace("\"", "");
+                ViewBag.PageStatus = "Public";
+                ViewBag.PageReport = "";
+                var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+                var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+                model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                ViewBag.isAdminHR = isAdminHR;
+                return View("AddReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
+        [HttpGet]
+        public IActionResult InstaAddReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
+        {
+            try
+            {
+                bool isAdminHR = false;
+                ViewBag.actiontype = actiontype;
+                string profileName = HttpContext.Session.GetString("profileName");
+                ViewBag.Profile = profileName.Replace("\"", "");
+                ViewBag.PageStatus = "Public";
+                ViewBag.PageReport = "Insta";
+                var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+                var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+                model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                ViewBag.isAdminHR = isAdminHR;
+                return View("AddReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
+        public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
+        {
+            _zoommetingobject.type = 2;
+            _zoommetingobject.duration = 60;
+            _zoommetingobject.timezone = "Asia/Calcutta";
+            _zoommetingobject.settings.host_video = true;
+            _zoommetingobject.settings.participant_video = true;
+            _zoommetingobject.settings.join_before_host = true;
+            _zoommetingobject.settings.jbh_time = 5;
+            _zoommetingobject.settings.auto_recording = "cloud";
+            string token = ZoomToken();
+
+            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
+
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("authorization", "Bearer " + token);
+            var body = JsonConvert.SerializeObject(_zoommetingobject);
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            var content = response.Content;
+            var convertedResponse = JsonConvert.DeserializeObject<InstaZoomMeetingResponse>(content);
+            convertedResponse.InterviewDate = indianTime;
+            return convertedResponse;
+        }
+        public string ZoomToken()
+        {
+            DateTime Expiry = DateTime.UtcNow.AddDays(1);
+            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
+            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
+            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var header = new JwtHeader(credentials);
+            var payload = new JwtPayload
+            {
+                { "iss", ApiKey},
+                { "exp", ts },
+            };
+            var secToken = new JwtSecurityToken(header, payload);
+            var handler = new JwtSecurityTokenHandler();
+            var tokenString = handler.WriteToken(secToken);
+            return tokenString;
+        }
+
     }
 }

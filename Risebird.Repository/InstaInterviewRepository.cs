@@ -82,6 +82,7 @@ namespace Risebird.Repository
             {
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meeting.id);
                 parameters.Add("@InstaRequestName", meeting.InstaRequestName);
                 parameters.Add("@AssessmentGroup", meeting.AssessmentGroup);
                 parameters.Add("@JDLink", meeting.JDLink);
@@ -434,6 +435,83 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public string UpdateInstaZoomLink(int meetingid, string Zoomlink, string accountEmail)
+        {
+            try
+            {
+                var query = "Select ir.RequestedBy from InstaInterviewMeetings im join InstaRequests ir on ir.id=im.RequestId where im.id=@id";
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "update [dbo].[InstaInterviewMeetings] set ZoomLink=@value,AccountEmail=@accountEmail where id = @meetingid", new { value = Zoomlink, accountEmail = accountEmail, meetingid }, commandType: Text);
+                    var result = con.Query<string>(query, parameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Failed";
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Failed";
+            }
+        }
+        public async Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", starttime);
+                    parameters.Add("@enddate", endtime);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_CheckInstaOnlineMettings", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    if (result != null && result.Count() > 0)
+                    {
+                        return (result.FirstOrDefault());
+                    }
+                    else
+                        return "";
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", starttime);
+                    parameters.Add("@enddate", endtime);
+                    parameters.Add("@Accountemail", Accountemail);
+                    var result = SqlMapper.Query<string>(con, "usp_UpdateInstaOnlineMettings", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    return "success";
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }

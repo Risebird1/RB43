@@ -15,13 +15,32 @@ else
 
 }*@
 
+<script>
+        $(document).ready(function () {
 
+        $('.sidebar-mini .sidebar').hover(function () {
+            $('.logo-mini img').attr("src", "https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+        }, function(){
+                if ($('#logo-img').val() == "") {
+           $('.logo-mini img').attr("src", "https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+           }
+                else {
+                    $('.logo-mini img').attr("src", "@HttpContextAccessor.HttpContext.Session.GetString("Logo")");
+
+                }
+    });
+
+    });
+
+</script>
 <div class="sidebar" data-color="blue">
     <!--
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
     -->
+    <input id="logo-img" type="hidden" value="@HttpContextAccessor.HttpContext.Session.GetString("Logo")"/>
     <div class="logo">
         <a href="#" class="simple-text logo-mini">
+
             @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
             {
                 <img style="position:relative;top:0px;" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />}
@@ -610,7 +629,7 @@ else
                                             <a class="admin-submenu" href="@item.sUrl">
                                                 @*<span class="@item.sIcon"></span>*@
                                                 <span class="sidebar-normal">
-                                                    <i class="fas fa-angle-down" style="float:left"></i>
+                                                    <i class="fas fa-angle-right" style="float:left"></i>
                                                     <span style="float:left;"> @item.functionName</span>
                                                 </span>
                                             </a>
@@ -642,7 +661,7 @@ else
                                         <li>
                                             <a class="interviewer-submenu" href="@item.sUrl">
                                                 @*<span class="@item.sIcon"> </span>*@
-                                                <span class="sidebar-normal">  <i class="fas fa-angle-down" style="float:left"></i>   <span>@item.functionName</span>  </span>
+                                                <span class="sidebar-normal">  <i class="fas fa-angle-right" style="float:left"></i>   <span>@item.functionName</span>  </span>
                                             </a>
                                         </li>
                                     }

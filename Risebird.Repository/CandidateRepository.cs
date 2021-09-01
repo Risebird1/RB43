@@ -289,6 +289,28 @@ namespace Risebird.Repository
             }
         }
 
+
+        //public async Task<IEnumerable<string>> GetIRFOwnerAndRestrictedOwnerClients(int interviewId)
+        //{
+        //    try
+        //    {
+        //        var dynamicParameters = new DynamicParameters();
+        //        dynamicParameters.Add("@IRFId", null);
+        //        dynamicParameters.Add("@interviewId", interviewId);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var results = await SqlMapper.QueryAsync<string>(con, "usp_ListOfIRFClients", dynamicParameters,
+        //               commandType: CommandType.StoredProcedure);
+        //            return results;
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
+
         public async Task<bool> DeleteCandidateResume(int id)
         {
             try
@@ -316,6 +338,46 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_GetCandidateStaffingAgencyAndClientHRByInterviewId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<string> GetCandidateStaffingAgency(int candidateId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@candidateId", candidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_GetCandidateStaffingAgency", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 

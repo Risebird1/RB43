@@ -1,54 +1,54 @@
 ﻿@model Risebird.Entities.ViewModel.DashboardVM
-    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
-    <div class="panel-body panel-body-table">
-        @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
-        {
-            <div class="sb-container scroller">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped ">
-                        <thead>
-                            <tr>
-                                <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
-                                <th width="20%" class="text-center"><strong>Morning Interviews</strong></th>
-                                <th width="20%" class="text-center"><strong>Evening Interviews</strong></th>
-                                <th width="50%" class="text-center"><strong>Status</strong></th>
-                            </tr>
-                        </thead>
-                        <tbody>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<div class="panel-body panel-body-table">
+    @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
+    {
+        <div class="sb-container scroller">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped ">
+                    <thead>
+                        <tr>
+                            <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
+                            <th width="20%" class="text-center"><strong>Morning Interviews</strong></th>
+                            <th width="20%" class="text-center"><strong>Evening Interviews</strong></th>
+                            <th width="50%" class="text-center"><strong>Status</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                            @{
-                                foreach (var item in Model.DailyInterviewSlots)
-                                {
-                                    <tr>
-                                        <td class="text-center"><strong>@item.IRFnSkill</strong></td>
-                                        <td class="text-center">
-                                            <span class="label-num"><strong title="Total Interview: @item.Morning">@item.Morning</strong></span>/
-                                            @if (item.MorningUnassinged == 0)
-                                            {
+                        @{
+                            foreach (var item in Model.DailyInterviewSlots)
+                            {
+                                <tr>
+                                    <td class="text-center"><strong>@item.IRFnSkill</strong></td>
+                                    <td class="text-center">
+                                        <span class="label-num"><strong title="Total Interview: @item.Morning">@item.Morning</strong></span>/
+                                        @if (item.MorningUnassinged == 0)
+                                        {
 
-                                                <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
+                                            <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
 
-                                            }
-                                            else
-                                            {
-                                                <span class="label-num" style="color: red"><strong title="Unassinged Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
-                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="label-num" style="color: red"><strong title="Unassinged Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
+                                        }
 
 
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="label-num"><strong title="Total Interview: @item.Evening">@item.Evening</strong></span>/
-                                            @if (item.EveningUnassinged == 0)
-                                            {
-                                                <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
-                                            }
-                                            else
-                                            {
-                                                <span class="label-num" style="color: red"><strong title="Unassinged Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
-                                            }
-                                        </td>
-                                        <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
-                                    </tr>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="label-num"><strong title="Total Interview: @item.Evening">@item.Evening</strong></span>/
+                                        @if (item.EveningUnassinged == 0)
+                                        {
+                                            <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label-num" style="color: red"><strong title="Unassinged Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
+                                        }
+                                    </td>
+                                    <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="QC Pending : @item.QCPending"><span><strong>@item.QCPending</strong></span></a></td>
+                                </tr>
 
                             }
                         }
@@ -64,14 +64,15 @@
         <div class="legend">
 
             <ul>
-                <li><div class="g color"></div>Selected</li>
-                <li><div class="r color"></div>Rejected</li>
-                <li><div class="b color"></div>BorderLine</li>
-                <li><div class="pr color"></div>Proxy</li>
-                <li><div class="ns color"></div>NoShow</li>
-                <li><div class="sch color"></div>Schedule</li>
-                <li><div class="dr color"></div>Dropped</li>
-                <li><div class="pe color"></div>Pending</li>
+                <li><div class="g color"></div>Selected: @Model.DailyInterviewSlots.Select(x => x.Selected).Sum()</li>
+                <li><div class="r color"></div>Rejected: @Model.DailyInterviewSlots.Select(x => x.Rejected).Sum()</li>
+                <li><div class="b color"></div>BorderLine: @Model.DailyInterviewSlots.Select(x => x.BorderLine).Sum()</li>
+                <li><div class="pr color"></div>Proxy: @Model.DailyInterviewSlots.Select(x => x.Proxy).Sum()</li>
+                <li><div class="ns color"></div>NoShow: @Model.DailyInterviewSlots.Select(x => x.NoShowCount).Sum()</li>
+                <li><div class="sch color"></div>Scheduled: @Model.DailyInterviewSlots.Select(x => x.ScheduledCount).Sum()</li>
+                <li><div class="dr color"></div>Dropped: @Model.DailyInterviewSlots.Select(x => x.DroppedCount).Sum()</li>
+                <li><div class="pe color"></div>Status Pending: @Model.DailyInterviewSlots.Select(x => x.Pending).Sum()</li>
+                <li><div class="pe color"></div>QC Pending: @Model.DailyInterviewSlots.Select(x => x.QCPending).Sum()</li>
 
             </ul>
         </div>

@@ -12,7 +12,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<InterviewerVM> GetInterviewersDetails();
 
-        IEnumerable<ClientUserVM> GetClientUsers();
+        IEnumerable<ClientUserVM> GetClientUsers(string EmailId);
         Task<ClientUserVM> GetClientUserDetails(string emailID);
         IEnumerable<QCInterviewerVM> GetQCInterviewers();
         Task<bool> AddUser(UserList user);
@@ -61,5 +61,9 @@ namespace Risebird.Repository.Interface
         int GetInterviewerid(string emailid);
         string SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
         List<CallRecordingDetailsVM> FetchCallRecording(string candidateEmailid, string irfid);
+        List<string> GetUserClients(int id);
+        List<ZoomAccountDetailsVM> FetchInstaZoomAccounts();
+        bool DeleteInstaZoomAccount(int Accountid);
+        bool AddInstaZoomAccount(string AccountEmail);
     }
 }

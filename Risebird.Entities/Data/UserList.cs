@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.Data
@@ -37,5 +38,8 @@ namespace Risebird.Entities.Data
         public string UserPassword { get; set; }
         [Display(Name = "Whatsapp Number")]
         public string WhatsappNumber { get; set; }
+        public string ClientIds { get; set; }
+        public List<SelectListItem> ClientList { get; set; }
+        public string[] ClientsArray { get; set; }
     }
 }

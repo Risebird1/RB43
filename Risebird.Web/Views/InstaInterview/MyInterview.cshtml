@@ -32,7 +32,7 @@
     //InterviewDuration = filter.InterviewDuration != null ? filter.InterviewDuration : new string[] { };
 }
 <script>
-    var Header = "<div id='myinterview_1'>My Insta Interviews</div>";
+    var Header = "<div id='myinterview_1'>Insta My Interviews</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
@@ -198,13 +198,13 @@
 
                                         <div class="clearfix"></div>
                                         <div class="col-sm-12 nopad">
-                                            <div class="table-responsive">
+                                            <div class="table-responsive myinstaint">
                                                 <table id="MyInterviewList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th style="border-left: 0px !important;">Date</th>
                                                             <th id="myinterview_4">Candidate Name</th>
-                                                            <th id="myinterview_5">JD Link</th>
+                                                            <th  id="myinterview_5">JD</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
                                                             <th>Meeting Status</th>
@@ -218,7 +218,7 @@
                                                         <tr>
                                                             <th style="border-left: 0px !important;">Date</th>
                                                             <th id="myinterview_4">Candidate Name</th>
-                                                            <th id="myinterview_5">JD Link</th>
+                                                            <th id="myinterview_5">JD </th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
                                                             <th>Meeting Status</th>
@@ -237,7 +237,7 @@
                                                                 <td class="cadName">@item.CandidateName</td>
                                                                 @if (item.JDLink != null && item.JDLink != "")
                                                                 {
-                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JD Link</a></td>
+                                                                    <td>  <a  id="jdlinkId" target="_blank" title="JD" href=@item.JDLink>JD</a></td>
                                                                 }
                                                                 else
                                                                 {
@@ -361,7 +361,7 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
                 $(".dataTables_filter").keyup(function (e) {
                     if ($(this).val() != "") { $("#x").hide(); }
                     else { $("#x").show(); }

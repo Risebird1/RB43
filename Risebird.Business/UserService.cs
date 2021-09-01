@@ -56,13 +56,17 @@ namespace Risebird.Business
             try
             {
                 var user = _userRepository.GetUser(id);
-
+                var userClients = _userRepository.GetUserClients(id);
                 if (user == null)
+                {
                     return null;
+                }
                 else
+                {
+                    user.Result.ClientsArray = userClients.ToArray();
                     return user.Result;
+                }
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -116,11 +120,11 @@ namespace Risebird.Business
 
         #region Client User Service Functions
 
-        public List<ClientUserVM> GetClientUsers()
+        public List<ClientUserVM> GetClientUsers(string EmailId)
         {
             try
             {
-                return _userRepository.GetClientUsers().ToList();
+                return _userRepository.GetClientUsers(EmailId).ToList();
             }
             catch (Exception e)
             {
@@ -719,6 +723,45 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+        {
+            try
+            {
+                return _userRepository.FetchInstaZoomAccounts();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool DeleteInstaZoomAccount(int Accountid)
+        {
+            try
+            {
+                return _userRepository.DeleteInstaZoomAccount(Accountid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public bool AddInstaZoomAccount(string AccountEmail)
+        {
+            try
+            {
+                return _userRepository.AddInstaZoomAccount(AccountEmail);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

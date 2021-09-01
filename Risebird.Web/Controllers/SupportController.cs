@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class SupportController : Controller
     {
         private IApplicationErrorLogger _applicationErrorLogger;

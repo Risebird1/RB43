@@ -10,5 +10,6 @@ namespace Risebird.Entities.Data
         //public string ZoomId { get; set; }
         //public string VideoLink { get; set; }
         public DateTime interviewDate { get; set; }
+        public DateTime RequestedDate { get; set; }
     }
 }

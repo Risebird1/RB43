@@ -159,19 +159,19 @@
         top: 46%;
     }
 
-[data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext, [data-id="notschedule_table"] .chardinjs-tooltiptext {
+[data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="staffallinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext, [data-id="notschedule_table"] .chardinjs-tooltiptext, [data-id="staffing_notschedule_table"] .chardinjs-tooltiptext {
     width: 500px;
 }
 
-[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after {
+[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after {
     left: 50%;
 }
 
-[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after, [data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top:after {
+[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after, [data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="staffing_notschedule_table"] .chardinjs-tooltip.chardinjs-top:after {
     bottom: -30px;
 }
 
-[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top {
+[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top {
     left: 100px !important;
     margin-top: -8px !important;
 }
@@ -180,7 +180,7 @@
     padding-bottom: 500px !important;
 }
 
-[data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top {
+[data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top, [data-id="staffing_notschedule_table"] .chardinjs-tooltip.chardinjs-top {
     left: 200px !important;
     margin-top: 50px !important;
 }
@@ -203,9 +203,12 @@
     bottom: 90px !important;
     right: -875px !important;
 }
-
+[data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+    right: -400% !important;
+    bottom: 138px !important;
+}
 [data-id="selectedcandidate_table"] .allmeetingnext-btn {
-    bottom: 95px !important;
+    bottom: 100px !important;
 }
 
 [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top {
@@ -243,7 +246,10 @@
 [data-id="candidatefeedback_table"] .chardinjs-tooltiptext {
     width: 400px !important;
 }
-
+[data-id="staffagency_candidatetimeline"] .chardinjs-tooltip.chardinjs-top {
+    left: 200px !important;
+    margin-top: 30px;
+}
 [data-id="candidatetimeline"] .chardinjs-tooltip.chardinjs-top {
     left: 200px !important;
     margin-top: 30px;
@@ -252,9 +258,8 @@
 [data-id="candidatetimeline"] .chardinjs-tooltiptext {
     width: 350px;
 }
-
 [data-id="candidatetimeline"] .allmeetingnext-btn {
-    right: -458% !important;
+    right: -400% !important;
     bottom: 138px !important;
 }
 
@@ -264,13 +269,42 @@
         padding-right: 10px;
         margin-top: 25px;
     }
+    [data-id="staffallinterview_table"] .allmeetingnext-btn {
+        bottom: 107px !important;
+        right: -250% !important;
+    }
 
-    [data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext {
+    [data-id="staffallinterview_table"] .chardinjs-tooltiptext, [data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext {
         width: 200px;
     }
 
     [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top {
         left: 0px !important;
         top: -84px !important;
+    }
+    [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-top {
+        left: 0px !important;
+        top: -140px !important;
+    }
+    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+        right: -160% !important;
+        bottom: 145px !important;
+    }
+
+    .staffntschnext-btn {
+        bottom: 125px !important;
+        right: -160% !important;
+    }
+    .staffclose-btn {
+        border-radius: 5px !important;
+        font-size: 12px !important;
+        background-color: #42A5F6 !important;
+        position: absolute !important;
+        bottom: 132px !important;
+        right: -150% !important;
+    }
+    .instanext-btn {
+        right: -45% !important;
+        bottom: 340px !important;
     }
 }

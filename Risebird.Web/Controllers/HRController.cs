@@ -17,6 +17,7 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class HRController : Controller
     {
         private readonly IMeetingService _meetingService;
@@ -1019,7 +1020,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
@@ -1091,7 +1092,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (filter != null)
                         {

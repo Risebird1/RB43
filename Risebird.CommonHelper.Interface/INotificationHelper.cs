@@ -13,10 +13,10 @@ namespace Risebird.CommonHelper.Interface
         string SendInterviewerMailOnAssinment(string interviwers, string meetingDate);
         string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer, string Skillchannelid, string Client);
         string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments);
-        string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail);
+        string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string staffingAgency = null);
         string CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId);
         string SendQCInterviewerMail(List<string> interviwers, string meetingDate);
-        string SendInterviewCancelledMail(List<string> interviewers, string interviewDate);
+        string SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null);
         string SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator);
         string SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid);
         string SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate);
@@ -44,7 +44,7 @@ namespace Risebird.CommonHelper.Interface
         string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
         string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score);
-        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null);
+        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null);
         string RBPayNotification(Mail model, string emailid);
         string RBFNQueryNotification(Mail model, string query);
         string ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
@@ -56,7 +56,10 @@ namespace Risebird.CommonHelper.Interface
         string AppologyNotificationToCandidate(Mail model, string candidateName);
         string ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName);
         string AppologyNotificationToCandidateSecond(Mail model, string candidateName);
-        string InstaClientNotification(Mail model,string RequiredSkill);
-        string InstaInterviewerNotification(Mail model,string RequiredSkill);
+        string InstaClientNotification(Mail model, string RequiredSkill);
+        string InstaInterviewerNotification(Mail model, string RequiredSkill);
+        string InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
+        string InstaReportClientNotification(Mail model, string UrlDetails,string CandidateName);
+        string InstaClientInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
     }
 }

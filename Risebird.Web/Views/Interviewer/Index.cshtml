@@ -168,22 +168,22 @@
                                                     </div>
                                                     @*<div class="col-md-6 col-sm-6 border-rv">
 
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
 
-                                                                    @foreach (var item in ViewBag.CompentencyLevel)
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                                        @foreach (var item in ViewBag.CompentencyLevel)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </div>*@
+                                                        </div>*@
                                                     <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
@@ -314,7 +314,7 @@
                                                     <th>Last Name</th>
                                                     <th class="interviewer_4">Email Id</th>
                                                     <th>Mobile No.</th>
-                                                    <th class="interviewer_5">Primary Skills</th>
+                                                    <th class="interviewer_5">Insta Interviewer</th>
                                                     <th class="interviewer_6">Assessment Group</th>
                                                     <th class="interviewer_7">Resume Link</th>
                                                     <th class="interviewer_8">Coded Name</th>
@@ -328,7 +328,7 @@
                                                     <th>Last Name</th>
                                                     <th>Email Id</th>
                                                     <th>Mobile No.</th>
-                                                    <th>Primary Skills</th>
+                                                    <th>Insta Interviewer</th>
                                                     <th>Assessment Group</th>
                                                     <th>Resume Link</th>
                                                     <th>Coded Name</th>
@@ -345,25 +345,6 @@
                                                             <td class="cadName intwname">
                                                                 <a onclick="" data-tooltip="@item.FirstName"><span class="intName"> @item.FirstName</span></a>
                                                             </td>
-
-
-                                                            @*@if (item.FirstName.Length > 20)
-                                                                {
-
-
-                                                                    <td class="cadName">
-                                                                        <a onclick="" data-tooltip="@item.FirstName"> @item.FirstName.Substring(0, 20)... </a>
-                                                                    </td>
-                                                                }
-
-
-                                                                else
-                                                                {
-                                                                    <td class="cadName">
-                                                                        <a onclick=""> @item.FirstName </a>
-                                                                    </td>
-                                                                }*@
-
                                                         }
                                                         else
                                                         {
@@ -372,25 +353,18 @@
 
                                                         @if (item.LastName != null && item.LastName != "")
                                                         {
-
-
                                                             @if (item.LastName.Length > 10)
                                                             {
-
-
                                                                 <td class="cadLast">
                                                                     <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 10)... </a>
                                                                 </td>
                                                             }
-
-
                                                             else
                                                             {
                                                                 <td class="cadLast">
                                                                     <a onclick=""> @item.LastName </a>
                                                                 </td>
                                                             }
-
                                                         }
                                                         else
                                                         {
@@ -399,67 +373,24 @@
 
                                                         @if (item.EmailId != null && item.EmailId != "")
                                                         {
-
-
                                                             <td class="cadEmail">
                                                                 <a onclick="" data-tooltip="@item.EmailId"><span class="intEmail"> @item.EmailId</span> </a>
                                                             </td>
-
-
-
-
                                                         }
                                                         else
                                                         {
                                                             <td></td>
                                                         }
-
-
                                                         <td>@item.MobileNumber</td>
-
+                                                        @if (item.Isinstaavailable)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
                                                         <td class="interview-com">
-
-
-                                                            <div id="section">
-                                                                @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                                {
-                                                                    @if (item.PrimarySkill.Length > 20)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.PrimarySkill.Substring(0, 20)
-                                                                            </p>
-                                                                            <p class="moretext_@item.id moretext">
-                                                                                @item.PrimarySkill.Substring(20, @item.PrimarySkill.Length - 20)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
-
-                                                                            <p>
-                                                                                @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length)
-                                                                            </p>
-                                                                        </div>}
-                                                                }
-                                                                else
-                                                                { <div></div>}
-
-
-                                                            </div>
-
-
-
-
-                                                        </td>
-
-
-
-                                                        <td class="interview-com">
-
-
                                                             <div id="section">
                                                                 @if (item.AssessmentGroupId != null && item.AssessmentGroupId != "")
                                                                 {
@@ -1230,26 +1161,15 @@
             }
 
             html += '  <td>' + data[i].mobileNumber + '</td>';
-            html += '<td class="interview-com">';
-            html += ' <div id="section">';
-            if (data[i].primarySkill != null && data[i].primarySkill != "") {
-                if (data[i].primarySkill.length > 20) {
-                    html += '  <div class="article">';
-                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 20) + '</p>';
-                    html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(20, data[i].primarySkill.length - 20) + '</p>';
-                    html += '</div>';
-                }
-                else {
-                    html += '<div class="article"><p>' + data[i].primarySkill.substring(0, data[i].primarySkill.length) + '</p></div>';
-                }
-            }
-            else {
-                html += '<div></div>';
-            }
-            html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
-            html += '</div>';
-            html += ' </td>';
-
+            if (data[i].isinstaavailable)
+                                                        {
+                html += '    <td>Yes</td>';
+                                                        }
+                                                        else
+                                                        {
+                html += '   <td>No</td>';
+                                                        }
+            
             html += '<td class="interview-com">';
             html += ' <div id="section">';
             if (data[i].assessmentGroupId != null && data[i].assessmentGroupId != "") {

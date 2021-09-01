@@ -281,34 +281,36 @@
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Report</th>
                                                     <th>Requested Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Required Skill</th>
                                                     <th>Assessment Group</th>
                                                     <th>Interviewer</th>
                                                     <th>Zoom Link</th>
+                                                    <th>Zoom Id</th>
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Resume</th>
-                                                    <th>JD Link</th>
+                                                    <th>JD </th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Report</th>
                                                     <th>Requested Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Required Skill</th>
                                                     <th>Assessment Group</th>
                                                     <th>Interviewer</th>
                                                     <th>Zoom Link</th>
+                                                    <th>Zoom Id</th>
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Resume</th>
-                                                    <th>JD Link</th>
+                                                    <th>JD</th>
 
                                                 </tr>
                                             </tfoot>
@@ -318,21 +320,50 @@
 
                                                     <tr id=@item.id>
                                                         <td class="text-center action">
-                                                            @*<span class="interview_7">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                        <span onclick="location.href = '@Url.Action("Edit", "InstaInterview", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id, Requestedid = ViewBag.Requestid })'>Report</a>
+                                                            @*<span class="interview_9">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                        <span onclick="location.href = '@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id,Requestedid=ViewBag.Requestid})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                     </button>
                                                                 </span>*@
-                                                            <span class="interview_9">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                    <span onclick="location.href = '@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id,Requestedid=ViewBag.Requestid})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                </button>
-                                                            </span>
 
                                                         </td>
                                                         <td> @item.RequestedDate </td>
                                                         <td>@item.CandidateName</td>
-                                                        <td> @item.RequiredSkill </td>
+                                                        <td class="interview-com">
+                                                            <div id="section">
+                                                                @if (item.RequiredSkill != null && item.RequiredSkill != "")
+                                                                {
+                                                                    @if (item.RequiredSkill.Length > 26)
+                                                                    {
+                                                                        <div class="article">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.RequiredSkill.Substring(0, 26)
+                                                                            </p>
+                                                                            <p class="moretext_@item.id moretext">
+                                                                                @item.RequiredSkill.Substring(26, @item.RequiredSkill.Length - 26)
+                                                                            </p>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="article">
+
+                                                                            <p>
+                                                                                @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length - 1)
+                                                                            </p>
+                                                                        </div>
+                                                                    }}
+                                                                else
+                                                                { <div></div>}
+
+                                                                <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+
+
+                                                            </div>
+
+                                                        </td>
+
                                                         <td> @item.AssessmentGroup</td>
                                                         <td>@item.Interviewer</td>
                                                         @if (item.ZoomLink != null && item.ZoomLink != "")
@@ -343,9 +374,24 @@
                                                         {
                                                             <td><span style="color:red">No Zoom Link</span></td>
                                                         }
+                                                        <td>@item.AccountEmail</td>
                                                         <td class="text-center"> @item.ConfirmationStatus</td>
-                                                        <td>@item.MeetingStatusStatusDesc</td>
-                                                        <td class="text-center"> @item.intervieweStatusStatDesc</td>
+                                                        @if (item.MeetingStatusStatusDesc != "0")
+                                                        {
+                                                            <td>@item.MeetingStatusStatusDesc</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        @if (item.intervieweStatusStatDesc != "0")
+                                                        {
+                                                            <td>@item.intervieweStatusStatDesc</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         @if (item.ResumeLink != null && item.ResumeLink != "")
                                                         {
                                                             <td><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
@@ -356,7 +402,7 @@
                                                         }
                                                         @if (item.JDLink != null && item.JDLink != "")
                                                         {
-                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                            <td>  <a id="jdlinkId" target="_blank" title="JD" href=@item.JDLink>JD</a></td>
                                                         }
                                                         else
                                                         {

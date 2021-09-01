@@ -111,12 +111,6 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 int Clientid = 0;
                 ViewBag.ProfileName = profileName;
-                if (profileName == "Client")
-                {
-                    var client = _userRepository.GetClientUserDetails(emailid);
-                    Clientid = client.Result.ClientId;
-                }
-                var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
                 var modelData = new List<SurveyVM>();
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
@@ -126,6 +120,38 @@ namespace Risebird.Web.Controllers
                 var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
                 if (profileName == "Client")
                 {
+                    var client = _userRepository.GetClientUserDetails(emailid);
+                    Clientid = client.Result.ClientId;
+                    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
+                    foreach (var item in result)
+                    {
+                        if (interviewerids.Any(x => x == item.interviewid))
+                        {
+                            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                            {
+                                modelData.Add(new SurveyVM
+                                {
+                                    interviewid = item.interviewid,
+                                    Question1 = item.Question1,
+                                    Question2 = item.Question2,
+                                    Question3 = item.Question3,
+                                    Question4 = item.Question4,
+                                    Question5 = item.Question5,
+                                    Question6 = item.Question6,
+                                    Name = item.Name,
+                                    EmailAddress = item.EmailAddress,
+                                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                                    CommentforInterviewer = item.CommentforInterviewer,
+                                    PrimarySkill = item.PrimarySkill,
+                                    IsClient = true
+                                });
+                            }
+                        }
+                    }
+                }
+                else if (profileName == "SeniorHR")
+                {
+                    var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
                     foreach (var item in result)
                     {
                         if (interviewerids.Any(x => x == item.interviewid))
@@ -211,12 +237,6 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 ViewBag.ProfileName = profileName;
                 int Clientid = 0;
-                if (profileName == "Client")
-                {
-                    var client = _userRepository.GetClientUserDetails(emailid);
-                    Clientid = client.Result.ClientId;
-                }
-                var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
                 var modelData = new List<SurveyVM>();
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
@@ -226,6 +246,9 @@ namespace Risebird.Web.Controllers
                 var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
                 if (profileName == "Client")
                 {
+                    var client = _userRepository.GetClientUserDetails(emailid);
+                    Clientid = client.Result.ClientId;
+                    var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
                     foreach (var item in result)
                     {
                         if (interviewerids.Any(x => x == item.interviewid))
@@ -246,6 +269,35 @@ namespace Risebird.Web.Controllers
                                     interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
                                     CommentforInterviewer = item.CommentforInterviewer,
                                     PrimarySkill = item.PrimarySkill
+                                });
+                            }
+                        }
+                    }
+                }
+                else if (profileName == "SeniorHR")
+                {
+                    var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
+                    foreach (var item in result)
+                    {
+                        if (interviewerids.Any(x => x == item.interviewid))
+                        {
+                            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                            {
+                                modelData.Add(new SurveyVM
+                                {
+                                    interviewid = item.interviewid,
+                                    Question1 = item.Question1,
+                                    Question2 = item.Question2,
+                                    Question3 = item.Question3,
+                                    Question4 = item.Question4,
+                                    Question5 = item.Question5,
+                                    Question6 = item.Question6,
+                                    Name = item.Name,
+                                    EmailAddress = item.EmailAddress,
+                                    interviewerEmail = resultset.Where(x => x.Interviewerid == item.Interviewerid).FirstOrDefault()?.Intervieweremail,
+                                    CommentforInterviewer = item.CommentforInterviewer,
+                                    PrimarySkill = item.PrimarySkill,
+                                    IsClient = true
                                 });
                             }
                         }
@@ -683,10 +735,17 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                var avgQ1 = modelData.Average(x => String.IsNullOrEmpty(x.Question1) ? 0 : Convert.ToInt32(x.Question1)).ToString("#.##");
-                var avgQ2 = modelData.Average(x => String.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("0.00");
-                var avgQ6 = modelData.Average(x => String.IsNullOrEmpty(x.Question6) ? 0 : Convert.ToInt32(x.Question6)).ToString("#.##");
-                return Json(new { avgQ1 = avgQ1, avgQ2 = avgQ2, avgQ6 = avgQ6 });
+                if (modelData != null && modelData.Count > 0)
+                {
+                    var avgQ1 = modelData.Average(x => String.IsNullOrEmpty(x.Question1) ? 0 : Convert.ToInt32(x.Question1)).ToString("#.##");
+                    var avgQ2 = modelData.Average(x => String.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("0.00");
+                    var avgQ6 = modelData.Average(x => String.IsNullOrEmpty(x.Question6) ? 0 : Convert.ToInt32(x.Question6)).ToString("#.##");
+                    return Json(new { avgQ1 = avgQ1, avgQ2 = avgQ2, avgQ6 = avgQ6 });
+                }
+                else
+                {
+                    return Json("Fail");
+                }
             }
             else
             {

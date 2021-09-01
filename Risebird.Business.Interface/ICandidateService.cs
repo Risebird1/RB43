@@ -19,5 +19,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddResume(List<CandidateResume> resumeList);
         Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId);
         Task<bool> DeleteCandidateResume(int id);
+        Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId);
     }
 }

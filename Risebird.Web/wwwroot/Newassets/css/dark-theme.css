@@ -2015,10 +2015,32 @@ div.dataTables_wrapper div.dataTables_info {
 .instainterview .form-group {
     box-shadow: none!important;
 }
-.single-video-right .video-card-image {
-    border: 2px #524c4cab solid;
+    .instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
+        background: #181818 !important;
+    }
+        .single-video-right .video-card-image {
+            border: 2px #524c4cab solid;
+        }
+.instainterview .table-bordered {
+    border: 2px solid rgb(47 45 45)!important;
 }
-
+.instainterview .multiple_row > h2 span {
+    color: #8c8888 !important;
+    position: absolute;
+    text-transform: uppercase;
+}
+.instainterview .multiple_row > h2:before {
+    background-color: rgb(43 43 43);
+    border-right: 30px solid rgb(43 43 43);
+}
+.instainterview .upload-area {
+    background: #181818;
+}
+.instainterview label.upload {
+    border: 1px #b8b9b98f solid;
+    color: #908c8c !important;
+    border-radius: 0rem !important;
+}
 input[type="radio"]:checked:before {
     background: #787878 !important;
 }

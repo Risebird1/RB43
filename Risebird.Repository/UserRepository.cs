@@ -64,8 +64,29 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,
                         commandType: CommandType.StoredProcedure);
+                    user.Id = result.FirstOrDefault();
+                    DataTable UserclientDt = new DataTable();
+                    UserclientDt.Columns.Add("IRFId", typeof(int));
+                    UserclientDt.Columns.Add("ClientUserId", typeof(int));
+                    if (user.ClientsArray != null)
+                    {
+                        foreach (var item in user.ClientsArray)
+                        {
+                            UserclientDt.Rows.Add(user.Id, item);
+                        }
+
+                        SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
                     return true;
                 }
             }
@@ -118,6 +139,25 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateUser", parameters,
                         commandType: CommandType.StoredProcedure);
+                    DataTable UserclientDt = new DataTable();
+                    UserclientDt.Columns.Add("IRFId", typeof(int));
+                    UserclientDt.Columns.Add("ClientUserId", typeof(int));
+                    if (user.ClientsArray != null)
+                    {
+                        foreach (var item in user.ClientsArray)
+                        {
+                            UserclientDt.Rows.Add(user.Id, item);
+                        }
+                        SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
                     return true;
                 }
             }
@@ -191,13 +231,15 @@ namespace Risebird.Repository
         /// Get all the Client Users
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ClientUserVM> GetClientUsers()
+        public IEnumerable<ClientUserVM> GetClientUsers(string EmailId)
         {
             try
             {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", null,
+                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", dp,
                         commandType: StoredProcedure);
                 }
             }
@@ -1318,6 +1360,81 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public List<string> GetUserClients(int id)
+        {
+            try
+            {
+                var query = "Select Clientid From SeniorHR where Userid=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, dynamicParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<string>();
+        }
+        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+        {
+            try
+            {
+                var query = "Select * From InstaZoomMeetingAccounts";
+                var dynamicParameters = new DynamicParameters();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<ZoomAccountDetailsVM>(query, dynamicParameters);
+                    return (List<ZoomAccountDetailsVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public bool DeleteInstaZoomAccount(int Accountid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", Accountid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<int>(con, "usp_DeleteInstaZoomAccount", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public bool AddInstaZoomAccount(string AccountEmail)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@AccountEmail", AccountEmail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_InsertInstaZoomAccount", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

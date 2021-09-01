@@ -4857,5 +4857,93 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<string>> FetchClientListByIRFID(int IRFID)
+        {
+            try
+            {
+                var queryfinal = "Select cu.Emailid from TransClientUser tc join UserList cu on cu.id=tc.ClientUserid where ClientRoleId in(1,2) and IRFID=@IRFID";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dpfinal = new DynamicParameters();
+                    dpfinal.Add("@IRFID", IRFID);
+                    var result = await con.QueryAsync<string>(queryfinal, dpfinal);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoInstantMeetings()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeEnd", DateTime.Now);
+                    parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
+                    var result = SqlMapper.Query<PendingVideoMeetingsData>(con, "usp_GetPendingVideoInstantMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateUploadedVideoLinkForInstaInterview(int interviewId, string videoLink)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@videoLink", videoLink);
+                    //parameters.Add("@videoDuration", videoDuration);
+                    var result = SqlMapper.Query(con, "usp_UpdateUploadedVideoLinkForInstaInterview", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid)
+        {
+            try
+            {
+                var query = "Select distinct im.id from IRF join InterviewMeetings im on im.IRFId=IRF.IRFId join SeniorHR sh on IRF.ClientId=sh.Clientid join Userlist ul on ul.id=Sh.Userid Where ul.Emailid=@Emailid and im.confirmationStatus=1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
