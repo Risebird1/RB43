@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class UnapprovedInterviewerMeetingsController : Controller
     {
         private readonly IUnapprovedInterviewerMeetingsService _unapprovedInterviewerMeetingsService;

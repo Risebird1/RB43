@@ -19,6 +19,7 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class FinanceController : Controller
     {
         private readonly IMeetingService _meetingService;
