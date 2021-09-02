@@ -24,11 +24,10 @@ namespace Risebird.CommonHelper
         private readonly string _twilioAuthToken = string.Empty;
         private readonly string _twilioAccountSID = string.Empty;
         private readonly TwilioRestClient _twilioClient;
-        private readonly IIRFService _irfService;
+      
 
         public TwilioHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
-            //_hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _twilioSMSNumber = _configuration["TwilioSettings:SmsSENDER"];
@@ -142,7 +141,7 @@ namespace Risebird.CommonHelper
                     var result = call.Status.ToString();
                     if (result != CallResource.StatusEnum.Failed.ToString())
                     {
-                        await _irfService.AddCandidateStatus(loggedInEmail, candidateId, irfId, "Placed a reminder call", (int)CandidateStatusOptions.ReminderCall);
+                        //await _irfService.AddCandidateStatus(loggedInEmail, candidateId, irfId, "Placed a reminder call", (int)CandidateStatusOptions.ReminderCall);
                         return true;
                     }
                     else

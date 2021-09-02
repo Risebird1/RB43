@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
@@ -56,7 +57,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(model.Body);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -116,7 +117,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -143,7 +144,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -183,7 +184,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -208,7 +209,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -248,7 +249,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -276,7 +277,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -316,7 +317,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -343,7 +344,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -374,7 +375,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -404,7 +405,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody.ToString();
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -431,7 +432,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -459,7 +460,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -488,7 +489,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InternalUserSharingTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -518,7 +519,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -548,7 +549,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -580,7 +581,7 @@ namespace Risebird.CommonHelper
                 msg.HtmlContent = msgBody;
 
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -604,7 +605,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -629,7 +630,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -659,7 +660,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -681,7 +682,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
 
             }
             catch (Exception)
@@ -710,7 +711,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -738,7 +739,7 @@ namespace Risebird.CommonHelper
                 msg.HtmlContent = msgBody;
 
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -764,7 +765,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -792,7 +793,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -815,7 +816,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -844,7 +845,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -872,7 +873,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -897,7 +898,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -922,7 +923,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -947,7 +948,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -978,7 +979,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1004,7 +1005,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1048,9 +1049,9 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
@@ -1075,7 +1076,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1106,7 +1107,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1131,7 +1132,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1177,7 +1178,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception ex)
             {
@@ -1226,13 +1227,13 @@ namespace Risebird.CommonHelper
             }
             return msg;
         }
-        private string SendMail(SendGridMessage msg)
+        private async Task<string> SendMail(SendGridMessage msg)
         {
             try
             {
                 var client = new SendGridClient(_sendGridClientKey);
 
-                var response = client.SendEmailAsync(msg).Result;
+                var response = await client.SendEmailAsync(msg);
                 if (response.StatusCode != HttpStatusCode.Accepted)
                 {
                     return "Failed to send mail. Please check all fields and try again.";
@@ -1242,7 +1243,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
@@ -1308,7 +1309,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception ex)
             {
@@ -1347,7 +1348,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception ex)
             {
@@ -1377,7 +1378,7 @@ namespace Risebird.CommonHelper
                     string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerWaitingNotification.html");
                     string msgBody = string.Format(rawEmail, parameters);
                     msg.HtmlContent = msgBody;
-                    return SendMail(msg);
+                    return SendMail(msg).Result;
                 }
                 else
                 {
@@ -1385,7 +1386,7 @@ namespace Risebird.CommonHelper
                     string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingNotification.html");
                     string msgBody = string.Format(rawEmail, parameters);
                     msg.HtmlContent = msgBody;
-                    return SendMail(msg);
+                    return SendMail(msg).Result;
                 }
             }
             catch (Exception)
@@ -1415,7 +1416,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1444,7 +1445,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingForInterviewer.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1472,7 +1473,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RescheduleInterview.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1501,7 +1502,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateWaitingApologyForInterviewer.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1524,7 +1525,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewRequest.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
@@ -1548,7 +1549,80 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewerRequestNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName)
+        {
+            try
+            {
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+
+                object[] parameters = new object[] { UrlDetails, CandidateName };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaReportClientNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string InstaClientInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaClientInterviewLinkNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
