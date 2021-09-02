@@ -2977,19 +2977,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<string> FetchClientListByIRFID(int IRFID)
-        {
-            try
-            {
-                var meetings = _meetingRespository.FetchClientListByIRFID(IRFID).Result.ToList();
-                return meetings ?? new List<string>();
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
+
         public IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid)
         {
             try
