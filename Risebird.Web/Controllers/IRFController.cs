@@ -22,7 +22,7 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+
     public class IRFController : Controller
     {
         private readonly IIRFRepository _irfRepository;
@@ -4643,7 +4643,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var candidateData = await _irfService.GetCandidateTimeline(id);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {
@@ -4794,7 +4794,7 @@ namespace Risebird.Web.Controllers
             if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
             {
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var candidateData = await _irfService.GetCandidateTimeline(id);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {
@@ -5003,7 +5003,7 @@ namespace Risebird.Web.Controllers
             if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
             {
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var candidateData = await _irfService.GetCandidateTimeline(id);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {

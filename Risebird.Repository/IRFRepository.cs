@@ -4197,12 +4197,11 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0)
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@EmailId", emailId);
                 parameters.Add("@irfid", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -4396,7 +4395,7 @@ namespace Risebird.Repository
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@SkillChannelCalendlyDetailsBulkData", SqlDbType.Structured));
                     cmd.Parameters["@SkillChannelCalendlyDetailsBulkData"].Value = calendlyDt;
-                    
+
                     con.Open();
                     if (await cmd.ExecuteNonQueryAsync() != 0)
                     {
@@ -4427,7 +4426,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
                     return await SqlMapper.QueryAsync<IRF>(con, "usp_GetPendingCalendlyResourceUriUpdateIRF",
                          commandType: CommandType.StoredProcedure);
                 }
@@ -4479,7 +4478,7 @@ namespace Risebird.Repository
                     parameters.Add("@startDate", startDate);
                     parameters.Add("@endDate", endDate);
                     parameters.Add("@timeNow", DateTime.Now);
-                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRFDetails", parameters, 
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRFDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }

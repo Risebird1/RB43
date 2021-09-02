@@ -1060,7 +1060,7 @@ namespace Risebird.Business
                     _whatsapp.Header = client.Name;
                     _whatsapp.Event = "Interview Schedule";
                     _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
-                    if(!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                    if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
                     {
                         _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
                     }
@@ -1735,11 +1735,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0)
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id)
         {
             try
             {
-                return await _irfRepository.GetCandidateTimeline(emailId, id);
+                return await _irfRepository.GetCandidateTimeline(id);
             }
 
             catch (Exception e)
@@ -1873,7 +1873,7 @@ namespace Risebird.Business
                                    if (irf.BussinessType == "B2B")
                                    {
                                        //mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
-                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill,  (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
+                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
 
                                    }
                                    else
