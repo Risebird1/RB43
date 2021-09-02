@@ -1556,29 +1556,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate)
-        {
-            try
-            {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
-                {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-                }
-                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotification.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
-                return SendMail(msg).Result;
-            }
-            catch (Exception)
-            {
-                return "Failed to send mail. Please check all fields and try again.";
-            }
-        }
+        
         public string InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName)
         {
             try
@@ -1645,57 +1623,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaInterviewLinkNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return SendMail(msg);
-            }
-            catch (Exception)
-            {
-                return "Failed to send mail. Please check all fields and try again.";
-            }
-        }
-        public string InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName)
-        {
-            try
-            {
-
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
-                {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-                }
-
-                object[] parameters = new object[] { UrlDetails, CandidateName };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaReportClientNotification.html");
-                string msgBody = string.Format(rawEmail, parameters);
-
-                msg.HtmlContent = msgBody;
-
-                return SendMail(msg);
-            }
-            catch (Exception)
-            {
-                return "Failed to send mail. Please check all fields and try again.";
-            }
-        }
-        public string InstaClientInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate)
-        {
-            try
-            {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
-                {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-                }
-                object[] parameters = new object[] { CandidateName, Interviewdate, zoomlink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InstaClientInterviewLinkNotification.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
-                return SendMail(msg);
+                return SendMail(msg).Result;
             }
             catch (Exception)
             {
