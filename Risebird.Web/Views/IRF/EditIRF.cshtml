@@ -60,7 +60,7 @@
                                             <li><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
                                             <li><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
                                             <li><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
-                                            <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@Model.ClientCollection.Count()</span></li>
+                                            <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection!=null?@Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
                                             <li><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
                                             <li><a href="#" id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>
@@ -102,14 +102,28 @@
                                                     }
 
                                                 </div>
-                                                <div class="col-md-4 col-sm-4 pull-left">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" for="Name">Client Name</label>
-                                                        @Html.TextBoxFor(m => m.ClientCompName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                @if (!Model.IsClone)
+                                                {
+                                                    <div class="col-md-4 col-sm-4 pull-left">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" for="Name">Client Name</label>
+                                                            @Html.TextBoxFor(m => m.ClientCompName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
 
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                }
+
+                                                else
+                                                {
+                                                    <div class="col-md-4 col-sm-4 pull-left">
+                                                        <div class="form-group" style="margin-bottom:20px;">
+                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                                                            @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
+                                                        </div>
+                                                    </div>
+                                                }
+
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
                                                         <div class="mandate">
@@ -134,7 +148,19 @@
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
-                                                        @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "form-control select-css" })
+                                                        @if (!Model.IsClone)
+                                                        {
+                                                            @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "form-control select-css" })
+
+                                                        }
+                                                        else
+                                                        {
+                                                            var billingOwnerList = new List<SelectListItem>();
+                                                            billingOwnerList.Add(new SelectListItem() { Value = "", Text = "" });
+                                                            @Html.DropDownListFor(model => model.BillingOwner, billingOwnerList, "Select a Client above", new { @class = "form-control select-css" })
+
+                                                        }
+
                                                         @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_BillingOwner", @class = "text-danger" })
 
                                                     </div>
@@ -842,12 +868,25 @@
                                                                     @if (Model.ClientCollection == null || Model.ClientCollection.Count() == 0)
                                                                     {
                                                                         <tr>
-                                                                            <td>
-                                                                                @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control ", @onchange = "ClientUserChanged(this.value, this.id)" })
-                                                                            </td>
+                                                                            @if (!Model.IsClone)
+                                                                            {
+                                                                                <td>
+                                                                                    @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control ", @onchange = "ClientUserChanged(this.value, this.id)" })
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                var list = new List<SelectListItem>();
+                                                                                list.Add(new SelectListItem() { Value = "", Text = "Select a Client" });
+
+                                                                                <td>
+                                                                                    @Html.DropDownList("ClientCollection[0].ClientUserId", list, new { @class = "select-css form-control ", @onchange = "ClientUserChanged(this.value, this.id)" })
+                                                                                </td>
+                                                                            }
+
                                                                             <td>
 
-                                                                                @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBox("ClientCollection[0].Role", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                                             </td>
 
@@ -1283,7 +1322,12 @@
 
 
                             @Html.HiddenFor(m => m.id)
-                            @Html.HiddenFor(m => m.ClientId)
+                            @if (!Model.IsClone)
+                            {
+                                @Html.HiddenFor(m => m.ClientId)
+
+                            }
+                            
                             @Html.HiddenFor(m => m.OldAssessmentGroupId)
                             @Html.HiddenFor(m => m.OldCalendlyLink)
                             @Html.HiddenFor(m => m.OldJDLink)
@@ -3348,4 +3392,47 @@
     $("#minimizeSidebar").click(function () {
         $('body').removeClass('sidebar-mini');
     });
+</script>
+
+<script>
+    function ClientChanged(clientId) {
+
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetClientUser",
+            data: { 'clientId': clientId },
+            success: function (data) {
+                var drpdwnId = $("#ClientCollection_0__ClientUserId");
+                //drpdwnId.options.length = 0;
+                $("#ClientCollection_0__ClientUserId option").remove();
+                if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpdwnId.append(option);
+                    });
+                    ClientUserChanged(data[0].value, 'ClientCollection_0__ClientUserId')
+                }
+                var drpbilling = $("#BillingOwner");
+                $("#BillingOwner option").remove();
+                if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpbilling.append(option);
+                    });
+                }
+
+            }
+        });
+
+    }
 </script>

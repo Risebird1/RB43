@@ -1546,7 +1546,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var model = await _irfService.GetEditIRF(id);
+                    var model = await _irfService.GetEditIRF(id, isClone);
                     model.IsClone = isClone;
                     SetEditIRFProperties(model);
                     //TempData["JDLink"] = model.JDLink;
@@ -1754,7 +1754,16 @@ namespace Risebird.Web.Controllers
                 Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-            ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
+            if(!model.IsClone)
+            {
+                ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
+
+            }
+            else
+            {
+                model.ClientCollection = null;
+                model.ClientId = 0;
+            }
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
             ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
             ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");

@@ -20,7 +20,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetIRFInterviewMeetings(int id, string profileName, string email);
         string GetQCSkills(int id);
         SelectList GetQualityController();
-        Task<IRFVm> GetEditIRF(int id);
+        Task<IRFVm> GetEditIRF(int id, bool isClone = false);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
         IList<SkillComment> GetTechSkillComments(int id);
         bool CheckUniqueness(string value);
