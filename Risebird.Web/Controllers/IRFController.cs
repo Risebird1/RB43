@@ -3951,7 +3951,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {
@@ -4054,11 +4054,13 @@ namespace Risebird.Web.Controllers
             {
                 model._skilldetails.id = modeldata.id;
                 model._skilldetails.AssessmentGroupName = modeldata.AssessmentGroup;
+                model._skilldetails.Isinstaavailable = modeldata.Isinstaavailable;
             }
             else
             {
                 model._skilldetails.id = 0;
                 model._skilldetails.AssessmentGroupName = "";
+                model._skilldetails.Isinstaavailable = false;
             }
             return PartialView(model);
             //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
@@ -4077,7 +4079,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {

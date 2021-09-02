@@ -3871,6 +3871,7 @@ namespace Risebird.Repository
                     parameters.Add("@AssessmentGroup", _skilldetails.AssessmentGroupName);
                     parameters.Add("@PrimarySkills", _skilldetails.PrimarySkill);
                     parameters.Add("@id", _skilldetails.id);
+                    parameters.Add("@Isinstaavailable", _skilldetails.Isinstaavailable);
                     await SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";

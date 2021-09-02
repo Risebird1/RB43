@@ -100,6 +100,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InstaMeetingVM();
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -170,6 +171,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("CreateRequest", meeting);
                         }
@@ -205,6 +207,7 @@ namespace Risebird.Web.Controllers
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -275,6 +278,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("EditRequest", meeting);
                         }
@@ -313,6 +317,11 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
                         }
                         List<InstaMeetingVM> modelList = new List<InstaMeetingVM>();
                         if (HttpContext.Session.GetString("InstaInterviewfilters") != null)
@@ -943,9 +952,9 @@ namespace Risebird.Web.Controllers
                     var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
                     if (model == null)
                     {
-                        if (isAdminHR)
+                        if (isAdminHR || profileName == "Admin")
                         {
-                            return RedirectToAction("Index");
+                            return RedirectToAction("Index", new { id = Requestedid });
                         }
                         else if (isInterviewer)
                         {
@@ -1043,12 +1052,26 @@ namespace Risebird.Web.Controllers
                         {
                             TempData["SuccessErrorMessage"] = "Report saved Successfully";
                             //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
-                            return RedirectToAction("MyInterview");
+                            if (profileName == "Admin")
+                            {
+                                return RedirectToAction("Index", new { id = model.RequestId });
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterview");
+                            }
                         }
                         else
                         {
                             TempData["SuccessErrorMessage"] = "Report was not saved.";
-                            return RedirectToAction("MyInterview");
+                            if (profileName == "Admin")
+                            {
+                                return RedirectToAction("Index", new { id = model.RequestId });
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterview");
+                            }
                         }
                     }
                     else
