@@ -39,10 +39,21 @@
             </div>
             <div class="form-group col-lg-12  col-md-12 col-sm-12 pull-left">
                 <div class="mandate">
-                    @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span></div>
-                    @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text", @required = "required" } })
-                    @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
+                    @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span>
                 </div>
+                @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text", @required = "required" } })
+                @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-lg-12  col-md-12 col-sm-12 pull-left">
+                <div class="mandate">
+                    @Html.LabelFor(model => model._skilldetails.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span>
+                </div>
+                @Html.DropDownListFor(model => model._skilldetails.Isinstaavailable, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                @Html.ValidationMessageFor(model => model._skilldetails.Isinstaavailable, "", new { @class = "text-danger" })
+            </div>
         </div>
         <div>
             <div class="card-footer" style="margin-top: 15px;">

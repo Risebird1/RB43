@@ -9,20 +9,21 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_HRUserClientBulkInsert]  
-(  
-      @HRUserClientBulkData AS [dbo].[TransClientUser_TableType] READONLY  
-)  
-AS  
-BEGIN  
   
-SET NOCOUNT ON;  
-  DELETE from SeniorHR where Userid in (Select Userid From @HRUserClientBulkData)
---This row performs bulk copy of object DataTable to Table in SQL  
-INSERT INTO [dbo].[SeniorHR](  
- [Userid] ,  
- [Clientid])  
- Select * From @HRUserClientBulkData
- 
-END  
+Create PROCEDURE [dbo].[usp_HRUserClientBulkInsert]    
+(    
+      @HRUserClientBulkData AS [dbo].[TransClientUser_TableType] READONLY    
+)    
+AS    
+BEGIN    
+    
+SET NOCOUNT ON;    
+  DELETE from SeniorHR where Userid in (Select IRFId From @HRUserClientBulkData)  
+--This row performs bulk copy of object DataTable to Table in SQL    
+INSERT INTO [dbo].[SeniorHR](    
+ [Userid] ,    
+ [Clientid])    
+ Select IRFId as Userid,ClientUserId as Clientid From @HRUserClientBulkData  
+   
+END 
 GO

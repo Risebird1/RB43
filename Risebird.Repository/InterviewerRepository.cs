@@ -259,6 +259,7 @@ namespace Risebird.Repository
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
+            parameters.Add("@Isinstaavailable", entity.Isinstaavailable);
             parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
@@ -1601,7 +1602,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select id,AssessmentGroup from AssessmentGroup";
+                var query = "Select id,AssessmentGroup,Isinstaavailable from AssessmentGroup";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query<AssignmentVM>(query, null);
