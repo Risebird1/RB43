@@ -14,7 +14,7 @@ GO
   
   
   
-Create PROCEDURE [dbo].[usp_GetCandidateTimelineByDate]    
+Create PROCEDURE [dbo].[usp_GetCandidateTimelineByDate]  
 @EmailId varchar(100),  
 @startDate datetime,  
 @endDate datetime  
@@ -57,16 +57,17 @@ declare  @meetingStatusId int, @interviewStatusId int, @qcPendingId int;
      
 if @EmailId is not null    
  Begin    
-  declare @profileId int, @roleId int, @userId int;    
+  declare @profileId int, @roleId int, @userId int=0;    
   set @profileId = (select id from [Profile] where [Name]='Client')    
   set @userId  = (select id from UserList where EmailId=@EmailId and idProfile=@profileId)    
   set @roleId  = (select RoleId from ClientUser where UserId=@userId)    
   
-  if(@userId=0)
+  if(Isnull(@userId,0)=0)
   Begin
   set @profileId = (select id from [Profile] where [Name]='SeniorHR')   
   set @userId  = (select id from UserList where EmailId=@EmailId and idProfile=@profileId) 
-  if(@userId>0)
+  
+  if(Isnull(@userId,0)>0)
   begin
   select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,    
   case     
@@ -94,7 +95,7 @@ if @EmailId is not null
   where ulsh.EmailId=@EmailId
   End
  End    
-
+ 
   else if(@roleId=1)    
    Begin    
     select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,   

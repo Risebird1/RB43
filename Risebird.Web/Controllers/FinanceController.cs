@@ -434,10 +434,13 @@ namespace Risebird.Web.Controllers
                 sb.Append("</tr>");
             }
             sb.Append("<tbody></table>");
-            var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1));
+
             var commentvalue = st.ToString() + " to " + se.ToString();
             var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
             var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
+            if (String.IsNullOrEmpty(paymenthistory))
+                paymenthistory = "0";
+            var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1), Convert.ToInt32(paymenthistory));
             //Start:Send email to Interviewer
             Mail _mail = new Mail
             {
@@ -541,8 +544,12 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> AdvancePayment(string Interviewer, string Comment, int Amount)
         {
-            var model = await _meetingService.InsertAdvancePayment(Interviewer, Comment, Amount);
             var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, Amount, "Advance", "");
+            if (String.IsNullOrEmpty(paymenthistory))
+            {
+                paymenthistory = "0";
+            }
+            var model = await _meetingService.InsertAdvancePayment(Interviewer, Comment, Amount, Convert.ToInt32(paymenthistory));
             StringBuilder sb = new StringBuilder();
             var result = "";
             if (model == "Success")
@@ -1377,6 +1384,25 @@ namespace Risebird.Web.Controllers
             var result = await _meetingService.SaveInvoiceDetails(model);
             TempData["SuccessErrorMessageCandidate"] = result;
             return RedirectToAction("InvoiceDetails");
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetPaymentHistoryDetailsView(int id)
+        {
+            var model = await _meetingService.GetPaymentHistoryDetailsView(id);
+            //int totalAmount = model.Sum(x => x.Points);
+            //int payableAmount = 0;
+            //int Tds = 0;
+            //if (totalAmount > 0)
+            //{
+            //    payableAmount = (totalAmount - Convert.ToInt32(Math.Round(totalAmount * .1)));
+            //    Tds = totalAmount - payableAmount;
+            //}
+            foreach (var item in model)
+            {
+                item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+            }
+            return Json(new { result = model/*, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds */});
         }
     }
 }

@@ -3910,28 +3910,29 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se)
+        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory)
         {
             try
             {
                 var query = "";
                 if (index == 2)
                 {
-                    query = "Update ip Set ip.Status='Paid' from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@st", st);
                     dynamicParameters.Add("@se", se);
                     dynamicParameters.Add("@Userid", interviewerid);
+                    dynamicParameters.Add("@PaymentHistoryId", paymenthistory);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid' from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid' from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (ip.Date>=@st and ip.Date<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (ip.Date>=@st and ip.Date<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
@@ -3947,9 +3948,10 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    query = "Update InterviewPoints set Status='Paid' where userid=@Userid and (status='Submitted' or status='Advance')";
+                    query = "Update InterviewPoints set Status='Paid',PaymentHistoryId=@PaymentHistoryId where userid=@Userid and (status='Submitted' or status='Advance')";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@Userid", interviewerid);
+                    dynamicParameters.Add("@PaymentHistoryId", paymenthistory);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
@@ -3983,7 +3985,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount)
+        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId)
         {
             try
             {
@@ -4016,7 +4018,7 @@ namespace Risebird.Repository
                 var date = DateTime.Now;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ,Interviewerid) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date,@interviewerid);";
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ,Interviewerid,PaymentHistoryId) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date,@interviewerid,@PaymentHistoryId);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         interviewid,
@@ -4026,7 +4028,8 @@ namespace Risebird.Repository
                         Comment,
                         status,
                         date,
-                        interviewerid
+                        interviewerid,
+                        PaymentHistoryId
                     });
                     return "Success";
                 }
@@ -4347,17 +4350,27 @@ namespace Risebird.Repository
                 var PaymentDate = DateTime.Now;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values (@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount);";
-                    var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
-                    {
-                        userid,
-                        PaymentDate,
-                        Amount,
-                        status,
-                        Comment,
-                        TotalAmount
-                    });
-                    return "Success";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userid", userid);
+                    parameters.Add("@PaymentDate", PaymentDate);
+                    parameters.Add("@Amount", Amount);
+                    parameters.Add("@status", status);
+                    parameters.Add("@Comment", Comment);
+                    parameters.Add("@TotalAmount", TotalAmount);
+                    var result = SqlMapper.Query<string>(con, "usp_InsertPaymentHistory", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                    //string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values (@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount);";
+                    //var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
+                    //{
+                    //    userid,
+                    //    PaymentDate,
+                    //    Amount,
+                    //    status,
+                    //    Comment,
+                    //    TotalAmount
+                    //});
+                    //return "Success";
                 }
             }
             catch (SqlException ex)
@@ -4944,6 +4957,25 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@PaymentHistoryId", interviewerid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "Usp_FetchPaymentHistoryDetailsbyId", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return (List<RBInterviewDetails>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

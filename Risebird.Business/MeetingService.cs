@@ -2567,11 +2567,11 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se)
+        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory)
         {
             try
             {
-                var result = _meetingRespository.RBConfirmPayment(interviewerid, index, st, se);
+                var result = _meetingRespository.RBConfirmPayment(interviewerid, index, st, se, paymenthistory);
                 return result.Result;
             }
             catch (Exception e)
@@ -2593,11 +2593,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount)
+        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId)
         {
             try
             {
-                var result = _meetingRespository.InsertAdvancePayment(Interviewer, Comment, Amount);
+                var result = _meetingRespository.InsertAdvancePayment(Interviewer, Comment, Amount, PaymentHistoryId);
                 return result.Result;
             }
             catch (Exception e)
@@ -2987,6 +2987,21 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetPaymentHistoryDetailsView(interviewerid);
+                return result.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

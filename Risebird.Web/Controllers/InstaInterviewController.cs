@@ -931,11 +931,11 @@ namespace Risebird.Web.Controllers
                     if (profileName != null)
                     {
                         profileName = profileName.Replace("\"", "");
-                        if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                        if (profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                         {
                             isAdminHR = true;
                         }
-                        else if ((profileName == "Interviewer" || profileName == "Quality Controller"))
+                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller")
                         {
                             isInterviewer = true;
                         }
@@ -997,11 +997,11 @@ namespace Risebird.Web.Controllers
                         if (profileName != null)
                         {
                             profileName = profileName.Replace("\"", "");
-                            if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                            if (profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                             {
                                 isAdminHR = true;
                             }
-                            else if ((profileName == "Interviewer" || profileName == "Quality Controller"))
+                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller")
                             {
                                 isInterviewer = true;
                             }
