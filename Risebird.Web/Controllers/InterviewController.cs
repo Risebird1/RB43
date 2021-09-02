@@ -3552,11 +3552,11 @@ namespace Risebird.Web.Controllers
                                 //find all IRFowner and Users
                                 var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
                                 var maillist = String.Join(";", clientlist);
-                                string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport/" + model.InterviewId;
+                                string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport/" + model.InterviewId + "&irfId=" + model.IRFId;
                                 Mail _mail1 = new Mail
                                 {
                                     TO = maillist,
-                                    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.JobLevelName
+                                    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
                                 };
                                 var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer

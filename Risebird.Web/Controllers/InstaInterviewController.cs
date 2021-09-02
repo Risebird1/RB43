@@ -990,8 +990,22 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     ViewBag.PageStatus = "Mainurl";
                     ViewBag.Profile = profileName.Replace("\"", "");
+                    bool isAdminHR = false;
+                    bool isInterviewer = false;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
                     {
+                        if (profileName != null)
+                        {
+                            profileName = profileName.Replace("\"", "");
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                            {
+                                isAdminHR = true;
+                            }
+                            else if ((profileName == "Interviewer" || profileName == "Quality Controller"))
+                            {
+                                isInterviewer = true;
+                            }
+                        }
                         var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
@@ -999,11 +1013,12 @@ namespace Risebird.Web.Controllers
                                               select new { ID = (int)s, Name = s.GetDescription() };
                         model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
-                        {
-                            ModelState.AddModelError(String.Empty, "Video file/link not found.");
-                            return View("AddReport", model);
-                        }
+                        ViewBag.isAdminHR = isAdminHR;
+                        //if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
+                        //{
+                        //    ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                        //    return View("AddReport", model);
+                        //}
                         if (model.VideoFile != null)
                         {
                             AzureCall _call = new AzureCall(_configuration);

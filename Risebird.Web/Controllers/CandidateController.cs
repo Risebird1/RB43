@@ -77,19 +77,19 @@ namespace Risebird.Web.Controllers
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" ? emailid : null)).ToList();
+                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                         }
                         else
                         {
                             //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
                         }
                     }
                     else
                     {
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                     }
 
@@ -332,13 +332,13 @@ namespace Risebird.Web.Controllers
                     var candidateData = new List<CandidateTimelineData>();
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                     }
                     else
                     {
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
                     }
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
@@ -809,7 +809,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Schedule Status";
                 Sheet.Cells[1, 7].Value = "Phone";
 
-                if(role != (int)ClientRoleEnum.RestrictedIRFowner)
+                if (role != (int)ClientRoleEnum.RestrictedIRFowner)
                 {
                     Sheet.Cells[1, 8].Value = "Current Status";
                     Sheet.Cells[1, 9].Value = "Current Status Date";
@@ -817,7 +817,7 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, 11].Value = "Skill Channel ID";
                 }
 
-                
+
 
 
                 int i = 2;
@@ -882,7 +882,7 @@ namespace Risebird.Web.Controllers
 
                             Sheet.Cells[i, 11].Value = item.IRFName;
                         }
-                        
+
 
                         i++;
                     }
@@ -2716,7 +2716,7 @@ namespace Risebird.Web.Controllers
                                             //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
                                             //    : string.Empty,
                                             ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
-                                                
+
                                             ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
                                             IRFId = IRFId
 
@@ -2856,7 +2856,7 @@ namespace Risebird.Web.Controllers
                 _whatsapp.InterviewDate = result.interviewDate.ToString();
                 _whatsapp.Header = result.ClientName;
                 _whatsapp.MessageValue = result.JDTiltle;
-                if(!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
                 {
                     _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
                 }
