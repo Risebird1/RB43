@@ -717,13 +717,14 @@ namespace Risebird.Web.Controllers
                         var result = _instaInterviewService.InstaAssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                         if (result.Contains("Successfully"))
                         {
-
                             InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
                             _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddMinutes(15), INDIAN_ZONE);
                             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
                             var accountEmail = await _instaInterviewService.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
+                            if (String.IsNullOrEmpty(accountEmail))
+                                accountEmail = "me";
                             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
                             var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url, indianTime, indianTime.AddMinutes(60), accountEmail);
                             //Send Mail to Client And Interviewer

@@ -52,7 +52,7 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
                         </button>
-                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client")
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" title="Click here to view uploaded Candidates Resume" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidates Resume</font></span>

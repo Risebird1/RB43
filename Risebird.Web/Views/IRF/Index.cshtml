@@ -80,7 +80,7 @@
                                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
                                         </button>
 
-                                        @if (Model.Profile == "Admin")
+                                        @if (Model.Profile == "Admin" || Model.Profile == "SeniorHR")
                                         {
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                                                 <span data-toggle="tooltip" data-placement="top" title="Client Job Description" onclick="location.href='@Url.Action("CreateJd", "Client")'" data-original-title="Tooltip on top"><font style="font-family:arial;">RB Matches</font></span>
@@ -88,7 +88,7 @@
 
                                         }
 
-                                        @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
                                         {
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                                                 <span data-toggle="tooltip" data-placement="top" title="Assessment Market Place" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Market Place</font></span>
@@ -340,7 +340,7 @@
                                                                                         </button>
                                                                                     }
                                                                                 }
-                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
                                                                                 {
                                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel">
                                                                                         <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
@@ -445,7 +445,7 @@
                                                                             </div>
 
                                                                             <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
                                                                                 {
                                                                                     <button id="not_schedule" class="mdc-fab app-fab--absolute item1" aria-label="Not Scheduled Candidate">
                                                                                         <span onclick="javascript:NotScheduledCandidate('@item.IRFId');" title="Not Scheduled Candidate" class="mdc-fab__icon material-icons">
@@ -456,7 +456,7 @@
                                                                                         </span>
                                                                                     </button>
                                                                                 }
-                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
                                                                                 {
                                                                                     <button id="skill_6" class="mdc-fab app-fab--absolute item1" aria-label="Send Candidate Feedback remainder">
                                                                                         <span onclick="javascript:Candidatesfeedbackremainder('@item.IRFId');" title="Send Candidate Feedback remainder" class="mdc-fab__icon material-icons">
