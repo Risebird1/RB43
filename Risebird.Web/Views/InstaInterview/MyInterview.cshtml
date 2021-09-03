@@ -204,7 +204,8 @@
                                                         <tr>
                                                             <th style="border-left: 0px !important;">Date</th>
                                                             <th id="myinterview_4">Candidate Name</th>
-                                                            <th  id="myinterview_5">JD</th>
+                                                            <th>Required Skill</th>
+                                                            <th id="myinterview_5">JD</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
                                                             <th>Meeting Status</th>
@@ -218,6 +219,7 @@
                                                         <tr>
                                                             <th style="border-left: 0px !important;">Date</th>
                                                             <th id="myinterview_4">Candidate Name</th>
+                                                            <th>Required Skill</th>
                                                             <th id="myinterview_5">JD </th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
@@ -235,9 +237,41 @@
                                                             <tr id=@item.id>
                                                                 <td> @item.RequestedDate </td>
                                                                 <td class="cadName">@item.CandidateName</td>
+                                                                <td class="interview-com">
+                                                                    <div id="section">
+                                                                        @if (item.RequiredSkill != null && item.RequiredSkill != "")
+                                                                        {
+                                                                            @if (item.RequiredSkill.Length > 26)
+                                                                            {
+                                                                                <div class="article">
+                                                                                    <p style="margin-bottom:0px;">
+                                                                                        @item.RequiredSkill.Substring(0, 26)
+                                                                                    </p>
+                                                                                    <p class="moretext_@item.id moretext">
+                                                                                        @item.RequiredSkill.Substring(26, @item.RequiredSkill.Length - 26)
+                                                                                    </p>
+                                                                                </div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="article">
+
+                                                                                    <p>
+                                                                                        @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length - 1)
+                                                                                    </p>
+                                                                                </div>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div></div>
+                                                                        }
+                                                                        <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                    </div>
+                                                                </td>
                                                                 @if (item.JDLink != null && item.JDLink != "")
                                                                 {
-                                                                    <td>  <a  id="jdlinkId" target="_blank" title="JD" href=@item.JDLink>JD</a></td>
+                                                                    <td>  <a id="jdlinkId" target="_blank" title="JD" href=@item.JDLink>JD</a></td>
                                                                 }
                                                                 else
                                                                 {
@@ -418,7 +452,17 @@
     }
 </script>
 <script>
+    function moreless(id) {
 
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
 </script>
 <script type="text/javascript">
     //// script for loader starts here

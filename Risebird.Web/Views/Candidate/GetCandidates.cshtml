@@ -333,7 +333,7 @@
                                                                         </span>
                                                                     </button>
 
-                                                                    @if (ViewBag.profile == "Admin")
+                                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                             <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
@@ -618,7 +618,7 @@
 
                             <div class="filheader">
                                 <div class="filavatar">
-                                    <span >
+                                    <span>
 
 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
