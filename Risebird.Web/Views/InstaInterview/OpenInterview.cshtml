@@ -64,7 +64,8 @@
                                                         <th>Date</th>
                                                         <th id="openinterview_2">Candidate Name</th>
                                                         <th id="openinterview_3">Resume</th>
-                                                        <th  id="openinterview_4">JD</th>
+                                                        <th id="openinterview_4">JD</th>
+                                                        <th>Required Skill</th>
                                                         @if (Model.Count() == 0)
                                                         {
                                                             <th id="openinterview_6" class="disabled-sorting text-right">Actions</th>
@@ -80,7 +81,8 @@
                                                         <th>Date</th>
                                                         <th>Candidate Name</th>
                                                         <th>Resume</th>
-                                                        <th >JD </th>
+                                                        <th>JD </th>
+                                                        <th>Required Skill</th>
                                                         <th class="disabled-sorting text-right">Actions</th>
                                                     </tr>
                                                 </tfoot>
@@ -106,6 +108,38 @@
                                                             {
                                                                 <td>No JD</td>
                                                             }
+                                                            <td class="interview-com">
+                                                                <div id="section">
+                                                                    @if (item.RequiredSkill != null && item.RequiredSkill != "")
+                                                                    {
+                                                                        @if (item.RequiredSkill.Length > 26)
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p style="margin-bottom:0px;">
+                                                                                    @item.RequiredSkill.Substring(0, 26)
+                                                                                </p>
+                                                                                <p class="moretext_@item.id moretext">
+                                                                                    @item.RequiredSkill.Substring(26, @item.RequiredSkill.Length - 26)
+                                                                                </p>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="article">
+
+                                                                                <p>
+                                                                                    @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length - 1)
+                                                                                </p>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div></div>
+                                                                    }
+                                                                    <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                </div>
+                                                            </td>
                                                             <td class="text-right">
                                                                 <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "InstaInterview", new { id = item.id,InterviewDate=item.RequestedDate,CandidateName=item.CandidateName,Role=item.AssessmentGroup})'" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
                                                             </td>
@@ -198,6 +232,17 @@
     };
 
 
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
 
 </script>
 
