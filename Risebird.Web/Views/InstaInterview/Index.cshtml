@@ -71,7 +71,8 @@
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "InstaInterview",new { Requestedid=ViewBag.Requestid})'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
                         </button>
 
-                        @Html.ActionLink("Back to List", "InstaIRF", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        <div class="desktop-view pull-left">  @Html.ActionLink("Back to List", "InstaIRF", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })</div>
+                        <div class="mobile-view pull-left">  @Html.ActionLink("Back", "InstaIRF", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })</div>
                     </div>
                 </div>
             </div>
@@ -355,7 +356,7 @@
                                                                         <div class="article">
 
                                                                             <p>
-                                                                                @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length - 1)
+                                                                                @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length)
                                                                             </p>
                                                                         </div>
                                                                     }

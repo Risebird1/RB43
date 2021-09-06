@@ -2548,7 +2548,7 @@ table {
     }
 
     .videocon .mdc-button--outlined.card-title-space, .videocon .mdc-button--raised.card-title-space {
-        margin: 20px 0px 10px 0px;
+        margin: 0px 0px 10px 0px;
     }
 
     .videocon.pt30 .pull-right {
@@ -2978,7 +2978,7 @@ table {
         }
 
         #myForm .searchbox input[type=email] {
-            width: 260px !important;
+            width: 256px !important;
             padding-left: 4px;
             /* height: auto;*/
         }

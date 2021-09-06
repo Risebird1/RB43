@@ -40,7 +40,7 @@ body {
     font-size: 0.96em;
     font-weight: 700;
 }
-
+.interview #meeting_filter #search{z-index:0}
 #scoreChart tspan {
     font-size: 12px;
 }
@@ -70,7 +70,11 @@ table tr td:hover, .table-striped tbody tr:hover {
 .nav .fa-user:before {
     content: "\f017";
 }
-
+.edit_request {
+    width: calc(100% - 10px);
+    float: left;
+    padding: 0px 10px;
+}
 .user-icon {
     font-weight: 500;
     position: absolute;
@@ -1425,9 +1429,13 @@ audio {
     height: 37px;
 }
 
-    #searchGo button.btn svg, #btnSearch svg {
+    #searchGo button.btn svg {
         position: relative;
         top: -9px;
+    }
+    #btnSearch svg {
+        position: relative;
+        top: 0px;
     }
 
 .priority button {
@@ -5973,6 +5981,9 @@ label {
     [class^='col-lg-'] {
         margin-bottom: 10px;
     }
+   .edit_request [class*="pl-"] {
+        padding-left: 13px !important;
+    }
     /* LOGIN */
     .login-container {
         padding: 0px 10px;
@@ -5992,7 +6003,11 @@ label {
     .recommendation .multiselect.dropdown-toggle:after {
         left: 1% !important;
     }
-
+    .edit_request {
+        width: 100% !important;
+        float: left;
+        padding: 0px !important;
+    }
     .next-btn {
         bottom: 735% !important;
         right: 0% !important;
@@ -6077,7 +6092,29 @@ label {
         width: 350px !important;
         height: 200px !important;
     }
-
+    .mob-txt .clientName {
+        width: 211px;
+    }
+    .mob-img {
+        width: 15%;
+        float: left;
+    }
+    .mob-txt {
+        width: 85%;
+        float: left;
+    }
+    .mob-mb-0{
+        margin-bottom:0px;
+    }
+   
+    .interviewer_2 {
+        width: 335px;
+        float: left;
+        display: block;
+    }
+    .searchCon.mb-10 {
+        margin-bottom: 10px
+    }
     .navbar-toggle {
         top: -5px;
     }
@@ -6360,6 +6397,10 @@ label {
         height: 180px !important;
         left: 7px !important;
     }
+    .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
+        font-size: 14px;
+    }
+
 }
 
 @media (max-width: 360px) {
