@@ -101,6 +101,7 @@ namespace Risebird.Web
                 o.MemoryBufferThreshold = int.MaxValue;
             });
 
+            services.AddApplicationInsightsTelemetry();
             //Dependency injection
             DependencyMapping(services);
         }
