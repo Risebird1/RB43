@@ -218,12 +218,12 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> MultipleCandidateInvites()
+        public List<MeetingVM> MultipleCandidateInvites(string emailid)
         {
             try
             {
 
-                return _meetingRespository.MultipleCandidateInvites().Result.ToList();
+                return _meetingRespository.MultipleCandidateInvites(emailid).Result.ToList();
             }
             catch (Exception ex)
             {
@@ -2675,11 +2675,11 @@ namespace Risebird.Business
                 return "fail";
             }
         }
-        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email)
         {
             try
             {
-                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate, email).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
