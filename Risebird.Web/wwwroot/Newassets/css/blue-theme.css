@@ -515,7 +515,7 @@ textarea::-webkit-scrollbar-thumb {
     border-bottom: 0px !important;
 }
 
-.instainterview .multiple_row > h2:before {
+.instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
     background-color: rgb(84 165 245);
     border-right: 30px solid rgb(84 165 245);
 }
@@ -523,33 +523,63 @@ textarea::-webkit-scrollbar-thumb {
 .instainterview .table-bordered {
     border: 2px solid #54a5f5 !important;
 }
+#reportForm .report-wrap, #reportForm .card-wrap {
+    background: #fff;
+}
+.mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+    background: #f7f7f7;
+}
+    .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+        color: #544d4dc4 !important;
+        font-weight: 400;
+    }
+
+#reportForm .videoConplayer {
+    background: #fff;
+}
+#reportForm table {
+    background: #fff;
+}
+#reportForm .talk-bubble textarea {
+    background: #fff !important;
+}
+#reportForm .textarealabel {
+    color: #544d4d !important;
+}
+#QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+}
     .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     background: #f7f7f7;
     color: #888 !important;
 }
-.instainterview .multiple_row > h2 span {
-    color: #ffffff;
-    position: absolute;
-    text-transform: uppercase;
-}
+
+
 .instainterview .form-group label.upload {
     color: #959596;
 }
+
 .instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
     background: #f7f7f7 !important;
 }
+
 .instainterview .upload-area {
     background: #f7f7f7;
 }
+
 .instainterview label.upload {
     border: 1px #54a5f58f solid;
-    color: #54a5f5!important;
-    border-radius: 0rem!important;
+    color: #54a5f5 !important;
+    border-radius: 0rem !important;
 }
-    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
-        border: 0px !important;
-        border-bottom: 2px rgb(75 146 249) solid !important;
-    }
+
+.mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
+    border: 0px !important;
+    border-bottom: 2px rgb(75 146 249) solid !important;
+}
 
 
 .mdc-button--outlined:not(:disabled) {
@@ -579,9 +609,11 @@ textarea::-webkit-scrollbar-thumb {
         background: #e4e2e2;
     }
 
-.multiple_row > h2 {
+.multiple_row > h2, #reportForm .multiple_row > h3 {
     background-color: #54a5f5 !important;
 }
+
+
 
 .talk-bubble {
     background-color: #fcfcfc;

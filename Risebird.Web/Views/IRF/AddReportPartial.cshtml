@@ -66,7 +66,7 @@
 
     <div class="mt50">
     </div>
-    <div class="content client">
+    <div id="reportForm" class="content client">
         <div class="row">
             <div class="col-md-12">
                 <div class="col-md-12">
@@ -103,175 +103,182 @@
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Candidate Details</h2>
-                                        </div><!--end of multiple location-->
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                   
-                                </div>
-
-                                @if (ViewBag.PageStatus != "PublicExternal")
-                                {
+                                <div class="report-full-wrap">
                                     <div class="row">
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @{
-                                            if (Model.resumeLink != null && Model.resumeLink != "")
-                                            {
-                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
-                                            }
-                                        }
-
-                                    </div>
-                                </div>
-
-                                @if (ViewBag.PageStatus != "PublicExternal")
-                                {
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        @*<div class="form-group">
-                                                @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>*@
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
-                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
-                                        </div>
-
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
-                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                </div>
-                                @if (ViewBag.PageReport != "Insta")
-                                {
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                             <div class="multiple_row">
-                                                <h2>Interview Video</h2>
+                                                <h3 class="mb-0"><span>Candidate Details</span></h3>
                                             </div><!--end of multiple location-->
-                                        </div><!--end of col-md-12-->
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
 
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        </div>
 
-                                            <div class="videoConplayer">
+                                        @if (ViewBag.PageStatus != "PublicExternal")
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                @Html.HiddenFor(x => Model.VideoLink)
-                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                                {
-                                                    @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                        @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                    @{
+                                                        if (Model.resumeLink != null && Model.resumeLink != "")
                                                         {
-                                                            <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
-                                                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                                <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                                Your browser does not support the video tag.
-                                                            </video>
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
                                                         }
+                                                    }
 
-                                                        else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                </div>
+                                            </div>
+
+                                            @if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Interview Report</span></h3>
+</div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="card-wrap">
+                                    <div class="row">
+
+                                        <div class="col-md-6 col-sm-6 border-rv">
+                                            @*<div class="form-group">
+                    @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                    @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                </div>*@
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                    @if (ViewBag.PageReport != "Insta")
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>Interview Video</span></h3>
+</div><!--end of multiple location-->
+                                            </div><!--end of col-md-12-->
+
+
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                                                <div class="videoConplayer">
+
+                                                    @Html.HiddenFor(x => Model.VideoLink)
+                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                    {
+                                                        @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                {
+                                    <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
+                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                                        Your browser does not support the video tag.
+                                    </video>
+                                }
+
+                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                {
+                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                    </video>
+                                }
+                                else
+                                {
+                                    <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                }*@
+                                                        string appendTime;
+                                                        if (Model.ThumbnailTimeSeconds == 0)
                                                         {
-                                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                                                <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
-
-                                                            </video>
+                                                            appendTime = configuration["ThumbnailTimeDefault"];
                                                         }
                                                         else
                                                         {
-                                                            <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                                        }*@
-                                                    string appendTime;
-                                                    if (Model.ThumbnailTimeSeconds == 0)
-                                                    {
-                                                        appendTime = configuration["ThumbnailTimeDefault"];
+                                                            appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                        }
+                                                        var src = Model.VideoLink + "#t=" + appendTime;
+                                                        <video width="400" controls="controls" preload="metadata" class="vjs-tech">
+                                                            <source src='@src' type="video/mp4">
+                                                        </video>
                                                     }
-                                                    else
-                                                    {
-                                                        appendTime = Model.ThumbnailTimeSeconds.ToString();
-                                                    }
-                                                    var src = Model.VideoLink + "#t=" + appendTime;
-                                                    <video width="400" controls="controls" preload="metadata" class="vjs-tech">
-                                                        <source src='@src' type="video/mp4">
-                                                    </video>
-                                                }
-                                            </div>
+                                                </div>
 
-                                        </div><!--end of col-md-12-->
+                                            </div><!--end of col-md-12-->
 
-                                    </div>
-                                }
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Report Details</h2>
-                                        </div><!--end of multiple location-->
-                                    </div>
+                                        </div>
+                                    }
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="multiple_row">
+                                        <h3 class="mb-0"><span>Report Details</span></h3>
+                                    </div><!--end of multiple location-->
+                                </div>
+                                <div class="report-wrap">
                                     @if (ViewBag.PageStatus != "PublicExternal")
                                     {
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="card" style="height:344px">
+                                        <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                            <div class="chart-box" style="height:344px">
                                                 <div class="card-body">
                                                     @*<p class="card-text">Overall Score: <span id="totScore"></span></p>*@
                                                     <p class="card-text">Tech Skill Score: <span id="totTechScore"></span></p>
@@ -281,8 +288,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="card">
+                                        <div class="col-md-6 col-sm-6 pull-left">
+                                            <div>
                                                 <div class="card-body">
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -348,13 +355,13 @@
                                         </div>
                                     }
                                 </div>
-
+                            </div>
                                 @if (ViewBag.PageReport != "Insta")
                                 {
                                     <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                             <div class="multiple_row">
-                                                <h2>Questions Discussed</h2>
+                                                <h3 class="mb-0"><span>Questions Discussed</span></h3>
                                             </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
@@ -381,7 +388,7 @@
                                                                     @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
 
                                                                     @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
-                                                                        @Html.TextBox("QuestionsCollection[0].Comment", new { @class = "select-css form-control text-box single-line" })*@
+                                            @Html.TextBox("QuestionsCollection[0].Comment", new { @class = "select-css form-control text-box single-line" })*@
 
                                                                 </td>
                                                                 <td>
@@ -390,7 +397,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control",@disabled = "disabled" })
+                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control", @disabled = "disabled" })
 
                                                                 </td>
 
@@ -400,13 +407,13 @@
                                                                 </td>
 
                                                                 @*<td>
-                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                                        </button>
+                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                            </button>
 
 
-                                                                    </td>*@
+                                        </td>*@
 
                                                             </tr>
                                                         }
@@ -456,96 +463,96 @@
 
                                     </div>
                                 }
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Tech Skill Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="multiple_row">
+                                        <h3 class="mb-0"><span>Tech Skill Report</span></h3>
+                                    </div><!--end of multiple location-->
+                                </div><!--end of col-md-12-->
 
 
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="SkillTable">
-                                                <thead>
-                                                    <tr>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="SkillTable">
+                                            <thead>
+                                                <tr>
 
-                                                        <th class="table_heading">Required Level</th>
-                                                        <th class="table_heading">Skill Name</th>
-                                                        <th class="table_heading">Actual Level</th>
-                                                        <th class="table_heading">Required Weightage</th>
-                                                        <th class="table_heading">Actual Weightage</th>
-                                                    </tr>
-                                                </thead>
+                                                    <th class="table_heading">Required Level</th>
+                                                    <th class="table_heading">Skill Name</th>
+                                                    <th class="table_heading">Actual Level</th>
+                                                    <th class="table_heading">Required Weightage</th>
+                                                    <th class="table_heading">Actual Weightage</th>
+                                                </tr>
+                                            </thead>
 
 
-                                                <tbody>
-                                                    @if (Model.TechSkillReportCollection != null)
+                                            <tbody>
+                                                @if (Model.TechSkillReportCollection != null)
+                                                {
+                                                    @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                     {
-                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
-                                                        {
-                                                            <tr>
+                                                        <tr>
 
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            </td>
 
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            </td>
+                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
 
 
-                                                            </tr>
+                                                        </tr>
 
-                                                        }
                                                     }
+                                                }
 
 
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        @if (ViewBag.PageReport != "Insta")
-                                        {
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    @if (ViewBag.PageReport != "Insta")
+                                    {
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                    <div class="talktext">
+                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                <div class="talktext">
 
-                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
-                                                    </div>
                                                 </div>
-
-
                                             </div>
-                                        }
 
 
-                                        </div><!--end of col-md-12-->
+                                        </div>
+                                    }
 
-                                </div>
+
+                                </div><!--end of col-md-12-->
+
+                            </div>
 
                                 @if (ViewBag.PageStatus != "PublicExternal")
                                 {
                                     <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                             <div class="multiple_row">
-                                                <h2>General Skill Report</h2>
+                                                <h3 class="mb-0"><span>General Skill Report</span></h3>
                                             </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
@@ -607,7 +614,7 @@
                                                 </table>
 
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
 
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
@@ -626,9 +633,9 @@
 
 
                                     <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                             <div class="multiple_row">
-                                                <h2>Joinability Report</h2>
+                                                <h3 class="mb-0"><span>Joinability Report<span></h3>
                                             </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
@@ -666,7 +673,7 @@
                                                                     </td>
 
                                                                     <td>
-                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)",@disabled="disabled" })
+                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
                                                                     </td>
                                                                     <td>
@@ -688,7 +695,7 @@
                                                     </tbody>
                                                 </table>
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
 
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
@@ -705,9 +712,9 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                             <div class="multiple_row">
-                                                <h2>Selectability Report</h2>
+                                                <h3 class="mb-0"><span>Selectability Report</span></h3>
                                             </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
@@ -745,7 +752,7 @@
                                                                     </td>
 
                                                                     <td>
-                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)",@disabled = "disabled" })
+                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
                                                                     </td>
                                                                     <td>
@@ -767,7 +774,7 @@
                                                     </tbody>
                                                 </table>
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                         <div class="talktext">
@@ -782,14 +789,14 @@
 
                                     </div>
 
-                                   
-                                        <div class="proctor">
-                                            <input class="toggle-box" id="identifier-1" type="checkbox">
-                                            <label for="identifier-1">
-                                                <div class="multiple_row">
-                                                    <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
-                                                </div><!--end of multiple location-->
-                                            </label>
+
+                                    <div class="proctor">
+                                        <input class="toggle-box" id="identifier-1" type="checkbox">
+                                        <label for="identifier-1">
+                                            <div class="multiple_row">
+                                                <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
+                                            </div><!--end of multiple location-->
+                                        </label>
                                         <!--end of col-md-12-->
 
 
@@ -1005,7 +1012,7 @@
 
 
                             </div>
-                        </form>
+</form>
                     </div>
 
                     <!-- end content-->
