@@ -100,7 +100,8 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InstaMeetingVM();
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                        if (profileName == "SeniorHR")
+                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -171,7 +172,8 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                            if (profileName == "SeniorHR")
+                                Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("CreateRequest", meeting);
                         }
@@ -207,7 +209,8 @@ namespace Risebird.Web.Controllers
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                        if (profileName == "SeniorHR")
+                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -278,7 +281,8 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                            if (profileName == "SeniorHR")
+                                Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("EditRequest", meeting);
                         }

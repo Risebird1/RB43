@@ -1731,7 +1731,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR")
                     {
                         var model = _interviewerService.GetInterviewerinteviewReport(interviewId, iscId).Result;
                         model.ProfileName = profileName;
@@ -1780,7 +1780,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "InterviewerManagement")
+                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR")
                     {
                         if (model.AudioFile != null)
                         {
