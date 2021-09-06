@@ -22,11 +22,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date)
+        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date,string Emailid)
         {
             try
             {
-                return _dashboardRespository.GetDateWiseMeetings(date).Result.OrderBy(x => x.interviewDate);
+                return _dashboardRespository.GetDateWiseMeetings(date, Emailid).Result.OrderBy(x => x.interviewDate);
             }
             catch (Exception ex)
             {
@@ -34,11 +34,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date)
+        public async Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date,string Emailid)
         {
             try
             {
-                return _dashboardRespository.GetDateWiseMeetingsSlots(date).Result;
+                return _dashboardRespository.GetDateWiseMeetingsSlots(date,Emailid).Result;
             }
             catch (Exception ex)
             {
@@ -59,11 +59,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<IRF>> GetIRFProgress(DateTime date)
+        public async Task<IEnumerable<IRF>> GetIRFProgress(DateTime date,string Emailid)
         {
             try
             {
-                return await _dashboardRespository.GetIRFProgress(date);
+                return await _dashboardRespository.GetIRFProgress(date, Emailid);
             }
             catch (Exception ex)
             {
@@ -96,11 +96,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<MeetingResultCount> GetMeetingResultCount()
+        public async Task<MeetingResultCount> GetMeetingResultCount(string Emailid)
         {
             try
             {
-                return await _dashboardRespository.GetMeetingResultCount();
+                return await _dashboardRespository.GetMeetingResultCount(Emailid);
             }
             catch (Exception ex)
             {
@@ -108,11 +108,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<CandidatesCount> GetCandidatesCount()
+        public async Task<CandidatesCount> GetCandidatesCount(string Emailid)
         {
             try
             {
-                var countObj = await _dashboardRespository.GetCandidatesCount();
+                var countObj = await _dashboardRespository.GetCandidatesCount(Emailid);
                 countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.Pending);
                 return countObj;
             }
@@ -489,11 +489,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement()
+        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement(string Emailid)
         {
             try
             {
-                return await _dashboardRespository.GetInterviewManagement();
+                return await _dashboardRespository.GetInterviewManagement(Emailid);
             }
             catch (Exception ex)
             {

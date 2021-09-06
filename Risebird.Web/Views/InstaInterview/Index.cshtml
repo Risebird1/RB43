@@ -289,7 +289,10 @@
                                                     <th>Assessment Group</th>
                                                     <th>Interviewer</th>
                                                     <th>Zoom Link</th>
-                                                    <th>Zoom Id</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    {
+                                                        <th>Zoom Id</th>
+                                                    }
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
@@ -306,7 +309,10 @@
                                                     <th>Assessment Group</th>
                                                     <th>Interviewer</th>
                                                     <th>Zoom Link</th>
-                                                    <th>Zoom Id</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    {
+                                                        <th>Zoom Id</th>
+                                                    }
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
@@ -383,7 +389,10 @@
                                                         {
                                                             <td><span style="color:red">No Zoom Link</span></td>
                                                         }
-                                                        <td>@item.AccountEmail</td>
+                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                        {
+                                                            <td>@item.AccountEmail</td>
+                                                        }
                                                         <td class="text-center"> @item.ConfirmationStatus</td>
                                                         @if (item.MeetingStatusStatusDesc != "0")
                                                         {

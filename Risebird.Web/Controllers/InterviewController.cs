@@ -531,10 +531,12 @@ namespace Risebird.Web.Controllers
 
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorHR")
                     {
 
-                        var modelList = _meetingService.MultipleCandidateInvites();
+                        var modelList = _meetingService.MultipleCandidateInvites(emailid);
                         if (profileName == "Admin" || profileName == "SeniorHR")
                         {
                             modelList.ForEach(x => x.IsAdmin = true);
@@ -579,7 +581,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 var selectedMeeting = new List<MeetingVM>();
-                var modelList = _meetingService.MultipleCandidateInvites();
+                var modelList = _meetingService.MultipleCandidateInvites(emailid);
 
                 modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -3552,7 +3554,7 @@ namespace Risebird.Web.Controllers
                                 //find all IRFowner and Users
                                 var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
                                 var maillist = String.Join(";", clientlist);
-                                string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport/" + model.InterviewId + "&irfId=" + model.IRFId;
+                                string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
                                 Mail _mail1 = new Mail
                                 {
                                     TO = maillist,
@@ -3574,26 +3576,24 @@ namespace Risebird.Web.Controllers
                                 _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report saved successfully";
-                            if (profileName == "Admin" || profileName == "HR")
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
                             }
                             else if (model.IsQC)
                             {
                                 return RedirectToAction("MyQualityControlledInterviews");
-
                             }
                             else
                             {
                                 return RedirectToAction("MyInterview");
-
                             }
 
                         }
                         else
                         {
                             TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
-                            if (profileName == "Admin" || profileName == "HR")
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
                             }

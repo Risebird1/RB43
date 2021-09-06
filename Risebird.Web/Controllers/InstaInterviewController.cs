@@ -32,7 +32,8 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService _interviewerService;
         private readonly IMeetingService _meetingService;
         private readonly IIRFRepository _irfRepository;
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository)
+        private readonly IUserService _userService;
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -42,6 +43,7 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             _meetingService = meetingService;
             _irfRepository = irfRepository;
+            _userService = userService;
         }
         public async Task<IActionResult> InstaIRF()
         {
@@ -100,8 +102,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InstaMeetingVM();
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                        if (profileName == "SeniorHR")
-                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -209,8 +210,7 @@ namespace Risebird.Web.Controllers
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                        if (profileName == "SeniorHR")
-                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -281,8 +281,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            if (profileName == "SeniorHR")
-                                Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("EditRequest", meeting);
                         }
@@ -1057,7 +1056,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
-                                string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport/" + model.id + "&Requestedid=" + model.RequestId;
+                                string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + model.id + "&Requestedid=" + model.RequestId;
                                 Mail _mail1 = new Mail
                                 {
                                     TO = model.RequestedBy,
@@ -1114,7 +1113,6 @@ namespace Risebird.Web.Controllers
                 bool isAdminHR = false;
                 ViewBag.actiontype = actiontype;
                 string profileName = HttpContext.Session.GetString("profileName");
-                ViewBag.Profile = profileName.Replace("\"", "");
                 ViewBag.PageStatus = "Public";
                 ViewBag.PageReport = "";
                 var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
@@ -1126,6 +1124,12 @@ namespace Risebird.Web.Controllers
                 model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.isAdminHR = isAdminHR;
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
                 return View("AddReport", model);
             }
             catch (Exception ex)
@@ -1142,7 +1146,7 @@ namespace Risebird.Web.Controllers
                 bool isAdminHR = false;
                 ViewBag.actiontype = actiontype;
                 string profileName = HttpContext.Session.GetString("profileName");
-                ViewBag.Profile = profileName.Replace("\"", "");
+
                 ViewBag.PageStatus = "Public";
                 ViewBag.PageReport = "Insta";
                 var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
@@ -1154,6 +1158,12 @@ namespace Risebird.Web.Controllers
                 model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.isAdminHR = isAdminHR;
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
                 return View("AddReport", model);
             }
             catch (Exception ex)

@@ -13,7 +13,7 @@ namespace Risebird.Business.Interface
         bool AddMeeting(AddUpdateMeetingVM meeting);
         List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate);
-        List<MeetingVM> MultipleCandidateInvites();
+        List<MeetingVM> MultipleCandidateInvites(string emailid);
         Task<AddUpdateMeetingVM> GetMeeting(int id);
         List<Meeting> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
@@ -129,7 +129,7 @@ namespace Risebird.Business.Interface
         List<string> FetchClientUsers(string ClientName);
         string SetCandidateAvailability(string imid, int isavailable);
         string MoveToCP(string imid, int movetocp);
-        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
+        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate,string email);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
         IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);

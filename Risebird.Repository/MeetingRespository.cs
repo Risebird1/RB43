@@ -434,13 +434,15 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<IEnumerable<MeetingVM>> MultipleCandidateInvites()
+        public async Task<IEnumerable<MeetingVM>> MultipleCandidateInvites(string emailid)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_MultipleCandidateInvites", null,
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_MultipleCandidateInvites", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }
@@ -4180,7 +4182,7 @@ namespace Risebird.Repository
             }
             return "fail";
         }
-        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate,string email)
         {
             try
             {
@@ -4189,6 +4191,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
+                    parameters.Add("@email", email);
                     var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllSelectedCandidateInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
