@@ -51,20 +51,19 @@
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 @Html.HiddenFor(model => model.RequestId)
-           
-                                <div class="report-full-wrap">
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Candidate Details</span></h3>
-                                            </div><!--end of multiple location-->
-                                        </div>
+                                @Html.HiddenFor(model => model.PreviousMeetingStatus)
+                                @Html.HiddenFor(model => model.RequestedBy)
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Candidate Details</h2>
+                                        </div><!--end of multiple location-->
                                     </div>
-                                    <div class="card-wrap">
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                                     @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                 </div>
@@ -432,7 +431,6 @@
 <script>
     function SubmitForm() {
         //disable button
-        document.getElementById("btnUpload").disabled = true;
         if (CheckConditions()) {
             document.getElementById("reportForm").submit();
         }

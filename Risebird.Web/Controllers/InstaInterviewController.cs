@@ -741,7 +741,7 @@ namespace Risebird.Web.Controllers
                             Mail _mail1 = new Mail
                             {
                                 TO = clientname,
-                                Subject = "Risebird: Insta interview has been scheduled for " + CandidateName
+                                Subject = "Risebird: Insta interview has been confirmed for " + CandidateName
                             };
                             var emailsend1 = _notificationHelper.InstaClientInterviewwithzoomlink(_mail1, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
 
@@ -945,11 +945,11 @@ namespace Risebird.Web.Controllers
                     if (profileName != null)
                     {
                         profileName = profileName.Replace("\"", "");
-                        if (profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                        if (profileName == "HR" || profileName == "Client")
                         {
                             isAdminHR = true;
                         }
-                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller")
+                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "SeniorHR")
                         {
                             isInterviewer = true;
                         }
@@ -957,7 +957,7 @@ namespace Risebird.Web.Controllers
                     var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
                     if (model == null)
                     {
-                        if (isAdminHR || profileName == "Admin")
+                        if (isAdminHR || profileName == "Admin" || profileName == "SeniorHR")
                         {
                             return RedirectToAction("Index", new { id = Requestedid });
                         }
@@ -1011,11 +1011,11 @@ namespace Risebird.Web.Controllers
                         if (profileName != null)
                         {
                             profileName = profileName.Replace("\"", "");
-                            if (profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                            if (profileName == "HR" || profileName == "Client")
                             {
                                 isAdminHR = true;
                             }
-                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller")
+                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "SeniorHR")
                             {
                                 isInterviewer = true;
                             }
@@ -1055,9 +1055,19 @@ namespace Risebird.Web.Controllers
                         }
                         if (_instaInterviewService.AddInstaInterviewReport(model, emailid).Result)
                         {
+                            if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
+                            {
+                                string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport/" + model.id + "&Requestedid=" + model.RequestId;
+                                Mail _mail1 = new Mail
+                                {
+                                    TO = model.RequestedBy,
+                                    Subject = "Insta Report URL of " + model.CandidateName + " - for Insta Interview"
+                                };
+                                var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                            }
                             TempData["SuccessErrorMessage"] = "Report saved Successfully";
                             //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
-                            if (profileName == "Admin")
+                            if (profileName == "Admin" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index", new { id = model.RequestId });
                             }

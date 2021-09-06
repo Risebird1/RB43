@@ -219,6 +219,7 @@ namespace Risebird.Business
             try
             {
                 var interviewDetails = _instaInterviewRepository.GetInstaInteviewReport(interviewId).Result;
+                interviewDetails.PreviousMeetingStatus = interviewDetails.MeetingStatus;
                 return interviewDetails;
             }
             catch (Exception e)

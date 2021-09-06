@@ -58,6 +58,7 @@ namespace Risebird.Entities.ViewModel
         public int CompletedInterview { get; set; }
         public int SelectedCandidate { get; set; }
         public string AccountEmail { get; set; }
+        public int PreviousMeetingStatus { get; set; }
     }
     public class InstaTechSkill
     {

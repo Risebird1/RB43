@@ -1305,7 +1305,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
+                if (profileName == "Admin" || profileName == "SeniorHR")
                 {
                     List<MeetingVM> modelList = new List<MeetingVM>();
                     if (HttpContext.Session.GetString("CommonPoolSelectedCandidatefilters") != null)
@@ -1415,7 +1415,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
+                if (profileName == "Admin" || profileName == "SeniorHR")
                 {
                     if (filter != null)
                     {
