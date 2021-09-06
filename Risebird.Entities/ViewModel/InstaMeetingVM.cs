@@ -41,7 +41,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Resume File")]
         public IFormFile ResumeFile { get; set; }
-        [Display(Name = "JD File")]
+        [Display(Name = "JD File (Optional)")]
         public IFormFile JDFile { get; set; }
         [Display(Name = "Assessment Group List ")]
         public SelectList AssessmentGroupList { get; set; }
