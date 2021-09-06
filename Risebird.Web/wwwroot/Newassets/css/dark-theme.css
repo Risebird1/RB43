@@ -1362,7 +1362,7 @@ table.dataTable thead .sorting:after {
     background-color: #1a1a1a !important;
 }
 
-.multiple_row > h2 {
+.multiple_row > h2, #reportForm .multiple_row > h3 {
     background-color: #121212 !important;
 }
 
@@ -2029,7 +2029,7 @@ div.dataTables_wrapper div.dataTables_info {
     position: absolute;
     text-transform: uppercase;
 }
-.instainterview .multiple_row > h2:before {
+.instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
     background-color: rgb(43 43 43);
     border-right: 30px solid rgb(43 43 43);
 }
@@ -2041,7 +2041,36 @@ div.dataTables_wrapper div.dataTables_info {
     color: #908c8c !important;
     border-radius: 0rem !important;
 }
-input[type="radio"]:checked:before {
+#reportForm .report-wrap, #reportForm .card-wrap {
+    background: #232222;
+}
+.mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+    background: #383838;
+}
+    .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+        color: #9c9797c4 !important;
+        font-weight:400;
+    }
+
+#reportForm .videoConplayer {
+    background: #232222;
+}
+#reportForm table {
+    background: #232222;
+}
+#reportForm .talk-bubble textarea {
+    background: #181818 !important;
+}
+#reportForm .textarealabel {
+    color: #9a9a9a !important;
+}
+#QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable.table-bordered td {
+    border-right: 1px solid #444444 !important;
+    border-left: 0px solid #444444 !important;
+    border-top: 1px solid #444444 !important;
+    border-top: 1px solid #444444 !important;
+}
+    input [type="radio"]:checked:before {
     background: #787878 !important;
 }
 

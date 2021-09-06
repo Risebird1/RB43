@@ -2095,7 +2095,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
+                if (profileName == "Admin" || profileName == "SeniorHR")
                 {
                     var model = _meetingService.GetVideoIntrestDetails();
                     foreach (var item in model)

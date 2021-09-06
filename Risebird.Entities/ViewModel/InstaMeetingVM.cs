@@ -41,7 +41,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Resume File")]
         public IFormFile ResumeFile { get; set; }
-        [Display(Name = "JD File")]
+        [Display(Name = "JD File (Optional)")]
         public IFormFile JDFile { get; set; }
         [Display(Name = "Assessment Group List ")]
         public SelectList AssessmentGroupList { get; set; }
@@ -58,6 +58,7 @@ namespace Risebird.Entities.ViewModel
         public int CompletedInterview { get; set; }
         public int SelectedCandidate { get; set; }
         public string AccountEmail { get; set; }
+        public int PreviousMeetingStatus { get; set; }
     }
     public class InstaTechSkill
     {

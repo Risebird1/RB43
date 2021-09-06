@@ -9,14 +9,14 @@ namespace Risebird.Repository.Interface
     public interface IDashboarRepository
     {
 
-        Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date);
-        Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date);
+        Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date,string Emailid);
+        Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date,string Emailid);
         Task<DashboardInterviewerCount> GetInterviewerCount();
-        Task<IEnumerable<IRF>> GetIRFProgress(DateTime date);
+        Task<IEnumerable<IRF>> GetIRFProgress(DateTime date,string Emailid);
         IEnumerable<IrfProgress> GetProgressOptions();
         Task<bool> UpdateIRFProgress(IList<IRF> irfProgressList);
-        Task<MeetingResultCount> GetMeetingResultCount();
-        Task<CandidatesCount> GetCandidatesCount();
+        Task<MeetingResultCount> GetMeetingResultCount(string Emailid);
+        Task<CandidatesCount> GetCandidatesCount(string Emailid);
         Task<IEnumerable<Meeting>> GetDateWiseClientMeetings(DateTime date, string emailId);
         Task<IRFFunnel> GetClientFunnelData(string emailId);
         Task<IEnumerable<ClientDailySlotsStatus>> GetDateWiseClientMeetingsSlots(DateTime date, string emailId);
@@ -44,6 +44,6 @@ namespace Risebird.Repository.Interface
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid);
         Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting();
         Task<List<ZoomMeetingHistoryDetails>> FetchZoomMeetingHistory(string meetingid);
-        Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement();
+        Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement(string Emailid);
     }
 }

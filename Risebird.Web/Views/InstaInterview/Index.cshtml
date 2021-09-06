@@ -71,7 +71,8 @@
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "InstaInterview",new { Requestedid=ViewBag.Requestid})'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
                         </button>
 
-                        @Html.ActionLink("Back to List", "InstaIRF", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        <div class="desktop-view pull-left">  @Html.ActionLink("Back to List", "InstaIRF", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })</div>
+                        <div class="mobile-view pull-left">  @Html.ActionLink("Back", "InstaIRF", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })</div>
                     </div>
                 </div>
             </div>
@@ -288,7 +289,10 @@
                                                     <th>Assessment Group</th>
                                                     <th>Interviewer</th>
                                                     <th>Zoom Link</th>
-                                                    <th>Zoom Id</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    {
+                                                        <th>Zoom Id</th>
+                                                    }
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
@@ -305,7 +309,10 @@
                                                     <th>Assessment Group</th>
                                                     <th>Interviewer</th>
                                                     <th>Zoom Link</th>
-                                                    <th>Zoom Id</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    {
+                                                        <th>Zoom Id</th>
+                                                    }
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
@@ -320,13 +327,18 @@
 
                                                     <tr id=@item.id>
                                                         <td class="text-center action">
-                                                            <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id, Requestedid = ViewBag.Requestid })'>Report</a>
-                                                            @*<span class="interview_9">
+                                                            @if (ViewBag.profile == "Client")
+                                                            {
+                                                                <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id, Requestedid = ViewBag.Requestid })'>Report</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="interview_9">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                         <span onclick="location.href = '@Url.Action("AddReport", "InstaInterview", new { interviewId = item.id,Requestedid=ViewBag.Requestid})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                     </button>
-                                                                </span>*@
-
+                                                                </span>
+                                                            }
                                                         </td>
                                                         <td> @item.RequestedDate </td>
                                                         <td>@item.CandidateName</td>
@@ -350,12 +362,15 @@
                                                                         <div class="article">
 
                                                                             <p>
-                                                                                @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length - 1)
+                                                                                @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length)
                                                                             </p>
                                                                         </div>
-                                                                    }}
+                                                                    }
+                                                                }
                                                                 else
-                                                                { <div></div>}
+                                                                {
+                                                                    <div></div>
+                                                                }
 
                                                                 <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
 
@@ -374,7 +389,10 @@
                                                         {
                                                             <td><span style="color:red">No Zoom Link</span></td>
                                                         }
-                                                        <td>@item.AccountEmail</td>
+                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                        {
+                                                            <td>@item.AccountEmail</td>
+                                                        }
                                                         <td class="text-center"> @item.ConfirmationStatus</td>
                                                         @if (item.MeetingStatusStatusDesc != "0")
                                                         {

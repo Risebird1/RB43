@@ -46,7 +46,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-
+                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         var model = new DashboardVM();
@@ -54,7 +55,7 @@ namespace Risebird.Web.Controllers
                         //daily interview tracking first chart
                         model = GetDateWiseInterviews(DateTime.Now);
                         //daily interview tracking slots
-                        model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
+                        model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now, Emailid);
                         model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
                         model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount();
                         var progressDate = TempData.Peek("ProgressDate")?.ToString();
@@ -67,17 +68,18 @@ namespace Risebird.Web.Controllers
                         {
                             model.ProgressDate = DateTime.Now;
                         }
-                        model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate));
-                        model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount();
-                        model.CandidatesCountObj = await _dashboardService.GetCandidatesCount();
+                        model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
+                        model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
+                        model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                         model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
+                        //need to Update
                         var channelrequest = await _dashboardService.FetchChannelRequests();
                         model.ChannelRequest = channelrequest;
-                        var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement();
+                        var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
                         interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
                         {
@@ -117,8 +119,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseMeetings(date).Result;
+                model.Meetings = _dashboardService.GetDateWiseMeetings(date, Emailid).Result;
                 var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
                 //var irfList = model.Meetings.Select(x => x.IRFID).Distinct();
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
@@ -150,8 +158,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseMeetings(date).Result;
+                model.Meetings = _dashboardService.GetDateWiseMeetings(date, Emailid).Result;
                 model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                 return PartialView("InterviewStatusPartial", model);
             }
@@ -166,8 +180,16 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date).Result;
+                model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date, Emailid).Result;
                 return PartialView("InterviewSlotsPartial", model);
             }
             catch (Exception ex)
@@ -196,8 +218,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(date));
+                model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(date, Emailid));
                 model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
                 model.ProgressDate = date;
                 TempData["ProgressDate"] = date;
@@ -1199,6 +1227,6 @@ namespace Risebird.Web.Controllers
             var modelList = await _dashboardService.FetchZoomMeetingHistory(meetingid);
             return Json(modelList);
         }
-        
+
     }
 }

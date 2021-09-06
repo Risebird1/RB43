@@ -181,16 +181,19 @@ namespace Risebird.Business
             {
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterviewsForTheWeek(interviewerMail).Result;
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
+                var clashingInterviews = assignedMeeting.Where(x => (x.interviewDate > interviewDate && x.interviewDate < interviewDate.AddMinutes(60)) || (x.interviewDate < interviewDate && interviewDate.AddMinutes(-60) < x.interviewDate));
                 if (checkDateMeeting != null && checkDateMeeting.Count() > 0)
                 {
                     return "Failed! You already have an interview scheduled at this time. Please contact Risebird HR.";
                 }
-                var clashingInterviews = assignedMeeting.Where(x => (x.interviewDate > interviewDate && x.interviewDate < interviewDate.AddMinutes(60)) || (x.interviewDate < interviewDate && interviewDate.AddMinutes(-60) < x.interviewDate));
-                if (clashingInterviews != null && clashingInterviews.Count() > 0)
+                else if (clashingInterviews != null && clashingInterviews.Count() > 0)
                 {
                     return "Failed! You already have an interview scheduled within 60 minutes. Please contact Risebird HR.";
                 }
-                return _instaInterviewRepository.InstaAssignYourself(meetingid, interviewerMail);
+                else
+                {
+                    return _instaInterviewRepository.InstaAssignYourself(meetingid, interviewerMail);
+                }
             }
             catch (Exception ex)
             {
@@ -216,6 +219,7 @@ namespace Risebird.Business
             try
             {
                 var interviewDetails = _instaInterviewRepository.GetInstaInteviewReport(interviewId).Result;
+                interviewDetails.PreviousMeetingStatus = interviewDetails.MeetingStatus;
                 return interviewDetails;
             }
             catch (Exception e)

@@ -20,7 +20,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetIRFInterviewMeetings(int id, string profileName, string email);
         string GetQCSkills(int id);
         SelectList GetQualityController();
-        Task<IRFVm> GetEditIRF(int id);
+        Task<IRFVm> GetEditIRF(int id, bool isClone = false);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
         IList<SkillComment> GetTechSkillComments(int id);
         bool CheckUniqueness(string value);
@@ -82,7 +82,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Level> GetLevels();
         IEnumerable<LevelTech> GetLevelTech();
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
         Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null);
         Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);

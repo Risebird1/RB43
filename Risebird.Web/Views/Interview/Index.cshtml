@@ -60,7 +60,7 @@
 
                 <div class="pull-right">
                     <div>
-                        @if (ViewBag.profile == "Admin")
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="Selected Candidates" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>

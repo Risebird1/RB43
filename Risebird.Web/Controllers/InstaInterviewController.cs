@@ -32,7 +32,8 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService _interviewerService;
         private readonly IMeetingService _meetingService;
         private readonly IIRFRepository _irfRepository;
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository)
+        private readonly IUserService _userService;
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -42,6 +43,7 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             _meetingService = meetingService;
             _irfRepository = irfRepository;
+            _userService = userService;
         }
         public async Task<IActionResult> InstaIRF()
         {
@@ -100,6 +102,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InstaMeetingVM();
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -170,6 +173,8 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            if (profileName == "SeniorHR")
+                                Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("CreateRequest", meeting);
                         }
@@ -205,6 +210,7 @@ namespace Risebird.Web.Controllers
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
                         var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                         model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -275,6 +281,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("EditRequest", meeting);
                         }
@@ -313,6 +320,11 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
                         }
                         List<InstaMeetingVM> modelList = new List<InstaMeetingVM>();
                         if (HttpContext.Session.GetString("InstaInterviewfilters") != null)
@@ -708,13 +720,14 @@ namespace Risebird.Web.Controllers
                         var result = _instaInterviewService.InstaAssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                         if (result.Contains("Successfully"))
                         {
-
                             InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
                             _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddMinutes(15), INDIAN_ZONE);
                             _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
                             var accountEmail = await _instaInterviewService.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
+                            if (String.IsNullOrEmpty(accountEmail))
+                                accountEmail = "me";
                             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
                             var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url, indianTime, indianTime.AddMinutes(60), accountEmail);
                             //Send Mail to Client And Interviewer
@@ -727,7 +740,7 @@ namespace Risebird.Web.Controllers
                             Mail _mail1 = new Mail
                             {
                                 TO = clientname,
-                                Subject = "Risebird: Insta interview has been scheduled for " + CandidateName
+                                Subject = "Risebird: Insta interview has been confirmed for " + CandidateName
                             };
                             var emailsend1 = _notificationHelper.InstaClientInterviewwithzoomlink(_mail1, CandidateName, zoomlink.join_url, zoomlink.InterviewDate);
 
@@ -931,11 +944,11 @@ namespace Risebird.Web.Controllers
                     if (profileName != null)
                     {
                         profileName = profileName.Replace("\"", "");
-                        if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                        if (profileName == "HR" || profileName == "Client")
                         {
                             isAdminHR = true;
                         }
-                        else if ((profileName == "Interviewer" || profileName == "Quality Controller"))
+                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "SeniorHR")
                         {
                             isInterviewer = true;
                         }
@@ -943,9 +956,9 @@ namespace Risebird.Web.Controllers
                     var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
                     if (model == null)
                     {
-                        if (isAdminHR)
+                        if (isAdminHR || profileName == "Admin" || profileName == "SeniorHR")
                         {
-                            return RedirectToAction("Index");
+                            return RedirectToAction("Index", new { id = Requestedid });
                         }
                         else if (isInterviewer)
                         {
@@ -990,8 +1003,22 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     ViewBag.PageStatus = "Mainurl";
                     ViewBag.Profile = profileName.Replace("\"", "");
+                    bool isAdminHR = false;
+                    bool isInterviewer = false;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
                     {
+                        if (profileName != null)
+                        {
+                            profileName = profileName.Replace("\"", "");
+                            if (profileName == "HR" || profileName == "Client")
+                            {
+                                isAdminHR = true;
+                            }
+                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "SeniorHR")
+                            {
+                                isInterviewer = true;
+                            }
+                        }
                         var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
@@ -999,11 +1026,12 @@ namespace Risebird.Web.Controllers
                                               select new { ID = (int)s, Name = s.GetDescription() };
                         model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
-                        {
-                            ModelState.AddModelError(String.Empty, "Video file/link not found.");
-                            return View("AddReport", model);
-                        }
+                        ViewBag.isAdminHR = isAdminHR;
+                        //if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
+                        //{
+                        //    ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                        //    return View("AddReport", model);
+                        //}
                         if (model.VideoFile != null)
                         {
                             AzureCall _call = new AzureCall(_configuration);
@@ -1026,14 +1054,38 @@ namespace Risebird.Web.Controllers
                         }
                         if (_instaInterviewService.AddInstaInterviewReport(model, emailid).Result)
                         {
+                            if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
+                            {
+                                string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + model.id + "&Requestedid=" + model.RequestId;
+                                Mail _mail1 = new Mail
+                                {
+                                    TO = model.RequestedBy,
+                                    Subject = "Insta Report URL of " + model.CandidateName + " - for Insta Interview"
+                                };
+                                var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                            }
                             TempData["SuccessErrorMessage"] = "Report saved Successfully";
                             //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
-                            return RedirectToAction("MyInterview");
+                            if (profileName == "Admin" || profileName == "SeniorHR")
+                            {
+                                return RedirectToAction("Index", new { id = model.RequestId });
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterview");
+                            }
                         }
                         else
                         {
                             TempData["SuccessErrorMessage"] = "Report was not saved.";
-                            return RedirectToAction("MyInterview");
+                            if (profileName == "Admin")
+                            {
+                                return RedirectToAction("Index", new { id = model.RequestId });
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterview");
+                            }
                         }
                     }
                     else
@@ -1061,7 +1113,6 @@ namespace Risebird.Web.Controllers
                 bool isAdminHR = false;
                 ViewBag.actiontype = actiontype;
                 string profileName = HttpContext.Session.GetString("profileName");
-                ViewBag.Profile = profileName.Replace("\"", "");
                 ViewBag.PageStatus = "Public";
                 ViewBag.PageReport = "";
                 var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
@@ -1073,6 +1124,12 @@ namespace Risebird.Web.Controllers
                 model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.isAdminHR = isAdminHR;
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
                 return View("AddReport", model);
             }
             catch (Exception ex)
@@ -1089,7 +1146,7 @@ namespace Risebird.Web.Controllers
                 bool isAdminHR = false;
                 ViewBag.actiontype = actiontype;
                 string profileName = HttpContext.Session.GetString("profileName");
-                ViewBag.Profile = profileName.Replace("\"", "");
+
                 ViewBag.PageStatus = "Public";
                 ViewBag.PageReport = "Insta";
                 var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
@@ -1101,6 +1158,12 @@ namespace Risebird.Web.Controllers
                 model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.isAdminHR = isAdminHR;
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
                 return View("AddReport", model);
             }
             catch (Exception ex)

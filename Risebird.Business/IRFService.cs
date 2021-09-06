@@ -441,7 +441,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IRFVm> GetEditIRF(int id)
+        public async Task<IRFVm> GetEditIRF(int id, bool isClone=false)
         {
             try
             {
@@ -452,7 +452,7 @@ namespace Risebird.Business
                 var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
                 var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
                 var transJoinability = _irfRepository.GetTransJoinability(id);
-                var transClientUser = _irfRepository.GetTransClientUser(id);
+                //var transClientUser = _irfRepository.GetTransClientUser(id);
                 var transInterviewer = _irfRepository.GetTransInterviewer(id);
                 var transQualityController = _irfRepository.GetTransQualityController(id);
                 var transSelectability = _irfRepository.GetTransSelectability(id);
@@ -480,7 +480,11 @@ namespace Risebird.Business
                 model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
                 model.Selectability = (IList<TransSelectability>)(transSelectability);
                 model.StartDate = IRF.StartDate;
-                model.ClientCollection = (IList<TransClientUser>)(transClientUser);
+                if(!isClone)
+                {
+                    var transClientUser = _irfRepository.GetTransClientUser(id);
+                    model.ClientCollection = (IList<TransClientUser>)(transClientUser);
+                }
                 model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
                 model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
                 model.HRCollection = (IList<TransHR>)(transHR);
@@ -1060,7 +1064,7 @@ namespace Risebird.Business
                     _whatsapp.Header = client.Name;
                     _whatsapp.Event = "Interview Schedule";
                     _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
-                    if(!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                    if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
                     {
                         _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
                     }
@@ -1735,11 +1739,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0)
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id)
         {
             try
             {
-                return await _irfRepository.GetCandidateTimeline(emailId, id);
+                return await _irfRepository.GetCandidateTimeline(id);
             }
 
             catch (Exception e)

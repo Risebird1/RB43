@@ -22,7 +22,7 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+
     public class IRFController : Controller
     {
         private readonly IIRFRepository _irfRepository;
@@ -42,8 +42,9 @@ namespace Risebird.Web.Controllers
         private IInterviewerService _interviewerService;
         private readonly INotificationHelper _notificationHelper;
         private readonly ITemplateService _templateService;
+        private readonly IClientService _clientService;
 
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService)
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -59,6 +60,7 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             _notificationHelper = notificationHelper;
             _templateService = templateService;
+            _clientService = clientService;
         }
 
 
@@ -685,7 +687,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Add(string IntrviewerId, int? templateId = null)
         {
-            if (HttpContext.Session.GetString("email") != null)
+            if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
                 var model = new IRFVm();
                 if (!string.IsNullOrEmpty(IntrviewerId))
@@ -796,7 +798,6 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
                 interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString()).ToList();
-
             }
             else
             {
@@ -810,6 +811,15 @@ namespace Risebird.Web.Controllers
             model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
             var clients = _irfRepository.GetClients();
             ViewBag.Clients = new SelectList(clients, "id", "Name");
+            if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                profilename = profilename.Replace("\"", "");
+                if (profilename == "SeniorHR")
+                    ViewBag.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
+            }
             ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
             var Skillset = skills;
@@ -1546,7 +1556,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var model = await _irfService.GetEditIRF(id);
+                    var model = await _irfService.GetEditIRF(id, isClone);
                     model.IsClone = isClone;
                     SetEditIRFProperties(model);
                     //TempData["JDLink"] = model.JDLink;
@@ -1754,7 +1764,16 @@ namespace Risebird.Web.Controllers
                 Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-            ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
+            if (!model.IsClone)
+            {
+                ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
+
+            }
+            else
+            {
+                model.ClientCollection = null;
+                model.ClientId = 0;
+            }
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
             ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
             ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
@@ -1884,7 +1903,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.PageStatus = "Mainurl";
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (model.AudioFile != null)
                         {
@@ -3942,7 +3961,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SeniorHR")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {
@@ -4045,11 +4064,13 @@ namespace Risebird.Web.Controllers
             {
                 model._skilldetails.id = modeldata.id;
                 model._skilldetails.AssessmentGroupName = modeldata.AssessmentGroup;
+                model._skilldetails.Isinstaavailable = modeldata.Isinstaavailable;
             }
             else
             {
                 model._skilldetails.id = 0;
                 model._skilldetails.AssessmentGroupName = "";
+                model._skilldetails.Isinstaavailable = false;
             }
             return PartialView(model);
             //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
@@ -4068,7 +4089,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SeniorHR")
                     {
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {
@@ -4643,7 +4664,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var candidateData = await _irfService.GetCandidateTimeline(id);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {
@@ -4794,7 +4815,7 @@ namespace Risebird.Web.Controllers
             if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
             {
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var candidateData = await _irfService.GetCandidateTimeline(id);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {
@@ -5003,7 +5024,7 @@ namespace Risebird.Web.Controllers
             if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
             {
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _irfService.GetCandidateTimeline(profileName == "Client" ? emailid : null, id);
+                var candidateData = await _irfService.GetCandidateTimeline(id);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x => x.Name);
                 foreach (var candidate in distinctCandidates)
                 {

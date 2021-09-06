@@ -137,7 +137,7 @@ namespace Risebird.Repository.Interface
         Task<int> GetCandidateIdByEmail(string emailId);
         Task<IEnumerable<string>> GetIRFClientsEmail(int irfId);
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id);
         Task<bool> AddQCCandidateStatus(int interviewId, string performedBy);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<Candidate> GetCandidateByIRF(int irfId, string emailId);

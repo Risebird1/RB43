@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[InterviewPoints](
 	[Status] [varchar](20) NULL,
 	[Date] [datetime] NULL,
 	[InterviewerId] [int] NULL,
+	[PaymentHistoryId] [int] NULL,
  CONSTRAINT [PK_InterviewPoints] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -27,6 +28,15 @@ IF Not EXISTS(
 BEGIN
     ALTER TABLE InterviewPoints
     Add  InterviewerId int
+END
+IF Not EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PaymentHistoryId')
+      AND Object_ID = Object_ID(N'InterviewPoints'))
+BEGIN
+    ALTER TABLE InterviewPoints
+    Add  PaymentHistoryId int
 END
 GO
 

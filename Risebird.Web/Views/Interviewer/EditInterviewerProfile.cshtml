@@ -267,6 +267,14 @@
                                             </div>
                                         }
                                     </div>
+                                    <div>
+                                        @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.Isinstaavailable, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.Isinstaavailable, "", new { @class = "text-danger" })
+                                    </div>
                                     @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
                                     @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
                                     @*@Html.HiddenFor(m => m.ResumeLink, Model.ResumeLink)

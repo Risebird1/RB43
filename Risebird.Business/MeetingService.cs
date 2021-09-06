@@ -218,12 +218,12 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> MultipleCandidateInvites()
+        public List<MeetingVM> MultipleCandidateInvites(string emailid)
         {
             try
             {
 
-                return _meetingRespository.MultipleCandidateInvites().Result.ToList();
+                return _meetingRespository.MultipleCandidateInvites(emailid).Result.ToList();
             }
             catch (Exception ex)
             {
@@ -2567,11 +2567,11 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se)
+        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory)
         {
             try
             {
-                var result = _meetingRespository.RBConfirmPayment(interviewerid, index, st, se);
+                var result = _meetingRespository.RBConfirmPayment(interviewerid, index, st, se, paymenthistory);
                 return result.Result;
             }
             catch (Exception e)
@@ -2593,11 +2593,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount)
+        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId)
         {
             try
             {
-                var result = _meetingRespository.InsertAdvancePayment(Interviewer, Comment, Amount);
+                var result = _meetingRespository.InsertAdvancePayment(Interviewer, Comment, Amount, PaymentHistoryId);
                 return result.Result;
             }
             catch (Exception e)
@@ -2675,11 +2675,11 @@ namespace Risebird.Business
                 return "fail";
             }
         }
-        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email)
         {
             try
             {
-                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate, email).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -2977,6 +2977,7 @@ namespace Risebird.Business
                 return null;
             }
         }
+
         public IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid)
         {
             try
@@ -2987,6 +2988,21 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetPaymentHistoryDetailsView(interviewerid);
+                return result.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
