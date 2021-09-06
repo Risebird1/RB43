@@ -171,7 +171,7 @@ textarea::-webkit-scrollbar {
 .instainterview .upload-area {
     background: #f7f7f7;
 }
-.instainterview .multiple_row > h2:before {
+.instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
     background-color: rgb(233 112 39);
     border-right: 30px solid rgb(233 112 39);
 }
@@ -195,7 +195,35 @@ textarea::-webkit-scrollbar {
     background: #ebecee url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 4.2% !important;
 }
+#reportForm .report-wrap, #reportForm .card-wrap {
+    background: #fff;
+}
+.mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+    background: #f7f7f7;
+}
+    .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+        color: #544d4dc4 !important;
+        font-weight: 400;
+    }
 
+#reportForm .videoConplayer {
+    background: #fff;
+}
+#reportForm table {
+    background: #fff;
+}
+#reportForm .talk-bubble textarea {
+    background: #fff !important;
+}
+#reportForm .textarealabel {
+    color: #544d4d !important;
+}
+#QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+}
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
     background: url("../../img/audio-button-set-4-transparent.png") #f5f5f5;
     background-size: 25px;
@@ -492,7 +520,7 @@ table.journey {
     background-color: #ea6e24 !important;
 }
 
-.multiple_row > h2 {
+.multiple_row > h2, #reportForm .multiple_row > h3 {
     background-color: #ea6e24 !important;
 }
 
