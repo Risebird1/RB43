@@ -354,7 +354,7 @@ namespace Risebird.Repository
                 //    return result;
                 //}
                 var model = new InstaMeetingVM();
-                var query = "Select * from InstaInterviewMeetings Where Id=@id";
+                var query = "Select im.*,ir.RequestedBy from InstaInterviewMeetings im join InstaRequests ir on im.RequestedId=ir.id Where im.Id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))

@@ -531,11 +531,11 @@ namespace Risebird.Web.Controllers
 
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin")
+                    if (profileName == "Admin" || profileName == "SeniorHR")
                     {
 
                         var modelList = _meetingService.MultipleCandidateInvites();
-                        if (profileName == "Admin")
+                        if (profileName == "Admin" || profileName == "SeniorHR")
                         {
                             modelList.ForEach(x => x.IsAdmin = true);
                         }

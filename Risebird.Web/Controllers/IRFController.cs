@@ -817,7 +817,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var profilename = HttpContext.Session.GetString("profileName")?.Trim();
                 profilename = profilename.Replace("\"", "");
-                if (profilename == "SenoirHR")
+                if (profilename == "SeniorHR")
                     ViewBag.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
             }
             ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
