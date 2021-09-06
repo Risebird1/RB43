@@ -345,14 +345,6 @@ namespace Risebird.Repository
         {
             try
             {
-                //var parameters = new DynamicParameters();
-                //parameters.Add("@interviewId", interviewid);
-                //using (SqlConnection con = new SqlConnection(connectionString))
-                //{
-                //    var result = await SqlMapper.QueryFirstAsync<InstaMeetingVM>(con, "usp_GetMeetingById", parameters,
-                //        commandType: CommandType.StoredProcedure);
-                //    return result;
-                //}
                 var model = new InstaMeetingVM();
                 var query = "Select im.*,ir.RequestedBy from InstaInterviewMeetings im join InstaRequests ir on im.RequestId=ir.id Where im.Id=@id";
                 var parameters = new DynamicParameters();
@@ -363,13 +355,24 @@ namespace Risebird.Repository
                     model = result.FirstOrDefault();
                 }
                 //Fetch Skills
-                var querySkill = "Select ti.*,lt.Name as Level,ti.SkillId as SkillName from TransInstaSkills ti join LevelTech lt on lt.id=ti.LevelId Where IRFID=@id";
+                var querySkill = "Select ti.*,lt.Name as Level,ti.SkillId as SkillName from TransInstaInterviewSkills ti join LevelTech lt on lt.id=ti.LevelId Where IRFID=@id";
                 var dp = new DynamicParameters();
-                dp.Add("@id", model.RequestId);
+                dp.Add("@id", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query<InstaTechSkill>(querySkill, dp);
-                    model.TechSkill = (List<InstaTechSkill>)result;
+                    if (result.Count() != 0)
+                    {
+                        model.TechSkill = (List<InstaTechSkill>)result;
+                    }
+                    else
+                    {
+                        var querySkill1 = "Select ti.*,lt.Name as Level,ti.SkillId as SkillName from TransInstaSkills ti join LevelTech lt on lt.id=ti.LevelId Where IRFID=@id";
+                        var dp1 = new DynamicParameters();
+                        dp1.Add("@id", model.RequestId);
+                        var result1 = con.Query<InstaTechSkill>(querySkill1, dp1);
+                        model.TechSkill = (List<InstaTechSkill>)result1;
+                    }
                 }
                 return model;
             }
