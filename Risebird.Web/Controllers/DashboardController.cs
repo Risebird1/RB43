@@ -57,7 +57,7 @@ namespace Risebird.Web.Controllers
                         //daily interview tracking slots
                         model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now, Emailid);
                         model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
-                        model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount();
+                        model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
                         var progressDate = TempData.Peek("ProgressDate")?.ToString();
                         if (!string.IsNullOrEmpty(progressDate))
                         {
@@ -944,7 +944,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype);
+                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
                         }
                         if (modelList == null)
                         {
@@ -1099,7 +1099,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
                         }
                         if (modelList == null)
                         {
@@ -1211,7 +1211,13 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
                 return Json(Ribbonmodel);
             }
         }

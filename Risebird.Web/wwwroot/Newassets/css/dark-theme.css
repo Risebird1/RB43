@@ -1071,16 +1071,16 @@ table {
 }
 
 .menu-container ul {
-    border-bottom: 2px #969595 solid;
+    border-bottom: 2px #151515 solid;
 }
 
 .user-menu:before {
-    border-top: 1px solid #e0e0ea;
-    border-left: 1px solid #e0e0ea;
+    border-top: 1px solid #47474a;
+    border-left: 1px solid #47474a;
 }
 
 .user-menu {
-    border: 2px #969595 solid;
+    border: 2px #424141 solid;
 }
 
 .send-btn {
@@ -2073,7 +2073,21 @@ div.dataTables_wrapper div.dataTables_info {
     input [type="radio"]:checked:before {
     background: #787878 !important;
 }
+.user-menu a:hover span, .user-menu span.color-themetxt:hover {
+    color: #47484a !important;
+}
 
+.welcome {
+    background: #252424;
+    padding: 6px 5px;
+    text-align: center;
+}
+.welcome-txt {
+    font-size: 13px;
+}
+.user-menu:before {
+    background: #252424;
+}
 input[type="radio"]:checked {
     border-color: #787878 !important;
 }

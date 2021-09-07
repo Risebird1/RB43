@@ -60,6 +60,10 @@
 
                 <div class="pull-right">
                     <div>
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                        {
+                            <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InstaInterviewsExporttoExcel", "InstaInterview", new { id = ViewBag.Requestid })'"></i></span>
+                        }
                         <span class="interview_3">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
 

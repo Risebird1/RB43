@@ -201,11 +201,25 @@ textarea::-webkit-scrollbar {
 .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
     background: #f7f7f7;
 }
-    .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+ .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
         color: #544d4dc4 !important;
         font-weight: 400;
-    }
+}
+.user-menu a:hover span, .user-menu span.color-themetxt:hover {
+    color: #ec8840 !important;
+}
 
+.welcome {
+    background: #ec8840;
+    padding: 6px 5px;
+    text-align: center;
+}
+.welcome-txt {
+    font-size: 13px;
+}
+.user-menu:before {
+    background: #ec8840;
+}
 #reportForm .videoConplayer {
     background: #fff;
 }

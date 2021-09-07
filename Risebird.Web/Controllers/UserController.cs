@@ -563,7 +563,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         #endregion
 
         #region Interviewer Functions

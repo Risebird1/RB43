@@ -645,7 +645,22 @@ table.journey {
     z-index: 1000;
 }
 
+.user-menu a:hover span, .user-menu span.color-themetxt:hover {
+    color: #47484a!important;
 }
+
+.welcome {
+    background: #8a8a8a;
+    padding: 6px 5px;
+    text-align: center;
+}
+.welcome-txt {
+    font-size: 13px;
+}
+.user-menu:before {
+    background: #8a8a8a;
+}
+
 
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #929292 solid !important;

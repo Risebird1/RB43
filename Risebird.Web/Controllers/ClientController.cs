@@ -4149,5 +4149,28 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have Client access.");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> SendPublicURLClientUser(string Emailid)
+        {
+            try
+            {
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Client/PublicAllMeetings";
+                Mail _mail1 = new Mail
+                {
+                    TO = Emailid,
+                    Subject = "All Meetings Public Url"
+                };
+                var emailsend1 = _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl);
+                if (emailsend1.Contains("successfully"))
+                    return Json("Success");
+                else
+                    return Json("Failed");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
     }
 }

@@ -666,13 +666,21 @@ textarea::-webkit-scrollbar-thumb {
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #417abb;
 }
-
-.user-menu__item span {
-    color: #1f3e63 !important;
-    text-transform: uppercase;
-    font-size: 13px;
-    font-weight: 600;
+.user-menu a:hover span, .user-menu span.color-themetxt:hover {
+    color: #54a5f5 !important;
 }
+.welcome {
+    background: #54a5f5;
+    padding: 6px 5px;
+    text-align: center;
+}
+.welcome-txt {
+    font-size: 13px;
+}
+.user-menu:before {
+    background: #54a5f5;
+}
+
 
 .menu-container ul {
     border-bottom: 2px #86c3ff solid;
