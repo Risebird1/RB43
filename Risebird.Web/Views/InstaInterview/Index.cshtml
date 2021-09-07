@@ -287,7 +287,10 @@
                                                     <th>Candidate Name</th>
                                                     <th>Required Skill</th>
                                                     <th>Assessment Group</th>
-                                                    <th>Interviewer</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    {
+                                                        <th>Interviewer</th>
+                                                    }
                                                     <th>Zoom Link</th>
                                                     @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
                                                     {
@@ -307,7 +310,10 @@
                                                     <th>Candidate Name</th>
                                                     <th>Required Skill</th>
                                                     <th>Assessment Group</th>
-                                                    <th>Interviewer</th>
+                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                    {
+                                                        <th>Interviewer</th>
+                                                    }
                                                     <th>Zoom Link</th>
                                                     @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
                                                     {
@@ -380,7 +386,10 @@
                                                         </td>
 
                                                         <td> @item.AssessmentGroup</td>
-                                                        <td>@item.Interviewer</td>
+                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                        {
+                                                            <td>@item.Interviewer</td>
+                                                        }
                                                         @if (item.ZoomLink != null && item.ZoomLink != "")
                                                         {
                                                             <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.ZoomLink>Zoom Link</a> </td>
