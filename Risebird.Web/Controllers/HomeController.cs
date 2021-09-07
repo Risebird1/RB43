@@ -35,7 +35,8 @@ namespace Risebird.Web.Controllers
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
                 //emailId = "shweta_kadechkar@risebird.io";
-                var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+              //emailId = "lakshmi_naga@risebird.io";
+                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
                 if (String.IsNullOrEmpty(currenttheme))
