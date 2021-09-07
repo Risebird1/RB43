@@ -668,7 +668,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        @if (ViewBag.PageReport != "Insta")
+                                        @if (ViewBag.PageReport != "Insta" && ViewBag.PageStatus != "PublicExternal")
                                         {
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
