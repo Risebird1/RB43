@@ -59,7 +59,8 @@ namespace Risebird.CommonHelper.Interface
         string InstaClientNotification(Mail model, string RequiredSkill);
         string InstaInterviewerNotification(Mail model, string RequiredSkill);
         string InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
-        string InstaReportClientNotification(Mail model, string UrlDetails,string CandidateName);
+        string InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName);
         string InstaClientInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
+        string SendPublicUrlToClient(Mail model, string UrlDetails);
     }
 }

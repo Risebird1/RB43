@@ -712,6 +712,33 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
+                else if (profileName == "SeniorHR")
+                {
+                    var interviewerids = _meetingService.FetchAllInterviewidBySeniorHR(emailid);
+                    foreach (var item in result)
+                    {
+                        if (interviewerids.Any(x => x == item.interviewid))
+                        {
+                            if (modelData.Where(x => x.interviewid == item.interviewid).Count() == 0)
+                            {
+                                modelData.Add(new SurveyVM
+                                {
+                                    interviewid = item.interviewid,
+                                    Question1 = item.Question1,
+                                    Question2 = item.Question2,
+                                    Question3 = item.Question3,
+                                    Question4 = item.Question4,
+                                    Question5 = item.Question5,
+                                    Question6 = item.Question6,
+                                    Name = item.Name,
+                                    EmailAddress = item.EmailAddress,
+                                    CommentforInterviewer = item.CommentforInterviewer,
+                                    PrimarySkill = item.PrimarySkill,
+                                });
+                            }
+                        }
+                    }
+                }
                 else
                 {
                     foreach (var item in result)
