@@ -1550,7 +1550,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, bool isClone = false)
+        public async Task<IActionResult> EditIRF(int id, bool isClone = false, int clonevalue)
         {
             try
             {
@@ -1563,6 +1563,8 @@ namespace Risebird.Web.Controllers
                     model.OldJDLink = model.JDLink;
                     //TempData["ComapanyDetails"] = model.CompanyDetails;
                     model.OldCompanyDetails = model.CompanyDetails;
+                    ViewBag.clonevalue = clonevalue;
+                    model.clonevalue = clonevalue;
                     return View(model);
                 }
                 else
@@ -1591,6 +1593,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
+                    ViewBag.clonevalue = model.clonevalue;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         //check duplicates for interviewer, emergency interviewer and quality controllers

@@ -146,6 +146,7 @@ namespace Risebird.Entities.ViewModel
         public bool isDuplicateEntries { get; set; }
         public string OldCompanyDetails { get; set; }
         public int TemplateId { get; set; }
+        public int clonevalue { get; set; }
 
     }
     public class InterviewerIds
