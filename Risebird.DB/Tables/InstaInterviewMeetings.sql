@@ -33,7 +33,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'InstaInterviewMeetings'))
 BEGIN
     ALTER TABLE InstaInterviewMeetings
-    Add AccountEmail INT NOT NULL DEFAULT 0
+    Add AccountEmail varchar(150)
 END
 END
 GO
