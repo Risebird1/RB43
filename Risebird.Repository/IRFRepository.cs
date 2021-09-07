@@ -4493,6 +4493,32 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public async Task<IEnumerable<SkillCahnnelDetailsVM>> GetAllSkillChannelDetails()
+        {
+            try
+            {
+                var query = "Select IRF.id,IRF.IRFId,ag.AssessmentGroup From IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
+                    return results;
+                }
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    var parameters = new DynamicParameters();
+                //    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", null,
+                //         commandType: CommandType.StoredProcedure);
+                //}
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

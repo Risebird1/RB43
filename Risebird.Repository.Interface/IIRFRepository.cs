@@ -152,5 +152,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRF>> GetPendingCalendlyResourceUriUpdateIRF();
         Task<string> GetIRFCalendlyResourceUri(int irfId);
         Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<SkillCahnnelDetailsVM>> GetAllSkillChannelDetails();
     }
 }

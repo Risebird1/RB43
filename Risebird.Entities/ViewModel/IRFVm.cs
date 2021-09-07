@@ -239,4 +239,10 @@ namespace Risebird.Entities.ViewModel
         public int FutureScheduledMeetings { get; set; }
 
     }
+    public class SkillCahnnelDetailsVM
+    {
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public string AssessmentGroup { get; set; }
+    }
 }
