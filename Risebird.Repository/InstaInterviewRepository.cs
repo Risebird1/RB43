@@ -412,7 +412,7 @@ namespace Risebird.Repository
                     {
                         foreach (var item in reportDetails.TechSkill)
                         {
-                            techReportDt.Rows.Add(reportDetails.RequestId, item.LevelId, item.SkillId, item.ActualLevelId);
+                            techReportDt.Rows.Add(reportDetails.id, item.LevelId, item.SkillId, item.ActualLevelId);
                         }
                         SqlCommand cmdTechReport = new SqlCommand("usp_InstaTechSkillReportBulkInsert", con)
                         {
