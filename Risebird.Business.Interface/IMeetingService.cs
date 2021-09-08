@@ -129,7 +129,7 @@ namespace Risebird.Business.Interface
         List<string> FetchClientUsers(string ClientName);
         string SetCandidateAvailability(string imid, int isavailable);
         string MoveToCP(string imid, int movetocp);
-        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate,string email);
+        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
         IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);
@@ -158,5 +158,7 @@ namespace Risebird.Business.Interface
         List<string> FetchClientListByIRFID(int IRFID);
         IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
         Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
+        Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se);
+        Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
     }
 }

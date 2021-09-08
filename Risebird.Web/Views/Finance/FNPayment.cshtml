@@ -99,6 +99,10 @@
                                             <label id="txtAmount">Amount: @ViewBag.totalAmount </label>
                                             <label id="txtTdsdeducted">Tds deducted: @ViewBag.Tds</label>
                                             <label id="txtPayableAmount">Payable Amount: @ViewBag.payableAmount</label>
+                                            <label id="txtpaidamount">Paid Amount: 0</label>
+                                            <label id="txtinterviewamount">Interview Amount: 0</label>
+                                            <label id="txtnoshowamount">No Show Amount: 0</label>
+                                            <label id="txtdroppedamount">Dropped Amount: 0</label>
                                         </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
@@ -792,6 +796,10 @@
                     $("#txtAmount").text("Amount: " + data.totalAmount);
                     $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
                     $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
+                    $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
+                    $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
+                    $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
+                    $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                 }
             }
         });
@@ -827,6 +835,10 @@
                             $("#txtAmount").text("Amount: " + data.totalAmount);
                             $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
                             $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
+                            $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
+                            $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
+                            $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
+                            $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                         }
                     }
                 });
