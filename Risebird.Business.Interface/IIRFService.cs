@@ -94,6 +94,6 @@ namespace Risebird.Business.Interface
         Task<string> GetInterviewerSkillsByUserId(int userId);
         IEnumerable<Skill> GetSkills();
         Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
-
+        IEnumerable<SkillCahnnelDetailsVM> GetAllSkillChannelDetails();
     }
 }

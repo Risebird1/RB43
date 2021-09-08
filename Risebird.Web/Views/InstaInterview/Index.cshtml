@@ -60,7 +60,7 @@
 
                 <div class="pull-right">
                     <div>
-                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "Client")
                         {
                             <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InstaInterviewsExporttoExcel", "InstaInterview", new { id = ViewBag.Requestid })'"></i></span>
                         }

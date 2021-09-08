@@ -71,7 +71,7 @@
                                         </ul>
                                     </div>
 
-
+                                    @Html.HiddenFor(m => m.clonevalue)
                                     <div>
                                         <h3 class="tab_drawer_heading" rel="tab-1">Event Details</h3>
                                         <div class="tab-box" id="tab-1" style="display:block;">
@@ -1305,7 +1305,14 @@
                             <div class="card-footer mt-20 clearfix">
                                 <div class="row  mc-button-area pull-right">
                                     <div class="col-md-12">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                        @if (ViewBag.clonevalue == 1)
+                                        {
+                                            @Html.ActionLink("Back to List", "CloneSkillChannnel", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                        }
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
 
@@ -1327,7 +1334,7 @@
                                 @Html.HiddenFor(m => m.ClientId)
 
                             }
-                            
+
                             @Html.HiddenFor(m => m.OldAssessmentGroupId)
                             @Html.HiddenFor(m => m.OldCalendlyLink)
                             @Html.HiddenFor(m => m.OldJDLink)
@@ -2993,8 +3000,8 @@
     }
 
     function InterviewerChanged(val, id) {
-       
-       var index = id.split('_')[1];
+
+        var index = id.split('_')[1];
         //var index = id.charAt(22);
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         $.ajax({
@@ -3028,7 +3035,7 @@
 
     function RecruiterChanged(val, id) {
         var index = id.split('_')[1];
-       
+
         var skillElementid = 'RecruiterCollection_' + index + '__Domain';
         $.ajax({
             type: "GET",
