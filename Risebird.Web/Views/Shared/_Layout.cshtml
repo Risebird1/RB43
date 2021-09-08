@@ -289,9 +289,9 @@
                                         <li class="user-menu__item welcome">
                                            
                                             @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
-                                                {
-                                                    var email = HttpContextAccessor.HttpContext.Session.GetString("email");
-                                                    email = email.Trim('"').Split('@')[0];
+                                            {
+                                                var email = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                                email = email.Trim('"').Split('@')[0];
 
 
                                               <div class="welcome-txt">  Welcome !&nbsp; @email</div>
@@ -388,9 +388,9 @@
                                         <li class="user-menu__item welcome">
                                           
                                             @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
-                                                {
-                                                    var email = HttpContextAccessor.HttpContext.Session.GetString("email");
-                                                    email = email.Trim('"').Split('@')[0];
+                                            {
+                                                var email = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                                email = email.Trim('"').Split('@')[0];
 
                                                 <div class="welcome-txt">  Welcome !&nbsp; @email</div>
 
