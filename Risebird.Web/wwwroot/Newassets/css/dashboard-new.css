@@ -4985,7 +4985,9 @@ label {
 #statusTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update, #meeting_filter #trigger-update {
     right: 28px;
 }
-
+#meeting_filter #trigger-update-search {
+    right: 11px;
+}
 .resumeEvaluator #meeting_filter #search {
     right: 37px;
 }

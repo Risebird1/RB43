@@ -63,10 +63,15 @@
                     </button>
                     <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
 
-                        <div class="searchCon">
+                        <div class="searchCon mt-20">
                             <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="">
-                            <button style="display:none;" type="button" id="x">x</button>
+                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeypress="searchResultEnter(event)" value="@ViewBag.Searchvalue">
+
+                            <span id="trigger-update-search" class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
+
+
+                            
+
                         </div>
                     </div>
                     <div>
@@ -847,3 +852,31 @@
     }
 </script>
 
+<script>
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+        searchResult();
+    }
+
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+
+
+
+
+    });
+</script>
