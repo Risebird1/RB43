@@ -1550,7 +1550,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, bool isClone = false, int clonevalue)
+        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
         {
             try
             {
