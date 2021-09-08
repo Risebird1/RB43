@@ -146,6 +146,7 @@ namespace Risebird.Entities.ViewModel
         public bool isDuplicateEntries { get; set; }
         public string OldCompanyDetails { get; set; }
         public int TemplateId { get; set; }
+        public int clonevalue { get; set; }
 
     }
     public class InterviewerIds
@@ -238,5 +239,11 @@ namespace Risebird.Entities.ViewModel
         public int ReScheduledCount { get; set; }
         public int FutureScheduledMeetings { get; set; }
 
+    }
+    public class SkillCahnnelDetailsVM
+    {
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public string AssessmentGroup { get; set; }
     }
 }
