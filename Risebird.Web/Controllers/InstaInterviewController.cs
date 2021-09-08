@@ -1312,8 +1312,8 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 7].Value = item.AccountEmail;
                         Sheet.Cells[i, 8].Value = item.ConfirmationStatus;
-                        Sheet.Cells[i, 9].Value = item.MeetingStatus;
-                        Sheet.Cells[i, 10].Value = item.InterviewStatus;
+                        Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+                        Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
                         if (!string.IsNullOrEmpty(item.ResumeLink))
                         {
                             try
@@ -1355,7 +1355,7 @@ namespace Risebird.Web.Controllers
                             try
                             {
                                 string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + item.id + "&Requestedid=" + id;
-                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                Sheet.Cells[i, 11].Hyperlink = new Uri(sendreporturl, UriKind.Absolute);
                                 Sheet.Cells[i, 11].Value = "Public Link";
                                 Sheet.Cells[i, 11].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
