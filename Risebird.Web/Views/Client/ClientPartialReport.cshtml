@@ -25,7 +25,24 @@
 </script>
 
 
-
+@if (ViewBag.PageStatus == "PublicExternal")
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageStatus == "Public")
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageReport == "Insta")
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
 
 
 <div class="main-panel" id="main-panel">

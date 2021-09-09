@@ -561,14 +561,14 @@
                                                                                     <div id="section">
                                                                                         @if (item.InterviewerComment != null && item.InterviewerComment != "")
                                                                                         {
-                                                                                            @if (item.InterviewerComment.Length > 28)
+                                                                                            @if (item.InterviewerComment.Length > 26)
                                                                                             {
                                                                                                 <div class="article">
                                                                                                     <p style="margin-bottom:0px;">
-                                                                                                        @item.InterviewerComment.Substring(0, 28)
+                                                                                                        @item.InterviewerComment.Substring(0, 26)
                                                                                                     </p>
                                                                                                     <p class="moretext_@item.imid moretext">
-                                                                                                        @item.InterviewerComment.Substring(28, @item.InterviewerComment.Length - 28)
+                                                                                                        @item.InterviewerComment.Substring(26, @item.InterviewerComment.Length - 26)
                                                                                                     </p>
                                                                                                 </div>
                                                                                             }

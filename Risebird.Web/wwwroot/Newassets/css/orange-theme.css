@@ -216,6 +216,7 @@ textarea::-webkit-scrollbar {
 }
 .welcome-txt {
     font-size: 13px;
+    text-transform: capitalize;
 }
 .user-menu:before {
     background: #ec8840;
