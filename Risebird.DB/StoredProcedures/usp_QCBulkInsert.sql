@@ -29,7 +29,8 @@ SET NOCOUNT ON;
 INSERT INTO [dbo].[TransQualityController](  
  [IRFId] ,  
  [UserId],  
- [PerSuccessRate],  
+ [PerSuccessRate],
+ [IsActive],
  [InterviewerId])  
    
   

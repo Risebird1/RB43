@@ -807,10 +807,11 @@ namespace Risebird.Repository
                             interviewerDt.Columns.Add("IRFId", typeof(int));
                             interviewerDt.Columns.Add("UserId", typeof(int));
                             interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                            interviewerDt.Columns.Add("IsActive", typeof(bool));
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
+                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone? item.IsActive : true);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -834,10 +835,11 @@ namespace Risebird.Repository
                             emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
                             emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
                             emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                            emergencyInterviewerDt.Columns.Add("IsActive", typeof(bool));
 
                             foreach (var item in irfDetails.EmergencyInterviewerCollection)
                             {
-                                emergencyInterviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
+                                emergencyInterviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
                             }
 
                             SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
@@ -882,10 +884,12 @@ namespace Risebird.Repository
                             qualityControllerDt.Columns.Add("IRFId", typeof(int));
                             qualityControllerDt.Columns.Add("UserId", typeof(int));
                             qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
+                            qualityControllerDt.Columns.Add("IsActive", typeof(bool));
+
 
                             foreach (var item in irfDetails.QualityController)
                             {
-                                qualityControllerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate);
+                                qualityControllerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
                             }
 
                             SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
@@ -1212,10 +1216,11 @@ namespace Risebird.Repository
                             interviewerDt.Columns.Add("IRFId", typeof(int));
                             interviewerDt.Columns.Add("UserId", typeof(int));
                             interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                            interviewerDt.Columns.Add("IsActive", typeof(bool));
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -1303,10 +1308,12 @@ namespace Risebird.Repository
                             emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
                             emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
                             emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                            emergencyInterviewerDt.Columns.Add("IsActive", typeof(bool));
+
 
                             foreach (var item in irfDetails.EmergencyInterviewerCollection)
                             {
-                                emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
+                                emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
                             }
 
                             SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
@@ -1440,10 +1447,11 @@ namespace Risebird.Repository
                             qualityControllerDt.Columns.Add("IRFId", typeof(int));
                             qualityControllerDt.Columns.Add("UserId", typeof(int));
                             qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
+                            qualityControllerDt.Columns.Add("IsActive", typeof(bool));
 
                             foreach (var item in irfDetails.QualityController)
                             {
-                                qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate);
+                                qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
                             }
 
                             SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);

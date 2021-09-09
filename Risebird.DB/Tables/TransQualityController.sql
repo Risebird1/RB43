@@ -7,6 +7,7 @@ CREATE TABLE [dbo].[TransQualityController](
 	[IRFId] [int] NOT NULL,
 	[InterviewerId] [int] NOT NULL,
 	[UserId] [int] NULL,
+    [IsActive] [bit] NOT NULL DEFAULT 1,
 	CONSTRAINT [FK__TransQualityController] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 	CONSTRAINT [FK__TransQualityController_1] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
  CONSTRAINT [PK_TransQualityController] PRIMARY KEY CLUSTERED 
@@ -24,6 +25,15 @@ BEGIN
     Add PerSuccessRate INT
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsActive')
+      AND Object_ID = Object_ID(N'TransQualityController'))
+BEGIN
+    ALTER TABLE TransQualityController
+    Add IsActive bit NOT NULL default 1
+END
 end
 
 GO

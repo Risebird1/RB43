@@ -4985,7 +4985,9 @@ label {
 #statusTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update, #meeting_filter #trigger-update {
     right: 28px;
 }
-
+#meeting_filter #trigger-update-search {
+    right: 11px;
+}
 .resumeEvaluator #meeting_filter #search {
     right: 37px;
 }
@@ -9798,6 +9800,7 @@ button.close {
 .instainterview .table-bordered th, #reportForm #QuestionsTable.table-bordered th, #reportForm #SkillTable.table-bordered th, #reportForm #JoinabilityTable.table-bordered th, #reportForm #SkillGeneralTable.table-bordered th, #reportForm #SelectabilityTable.table-bordered th, #reportForm #FeedBackAudioTable.table-bordered th {
     background: none !important;
 }
+
     #reportForm #QuestionsTable.table-bordered th:last-child, #reportForm #SkillTable.table-bordered th:last-child, #reportForm #JoinabilityTable.table-bordered th:last-child, #reportForm #SkillGeneralTable.table-bordered th:last-child, #reportForm #SelectabilityTable.table-bordered th:last-child, #reportForm #FeedBackAudioTable.table-bordered th:last-child {
         border-right: 0px !important
     }
@@ -9823,6 +9826,15 @@ button.close {
 
 .mtop-0 {
     margin-top: 0px !important
+}
+.inactive {
+    position: absolute;
+    right: 17px;
+    top: 37px;
+    color: #b5b3b3;
+    background: #c7c1c13d;
+    padding: 0px 7px;
+    border-radius: 2px;
 }
 
 #reportForm #QuestionsTable.table-bordered th, #reportForm #SkillTable.table-bordered th {

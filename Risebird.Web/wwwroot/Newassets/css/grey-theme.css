@@ -656,6 +656,7 @@ table.journey {
 }
 .welcome-txt {
     font-size: 13px;
+    text-transform: capitalize;
 }
 .user-menu:before {
     background: #8a8a8a;

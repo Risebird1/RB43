@@ -22,13 +22,13 @@ declare @Members table (EmailId varchar(100));
 	Begin
 
 	insert into @Members
-	select ul.EmailId from TransEmergencyInterviewer tei join UserList ul on ul.id = tei.UserId where IRFId = @IRFId
+	select ul.EmailId from TransEmergencyInterviewer tei join UserList ul on ul.id = tei.UserId where IRFId = @IRFId and tei.IsActive=1
 
 	insert into @Members
-	select ul.EmailId from TransInterviewer ti join UserList ul on ul.id = ti.UserId where IRFId = @IRFId
+	select ul.EmailId from TransInterviewer ti join UserList ul on ul.id = ti.UserId where IRFId = @IRFId and ti.IsActive=1
 
 	insert into @Members
-	select ul.EmailId from TransQualityController tqc join UserList ul on ul.id = tqc.UserId where IRFId = @IRFId
+	select ul.EmailId from TransQualityController tqc join UserList ul on ul.id = tqc.UserId where IRFId = @IRFId and tqc.IsActive=1
 
 	select distinct(EmailId) from @Members
 

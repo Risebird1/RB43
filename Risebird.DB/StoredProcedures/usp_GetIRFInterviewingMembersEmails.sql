@@ -24,10 +24,10 @@ declare @irfIntId int
 	Begin
 
 	insert into @Members
-	select ul.EmailId from TransEmergencyInterviewer tei join UserList ul on ul.id = tei.UserId where IRFId = @irfIntId
+	select ul.EmailId from TransEmergencyInterviewer tei join UserList ul on ul.id = tei.UserId where IRFId = @irfIntId and tei.IsActive=1
 
 	insert into @Members
-	select ul.EmailId from TransInterviewer ti join UserList ul on ul.id = ti.UserId where IRFId = @irfIntId
+	select ul.EmailId from TransInterviewer ti join UserList ul on ul.id = ti.UserId where IRFId = @irfIntId and ti.IsActive=1
 
 
 	select distinct(EmailId) from @Members
