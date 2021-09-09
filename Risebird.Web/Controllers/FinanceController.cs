@@ -596,6 +596,11 @@ namespace Risebird.Web.Controllers
                 else
                     Page = Convert.ToInt32(PageSet);
                 var model = await _meetingService.FNGenerateInvoiceDetails(st, se.AddDays(1));
+                var totalpaidamount = await _meetingService.FNFetchToalAmountPaid(st, se.AddDays(1));
+                var totalamountforstatus = await _meetingService.FNFetchToalAmountStatus(st, se.AddDays(1));
+                int totalinterviewamount = totalamountforstatus.Where(x => x.MeetingStatus == 4).Sum(x => x.Points);
+                int totalNoShowamount = totalamountforstatus.Where(x => x.MeetingStatus == 1).Sum(x => x.Points);
+                int totaldroppedamount = totalamountforstatus.Where(x => x.MeetingStatus == 3).Sum(x => x.Points);
                 var totalAmount = model.Sum(x => x.Points);
                 foreach (var item in model)
                 {
@@ -632,7 +637,7 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
                 _modelDetails = model;
-                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds });
+                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds, totalpaidamount = totalpaidamount, totalinterviewamount = totalinterviewamount, totaldroppedamount = totaldroppedamount, totalNoShowamount = totalNoShowamount });
             }
             catch (Exception ex)
             {

@@ -4497,7 +4497,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRF.id,IRF.IRFId,ag.AssessmentGroup From IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId";
+                var query = "Select IRF.id,IRF.IRFId,ag.AssessmentGroup From IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId order by IRF.id desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
