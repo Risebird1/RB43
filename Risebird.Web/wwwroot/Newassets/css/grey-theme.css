@@ -384,9 +384,12 @@ table.journey {
 }
 
 .interviewer .multiselect {
-    background: #dddddf !important;
+    background: #f7f7f7 !important;
 }
 
+.interviewer .radiobox {
+    background: #f7f7f7;
+}
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
@@ -644,11 +647,41 @@ table.journey {
     background-position: 45%;
     z-index: 1000;
 }
+.clickhere_btn {
+    color: #8a8a8a !important;
+    background: #54a5f500;
+    border: 1px #8a8a8a9e solid;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 3px 15px;
+    margin: 0px 15px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+}
 
+    .clickhere_btn:hover {
+        background: #8a8a8a;
+        color: #fff !important;
+        border: 0px;
+        border-radius: 5px;
+        font-weight: bold;
+        padding: 4px 15px;
+        margin: 0px 15px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+    }
+.client .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+}
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
     color: #47484a!important;
 }
-
+.report-full-wrap #videoId {
+    background: #fff;
+    font-size: 12px;
+    padding: 1px 7px;
+    margin: 0px 10px;
+}
 .welcome {
     background: #8a8a8a;
     padding: 6px 5px;

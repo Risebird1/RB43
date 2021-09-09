@@ -750,9 +750,11 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .interviewer .multiselect {
-    background: #181818 !important;
+    background: #383838 !important;
 }
-
+.interviewer .radiobox {
+    background: #383838 !important;
+}
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
@@ -1686,7 +1688,7 @@ select * {
 }
 
 .ref-btn {
-    background: #fff;
+    background: #000;
 }
 
 .border-db {
@@ -2076,7 +2078,12 @@ div.dataTables_wrapper div.dataTables_info {
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
     color: #47484a !important;
 }
-
+.report-full-wrap #videoId {
+    background: #121212;
+    font-size: 12px;
+    padding: 1px 7px;
+    margin: 0px 10px;
+}
 .welcome {
     background: #252424;
     padding: 6px 5px;
@@ -2096,7 +2103,32 @@ input[type="radio"]:checked {
 .text-areadiv1 textarea {
     background: #181818 !important;
 }
+.client .table-bordered td {
+    border-right: 1px solid #dee2e647 !important;
+}
+.clickhere_btn {
+    color: #8c8989 !important;
+    background: #54a5f500;
+    border: 1px #353535 solid;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 3px 15px;
+    margin: 0px 15px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+}
 
+    .clickhere_btn:hover {
+        background: #181818;
+        color: #fff !important;
+        border: 0px;
+        border-radius: 5px;
+        font-weight: bold;
+        padding: 4px 15px;
+        margin: 0px 15px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+    }
 [data-tooltip]:before {
     background: #121212 !important;
     color: #8a8181 !important;

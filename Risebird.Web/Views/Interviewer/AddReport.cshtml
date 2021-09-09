@@ -42,7 +42,7 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="report-full-wrap">
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Interviewer Details</span></h3>
                                             </div><!--end of multiple location-->
@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Profile Score</span></h3>
                                         </div><!--end of multiple location-->
@@ -378,7 +378,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Personality Report</span></h3>
                                         </div><!--end of multiple location-->
@@ -509,7 +509,7 @@
                                     </div>
                                 </div>
                                 <div class="row  mb-40">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Summary</span></h3>
                                         </div><!--end of multiple location-->
@@ -678,7 +678,7 @@
                                 </div>
                                 
                                     <div class="row mb-40">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Record Feedback Audio</span></h3>
                                             </div><!--end of multiple location-->
@@ -729,12 +729,12 @@
                                         @if (Model.FeedbackAudioLink != null)
                                         {
                                         <div class="row mb-40">
-                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
                                                     <h3 class="mb-0"><span>Uploaded Feedback Audio</span></h3>
                                                 </div><!--end of multiple location-->
                                             </div><!--end of col-md-12-->
-                                    
+
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="table-responsive-sm">
                                                     <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
@@ -776,7 +776,7 @@
 
                                     <div id="playUploadedAudioTwo" style="display:none">
                                         <div class="row mb-40">
-                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
                                                     <h3 class="mb-0"><span>Uploaded Feedback Audio</span></h3>
                                                 </div><!--end of multiple location-->
@@ -822,7 +822,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Interviewing Strategy</span></h3>
                                             </div><!--end of multiple location-->
@@ -910,10 +910,10 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Tech Skill Report</span></h3>
-</div><!--end of multiple location-->
+                                            </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
 
@@ -988,7 +988,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Interviewing Ability</span></h3>
                                             </div>
@@ -1264,10 +1264,10 @@
 
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Recommendation</span></h3>
-</div>
+                                            </div>
                                         </div>
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="card-wrap recommendation-form">
@@ -1498,7 +1498,7 @@
                                     @Html.HiddenFor(m => m.PrimarySkill)
                                     @Html.HiddenFor(m => m.InterviewerProfileId)
 
-                                    <div class="card-footer ">
+                                    <div class="card-footer">
                                         <div class="row">
 
                                             <div class="col-md-12 mc-button-area">

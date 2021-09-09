@@ -157,7 +157,7 @@
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <th class="disabled-sorting" style="text-align:center">Skill Channel ID</th>
+                                                    <th class="disabled-sorting" style="text-align:left">Skill Channel ID</th>
                                                     <th>Assessment Group</th>
                                                     <th>Added Skills</th>
                                                     <th>Clone</th>
@@ -178,11 +178,16 @@
                                                     <tr id=@item.id>
                                                         <td>@item.IRFId</td>
                                                         <td>@item.AssessmentGroup</td>
-                                                        <td><a onclick="openSkillpopup(@item.id)">CLICK HERE</a></td>
+                                                        <td>
+    <button type="button" class="clickhere_btn pull-left">
+        <span  data-toggle="tooltip" data-placement="top" title=""  onclick="openSkillpopup(@item.id)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+    </button>
+   
+</td>
                                                         <td>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel">
                                                                 <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id,clonevalue=1, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:14px;" class="fa fa-clone"></i>
+                                                                    <i style="font-size:14px!important;" class="fa fa-clone"></i>
                                                                 </span>
                                                             </button>
                                                         </td>
@@ -215,10 +220,7 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span class="publicsharing-icon">
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
-                    </span>
+                        <i class="fa fa-cogs" style="font-size: 23px;"></i></span>
                 </div>
                 <h5 class="modal-title pull-left">Tech Skills </h5>
             </div>
@@ -227,7 +229,7 @@
             </button>
 
             <input type="text" hidden id="txtinterviewid" />
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body">
                 <div style="padding:10px" id="divcandidatefeedback">
 
                 </div>
@@ -398,7 +400,7 @@
     }
     function bindSkillData(data) {
         var html = '';
-        html += '  <table class="table table-bordered mbn" id="SkillTable">';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
         html += '  <thead>';
         html += '  <tr>';
         html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
@@ -415,7 +417,7 @@
             html += '  </tr>';
         }
         html += '</tbody>';
-        html += ' </table>';
+        html += ' </table></div>';
         $("#divcandidatefeedback").empty().html(html);
     }
 

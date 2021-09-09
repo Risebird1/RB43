@@ -59,7 +59,7 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="report-full-wrap">
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Candidate Details</span></h3>
                                             </div><!--end of multiple location-->
@@ -143,7 +143,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Interview Report</span></h3>
                                         </div><!--end of multiple location-->
@@ -186,7 +186,7 @@
 
 
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Report Details</span></h3>
                                         </div><!--end of multiple location-->
@@ -230,7 +230,7 @@
 
 
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Record Feedback Audio</span></h3>
                                         </div><!--end of multiple location-->
@@ -288,7 +288,7 @@
                                         @if (Model.FeedbackAudioLink != null)
                                         {
                                         <div class="row">
-                                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
                                                     <h3 class="mb-0"><span>Uploaded Feedback Audio</span></h3>
 </div><!--end of multiple location-->
@@ -381,7 +381,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Interview Video</span></h3>
                                             </div><!--end of multiple location-->
@@ -414,7 +414,7 @@
 
                                     </div>
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Questions Discussed</span></h3>
                                             </div><!--end of multiple location-->
@@ -536,7 +536,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Tech Skill Report</span></h3>
                                             </div><!--end of multiple location-->
@@ -615,7 +615,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>General Skill Report</span></h3>
                                             </div><!--end of multiple location-->
@@ -697,7 +697,7 @@
                                     @if (!Model.IsInterviewer)
                                     {
                             <div class="row">
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
                                         <h3 class="mb-0"><span>Joinability Report</span></h3>
                                     </div><!--end of multiple location-->
@@ -778,7 +778,7 @@
 
 
                             <div class="row">
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
                                         <h3 class="mb-0"><span>Selectability Report</span></h3>
 </div><!--end of multiple location-->
@@ -863,7 +863,7 @@
                                     @if (Model.IsBiometricEnabled)
                                     {
                             <div class="row">
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
                                         <h3 class="mb-0"><span>Voice Biometric Verification Report</span></h3>
                                     </div><!--end of multiple location-->
@@ -1013,7 +1013,6 @@
                                                                 @Html.LabelFor(model => model.VideoDuration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                                 @Html.TextBoxFor(model => model.VideoDuration, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                                             </div>
-
                                                         }
                                                     </div>
                                                 </div>
@@ -1027,10 +1026,10 @@
                                         <div class="proctor">
                                             <input class="toggle-box" id="identifier-2" type="checkbox">
                                             <label for="identifier-2">
-                                                <div class="multiple_row">
+                                                <span class="multiple_row">
                                                     <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
 
-                                                </div>
+                                                </div
                                             </label>
 
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
