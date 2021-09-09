@@ -150,7 +150,7 @@ namespace Risebird.Repository.Interface
         List<string> FetchClientUsers(string ClientName);
         string SetCandidateAvailability(string imid, int isavailable);
         string MoveToCP(string imid, int movetocp);
-        Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate,string email);
+        Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
         IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);
@@ -188,5 +188,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateUploadedVideoLinkForInstaInterview(int interviewId, string videoLink);
         IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
         Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
+        Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se);
+        Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
     }
 }

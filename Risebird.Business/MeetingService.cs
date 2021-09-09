@@ -3006,6 +3006,32 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se)
+        {
+            try
+            {
+                var totalpaidamount = _meetingRespository.FNFetchToalAmountPaid(st, se);
+                return totalpaidamount.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                var result = _meetingRespository.FNFetchToalAmountStatus(st, se);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 
