@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[TransEmergencyInterviewer](
 	[IRFId] [int] NOT NULL,
 	[InterviewerId] [int] NOT NULL,
 	[UserId] [int] NULL,
+    [IsActive] [bit] NOT NULL default 1,
 	CONSTRAINT [FK__TransEmergencyInterviewer] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 	CONSTRAINT [FK__TransEmergencyInterviewer_1] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
  CONSTRAINT [PK_TransEmergencyInterviewer] PRIMARY KEY CLUSTERED 
@@ -24,6 +25,17 @@ BEGIN
     ALTER TABLE TransEmergencyInterviewer
     Add PerSuccessRate INT
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsActive')
+      AND Object_ID = Object_ID(N'TransEmergencyInterviewer'))
+BEGIN
+    ALTER TABLE TransEmergencyInterviewer
+    Add IsActive bit NOT NULL default 1
+END
+
 End
 GO
 

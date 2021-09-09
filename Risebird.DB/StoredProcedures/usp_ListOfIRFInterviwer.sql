@@ -26,7 +26,7 @@ IF EXISTS (Select 1 from IRF where IRFId =@IRFId)
 		select distinct userlist.EmailId from [dbo].[TransInterviewer] tr
 		join [dbo].[IRF] irf on tr.IRFId = irf.id
 		join [dbo].[UserList] userlist on tr.UserId = userlist.id
-		where irf.IRFId like @IRFID
+		where irf.IRFId like @IRFID and tr.IsActive=1
 	END
 Else
 	BEGIN

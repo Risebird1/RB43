@@ -21,7 +21,7 @@ declare @irfIntId int
 	set @irfIntId = (select id from IRF where IRFId =@IRFId)
 		
 
-	select distinct ul.EmailId from TransQualityController tqc join UserList ul on ul.id = tqc.UserId where IRFId = @irfIntId
+	select distinct ul.EmailId from TransQualityController tqc join UserList ul on ul.id = tqc.UserId where IRFId = @irfIntId and tqc.IsActive=1
 
 		
 

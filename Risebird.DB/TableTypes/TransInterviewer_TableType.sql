@@ -5,7 +5,8 @@ BEGIN
 CREATE TYPE [dbo].[TransInterviewer_TableType] AS TABLE(
 	[IRFId] [int] NOT NULL,
 	[UserId] [int] NULL,
-	[PerSuccessRate] [int] NULL
+	[PerSuccessRate] [int] NULL,
+	[IsActive] [bit] not null
 )
 
 End

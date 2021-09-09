@@ -511,6 +511,14 @@ namespace Risebird.Business
         {
             try
             {
+                if(!string.IsNullOrEmpty(meetingToUpdate.NewActiveInterviewer))
+                {
+                    meetingToUpdate.interviewer = meetingToUpdate.NewActiveInterviewer;
+                }
+                if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveQCInterviewer))
+                {
+                    meetingToUpdate.QCInterviewer = meetingToUpdate.NewActiveQCInterviewer;
+                }
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
                 if (result)
                 {
@@ -1405,7 +1413,7 @@ namespace Risebird.Business
                         var mailIds = new List<string>();
                         foreach (var item in irfQualityControllers ?? new List<TransQualityController>())
                         {
-                            if (item.EmailId != null)
+                            if (item.EmailId != null && item.IsActive)
                             {
                                 mailIds.Add(item.EmailId);
                             }
