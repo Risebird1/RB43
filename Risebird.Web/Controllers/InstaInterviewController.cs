@@ -1228,6 +1228,8 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+                var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                profilename = profilename.Replace("\"", "");
                 List<InstaMeetingVM> modelList = new List<InstaMeetingVM>();
                 if (HttpContext.Session.GetString("InstaInterviewfilters") != null)
                 {
@@ -1273,15 +1275,27 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Candidate Name";
                 Sheet.Cells[1, 3].Value = "Required Skill";
                 Sheet.Cells[1, 4].Value = "Assessment Group";
-                Sheet.Cells[1, 5].Value = "Interviewer";
-                Sheet.Cells[1, 6].Value = "Zoom Link";
-                Sheet.Cells[1, 7].Value = "Zoom Id";
-                Sheet.Cells[1, 8].Value = "Confirmation Status";
-                Sheet.Cells[1, 9].Value = "Meeting Status";
-                Sheet.Cells[1, 10].Value = "Interview Status";
-                Sheet.Cells[1, 11].Value = "Resume";
-                Sheet.Cells[1, 12].Value = "JD Link";
-                Sheet.Cells[1, 13].Value = "Public URL";
+                if (profilename == "Client")
+                {
+                    Sheet.Cells[1, 5].Value = "Confirmation Status";
+                    Sheet.Cells[1, 6].Value = "Meeting Status";
+                    Sheet.Cells[1, 7].Value = "Interview Status";
+                    Sheet.Cells[1, 8].Value = "Resume";
+                    Sheet.Cells[1, 9].Value = "JD Link";
+                    Sheet.Cells[1, 10].Value = "Report URL";
+                }
+                else
+                {
+                    Sheet.Cells[1, 5].Value = "Interviewer";
+                    Sheet.Cells[1, 6].Value = "Zoom Link";
+                    Sheet.Cells[1, 7].Value = "Zoom Id";
+                    Sheet.Cells[1, 8].Value = "Confirmation Status";
+                    Sheet.Cells[1, 9].Value = "Meeting Status";
+                    Sheet.Cells[1, 10].Value = "Interview Status";
+                    Sheet.Cells[1, 11].Value = "Resume";
+                    Sheet.Cells[1, 12].Value = "JD Link";
+                    Sheet.Cells[1, 13].Value = "Report URL";
+                }
                 int i = 2;
                 if (modelList.Count() > 0)
                 {
@@ -1291,85 +1305,160 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 2].Value = item.CandidateName;
                         Sheet.Cells[i, 3].Value = item.RequiredSkill;
                         Sheet.Cells[i, 4].Value = item.AssessmentGroup;
-                        Sheet.Cells[i, 5].Value = item.Interviewer;
-                        if (!string.IsNullOrEmpty(item.ZoomLink))
+                        if (profilename == "Client")
                         {
-                            try
+                            Sheet.Cells[i, 5].Value = item.ConfirmationStatus;
+                            if (item.MeetingStatusStatusDesc != "0")
+                                Sheet.Cells[i, 6].Value = item.MeetingStatusStatusDesc;
+                            else
+                                Sheet.Cells[i, 6].Value = "";
+                            if (item.intervieweStatusStatDesc != "0")
+                                Sheet.Cells[i, 7].Value = item.intervieweStatusStatDesc;
+                            else
+                                Sheet.Cells[i, 7].Value = "";
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
                             {
-                                Sheet.Cells[i, 6].Hyperlink = new Uri(item.ZoomLink, UriKind.Absolute);
-                                Sheet.Cells[i, 6].Value = "Zoom Link";
-                                Sheet.Cells[i, 6].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                try
+                                {
+                                    Sheet.Cells[i, 8].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 8].Value = "Resume";
+                                    Sheet.Cells[i, 8].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 8].Value = "No Resume";
+                                }
                             }
-                            catch (Exception)
+                            else
+                            {
+                                Sheet.Cells[i, 8].Value = "No Resume";
+                            }
+                            if (!string.IsNullOrEmpty(item.JDLink))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 9].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 9].Value = "JD Link";
+                                    Sheet.Cells[i, 9].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 9].Value = "No JD Link";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 9].Value = "No JD Link";
+                            }
+                            if (item.id != 0)
+                            {
+                                try
+                                {
+                                    string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + item.id + "&Requestedid=" + id;
+                                    Sheet.Cells[i, 10].Hyperlink = new Uri(sendreporturl, UriKind.Absolute);
+                                    Sheet.Cells[i, 10].Value = "Report Url";
+                                    Sheet.Cells[i, 10].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 10].Value = "No url";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 10].Value = "No url";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 5].Value = item.Interviewer;
+                            if (!string.IsNullOrEmpty(item.ZoomLink))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 6].Hyperlink = new Uri(item.ZoomLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 6].Value = "Zoom Link";
+                                    Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 6].Value = "No Link";
+                                }
+                            }
+                            else
                             {
                                 Sheet.Cells[i, 6].Value = "No Link";
                             }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 6].Value = "No Link";
-                        }
-                        Sheet.Cells[i, 7].Value = item.AccountEmail;
-                        Sheet.Cells[i, 8].Value = item.ConfirmationStatus;
-                        Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
-                        Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
-                        if (!string.IsNullOrEmpty(item.ResumeLink))
-                        {
-                            try
+                            Sheet.Cells[i, 7].Value = item.AccountEmail;
+                            Sheet.Cells[i, 8].Value = item.ConfirmationStatus;
+                            if (item.MeetingStatusStatusDesc != "0")
+                                Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+                            else
+                                Sheet.Cells[i, 9].Value = "";
+                            if (item.intervieweStatusStatDesc != "0")
+                                Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
+                            else
+                                Sheet.Cells[i, 10].Value = "";
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
                             {
-                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
-                                Sheet.Cells[i, 11].Value = "Resume";
-                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                try
+                                {
+                                    Sheet.Cells[i, 11].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 11].Value = "Resume";
+                                    Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 11].Value = "No Resume";
+                                }
                             }
-                            catch (Exception)
+                            else
                             {
                                 Sheet.Cells[i, 11].Value = "No Resume";
                             }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 11].Value = "No Resume";
-                        }
-                        if (!string.IsNullOrEmpty(item.JDLink))
-                        {
-                            try
+                            if (!string.IsNullOrEmpty(item.JDLink))
                             {
-                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
-                                Sheet.Cells[i, 11].Value = "JD Link";
-                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                try
+                                {
+                                    Sheet.Cells[i, 12].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 12].Value = "JD Link";
+                                    Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 12].Value = "No JD Link";
+                                }
                             }
-                            catch (Exception)
+                            else
                             {
-                                Sheet.Cells[i, 11].Value = "No JD Link";
+                                Sheet.Cells[i, 12].Value = "No JD Link";
                             }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 11].Value = "No JD Link";
-                        }
-                        if (item.id != 0)
-                        {
-                            try
+                            if (item.id != 0)
                             {
-                                string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + item.id + "&Requestedid=" + id;
-                                Sheet.Cells[i, 11].Hyperlink = new Uri(sendreporturl, UriKind.Absolute);
-                                Sheet.Cells[i, 11].Value = "Public Link";
-                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                try
+                                {
+                                    string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + item.id + "&Requestedid=" + id;
+                                    Sheet.Cells[i, 13].Hyperlink = new Uri(sendreporturl, UriKind.Absolute);
+                                    Sheet.Cells[i, 13].Value = "Report Url";
+                                    Sheet.Cells[i, 13].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 13].Value = "No url";
+                                }
                             }
-                            catch (Exception)
+                            else
                             {
-                                Sheet.Cells[i, 11].Value = "No Link";
+                                Sheet.Cells[i, 13].Value = "No url";
                             }
                         }
-                        else
-                        {
-                            Sheet.Cells[i, 11].Value = "No Link";
-                        }
-
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

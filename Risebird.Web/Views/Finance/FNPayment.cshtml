@@ -22,7 +22,7 @@
                 </div>
 
                 <div class="pull-right client-ms">
-                    <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                    <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
                         <option value="1">January</option>
                         <option value="2">February</option>
                         <option value="3">March</option>
@@ -99,6 +99,10 @@
                                             <label id="txtAmount">Amount: @ViewBag.totalAmount </label>
                                             <label id="txtTdsdeducted">Tds deducted: @ViewBag.Tds</label>
                                             <label id="txtPayableAmount">Payable Amount: @ViewBag.payableAmount</label>
+                                            <label id="txtpaidamount">Paid Amount: 0</label>
+                                            <label id="txtinterviewamount">Interview Amount: 0</label>
+                                            <label id="txtnoshowamount">No Show Amount: 0</label>
+                                            <label id="txtdroppedamount">Dropped Amount: 0</label>
                                         </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
@@ -792,6 +796,10 @@
                     $("#txtAmount").text("Amount: " + data.totalAmount);
                     $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
                     $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
+                    $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
+                    $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
+                    $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
+                    $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                 }
             }
         });
@@ -827,6 +835,10 @@
                             $("#txtAmount").text("Amount: " + data.totalAmount);
                             $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
                             $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
+                            $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
+                            $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
+                            $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
+                            $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                         }
                     }
                 });
@@ -844,6 +856,40 @@
     }
     function openPaymentHistory() {
         window.location.href = "/Finance/PaymentHistory";
+    }
+    function Changemonth() {
+        $(".Fnactive-header").removeClass("Fnactive-header-button");
+        $(".Fnactive-header").addClass("mdc-button--raised");
+        bindtableDataChangeMonth();
+        bindPagesChangeMonth();
+        $("#txtAmount").text("Amount: " + data.totalAmount);
+        $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
+        $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
+        $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
+        $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
+        $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
+        $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
+    }
+    function bindtableDataChangeMonth() {
+        var html = '';
+        html += '  <tr>';
+        html += ' <td colspan="9" class="text-center">No data available in table</td>';
+        html += ' </tr>';
+        $("#tblbodyPayment").empty().html(html);
+    }
+    function bindPagesChangeMonth() {
+        St_date = '';
+        Se_date = '';
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing 0 to 0 of 0 entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
+
     }
 </script>
 
