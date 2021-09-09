@@ -46,7 +46,9 @@ body {
 }
 
 #style-2::-webkit-scrollbar, .style-2::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
+    height: 9px;
+    margin-top:5px;
 }
 
 #style-2::-webkit-scrollbar-thumb, .style-2::-webkit-scrollbar-thumb {
@@ -1182,7 +1184,7 @@ audio {
 }
 
 .multiple_row > h2, #reportForm .multiple_row > h3 {
-    font-size: 18px;
+    font-size: 16px;
     padding: 8px 10px;
     text-align: left;
     color: #ffffff;
@@ -4568,7 +4570,7 @@ td.detail-row {
     width: 20px;
     height: 20px;
     background-color: #cccccc47;
-    background-position: center 30px;
+    background-position: center 50%;
     padding: 12px 6.5px !important;
 }
 
@@ -6114,9 +6116,10 @@ label {
         float: left;
         display: block;
     }
-    .searchCon.mb-10 {
+    .searchCon.mb-10, .mb-10 {
         margin-bottom: 10px
     }
+   .interviewerMemberModal
     .navbar-toggle {
         top: -5px;
     }
@@ -9787,13 +9790,13 @@ button.close {
     margin-bottom: 25px;
 }
 .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
-    height: 35px;
+    height: 32px;
     position: relative;
     background: none !important;
     color: #FFF !important;
     width: 100%;
     top: 0px;
-    font-size: 18px;
+    font-size: 16px;
     z-index: 0 !important;
 }
 
@@ -9855,9 +9858,9 @@ button.close {
     -webkit-transform-origin: 100% 100%;
     -ms-transform-origin: 100% 100%;
     transform-origin: 100% 100%;
-    -webkit-transform: skewX( 30deg );
-    -ms-transform: skewX(30deg);
-    transform: skewX( 30deg );
+    -webkit-transform: skewX( 0deg );
+    -ms-transform: skewX(0deg);
+    transform: skewX( 0deg );
     color: #fff !important;
 }
 
@@ -10192,7 +10195,9 @@ tbody.collapse.in {
 .user-menu a {
     border-top: 1px dotted #e0e3ea !important;
 }
-
+.menu .fa.fa-clone {
+    font-size: 17px !important;
+}
 .user {
     position: relative;
     left: auto;
