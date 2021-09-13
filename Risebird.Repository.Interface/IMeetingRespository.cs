@@ -190,6 +190,7 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
         Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
+        Task<Meeting> GetMeetingDetails(int meetingId);
         Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
     }
 }

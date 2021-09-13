@@ -93,7 +93,7 @@
                                                     {
                                                         <div class="form-group">
                                                             @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "validateIRFName()" } })
                                                             <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
                                                             @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger" })
 
@@ -3315,6 +3315,48 @@
         }
 
     }
+
+    function validateIRFName() {
+        var letterNumber = /^[0-9a-zA-Z]+$/;
+        var val = document.getElementById("IRFId").value;
+        if (val == "") {
+            document.getElementById("error_IRFName").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            return false;
+        }
+        else if (val.length != 10) {
+            document.getElementById("IRFId").focus();
+            document.getElementById("error_IRFName").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            return false;
+        }
+        else if (!(val.match(letterNumber))) {
+            document.getElementById("IRFId").focus();
+            document.getElementById("error_IRFName").innerHTML = "Only Letters and Numbers are allowed.";
+            return false;
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/IRF/CheckUniqueness",
+                data: { 'value': val },
+                success: function (response) {
+                    if (response == false) {
+                        //document.getElementById("btnUpload").disabled = true;
+                        document.getElementById("error_IRFName").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
+                        document.getElementById("IRFId").focus();
+                        return false;
+                    }
+                    else {
+                        document.getElementById("error_IRFName").innerHTML = "";
+                        //document.getElementById("btnUpload").disabled = false;
+                        return true;
+                    }
+
+                }
+            });
+            return true;
+        }
+    }
+
 
 </script>
 

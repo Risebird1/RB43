@@ -18,9 +18,11 @@ body {
     min-height: 100%;
     position: absolute;
     width: 100%;
+    padding:0px!important;
 }
-
-
+.modal{
+    padding:0px!important;
+}
 /* PREDEFINED CLASSES */
 .clearfix {
     zoom: 1;
@@ -4606,11 +4608,13 @@ textarea.form-control {
     transition: all .3s;
 }
 
+.survey .multiselect.dropdown-toggle.btn{
+    padding:11px 8px;
+}
 
-
-    #QuestionsTable.table-bordered td:nth-of-type(even) {
-        border-right: 0px !important;
-    }
+#QuestionsTable.table-bordered td:nth-of-type(even) {
+    border-right: 0px !important;
+}
 
 .interviewer #QuestionsTable.table-bordered td:nth-of-type(even) {
     border-right: 1px solid #dee2e6 !important;
@@ -7083,6 +7087,8 @@ blockquote {
 
 .text-danger {
     color: #E04B4A !important;
+    font-size: 12px !important;
+    padding: 0px !important;
 }
 
 .progress-list .text-danger {
@@ -9863,12 +9869,31 @@ button.close {
     transform: skewX( 0deg );
     color: #fff !important;
 }
-
+.instainterview .multiple_row > h2:before {
+    -webkit-transform: skewX( 30deg );
+    -ms-transform: skewX(30deg);
+    transform: skewX( 30deg );
+}
 .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
     position: relative;
     overflow: hidden;
 }
-
+.client .curated-group .table-bordered td:nth-child(odd) {
+    border-right:0px!important;
+}
+.client .curated-group .table-bordered td:nth-child(even) {
+    border-left-width: 1px !important;
+}
+.client .curated-group .table{background:#fff;}
+.curated-name{
+    margin:10px 0px!important;
+}
+.whbg-wrap {
+    width: 100%;
+    float: left;
+    border-bottom: 1px #cccccc69 solid;
+    margin-bottom: 10px;
+}
 #file-chosen {
     margin-left: 0.3rem;
     font-family: sans-serif;
@@ -12171,7 +12196,9 @@ div.tagsinput {
         right: 27px;
         top: 11px !important;
     }
-
+    .curated-name {
+        margin: 0px 0px !important;
+    }
     .filter-note {
         width: 223px;
         float: left;
