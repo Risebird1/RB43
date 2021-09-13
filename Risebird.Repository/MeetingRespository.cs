@@ -5024,5 +5024,26 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<Meeting> GetMeetingDetails(int meetingId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingId", meetingId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_GetMeetingDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
     }
 }

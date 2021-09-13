@@ -486,9 +486,32 @@ namespace Risebird.Business
                 var status = Convert.ToInt16(qcStatus);
                 var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), status, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
 
+                if(result && status == (int)QCStatus.Failed)
+                {
+                    var meetingDetails = _meetingRespository.GetMeetingDetails(Convert.ToInt32(imid)).Result;
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCFailed;
+                    activityTrackerModel.Particulars = "QC Failed for: " + meetingDetails.candidateEmail + " dated " + meetingDetails.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Failed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
                 //var oldStatus = Convert.ToInt16(oldQcStatus);
                 if (result && status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
                 {
+                    var meetingDetails = _meetingRespository.GetMeetingDetails(Convert.ToInt32(imid)).Result;
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCPassed;
+                    activityTrackerModel.Particulars = "QC Passed for: " + meetingDetails.candidateEmail + " dated " + meetingDetails.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Passed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(Convert.ToInt32(imid), performedBy);
                 }
@@ -997,6 +1020,20 @@ namespace Risebird.Business
             try
             {
                 var result = _meetingRespository.UpdateComments(comments).Result;
+                if(result && comments.QCStatus.HasValue && comments.QCStatus ==(int)QCStatus.Failed)
+                {
+                    //add to activity tracker
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCFailed;
+                    activityTrackerModel.Particulars = "QC Failed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Failed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
+                }
+
                 if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
                 {
                     //add to activity tracker

@@ -20,6 +20,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Skill Channel ID")]
         [Required]
+        //[RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string IRFId { get; set; }
 
         [DisplayName("End Client Name")]
