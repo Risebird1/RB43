@@ -4154,7 +4154,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Client/PublicAllMeetings";
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings";
                 Mail _mail1 = new Mail
                 {
                     TO = Emailid,
