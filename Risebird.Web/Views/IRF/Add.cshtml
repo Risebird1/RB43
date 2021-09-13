@@ -1545,6 +1545,7 @@
 
     //checkUniqueness(this.value)
     function checkUniqueness() {
+        var letterNumber = /^[0-9a-zA-Z]+$/;
         var val = document.getElementById("IRFId").value;
         if (val == "") {
             document.getElementById("uniqueMsg").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
@@ -1553,6 +1554,11 @@
         else if (val.length != 10) {
             document.getElementById("IRFId").focus();
             document.getElementById("uniqueMsg").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            return false;
+        }
+        else if (!(val.match(letterNumber))){
+            document.getElementById("IRFId").focus();
+            document.getElementById("uniqueMsg").innerHTML = "Only Letters and Numbers are allowed.";
             return false;
         }
         else {
