@@ -994,10 +994,13 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                        <th width="50%" class="table_heading">Skills</th>
-                                                                        <th width="20%" class="table_heading">
+                                                                        <th width="45%" class="table_heading">Skills</th>
+                                                                        <th width="15%" class="table_heading">
                                                                             Per Interviewer Rate
                                                                             <span style="color:red">*</span>
+                                                                        </th>
+                                                                        <th width="10%" class="table_heading">
+                                                                            Active
                                                                         </th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
@@ -1005,57 +1008,67 @@
                                                                 <tbody>
                                                                     @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                     {
-                                                                        <tr>
-                                                                            <td>
-                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                            </td>
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                        </td>
 
-                                                                            <td>
+                                                                        <td>
 
-                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                            </td>
-                                                                            <td>
+                                                                        </td>
+                                                                        <td>
 
-                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                            </td>
-                                                                            <td class="action text-center">
-                                                                                <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                            @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                        </td>
+                                                                        
+                                                                        <td class="action text-center">
+                                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                            @if (Model.IsClone)
+                                                                            {
+                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                            }
 
-
-
-
-                                                                            </td>
-                                                                        </tr>
+                                                                        </td>
+                                                                    </tr>
                                                                     }
                                                                     else
                                                                     {
                                                                         for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                                         {
-                                                                            <tr>
-                                                                                <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                                </td>
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                            </td>
 
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                            <td>
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
-                                                                                </td>
-                                                                                <td class="action text-center">
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                            </td>
+                                                                            <td class="action text-center">
 
-                                                                                    <div>
-                                                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                <div>
+                                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                    @if (Model.IsClone)
+                                                                                    {
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    }
 
 
-                                                                                    </div>
-                                                                                </td>
-                                                                            </tr>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
                                                                         }
 
                                                                     }
@@ -1082,8 +1095,11 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                        <th width="50%" class="table_heading">Skills</th>
-                                                                        <th width="20%" class="table_heading">Per QC Rate  <span style="color:red">*</span></th>
+                                                                        <th width="45%" class="table_heading">Skills</th>
+                                                                        <th width="15%" class="table_heading">Per QC Rate  <span style="color:red">*</span></th>
+                                                                        <th width="10%" class="table_heading">
+                                                                            Active
+                                                                        </th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -1103,9 +1119,16 @@
 
                                                                                 @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                                             </td>
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBox("QualityController[0].IsActive", new { @checked = "checked" })
+                                                                            </td>
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                @if (Model.IsClone)
+                                                                                {
+                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                }
+
 
                                                                             </td>
                                                                         </tr>
@@ -1127,10 +1150,16 @@
                                                                                     @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
                                                                                 </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBoxFor(m => m.QualityController[i].IsActive)
+                                                                                </td>
                                                                                 <td class="action text-center">
                                                                                     <div>
                                                                                         <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        @if (Model.IsClone)
+                                                                                        {
+                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        }
 
                                                                                     </div>
                                                                                 </td>
@@ -1157,8 +1186,11 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                        <th width="50%" class="table_heading">Skills</th>
-                                                                        <th width="20%" class="table_heading">Per EI Rate  <span style="color:red">*</span></th>
+                                                                        <th width="45%" class="table_heading">Skills</th>
+                                                                        <th width="15%" class="table_heading">Per EI Rate  <span style="color:red">*</span></th>
+                                                                        <th width="10%" class="table_heading">
+                                                                            Active
+                                                                        </th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -1181,9 +1213,16 @@
                                                                                 @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
 
                                                                             </td>
+
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBox("EmergencyInterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                            </td>
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                @if (Model.IsClone)
+                                                                                {
+                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                }
 
                                                                             </td>
                                                                         </tr>
@@ -1206,12 +1245,17 @@
                                                                                     @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
                                                                                 </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBoxFor(m => m.EmergencyInterviewerCollection[i].IsActive)
+                                                                                </td>
                                                                                 <td class="action text-center">
 
                                                                                     <div>
-
                                                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        @if (Model.IsClone)
+                                                                                        {
+                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        }
 
                                                                                     </div>
                                                                                 </td>
@@ -2741,6 +2785,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=checkbox]").prop("checked", true);
 
         $tr.find("a").val("");
 
@@ -2787,6 +2832,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=checkbox]").prop("checked", true);
 
         $tr.find("a").val("");
 
@@ -2972,6 +3018,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=checkbox]").prop("checked", true);
 
         $tr.find("a").val("");
 
@@ -3156,7 +3203,7 @@
     }
 
 
-    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
         if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -3195,7 +3242,11 @@
                         elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
                         elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
                     }
-
+                    if (tdFour != null && tdFour != "") {
+                        elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                    }
 
                 }
 

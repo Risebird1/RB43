@@ -112,7 +112,32 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 .user-menu {
     border: 2px #f3d6c3 solid;
 }
+.clickhere_btn {
+    color: #ea7227 !important;
+    background: #54a5f500;
+    border: 1px #e96f289e solid;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 3px 15px;
+    margin: 0px 15px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+}
 
+    .clickhere_btn:hover {
+        background: #ea7227;
+        color: #fff !important;
+        border: 0px;
+        border-radius: 5px;
+        font-weight: bold;
+        padding: 4px 15px;
+        margin: 0px 15px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+    }
+.client .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+}
 .client .mdc-card {
     background: #ebecf1;
 }
@@ -122,7 +147,12 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
     padding: 7px 7px !important;
     background: #f0f0f0;
 }
-
+.report-full-wrap #videoId {
+    background: #fff;
+    font-size: 12px;
+    padding: 1px 7px;
+    margin: 0px 10px;
+}
 table.dataTable thead .sorting:after {
     color: transparent
 }
@@ -216,6 +246,7 @@ textarea::-webkit-scrollbar {
 }
 .welcome-txt {
     font-size: 13px;
+    text-transform: capitalize;
 }
 .user-menu:before {
     background: #ec8840;
@@ -669,7 +700,11 @@ table.journey {
 }
 
 .interviewer .multiselect {
-    background: #dddddf !important;
+    background: #f7f7f7 !important;
+}
+
+.interviewer .radiobox {
+    background: #f7f7f7;
 }
 
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {

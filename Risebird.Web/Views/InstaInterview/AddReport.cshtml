@@ -18,11 +18,23 @@
 
     }
 }
+
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+@if (ViewBag.PageStatus == "Public")
+    {
+        <script>
+            document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+        </script>
+    }
+    @if (ViewBag.PageReport == "Insta")
+    {
+        <script>
+            document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+        </script>
+    }
 <div class="main-panel" id="main-panel">
 
     <div class="loader text-center">
@@ -55,7 +67,7 @@
                                 @Html.HiddenFor(model => model.RequestedBy)
                                 <div class="report-full-wrap">
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Candidate Details</span></h3>
                                             </div><!--end of multiple location-->
@@ -98,7 +110,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
                                         <h3 class="mb-0"><span>Interview Report</span></h3>
                                     </div><!--end of multiple location-->
@@ -147,7 +159,7 @@
 
 
                             <div class="row mb-40">
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
                                         <h3 class="mb-0"><span>Report Details</span></h3>
                                     </div><!--end of multiple location-->
@@ -177,7 +189,7 @@
                             @if (ViewBag.PageReport != "Insta")
                             {
                                 <div class="row mb-40">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Interview Video</span></h3>
                                         </div>
@@ -670,11 +682,13 @@
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";
         var urlcurrent = window.location.href;
+
          if (index == 2) {
              urlcurrent = urlcurrent.replace("AddReport", "PublicReport");
+
         }
         else {
-            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+             urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
         }
         $("#txtvideoUrls").text(urlcurrent);
     }
