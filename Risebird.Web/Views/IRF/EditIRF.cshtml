@@ -170,7 +170,14 @@
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
-                                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
+                                                        @if (ViewBag.clonevalue == 1)
+                                                        {
+                                                            @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @disabled = "disabled" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
+                                                        }
                                                         @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @id = "error_AssessmentGroupId", @class = "text-danger" })
 
                                                     </div>
@@ -1008,67 +1015,67 @@
                                                                 <tbody>
                                                                     @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                     {
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                        </td>
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                            </td>
 
-                                                                        <td>
+                                                                            <td>
 
-                                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                        </td>
-                                                                        <td>
+                                                                            </td>
+                                                                            <td>
 
-                                                                            @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
-                                                                        </td>
-                                                                        
-                                                                        <td class="action text-center">
-                                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            @if (Model.IsClone)
-                                                                            {
-                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                            }
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                            </td>
 
-                                                                        </td>
-                                                                    </tr>
+                                                                            <td class="action text-center">
+                                                                                <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                @if (Model.IsClone)
+                                                                                {
+                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                }
+
+                                                                            </td>
+                                                                        </tr>
                                                                     }
                                                                     else
                                                                     {
                                                                         for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                                         {
-                                                                        <tr>
-                                                                            <td>
-                                                                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                            </td>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                                </td>
 
-                                                                            <td>
-                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                            </td>
-                                                                            <td>
-                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
-                                                                            </td>
-                                                                            <td class="text-center">
-                                                                                @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
-                                                                            </td>
-                                                                            <td class="action text-center">
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                                </td>
+                                                                                <td class="action text-center">
 
-                                                                                <div>
-                                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                    @if (Model.IsClone)
-                                                                                    {
-                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                    }
+                                                                                    <div>
+                                                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        @if (Model.IsClone)
+                                                                                        {
+                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        }
 
 
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
                                                                         }
 
                                                                     }

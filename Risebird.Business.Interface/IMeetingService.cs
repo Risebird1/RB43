@@ -160,5 +160,6 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
         Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
+        Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
     }
 }

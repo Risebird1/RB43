@@ -53,6 +53,7 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 <input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
         <div class="pt30 videocon">
@@ -75,7 +76,7 @@
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             </span>
-                            <span id="status_3"><i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i></span>
+                            <span id="status_3"><i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
 
 
                         </div>
@@ -83,7 +84,7 @@
 
                     </div>
 
-                    <div class="note-filter" style="text-align: right;"> Note: To visualize data older than 7 days, please apply filter</div>
+                    <div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>
                 </div>
             </div>
         </div>
@@ -764,9 +765,7 @@
 
 
     function ResetFilter() {
-
-        window.location.href = "/Candidate/ResetCandidateTimelineFilter";
-
+        window.location.href = "/Candidate/ResetPublicCandidateTimelineFilter?emailid=" + $("#hidtxtemailid").val();
     }
     function ApplySessionFilter() {
 
