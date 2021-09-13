@@ -1522,7 +1522,7 @@ ul.panel-controls > li > button {
     border-radius: 4px 4px 0 0;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+   /* border-bottom: 1px rgba(0, 0, 0, 0.29) solid;*/
 }
 
     .dropdown-toggle::after {
