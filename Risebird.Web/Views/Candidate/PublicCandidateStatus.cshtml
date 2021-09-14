@@ -696,9 +696,15 @@
             var modal = document.getElementById("PublicShareVideo");
             modal.style.display = "block";
         }
+        //var emailiud = window.localStorage.getItem('PublicEmailid');
+        //if (emailiud != "" && emailiud != null) {
+        //    $("#txtvideoemailid").val(emailiud);
+        //    SubmitEmail();
+        //}
     });
     function SubmitEmail() {
         if ($("#txtvideoemailid").val() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtvideoemailid").val());
             $.ajax({
                 type: "POST",
                 url: "/Candidate/PublicAllMeetings",
