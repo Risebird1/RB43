@@ -3077,6 +3077,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                var result = _meetingRespository.FNFetchToalQCAmountStatus(st, se);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 
