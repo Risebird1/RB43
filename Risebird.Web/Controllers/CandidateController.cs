@@ -3276,6 +3276,8 @@ namespace Risebird.Web.Controllers
             {
                 var model = new List<CandidateTimelineVM>();
                 ViewBag.emailid = emailid;
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                 var candidateData = new List<CandidateTimelineData>();
                 if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                 {
@@ -3492,7 +3494,7 @@ namespace Risebird.Web.Controllers
             var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
             {
-                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                 HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
             }
             return View("PublicCandidateStatus", model);
