@@ -176,7 +176,7 @@
                                                         }
                                                         else
                                                         {
-                                                            @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()" })
+                                                            @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()", @disabled = "disabled" })
                                                         }
                                                         @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @id = "error_AssessmentGroupId", @class = "text-danger" })
 
@@ -1015,17 +1015,20 @@
                                                                 <tbody>
                                                                     @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                     {
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                        </td>
+                                                                        <tr>
+                                                                            <td>
+                                                                             
+                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled= "@disabled" })
+                                                                          
+                                                                            
+                                                                            </td>
 
-                                                                        <td>
+                                                                            <td>
 
-                                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                        </td>
-                                                                        <td>
+                                                                            </td>
+                                                                            <td>
 
                                                                                 @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                                             </td>
@@ -1047,17 +1050,17 @@
                                                                     {
                                                                         for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                                         {
-                                                                        <tr>
-                                                                            <td>
-                                                                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                            </td>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "@disabled" })
+                                                                                </td>
 
-                                                                            <td>
-                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                            </td>
-                                                                            <td>
-                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
                                                                                 </td>
                                                                                 <td class="text-center">
@@ -1073,9 +1076,9 @@
                                                                                         }
 
 
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
                                                                         }
 
                                                                     }
@@ -1115,7 +1118,7 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
+                                                                                @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)", @disabled = "@disabled" })
                                                                             </td>
 
                                                                             <td>
@@ -1146,7 +1149,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
+                                                                                    @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)", @disabled = "@disabled" })
                                                                                 </td>
 
                                                                                 <td>
@@ -1207,7 +1210,7 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                                                @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)",@disabled = "disabled" })
                                                                             </td>
 
                                                                             <td>
@@ -1245,7 +1248,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                                                    @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)",@disabled="disabled" })
                                                                                 </td>
 
                                                                                 <td>
@@ -2790,10 +2793,10 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
-
-
+      
         // reset fields in the new row
         $tr.find("select").val("");
+       
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=checkbox]").prop("checked", true);
@@ -2809,9 +2812,9 @@
         // Unbind existing validation
         $form.unbind();
         $form.data("validator", null);
-
+        $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+       $.validator.unobtrusive.parse(document);
 
 
     }
@@ -2856,10 +2859,10 @@
         // Unbind existing validation
         $form.unbind();
         $form.data("validator", null);
-
+        $('#EmergencyInterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-
+      
 
     }
 
@@ -3042,7 +3045,7 @@
         // Unbind existing validation
         $form.unbind();
         $form.data("validator", null);
-
+        $('#QualityController_' + (parseInt(trIndexReplaced)) + '__UserId').attr("disabled", false);
         // Check document for changes
         $.validator.unobtrusive.parse(document);
 
@@ -3546,4 +3549,18 @@
         });
 
     }
+</script>
+<script>
+    $("#InterviewerTable select").change(function () {
+        if ($(this).val() !== "") {
+       
+            $(".select-css").prop('disabled', false);
+
+        }
+        else {
+            $(".select-css").prop('disabled', true);
+
+
+        }
+    })
 </script>
