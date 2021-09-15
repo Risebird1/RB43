@@ -38,12 +38,22 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
+                var username = _userService.GetCurrentUsername(emailId);
                 if (String.IsNullOrEmpty(currenttheme))
                 {
                     HttpContext.Session.SetString("Currenttheme", "");
                 }
                 else
                     HttpContext.Session.SetString("Currenttheme", currenttheme);
+
+
+                if (String.IsNullOrEmpty(username))
+                {
+                    HttpContext.Session.SetString("CurrentUsername", "");
+                }
+                else
+                    HttpContext.Session.SetString("CurrentUsername", username);
+
 
                 if (menus.Count > 0)
                 {
@@ -74,6 +84,7 @@ namespace Risebird.Web.Controllers
                     {
                         role =  _clientService.GetClientRoleByEmailId(emailId).Result;
                     }
+
                     HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty);
                     HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
                     //HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));

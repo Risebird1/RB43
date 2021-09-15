@@ -65,5 +65,6 @@ namespace Risebird.Repository.Interface
         List<ZoomAccountDetailsVM> FetchInstaZoomAccounts();
         bool DeleteInstaZoomAccount(int Accountid);
         bool AddInstaZoomAccount(string AccountEmail);
+        string GetCurrentUsername(string emailId);
     }
 }
