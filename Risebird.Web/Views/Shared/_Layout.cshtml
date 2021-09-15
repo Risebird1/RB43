@@ -288,13 +288,13 @@
                                     <ul class="user-menu">
                                         <li class="user-menu__item welcome">
                                            
-                                            @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                            @if (@HttpContextAccessor.HttpContext.Session.GetString("CurrentUsername") != null)
                                             {
-                                                var email = HttpContextAccessor.HttpContext.Session.GetString("email");
-                                                email = email.Trim('"').Split('@')[0];
+                                                var CurrentUsername = HttpContextAccessor.HttpContext.Session.GetString("CurrentUsername");
+                                                CurrentUsername = CurrentUsername.Trim('"').Split('@')[0];
 
 
-                                              <div class="welcome-txt">  Welcome !&nbsp; @email</div>
+                                              <div class="welcome-txt">  Welcome !&nbsp; @CurrentUsername</div>
 
                                             }
                                         </li>
@@ -387,12 +387,12 @@
                                     <ul class="user-menu">
                                         <li class="user-menu__item welcome">
                                           
-                                            @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                            @if (@HttpContextAccessor.HttpContext.Session.GetString("CurrentUsername") != null)
                                             {
-                                                var email = HttpContextAccessor.HttpContext.Session.GetString("email");
-                                                email = email.Trim('"').Split('@')[0];
+                                                var CurrentUsername = HttpContextAccessor.HttpContext.Session.GetString("CurrentUsername");
+                                                CurrentUsername = CurrentUsername.Trim('"').Split('@')[0];
 
-                                                <div class="welcome-txt">  Welcome !&nbsp; @email</div>
+                                                <div class="welcome-txt">  Welcome !&nbsp; @CurrentUsername</div>
 
                                             }
                                           

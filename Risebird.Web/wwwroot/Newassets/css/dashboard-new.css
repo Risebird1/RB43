@@ -441,6 +441,7 @@ table tr td:hover, .table-striped tbody tr:hover {
     color: #159241;
     position: absolute;
     right: 75px;
+    font-size:19px;
 }
 
 #tblbodyCandidate [data-tooltip]:before {
@@ -6592,12 +6593,16 @@ input[type='radio'] {
 .mt-20 {
     margin-top: 20px;
 }
-
+.mt-10 {
+    margin-top: 10px;
+}
 .mtop-5 {
     margin-top: 5px;
 }
 
-
+.swal2-popup .swal2-title {
+    font-size: 1.35em !important;
+}
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
 }

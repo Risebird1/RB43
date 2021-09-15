@@ -764,5 +764,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public string GetCurrentUsername(string emailId)
+        {
+            try
+            {
+                return _userRepository.GetCurrentUsername(emailId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

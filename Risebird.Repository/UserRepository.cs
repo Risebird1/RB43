@@ -1436,5 +1436,26 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+
+        public string GetCurrentUsername(string emailid)
+        {
+            try
+            {
+                string connectionString = _configuration["ConnectionString:DBConnectionString"];
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select firstname  from UserList where EmailId = @id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", emailid);
+                    var results = con.Query<string>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
     }
 }
