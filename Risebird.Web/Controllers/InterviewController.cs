@@ -1357,7 +1357,7 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Index");
 
                         SetAddUpdateMeetingParameters(meetingToUpdate);
-                        
+
                         if (meetingToUpdate != null)
                         {
 
