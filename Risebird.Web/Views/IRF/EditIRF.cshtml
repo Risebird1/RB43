@@ -1015,17 +1015,17 @@
                                                                 <tbody>
                                                                     @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                     {
-                                                                        <tr>
-                                                                            <td>
-                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                            </td>
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                        </td>
 
-                                                                            <td>
+                                                                        <td>
 
-                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                            </td>
-                                                                            <td>
+                                                                        </td>
+                                                                        <td>
 
                                                                                 @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                                             </td>
@@ -1047,17 +1047,17 @@
                                                                     {
                                                                         for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                                         {
-                                                                            <tr>
-                                                                                <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                                </td>
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                            </td>
 
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                            <td>
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
                                                                                 </td>
                                                                                 <td class="text-center">
@@ -1073,9 +1073,9 @@
                                                                                         }
 
 
-                                                                                    </div>
-                                                                                </td>
-                                                                            </tr>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
                                                                         }
 
                                                                     }
@@ -1219,6 +1219,10 @@
 
                                                                                 @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
 
+                                                                            </td>
+
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBox("EmergencyInterviewerCollection[0].IsActive", new { @checked = "checked" })
                                                                             </td>
 
                                                                             <td class="text-center">
