@@ -117,14 +117,14 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.interviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @if (Model.InterviewingMembersList.Any(x => x.Text == Model.interviewer))
+                                        @if ((Model.InterviewingMembersList.Any(x => x.Text == Model.interviewer)) || string.IsNullOrEmpty(Model.interviewer))
                                         {
                                             @Html.DropDownListFor(x => Model.interviewer, Model.InterviewingMembersList, "Select Interviewer", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
 
                                         }
                                         else
                                         {
-                                            @Html.EditorFor(model => model.interviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly",@style = "position: relative;margin-bottom: 8px!important;" } })<span class="inactive">Inactive</span>
+                                            @Html.EditorFor(model => model.interviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "position: relative;margin-bottom: 8px!important;" } })<span class="inactive">Inactive</span>
                                             @Html.DropDownListFor(x => Model.NewActiveInterviewer, Model.InterviewingMembersList, "Select Interviewer", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
 
                                         }
@@ -135,14 +135,14 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.QCInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @if (Model.QualityControllersList.Any(x => x.Text == Model.QCInterviewer))
+                                        @if ((Model.QualityControllersList.Any(x => x.Text == Model.QCInterviewer)) || string.IsNullOrEmpty(Model.QCInterviewer))
                                         {
                                             @Html.DropDownListFor(x => Model.QCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
 
                                         }
                                         else
                                         {
-                                            @Html.EditorFor(model => model.QCInterviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly",@style= "position: relative;margin-bottom: 8px!important;" } })<span class="inactive">Inactive</span>
+                                            @Html.EditorFor(model => model.QCInterviewer, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @style = "position: relative;margin-bottom: 8px!important;" } })<span class="inactive">Inactive</span>
                                             @Html.DropDownListFor(x => Model.NewActiveQCInterviewer, Model.QualityControllersList, "Select Quality Controller", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
 
                                         }
@@ -337,30 +337,30 @@
 
     </script>
 }
-<script src="~/Newassets/js/interview.js"></script>
-<script>
+@*<script src="~/Newassets/js/interview.js"></script>*@
+@*<script>
 
-    document.body.className += "js";
+        document.body.className += "js";
 
-    var spinner = document.querySelector('.input');
-    var buttonUp = document.querySelector('.up');
-    var buttonDown = document.querySelector('.down');
+        var spinner = document.querySelector('.input');
+        var buttonUp = document.querySelector('.up');
+        var buttonDown = document.querySelector('.down');
 
-    buttonUp.onclick = function () {
-        var value = parseInt(spinner.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value++;
-        spinner.value = value;
-    };
+        buttonUp.onclick = function () {
+            var value = parseInt(spinner.value, 10);
+            value = isNaN(value) ? 0 : value;
+            value++;
+            spinner.value = value;
+        };
 
-    buttonDown.onclick = function () {
-        var value = parseInt(spinner.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value--;
-        spinner.value = value;
-    };
+        buttonDown.onclick = function () {
+            var value = parseInt(spinner.value, 10);
+            value = isNaN(value) ? 0 : value;
+            value--;
+            spinner.value = value;
+        };
 
-</script>
+    </script>*@
 <script>
     $('body').addClass('sidebar-mini js');
     $("#minimizeSidebar").click(function () {
