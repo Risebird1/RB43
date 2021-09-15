@@ -3276,6 +3276,8 @@ namespace Risebird.Web.Controllers
             {
                 var model = new List<CandidateTimelineVM>();
                 ViewBag.emailid = emailid;
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                 var candidateData = new List<CandidateTimelineData>();
                 if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                 {
@@ -3356,15 +3358,20 @@ namespace Risebird.Web.Controllers
                 {
                     var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
 
-                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
+                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
                     filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
+                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                     if (filter.HREmail != null)
                     {
-                        model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
+                        model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
                     }
                     if (filter.ProfileSource != null)
                     {
                         model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+                    }
+                    if (filter.MeetingStatus != null)
+                    {
+                        model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
                     }
                 }
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
@@ -3454,17 +3461,20 @@ namespace Risebird.Web.Controllers
                         model.Add(candidateTimeline);
                     }
                 }
-                filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
+                filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
                 filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
+                filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                 if (filter.HREmail != null)
                 {
-                    model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
-
+                    model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
                 }
                 if (filter.ProfileSource != null)
                 {
                     model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
-
+                }
+                if (filter.MeetingStatus != null)
+                {
+                    model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
                 }
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
@@ -3484,7 +3494,7 @@ namespace Risebird.Web.Controllers
             var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
             {
-                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                 HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
             }
             return View("PublicCandidateStatus", model);
@@ -3563,6 +3573,19 @@ namespace Risebird.Web.Controllers
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var scheduleStatusObjList = new List<TimelineStatus>();
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
+                        {
+                            var scheduleStatusObj = new TimelineStatus();
+                            scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
+                            scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
+                            scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
+                            scheduleStatusObj.Status = item.ScheduleStatusValue;
+                            scheduleStatusObj.ActualDate = item.ScheduleStatusDate;
+                            scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
+                            scheduleStatusObjList.Add(scheduleStatusObj);
+                        }
+                        candidateTimeline.ScheduleStatus = scheduleStatusObjList;
                         var lastStatus = scheduleStatusData.LastOrDefault();
                         if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                         {
@@ -3583,17 +3606,20 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
-
-                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.HREmail).ToArray() : filter.HREmail = filter.HREmail;
+                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
                     filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
-
+                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                     if (filter.HREmail != null)
                     {
-                        model = model.Where(x => filter.HREmail.Contains(x.HREmail)).ToList();
+                        model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
                     }
                     if (filter.ProfileSource != null)
                     {
                         model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+                    }
+                    if (filter.MeetingStatus != null)
+                    {
+                        model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
                     }
                 }
                 int role = 0;
@@ -3608,15 +3634,14 @@ namespace Risebird.Web.Controllers
                 }
                 Sheet.Cells[1, 1].Value = "Candidate name";
                 Sheet.Cells[1, 2].Value = "Candidate EmailId";
-                Sheet.Cells[1, 3].Value = "Primary Skill";
-                Sheet.Cells[1, 4].Value = "Client HR Email";
-                Sheet.Cells[1, 5].Value = "Candidated Added On/At";
-                Sheet.Cells[1, 6].Value = "Schedule Status";
-                Sheet.Cells[1, 7].Value = "Phone";
-                Sheet.Cells[1, 8].Value = "Current Status";
-                Sheet.Cells[1, 9].Value = "Current Status Date";
-                Sheet.Cells[1, 10].Value = "Profile Source";
-                Sheet.Cells[1, 11].Value = "Skill Channel ID";
+                Sheet.Cells[1, 3].Value = "JD Title";
+                Sheet.Cells[1, 4].Value = "Candidated Added On/At";
+                Sheet.Cells[1, 5].Value = "Schedule Status";
+                Sheet.Cells[1, 6].Value = "Phone";
+                Sheet.Cells[1, 7].Value = "Current Status";
+                Sheet.Cells[1, 8].Value = "Current Status Date";
+                Sheet.Cells[1, 9].Value = "Profile Source";
+                Sheet.Cells[1, 10].Value = "Skill Channel ID";
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -3626,52 +3651,51 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 1].Value = item.CandidateName;
                         Sheet.Cells[i, 2].Value = item.CandidateEmailId;
                         Sheet.Cells[i, 3].Value = item.PrimarySkill;
-                        Sheet.Cells[i, 4].Value = item.HREmail;
                         if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
                         {
                             var addedOnData = item.ScheduleStatus.Where(x => x.Status == CandidateStatusOptions.Added.GetDescription())?.FirstOrDefault();
                             if (addedOnData != null)
                             {
-                                Sheet.Cells[i, 5].Value = addedOnData.Date + " " + addedOnData.StatusDate + ", " + addedOnData.Time;
+                                Sheet.Cells[i, 4].Value = addedOnData.Date + " " + addedOnData.StatusDate + ", " + addedOnData.Time;
                             }
                             else
                             {
-                                Sheet.Cells[i, 5].Value = string.Empty;
+                                Sheet.Cells[i, 4].Value = string.Empty;
                             }
                             if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
                             {
-                                Sheet.Cells[i, 6].Value = ScheduleStatusTypes.Scheduled.GetDescription();
+                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.Scheduled.GetDescription();
                             }
                             else
                             {
-                                Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 5].Value = string.Empty;
-                            Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                            Sheet.Cells[i, 4].Value = string.Empty;
+                            Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
                         }
-                        Sheet.Cells[i, 7].Value = item.Phone ?? string.Empty;
+                        Sheet.Cells[i, 6].Value = item.Phone ?? string.Empty;
                         if (!string.IsNullOrEmpty(item.CurrentStatus))
                         {
-                            Sheet.Cells[i, 8].Value = item.CurrentStatus;
-                            Sheet.Cells[i, 9].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
+                            Sheet.Cells[i, 7].Value = item.CurrentStatus;
+                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
                         }
                         else
                         {
+                            Sheet.Cells[i, 7].Value = string.Empty;
                             Sheet.Cells[i, 8].Value = string.Empty;
-                            Sheet.Cells[i, 9].Value = string.Empty;
                         }
                         if (!string.IsNullOrEmpty(item.ProfileSource))
                         {
-                            Sheet.Cells[i, 10].Value = item.ProfileSource;
+                            Sheet.Cells[i, 9].Value = item.ProfileSource;
                         }
                         else
                         {
-                            Sheet.Cells[i, 10].Value = string.Empty;
+                            Sheet.Cells[i, 9].Value = string.Empty;
                         }
-                        Sheet.Cells[i, 11].Value = item.IRFName;
+                        Sheet.Cells[i, 10].Value = item.IRFName;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
