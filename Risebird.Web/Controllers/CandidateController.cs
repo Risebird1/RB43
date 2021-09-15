@@ -3278,25 +3278,9 @@ namespace Risebird.Web.Controllers
                 ViewBag.emailid = emailid;
                 HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
                 HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+                HttpContext.Session.Remove("PublicCandidateStatusfilters");
                 var candidateData = new List<CandidateTimelineData>();
-                if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
-                {
-                    var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
-
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, emailid)).ToList();
-                    }
-                    else
-                    {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
-                    }
-                }
-                else
-                {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
-                }
-
+                candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -3351,27 +3335,6 @@ namespace Risebird.Web.Controllers
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
                     {
                         model.Add(candidateTimeline);
-                    }
-                }
-
-                if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
-                {
-                    var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
-
-                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
-                    filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
-                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-                    if (filter.HREmail != null)
-                    {
-                        model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
-                    }
-                    if (filter.ProfileSource != null)
-                    {
-                        model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
-                    }
-                    if (filter.MeetingStatus != null)
-                    {
-                        model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
                     }
                 }
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
