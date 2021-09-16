@@ -83,8 +83,10 @@
                                                         <div class="form-group">
                                                             @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                            <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
-                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger" })
+                                                            <div style="position:relative">
+                                                                <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
+                                                                @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger", @style = "position:absolute" })
+                                                            </div>
 
                                                         </div>
 
@@ -94,9 +96,11 @@
                                                         <div class="form-group">
                                                             @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "validateIRFName()" } })
-                                                            <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
-                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger" })
+                                                            <div style="position:relative">
+                                                                <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
+                                                                @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger", @style = "position:absolute" })
 
+                                                            </div>
                                                         </div>
 
                                                     }
@@ -1014,7 +1018,10 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
+
                                                                                 @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+
+
                                                                             </td>
 
                                                                             <td>
@@ -1032,10 +1039,10 @@
 
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                @if (Model.IsClone)
-                                                                                {
-                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                }
+                                                                                @*@if (Model.IsClone)
+                                                                                    {
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    }*@
 
                                                                             </td>
                                                                         </tr>
@@ -1046,8 +1053,9 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
+
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
-                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "@disabled" })
                                                                                 </td>
 
                                                                                 <td>
@@ -1065,10 +1073,10 @@
 
                                                                                     <div>
                                                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        @if (Model.IsClone)
-                                                                                        {
-                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                        }
+                                                                                        @*@if (Model.IsClone)
+                                                                                            {
+                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                            }*@
 
 
                                                                                     </div>
@@ -1129,10 +1137,10 @@
                                                                             </td>
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                @if (Model.IsClone)
-                                                                                {
-                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                }
+                                                                                @*@if (Model.IsClone)
+                                                                                    {
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    }*@
 
 
                                                                             </td>
@@ -1144,8 +1152,10 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
+
+                                                                                    @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                     @Html.HiddenFor(m => m.QualityController[i].UserId)
-                                                                                    @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)", @disabled = "@disabled" })
+
                                                                                 </td>
 
                                                                                 <td>
@@ -1162,10 +1172,10 @@
                                                                                 <td class="action text-center">
                                                                                     <div>
                                                                                         <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        @if (Model.IsClone)
-                                                                                        {
-                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                        }
+                                                                                        @*@if (Model.IsClone)
+                                                                                            {
+                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                            }*@
 
                                                                                     </div>
                                                                                 </td>
@@ -1230,10 +1240,10 @@
                                                                             </td>
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                @if (Model.IsClone)
-                                                                                {
-                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                }
+                                                                                @*@if (Model.IsClone)
+                                                                                    {
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    }*@
 
                                                                             </td>
                                                                         </tr>
@@ -1245,8 +1255,10 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.HiddenFor(m => m.EmergencyInterviewerCollection[i].UserId)
+
                                                                                     @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)", @disabled = "disabled" })
+                                                                                    @Html.HiddenFor(m => m.EmergencyInterviewerCollection[i].UserId)
+
                                                                                 </td>
 
                                                                                 <td>
@@ -1264,10 +1276,10 @@
 
                                                                                     <div>
                                                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        @if (Model.IsClone)
-                                                                                        {
-                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                        }
+                                                                                        @*@if (Model.IsClone)
+                                                                                            {
+                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill','PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                            }*@
 
                                                                                     </div>
                                                                                 </td>
@@ -2810,9 +2822,10 @@
         // Unbind existing validation
         $form.unbind();
         $form.data("validator", null);
+
         $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        //  $.validator.unobtrusive.parse(document);
 
 
     }

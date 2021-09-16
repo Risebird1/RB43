@@ -434,14 +434,16 @@ table tr td:hover, .table-striped tbody tr:hover {
 .recommendation .senioritylevel .multiselect.dropdown-toggle:after {
     left: 1%;
 }
-
+.publicmeeting .multiselect.dropdown-toggle.btn {
+    padding:12px 8px;
+}
 .popup-text {
     text-transform: none;
     text-align: right;
     color: #159241;
     position: absolute;
     right: 75px;
-    font-size:19px;
+    font-size: 19px;
 }
 
 #tblbodyCandidate [data-tooltip]:before {
@@ -1060,7 +1062,7 @@ input#txt_accno[type=number] {
 }
 
 .mobile-view-skchn {
-    right: -27px !important;
+    right: -20px !important;
 }
 
 .mobile-view-chn:before {
@@ -4969,7 +4971,7 @@ label {
 }
 
 .search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus {
-    background: #FFF !important;
+    background: #FFF;
     border: 1px #ccc solid !important;
     width: 256px !important;
     height: 39px !important;
@@ -6100,6 +6102,12 @@ label {
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         width: 350px !important;
         height: 200px !important;
+    }
+    .support svg {
+        position: relative;
+        left: 10px;
+        width: 16px;
+        top: -4px;
     }
     .mob-txt .clientName {
         width: 211px;
@@ -9813,6 +9821,10 @@ button.close {
 
 .instainterview .table-bordered th, #reportForm #QuestionsTable.table-bordered th, #reportForm #SkillTable.table-bordered th, #reportForm #JoinabilityTable.table-bordered th, #reportForm #SkillGeneralTable.table-bordered th, #reportForm #SelectabilityTable.table-bordered th, #reportForm #FeedBackAudioTable.table-bordered th {
     background: none !important;
+}
+
+.table-bordered tfoot {
+    background: #e0e0e0!important;
 }
 
     #reportForm #QuestionsTable.table-bordered th:last-child, #reportForm #SkillTable.table-bordered th:last-child, #reportForm #JoinabilityTable.table-bordered th:last-child, #reportForm #SkillGeneralTable.table-bordered th:last-child, #reportForm #SelectabilityTable.table-bordered th:last-child, #reportForm #FeedBackAudioTable.table-bordered th:last-child {

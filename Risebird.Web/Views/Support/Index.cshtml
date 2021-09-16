@@ -40,7 +40,7 @@
                     <div>
                         @if (ViewBag.Profile == "Admin")
                         {
-                            <button type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  card-title-space">
+                            <button type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin:10px 0px;"> 
                                 <span class="fa fa-envelope" data-toggle="tooltip" data-placement="top" title="Mail" onclick="location.href='@Url.Action("Mail", "Mail")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Mail</font></span>
                             </button>
 
@@ -74,7 +74,7 @@
                         <div class="loader text-center" style="display:block;">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
-                        <div class="dataloading">
+                        <div class="dataloading mtop-10">
                             <div class="toolbar">
 
                             </div>
