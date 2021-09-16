@@ -170,14 +170,11 @@
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
-                                                        @if (ViewBag.clonevalue == 1)
-                                                        {
-                                                            @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @disabled = "disabled" })
-                                                        }
-                                                        else
-                                                        {
-                                                            @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @onchange = "TechSkillChanged()", @disabled = "disabled" })
-                                                        }
+
+                                                        @Html.HiddenFor(model => model.AssessmentGroupId)
+                                                        @Html.DropDownListFor(model => model.AssessmentGroupId, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "form-control select-css", @disabled = "disabled" })
+
+
                                                         @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @id = "error_AssessmentGroupId", @class = "text-danger" })
 
                                                     </div>
@@ -1017,10 +1014,7 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                             
-                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled= "@disabled" })
-                                                                          
-                                                                            
+                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                                             </td>
 
                                                                             <td>
@@ -1052,6 +1046,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
+                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                     @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "@disabled" })
                                                                                 </td>
 
@@ -1118,7 +1113,7 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)", @disabled = "@disabled" })
+                                                                                @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
                                                                             </td>
 
                                                                             <td>
@@ -1149,6 +1144,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
+                                                                                    @Html.HiddenFor(m => m.QualityController[i].UserId)
                                                                                     @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)", @disabled = "@disabled" })
                                                                                 </td>
 
@@ -1210,7 +1206,8 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)",@disabled = "disabled" })
+
+                                                                                @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
                                                                             </td>
 
                                                                             <td>
@@ -1248,7 +1245,8 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)",@disabled="disabled" })
+                                                                                    @Html.HiddenFor(m => m.EmergencyInterviewerCollection[i].UserId)
+                                                                                    @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                 </td>
 
                                                                                 <td>
@@ -2793,10 +2791,10 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
-      
+
         // reset fields in the new row
         $tr.find("select").val("");
-       
+
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=checkbox]").prop("checked", true);
@@ -2814,7 +2812,7 @@
         $form.data("validator", null);
         $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
         // Check document for changes
-       $.validator.unobtrusive.parse(document);
+        $.validator.unobtrusive.parse(document);
 
 
     }
@@ -2862,7 +2860,7 @@
         $('#EmergencyInterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-      
+
 
     }
 
@@ -3553,7 +3551,7 @@
 <script>
     $("#InterviewerTable select").change(function () {
         if ($(this).val() !== "") {
-       
+
             $(".select-css").prop('disabled', false);
 
         }
