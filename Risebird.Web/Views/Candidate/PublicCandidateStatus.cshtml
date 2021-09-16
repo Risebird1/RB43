@@ -8,7 +8,7 @@
 @{
     ViewData["Title"] = "Candidates Status";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+   Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
@@ -46,6 +46,7 @@
         top: 7.9rem;
         right: -.3rem;
     }
+    .mob_h{display:none!important}
 </style>
 
 <script>
@@ -114,7 +115,7 @@
                                                 </button>
                                                 <form action="@Url.Action("PublicCandidateStatus", "Candidate",new { emailid=ViewBag.emailid})" method="post" id="form">
 
-                                                    <div class="modal-body">
+                                                    <div class="modal-body publicmeeting">
                                                         <div class="row">
                                                             <div class="col-md-6 col-sm-6 border-rv">
                                                                 <div class="form-group">
@@ -136,7 +137,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
                                                                 <div class="form-group">
                                                                     <label class="control-label  col-md-12 col-sm-12 desp-label" for="HREmail">
                                                                         JD Title
@@ -153,6 +154,10 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
+                                                               
+                                                            </div>
+
+                                                            <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <label class="control-label  col-md-12 col-sm-12 desp-label" for="MeetingStatus">
                                                                         Current Status
@@ -169,18 +174,20 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
+                                                            </div>
 
+                                                            <div class="col-sm-12 col-md-12 pull-right">
                                                                 <div class="form-group">
                                                                     <div>
                                                                         <div class="col-md-12 col-sm-12">
 
 
-                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
                                                                                 <font style="font-size:12px;"> Reset Filter</font>
                                                                             </button>
 
 
-                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-bottom:10px;">
                                                                                 <font style="font-size:12px;"> Apply Filter</font>
                                                                             </button>
 
@@ -189,7 +196,6 @@
 
                                                                     </div>
                                                                 </div>
-
                                                             </div>
                                                         </div>
 
