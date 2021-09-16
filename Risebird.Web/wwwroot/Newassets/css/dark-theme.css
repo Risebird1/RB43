@@ -755,6 +755,9 @@ div.dataTables_wrapper div.dataTables_info {
 .interviewer .radiobox {
     background: #383838 !important;
 }
+.dataTables_filter input[type=search] {
+    background: #000!important;
+}
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
