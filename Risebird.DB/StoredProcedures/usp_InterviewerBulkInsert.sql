@@ -25,7 +25,8 @@ SET NOCOUNT ON;
 INSERT INTO [dbo].[TransInterviewer](  
  [IRFId] ,  
  [UserId],  
- [PerSuccessRate],  
+ [PerSuccessRate], 
+ [IsActive],
  [InterviewerId])  
    
   

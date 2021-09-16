@@ -3270,6 +3270,426 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        public async Task<IActionResult> PublicCandidateStatus(string emailid)
+        {
+            try
+            {
+                var model = new List<CandidateTimelineVM>();
+                ViewBag.emailid = emailid;
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+                HttpContext.Session.Remove("PublicCandidateStatusfilters");
+                var candidateData = new List<CandidateTimelineData>();
+                candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+                foreach (var candidate in distinctCandidates)
+                {
+                    var firstData = new CandidateTimelineData();
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
 
+                    var candidateTimeline = new CandidateTimelineVM();
+
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ProfileSource = firstData.ProfileSource;
+                    candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                    candidateTimeline.Phone = firstData.MobileNumber;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                    }
+                    //add candidate to final model
+                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
+                    {
+                        model.Add(candidateTimeline);
+                    }
+                }
+                var role = await _clientService.GetClientRoleByEmailId(emailid);
+                ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                ViewBag.Profile = "Client";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid)
+        {
+            ViewBag.emailid = emailid;
+            try
+            {
+                var model = new List<CandidateTimelineVM>();
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("PublicCandidateStatusfilters", JsonConvert.SerializeObject(filter));
+                }
+                var candidateData = new List<CandidateTimelineData>();
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, emailid)).ToList();
+                }
+                else
+                {
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, emailid)).ToList();
+                }
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+                foreach (var candidate in distinctCandidates)
+                {
+                    var firstData = new CandidateTimelineData();
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
+
+                    var candidateTimeline = new CandidateTimelineVM();
+
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ProfileSource = firstData.ProfileSource;
+                    candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                    candidateTimeline.Phone = firstData.MobileNumber;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                    }
+                    //add candidate to final model
+                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
+                    {
+                        model.Add(candidateTimeline);
+                    }
+                }
+                filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
+                filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
+                filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                if (filter.HREmail != null)
+                {
+                    model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
+                }
+                if (filter.ProfileSource != null)
+                {
+                    model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+                }
+                if (filter.MeetingStatus != null)
+                {
+                    model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
+                }
+                var role = await _clientService.GetClientRoleByEmailId(emailid);
+                ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                ViewBag.Profile = "Client";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+            }
+        }
+        public async Task<IActionResult> PublicAllMeetings()
+        {
+            var model = new List<CandidateTimelineVM>();
+            ViewBag.PageType = "Public";
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View("PublicCandidateStatus", model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> PublicAllMeetings(string Emailid)
+        {
+            var role = await _clientService.GetClientRoleByEmailId(Emailid);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have Client access.");
+            }
+        }
+        public async Task<FileContentResult> PublicCandidateStatusExporttoExcel(string emailid)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Status");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
+            try
+            {
+                var model = new List<CandidateTimelineVM>();
+                var candidateData = new List<CandidateTimelineData>();
+                if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, emailid)).ToList();
+                    }
+                    else
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                    }
+                }
+                else
+                {
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                }
+
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+                foreach (var candidate in distinctCandidates)
+                {
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        data = data.Where(x => x.confirmationStatus != 2);
+                        data = data.OrderByDescending(x => x.InterviewId);
+                    }
+                    var firstData = data.FirstOrDefault();
+
+                    var candidateTimeline = new CandidateTimelineVM();
+
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ProfileSource = firstData.ProfileSource;
+                    candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                    candidateTimeline.IRFName = firstData.IRFName;
+                    candidateTimeline.Phone = firstData.Phone;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var scheduleStatusObjList = new List<TimelineStatus>();
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
+                        {
+                            var scheduleStatusObj = new TimelineStatus();
+                            scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
+                            scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
+                            scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
+                            scheduleStatusObj.Status = item.ScheduleStatusValue;
+                            scheduleStatusObj.ActualDate = item.ScheduleStatusDate;
+                            scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
+                            scheduleStatusObjList.Add(scheduleStatusObj);
+                        }
+                        candidateTimeline.ScheduleStatus = scheduleStatusObjList;
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
+                    {
+                        model.Add(candidateTimeline);
+                    }
+                }
+                if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
+                    filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
+                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                    if (filter.HREmail != null)
+                    {
+                        model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
+                    }
+                    if (filter.ProfileSource != null)
+                    {
+                        model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+                    }
+                    if (filter.MeetingStatus != null)
+                    {
+                        model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
+                    }
+                }
+                int role = 0;
+                role = await _clientService.GetClientRoleByEmailId(emailid);
+                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:S1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 12;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Candidate name";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "JD Title";
+                Sheet.Cells[1, 4].Value = "Candidated Added On/At";
+                Sheet.Cells[1, 5].Value = "Schedule Status";
+                Sheet.Cells[1, 6].Value = "Phone";
+                Sheet.Cells[1, 7].Value = "Current Status";
+                Sheet.Cells[1, 8].Value = "Current Status Date";
+                Sheet.Cells[1, 9].Value = "Profile Source";
+                Sheet.Cells[1, 10].Value = "Skill Channel ID";
+
+                int i = 2;
+                if (model.Count() > 0)
+                {
+                    foreach (var item in model)
+                    {
+                        Sheet.Cells[i, 1].Value = item.CandidateName;
+                        Sheet.Cells[i, 2].Value = item.CandidateEmailId;
+                        Sheet.Cells[i, 3].Value = item.PrimarySkill;
+                        if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
+                        {
+                            var addedOnData = item.ScheduleStatus.Where(x => x.Status == CandidateStatusOptions.Added.GetDescription())?.FirstOrDefault();
+                            if (addedOnData != null)
+                            {
+                                Sheet.Cells[i, 4].Value = addedOnData.Date + " " + addedOnData.StatusDate + ", " + addedOnData.Time;
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 4].Value = string.Empty;
+                            }
+                            if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
+                            {
+                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.Scheduled.GetDescription();
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 4].Value = string.Empty;
+                            Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                        }
+                        Sheet.Cells[i, 6].Value = item.Phone ?? string.Empty;
+                        if (!string.IsNullOrEmpty(item.CurrentStatus))
+                        {
+                            Sheet.Cells[i, 7].Value = item.CurrentStatus;
+                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 7].Value = string.Empty;
+                            Sheet.Cells[i, 8].Value = string.Empty;
+                        }
+                        if (!string.IsNullOrEmpty(item.ProfileSource))
+                        {
+                            Sheet.Cells[i, 9].Value = item.ProfileSource;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = string.Empty;
+                        }
+                        Sheet.Cells[i, 10].Value = item.IRFName;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid)
+        {
+            try
+            {
+                HttpContext.Session.Remove("PublicCandidateStatusfilters");
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+            }
+
+        }
     }
 }

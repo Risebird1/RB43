@@ -18,11 +18,23 @@
 
     }
 }
+
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+@if (ViewBag.PageStatus == "Public")
+    {
+        <script>
+            document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+        </script>
+    }
+    @if (ViewBag.PageReport == "Insta")
+    {
+        <script>
+            document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+        </script>
+    }
 <div class="main-panel" id="main-panel">
 
     <div class="loader text-center">
@@ -34,7 +46,7 @@
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="pull-right">
-                    @if (ViewBag.isAdminHR)
+                    @if (ViewBag.isAdminHR || ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
                     {
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
@@ -53,46 +65,52 @@
                                 @Html.HiddenFor(model => model.RequestId)
                                 @Html.HiddenFor(model => model.PreviousMeetingStatus)
                                 @Html.HiddenFor(model => model.RequestedBy)
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Candidate Details</h2>
-                                        </div><!--end of multiple location-->
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Candidate Details</span></h3>
+                                            </div><!--end of multiple location-->
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.RequestedDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.RequestedDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </div>
-                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6 border-rv">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @{
-                                                if (Model.ResumeLink != null && Model.ResumeLink != "")
-                                                {
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.ResumeLink.ToString() class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
-                                                }
-                                            }
+                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.RequestedDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.RequestedDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @{
+                                                        if (Model.ResumeLink != null && Model.ResumeLink != "")
+                                                        {
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.ResumeLink.ToString() class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
                                         <h3 class="mb-0"><span>Interview Report</span></h3>
                                     </div><!--end of multiple location-->
@@ -141,7 +159,7 @@
 
 
                             <div class="row mb-40">
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
                                         <h3 class="mb-0"><span>Report Details</span></h3>
                                     </div><!--end of multiple location-->
@@ -171,7 +189,7 @@
                             @if (ViewBag.PageReport != "Insta")
                             {
                                 <div class="row mb-40">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Interview Video</span></h3>
                                         </div>
@@ -330,7 +348,7 @@
                                         <div class="col-md-12 mc-button-area">
                                             @if (!ViewBag.isAdminHR)
                                             {
-                                                @if (ViewBag.Profile == "Admin")
+                                                @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
                                                 {
                                                     @Html.ActionLink("Back to List", "Index", "InstaInterview", new { id = Model.RequestId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                 }
@@ -664,11 +682,13 @@
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "block";
         var urlcurrent = window.location.href;
+
          if (index == 2) {
              urlcurrent = urlcurrent.replace("AddReport", "PublicReport");
+
         }
         else {
-            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+             urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
         }
         $("#txtvideoUrls").text(urlcurrent);
     }

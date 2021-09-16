@@ -67,7 +67,7 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="report-full-wrap">
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Candidate Details</span></h3>
                                             </div><!--end of multiple location-->
@@ -157,14 +157,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-
-                                        </div>
-                                    </div>
                                     <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -174,23 +167,6 @@
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-
-
-                                </div>
-
-                                <div class="row">
-
-                                    @*<div class="col-md-6 col-sm-6 pull-left">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-
-                    @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control", @disabled = "disabled" })
-                    @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
-
-                </div>
-
-            </div>*@
                                     <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -201,11 +177,12 @@
                                         </div>
                                     </div>
 
-
                                 </div>
 
-                                <div class="row mb-40">
-                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                        
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Interview Video</span></h3>
                                         </div><!--end of multiple location-->
@@ -305,7 +282,7 @@
 
 
                                         </div>
-                                        <div class="col-md-6 col-sm-6">
+                                        <div class="col-md-6 col-sm-6 pull-left">
                                             <div>
                                                 <div>
                                                     <div class="form-group">
@@ -357,7 +334,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Questions Discussed</span></h3>
                                             </div><!--end of multiple location-->
@@ -465,7 +442,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Tech Skill Report</span></h3>
                                             </div><!--end of multiple location-->
@@ -550,7 +527,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>General Skill Report</span></h3>
 </div><!--end of multiple location-->
@@ -633,7 +610,7 @@
 
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Joinability Report</span></h3>
 </div><!--end of multiple location-->
@@ -715,7 +692,7 @@
 
 
                                     <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Selectability Report</span></h3>
 </div><!--end of multiple location-->
@@ -800,7 +777,7 @@
                                                 <input class="toggle-box" id="identifier-1" type="checkbox">
                                                 <label for="identifier-1">
                                                     <div class="multiple_row">
-                                                        <h2>Proctoring Report</h2>
+                                                        <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
                                                     </div>
                                                 </label>
 

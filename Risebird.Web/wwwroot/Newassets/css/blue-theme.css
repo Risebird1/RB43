@@ -13,6 +13,42 @@ body {
     background-size: 7% !important;
 }
 
+#videoId {
+    background: #cbe0f5;
+    color: #5097de;
+}
+.client #reportId, .client #reportId:hover {
+    background: #fff;
+    border: 1px #8eb7e0 solid;
+    text-decoration: none;
+    color: #007bff!important;
+}
+.clickhere_btn {
+    color: #2970bbb8 !important;
+    background: #54a5f500;
+    border: 1px #03a9f469 solid;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 3px 15px;
+    margin:0px 15px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+}
+
+    .clickhere_btn:hover {
+        background: #54a5f5e0;
+        color: #fff !important;
+        border: 0px;
+        border-radius: 5px;
+        font-weight: bold;
+        padding: 4px 15px;
+        margin: 0px 15px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+    }
+.client .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+}
 .can-details a, .callatag {
     background: #e2f0ff;
     color: #007bff !important;
@@ -22,7 +58,12 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
-
+.report-full-wrap #videoId {
+    background: #fff;
+    font-size: 12px;
+    padding: 1px 7px;
+    margin: 0px 10px;
+}
 .Fnactive-header-button {
     background-color: #204065 !important;
     color: #fff !important;
@@ -437,9 +478,11 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .interviewer .multiselect {
-    background: #ececee !important;
+    background: #f7f7f7 !important;
 }
-
+.interviewer .radiobox {
+    background: #f7f7f7;
+}
 [type="datetime-local"] {
     background: #ececee url(../img/blue-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
@@ -666,13 +709,22 @@ textarea::-webkit-scrollbar-thumb {
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #417abb;
 }
-
-.user-menu__item span {
-    color: #1f3e63 !important;
-    text-transform: uppercase;
-    font-size: 13px;
-    font-weight: 600;
+.user-menu a:hover span, .user-menu span.color-themetxt:hover {
+    color: #54a5f5 !important;
 }
+.welcome {
+    background: #54a5f5;
+    padding: 6px 5px;
+    text-align: center;
+}
+.welcome-txt {
+    font-size: 13px;
+    text-transform: capitalize;
+}
+.user-menu:before {
+    background: #54a5f5;
+}
+
 
 .menu-container ul {
     border-bottom: 2px #86c3ff solid;

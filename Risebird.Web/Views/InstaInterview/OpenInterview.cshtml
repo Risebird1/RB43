@@ -112,7 +112,7 @@
                                                                 <div id="section">
                                                                     @if (item.RequiredSkill != null && item.RequiredSkill != "")
                                                                     {
-                                                                        @if (item.RequiredSkill.Length > 26)
+                                                                        @if (item.RequiredSkill.Length > 30)
                                                                         {
                                                                             <div class="article">
                                                                                 <p style="margin-bottom:0px;">
@@ -128,7 +128,7 @@
                                                                             <div class="article">
 
                                                                                 <p>
-                                                                                    @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length - 1)
+                                                                                    @item.RequiredSkill.Substring(0, @item.RequiredSkill.Length)
                                                                                 </p>
                                                                             </div>
                                                                         }

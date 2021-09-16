@@ -1550,7 +1550,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, bool isClone = false)
+        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
         {
             try
             {
@@ -1563,6 +1563,8 @@ namespace Risebird.Web.Controllers
                     model.OldJDLink = model.JDLink;
                     //TempData["ComapanyDetails"] = model.CompanyDetails;
                     model.OldCompanyDetails = model.CompanyDetails;
+                    ViewBag.clonevalue = clonevalue;
+                    model.clonevalue = clonevalue;
                     return View(model);
                 }
                 else
@@ -1591,6 +1593,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
+                    ViewBag.clonevalue = model.clonevalue;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         //check duplicates for interviewer, emergency interviewer and quality controllers
@@ -5435,7 +5438,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 return PartialView("AddReportPartial", model);
@@ -5544,7 +5547,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 return PartialView("AddReportPartial", model);
@@ -5565,9 +5568,10 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                ViewBag.Profile = profileName;
                 //var emailid = HttpContext.Session.GetString("email")?.Trim();
                 //emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                 {
                     var irfList = new List<IRF>();
                     if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
@@ -5617,9 +5621,10 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                ViewBag.Profile = profileName;
                 //var emailid = HttpContext.Session.GetString("email")?.Trim();
                 //emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                 {
                     var irfList = new List<IRF>();
                     if (filter.StartDate != null && filter.EndDate != null)
@@ -5665,5 +5670,103 @@ namespace Risebird.Web.Controllers
 
         }
 
+        public async Task<IActionResult> CloneSkillChannnel()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                {
+                    var irfList = _irfService.GetAllSkillChannelDetails();
+                    if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("CloneSkillChannelfilters"));
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.AssessmentGroup).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        irfList = irfList.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)).ToList();
+                    }
+                    return View(irfList);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> CloneSkillChannnel(InterviewFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("CloneSkillChannelfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    var irfList = _irfService.GetAllSkillChannelDetails();
+                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.AssessmentGroup).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                    irfList = irfList.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)).ToList();
+                    return View(irfList);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task<IActionResult> ResetCloneSkillChannnelFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("CloneSkillChannelfilters");
+                    return RedirectToAction("CloneSkillChannnel");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        public JsonResult FetchSkillDetails(int id)
+        {
+            var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
+            var level = _irfRepository.GetLevelTech();
+            var Skillset = _irfRepository.GetSkills();
+            if (Skillset != null)
+            {
+                Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            }
+            foreach (var item in transTechSkills)
+            {
+                item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
+                item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+            }
+            return Json(transTechSkills);
+        }
     }
 }

@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using RestSharp;
+using OfficeOpenXml;
 
 namespace Risebird.Web.Controllers
 {
@@ -1127,7 +1128,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 return View("AddReport", model);
@@ -1161,7 +1162,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 return View("AddReport", model);
@@ -1216,6 +1217,267 @@ namespace Risebird.Web.Controllers
             var tokenString = handler.WriteToken(secToken);
             return tokenString;
         }
+        [HttpGet]
+        public FileContentResult InstaInterviewsExporttoExcel(int id)
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("InstaInterviews");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_InstaInterviews" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                profilename = profilename.Replace("\"", "");
+                List<InstaMeetingVM> modelList = new List<InstaMeetingVM>();
+                if (HttpContext.Session.GetString("InstaInterviewfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("InstaInterviewfilters"));
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        modelList = _instaInterviewService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), id, emailid);
+                    }
+                    modelList = modelList.Select(x =>
+                    {
+                        x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
+                        x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription();
+                        return x;
+                    }).ToList();
 
+                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.RequiredSkill.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = modelList.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                    filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+                    filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.Interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+
+                    modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.RequiredSkill.Split("|")[0])
+                    && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
+                    && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                    && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.Interviewer) : c.Interviewer == null)).ToList();
+                }
+                else
+                {
+                    modelList = _instaInterviewService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), id, emailid);
+                    modelList = modelList.Select(x => { x.ConfirmationStatus = ((InstaReceiveMeetingStatus)Convert.ToInt32(x.ConfirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                }
+
+                Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 20;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Requested Date";
+                Sheet.Cells[1, 2].Value = "Candidate Name";
+                Sheet.Cells[1, 3].Value = "Required Skill";
+                Sheet.Cells[1, 4].Value = "Assessment Group";
+                if (profilename == "Client")
+                {
+                    Sheet.Cells[1, 5].Value = "Confirmation Status";
+                    Sheet.Cells[1, 6].Value = "Meeting Status";
+                    Sheet.Cells[1, 7].Value = "Interview Status";
+                    Sheet.Cells[1, 8].Value = "Resume";
+                    Sheet.Cells[1, 9].Value = "JD Link";
+                    Sheet.Cells[1, 10].Value = "Report URL";
+                }
+                else
+                {
+                    Sheet.Cells[1, 5].Value = "Interviewer";
+                    Sheet.Cells[1, 6].Value = "Zoom Link";
+                    Sheet.Cells[1, 7].Value = "Zoom Id";
+                    Sheet.Cells[1, 8].Value = "Confirmation Status";
+                    Sheet.Cells[1, 9].Value = "Meeting Status";
+                    Sheet.Cells[1, 10].Value = "Interview Status";
+                    Sheet.Cells[1, 11].Value = "Resume";
+                    Sheet.Cells[1, 12].Value = "JD Link";
+                    Sheet.Cells[1, 13].Value = "Report URL";
+                }
+                int i = 2;
+                if (modelList.Count() > 0)
+                {
+                    foreach (var item in modelList)
+                    {
+                        Sheet.Cells[i, 1].Value = item.RequestedDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = item.CandidateName;
+                        Sheet.Cells[i, 3].Value = item.RequiredSkill;
+                        Sheet.Cells[i, 4].Value = item.AssessmentGroup;
+                        if (profilename == "Client")
+                        {
+                            Sheet.Cells[i, 5].Value = item.ConfirmationStatus;
+                            if (item.MeetingStatusStatusDesc != "0")
+                                Sheet.Cells[i, 6].Value = item.MeetingStatusStatusDesc;
+                            else
+                                Sheet.Cells[i, 6].Value = "";
+                            if (item.intervieweStatusStatDesc != "0")
+                                Sheet.Cells[i, 7].Value = item.intervieweStatusStatDesc;
+                            else
+                                Sheet.Cells[i, 7].Value = "";
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 8].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 8].Value = "Resume";
+                                    Sheet.Cells[i, 8].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 8].Value = "No Resume";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 8].Value = "No Resume";
+                            }
+                            if (!string.IsNullOrEmpty(item.JDLink))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 9].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 9].Value = "JD Link";
+                                    Sheet.Cells[i, 9].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 9].Value = "No JD Link";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 9].Value = "No JD Link";
+                            }
+                            if (item.id != 0)
+                            {
+                                try
+                                {
+                                    string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + item.id + "&Requestedid=" + id;
+                                    Sheet.Cells[i, 10].Hyperlink = new Uri(sendreporturl, UriKind.Absolute);
+                                    Sheet.Cells[i, 10].Value = "Report Url";
+                                    Sheet.Cells[i, 10].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 10].Value = "No url";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 10].Value = "No url";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 5].Value = item.Interviewer;
+                            if (!string.IsNullOrEmpty(item.ZoomLink))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 6].Hyperlink = new Uri(item.ZoomLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 6].Value = "Zoom Link";
+                                    Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 6].Value = "No Link";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 6].Value = "No Link";
+                            }
+                            Sheet.Cells[i, 7].Value = item.AccountEmail;
+                            Sheet.Cells[i, 8].Value = item.ConfirmationStatus;
+                            if (item.MeetingStatusStatusDesc != "0")
+                                Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+                            else
+                                Sheet.Cells[i, 9].Value = "";
+                            if (item.intervieweStatusStatDesc != "0")
+                                Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
+                            else
+                                Sheet.Cells[i, 10].Value = "";
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 11].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 11].Value = "Resume";
+                                    Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 11].Value = "No Resume";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 11].Value = "No Resume";
+                            }
+                            if (!string.IsNullOrEmpty(item.JDLink))
+                            {
+                                try
+                                {
+                                    Sheet.Cells[i, 12].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                    Sheet.Cells[i, 12].Value = "JD Link";
+                                    Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 12].Value = "No JD Link";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 12].Value = "No JD Link";
+                            }
+                            if (item.id != 0)
+                            {
+                                try
+                                {
+                                    string sendreporturl = "https://" + Request.Host.ToString() + "/InstaInterview/InstaAddReport?interviewId=" + item.id + "&Requestedid=" + id;
+                                    Sheet.Cells[i, 13].Hyperlink = new Uri(sendreporturl, UriKind.Absolute);
+                                    Sheet.Cells[i, 13].Value = "Report Url";
+                                    Sheet.Cells[i, 13].Style.Font.UnderLine = true;
+                                    Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                }
+                                catch (Exception)
+                                {
+                                    Sheet.Cells[i, 13].Value = "No url";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 13].Value = "No url";
+                            }
+                        }
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
     }
 }

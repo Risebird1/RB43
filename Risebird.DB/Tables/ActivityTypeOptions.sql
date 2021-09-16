@@ -29,3 +29,6 @@ insert into ActivityTypeOptions values (4,'Update Skills Channel')
 insert into ActivityTypeOptions values (5,'Create Candidate Feedback')
 insert into ActivityTypeOptions values (6,'Update Candidate Feedback')
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (7, N'QC Passed')
+SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON 
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (8, N'QC Failed')
+SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF

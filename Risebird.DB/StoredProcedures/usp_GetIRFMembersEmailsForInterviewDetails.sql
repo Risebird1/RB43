@@ -24,13 +24,13 @@ declare @irfIntId int
 	Begin
 
 	insert into @Members
-	select ul.EmailId, 'I' from TransEmergencyInterviewer tei join UserList ul on ul.id = tei.UserId where IRFId = @irfIntId
+	select ul.EmailId, 'I' from TransEmergencyInterviewer tei join UserList ul on ul.id = tei.UserId where IRFId = @irfIntId and tei.IsActive=1
 
 	insert into @Members
-	select ul.EmailId,'I' from TransInterviewer ti join UserList ul on ul.id = ti.UserId where IRFId = @irfIntId
+	select ul.EmailId,'I' from TransInterviewer ti join UserList ul on ul.id = ti.UserId where IRFId = @irfIntId and ti.IsActive=1
 
 	insert into @Members
-	select distinct ul.EmailId, 'Q' from TransQualityController tqc join UserList ul on ul.id = tqc.UserId where IRFId = @irfIntId
+	select distinct ul.EmailId, 'Q' from TransQualityController tqc join UserList ul on ul.id = tqc.UserId where IRFId = @irfIntId and tqc.IsActive=1
 
 	insert into @Members
 	select ulh.EmailId, 'O' from IRF join UserList ulh on ulh.id = irf.RisebirdHr where irf.id = @irfIntId

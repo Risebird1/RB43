@@ -49,6 +49,7 @@ namespace Risebird.Business
         {
             try
             {
+                irfDetails.IRFId = irfDetails.IRFId.Trim();
                 irfDetails.CreatedOn = DateTime.UtcNow;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
@@ -441,7 +442,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IRFVm> GetEditIRF(int id, bool isClone=false)
+        public async Task<IRFVm> GetEditIRF(int id, bool isClone = false)
         {
             try
             {
@@ -480,7 +481,7 @@ namespace Risebird.Business
                 model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
                 model.Selectability = (IList<TransSelectability>)(transSelectability);
                 model.StartDate = IRF.StartDate;
-                if(!isClone)
+                if (!isClone)
                 {
                     var transClientUser = _irfRepository.GetTransClientUser(id);
                     model.ClientCollection = (IList<TransClientUser>)(transClientUser);
@@ -1875,11 +1876,11 @@ namespace Risebird.Business
                                    string mailResult = string.Empty;
                                    string oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
                                    if (irf.BussinessType == "B2B")
-                                   {                                      
-                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill,  (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
+                                   {
+                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
                                    }
                                    else
-                                   {                                       
+                                   {
                                        mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                                    }
                                    var index = data.Rows.IndexOf(row);
@@ -2049,6 +2050,19 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<SkillCahnnelDetailsVM> GetAllSkillChannelDetails()
+        {
+            try
+            {
+                var irfList = _irfRepository.GetAllSkillChannelDetails().Result.ToList();
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

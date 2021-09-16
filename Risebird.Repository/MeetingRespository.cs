@@ -4059,7 +4059,7 @@ namespace Risebird.Repository
                 }
                 if (_list.Count > 0)
                 {
-                    var queryad = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Advance' and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Advance' and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se))Select Comment,id,Sum(Points) as Points from CTE group by Comment,id";
+                    var queryad = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and interviewid!=0 Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Advance' and interviewerid!=0  Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Advance' and interviewerid=0 and Interviewid=0)Select Comment,id,Sum(Points) as Points from CTE group by Comment,id";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync<RBInterviewDetails>(queryad, dynamicParameters);
@@ -4182,7 +4182,7 @@ namespace Risebird.Repository
             }
             return "fail";
         }
-        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate,string email)
+        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email)
         {
             try
             {
@@ -4979,6 +4979,94 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public async Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                //var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                var query = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Paid' and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Paid' and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Paid' and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se)) Select Sum(Points*90/100) as Points from CTE";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<long>(query, dynamicParameters);
+                    return Convert.ToInt32(results.FirstOrDefault());
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                //var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                var query = ";with CTE(paymentid,Comment,id, Points,MeetingStatus) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.Interviewid=im.id  where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Interview' and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.Interviewid=im.id where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Interview' and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)) Select Comment,id,MeetingStatus,Sum(Points) as Points from CTE where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=4 group by Comment,id,MeetingStatus";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    _list = (List<RBInterviewDetails>)results;
+                    return _list.OrderBy(x => x.Comment).ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                //var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                var query = ";with CTE(paymentid,Comment,id, Points,MeetingStatus) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.Interviewid=im.id  where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Quality Controller' and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.Interviewid=im.id where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Quality Controller' and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)) Select Comment,id,MeetingStatus,Sum(Points) as Points from CTE group by Comment,id,MeetingStatus";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    _list = (List<RBInterviewDetails>)results;
+                    return _list.OrderBy(x => x.Comment).ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<Meeting> GetMeetingDetails(int meetingId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingId", meetingId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_GetMeetingDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
     }
 }

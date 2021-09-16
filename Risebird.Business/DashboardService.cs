@@ -22,7 +22,7 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date,string Emailid)
+        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date, string Emailid)
         {
             try
             {
@@ -34,11 +34,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date,string Emailid)
+        public async Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date, string Emailid)
         {
             try
             {
-                return _dashboardRespository.GetDateWiseMeetingsSlots(date,Emailid).Result;
+                return _dashboardRespository.GetDateWiseMeetingsSlots(date, Emailid).Result;
             }
             catch (Exception ex)
             {
@@ -59,7 +59,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<IRF>> GetIRFProgress(DateTime date,string Emailid)
+        public async Task<IEnumerable<IRF>> GetIRFProgress(DateTime date, string Emailid)
         {
             try
             {
@@ -340,11 +340,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount()
+        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount(string Emailid)
         {
             try
             {
-                return await _dashboardRespository.GetNotUpdatedMeetingsCount();
+                return await _dashboardRespository.GetNotUpdatedMeetingsCount(Emailid);
             }
             catch (Exception ex)
             {
@@ -429,11 +429,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype)
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype, string profileName)
         {
             try
             {
-                return await _dashboardRespository.FetchRibbonDetailsValues(actionstatus, emailid, actiontype);
+                return await _dashboardRespository.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
             }
             catch (Exception ex)
             {
@@ -441,11 +441,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype)
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName)
         {
             try
             {
-                return await _dashboardRespository.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                return await _dashboardRespository.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
             }
             catch (Exception ex)
             {

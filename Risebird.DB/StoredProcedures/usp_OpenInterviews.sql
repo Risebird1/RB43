@@ -29,7 +29,7 @@ left join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail  
 join CandidatesMaster cm on cm.UserId = ulc.id  
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id  
-where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow
+where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1
 union 
 select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, 
 ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,    
@@ -45,7 +45,7 @@ left join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail  
 join CandidatesMaster cm on cm.UserId = ulc.id  
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id  
-where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow
+where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1
 END  
 
 

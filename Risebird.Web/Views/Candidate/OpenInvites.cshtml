@@ -10,27 +10,12 @@
 }
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-
+<script>
+    var Header = "Open Interview Invites";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
 
-                <a class="navbar-brand">
-                    Open Interview Invites
-                </a>
-            </div>
-        </div>
-    </nav>
-    <!-- End Navbar -->
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -120,7 +105,7 @@
 
 
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
     <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
@@ -176,4 +161,4 @@
         enjoyhint_instance.run();
 
     </script>
-}
+}*@

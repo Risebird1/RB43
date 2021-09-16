@@ -3781,7 +3781,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 ViewBag.PageStatus = "PublicExternal";
@@ -4099,7 +4099,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 ViewBag.PageStatus = "PublicExternal";
@@ -4120,7 +4120,7 @@ namespace Risebird.Web.Controllers
             var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
             {
-                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                 HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
             }
             ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct();
@@ -4147,6 +4147,29 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Emailid don't have Client access.");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> SendPublicURLClientUser(string Emailid)
+        {
+            try
+            {
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings";
+                Mail _mail1 = new Mail
+                {
+                    TO = Emailid,
+                    Subject = "Candidate Status Update"
+                };
+                var emailsend1 = _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl);
+                if (emailsend1.Contains("successfully"))
+                    return Json("Success");
+                else
+                    return Json("Failed");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
             }
         }
     }
