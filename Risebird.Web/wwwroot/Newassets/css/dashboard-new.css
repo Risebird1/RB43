@@ -9977,12 +9977,12 @@ h4.card-title {
 #search {
     right: 40px;
     position: absolute;
-    width: 25px;
-    height: 19px;
-    top: 10px;
+    width: 35px;
+    height: 35px;
+    top: 3px;
     position: absolute;
     border: 0px;
-    background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
+    background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat center;
     z-index: 1;
 }
 
