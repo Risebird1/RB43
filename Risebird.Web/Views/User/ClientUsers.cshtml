@@ -43,8 +43,7 @@
                             <table id="clientduser" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th hidden></th>
-                                        <th hidden></th>
+
                                         <th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Email Id</th>
@@ -53,12 +52,13 @@
                                         <th>Mobile Number</th>
                                         <th>Password</th>
                                         <th class="disabled-sorting text-center">Actions</th>
+                                        <th hidden></th>
+                                        <th hidden></th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
-                                        <th hidden></th>
-                                        <th hidden></th>
+
                                         <th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Email Id</th>
@@ -67,53 +67,56 @@
                                         <th>Mobile Number</th>
                                         <th>Password</th>
                                         <th class="disabled-sorting text-center">Actions</th>
+                                        <th hidden></th>
+                                        <th hidden></th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr id=@item.id>
-                                            <td hidden>@item.id</td>
-                                            <td hidden>@item.idProfile</td>
-                                            <td>@item.FirstName</td>
-                                            <td>@item.LastName</td>
-                                            <td>@item.EmailId</td>
-                                            <td>@item.ClientName</td>
-                                            <td>@item.Role</td>
-                                            <td>@item.MobileNumber</td>
-                                            <td>
-                                                <div style="position:relative">
-                                                    <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
-                                                    @if (item.UserPassword != null && item.UserPassword != "")
-                                                    {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
-                                                        <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
-                                                    }
-                                                    else
-                                                    { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
-                                                </div>
+                                    <tr id=@item.id>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>@item.EmailId</td>
+                                        <td>@item.ClientName</td>
+                                        <td>@item.Role</td>
+                                        <td>@item.MobileNumber</td>
+                                        <td>
+                                            <div style="position:relative">
+                                                <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
+                                                @if (item.UserPassword != null && item.UserPassword != "")
+                                                {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
+                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                }
+                                                else
+                                                { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
+                                            </div>
 
 
-                                            </td>
-                                            <td class="text-center">
+                                        </td>
+                                        <td class="text-center">
 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
-                                                    <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                </button>
+                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
+                                                <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                            </button>
 
 
 
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                </button>
+                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
+                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                            </button>
 
-                                                <button class="mdc-fab app-fab--absolute " aria-label="Click here to reset your navigation history">
-                                                    <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-                                                </button>
-                                                <button class="mdc-fab app-fab--absolute " aria-label="Share Public URL">
-                                                    <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                            <button class="mdc-fab app-fab--absolute " aria-label="Click here to reset your navigation history">
+                                                <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
+                                            </button>
+                                            <button class="mdc-fab app-fab--absolute " aria-label="Share Public URL">
+                                                <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
+                                            </button>
+                                        </td>
+
+                                        <td hidden>@item.id</td>
+                                        <td hidden>@item.idProfile</td>
+                                    </tr>
                                     }
                                 </tbody>
                             </table>
