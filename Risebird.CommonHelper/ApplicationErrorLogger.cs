@@ -66,6 +66,28 @@ namespace Risebird.CommonHelper
                 Console.WriteLine(ex1.InnerException);
             }
         }
+        public async Task LogMessage(LogLevelInfo logLevelInfo, string message, string userEmailid = "")
+        {
+            try
+            {
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
 
+              
+                    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                    var exception = new LogData(date, Guid.NewGuid().ToString())
+                    {
+                        LogeLevel = (int)logLevelInfo,
+                        UserEmailId = userEmailid,
+                        LogMessage = message                     
+                    };
+                    await _azureTableStorageService.InsertEntity("Risebirdlogs", exception);
+               
+
+            }
+            catch (Exception ex1)
+            {
+                Console.WriteLine(ex1.InnerException);
+            }
+        }
     }
 }
