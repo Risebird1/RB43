@@ -3781,5 +3781,26 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail)
+        {
+            try
+            {
+                if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                {
+                    return Json("Invitation cancelled successfully");
+                }
+                else
+                {
+                    return Json("Sorry! Could not cancel invite!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not cancel invite!");
+            }
+        }
     }
 }
