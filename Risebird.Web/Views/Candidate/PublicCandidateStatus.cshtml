@@ -325,6 +325,7 @@
                                                                                 </a>
                                                                             }
                                                                             <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
+                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px;" title="Cancel Invite"><span class="fa fa-close"></span></span></span>
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
@@ -697,6 +698,16 @@
             url: '/Candidate/PublicSendInvite',
             type: 'POST',
             data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail, 'logiduser': $("#hidtxtemailid").val() },
+            success: function (data) {
+                swal.fire(data);
+            }
+        });
+    }
+    function Cancelinvite(id, interviewdate, CandidateEmail) {
+        $.ajax({
+            url: '/Candidate/PublicCancelInterview',
+            type: 'POST',
+            data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail },
             success: function (data) {
                 swal.fire(data);
             }
