@@ -424,6 +424,8 @@ namespace Risebird.Web.Controllers
             sb.Append("<tbody></table>");
 
             var commentvalue = st.ToString() + " to " + se.ToString();
+            var _Amount = Convert.ToInt32(resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * .9) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points));
+            amount = _Amount.ToString();
             var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
             var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
             if (String.IsNullOrEmpty(paymenthistory))
