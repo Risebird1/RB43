@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FileTypeInterrogator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -39,9 +40,15 @@ namespace Risebird.Web.Controllers
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IClientService _clientService;
         private readonly ICalendlyHelper _calendlyHelper;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
         //private static string Searchvalue;
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, 
+            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, 
+            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, 
+            INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
+            ISASUrlHelper sasUrlHelper, IClientService clientService, 
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -56,6 +63,7 @@ namespace Risebird.Web.Controllers
             _sasUrlHelper = sasUrlHelper;
             _calendlyHelper = calendlyHelper;
             _clientService = clientService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -2683,60 +2691,78 @@ namespace Risebird.Web.Controllers
 
                         if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
                         {
-
-                            string fileName = file.FileName;
-                            string fileContentType = file.ContentType;
-                            byte[] fileBytes = new byte[file.Length];
-                            var data = file.OpenReadStream();
-                            var candidateList = new List<CandidateQuickAddModel>();
-                            using (var package = new ExcelPackage(file.OpenReadStream()))
+                            FileInfo fi = new FileInfo(file.FileName);
+                            if (fi.Extension == ".xls" || fi.Extension == ".xlsx")
                             {
-                                var currentSheet = package.Workbook.Worksheets;
-                                var workSheet = currentSheet.First();
-                                var noOfCol = workSheet.Dimension.End.Column;
-                                var noOfRow = workSheet.Dimension.End.Row;
-                                for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    || fileMimeType == "application/vnd.ms-excel")
                                 {
-                                    if (workSheet.Cells[rowIterator, 2].Value != null)
+                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                    string fileName = file.FileName;
+                                    string fileContentType = file.ContentType;
+                                    byte[] fileBytes = new byte[file.Length];
+                                    var data = file.OpenReadStream();
+                                    var candidateList = new List<CandidateQuickAddModel>();
+                                    using (var package = new ExcelPackage(file.OpenReadStream()))
                                     {
-                                        var candidate = new CandidateQuickAddModel
+                                        var currentSheet = package.Workbook.Worksheets;
+                                        var workSheet = currentSheet.First();
+                                        var noOfCol = workSheet.Dimension.End.Column;
+                                        var noOfRow = workSheet.Dimension.End.Row;
+                                        for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
                                         {
-                                            Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                            EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
-                                            ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
-                                                ? workSheet.Cells[rowIterator, 3].Value.ToString()
-                                                : string.Empty,
-                                            Phone = (workSheet.Cells[rowIterator, 4].Value != null)
-                                                ? ("+" + workSheet.Cells[rowIterator, 4].Value)
-                                                : string.Empty,
-                                            WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                                ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                                : string.Empty,
-                                            //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
-                                            //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
-                                            //    : string.Empty,
-                                            ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
+                                            if (workSheet.Cells[rowIterator, 2].Value != null)
+                                            {
+                                                var candidate = new CandidateQuickAddModel
+                                                {
+                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
+                                                    ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
+                                                        ? workSheet.Cells[rowIterator, 3].Value.ToString()
+                                                        : string.Empty,
+                                                    Phone = (workSheet.Cells[rowIterator, 4].Value != null)
+                                                        ? ("+" + workSheet.Cells[rowIterator, 4].Value)
+                                                        : string.Empty,
+                                                    WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                                        ? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                                        : string.Empty,
+                                                    //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
+                                                    //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
+                                                    //    : string.Empty,
+                                                    ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
 
-                                            ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
-                                            IRFId = IRFId
+                                                    ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
+                                                    IRFId = IRFId
 
-                                        };
+                                                };
 
-                                        candidateList.Add(candidate);
+                                                candidateList.Add(candidate);
+                                            }
+                                        }
+
                                     }
+                                    StringBuilder result = new StringBuilder();
+                                    if (candidateList != null && candidateList.Any())
+                                    {
+                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                                    }
+                                    else
+                                    {
+                                        result.Append("No candidates to add!");
+                                    }
+                                    return result.ToString();
                                 }
+                                else
+                                {
+                                    return "Please select valid file for import(.xls, .xslx)!";
 
-                            }
-                            StringBuilder result = new StringBuilder();
-                            if (candidateList != null && candidateList.Any())
-                            {
-                                result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                                }
                             }
                             else
                             {
-                                result.Append("No candidates to add!");
+                                return "Please select valid file for import(.xls, .xslx)!";
                             }
-                            return result.ToString();
                         }
                         else
                         {
@@ -2753,6 +2779,8 @@ namespace Risebird.Web.Controllers
             }
             return null;
         }
+
+       
 
         [Authorize]
         [HttpGet]
@@ -3029,22 +3057,43 @@ namespace Risebird.Web.Controllers
                                         //upload in blob and get the link and and the entry in the list
                                         var fileName = file.FileName.Replace(" ", "_");
                                         FileInfo fi = new FileInfo(fileName);
-                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
-                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                        var blob = containerRef.GetBlockBlobReference(fileName);
-                                        string uploadedaudioFileURL = blob.Uri.ToString();
-                                        string sasUrl = string.Empty;
-                                        if (uploadedaudioFileURL == null)
+                                        if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
                                         {
-                                            ModelState.AddModelError(string.Empty, "Resume upload has failed.");
-                                            return View(model);
+                                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf")
+                                            {
+                                                await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                                string sasUrl = string.Empty;
+                                                if (uploadedaudioFileURL == null)
+                                                {
+                                                    ModelState.AddModelError(string.Empty, "Resume upload has failed.");
+                                                    return View(model);
+                                                }
+                                                else
+                                                {
+                                                    //generate SAS URL from the uploaded video url
+                                                    var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                                    sasUrl = uploadedaudioFileURL + "?" + sas;
+                                                    resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                                return View(model);
+
+                                            }
+
                                         }
                                         else
                                         {
-                                            //generate SAS URL from the uploaded video url
-                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
-                                            sasUrl = uploadedaudioFileURL + "?" + sas;
-                                            resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                            ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                            return View(model);                                          
+
                                         }
                                     }
 

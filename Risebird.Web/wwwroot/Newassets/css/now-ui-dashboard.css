@@ -11542,7 +11542,7 @@ div.dataTables_scrollFoot table {
         padding: 10px 0px !important;
         margin: 0px !important;
     }
-
+    .navbar-toggler-bar{top:-14px;}
     .pt30 .card-title {
         margin-right: 10px;
     }
@@ -15468,7 +15468,7 @@ be a descendant of the grid when it is being dragged.
     }
 
         .navbar-toggler-bar + .navbar-toggler-bar {
-            margin-top: 7px;
+            margin-top: 7.5px;
         }
 
             .navbar-toggler-bar + .navbar-toggler-bar.navbar-kebab {
@@ -15476,7 +15476,7 @@ be a descendant of the grid when it is being dragged.
             }
 
         .navbar-toggler-bar.bar2 {
-            width: 17px;
+            width: 22px;
             transition: width .2s linear;
         }
 
@@ -16029,9 +16029,10 @@ be a descendant of the grid when it is being dragged.
             display: block;
             position: relative;
             width: 22px;
-            height: 1px;
+            height: 1.5px;
             border-radius: 1px;
             background: #FFFFFF;
+            top:0px;
         }
 
             .navbar-toggler-bar + .navbar-toggler-bar {
@@ -16043,7 +16044,7 @@ be a descendant of the grid when it is being dragged.
                 }
 
             .navbar-toggler-bar.bar2 {
-                width: 17px;
+                width: 22px;
                 transition: width .2s linear;
             }
 
