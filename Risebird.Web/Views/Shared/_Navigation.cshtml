@@ -109,7 +109,7 @@ else
 
 
         <ul class="nav multilevel-accordion-menu vertical menu" data-accordion-menu" id="content">
-            @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
+            @if (@HttpContextAccessor.HttpContext.Session.GetString("userMenus") != null && JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
             {
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
                 var adminMenuList = menuList.Where(a => a.idParentFunction == 3).ToList();
