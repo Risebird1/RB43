@@ -43,11 +43,11 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
         //private static string Searchvalue;
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, 
-            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, 
-            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, 
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
+            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
+            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
-            ISASUrlHelper sasUrlHelper, IClientService clientService, 
+            ISASUrlHelper sasUrlHelper, IClientService clientService,
             ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _candidateService = candidateService;
@@ -2695,7 +2695,7 @@ namespace Risebird.Web.Controllers
                             if (fi.Extension == ".xls" || fi.Extension == ".xlsx")
                             {
                                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
-                               _applicationErrorLogger.LogMessage(LogLevelInfo.Error, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                _applicationErrorLogger.LogMessage(LogLevelInfo.Error, $"Mime type of file {file.FileName} is {fileMimeType}");
                                 string fileName = file.FileName;
                                 string fileContentType = file.ContentType;
                                 byte[] fileBytes = new byte[file.Length];
@@ -2772,7 +2772,7 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-       
+
 
         [Authorize]
         [HttpGet]
@@ -3384,7 +3384,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid,string id)
+        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id)
         {
             ViewBag.emailid = emailid;
             ViewBag.id = id;
@@ -3758,6 +3758,27 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Emailid don't have access.");
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
+        {
+            try
+            {
+                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser))
+                {
+                    return Json("Invitation sent successfully!");
+                }
+                else
+                {
+                    return Json("Sorry! Could not send invite!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not send invite!");
             }
         }
     }
