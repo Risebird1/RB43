@@ -1643,6 +1643,8 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));               
+           
 
                 object[] parameters = new object[] { UrlDetails };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PublicURLsendtoClient.html");
