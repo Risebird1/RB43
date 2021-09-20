@@ -1123,7 +1123,7 @@ audio {
     }
 
 .mobile-view-chn, .mobile-view-ac, .mobile-view-skchn {
-    display: none
+    display: none!important;
 }
 
 .no-border {
@@ -5040,7 +5040,6 @@ label {
 
 .notschedulemeeting #search, .survey #search, .candidate-timeline #search, .resume #search, .unassigned-int #search {
     right: 65px;
-    top: 13px;
     z-index: 0;
 }
 
@@ -5048,7 +5047,9 @@ label {
     right: 35px;
     top: 11px;
 }
-
+.topbar-item svg{
+    margin-top:-4.3px;
+}
 #divclientname .btn-group > .btn.dropdown-toggle {
     border: 0px;
     background: #eee !important;
@@ -9680,11 +9681,17 @@ button.close {
     right: 40px;
 }
 
-.instainterview #meeting_filter #search {
-    right: 52px;
+    .instainterview #meeting_filter #search {
+    right: 45px;
     z-index: 0;
 }
+.payment-history #meeting_filter #search {
+    right: 50px;
+}
 
+.payment-history #meeting_filter #trigger-update {
+    right: 30px;
+}
 .search-field #meeting_filter #search {
     right: 60px;
 }
@@ -9977,12 +9984,12 @@ h4.card-title {
 #search {
     right: 40px;
     position: absolute;
-    width: 25px;
-    height: 19px;
-    top: 10px;
+    width: 35px;
+    height: 35px;
+    top: 3px;
     position: absolute;
     border: 0px;
-    background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
+    background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat center;
     z-index: 1;
 }
 
@@ -10020,7 +10027,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
 }*/
 
 #interviewer_filter input[type=search], #statusTable_filter input[type=search], #meeting input[type=search], #MyInterviewList_filter input[type=search], #txtmeeting_filter input[type=search], .interview #meeting_filter input[type=search], #dupmeeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #interviewer_filter input[type=search], #profile_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 75% 9px;
+    /*background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 75% 9px;*/
 }
 
 .intEmail, .intName {
@@ -12329,7 +12336,7 @@ div.tagsinput {
     }
 
     .mobile-view-chn, .mobile-view-ac, .mobile-view-skchn {
-        display: block
+        display: block!important;
     }
 
         .mobile-view-chn font, .mobile-view-ac font, .mobile-view-skchn font {
