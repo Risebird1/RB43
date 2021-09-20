@@ -4154,7 +4154,9 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings";
+                Guid uniqueid = Guid.NewGuid();
+                var role = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + uniqueid;
                 Mail _mail1 = new Mail
                 {
                     TO = Emailid,
