@@ -260,19 +260,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.payableAmount = payableAmount;
                     ViewBag.Tds = Tds;
                     ViewBag.setvalueforfunction = 1;
-                    if (String.IsNullOrEmpty(searchValue))
-                    {
-                        if (!String.IsNullOrEmpty(SearchValue))
-                        {
-                            searchValue = SearchValue;
-                        }
-                    }
-                    if (!String.IsNullOrEmpty(searchValue))
-                    {
-                        searchValue = searchValue.ToUpper().Trim();
-                        model = model.Where(x => (!String.IsNullOrEmpty(x.Comment) ? x.Comment.ToUpper().Contains(searchValue) : x.Comment == "")).ToList();
-                    }
-                    ViewBag.Searchvalue = searchValue;
+                    ViewBag.Searchvalue = "";
                     ViewBag.TotalCount = model.Count;
 
                     ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -396,7 +384,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> ConfirmPayment(int id, int index, string email, string amount, DateTime st, DateTime se)
+        public async Task<JsonResult> ConfirmPayment(int id, int index, string email, string amount, DateTime st, DateTime se)
         {
 
             var resultset = await _meetingService.RBInterviewerDetails(id, index);
@@ -461,13 +449,16 @@ namespace Risebird.Web.Controllers
             }
             if (model == "Success")
             {
-                TempData["PaymentMessage"] = "Payment paid Successfully";
+                return Json("Payment paid Successfully");
+                // TempData["PaymentMessage"] = "Payment paid Successfully";
             }
             else
             {
-                TempData["PaymentMessage"] = "Fail To pay the payment";
+                return Json("Fail To pay the payment");
+                //TempData["PaymentMessage"] = "Fail To pay the payment";
             }
-            return RedirectToAction("FNPayment");
+
+            //return RedirectToAction("FNPayment");
         }
         /// <summary>
         /// Search functionlity implement
@@ -599,11 +590,13 @@ namespace Risebird.Web.Controllers
                 var totalpaidamount = await _meetingService.FNFetchToalAmountPaid(st, se.AddDays(1));
                 var totalamountforstatus = await _meetingService.FNFetchToalAmountStatus(st, se.AddDays(1));
                 var totalqcamount = await _meetingService.FNFetchToalQCAmountStatus(st, se.AddDays(1));
-                int totalinterviewamount = totalamountforstatus.Where(x => x.MeetingStatus == 4).Sum(x => x.Points);
-                int totalNoShowamount = totalamountforstatus.Where(x => x.MeetingStatus == 1).Sum(x => x.Points);
-                int totaldroppedamount = totalamountforstatus.Where(x => x.MeetingStatus == 3).Sum(x => x.Points);
+                int totalinterviewamount = totalamountforstatus.Where(x => x.MeetingStatus == 4).Sum(x => x.Points * 90 / 100);
+                int totalNoShowamount = totalamountforstatus.Where(x => x.MeetingStatus == 1).Sum(x => x.Points * 90 / 100);
+                int totaldroppedamount = totalamountforstatus.Where(x => x.MeetingStatus == 3).Sum(x => x.Points * 90 / 100);
                 var pendingAmount = model.Sum(x => x.Points);
                 var totalAmount = totalpaidamount + pendingAmount;
+                totalpaidamount = Convert.ToInt32(Math.Round(totalpaidamount * .9));
+                pendingAmount = Convert.ToInt32(Math.Round(pendingAmount * .9));
                 foreach (var item in model)
                 {
                     item.Points = (item.Points - Convert.ToInt32(Math.Round(item.Points * .1)));
@@ -611,7 +604,7 @@ namespace Risebird.Web.Controllers
                 //var payableAmount = model.Sum(x => x.Points);
                 var payableAmount = totalAmount - Math.Round(totalAmount * .1);
                 var Tds = totalAmount - payableAmount;
-                int qcamount = totalqcamount.Sum(x => x.Points);
+                int qcamount = totalqcamount.Sum(x => x.Points * 90 / 100);
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;

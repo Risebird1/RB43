@@ -3290,12 +3290,19 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<IActionResult> PublicCandidateStatus(string emailid)
+        public async Task<IActionResult> PublicCandidateStatus(string emailid, string id)
         {
             try
             {
+                var Emailid = String.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new List<CandidateTimelineVM>();
                 ViewBag.emailid = emailid;
+                ViewBag.id = id;
                 HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
                 HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                 HttpContext.Session.Remove("PublicCandidateStatusfilters");
@@ -3332,6 +3339,10 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
+                    candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
+                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.imid = firstData.imid;
+                    candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
@@ -3360,6 +3371,10 @@ namespace Risebird.Web.Controllers
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                 ViewBag.Profile = "Client";
+                if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicAllMeetings", new { id = id });
+                }
                 return View(model);
             }
             catch (Exception ex)
@@ -3369,9 +3384,10 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid)
+        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid,string id)
         {
             ViewBag.emailid = emailid;
+            ViewBag.id = id;
             try
             {
                 var model = new List<CandidateTimelineVM>();
@@ -3419,6 +3435,10 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ProfileSource = firstData.ProfileSource;
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
+                    candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
+                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.imid = firstData.imid;
+                    candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
@@ -3470,10 +3490,12 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
             }
         }
-        public async Task<IActionResult> PublicAllMeetings()
+        public async Task<IActionResult> PublicAllMeetings(string id)
         {
             var model = new List<CandidateTimelineVM>();
             ViewBag.PageType = "Public";
+            ViewBag.Id = id;
+            ViewBag.Status = "Client";
             var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
             {
@@ -3483,16 +3505,17 @@ namespace Risebird.Web.Controllers
             return View("PublicCandidateStatus", model);
         }
         [HttpPost]
-        public async Task<JsonResult> PublicAllMeetings(string Emailid)
+        public async Task<JsonResult> PublicAllMeetings(string id, string Emailid)
         {
-            var role = await _clientService.GetClientRoleByEmailId(Emailid);
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            var role = await _clientService.GetUniqueClientRoleByEmailId(Emailid, id);
             if (role > 0)
             {
                 return Json("success");
             }
             else
             {
-                return Json("Emailid don't have Client access.");
+                return Json("Emailid don't have access.");
             }
         }
         public async Task<FileContentResult> PublicCandidateStatusExporttoExcel(string emailid)
@@ -3710,6 +3733,32 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
             }
 
+        }
+        public async Task<IActionResult> PublicAllMeetingsAdmin()
+        {
+            var model = new List<CandidateTimelineVM>();
+            ViewBag.PageType = "Public";
+            ViewBag.Status = "Admin";
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View("PublicCandidateStatus", model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> PublicAllMeetingsAdmin(string Emailid)
+        {
+            var role = await _clientService.GetClientRoleByEmailId(Emailid);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have access.");
+            }
         }
     }
 }

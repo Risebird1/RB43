@@ -32,7 +32,10 @@ namespace Risebird.Entities.ViewModel
         public bool IsIRFArchived { get; set; }
         public string IRFName { get; set; }
         public string Phone { get; set; }
-
+        public string interviewDate { get; set; }
+        public string IRFname { get; set; }
+        public int imid { get; set; }
+        public string CalendlyLink { get; set; }
     }
 
     public class TimelineStatus

@@ -73,24 +73,24 @@
 
                                                 <div class="row">
                                                     @*<div class="col-md-6 col-sm-6">
-                        <div class="form-group" style="margin-bottom:10px;">
-                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            <div class="form-group" style="margin-bottom:10px;">
+                                                                @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                        </div>
-                    </div>*@
+                                                            </div>
+                                                        </div>*@
                                                     @*<div class="col-md-6 col-sm-6">
-                                                        <div class="form-group" style="margin-bottom:10px;">
-                                                            @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                        </div>
-                                                    </div>*@
+                                                            <div class="form-group" style="margin-bottom:10px;">
+                                                                @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            </div>
+                                                        </div>*@
                                                     <div class="col-md-12 col-sm-12">
                                                         <div class="form-group">
                                                             <label asp-for="ResumeFiles" class="form-label"></label>
                                                             <div class="col-sm-12">
                                                                 <div class="custom-file">
-                                                                    <input asp-for="ResumeFiles" multiple class="form-control custom-file-input">
+                                                                    <input asp-for="ResumeFiles" multiple class="form-control custom-file-input" accept=".doc, .docx, .pdf, .txt">
                                                                     <label class="custom-file-label">Choose File(s)...</label>
                                                                 </div>
                                                             </div>
@@ -267,7 +267,7 @@
         }
         return true;
     }
-    
+
 </script>
 <script>
 
