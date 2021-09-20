@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
 {
     public interface IClientService
     {
-        List<Client> GetClients(string emailid,string profilename);
+        List<Client> GetClients(string emailid, string profilename);
         bool AddClient(Client client);
         bool UpdateClient(Client client);
         Client GetClient(int id);
@@ -22,5 +22,7 @@ namespace Risebird.Business.Interface
         string ResetCandidate(int Clientjdid, string candidateEmail, string emailid);
         string DeleteClientJd(int assessmentid);
         Task<int> GetClientRoleByEmailId(string emailId);
+        Task<int> GetUniqueClientRoleByEmailId(string emailId, string id);
+        Task<bool> PublicClientUrlSave(string emailId, string uniqueid);
     }
 }

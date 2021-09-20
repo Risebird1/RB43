@@ -665,7 +665,17 @@
             confirmButtonText: 'Yes',
         }).then((result) => {
             if (result.value) {
-                window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
+                $.ajax({
+                    url: "/Finance/ConfirmPayment",
+                    type: "POST",
+                    data: { id: interviewerid, index: Generateinvoiceflag, email: $("#hidcomment_" + interviewerid).val(), amount: $("#hidpoint_" + interviewerid).val(), st: St_date, se: Se_date },
+                    dataType: 'json',
+                    success: function (data) {
+                        swal.fire(data);
+                        Fetchinvoice(actionbutton, pagenumber);
+                    }
+                });
+                //window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
             }
         })
     }

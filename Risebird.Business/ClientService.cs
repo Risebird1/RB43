@@ -22,7 +22,7 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public List<Client> GetClients(string emailid,string profilename)
+        public List<Client> GetClients(string emailid, string profilename)
         {
             try
             {
@@ -219,7 +219,6 @@ namespace Risebird.Business
                 return "failed";
             }
         }
-
         public async Task<int> GetClientRoleByEmailId(string emailId)
         {
             try
@@ -231,6 +230,32 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return 0;
+            }
+        }
+        public async Task<int> GetUniqueClientRoleByEmailId(string emailId, string id)
+        {
+            try
+            {
+                return await _clientRepository.GetUniqueClientRoleByEmailId(emailId, id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<bool> PublicClientUrlSave(string emailId, string uniqueid)
+        {
+            try
+            {
+                return await _clientRepository.PublicClientUrlSave(emailId, uniqueid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

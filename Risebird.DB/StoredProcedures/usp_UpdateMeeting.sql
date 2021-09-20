@@ -102,9 +102,9 @@ Begin
 
 	set @canMasterId = (select id from CandidatesMaster where UserId=@cndUserId)
 
-	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
+	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact, ProfileSource) 
 	values((select id from IRF where IRFId=@IRFId), @resumeLink, @preferredLocation, @MobileNumber,
-	(select id from CandidatesMaster  where UserId = @cndUserId), @ClientHrContact)
+	(select id from CandidatesMaster  where UserId = @cndUserId), @ClientHrContact, @staffingAgency)
 
 	--insert candidate added status
 	insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
@@ -127,8 +127,8 @@ Begin
 	--declare @irfintid int = (select id from IRF where IRFId=@IRFId)
 	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @canMasterId and IRFID= @irfintid)
 		Begin
-			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact) 
-			values(@irfintid, @resumeLink, @preferredLocation,@MobileNumber, @canMasterId, @ClientHrContact) 	
+			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId, ClientHRAttemptContact, ProfileSource) 
+			values(@irfintid, @resumeLink, @preferredLocation,@MobileNumber, @canMasterId, @ClientHrContact, @staffingAgency) 	
 			
 			--insert candidate added status
 			insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy) 
