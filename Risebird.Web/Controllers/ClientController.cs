@@ -4155,12 +4155,16 @@ namespace Risebird.Web.Controllers
             try
             {
                 Guid uniqueid = Guid.NewGuid();
-                var role = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
+                var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
                 string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + uniqueid;
+                if (!String.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + _uniqueid;
+                }
                 Mail _mail1 = new Mail
                 {
                     TO = Emailid,
-                    CC= "talent@risebird.io",
+                    CC = "talent@risebird.io",
                     Subject = "Candidate Status Update"
                 };
                 var emailsend1 = _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl);

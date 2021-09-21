@@ -589,24 +589,41 @@ namespace Risebird.Web.Controllers
                 else
                     Page = Convert.ToInt32(PageSet);
                 var model = await _meetingService.FNGenerateInvoiceDetails(st, se.AddDays(1));
-                var totalpaidamount = await _meetingService.FNFetchToalAmountPaid(st, se.AddDays(1));
+                var _totalpaidamount = await _meetingService.FNFetchToalAmountPaid(st, se.AddDays(1));
+                var totalpaidamount1 = Convert.ToInt32((from ad in _totalpaidamount
+                                                        select ad.Points).ToList().Sum());
+                var totalpaidamount = Convert.ToInt32((from ad in _totalpaidamount
+                                                       select Math.Round(ad.Points * .9)).ToList().Sum());
                 var totalamountforstatus = await _meetingService.FNFetchToalAmountStatus(st, se.AddDays(1));
                 var totalqcamount = await _meetingService.FNFetchToalQCAmountStatus(st, se.AddDays(1));
-                int totalinterviewamount = totalamountforstatus.Where(x => x.MeetingStatus == 4).Sum(x => x.Points * 90 / 100);
-                int totalNoShowamount = totalamountforstatus.Where(x => x.MeetingStatus == 1).Sum(x => x.Points * 90 / 100);
-                int totaldroppedamount = totalamountforstatus.Where(x => x.MeetingStatus == 3).Sum(x => x.Points * 90 / 100);
-                var pendingAmount = model.Sum(x => x.Points);
-                var totalAmount = totalpaidamount + pendingAmount;
-                totalpaidamount = Convert.ToInt32(Math.Round(totalpaidamount * .9));
-                pendingAmount = Convert.ToInt32(Math.Round(pendingAmount * .9));
+                //int totalinterviewamount = totalamountforstatus.Where(x => x.MeetingStatus == 4).Sum(x => x.Points * 90 / 100);
+                var totalinterviewamount = Convert.ToInt32((from ad in totalamountforstatus
+                                                            where ad.MeetingStatus == 4
+                                                            select Math.Round(ad.Points * .9)).ToList().Sum());
+                var totalNoShowamount = Convert.ToInt32((from ad in totalamountforstatus
+                                                         where ad.MeetingStatus == 1
+                                                         select Math.Round(ad.Points * .9)).ToList().Sum());
+                var totaldroppedamount = Convert.ToInt32((from ad in totalamountforstatus
+                                                          where ad.MeetingStatus == 3
+                                                          select Math.Round(ad.Points * .9)).ToList().Sum());
+                //int totalNoShowamount = totalamountforstatus.Where(x => x.MeetingStatus == 1).Sum(x => x.Points * 90 / 100);
+                //int totaldroppedamount = totalamountforstatus.Where(x => x.MeetingStatus == 3).Sum(x => x.Points * 90 / 100);
+                //var pendingAmount = model.Sum(x => x.Points);
+                var pendingAmount = Convert.ToInt32((from ad in model
+                                                     select Math.Round(ad.Points * .9)).ToList().Sum());
+                var totalAmount = totalpaidamount1 + model.Sum(x => x.Points);
+                //totalpaidamount = Convert.ToInt32(Math.Round(totalpaidamount * .9));
+                //pendingAmount = Convert.ToInt32(Math.Round(pendingAmount * .9));
                 foreach (var item in model)
                 {
-                    item.Points = (item.Points - Convert.ToInt32(Math.Round(item.Points * .1)));
+                    item.Points = Convert.ToInt32(Math.Round(item.Points * .9));
                 }
                 //var payableAmount = model.Sum(x => x.Points);
-                var payableAmount = totalAmount - Math.Round(totalAmount * .1);
+                var payableAmount = totalpaidamount + pendingAmount;
                 var Tds = totalAmount - payableAmount;
-                int qcamount = totalqcamount.Sum(x => x.Points * 90 / 100);
+                //int qcamount = totalqcamount.Sum(x => x.Points * 90 / 100);
+                int qcamount = Convert.ToInt32((from ad in totalqcamount
+                                                select Math.Round(ad.Points * .9)).ToList().Sum());
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
