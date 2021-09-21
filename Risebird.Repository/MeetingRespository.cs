@@ -4980,7 +4980,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se)
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se)
         {
             try
             {
@@ -4988,17 +4988,18 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@st", st);
                 dynamicParameters.Add("@se", se);
                 //var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
-                var query = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Paid' and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se)) Select Sum(Points) as Points from CTE";
+                var query = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Paid' and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se)) Select *  from CTE";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<long>(query, dynamicParameters);
-                    return Convert.ToInt32(results.FirstOrDefault());
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    //return Convert.ToInt32(results.FirstOrDefault());
+                    return (List<RBInterviewDetails>)results;
                 }
             }
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return 0;
+                return null;
             }
         }
         public async Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se)

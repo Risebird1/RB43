@@ -158,7 +158,7 @@ namespace Risebird.Business.Interface
         List<string> FetchClientListByIRFID(int IRFID);
         IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
         Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
-        Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se);
+        Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
     }

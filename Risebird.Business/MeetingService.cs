@@ -486,7 +486,7 @@ namespace Risebird.Business
                 var status = Convert.ToInt16(qcStatus);
                 var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), status, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
 
-                if(result && status == (int)QCStatus.Failed)
+                if (result && status == (int)QCStatus.Failed)
                 {
                     var meetingDetails = _meetingRespository.GetMeetingDetails(Convert.ToInt32(imid)).Result;
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -534,7 +534,7 @@ namespace Risebird.Business
         {
             try
             {
-                if(!string.IsNullOrEmpty(meetingToUpdate.NewActiveInterviewer))
+                if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveInterviewer))
                 {
                     meetingToUpdate.interviewer = meetingToUpdate.NewActiveInterviewer;
                 }
@@ -1020,7 +1020,7 @@ namespace Risebird.Business
             try
             {
                 var result = _meetingRespository.UpdateComments(comments).Result;
-                if(result && comments.QCStatus.HasValue && comments.QCStatus ==(int)QCStatus.Failed)
+                if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Failed)
                 {
                     //add to activity tracker
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -3051,7 +3051,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<int> FNFetchToalAmountPaid(DateTime st, DateTime se)
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se)
         {
             try
             {
@@ -3061,7 +3061,7 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return 0;
+                return null;
             }
         }
         public async Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se)
