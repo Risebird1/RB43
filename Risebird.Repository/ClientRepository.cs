@@ -530,7 +530,7 @@ namespace Risebird.Repository
                 return 0;
             }
         }
-        public async Task<bool> PublicClientUrlSave(string emailId, string uniqueid)
+        public async Task<string> PublicClientUrlSave(string emailId, string uniqueid)
         {
             try
             {
@@ -539,20 +539,20 @@ namespace Risebird.Repository
                 parameters.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_SaveClientPublicURL]", parameters,
+                    var result = await SqlMapper.QueryAsync<string>(con, "[usp_SaveClientPublicURL]", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return true;
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
         }
     }
