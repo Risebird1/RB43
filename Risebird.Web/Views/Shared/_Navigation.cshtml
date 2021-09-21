@@ -109,7 +109,7 @@ else
 
 
         <ul class="nav multilevel-accordion-menu vertical menu" data-accordion-menu" id="content">
-            @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
+            @if (@HttpContextAccessor.HttpContext.Session.GetString("userMenus") != null && JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
             {
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
                 var adminMenuList = menuList.Where(a => a.idParentFunction == 3).ToList();
@@ -121,365 +121,365 @@ else
                     {
                         if (m.sUrl == "/IRF/Index")
                         {
-                            <li id="skillchannel_menu" class="skillchannelmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
+            <li id="skillchannel_menu" class="skillchannelmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
 
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Dashboard/Index")
                         {
-                            <li class="Dashboardmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-home fa-sm"></i>
+            <li class="Dashboardmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-home fa-sm"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Dashboard/ClientIndex")
                         {
-                            <li class="Dashboardmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-home fa-sm"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="Dashboardmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-home fa-sm"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Project/Index")
                         {
-                            <li class="Dashboardmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="Dashboardmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Account/Index")
                         {
-                            <li class="Dashboardmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-user-circle"></i>
+            <li class="Dashboardmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-user-circle"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/RiseTube/Index")
                         {
-                            <li id="risetube_menu" class="risetubemenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-file-video-o fa-sm" aria-hidden="true"></i>
+            <li id="risetube_menu" class="risetubemenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-file-video-o fa-sm" aria-hidden="true"></i>
 
-                                    </span>
-                                    <p>Selected Candidates (Video)</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>Selected Candidates (Video)</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/CommonPool/Index")
                         {
-                            <li class="commonpool_menu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="commonpool_menu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/MCQ/Index")
                         {
-                            <li class="mcqmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="mcqmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/RiseTube/VideoPage")
                         {
-                            <li class="disabled risetubemenu" style="cursor: not-allowed;">
-                                <a href="@m.sUrl" style="pointer-events: none;">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="disabled risetubemenu" style="cursor: not-allowed;">
+                <a href="@m.sUrl" style="pointer-events: none;">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/CommonPool/VideoPage")
                         {
-                            <li class="disabled risetubemenu" style="cursor: not-allowed;">
-                                <a href="@m.sUrl" style="pointer-events: none;">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="disabled risetubemenu" style="cursor: not-allowed;">
+                <a href="@m.sUrl" style="pointer-events: none;">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Candidate/CandidateTimeline")
                         {
-                            <li id="status_menu" class="candidatetimeline">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-chart-line"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="status_menu" class="candidatetimeline">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-chart-line"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/Survey/CandidateFeedBack")
                         {
-                            <li id="candidatefeedback_menu" class="candidatetimeline">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-comments" aria-hidden="true"></i>
+            <li id="candidatefeedback_menu" class="candidatetimeline">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-comments" aria-hidden="true"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/Client/RejectedMeetings")
                         {
-                            <li  class="candidatetimeline">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-user-times"></i>
+            <li class="candidatetimeline">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-user-times"></i>
 
-                                    </span>
-                                    <p>Rejected Candidates</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>Rejected Candidates</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/Interview/Index")
                         {
-                            <li id="interview_menu" class="interviewmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-users"></i>
+            <li id="interview_menu" class="interviewmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-users"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/User/Interviewers")
                         {
-                            <li class="interviewermenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fas fa-user-tie"></i>
+            <li class="interviewermenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fas fa-user-tie"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Support/Index")
                         {
-                            <li id="support_menu" class="supportmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="support_menu" class="supportmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
-                        @*   else if (m.sUrl == "/Mail/Mail")
-                    {
-                        <li class="mailmenu">
-                            <a href="@m.sUrl">
-                                <span class="sidemenu-icon">
-                                    <i class="fa fa-envelope"></i>
-                                </span>
-                                <p>@m.functionName</p>
-                            </a>
-                        </li>
-                    }*@
+            @*   else if (m.sUrl == "/Mail/Mail")
+        {
+            <li class="mailmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-envelope"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
+        }*@
                         else if (m.sUrl == "/ScheduleMeeting/Index")
                         {
-                            <li>
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li>
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
 
                         else if (m.sUrl == "/User/ResumeEvaluators")
                         {
-                            <li class="resumeevaluatormenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-user-plus"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="resumeevaluatormenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-user-plus"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/User/Recruiters")
                         {
-                            <li class="recruitersmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-handshake-o" aria-hidden="true"></i>
+            <li class="recruitersmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-handshake-o" aria-hidden="true"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/Settings/Index")
                         {
-                            <li>
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-cogs fa-sm" aria-hidden="true"></i>
+            <li>
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-cogs fa-sm" aria-hidden="true"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Client/AllMeetings")
                         {
-                            <li id="allmeeting_menu" class="iacm">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-users"></i>
-                                    </span>
-                                    <p>All Scheduled Interviews</p>
-                                </a>
-                            </li>
+            <li id="allmeeting_menu" class="iacm">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-users"></i>
+                    </span>
+                    <p>All Scheduled Interviews</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Client/SelectedMeetings")
                         {
-                            <li id="selectedcandidate_menu" class="iscm">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
+            <li id="selectedcandidate_menu" class="iscm">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
 
-                                    </span>
-                                    <p>Selected Candidates (Table)</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>Selected Candidates (Table)</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Interview/CandidateInterviews")
                         {
-                            <li class="icimenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="icimenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Interview/MyInterview")
                         {
-                            <li id="openinterview_8" class="myint">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-user-o" aria-hidden="true"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="openinterview_8" class="myint">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Interview/OpenInterview")
                         {
-                            <li id="openinterview_menus" class="inoi">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="openinterview_menus" class="inoi">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Interview/MyQualityControlledInterviews")
                         {
-                            <li id="openqcinterview_8" class="inmqci">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="openqcinterview_8" class="inmqci">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Mail/Mail")
                         {
-                            <li class="mailmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="now-ui-icons @m.sIcon"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li class="mailmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="now-ui-icons @m.sIcon"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Interviewer/MyProfile")
                         {
-                            <li id="interviewerassessment_7" class="myinterviewermenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
+            <li id="interviewerassessment_7" class="myinterviewermenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-user-circle" aria-hidden="true"></i>
 
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else if (m.sUrl == "/Interview/QCOpenInterviews")
                         {
-                            <li id="myinterview_11" class="iqcomenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="myinterview_11" class="iqcomenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
 
 
                         else if (m.sUrl == "/ProctorInterviews/Index")
                         {
-                            <li id="qcinterview_11">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-laptop"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="qcinterview_11">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-laptop"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
 
@@ -488,114 +488,114 @@ else
 
                         else if (m.sUrl == "/Interviewer/InterviewerAssessment")
                         {
-                            <li id="procinterview_8">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="procinterview_8">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
 
 
                         else if (m.sUrl == "/Interviewer/OpenInterviewerAssessment")
                         {
-                            <li id="openinterviewermenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z" /></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="openinterviewermenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z" /></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/Interviewer/MyInterviewerAssessment")
                         {
-                            <li id="myintassessmentmenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" /></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="myintassessmentmenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" /></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/Interviewer/MyScheduledDiscussions")
                         {
-                            <li id="opendiscinterview_5">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="opendiscinterview_5">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/Client/createjd")
                         {
-                            <li id="rbmatch_menu" class="iqcomenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="now-ui-icons @m.sIcon"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="rbmatch_menu" class="iqcomenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="now-ui-icons @m.sIcon"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
 
                         else if (m.sUrl == "/Client/risebirdpay")
                         {
-                            <li id="rbpay_menu" class="iqcomenu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="now-ui-icons @m.sIcon"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="rbpay_menu" class="iqcomenu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="now-ui-icons @m.sIcon"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
 
 
                         else if (m.sUrl == "/HR/MyInterviews")
                         {
-                            <li id="status_menu" class="hropeninterview_12">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="fa fa-user-o" aria-hidden="true"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="status_menu" class="hropeninterview_12">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
                         else if (m.sUrl == "/HR/OpenInterviews")
                         {
-                            <li id="status_menu">
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"></path></svg>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li id="status_menu">
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"></path></svg>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
                         else
                         {
-                            <li>
-                                <a href="@m.sUrl">
-                                    <span class="sidemenu-icon">
-                                        <i class="now-ui-icons @m.sIcon"></i>
-                                    </span>
-                                    <p>@m.functionName</p>
-                                </a>
-                            </li>
+            <li>
+                <a href="@m.sUrl">
+                    <span class="sidemenu-icon">
+                        <i class="now-ui-icons @m.sIcon"></i>
+                    </span>
+                    <p>@m.functionName</p>
+                </a>
+            </li>
                         }
 
 
@@ -608,87 +608,87 @@ else
                     {
 
 
-                        <li id="adminmenu" class="dropmenu">
+            <li id="adminmenu" class="dropmenu">
 
 
-                            <input class="toggle-box1" id="admin" type="checkbox">
-                            <label class="admin-active" for="admin">
-                                <span class="sidemenu-icon">
-                                    <i class="fas fa-user-cog"></i>
+                <input class="toggle-box1" id="admin" type="checkbox">
+                <label class="admin-active" for="admin">
+                    <span class="sidemenu-icon">
+                        <i class="fas fa-user-cog"></i>
 
-                                </span>  <p>
-                                    @m.functionName
+                    </span>  <p>
+                        @m.functionName
 
-                                </p>
-                            </label>
-                            <div class="drop-wrap">
-                                <ul class="nav">
-                                    @foreach (var item in adminMenuList)
+                    </p>
+                </label>
+                <div class="drop-wrap">
+                    <ul class="nav">
+                        @foreach (var item in adminMenuList)
                                     {
-                                        <li>
-                                            <a class="admin-submenu" href="@item.sUrl">
-                                                @*<span class="@item.sIcon"></span>*@
-                                                <span class="sidebar-normal">
-                                                    <i class="fas fa-angle-right" style="float:left"></i>
-                                                    <span style="float:left;"> @item.functionName</span>
-                                                </span>
-                                            </a>
-                                        </li>
+                        <li>
+                            <a class="admin-submenu" href="@item.sUrl">
+                                @*<span class="@item.sIcon"></span>*@
+                                <span class="sidebar-normal">
+                                    <i class="fas fa-angle-right" style="float:left"></i>
+                                    <span style="float:left;"> @item.functionName</span>
+                                </span>
+                            </a>
+                        </li>
                                     }
 
-                                </ul>
-                            </div>
-                        </li>
+                    </ul>
+                </div>
+            </li>
 
 
                     }
                     else if (m.functionName == "Interviewer")
                     {
-                        <li id="interviewer_menu" class="dropmenu interviewer_menu">
+            <li id="interviewer_menu" class="dropmenu interviewer_menu">
 
-                            <input class="toggle-box1" id="menu_Interviewer" type="checkbox">
-                            <label class="interviewer-active" for="menu_Interviewer">
-                                <span class="sidemenu-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </span>
-                                <p>@m.functionName</p>
+                <input class="toggle-box1" id="menu_Interviewer" type="checkbox">
+                <label class="interviewer-active" for="menu_Interviewer">
+                    <span class="sidemenu-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </span>
+                    <p>@m.functionName</p>
 
-                            </label>
-                            <div class="drop-wrap">
-                                <ul class="nav">
-                                    @foreach (var item in interviewerMenuList)
+                </label>
+                <div class="drop-wrap">
+                    <ul class="nav">
+                        @foreach (var item in interviewerMenuList)
                                     {
-                                        <li>
-                                            <a class="interviewer-submenu" href="@item.sUrl">
-                                                @*<span class="@item.sIcon"> </span>*@
-                                                <span class="sidebar-normal">  <i class="fas fa-angle-right" style="float:left"></i>   <span>@item.functionName</span>  </span>
-                                            </a>
-                                        </li>
-                                    }
-
-                                </ul>
-                            </div>
-
-
-                            @*<div>
-                            <input class="toggle-box" id="menu_Interviewer" type="checkbox">
-                            <label for="menu_Interviewer">Interviewer</label>
-                            <div>
-                                <ul class="nav">
-                                    @foreach (var item in interviewerMenuList)
-                                    {
-                                        <li>
-                                            <a href="@item.sUrl">
-                                                <span class="sidebar-mini-icon">  @(new string(item.functionName.ToString().Split(' ').Select(x => x[0]).ToArray()))</span>
-                                                <span class="sidebar-normal">     @item.functionName </span>
-                                            </a>
-                                        </li>
-                                    }
-
-                                </ul>
-                            </div>
-                        </div>*@
+                        <li>
+                            <a class="interviewer-submenu" href="@item.sUrl">
+                                @*<span class="@item.sIcon"> </span>*@
+                                <span class="sidebar-normal">  <i class="fas fa-angle-right" style="float:left"></i>   <span>@item.functionName</span>  </span>
+                            </a>
                         </li>
+                                    }
+
+                    </ul>
+                </div>
+
+
+                @*<div>
+                <input class="toggle-box" id="menu_Interviewer" type="checkbox">
+                <label for="menu_Interviewer">Interviewer</label>
+                <div>
+                    <ul class="nav">
+                        @foreach (var item in interviewerMenuList)
+                        {
+                            <li>
+                                <a href="@item.sUrl">
+                                    <span class="sidebar-mini-icon">  @(new string(item.functionName.ToString().Split(' ').Select(x => x[0]).ToArray()))</span>
+                                    <span class="sidebar-normal">     @item.functionName </span>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+            </div>*@
+            </li>
 
                     }
 
