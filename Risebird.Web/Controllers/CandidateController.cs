@@ -3057,11 +3057,11 @@ namespace Risebird.Web.Controllers
                                         //upload in blob and get the link and and the entry in the list
                                         var fileName = file.FileName.Replace(" ", "_");
                                         FileInfo fi = new FileInfo(fileName);
-                                        if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
+                                        if (fi.Extension.ToLower() == ".docx" || fi.Extension.ToLower() == ".doc" || fi.Extension.ToLower() == ".pdf")
                                         {
                                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
                                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                || fileMimeType == "application/pdf")
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive")
                                             {
                                                 await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
                                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
