@@ -20,5 +20,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<CandidateResume>> GetCandidatesResumes(int irfId);
         Task<bool> DeleteCandidateResume(int id);
         Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
     }
 }
