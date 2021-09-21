@@ -4179,5 +4179,25 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> CopyPublicURLClientUser(string Emailid)
+        {
+            try
+            {
+                Guid uniqueid = Guid.NewGuid();
+                var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + uniqueid;
+                if (!String.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + _uniqueid;
+                }
+                return Json(sendreporturl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
     }
 }

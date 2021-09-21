@@ -12,6 +12,7 @@
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
+    string datetype = String.Empty;
     string[] MeetingStatus = new string[] { };
     string[] InterviewStatus = new string[] { };
     string[] ScheduleStatus = new string[] { };
@@ -24,6 +25,7 @@
     filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContextAccessor.HttpContext.Session.GetString("PublicCandidateStatusfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    datetype = filter.DateType != null ? filter.DateType : String.Empty;
 
     MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
     InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
@@ -121,6 +123,20 @@
 
                                                     <div class="modal-body publicmeeting">
                                                         <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked" }) Added Date
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2" }) Interview Date
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div class="col-md-6 col-sm-6 border-rv">
                                                                 <div class="form-group">
                                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
@@ -556,6 +572,7 @@
 
         var strtDte = '@strtDte';
         var endDte = '@endDte';
+        var datetype = '@datetype';
         var hrEmail=  @Html.Raw(Json.Serialize(HREmail));
         var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
         var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
@@ -563,6 +580,7 @@
         var profileSource =  @Html.Raw(Json.Serialize(ProfileSource));
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
+        document.getElementById("Datetype_" + datetype).checked = true;
         $("#HREmail").val(hrEmail);
         $("#MeetingStatus").val(meetingStatus);
         $("#InterviewStatus").val(interviewStatus);

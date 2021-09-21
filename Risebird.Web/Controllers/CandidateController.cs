@@ -43,11 +43,11 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
         //private static string Searchvalue;
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, 
-            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, 
-            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, 
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
+            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
+            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
-            ISASUrlHelper sasUrlHelper, IClientService clientService, 
+            ISASUrlHelper sasUrlHelper, IClientService clientService,
             ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _candidateService = candidateService;
@@ -2780,7 +2780,7 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-       
+
 
         [Authorize]
         [HttpGet]
@@ -3092,7 +3092,7 @@ namespace Risebird.Web.Controllers
                                         else
                                         {
                                             ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
-                                            return View(model);                                          
+                                            return View(model);
 
                                         }
                                     }
@@ -3413,7 +3413,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid,string id)
+        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id)
         {
             ViewBag.emailid = emailid;
             ViewBag.id = id;
@@ -3425,13 +3425,14 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("PublicCandidateStatusfilters", JsonConvert.SerializeObject(filter));
                 }
                 var candidateData = new List<CandidateTimelineData>();
+                int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 0;
                 if (filter.StartDate != null && filter.EndDate != null)
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, datatype, emailid)).ToList();
                 }
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
