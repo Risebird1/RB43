@@ -100,7 +100,6 @@ namespace Risebird.Web.Controllers
                         candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                     }
-
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {
@@ -108,15 +107,24 @@ namespace Risebird.Web.Controllers
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            //data = data.Where(x => x.confirmationStatus != 2);
-                            //data = data.OrderByDescending(x => x.InterviewId);
-                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x => x.confirmationStatus == 1);
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            firstData = data.FirstOrDefault();
+                        }
+                        else if(data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                        {
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x =>x.interviewDate == latestInterviewDate.interviewDate);
+
+                            firstData = data.FirstOrDefault();
                         }
                         else
                         {
                             firstData = data.FirstOrDefault();
-                        }
 
+                        }
                         var candidateTimeline = new CandidateTimelineVM();
 
                         candidateTimeline.HREmail = firstData.HREmail;
@@ -348,22 +356,44 @@ namespace Risebird.Web.Controllers
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
                         candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
                     }
+
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+
                     foreach (var candidate in distinctCandidates)
                     {
                         var firstData = new CandidateTimelineData();
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                        //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                        //{
+                        //    //data = data.Where(x => x.confirmationStatus != 2);
+                        //    //data = data.OrderByDescending(x => x.InterviewId);
+                        //    firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //}
+                        //else
+                        //{
+                        //    firstData = data.FirstOrDefault();
+                        //}
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            //data = data.Where(x => x.confirmationStatus != 2);
-                            //data = data.OrderByDescending(x => x.InterviewId);
-                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+
+                            data = data.Where(x => x.confirmationStatus == 1);
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            firstData = data.FirstOrDefault();
+                        }
+                        else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                        {
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                            firstData = data.FirstOrDefault();
                         }
                         else
                         {
                             firstData = data.FirstOrDefault();
-                        }
 
+                        }
                         var candidateTimeline = new CandidateTimelineVM();
 
                         candidateTimeline.HREmail = firstData.HREmail;
@@ -608,13 +638,34 @@ namespace Risebird.Web.Controllers
                 foreach (var candidate in distinctCandidates)
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    //{
+                    //    data = data.Where(x => x.confirmationStatus != 2);
+                    //    data = data.OrderByDescending(x => x.InterviewId);
+                    //}
+                    //var firstData = data.FirstOrDefault();
+                    var firstData = new CandidateTimelineData();
+
                     if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        data = data.Where(x => x.confirmationStatus != 2);
-                        data = data.OrderByDescending(x => x.InterviewId);
+                        data = data.Where(x => x.confirmationStatus == 1);
+                        var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.FirstOrDefault();
                     }
-                    var firstData = data.FirstOrDefault();
+                    else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
 
+                        firstData = data.FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+
+                    }
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
@@ -3676,7 +3727,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Phone";
                 Sheet.Cells[1, 7].Value = "Current Status";
                 Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1, 9].Value = "Profile Source";
+                Sheet.Cells[1, 9].Value = "Staffing Agency EmailId";
                 Sheet.Cells[1, 10].Value = "Skill Channel ID";
 
                 int i = 2;
