@@ -245,7 +245,7 @@ namespace Risebird.Business
                 return 0;
             }
         }
-        public async Task<bool> PublicClientUrlSave(string emailId, string uniqueid)
+        public async Task<string> PublicClientUrlSave(string emailId, string uniqueid)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
         }
     }

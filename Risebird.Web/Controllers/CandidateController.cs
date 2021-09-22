@@ -43,11 +43,11 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
         //private static string Searchvalue;
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, 
-            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, 
-            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, 
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
+            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
+            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
-            ISASUrlHelper sasUrlHelper, IClientService clientService, 
+            ISASUrlHelper sasUrlHelper, IClientService clientService,
             ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _candidateService = candidateService;
@@ -100,7 +100,6 @@ namespace Risebird.Web.Controllers
                         candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                     }
-
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {
@@ -108,15 +107,24 @@ namespace Risebird.Web.Controllers
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            //data = data.Where(x => x.confirmationStatus != 2);
-                            //data = data.OrderByDescending(x => x.InterviewId);
-                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x => x.confirmationStatus == 1);
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            firstData = data.FirstOrDefault();
+                        }
+                        else if(data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                        {
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x =>x.interviewDate == latestInterviewDate.interviewDate);
+
+                            firstData = data.FirstOrDefault();
                         }
                         else
                         {
                             firstData = data.FirstOrDefault();
-                        }
 
+                        }
                         var candidateTimeline = new CandidateTimelineVM();
 
                         candidateTimeline.HREmail = firstData.HREmail;
@@ -348,22 +356,44 @@ namespace Risebird.Web.Controllers
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
                         candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
                     }
+
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+
                     foreach (var candidate in distinctCandidates)
                     {
                         var firstData = new CandidateTimelineData();
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                        //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                        //{
+                        //    //data = data.Where(x => x.confirmationStatus != 2);
+                        //    //data = data.OrderByDescending(x => x.InterviewId);
+                        //    firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //}
+                        //else
+                        //{
+                        //    firstData = data.FirstOrDefault();
+                        //}
                         if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            //data = data.Where(x => x.confirmationStatus != 2);
-                            //data = data.OrderByDescending(x => x.InterviewId);
-                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+
+                            data = data.Where(x => x.confirmationStatus == 1);
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            firstData = data.FirstOrDefault();
+                        }
+                        else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                        {
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                            firstData = data.FirstOrDefault();
                         }
                         else
                         {
                             firstData = data.FirstOrDefault();
-                        }
 
+                        }
                         var candidateTimeline = new CandidateTimelineVM();
 
                         candidateTimeline.HREmail = firstData.HREmail;
@@ -608,13 +638,34 @@ namespace Risebird.Web.Controllers
                 foreach (var candidate in distinctCandidates)
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    //{
+                    //    data = data.Where(x => x.confirmationStatus != 2);
+                    //    data = data.OrderByDescending(x => x.InterviewId);
+                    //}
+                    //var firstData = data.FirstOrDefault();
+                    var firstData = new CandidateTimelineData();
+
                     if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        data = data.Where(x => x.confirmationStatus != 2);
-                        data = data.OrderByDescending(x => x.InterviewId);
+                        data = data.Where(x => x.confirmationStatus == 1);
+                        var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.FirstOrDefault();
                     }
-                    var firstData = data.FirstOrDefault();
+                    else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
 
+                        firstData = data.FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+
+                    }
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
@@ -2780,7 +2831,7 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-       
+
 
         [Authorize]
         [HttpGet]
@@ -3063,6 +3114,7 @@ namespace Risebird.Web.Controllers
                                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                 || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive")
                                             {
+
                                                 await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
                                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
                                                 var blob = containerRef.GetBlockBlobReference(fileName);
@@ -3092,7 +3144,7 @@ namespace Risebird.Web.Controllers
                                         else
                                         {
                                             ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
-                                            return View(model);                                          
+                                            return View(model);
 
                                         }
                                     }
@@ -3413,7 +3465,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid,string id)
+        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id)
         {
             ViewBag.emailid = emailid;
             ViewBag.id = id;
@@ -3425,13 +3477,14 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("PublicCandidateStatusfilters", JsonConvert.SerializeObject(filter));
                 }
                 var candidateData = new List<CandidateTimelineData>();
+                int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 0;
                 if (filter.StartDate != null && filter.EndDate != null)
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, datatype, emailid)).ToList();
                 }
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
@@ -3675,7 +3728,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Phone";
                 Sheet.Cells[1, 7].Value = "Current Status";
                 Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1, 9].Value = "Profile Source";
+                Sheet.Cells[1, 9].Value = "Staffing Agency EmailId";
                 Sheet.Cells[1, 10].Value = "Skill Channel ID";
 
                 int i = 2;
@@ -3787,6 +3840,48 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Emailid don't have access.");
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
+        {
+            try
+            {
+                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser))
+                {
+                    return Json("Invitation sent successfully!");
+                }
+                else
+                {
+                    return Json("Sorry! Could not send invite!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not send invite!");
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail)
+        {
+            try
+            {
+                if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                {
+                    return Json("Invitation cancelled successfully");
+                }
+                else
+                {
+                    return Json("Sorry! Could not cancel invite!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not cancel invite!");
             }
         }
     }

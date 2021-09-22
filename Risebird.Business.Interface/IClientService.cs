@@ -23,6 +23,6 @@ namespace Risebird.Business.Interface
         string DeleteClientJd(int assessmentid);
         Task<int> GetClientRoleByEmailId(string emailId);
         Task<int> GetUniqueClientRoleByEmailId(string emailId, string id);
-        Task<bool> PublicClientUrlSave(string emailId, string uniqueid);
+        Task<string> PublicClientUrlSave(string emailId, string uniqueid);
     }
 }
