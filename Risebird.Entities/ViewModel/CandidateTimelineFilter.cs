@@ -14,5 +14,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime? EndDate { get; set; }
         public DateTime? InterviewStartDate { get; set; }
         public DateTime? InterviewEndDate { get; set; }
+        public string DateType { get; set; }
     }
 }
