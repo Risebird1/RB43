@@ -18,6 +18,9 @@ Create PROCEDURE [dbo].[usp_GetIRFCandidates]
 AS  
 Begin    
     
+declare @IRFName varchar(100)
+set @IRFName = (select IRFId from IRF where id =@IRFId)
+
 declare @tblAttemptStatusCount table (IRFId int, CandidateId int, AttemptsCount int);    
  insert into @tblAttemptStatusCount    
  select IRFId, CandidateId, count(id) from CandidateStatus where IRFId = @IRFId group by IRFId, CandidateId     
@@ -41,7 +44,7 @@ left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id
 where ca.IRFId = @IRFId) Cnd      
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,    
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join    
-(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings group by candidateEmail) Filtered    
+(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered    
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate    
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId    
 End 
@@ -50,4 +53,6 @@ End
 
 GO
 
+
+ 
 

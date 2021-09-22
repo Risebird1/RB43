@@ -3214,7 +3214,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select id, EmailId from UserList where idProfile in (1,2,28)";
+                var query = "select id, EmailId from UserList where idProfile in (1,2,28,31)";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return con.Query<Users>(query);
