@@ -5050,6 +5050,9 @@ label {
 .topbar-item svg{
     margin-top:-4.3px;
 }
+.notschedulemeeting .candidate-details [data-tooltip]:after {
+    left: 40% !important;
+}
 #divclientname .btn-group > .btn.dropdown-toggle {
     border: 0px;
     background: #eee !important;

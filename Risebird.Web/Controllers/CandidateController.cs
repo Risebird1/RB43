@@ -3727,7 +3727,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Phone";
                 Sheet.Cells[1, 7].Value = "Current Status";
                 Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1, 9].Value = "Profile Source";
+                Sheet.Cells[1, 9].Value = "Staffing Agency EmailId";
                 Sheet.Cells[1, 10].Value = "Skill Channel ID";
 
                 int i = 2;
