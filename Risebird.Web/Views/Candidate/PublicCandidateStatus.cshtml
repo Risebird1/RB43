@@ -125,20 +125,21 @@
 
                                                     <div class="modal-body publicmeeting">
                                                         <div class="row">
-                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked" }) Added Date
+                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2", @style = "position:relative;top:4px;" }) Interview Date <span style="font-size:14px; font-weight:600;color: #0f6121;">(Filter based on Interview date)</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2" }) Interview Date
-                                                                    </div>
+                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked", @style = "position:relative;top:4px;" }) Added Date <span style="ont-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
+</div>
                                                                 </div>
                                                             </div>
+
                                                             <div class="col-md-6 col-sm-6 border-rv">
                                                                 <div class="form-group">
                                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
@@ -349,10 +350,10 @@
         position: relative;
         cursor: pointer;
 " title="Send Invite"><span class="fa fa-send-o"></span></span></span>
-                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;
+                                                                            @*<span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;
         position: relative;
         cursor: pointer;
-" title="Cancel Invite"><span class="fa fa-close"></span></span></span>
+" title="Cancel Invite"><span class="fa fa-close"></span></span></span>*@
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative;cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
