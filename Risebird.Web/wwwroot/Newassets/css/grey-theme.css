@@ -398,6 +398,10 @@ table.journey {
     background: #dddddf url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
+.table-striped.table-bordered th {
+    background: rgba(179, 172, 172, 0.3) !important
+}
+
 #mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
     width: 4px;
 }

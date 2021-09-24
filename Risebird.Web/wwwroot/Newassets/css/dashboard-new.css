@@ -2762,9 +2762,6 @@ table.journey td.cadSkill {
     background: rgba(220, 220, 220, 0.3);
 }
 
-.table-striped.table-bordered th {
-    background: rgba(179, 172, 172, 0.3) !important
-}
 
 
 table {
