@@ -32,7 +32,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Users> GetClientUser(int id);
         string GetClientUserRole(int id);
         IEnumerable<Interviewer> GetInterviewers(string assessmentgroupid);
-        Task<IEnumerable<Candidate>> GetIRFCandidates(int id);
+        Task<IEnumerable<Candidate>> GetIRFCandidates(int id, string emailId = null);
         Task<string> AddCandidate(Candidate obj, string emailId, string profile);
         Task<string> AddMultipleCandidates(List<Candidate> candidateList, string emailId, string profile);
         Task<bool> DeleteCandidate(int id);

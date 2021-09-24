@@ -46,7 +46,7 @@ namespace Risebird.Repository.Interface
         string GetClientUserRole(int userId);
         string GetIRFNameBasedOnId(int irfID);
         string GetIRFJDTitleBasedOnId(int irfID);
-        Task<IEnumerable<Candidate>> GetIRFCandidates(int id);
+        Task<IEnumerable<Candidate>> GetIRFCandidates(int id, string emailId = null);
         Task<string> AddCandidate(Candidate obj);
         Task<string> AddMultipleCandidates(List<Candidate> candidateList, int userId);
         Task<bool> DeleteCandidate(int id);

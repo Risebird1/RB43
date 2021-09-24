@@ -728,7 +728,7 @@
                                                                                 <td>@item.intervieweStatusStatDesc</td>
 
 
-                                                                                @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                                @if ((item.MeetingStatus == 4) @*&& ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))*@)
                                                                                 {
 
                                                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
@@ -1435,7 +1435,7 @@
                                                                                 <td>@item.intervieweStatusStatDesc</td>
 
 
-                                                                                @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                                @if ((item.MeetingStatus == 4) @*&& (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2))*@)
                                                                                 {
 
                                                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
@@ -1867,7 +1867,7 @@
                 }
                 else { html += '<td></td>'; }
 
-                if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                if ((data[i].meetingStatus == 4) /*&& (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))*/) {
                     html += '<td> <a id="reportId" target="_blank" title="Report Link" href="/Client/Report?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient = true">Report</a></td>';
                 } else {
                     html += '<td>No Report</td>';
