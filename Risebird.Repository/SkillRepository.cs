@@ -320,5 +320,20 @@ namespace Risebird.Repository
         }
 
         #endregion
+        public IEnumerable<Skill> GetAssessmentGroupCategory()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Skill>(
+                        con, "select id,CategoryName as Name from AssessmentGroupCategory", null, commandType: Text);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return null;
+        }
     }
 }

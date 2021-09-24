@@ -761,6 +761,14 @@ div.dataTables_wrapper div.dataTables_info {
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+}
+
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    background-color: rgb(255 254 254);
+}
+
 
 #candidateStatusModal .file-upload-wrapper:before {
     background: #353434;

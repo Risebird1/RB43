@@ -4046,6 +4046,9 @@ namespace Risebird.Web.Controllers
             }
             var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
             model._assessment = modellist.Where(x => x.id == assessmentid).ToList();
+            var _Category = _skillService.GetAssessmentGroupCategory().OrderBy(x => x.Name);
+            model._skilldetails.CategoryNameList = new SelectList(_Category, "id", "Name");
+
             var skillset = _skillService.GetSkills();
             var primaryskilllist = new List<SelectListItem>();
             model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");

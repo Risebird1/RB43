@@ -668,7 +668,6 @@ table.journey {
 .show-interest {
     color: #000;
 }
-
 .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
     background: #e96b28 !important;
     border-color: #e96b28 !important;
@@ -677,7 +676,13 @@ table.journey {
 .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
     background: #ffb23630 !important;
 }
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+}
 
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    background-color: rgba(255,255,255,.05);
+}
 .bl-bg {
     background: #ebecf1;
 }
