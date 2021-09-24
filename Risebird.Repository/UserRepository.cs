@@ -1176,7 +1176,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     // var query = "select sk.id as id,LTRIM(RTRIM(sk.Name)) as PrimarySkill,Count(*) as NoOfInterview from Skill sk join TransInterviewerSkill tis on sk.id=tis.SkillId group by sk.Name,sk.id order by LTRIM(RTRIM(sk.Name))";
-                    var query = "Select ag.id,AssessmentGroup,PrimarySkills,(Select count(*) from InterviewerAssessments where Assessmentgroupid=ag.id and isApproved=1) as Assessmentcount,ag.Isinstaavailable from AssessmentGroup ag ";
+                    var query = "Select ag.id,AssessmentGroup,PrimarySkills,(Select count(*) from InterviewerAssessments where Assessmentgroupid=ag.id and isApproved=1) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid";
                     var parameters = new DynamicParameters();
                     var results = con.Query<AssignmentVM>(query, parameters);
                     return results;

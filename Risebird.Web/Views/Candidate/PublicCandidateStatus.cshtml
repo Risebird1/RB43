@@ -80,7 +80,7 @@
 
                     <div class="pull-right">
                         <div>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" title="Scheduling Links" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
                             </button>
                             <span>
@@ -483,31 +483,45 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
-                <h5 class="modal-title pull-left"> Scheduling Links</h5>
+                <div class="filavatar">
+                    <span class="fa fa-link"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Scheduling Links</h5>
             </div>
+
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemySchedulingLinkpopup()">
                 <span aria-hidden="true">×</span>
             </button>
             <div class="modal-body">
-                <table width="100%">
-                    <thead>
-                        <tr>
-                            <td>Skill Channel</td>
-                            <td>JDTitle</td>
-                            <td>Scheduling Link</td>
-                        </tr>
-                    </thead>
-                    <tbody id="divschedulinglink">
-                    </tbody>
-                </table>
+                <div class="col-md-12">
+                    <div class="scrollbox">
+                        <div class="table-responsive">
+                            <table width="100%" cellpadding="0" cellspacing="0" class="table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Skill Channel</th>
+                                        <th>JDTitle</th>
+                                        <th>Scheduling Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divschedulinglink">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-12 text-right clearfix">
-                    <input type="button" onclick="closemySchedulingLinkpopup()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                    <input type="button" onclick="closemySchedulingLinkpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
                 </div>
             </div>
         </div>
     </div>
 </div>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" />
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1"></script>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
 <script>
     $(document).ready(function () {
         if ($("#txtVideostatus").val() == "Public") {
@@ -796,10 +810,10 @@
         for (var i = 0; i < data.length; i++) {
             html += '<tr><td>' + data[i].irfId + '</td>';
             html += '<td>' + data[i].jdTiltle + '</td>';
-            html += '<td><a id="calendlyLink_' + i + '" target="_blank" title="Scheduling Link" href="' + data[i].calendlyLink + '">Scheculing Link</a>';
-            html += '<button class="copy-btn" onclick="copyToClipboard(' + i + ')">';
+            html += '<td><a class="schedule-linktxt" id="calendlyLink_' + i + '" target="_blank" title="Scheduling Link" href="' + data[i].calendlyLink + '">Scheculing Link</a>';
+            html += '<button class="copy-btn schedule-linkbtn" onclick="copyToClipboard(' + i + ')">';
             html += ' <p class="special-text">';
-            html += '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>';
+            html += '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>';
             html += '<span id="special_text_' + i + '" class="special-text__tooltip">';
             html += 'Copy Link';
             html += '</span>';
@@ -826,5 +840,11 @@
 </script>
 
 
-
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox").mCustomScrollbar();
+        });
+    })(jQuery);
+</script>
 

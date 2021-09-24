@@ -10602,7 +10602,7 @@ body .top-panel {
     height: 45px;
 }
 
-    .filavatar .fa-filter, .uploadavatar .fa {
+    .filavatar .fa-filter, .uploadavatar .fa, .filavatar .fa{
         font-size: 22px;
         color: #fff;
         padding: 10px 30px 0px 13px;
@@ -10613,11 +10613,39 @@ body .top-panel {
     position: relative;
 }
 
-
-
-.client-change .on-off {
-    color: #393a3c;
+.schedule-linktxt {
+    position: relative;
+    top: 7px;
 }
+.schedule-linktxt {
+    color: #5f92ca;
+}
+
+
+#mySchedulingLinkpopup .mCSB_inside > .mCSB_container {
+    margin-right: 9px;
+}
+#mySchedulingLinkpopup .scrollbox {
+    overflow: auto;
+    height: 341px;
+}
+.schedule-linkbtn {
+    position: relative;
+    top: 7px;
+    left: 10px;
+}
+#mySchedulingLinkpopup table tr td:hover {
+    box-shadow:none!important;
+}
+#mySchedulingLinkpopup table td, #mySchedulingLinkpopup table th {
+    padding: 0px 0px 0px 10px;
+}
+    #mySchedulingLinkpopup table th{
+        font-size:15px;
+    }
+    .client-change .on-off {
+        color: #393a3c;
+    }
 
 .client-change .material-toggle input:checked ~ label:after {
     left: 15px;

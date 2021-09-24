@@ -52,6 +52,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList AssessmentGrouplist { get; set; }
         public List<AssessmentQuestions> Questionslist { get; set; }
         public bool Isinstaavailable { get; set; }
+        public string CategoryName { get; set; }
     }
     public class Assessment
     {
@@ -74,6 +75,8 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public List<SelectListItem> PrimarySkillsList { get; set; }
         public bool Isinstaavailable { get; set; }
+        public SelectList CategoryNameList { get; set; }
+        public int Category { get; set; }
     }
     public class AssessmentQuestions
     {
