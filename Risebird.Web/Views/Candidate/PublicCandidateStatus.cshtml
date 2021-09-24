@@ -535,12 +535,12 @@
         //}
     });
     function SubmitEmail() {
-        if ($("#txtvideoemailid").val() != "") {
+        if ($("#txtvideoemailid").val().trim() != "") {
             localStorage.setItem('PublicEmailid', $("#txtvideoemailid").val());
             $.ajax({
                 type: "POST",
                 url: "/Candidate/PublicAllMeetings",
-                data: { id: $("#hidtxtid").val(), Emailid: $("#txtvideoemailid").val() },
+                data: { id: $("#hidtxtid").val(), Emailid: $("#txtvideoemailid").val().trim() },
                 success: function (data) {
                     if (data == "success") {
                         window.location = "/Candidate/PublicCandidateStatus?emailid=" + $("#txtvideoemailid").val() + "&id=" + $("#hidtxtid").val();
@@ -552,12 +552,12 @@
         }
     }
     function SubmitEmailAdmin() {
-        if ($("#txtvideoemailid").val() != "") {
+        if ($("#txtvideoemailid").val().trim() != "") {
             localStorage.setItem('PublicEmailid', $("#txtvideoemailid").val());
             $.ajax({
                 type: "POST",
                 url: "/Candidate/PublicAllMeetingsAdmin",
-                data: { Emailid: $("#txtvideoemailid").val() },
+                data: { Emailid: $("#txtvideoemailid").val().trim() },
                 success: function (data) {
                     if (data == "success") {
                         window.location = "/Candidate/PublicCandidateStatus?emailid=" + $("#txtvideoemailid").val();
