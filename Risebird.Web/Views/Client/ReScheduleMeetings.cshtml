@@ -266,7 +266,8 @@
                                                                                     {
                                                                                         <div class="mtop-5">@item.candidateName</div>
                                                                                     }
-                                                                                    @if (item.candidateEmail != null && item.candidateEmail != "") { 
+                                                                                    @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                                    {
                                                                                         @if (item.candidateEmail.Length > 10)
                                                                                         {
                                                                                             <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname">  <strong>Email:</strong> @item.candidateEmail</span></a>
@@ -275,7 +276,7 @@
                                                                                         {
                                                                                             <a onclick=""> @item.candidateEmail </a>
                                                                                         }
-                                                                                   
+
                                                                                     }
                                                                                     <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
                                                                                 </td>
@@ -306,20 +307,21 @@
                                                                                 }
                                                                                 <td class="text-left">
 
-                                                                                    @if (ViewBag.Profile != "Client" || (ViewBag.Profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
-                                                                                    {
-                                                                                        <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="top:3px;position:relative;">
-                                                                                            <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                                                        </button>
-                                                                                    }
+
+                                                                                    <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting" style="top:3px;position:relative;">
+                                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                                    </button>
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;cursor:pointer" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
 
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px;
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top">
+                                                                                            <span class="btn-call" style="top: -7px;
         position: relative;
-        cursor: pointer" title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+        cursor: pointer
+" title="Click here to call the candidate."><span class="fa fa-phone"></span></span>
+                                                                                        </span>
                                                                                     }
                                                                                 </td>
                                                                             </tr>
@@ -415,7 +417,7 @@
                                                                                         {
                                                                                             <a onclick=""> @item.candidateEmail </a>
                                                                                         }
-                                                                                
+
                                                                                     }
                                                                                     <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
                                                                                 </td>
@@ -457,10 +459,12 @@
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="        top: -7px;
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top">
+                                                                                            <span class="btn-call" style="        top: -7px;
         position: relative;
         cursor: pointer
-" title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+" title="Click here to call the candidate."><span class="fa fa-phone"></span></span>
+                                                                                        </span>
                                                                                     }
                                                                                 </td>
                                                                             </tr>
@@ -856,7 +860,7 @@
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("ClientRole") == ClientRoleEnum.RestrictedIRFowner.GetDescription())
 {
-    
+
     @if (HttpContextAccessor.HttpContext.Session.GetString("NReschedule") != null)
     {
 

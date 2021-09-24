@@ -19,6 +19,7 @@
     .mob_h {
         display: none;
     }
+
     .sidebar-mini .sidebar:hover {
         width: 80px !important;
     }
@@ -38,297 +39,304 @@
 
 
 <div class="main-panel" id="main-panel">
-    
+
     <div class="mt50">
     </div>
     <div id="reportForm" class="content client">
         <div class="row bl-bg">
-            @*<div class="col-md-12">
-                <div class="pull-right mt-20">
-                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
-                </div>*@
             <div class="col-md-12">
-                <div class="mdc-card card bl-bg">
-                    <div class="mdc-card-wrapper__text-section">
+                @if (ViewBag.PageStatus == "Mainurl")
+                {
+                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
+                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>
+                }
 
-                        @if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
-                        {
-                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
-                            <div class="clearfix text-right">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
 
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
-                                    <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
-                                </button>
+                            @if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
+                            {
+                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
+                                <div class="clearfix text-right">
+
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
+                                        <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
+                                    </button>
 
 
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
-                                    <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Select</font></span>
-                                </button>
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
+                                        <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Select</font></span>
+                                    </button>
 
-                            </div>
-                        }
+                                </div>
+                            }
 
-                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine clearfix ng-valid form" id="Clienform">
-                            @Html.AntiForgeryToken()
-                            <div class="canvas_div_pdf">
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                <div class="report-full-wrap">
+                            <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine clearfix ng-valid form" id="Clienform">
+                                @Html.AntiForgeryToken()
+                                <div class="canvas_div_pdf">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    <div class="report-full-wrap">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>Candidate Details</span></h3>
+                                                </div><!--end of multiple location-->
+                                            </div>
+                                        </div>
+                                        <div class="card-wrap">
+                                            <div class="row">
+
+                                                <div class="col-md-6 col-sm-6 pull-left border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 pull-left">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="row">
+
+                                                <div class="col-md-6 col-sm-6 pull-left border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                        @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+
+                                                    </div>
+
+                                                </div>
+                                                @if (ViewBag.PageStatus != "PublicExternal")
+                                                {
+                                                    <div class="col-md-6 col-sm-6 pull-left">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                            @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="row">
+                                                @if (ViewBag.PageStatus != "PublicExternal")
+                                                {
+                                                    <div class="col-md-6 col-sm-6 pull-left border-rv">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                            @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <div class="col-md-6 col-sm-6 pull-left">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                        @{
+                                                            if (Model.resumeLink != null && Model.resumeLink != "")
+                                                            {
+                                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label click ">Click here</a>
+                                                            }
+                                                        }
+
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Candidate Details</span></h3>
+                                                <h2>Interview Report</h2>
                                             </div><!--end of multiple location-->
                                         </div>
                                     </div>
-                                    <div class="card-wrap">
-                                        <div class="row">
-
-                                            <div class="col-md-6 col-sm-6 pull-left border-rv">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6 pull-left">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-
-                                        <div class="row">
-
-                                            <div class="col-md-6 col-sm-6 pull-left border-rv">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                    @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
-
-                                                </div>
-
-                                            </div>
-                                            <div class="col-md-6 col-sm-6 pull-left">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                    @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="row">
-
-                                            <div class="col-md-6 col-sm-6 pull-left border-rv">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                    @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6 pull-left">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                    @{
-                                                        if (Model.resumeLink != null && Model.resumeLink != "")
-                                                        {
-                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label click ">Click here</a>
-                                                        }
-                                                    }
-
-
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div>
-                                </div>
-                                <div class="row">
-
-                                    <div class="col-md-6 col-sm-6 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
-                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
-                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                        
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h3 class="mb-0"><span>Interview Video</span></h3>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-                                </div>
-                                <div class="card-wrap">
                                     <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="videoConplayer">
-                                                @Html.HiddenFor(x => Model.VideoLink)
-                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+
+                                        <div class="col-md-6 col-sm-6 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
 
-                                                {
-
-                                                    @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                {
-                                <p></p>
-                                <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
-                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                    Your browser does not support the video tag.
-                                </video>
-                            }
-
-                            else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                            {
-                                <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
-
-                                </video>
-                            }
-
-
-                            else
-                            {
-                                <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                            }*@
-                                                    string appendTime;
-                                                    if (Model.ThumbnailTimeSeconds == 0)
-                                                    {
-                                                        appendTime = configuration["ThumbnailTimeDefault"];
-                                                    }
-                                                    else
-                                                    {
-                                                        appendTime = Model.ThumbnailTimeSeconds.ToString();
-                                                    }
-                                                    var src = Model.VideoLink + "#t=" + appendTime;
-                                                    <video width="600" controls="controls" preload="metadata">
-                                                        <source src='@src' type="video/mp4">
-                                                    </video>
-                                                }
-
+                                                @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                             </div>
-                                        </div><!--end of col-md-12-->
-
-                                    </div>
-                                    </div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h3 class="mb-0"><span>Report Details</span></h3>
-                                        </div><!--end of multiple location-->
-                                    </div>
-                                    <div class="report-wrap">
-                                        <div class="col-md-6 col-sm-6 border-rv pull-left">
-                                            <div class="chart-box">
-                                                <div>
-                                                    @*<p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>*@
-                                                    <p class="card-text">Tech Skill Score: <span class="totScore" id="totTechScore"></span></p>
-                                                    <div>
-                                                        <div id="scoreChart" style="height: 200px; width:100%;"></div>
-                                                        <div class="transparent-chart">&nbsp;</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="mc-button-area">
-                                                <div id="uploadDiv">
-
-
-                                                    <div style="margin-bottom:15px;">
-                                                        @{
-                                                            if (Model.VideoLink != null)
-                                                            {
-                                                                <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
-                                                            }
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-
-
                                         </div>
                                         <div class="col-md-6 col-sm-6 pull-left">
-                                            <div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+
+                                                @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Interview Video</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="videoConplayer">
+                                                    @Html.HiddenFor(x => Model.VideoLink)
+                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+
+
+                                                    {
+
+                                                        @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                                {
+                                                                <p></p>
+                                                                <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
+                                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            }
+
+                                                            else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                            {
+                                                                <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                                    <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                                </video>
+                                                            }
+
+
+                                                            else
+                                                            {
+                                                                <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                            }*@
+                                                        string appendTime;
+                                                        if (Model.ThumbnailTimeSeconds == 0)
+                                                        {
+                                                            appendTime = configuration["ThumbnailTimeDefault"];
+                                                        }
+                                                        else
+                                                        {
+                                                            appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                        }
+                                                        var src = Model.VideoLink + "#t=" + appendTime;
+                                                        <video width="600" controls="controls" preload="metadata">
+                                                            <source src='@src' type="video/mp4">
+                                                        </video>
+                                                    }
+
+                                                </div>
+                                            </div><!--end of col-md-12-->
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Report Details</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div>
+                                        <div class="report-wrap">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="chart-box">
+                                                    <div>
+                                                        @*<p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>*@
+                                                        <p class="card-text">Tech Skill Score: <span class="totScore" id="totTechScore"></span></p>
+                                                        <div>
+                                                            <div id="scoreChart" style="height: 200px; width:100%;"></div>
+                                                            <div class="transparent-chart">&nbsp;</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="mc-button-area">
+                                                    <div id="uploadDiv">
+
+
+                                                        <div style="margin-bottom:15px;">
+                                                            @{
+                                                                if (Model.VideoLink != null)
+                                                                {
+                                                                    <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 pull-left">
                                                 <div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 desp-label" })
+                                                    <div>
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 desp-label" })
 
 
-                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                            <div class="talktext">
-                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                <div class="talktext">
+                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
+                                                                </div>
                                                             </div>
+
+                                                            @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <span>
+
+                                                            </span>
                                                         </div>
 
-                                                        @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </div>
+
+
+
+
                                                     </div>
-                                                    <div class="form-group">
-                                                        <span>
-
-                                                        </span>
-                                                    </div>
-
-
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    </div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    </div>
-
-
-
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
@@ -388,10 +396,10 @@
                                                                 </td>
 
                                                                 @*<td class="action text-center">
-                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                        </td>*@
+                                                                    </td>*@
 
                                                             </tr>
                                                         }
@@ -427,9 +435,9 @@
                                                                     </td>
 
                                                                     @*<td class="action text-center">
-                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                            </td>*@
+                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                        </td>*@
 
                                                                 </tr>
 
@@ -537,7 +545,7 @@
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>General Skill Report</span></h3>
-</div><!--end of multiple location-->
+                                            </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
 
@@ -620,7 +628,7 @@
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Joinability Report</span></h3>
-</div><!--end of multiple location-->
+                                            </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
 
@@ -702,7 +710,7 @@
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
                                                 <h3 class="mb-0"><span>Selectability Report</span></h3>
-</div><!--end of multiple location-->
+                                            </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
 
@@ -1021,114 +1029,148 @@
 
 
                                 </div>
-</form>
+                            </form>
 
-                        <div id="myModal" class="modal modal-bg">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
+                            <div id="myModal" class="modal modal-bg">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
 
 
-                                    <div class="filheader">
-                                        <div class="filavatar">
+                                        <div class="filheader">
+                                            <div class="filavatar">
 
-                                            <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z" /></svg>
+                                                <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z" /></svg>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="ApproveModalLabel"> Approved For Next Round</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left" id="ApproveModalLabel"> Approved For Next Round</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="approvePopUp">&times;</span>
-                                    </button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="approvePopUp">&times;</span>
+                                        </button>
 
 
 
-                                    <div class="modal-body">
-                                        <div class="form-group">
+                                        <div class="modal-body">
+                                            <div class="form-group">
 
-                                            <label for="approveDropdown" class="control-label">Approved For Next Round</label>
-                                            <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                                <label for="approveDropdown" class="control-label">Approved For Next Round</label>
+                                                <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                            </div>
+                                            <div id="approvalComments" class="form-group">
+                                                <label class="control-label">Approval Comments</label>
+                                                <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px">
+                                            </div>
+                                            <div>
+                                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                            </div>
                                         </div>
-                                        <div id="approvalComments" class="form-group">
-                                            <label class="control-label">Approval Comments</label>
-                                            <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px">
-                                        </div>
-                                        <div>
-                                            <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
-                                        </div>
+
                                     </div>
 
                                 </div>
-
                             </div>
-                        </div>
 
-                        <div id="mySelectionModal" class="modal modal-bg" tabindex="-1" role="dialog" aria-labelledby="mySelectionModalLabel" aria-hidden="true">
-                            <!-- Modal content -->
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-
+                            <div id="mySelectionModal" class="modal modal-bg" tabindex="-1" role="dialog" aria-labelledby="mySelectionModalLabel" aria-hidden="true">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
 
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="reportbtn-icon fas fa-check"></span>
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="reportbtn-icon fas fa-check"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Final Selection Status</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Final Selection Status</h5>
-                                    </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="selectPopUp">&times;</span>
-                                    </button>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="selectPopUp">&times;</span>
+                                        </button>
 
 
 
-                                    <div class="modal-body">
-                                        <div class="form-group">
+                                        <div class="modal-body">
+                                            <div class="form-group">
 
-                                            <label for="selectionDropdown" class="control-label">Final Selection</label>
-                                            <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                                        </div>
-                                        <div id="selectionComments" class="form-group">
-                                            <label class="control-label">Final Comments</label>
-                                            <input type="text" name="selecComments" class="form-control" id="selecComments">
-                                        </div>
-                                        <div class="">
-                                            <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
+                                                <label for="selectionDropdown" class="control-label">Final Selection</label>
+                                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                            </div>
+                                            <div id="selectionComments" class="form-group">
+                                                <label class="control-label">Final Comments</label>
+                                                <input type="text" name="selecComments" class="form-control" id="selecComments">
+                                            </div>
+                                            <div class="">
+                                                <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
+                                            </div>
+
                                         </div>
 
                                     </div>
 
                                 </div>
-
                             </div>
                         </div>
                     </div>
+
+                    <!-- end content-->
                 </div>
-
-                <!-- end content-->
+                <!--  end card  -->
             </div>
-            <!--  end card  -->
+            <!-- end col-md-12 -->
         </div>
-        <!-- end col-md-12 -->
+
+
+        <!-- end row -->
+
     </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
 
-
-    <!-- end row -->
-
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
 </div>
-<footer class="footer">
-    <div class=" container-fluid ">
-
-        <div class="copyright" id="copyright">
-            &copy;
-            <script>
-                document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-            </script> Risebird All Rights Reserved.
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</footer>
-    </div>
-
+</div>
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -1357,7 +1399,30 @@
         });
 
     }
-
+    function GeneratePublicUrl(index) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        if (index == 1) {
+            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
+        }
+        else {
+            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+        }
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
 </script>
 <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
 <script>

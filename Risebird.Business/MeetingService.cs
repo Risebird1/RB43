@@ -3090,6 +3090,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchSchedulingLinks(emailid);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

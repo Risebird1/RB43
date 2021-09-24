@@ -3326,6 +3326,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.PageStatus = "Mainurl";
                 string userMenus = HttpContext.Session.GetString("userMenus");
 
                 if (userMenus == null)
@@ -3433,6 +3434,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.PageStatus = "Mainurl";
                 if (HttpContext.Session.GetString("email") != null &&
                     HttpContext.Session.GetString("profileName") != null)
                 {
@@ -5917,6 +5919,100 @@ namespace Risebird.Web.Controllers
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
             var codedname = _meetingService.FetchInterviewerCodedName(Emailid);
             return Json(new { meetings = meetings, codedname = codedname });
+        }
+        [AllowAnonymous]
+        public IActionResult InstaAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        {
+            try
+            {
+                bool isInterviewer = false;
+                ViewBag.actiontype = actiontype;
+                ViewBag.IRFID = irfId;
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                GetStatusList(model, irfId, 0);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageStatus = "PublicExternal";
+                ViewBag.PageReport = "Insta";
+                if (isClient || isClientSelected)
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
+                else
+                {
+                    return View("AddReport", model);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                if (isQC)
+                {
+                    return RedirectToAction("MyQualityControlledInterviews");
+
+                }
+                else
+                {
+                    return RedirectToAction("MyInterview");
+                }
+            }
+        }
+        public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        {
+            try
+            {
+                bool isInterviewer = false;
+                ViewBag.IRFID = irfId;
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                GetStatusList(model, irfId, 0);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageStatus = "PublicExternal";
+                ViewBag.PageReport = "";
+                return View("AddReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AllMeetings");
+            }
+
         }
     }
 }
