@@ -2358,12 +2358,13 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int irfId)
+        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int irfId, string emailId = null)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetIRFCandidates", dynamicParameters,

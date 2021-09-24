@@ -908,11 +908,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int id)
+        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int id, string emailId = null)
         {
             try
             {
-                return await _irfRepository.GetIRFCandidates(id);
+                return await _irfRepository.GetIRFCandidates(id, emailId);
             }
             catch (Exception e)
             {

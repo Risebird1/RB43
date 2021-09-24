@@ -748,7 +748,9 @@ div.dataTables_wrapper div.dataTables_info {
     border: 1px #181818 solid;
     color: #9A9A9A;
 }
-
+.table-striped.table-bordered th {
+    background: rgb(54 52 52) !important;
+}
 .interviewer .multiselect {
     background: #383838 !important;
 }
