@@ -3112,7 +3112,7 @@ namespace Risebird.Web.Controllers
                                         {
                                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
                                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive")
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                             {
 
                                                 await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
