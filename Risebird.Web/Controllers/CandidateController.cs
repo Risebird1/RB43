@@ -112,11 +112,11 @@ namespace Risebird.Web.Controllers
                             var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
                             firstData = data.FirstOrDefault();
                         }
-                        else if(data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                        else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
                         {
                             var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
                             var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
-                            data = data.Where(x =>x.interviewDate == latestInterviewDate.interviewDate);
+                            data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
 
                             firstData = data.FirstOrDefault();
                         }
@@ -227,6 +227,10 @@ namespace Risebird.Web.Controllers
                                 interviewStatusObjList.Add(interviewStatusObj);
                             }
                             candidateTimeline.InterviewStatus = interviewStatusObjList;
+                        }
+                        if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                         }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -496,6 +500,10 @@ namespace Risebird.Web.Controllers
                                 interviewStatusObjList.Add(interviewStatusObj);
                             }
                             candidateTimeline.InterviewStatus = interviewStatusObjList;
+                        }
+                        if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                         }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -768,6 +776,10 @@ namespace Risebird.Web.Controllers
                             interviewStatusObjList.Add(interviewStatusObj);
                         }
                         candidateTimeline.InterviewStatus = interviewStatusObjList;
+                    }
+                    if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                    {
+                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                     }
                     //add candidate to final model
                     if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -3882,6 +3894,25 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Sorry! Could not cancel invite!");
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> FetchSchedulingLinks(string emailid)
+        {
+            try
+            {
+                var model = await _meetingService.FetchSchedulingLinks(emailid);
+                if (model != null)
+                {
+                    return Json(model);
+                }
+                return Json("");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("");
             }
         }
     }

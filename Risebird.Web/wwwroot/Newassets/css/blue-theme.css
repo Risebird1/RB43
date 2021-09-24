@@ -452,7 +452,16 @@ textarea::-webkit-scrollbar-thumb {
 #interviewer.table.dataTable > thead > tr > th.overlay-relative {
     color: #000 !important
 }
+.table-striped.table-bordered th {
+    background: rgba(179, 172, 172, 0.3) !important
+}
 
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+}
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    background-color: rgba(255,255,255,.05);
+}
 .ref-btn {
     background: #fff;
 }

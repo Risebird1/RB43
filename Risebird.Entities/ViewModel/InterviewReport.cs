@@ -365,4 +365,10 @@ namespace Risebird.Entities.ViewModel
         public bool IsEmergency { get; set; }
         public int TotalAmount { get; set; }
     }
+    public class SchedulingLinkVM
+    {
+        public string IRFId { get; set; }
+        public string JDTiltle { get; set; }
+        public string CalendlyLink { get; set; }
+    }
 }

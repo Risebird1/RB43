@@ -14,6 +14,13 @@
         @Html.HiddenFor(model => model._skilldetails.id)
         <div class="clearfix">
             <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
+                <div class="form-group col-lg-12  col-md-12 col-sm-12 pull-left">
+                    <div class="mandate">
+                        @Html.LabelFor(model => model._skilldetails.Category, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span>
+                    </div>
+                    @Html.DropDownListFor(model => model._skilldetails.Category, Model._skilldetails.CategoryNameList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model._skilldetails.Category, "", new { @class = "text-danger" })
+                </div>
                 <div class="mandate">
                     @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span>
                 </div>
