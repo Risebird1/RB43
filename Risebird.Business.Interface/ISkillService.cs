@@ -16,7 +16,7 @@ namespace Risebird.Business.Interface
         SkillLevel GetSkillLevel(int id);
         bool UpdateSkillLevel(SkillLevel skillLevelToUpdate);
         bool DeleteSkillLevel(int id);
-
+        List<Skill> GetAssessmentGroupCategory();
 
     }
 }

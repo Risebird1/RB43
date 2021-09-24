@@ -48,9 +48,11 @@
         top: 7.9rem;
         right: -.3rem;
     }
+
     .sidebar-mini .sidebar:hover {
-        width: 80px!important;
+        width: 80px !important;
     }
+
     .mob_h {
         display: none !important
     }
@@ -78,6 +80,9 @@
 
                     <div class="pull-right">
                         <div>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" title="Scheduling Links" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
+                            </button>
                             <span>
                                 <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
 
@@ -128,17 +133,18 @@
                                                             <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2", @style = "position:relative;top:4px;" }) Interview Date <span style="font-size:14px; font-weight:600;color: #0f6121;">(Filter based on Interview date)</span>
+                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked", @style = "position:relative;top:4px;" }) Added Date <span style="ont-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked", @style = "position:relative;top:4px;" }) Added Date <span style="ont-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
-</div>
+                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2", @style = "position:relative;top:4px;" }) Interview Date <span style="font-size:14px; font-weight:600;color: #0f6121;">(Filter based on Interview date)</span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+
 
                                                             <div class="col-md-6 col-sm-6 border-rv">
                                                                 <div class="form-group">
@@ -346,14 +352,16 @@
                                                                                     <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                                 </a>
                                                                             }
-                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call" style="        top: -7px;
+                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
+                                                                                <span class="btn-call" style="        top: -7px;
         position: relative;
         cursor: pointer;
-" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
+" title="Send Invite"><span class="fa fa-send-o"></span></span>
+                                                                            </span>
                                                                             @*<span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;
-        position: relative;
-        cursor: pointer;
-" title="Cancel Invite"><span class="fa fa-close"></span></span></span>*@
+                                                                                        position: relative;
+                                                                                        cursor: pointer;
+                                                                                " title="Cancel Invite"><span class="fa fa-close"></span></span></span>*@
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative;cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
@@ -470,7 +478,50 @@
 
     </div>
 </div>
+<div id="mySchedulingLinkpopup" class="modal modal-wrap modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-link"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Scheduling Links</h5>
+            </div>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemySchedulingLinkpopup()">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="scrollbox">
+                        <div class="table-responsive">
+                            <table width="100%" cellpadding="0" cellspacing="0" class="table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Skill Channel</th>
+                                        <th>JDTitle</th>
+                                        <th>Scheduling Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divschedulinglink">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemySchedulingLinkpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" />
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1"></script>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
 <script>
     $(document).ready(function () {
         if ($("#txtVideostatus").val() == "Public") {
@@ -592,7 +643,6 @@
         var form = $("#form").serialize();
 
     }
-
 </script>
 <script type="text/javascript">
     //// script for loader starts here
@@ -743,9 +793,58 @@
             }
         });
     }
-
+    function openSchedulingLinks(emailid) {
+        $.ajax({
+            url: '/Candidate/FetchSchedulingLinks',
+            type: 'POST',
+            data: { 'emailid': emailid },
+            success: function (data) {
+                var modal = document.getElementById("mySchedulingLinkpopup");
+                modal.style.display = "block";
+                bindschedulingdata(data);
+            }
+        });
+    }
+    function bindschedulingdata(data) {
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr><td>' + data[i].irfId + '</td>';
+            html += '<td>' + data[i].jdTiltle + '</td>';
+            html += '<td><a class="schedule-linktxt" id="calendlyLink_' + i + '" target="_blank" title="Scheduling Link" href="' + data[i].calendlyLink + '">Scheculing Link</a>';
+            html += '<button class="copy-btn schedule-linkbtn" onclick="copyToClipboard(' + i + ')">';
+            html += ' <p class="special-text">';
+            html += '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>';
+            html += '<span id="special_text_' + i + '" class="special-text__tooltip">';
+            html += 'Copy Link';
+            html += '</span>';
+            html += '</p>';
+            html += '</button></td></tr>';
+        }
+        $("#divschedulinglink").empty().html(html);
+    }
+    function closemySchedulingLinkpopup() {
+        var modal = document.getElementById("mySchedulingLinkpopup");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(elementId) {
+        var element = document.getElementById("calendlyLink_" + elementId);
+        var href = element.href;
+        var temp = $("<input>");
+        $("body").append(temp);
+        //temp.val($(element).href).select();
+        temp.val(href).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text_' + elementId).text('Copied');
+    }
 </script>
 
 
-
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox").mCustomScrollbar();
+        });
+    })(jQuery);
+</script>
 

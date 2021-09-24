@@ -4977,7 +4977,7 @@ label {
     max-height: 100px !important;
 }
 
-.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus {
+.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, #entitleTable_filter input[type=search].form-control, .resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus {
     background: #FFF;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -4985,7 +4985,7 @@ label {
     padding: 9px 10px 9px 10px;
 }
 
-.indexemp #search, #skillLevel_filter #search, #risebirduser_filter #search, #clientduser_filter #search, #skill_filter #search, #questionsTable_filter #search {
+.indexemp #search, #skillLevel_filter #search, #risebirduser_filter #search, #clientduser_filter #search, #skill_filter #search, #questionsTable_filter #search, #entitleTable_filter #search {
     right: 45px;
     z-index: 0;
 }
@@ -4994,11 +4994,11 @@ label {
     right: 55px;
 }
 
-.indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update {
+.indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update,  #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update {
     right: 20px;
 }
 
-#statusTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update, #meeting_filter #trigger-update {
+#statusTable_filter #trigger-update, #entitleTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update, #meeting_filter #trigger-update {
     right: 28px;
 }
 #meeting_filter #trigger-update-search {
@@ -9668,7 +9668,7 @@ button.close {
 
 .ref-btn {
     position: absolute;
-    top: 9px;
+    top: 11px;
     right: 10px;
 }
 
@@ -9989,7 +9989,7 @@ h4.card-title {
     position: absolute;
     width: 35px;
     height: 35px;
-    top: 3px;
+    top: 5px;
     position: absolute;
     border: 0px;
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat center;
@@ -10602,7 +10602,7 @@ body .top-panel {
     height: 45px;
 }
 
-    .filavatar .fa-filter, .uploadavatar .fa {
+    .filavatar .fa-filter, .uploadavatar .fa, .filavatar .fa{
         font-size: 22px;
         color: #fff;
         padding: 10px 30px 0px 13px;
@@ -10613,11 +10613,39 @@ body .top-panel {
     position: relative;
 }
 
-
-
-.client-change .on-off {
-    color: #393a3c;
+.schedule-linktxt {
+    position: relative;
+    top: 7px;
 }
+.schedule-linktxt {
+    color: #5f92ca;
+}
+
+
+#mySchedulingLinkpopup .mCSB_inside > .mCSB_container {
+    margin-right: 9px;
+}
+#mySchedulingLinkpopup .scrollbox {
+    overflow: auto;
+    height: 341px;
+}
+.schedule-linkbtn {
+    position: relative;
+    top: 7px;
+    left: 10px;
+}
+#mySchedulingLinkpopup table tr td:hover {
+    box-shadow:none!important;
+}
+#mySchedulingLinkpopup table td, #mySchedulingLinkpopup table th {
+    padding: 0px 0px 0px 10px;
+}
+    #mySchedulingLinkpopup table th{
+        font-size:15px;
+    }
+    .client-change .on-off {
+        color: #393a3c;
+    }
 
 .client-change .material-toggle input:checked ~ label:after {
     left: 15px;

@@ -398,7 +398,13 @@ table.journey {
     background: #dddddf url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+}
 
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    background-color: rgba(255,255,255,.05);
+}
 #candidateStatusModal .file-upload-wrapper:before {
     background: #929292;
 }
