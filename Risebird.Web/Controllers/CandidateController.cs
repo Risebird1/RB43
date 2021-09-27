@@ -228,6 +228,10 @@ namespace Risebird.Web.Controllers
                             }
                             candidateTimeline.InterviewStatus = interviewStatusObjList;
                         }
+                        if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
                         {
@@ -496,6 +500,10 @@ namespace Risebird.Web.Controllers
                                 interviewStatusObjList.Add(interviewStatusObj);
                             }
                             candidateTimeline.InterviewStatus = interviewStatusObjList;
+                        }
+                        if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                         }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -769,6 +777,10 @@ namespace Risebird.Web.Controllers
                         }
                         candidateTimeline.InterviewStatus = interviewStatusObjList;
                     }
+                    if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                    {
+                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                    }
                     //add candidate to final model
                     if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
                     {
@@ -1008,7 +1020,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Profile = profileName;
 
                         var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
-                        var candidateList = (await _irfService.GetIRFCandidates(id))?.ToList();
+                        var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                         if (profileName == "Recruiter")
                         {
                             var userId = _irfService.GetUserId(emailid, profileName);
@@ -1099,7 +1111,7 @@ namespace Risebird.Web.Controllers
 
 
                 var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
-                var candidateList = (await _irfService.GetIRFCandidates(id))?.ToList();
+                var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                 if (profileName == "Recruiter")
                 {
                     var userId = _irfService.GetUserId(emailid, profileName);
@@ -1353,7 +1365,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(irfId), profileName, emailid))?.ToList();
-                        var candidateList = (await _irfService.GetIRFCandidates(Convert.ToInt32(irfId)))?.ToList();
+                        var candidateList = (await _irfService.GetIRFCandidates(Convert.ToInt32(irfId),emailid))?.ToList();
                         if (candidateList != null && candidateList.Count > 0)
                         {
                             candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());

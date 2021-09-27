@@ -676,6 +676,10 @@ table.journey {
 .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
     background: #ffb23630 !important;
 }
+.table-striped.table-bordered th {
+    background: rgba(179, 172, 172, 0.3) !important
+}
+
 #mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
     width: 4px;
 }
