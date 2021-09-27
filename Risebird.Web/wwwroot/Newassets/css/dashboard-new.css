@@ -5487,8 +5487,10 @@ label {
     .rejectedmeeting .s_cname {
         width: 247px;
     }
-
-    .s_cname {
+    .selectedmeeting .s_cname {
+        width: 180px;
+    }
+        .s_cname {
         width: 236px;
         white-space: nowrap;
         overflow: hidden;
