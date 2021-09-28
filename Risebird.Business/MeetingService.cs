@@ -2968,11 +2968,11 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
-        public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId)
+        public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try
             {
-                var meetings = _meetingRespository.GetClientNotScheduledMeetingListByIRFId(IRFId).Result.ToList();
+                var meetings = _meetingRespository.GetClientNotScheduledMeetingListByIRFId(IRFId, emailId).Result.ToList();
 
                 return meetings ?? new List<MeetingVM>();
             }

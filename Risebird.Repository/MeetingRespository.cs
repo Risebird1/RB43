@@ -4817,7 +4817,7 @@ namespace Risebird.Repository
                 return "Fail";
             }
         }
-        public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId)
+        public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try
             {
@@ -4825,6 +4825,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@IRFId", IRFId);
+                    parameters.Add("@emailId", emailId);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientNotScheduledMeetingsByIRFId", parameters,
                          commandType: CommandType.StoredProcedure);
                 }

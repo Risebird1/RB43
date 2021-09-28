@@ -13,11 +13,12 @@ GO
     
     
 CREATE PROCEDURE [dbo].[usp_GetCandidateTimelineByIRFId] 
-@irfid int  
+@irfid int ,
+@emailId varchar(100) = null
 AS      
 Begin 
 
-declare  @addedStatusId int    
+declare  @addedStatusId int, @roleId int  
     
  set @addedStatusId = (select id from CandidateStatusOptionsMst where StatusValue='Added')    
     
@@ -48,8 +49,46 @@ declare  @meetingStatusId int, @interviewStatusId int, @qcPendingId int;
     insert into @interviewStatusTable     
     select cs.CandidateId, cs.IRFId, [Date], Comments from CandidateStatus cs join @CandidateStatusGrouped csg on (csg.CandidateId=cs.CandidateId and csg.IRFId=cs.IRFId)   
  where ([Status]=@interviewStatusId  or [Status]= @qcPendingId)  
-        
-    select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,    
+ 
+
+if(@emailId is not null)
+begin
+	declare @profile varchar(150)
+	set @profile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id = ul.idProfile where ul.EmailId=@emailId)
+	if(@profile =  'Client')
+	begin
+		set @roleId = (select cu.RoleId from UserList ul join ClientUser cu on cu.UserId = ul.id where ul.EmailId = @emailId)
+	end
+end
+if(@roleId = 1)
+begin
+	    select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,    
+  case     
+   when ul.LastName is null then ul.FirstName    
+   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))    
+  end as [Name],    
+  ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,    
+  ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,    
+  mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,    
+  ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,    
+  ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone,  im.interviewDate,  
+  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill    
+  from Candidate ca     
+  join CandidatesMaster cm on cm.id =ca.CandidateMasterId    
+  join UserList ul on ul.id =cm.UserId    
+  join IRF on IRF.id=ca.IRFId    
+  left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId =IRF.IRFId    
+  left join InterviewComments ic on ic.InterviewId = im.id    
+  left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id    
+  join @allStatustable ast on ca.CandidateMasterId = ast.CandidateMasterId and ca.IRFId=ast.IRFId     
+  left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId    
+  left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId    
+  Where IRF.id=@irfid and ca.ClientHRAttemptContact = @emailId
+
+end
+else
+begin
+	    select ca.id as CandidateId, ca.CandidateMasterId, ul.EmailId,    
   case     
    when ul.LastName is null then ul.FirstName    
    else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))    
@@ -71,6 +110,8 @@ declare  @meetingStatusId int, @interviewStatusId int, @qcPendingId int;
   left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId    
   left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId    
   Where IRF.id=@irfid
+
+end
      
         
     

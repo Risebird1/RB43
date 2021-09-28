@@ -82,7 +82,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Level> GetLevels();
         IEnumerable<LevelTech> GetLevelTech();
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
         Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null);
         Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
@@ -95,5 +95,6 @@ namespace Risebird.Business.Interface
         IEnumerable<Skill> GetSkills();
         Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
         IEnumerable<SkillCahnnelDetailsVM> GetAllSkillChannelDetails();
+        Task<List<MeetingVM>> GetIRFInterviewMeetingsForClient(int id, string profileName, string email);
     }
 }
