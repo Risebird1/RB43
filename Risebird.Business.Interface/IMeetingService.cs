@@ -152,7 +152,7 @@ namespace Risebird.Business.Interface
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
-        List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId);
+        List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
         List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid);
         List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
         List<string> FetchClientListByIRFID(int IRFID);
