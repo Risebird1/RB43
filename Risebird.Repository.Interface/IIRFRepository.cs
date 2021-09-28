@@ -29,7 +29,7 @@ namespace Risebird.Repository.Interface
         bool AddSkillComments(TechSkillComments obj);
         Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> ArchiveIRF(int IRFId);
-        Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id);
+        Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
@@ -137,7 +137,7 @@ namespace Risebird.Repository.Interface
         Task<int> GetCandidateIdByEmail(string emailId);
         Task<IEnumerable<string>> GetIRFClientsEmail(int irfId);
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null);
         Task<bool> AddQCCandidateStatus(int interviewId, string performedBy);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<Candidate> GetCandidateByIRF(int irfId, string emailId);
