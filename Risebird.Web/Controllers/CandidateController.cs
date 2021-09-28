@@ -3454,6 +3454,10 @@ namespace Risebird.Web.Controllers
                             candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
                         }
                     }
+                    if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                    {
+                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                    }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
                     {
@@ -3550,6 +3554,10 @@ namespace Risebird.Web.Controllers
                             candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
                             candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
                         }
+                    }
+                    if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                    {
+                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                     }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
