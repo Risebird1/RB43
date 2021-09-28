@@ -34,7 +34,7 @@ end
 if(@roleId=1)
 begin
 	select irf.PerMintuteRate, irf.TotalBudget,QCF.InterviewId as QCInterview,im.id as imid, im.IRFId, im.interviewDate,  
-	im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail, im.ClientHrContact,  
+	im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail, ca.ClientHRAttemptContact as ClientHrContact,  
 	im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,  
 	im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,  
 	case 
@@ -57,7 +57,7 @@ end
 else
 begin
 	select irf.PerMintuteRate, irf.TotalBudget,QCF.InterviewId as QCInterview,im.id as imid, im.IRFId, im.interviewDate,  
-	im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail, im.ClientHrContact,  
+	im.interviewSlot, im.interviewDuration, ul.EmailId as candidateEmail, ca.ClientHRAttemptContact as ClientHrContact,
 	im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,  
 	im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,  
 	case 
