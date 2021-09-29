@@ -846,7 +846,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
             var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                             select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
