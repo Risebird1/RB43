@@ -873,7 +873,7 @@ namespace Risebird.Repository
                 parameters.Add("@ResumeLink", interviewerProfile.ResumeLink);
                 parameters.Add("@InterviewerProfileId", interviewerProfile.id);
                 parameters.Add("@Isinstaavailable", interviewerProfile.Isinstaavailable);
-
+                parameters.Add("@CodedResumeLink", interviewerProfile.CodedResumeLink);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,

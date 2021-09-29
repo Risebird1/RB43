@@ -530,6 +530,15 @@ namespace Risebird.Web.Controllers
                         userProfile.ResumeLink = uploadedFileURL;
 
                     }
+                    if (userProfile.CodedResumeFile != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(userProfile.CodedResumeFile.FileName, "resumes", userProfile.CodedResumeFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(userProfile.CodedResumeFile.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        userProfile.CodedResumeLink = uploadedFileURL;
+
+                    }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
                     {
                         if (!String.IsNullOrEmpty(userProfile.ImageURL))

@@ -1905,6 +1905,23 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageStartCount = 0;
                             ViewBag.PageEndCount = 0;
                         }
+
+                        foreach (var item in myInterview)
+                        {
+                            var time = item.interviewDate.AddHours(1);
+                            var currentTime = DateTime.UtcNow;
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
+                            var timediff = time - indianTime;
+                            if (timediff.TotalMinutes <= 60)
+                            {
+                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+                               
+                            }
+                           // item.Timer = 60;
+
+
+                        }
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
 
                     }
@@ -2145,6 +2162,21 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageStartCount = 0;
                             ViewBag.PageEndCount = 0;
+                        }
+
+                        foreach (var item in myInterview)
+                        {
+                            var time = item.interviewDate.AddHours(1);
+                            var currentTime = DateTime.UtcNow;
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
+                            var timediff = time - indianTime;
+                            if (timediff.TotalMinutes <= 60)
+                            {
+                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+
+                            }
+
                         }
 
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
@@ -5749,6 +5781,21 @@ namespace Risebird.Web.Controllers
                         {
                             Pagestart = 0;
                             Pageend = 0;
+                        }
+
+                        foreach (var item in myInterview)
+                        {
+                            var time = item.interviewDate.AddHours(2);
+                            var currentTime = DateTime.UtcNow;
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
+                            var timediff = time - indianTime;
+                            if (timediff.TotalMinutes <= 60)
+                            {
+                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+
+                            }
+
                         }
                         return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
 

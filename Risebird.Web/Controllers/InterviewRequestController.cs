@@ -349,7 +349,7 @@ namespace Risebird.Web.Controllers
                 //Send a mail to userid with EventDetails
                 var model = _interviewRequestService.FetchInterviewRequestById(id);
                 model.CountryName = ((InterviewRequestCountry)Convert.ToInt32(model.Country)).GetDescription();
-                model.JobLevelName = ((InterviewRequestCountry)Convert.ToInt32(model.JobLevel)).GetDescription();
+                model.JobLevelName = ((JobLevels)Convert.ToInt32(model.JobLevel)).GetDescription();
                 Mail _mail = new Mail
                 {
                     TO = model.Assignto,
@@ -370,6 +370,8 @@ namespace Risebird.Web.Controllers
             {
                 //Send mail for confirmation
                 var model = _interviewRequestService.FetchInterviewRequestById(id);
+                model.CountryName = ((InterviewRequestCountry)Convert.ToInt32(model.Country)).GetDescription();
+                model.JobLevelName = ((JobLevels)Convert.ToInt32(model.JobLevel)).GetDescription();
                 Mail _mail = new Mail
                 {
                     TO = model.RequestedBy,
