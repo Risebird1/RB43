@@ -1389,7 +1389,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(irfId), profileName, emailid))?.ToList();
-                        var candidateList = (await _irfService.GetIRFCandidates(Convert.ToInt32(irfId),emailid))?.ToList();
+                        var candidateList = (await _irfService.GetIRFCandidates(Convert.ToInt32(irfId), emailid))?.ToList();
                         if (candidateList != null && candidateList.Count > 0)
                         {
                             candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
@@ -3516,7 +3516,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("PublicCandidateStatusfilters", JsonConvert.SerializeObject(filter));
                 }
                 var candidateData = new List<CandidateTimelineData>();
-                int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 0;
+                int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 1;
                 if (filter.StartDate != null && filter.EndDate != null)
                 {
                     candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
@@ -3655,13 +3655,14 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                    int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 1;
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, datatype, emailid)).ToList();
                     }
                 }
                 else
