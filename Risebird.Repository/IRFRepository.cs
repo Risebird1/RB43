@@ -811,7 +811,7 @@ namespace Risebird.Repository
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone? item.IsActive : true);
+                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -2085,12 +2085,13 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id)
+        public async Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null)
         {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
+                parameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
@@ -3881,6 +3882,7 @@ namespace Risebird.Repository
                     parameters.Add("@PrimarySkills", _skilldetails.PrimarySkill);
                     parameters.Add("@id", _skilldetails.id);
                     parameters.Add("@Isinstaavailable", _skilldetails.Isinstaavailable);
+                    parameters.Add("@Category", _skilldetails.Category);
                     await SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
@@ -4207,12 +4209,13 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id)
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null)
         {
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@irfid", id);
+                parameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimelineByIRFId", parameters,

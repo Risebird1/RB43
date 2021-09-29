@@ -6014,5 +6014,80 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [HttpGet]
+        public IActionResult PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        {
+            try
+            {
+                ViewBag.PageStatus = "PublicExternal";
+                bool isAdminHR = false;
+                bool isInterviewer = false;
+                ViewBag.actiontype = actiontype;
+                ViewBag.IRFID = irfId;
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model == null)
+                {
+                    if (isAdminHR)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else if (isInterviewer)
+                    {
+                        if (isQC)
+                        {
+                            return RedirectToAction("MyQualityControlledInterviews");
+
+                        }
+                        else
+                        {
+                            return RedirectToAction("MyInterview");
+                        }
+                    }
+                }
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                GetStatusList(model, irfId, 0);
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageReport = "External";
+                if (isClient || isClientSelected)
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
+                else
+                {
+                    return View("AddReport", model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                if (isQC)
+                {
+                    return RedirectToAction("MyQualityControlledInterviews");
+
+                }
+                else
+                {
+                    return RedirectToAction("MyInterview");
+                }
+            }
+        }
     }
 }

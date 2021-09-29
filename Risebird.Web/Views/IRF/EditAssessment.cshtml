@@ -18,7 +18,7 @@
                     <div class="mandate">
                         @Html.LabelFor(model => model._skilldetails.Category, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red"> * </span>
                     </div>
-                    @Html.DropDownListFor(model => model._skilldetails.Category, Model._skilldetails.CategoryNameList, new { @class = "form-control" })
+                    @Html.DropDownListFor(model => model._skilldetails.Category, Model._skilldetails.CategoryNameList, "Select", new { @class = "form-control", @required = "required" })
                     @Html.ValidationMessageFor(model => model._skilldetails.Category, "", new { @class = "text-danger" })
                 </div>
                 <div class="mandate">

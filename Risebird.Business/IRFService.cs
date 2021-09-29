@@ -398,7 +398,7 @@ namespace Risebird.Business
             try
             {
                 int role = 0;
-                var result = (await _irfRepository.GetIRFInterviewMeetings(id)).OrderByDescending(x => x.interviewDate).ToList();
+                var result = (await _irfRepository.GetIRFInterviewMeetings(id, email)).OrderByDescending(x => x.interviewDate).ToList();
 
                 if (email != string.Empty && profileName == "Client")
                 {
@@ -433,6 +433,22 @@ namespace Risebird.Business
                     return result;
                 }
 
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
+        public async Task<List<MeetingVM>> GetIRFInterviewMeetingsForClient(int id, string profileName, string email)
+        {
+            try
+            {
+                var result = (await _irfRepository.GetIRFInterviewMeetings(id, email)).OrderByDescending(x => x.interviewDate).ToList();
+                return result;
             }
 
             catch (Exception e)
@@ -1740,11 +1756,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id)
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null)
         {
             try
             {
-                return await _irfRepository.GetCandidateTimeline(id);
+                return await _irfRepository.GetCandidateTimeline(id, emailId);
             }
 
             catch (Exception e)
