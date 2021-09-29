@@ -45,7 +45,7 @@
                                     <div class="col-lg-8  col-md-8 col-sm-8 pull-left pl-1">
                                         <div class="form-group">
                                             @Html.LabelFor(m => m.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, new { @class = "form-control br-g" })
+                                            @Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required" })
                                             @Html.ValidationMessageFor(model => model.JobLevel, "", new { @class = "text-danger" })
                                         </div>
                                     </div>

@@ -207,7 +207,17 @@
                                                                 }
                                                             </div>
                                                             @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
-
+                                                            <div class="col-md-12">
+                                                                @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
+                                                                @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                            </div>
+                                                            <div class="col-md-12" style="margin:10px 0px;">
+                                                                @if (Model.CodedResumeFile != null)
+                                                                {
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@Model.CodedResumeFile>Coded Resume  </a>
+                                                                }
+                                                            </div>
+                                                            @Html.Hidden("CodedResumeFile", Model.CodedResumeFile, htmlAttributes: new { id = "hdn_CodedResumeLink" })
 
                                                         }
                                                     }
@@ -262,21 +272,27 @@
 
 
 
+
+
                                                                                     <div class="mdc-checkbox">
 
-                                                                                        @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
-                                                                                        <div class="mdc-checkbox__background">
-                                                                                            <svg class="mdc-checkbox__checkmark"
-                                                                                                 viewBox="0 0 24 24">
-                                                                                                <path class="mdc-checkbox__checkmark-path"
-                                                                                                      fill="none"
-                                                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                                            </svg>
-                                                                                            <div class="mdc-checkbox__mixedmark"></div>
-                                                                                        </div>
-                                                                                        <div class="mdc-checkbox__ripple"></div>
 
-                                                                                    </div>
+
+                                                                                        <div class="mdc-checkbox">
+
+                                                                                            @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
+                                                                                            <div class="mdc-checkbox__background">
+                                                                                                <svg class="mdc-checkbox__checkmark"
+                                                                                                     viewBox="0 0 24 24">
+                                                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                                                          fill="none"
+                                                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                                </svg>
+                                                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                                                            </div>
+                                                                                            <div class="mdc-checkbox__ripple"></div>
+
+                                                                                        </div>
 
                                                                                 </td>
                                                                                 <td class="action text-center">
