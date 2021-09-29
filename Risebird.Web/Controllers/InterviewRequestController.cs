@@ -61,7 +61,7 @@ namespace Risebird.Web.Controllers
                         {
                             x.CountryName = ((InterviewRequestCountry)Convert.ToInt32(x.Country)).GetDescription();
                             x.JobLevelName = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription();
-                            x.IsSetToComplete = x.Assignto.ToUpper() == emailid.ToUpper() ? true : false;
+                            x.IsSetToComplete = !String.IsNullOrEmpty(x.Assignto) ? x.Assignto.ToUpper() == emailid.ToUpper() ? true : false : false;
                             return x;
                         }).ToList();
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -170,7 +170,7 @@ namespace Risebird.Web.Controllers
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                                 Mail _mail = new Mail
                                 {
-                                    TO = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io",
+                                    TO = "ashutosh@risebird.io",//;vaibhaw_sachan@risebird.io;talent@risebird.io",
                                     Subject = "New Interview Request: " + meeting.JdTitle + " - " + meeting.PrimarySkill
                                 };
                                 var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill);

@@ -186,6 +186,23 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
 <script type="text/javascript">
 
     $(document).ready(function () {
