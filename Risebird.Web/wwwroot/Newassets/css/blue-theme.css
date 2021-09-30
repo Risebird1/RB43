@@ -30,7 +30,7 @@ body {
     border-radius: 5px;
     font-weight: bold;
     padding: 3px 15px;
-    margin:0px 15px;
+    margin:0px 10px;
     text-transform: uppercase;
     box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
 }
@@ -42,7 +42,7 @@ body {
         border-radius: 5px;
         font-weight: bold;
         padding: 4px 15px;
-        margin: 0px 15px;
+        margin: 0px 10px;
         text-transform: uppercase;
         box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
     }

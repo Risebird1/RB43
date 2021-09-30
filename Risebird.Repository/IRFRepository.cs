@@ -811,7 +811,7 @@ namespace Risebird.Repository
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone? item.IsActive : true);
+                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -3882,6 +3882,7 @@ namespace Risebird.Repository
                     parameters.Add("@PrimarySkills", _skilldetails.PrimarySkill);
                     parameters.Add("@id", _skilldetails.id);
                     parameters.Add("@Isinstaavailable", _skilldetails.Isinstaavailable);
+                    parameters.Add("@Category", _skilldetails.Category);
                     await SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";

@@ -846,7 +846,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
             var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                             select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
@@ -1218,7 +1218,7 @@ namespace Risebird.Web.Controllers
                     {
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = new List<MeetingVM>();
-                        if(profileName=="Client")
+                        if (profileName == "Client")
                         {
                             meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
 
@@ -1444,7 +1444,7 @@ namespace Risebird.Web.Controllers
                     {
                         var meetings = new List<MeetingVM>();
 
-                        if (profileName =="Client")
+                        if (profileName == "Client")
                         {
                             meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).ToList();
 
@@ -4091,6 +4091,7 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.id = modeldata.id;
                 model._skilldetails.AssessmentGroupName = modeldata.AssessmentGroup;
                 model._skilldetails.Isinstaavailable = modeldata.Isinstaavailable;
+                model._skilldetails.Category = _Category.Where(x => x.Name == modeldata.CategoryName).Select(x => x.id).FirstOrDefault();
             }
             else
             {
@@ -4188,6 +4189,28 @@ namespace Risebird.Web.Controllers
             List<String> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
             model._skilldetails.PrimarySkill = String.Join(",", selectedSkill);
             var result = _irfService.Addassignmentgroup(model._skilldetails);
+            if (result == "Success")
+            {
+                if (model._skilldetails.id > 0)
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Edit Successfully.";
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Add Successfully.";
+                }
+            }
+            else
+            {
+                if (model._skilldetails.id > 0)
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Fail to edit";
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Fail to add";
+                }
+            }
             return RedirectToAction("InterviewerEntitle");
         }
         /// <summary>

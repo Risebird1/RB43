@@ -73,9 +73,9 @@
                                 <thead>
                                     <tr>
                                         <th>Assessment Group</th>
-                                        <th>Category</th>
+                                        <th width="30%">Category</th>
                                         <th>Primary Skills</th>
-                                        <th>Number Of Assessments</th>
+                                        <th width="4%">Number Of Assessments</th>
                                         <th>Insta Available</th>
                                         <th>Action</th>
                                     </tr>
@@ -85,7 +85,19 @@
                                     @foreach (var item in Model._assessment)
                                     {
                                         <tr>
-                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></td>
+                                            <td class="table-h">
+
+                                                @if (item.AssessmentGroup.Length > 45)
+                                                {
+
+
+                                                    <a data-tooltip="@item.AssessmentGroup" href="@Url.Action("InterviewerEntitleDetails", "IRF", new { id = item.id })">@item.AssessmentGroup.Substring(0, 45)</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("InterviewerEntitleDetails", "IRF", new { id = item.id })">@item.AssessmentGroup</a>
+                                                }
+                                            </td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.CategoryName</a></td>
                                             <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
@@ -186,6 +198,23 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
 <script type="text/javascript">
 
     $(document).ready(function () {

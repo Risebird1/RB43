@@ -51,7 +51,7 @@
         <img src="~/Newassets/img/lazyload.gif" />
     </div>
     <div class="mt50">
-        @if (ViewBag.PageStatus == "Mainurl")
+        @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>
@@ -423,7 +423,7 @@
                                     </div>
 
                                 </div>
-                                @if (ViewBag.PageStatus != "PublicExternal")
+                                @if (ViewBag.PageReport != "Insta")
                                 {
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1075,215 +1075,217 @@
                                         <div class="proctor">
                                             <input class="toggle-box" id="identifier-2" type="checkbox">
                                             <label for="identifier-2">
-                                                <span class="multiple_row">
+                                                <div class="multiple_row">
                                                     <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
+                                                </div>
                                             </label>
-                                        </div>
-
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
-                                            <div class="table-responsive-sm">
-                                                <table class="table table-bordered mbn" id="ProctoringTable">
-                                                    <thead>
-                                                        <tr>
-
-                                                            <th class="table_heading">Areas</th>
-                                                            <th class="table_heading">Number of Red Flags</th>
-
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                Eyes Movement
-                                                            </td>
-                                                            <td></td>
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <label class="form-control label-type" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Head Movement
-                                                            </td>
-                                                            <td></td>
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Lips Movement
-                                                            </td>
-                                                            <td class="control-width"></td>
-                                                        </tr>
-
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="LipsOverhead">Using overhead light</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="LipsDarklight">Dark light in the room or on the face</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="LipsHeadphone">Using Headphone in front of Lips</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Latency check
-                                                            </td>
-                                                            <td></td>
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td>
-                                                                Candidate desktop
-                                                            </td>
-                                                            <td></td>
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="DesktopScreenSharing">Sharing screen but not desktop</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Voice Impostering
-                                                            </td>
-                                                            <td></td>
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Linkedin Photo
-                                                            </td>
-                                                            <td class="control-width"></td>
-                                                        </tr>
-                                                        <tr>
-
-                                                            <td>
-                                                                <label class="form-control label-type" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
-                                                            </td>
-                                                            <td class="control-width">
-                                                                @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
 
 
-                                                            </td>
 
-                                                        </tr>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
+                                                <div class="table-responsive-sm">
+                                                    <table class="table table-bordered mbn" id="ProctoringTable">
+                                                        <thead>
+                                                            <tr>
+
+                                                                <th class="table_heading">Areas</th>
+                                                                <th class="table_heading">Number of Red Flags</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    Eyes Movement
+                                                                </td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <label class="form-control label-type" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Head Movement
+                                                                </td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Lips Movement
+                                                                </td>
+                                                                <td class="control-width"></td>
+                                                            </tr>
+
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="LipsOverhead">Using overhead light</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="LipsDarklight">Dark light in the room or on the face</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="LipsHeadphone">Using Headphone in front of Lips</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Latency check
+                                                                </td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>
+                                                                    Candidate desktop
+                                                                </td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="DesktopScreenSharing">Sharing screen but not desktop</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Voice Impostering
+                                                                </td>
+                                                                <td></td>
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    Linkedin Photo
+                                                                </td>
+                                                                <td class="control-width"></td>
+                                                            </tr>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <label class="form-control label-type" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
+                                                                </td>
+                                                                <td class="control-width">
+                                                                    @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
 
 
-                                                    </tbody>
-                                                </table>
+                                                                </td>
+
+                                                            </tr>
+
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
-
                                         <!--end of multiple location-->
                                     </div><!--end of col-md-12-->
                                     <!--end of col-md-12-->
@@ -1500,9 +1502,11 @@
         modal.style.display = "block";
         var urlcurrent = window.location.href;
         if (index == 1) {
+            urlcurrent = urlcurrent.replace("Public", "");
             urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
         }
         else {
+            urlcurrent = urlcurrent.replace("Public", "");
             urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
         }
         $("#txtvideoUrls").text(urlcurrent);

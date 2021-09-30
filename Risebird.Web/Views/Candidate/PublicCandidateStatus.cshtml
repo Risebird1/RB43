@@ -368,9 +368,9 @@
                                                                             }
                                                                         </td>
                                                                         <td>
-                                                                            @if ((item.CurrentMeetingStatus == 4) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || (item.QCStatus == 1 && (item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
+                                                                            @if ((item.CurrentMeetingStatus == 4) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || ((item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
                                                                             {
-                                                                                <a target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate" })'" title="Feedback Report">Report</a>
+                                                                                <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate" })'" title="Feedback Report">Report</a>
                                                                             }
                                                                             else
                                                                             {

@@ -1237,5 +1237,12 @@ namespace Risebird.Entities.Enum
         [Description("Resolved")]
         Resolved
     }
+    public enum InterviewRequestCountry
+    {
+        [Description("India")]
+        India = 1,
+        [Description("Outside India")]
+        OutsideIndia = 2
+    }
 }
 
