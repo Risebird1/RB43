@@ -212,12 +212,12 @@
                                                                 @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                                             </div>
                                                             <div class="col-md-12" style="margin:10px 0px;">
-                                                                @if (Model.CodedResumeFile != null)
+                                                                @if (Model.CodedResumeLink != null)
                                                                 {
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@Model.CodedResumeFile>Coded Resume  </a>
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume  </a>
                                                                 }
                                                             </div>
-                                                            @Html.Hidden("CodedResumeFile", Model.CodedResumeFile, htmlAttributes: new { id = "hdn_CodedResumeLink" })
+                                                            @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
 
                                                         }
                                                     }
