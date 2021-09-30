@@ -4091,6 +4091,7 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.id = modeldata.id;
                 model._skilldetails.AssessmentGroupName = modeldata.AssessmentGroup;
                 model._skilldetails.Isinstaavailable = modeldata.Isinstaavailable;
+                model._skilldetails.Category = _Category.Where(x => x.Name == modeldata.CategoryName).Select(x => x.id).FirstOrDefault();
             }
             else
             {

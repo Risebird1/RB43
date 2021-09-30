@@ -1908,12 +1908,12 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in myInterview)
                         {
-                            var time = item.interviewDate.AddHours(1);
+                            var time = item.interviewDate.AddHours(2);
                             var currentTime = DateTime.UtcNow;
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 60)
+                            if (timediff.TotalMinutes <= 120)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
                                
@@ -2166,12 +2166,12 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in myInterview)
                         {
-                            var time = item.interviewDate.AddHours(1);
+                            var time = item.interviewDate.AddHours(2);
                             var currentTime = DateTime.UtcNow;
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 60)
+                            if (timediff.TotalMinutes <= 120)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
@@ -5790,7 +5790,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 60)
+                            if (timediff.TotalMinutes <= 120)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 

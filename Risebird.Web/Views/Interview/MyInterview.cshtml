@@ -316,11 +316,11 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;">Date </th>
-                                                            <th style="text-align:center">Slot</th>
-                                                            <th style="text-align:center">Skills</th>
+                                                            <th >Slot</th>
+                                                            <th >Skills</th>
                                                             <th id="myinterview_4">Candidate Name</th>
                                                             <th>Interview level</th>
-                                                            <th id="myinterview_5">JD Link</th>
+                                                            <th id="myinterview_5" style="padding-left:10px;">JD Link</th>
                                                             <th>Skill Channel</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
@@ -333,11 +333,11 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;width:12%">Date</th>
-                                                            <th style="text-align:center">Slot</th>
-                                                            <th style="text-align:center">Skills</th>
+                                                            <th >Slot</th>
+                                                            <th >Skills</th>
                                                             <th style="width:18%;">Candidate Name</th>
                                                             <th>Interview level</th>
-                                                            <th>JD Link</th>
+                                                            <th  style="padding-left:10px;">JD Link</th>
                                                             <th>Skill Channel</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Link</th>
@@ -360,11 +360,12 @@
 
                                                             <tr id=@item.id>
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row">&nbsp;</td>
-                                                                <td> @item.interviewDate 
-                                                                @if (item.Timer > 0)
-                                                                {
-                                                                <br /><span class="time-left-txt">Time left to fill the feedback:</span><div><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated in 60 mins then this interview will not be billable </span></a></div>
-                                                                }
+                                                                <td>
+                                                                    @item.interviewDate
+                                                                    @if (item.Timer > 0)
+                                                                    {
+                                                                        <br /><span class="time-left-txt">Time left to fill the feedback:</span><div><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated in 2 hours of the Interview Time then this interview will not be billable </span></a></div>
+                                                                    }
                                                                 </td>
                                                                 @if (@item.interviewSlot == "Morning")
                                                                 {
@@ -419,7 +420,7 @@
                                                                 {
                                                                     <td>No JD</td>
                                                                 }
-                                                                <td style="text-align: center"> @item.IRFID </td>
+                                                                <td > @item.IRFID </td>
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -648,7 +649,7 @@
 
             <input type="text" hidden id="txtinterviewid" />
             <div class="modal-body">
-                <div style="padding:10px" id="divcandidatefeedback">
+                <div style="padding:10px" id="divcandidateskills">
 
                 </div>
                 <div>
@@ -833,7 +834,7 @@
         }
         html += '</tbody>';
         html += ' </table></div>';
-        $("#divcandidatefeedback").empty().html(html);
+        $("#divcandidateskills").empty().html(html);
     }
 
 </script>
@@ -1771,3 +1772,37 @@
 
 }
 
+<script>
+
+
+    startTimer();
+
+
+    function startTimer() {
+        var presentTime1 = document.getElementsByClassName('timer');
+        for (var i = 0; i < presentTime1.length; i++) {
+            var presentTime = presentTime1[i].innerHTML + ':00';
+            var timeArray = presentTime.split(/[:]+/);
+            var m = timeArray[0];
+            var s = checkSecond((timeArray[1] - 1));
+            if (s == 59) { m = m - 1 }
+            if (m < 0) {
+                return
+            }
+            presentTime1[i].innerHTML = m + ":" + s;
+
+        }
+
+
+
+
+        setTimeout(startTimer, 1000);
+
+    }
+
+    function checkSecond(sec) {
+        if (sec < 10 && sec >= 0) { sec = "0" + sec }; // add zero in front of numbers < 10
+        if (sec < 0) { sec = "59" };
+        return sec;
+    }
+</script>
