@@ -106,7 +106,7 @@ namespace Risebird.Repository
             {
                 //Set the parameters to be passed to store procedure
                 var model = new InterviewRequestVM();
-                var query = "Select ir.*,ul.EmailId as Assignto from InterviewRequests ir left join UserList ul on ul.id=ir.Assignto Where Id=@id";
+                var query = "Select ir.*,ul.EmailId as Assignto from InterviewRequests ir left join UserList ul on ul.id=ir.Assignto Where ir.id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
