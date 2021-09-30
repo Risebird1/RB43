@@ -542,6 +542,7 @@
                 var modal = document.getElementById("AssignationModel");
                 modal.style.display = "block";
                 $("#txtCoordinator").empty();
+                $("#txtCoordinator").append($("<option></option>").val("").html("Select"));
                 for (var i = 0; i < data.result.length; i++) {
                     $("#txtCoordinator").append($("<option></option>").val(data.result[i].value).html(data.result[i].text));
                 }
@@ -554,14 +555,20 @@
     }
     function SubmitAssign() {
         var coordinator = $("#txtCoordinator").val();
-        $.ajax({
-            type: "POST",
-            url: "/InterviewRequest/AssignCoordinator",
-            data: { userid: coordinator, id: $("#txthidEventid").val() },
-            success: function (data) {
-                closeAssignationModel();
-            }
-        });
+        if (parseInt(coordinator) > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/InterviewRequest/AssignCoordinator",
+                data: { userid: coordinator, id: $("#txthidEventid").val() },
+                success: function (data) {
+                    closeAssignationModel();
+                    window.location.href = "/InterviewRequest/Index";
+
+                }
+            });
+        } else {
+            swal.fire("Please select a co-ordinator.");
+        }
     }
 </script>
 
