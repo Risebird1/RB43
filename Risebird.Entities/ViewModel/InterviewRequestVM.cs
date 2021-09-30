@@ -13,10 +13,11 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Primary Skill")]
         public string PrimarySkill { get; set; }
         public SelectList PrimarySkillsList { get; set; }
+        [Display(Name = "JD Title")]
         public string JdTitle { get; set; }
         [Display(Name = "Requested By")]
         public string RequestedBy { get; set; }
-        [Display(Name = "JD File *")]
+        [Display(Name = "JD File")]
         public IFormFile JDFile { get; set; }
         public string JDLink { get; set; }
         public int JobLevel { get; set; }

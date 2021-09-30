@@ -161,7 +161,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                ModelState.AddModelError(String.Empty, "Jd File is required,Please upload Jd File.");
+                                ModelState.AddModelError("JDFile", "Jd File is required.");
                                 await SetInterviewRequestSelectLists();
                                 return View(meeting);
                             }
@@ -279,7 +279,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                ModelState.AddModelError(String.Empty, "Jd File is required,Please upload Jd File.");
+                                ModelState.AddModelError("JDFile", "Jd File is required.");
                                 await SetInterviewRequestSelectLists();
                                 return View(meeting);
                             }

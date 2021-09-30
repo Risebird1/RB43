@@ -24,10 +24,10 @@
                         @using (Html.BeginForm("EditInterviewRequest", "InterviewRequest", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
                         {
 
-                            @Html.AntiForgeryToken()
+                            @*@Html.AntiForgeryToken()*@
 
                             <div class="row">
-                                <div asp-validation-summary="All" class="text-danger"></div>
+                                @*<div asp-validation-summary="All" class="text-danger"></div>*@
                             </div>
                             <div class="row instainterview">
                                 <div class="col-md-12">
@@ -37,21 +37,31 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
                                             @Html.TextBoxFor(model => model.PrimarySkill, new { @class = "select-css form-control", @required = "required" })
                                             @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="col-lg-8  col-md-8 col-sm-8 pull-left pl-1">
                                         <div class="form-group">
-                                            @Html.LabelFor(m => m.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(m => m.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
                                             @Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required" })
                                             @Html.ValidationMessageFor(model => model.JobLevel, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+                                    <div class="clear-field"></div>
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.JdTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JdTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
                                             @Html.TextBoxFor(model => model.JdTitle, new { @class = "form-control br-g", @required = "required" })
                                             @Html.ValidationMessageFor(model => model.JdTitle, "", new { @class = "text-danger" })
                                         </div>
@@ -60,17 +70,23 @@
                                     {
                                         <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.RequestedBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control br-g" } })
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.RequestedBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <span class="red">*</span>
+                                                </div>
+                                                @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control br-g", @required = "required" } })
                                                 @Html.ValidationMessageFor(model => model.RequestedBy, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
                                     }
                                     <div class="col-lg-4  col-md-4 col-sm-4 pl-1 pull-left" id="uploadDiv">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
                                             <div class="upload-area br-g">
-                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden" })
+                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @required = "required" })
                                                 <label class="upload" for="JDFile">Choose File</label>
 
                                                 <!-- name of file chosen -->
@@ -79,68 +95,62 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ExpectedInterviews, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.ExpectedInterviews, new { @class = "form-control br-g", @required = "required", @type = "number" })
-                                        @Html.ValidationMessageFor(model => model.ExpectedInterviews, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required" })
-                                        @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        <a id="JDLink" name="JDLink" href="@Model.JDLink">JD File</a>
-                                        @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                                    <div class="multiple_row">
-                                        <h2 class="mb-0"><span>Skills</span></h2>
-                                    </div>
-                                </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive-sm">
-                                        <table class="table table-bordered mbn" id="SkillTable">
-                                            <thead>
-                                                <tr>
-                                                    <th>Level</th>
-                                                    <th>Skill Name</th>
-                                                    <th class="text-center">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (Model.TechSkill == null || Model.TechSkill.Count() == 0)
-                                                {
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.ExpectedInterviews, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                                @Html.TextBoxFor(model => model.ExpectedInterviews, new { @class = "form-control br-g", @required = "required", @type = "number"})
+                                                @Html.ValidationMessageFor(model => model.ExpectedInterviews, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                                @Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required" })
+                                                @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                                <a class="mdc-button mdc-button--outlined" target="_blank" id="JDLink" name="JDLink" href="@Model.JDLink" style=" position: relative; top: -20px; text-decoration: none;">JD File</a>
+                                                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                        <div class="multiple_row">
+                                            <h2 class="mb-0"><span>Skills</span></h2>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-bordered mbn" id="SkillTable">
+                                                <thead>
                                                     <tr>
-                                                        <td>
-                                                            @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
-                                                        </td>
-                                                        <td class="action text-center">
-                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowSkills(this,'TechSkill', 'LevelId','SkillId','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        </td>
+                                                        <th>Level</th>
+                                                        <th>Skill Name</th>
+                                                        <th class="text-center">Action</th>
                                                     </tr>
-                                                }
-                                                else
-                                                {
-                                                    @for (int i = 0; i < Model.TechSkill.Count(); i++)
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.TechSkill == null || Model.TechSkill.Count() == 0)
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.TechSkill[i].LevelId, (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                                @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
                                                             </td>
                                                             <td>
-                                                                @Html.TextBoxFor(m => m.TechSkill[i].SkillId, "", new { @class = "form-control " })
+                                                                @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
                                                             </td>
                                                             <td class="action text-center">
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
@@ -148,28 +158,45 @@
                                                             </td>
                                                         </tr>
                                                     }
-                                                }
-                                            </tbody>
-                                        </table>
-                                        <label class="text-danger" id="SkillCollection_WeightageError"></label>
+                                                    else
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkill.Count(); i++)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.TechSkill[i].LevelId, (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkill[i].SkillId, "", new { @class = "form-control " })
+                                                                </td>
+                                                                <td class="action text-center">
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this,'TechSkill', 'LevelId','SkillId','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            <label class="text-danger" id="SkillCollection_WeightageError"></label>
+                                        </div>
                                     </div>
+
                                 </div>
 
-                            </div>
-
-                            <div class="card-footer ">
-                                <div class="row">
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Index", "InterviewRequest", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Add Interview">
-                                            Submit Request
-                                        </button>
+                                <div class="card-footer ">
+                                    <div class="row">
+                                        <div class="col-md-12 mc-button-area">
+                                            @Html.ActionLink("Back to List", "Index", "InterviewRequest", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Add Interview">
+                                                Submit Request
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
+                                }
 
-                    </div>
+                            </div>
                 </div>
             </div>
         </div>
