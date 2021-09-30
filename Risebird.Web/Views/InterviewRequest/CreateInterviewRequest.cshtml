@@ -24,10 +24,10 @@
                         @using (Html.BeginForm("CreateInterviewRequest", "InterviewRequest", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
                         {
 
-                            @Html.AntiForgeryToken()
+                            @*@Html.AntiForgeryToken()*@
 
                             <div class="row">
-                                <div asp-validation-summary="All" class="text-danger"></div>
+                                @*<div asp-validation-summary="All" class="text-danger"></div>*@
                             </div>
                             <div class="row instainterview">
                                 <div class="col-md-12">
