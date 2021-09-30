@@ -1456,11 +1456,11 @@
         modal.style.display = "block";
         var urlcurrent = window.location.href;
         if (index == 1) {
-            urlcurrent = urlcurrent.replace("PublicAddReport", "ExecutiveReport");
+            urlcurrent = urlcurrent.replace("Public", "");
             urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
         }
         else {
-            urlcurrent = urlcurrent.replace("PublicAddReport", "InstaAddReport");
+            urlcurrent = urlcurrent.replace("Public", "");
             urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
         }
         $("#txtvideoUrls").text(urlcurrent);

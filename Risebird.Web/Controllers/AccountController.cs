@@ -532,9 +532,9 @@ namespace Risebird.Web.Controllers
                     }
                     if (userProfile.CodedResumeFile != null)
                     {
-                        await _azureStorageHelper.InsertBlob(userProfile.CodedResumeFile.FileName, "resumes", userProfile.CodedResumeFile);
+                        await _azureStorageHelper.InsertBlob(userProfile.CodedResumeFile.FileName.Replace(" ", "_"), "resumes", userProfile.CodedResumeFile);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(userProfile.CodedResumeFile.FileName);
+                        var blob = containerRef.GetBlockBlobReference(userProfile.CodedResumeFile.FileName.Replace(" ", "_"));
                         uploadedFileURL = blob.Uri.ToString();
                         userProfile.CodedResumeLink = uploadedFileURL;
 
