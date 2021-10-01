@@ -316,11 +316,11 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;">Date </th>
-                                                            <th >Slot</th>
-                                                            <th >Skills</th>
+                                                            <th style="text-align:center">Slot</th>
+                                                            <th style="text-align:center">JD Skills</th>
                                                             <th id="myinterview_4">Candidate Name</th>
                                                             <th>Interview level</th>
-                                                            <th id="myinterview_5" style="padding-left:10px;">JD Link</th>
+                                                            @*<th id="myinterview_5">JD Link</th>*@
                                                             <th>Skill Channel</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
@@ -337,7 +337,7 @@
                                                             <th >Skills</th>
                                                             <th style="width:18%;">Candidate Name</th>
                                                             <th>Interview level</th>
-                                                            <th  style="padding-left:10px;">JD Link</th>
+                                                            @*<th>JD Link</th>*@
                                                             <th>Skill Channel</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Link</th>
@@ -412,15 +412,15 @@
 
 
                                                                 <td> @item.HeuristicProfileTypeDesc </td>
-                                                                @if (item.JDLink != null && item.JDLink != "")
-                                                                {
-                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No JD</td>
-                                                                }
-                                                                <td > @item.IRFID </td>
+                                                                @*@if (item.JDLink != null && item.JDLink != "")
+                                                                    {
+                                                                        <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No JD</td>
+                                                                    }*@
+                                                                <td style="text-align: center"> @item.IRFID </td>
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>

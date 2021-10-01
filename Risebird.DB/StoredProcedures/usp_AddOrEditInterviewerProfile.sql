@@ -41,7 +41,13 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @UserPassword nvarchar(60),   
 @WhatsappNumber varchar(15),  
 @Isinstaavailable bit,
-@InterviewerProfileId int output          
+@InterviewerProfileId int output,
+@IsServiceDomain bit,
+@IsProductDomain bit,
+@IndiaServiceRate int,
+@IndiaProductRate int,
+@OutsideIndiaServiceRate int,
+@OutsideIndiaProductRate int
           
 AS          
           
@@ -83,8 +89,13 @@ Declare @v_ProfileId int;
    [IsLeadInterviewer] = @IsLeadInterviewer,          
    [IsApproved] = @IsApproved,          
    [AssessmentGroupId]=@AssessmentGroupId,
-   [Isinstaavailable]=@Isinstaavailable
-                 
+   [Isinstaavailable]=@Isinstaavailable,
+   [IsServiceDomain] =@IsServiceDomain,
+   [IsProductDomain] = @IsProductDomain,
+   [IndiaServiceRate] = @IndiaServiceRate,
+   [IndiaProductRate] = @IndiaProductRate,
+   [OutsideIndiaServiceRate] = @OutsideIndiaServiceRate,
+   [OutsideIndiaProductRate] = @OutsideIndiaProductRate
  where userId = @UserId;          
            
   select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;          
@@ -157,7 +168,13 @@ Declare @v_User_Id int;
    [IsLeadInterviewer],          
    [IsApproved],          
    [AssessmentGroupId],
-   [Isinstaavailable])          
+   [Isinstaavailable],
+   [IsServiceDomain],
+   [IsProductDomain],
+   [IndiaServiceRate],
+   [IndiaProductRate],
+   [OutsideIndiaServiceRate],
+   [OutsideIndiaProductRate])          
        VALUES          
            (@v_User_Id,          
    @NickName,          
@@ -180,22 +197,18 @@ Declare @v_User_Id int;
    @IsLeadInterviewer,          
    @IsApproved,          
    @AssessmentGroupId,
-   @Isinstaavailable)          
+   @Isinstaavailable,
+   @IsServiceDomain,
+   @IsProductDomain,
+   @IndiaServiceRate,
+   @IndiaProductRate,
+   @OutsideIndiaServiceRate,
+   @OutsideIndiaProductRate)          
     
  select @InterviewerProfileId=(select id from InterviewerProfile where UserId=@v_User_Id)    
          
 End          
-      
-      
-      
-      
-      
-    
-   
-    
-    
-  
-
+ 
 GO
 
 

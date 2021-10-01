@@ -73,9 +73,9 @@
                                 <thead>
                                     <tr>
                                         <th>Assessment Group</th>
-                                        <th>Category</th>
+                                        <th width="30%">Category</th>
                                         <th>Primary Skills</th>
-                                        <th>Number Of Assessments</th>
+                                        <th width="4%">Number Of Assessments</th>
                                         <th>Insta Available</th>
                                         <th>Action</th>
                                     </tr>
@@ -85,7 +85,19 @@
                                     @foreach (var item in Model._assessment)
                                     {
                                         <tr>
-                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></td>
+                                            <td class="table-h">
+
+                                                @if (item.AssessmentGroup.Length > 45)
+                                                {
+
+
+                                                    <a data-tooltip="@item.AssessmentGroup" href="@Url.Action("InterviewerEntitleDetails", "IRF", new { id = item.id })">@item.AssessmentGroup.Substring(0, 45)</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("InterviewerEntitleDetails", "IRF", new { id = item.id })">@item.AssessmentGroup</a>
+                                                }
+                                            </td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.CategoryName</a></td>
                                             <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
