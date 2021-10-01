@@ -180,5 +180,23 @@ namespace Risebird.Entities.ViewModel
         public IFormFile ImageUpload { get; set; }
         [Display(Name = "Available for Insta interview (You have to be available within 30 mins)")]
         public bool Isinstaavailable { get; set; }
+
+        [Display(Name = "Product Domain")]
+        public bool IsProductDomain { get; set; }
+
+        [Display(Name = "Service Domain")]
+        public bool IsServiceDomain { get; set; }
+
+        [Display(Name = "Service Rate(India)")]
+        public int IndiaServiceRate { get; set; }
+
+        [Display(Name = "Service Rate(Outside India)")]
+        public int OutsideIndiaServiceRate { get; set; }
+
+        [Display(Name = "Product Rate(India)")]
+        public int IndiaProductRate { get; set; }
+
+        [Display(Name = "Product Rate(Outside India)")]
+        public int OutsideIndiaProductRate { get; set; }
     }
 }

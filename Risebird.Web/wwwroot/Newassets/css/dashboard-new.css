@@ -57,7 +57,7 @@ a.infos {
         z-index: -1;
         font-size: 14px;
         width: 208px;
-        color:#fff;
+        color: #fff;
         border-radius: 2px;
         background: #a09f9f;
         visibility: hidden;
@@ -9828,7 +9828,13 @@ button.close {
     height: 25px;
     border: 0px;
 }
-
+.sector {
+    position: relative;
+    left: 15px;
+    width: 15px;
+    height: 15px;
+    margin-left:10px;
+}
 .ref-btn {
     position: absolute;
     top: 11px;
@@ -9903,6 +9909,8 @@ button.close {
 .br-g {
     border-bottom: 1px #ccccccfc solid !important;
 }
+
+
 
 .instainterview .form-group label {
     /* display: block; */

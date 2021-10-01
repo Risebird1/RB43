@@ -24,6 +24,13 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[IsLeadInterviewer] [bit] NULL DEFAULT 0,
 	[IsApproved] [bit] NOT NULL,
 	[Isinstaavailable] [bit] NOT NULL,
+	[IsProductDomain] [bit] NOT NULL DEFAULT 1,
+	[IsServiceDomain] [bit] NOT NULL DEFAULT 1,
+	[IndiaServiceRate] [int] NULL,
+	[IndiaProductRate] [int] NULL,
+	[OutsideIndiaServiceRate] [int] NULL,
+	[OutsideIndiaProductRate] [int] NULL,
+	
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -214,6 +221,60 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add Isinstaavailable bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsProductDomain')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    alter table InterviewerProfile
+    add IsProductDomain bit not null default 1
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsServiceDomain')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    alter table InterviewerProfile
+    add IsServiceDomain bit not null default 1
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IndiaServiceRate')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    alter table InterviewerProfile
+    add IndiaServiceRate int 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IndiaProductRate')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    alter table InterviewerProfile
+    add IndiaProductRate int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OutsideIndiaServiceRate')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    alter table InterviewerProfile
+    add OutsideIndiaServiceRate int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OutsideIndiaProductRate')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    alter table InterviewerProfile
+    add OutsideIndiaProductRate int
 END
 
 End
