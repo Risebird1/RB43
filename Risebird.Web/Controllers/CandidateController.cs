@@ -1042,7 +1042,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
                         ViewBag.Profile = profileName;
-
+                        var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim();
+                        ClientRole = ClientRole.Replace("\"", "");
+                        ViewBag.ClientRole = ClientRole;
                         var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
                         var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                         if (profileName == "Recruiter")
@@ -1070,6 +1072,7 @@ namespace Risebird.Web.Controllers
                             candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
+
                         ViewBag.TotalCount = candidateList.Count;
 
                         ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
