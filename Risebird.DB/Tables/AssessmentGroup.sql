@@ -7,6 +7,7 @@ CREATE TABLE [dbo].[AssessmentGroup](
 	[AssessmentGroup] [varchar](100) NULL,
 	[PrimarySkills] [varchar](max) NULL,
     [Isinstaavailable][bit] NULL,
+    [Categoryid][int] NULL,
  CONSTRAINT [PK_AssessmentGroup] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -21,6 +22,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE AssessmentGroup
     Add Isinstaavailable bit NOT NULL DEFAULT 0
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Categoryid')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add Categoryid int NULL 
 END
 GO
 
