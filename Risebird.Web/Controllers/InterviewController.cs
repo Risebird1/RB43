@@ -1913,7 +1913,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 120)
+                            if (timediff.TotalMinutes >= 0)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
                                
@@ -2171,7 +2171,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 120)
+                            if (timediff.TotalMinutes >= 0)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
@@ -5790,7 +5790,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 120)
+                            if (timediff.TotalMinutes >= 0)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
