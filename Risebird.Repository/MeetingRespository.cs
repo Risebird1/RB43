@@ -1016,6 +1016,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@candidateEmail", candidateEmail);
                 parameters.Add("@interviewDate", interviewDate);
+                parameters.Add("@IRFID", "");
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

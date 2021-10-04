@@ -41,6 +41,7 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ICandidateService _candidateService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -49,7 +50,7 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -65,6 +66,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _httpClient = factory.GetHttpClient();
             _whatsAppHelper = whatsAppHelper;
+            _candidateService = candidateService;
         }
 
 
@@ -1916,9 +1918,9 @@ namespace Risebird.Web.Controllers
                             if (timediff.TotalMinutes >= 0)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
-                               
+
                             }
-                           // item.Timer = 60;
+                            // item.Timer = 60;
 
 
                         }
@@ -4702,8 +4704,21 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                     if (profileName == "Candidate")
                     {
-                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        //if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        if (_meetingService.PublicCancelInterview(id))
                         {
+                            var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                            var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
+                            List<string> interviewers = new List<string>();
+                            if (!String.IsNullOrEmpty(result.interviewer))
+                            {
+                                interviewers.Add(result.interviewer);
+                            }
+                            if (!String.IsNullOrEmpty(result.EmailId))
+                            {
+                                interviewers.Add(result.EmailId);
+                            }
+                            _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                             //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
                             return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
                         }

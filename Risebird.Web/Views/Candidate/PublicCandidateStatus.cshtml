@@ -345,23 +345,17 @@
                                                                                 @*<button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                                                         <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                                     </button>*@
-                                                                                <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="top: 3px;
-        position: relative;
-        cursor: pointer;
-">
+                                                                                <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
                                                                                     <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                                 </a>
                                                                             }
                                                                             <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
-                                                                                <span class="btn-call" style="        top: -7px;
-        position: relative;
-        cursor: pointer;
-" title="Send Invite"><span class="fa fa-send-o"></span></span>
+                                                                                <span class="btn-call" style="top: -7px; position: relative;cursor: pointer;" title="Send Invite"><span class="fa fa-send-o"></span></span>
                                                                             </span>
-                                                                            @*<span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;
-                                                                                        position: relative;
-                                                                                        cursor: pointer;
-                                                                                " title="Cancel Invite"><span class="fa fa-close"></span></span></span>*@
+                                                                            @if (item.CurrentStatus == "Scheduled")
+                                                                            {
+                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fa fa-close"></span></span></span>
+                                                                            }
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative;cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
