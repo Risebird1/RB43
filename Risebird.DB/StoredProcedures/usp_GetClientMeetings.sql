@@ -30,7 +30,8 @@ if(@roleId=1)
       
  Begin      
   select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-  @EmailIdParam as ClientHrContact,      
+  --@EmailIdParam as ClientHrContact,      
+  ca.ClientHRAttemptContact as ClientHrContact,
   im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
   im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,    
   case     
@@ -53,7 +54,7 @@ if(@roleId=1)
   inner join TransClientUser tcu on IRF.id=tcu.IRFId      
   left join UserList ul on tcu.ClientUserId= ul.id      
       
-  where ul.EmailId LIKE @EmailIdParam AND ul.IsActive=1 and (im.ClientHrContact=@EmailIdParam or ca.ClientHRAttemptContact=@EmailIdParam)      
+  where ul.EmailId LIKE @EmailIdParam AND ul.IsActive=1 and (ca.ClientHRAttemptContact=@EmailIdParam)   --im.ClientHrContact=@EmailIdParam or    
   and irf.IsDeleted=0      
   --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNowParam) as date)) or IRF.IsDeleted=0)         
       
@@ -62,7 +63,9 @@ if(@roleId=1)
       
 else if(@roleId=4)      
  Begin      
-  select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+  select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+  --im.ClientHrContact,
+  ca.ClientHRAttemptContact as ClientHrContact,
   im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
   im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
   case     
@@ -93,7 +96,9 @@ else if(@roleId=4)
       
 else      
  Begin      
-  select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,      
+  select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
+  --im.ClientHrContact,   
+  ca.ClientHRAttemptContact as ClientHrContact,
   im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
   im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
   case     

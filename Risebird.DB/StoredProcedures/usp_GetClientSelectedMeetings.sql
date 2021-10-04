@@ -32,7 +32,8 @@ if(@roleId=1)
  if(@timeNow is not null)      
   Begin      
    select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-   @EmailId as ClientHrContact,      
+   --@EmailId as ClientHrContact,  
+   ca.ClientHRAttemptContact as ClientHrContact,
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
    case     
@@ -55,7 +56,7 @@ if(@roleId=1)
    inner join TransClientUser tcu on IRF.id=tcu.IRFId      
    left join UserList ul on tcu.ClientUserId= ul.id      
       
-   where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and (im.ClientHrContact=@EmailId or ca.ClientHRAttemptContact=@EmailId)     
+   where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and  ca.ClientHRAttemptContact=@EmailId --im.ClientHrContact=@EmailId or     
    and irf.IsDeleted=0      
    --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
    and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)      
@@ -65,7 +66,8 @@ if(@roleId=1)
  else if((@startDate is not null) and (@endDate is not null))      
   Begin      
    select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-   @EmailId as ClientHrContact,      
+   --@EmailId as ClientHrContact, 
+   ca.ClientHRAttemptContact as ClientHrContact,
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
    case     
@@ -88,7 +90,7 @@ if(@roleId=1)
    inner join TransClientUser tcu on IRF.id=tcu.IRFId      
    left join UserList ul on tcu.ClientUserId= ul.id      
       
-   where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and (im.ClientHrContact=@EmailId or ca.ClientHRAttemptContact=@EmailId)      
+   where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and ca.ClientHRAttemptContact=@EmailId --im.ClientHrContact=@EmailId or   
    and irf.IsDeleted=0      
    --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
    and cast(interviewDate as date) >= cast(@startDate as date) and cast(interviewDate as date) <= cast(@endDate as date)      
@@ -101,7 +103,8 @@ if(@roleId=1)
  else      
   Begin      
    select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-   @EmailId as ClientHrContact,      
+   --@EmailId as ClientHrContact, 
+   ca.ClientHRAttemptContact as ClientHrContact,
    im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
    im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
    case     
@@ -124,7 +127,7 @@ if(@roleId=1)
    inner join TransClientUser tcu on IRF.id=tcu.IRFId      
    left join UserList ul on tcu.ClientUserId= ul.id      
       
-   where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and (im.ClientHrContact=@EmailId or ca.ClientHRAttemptContact=@EmailId)      
+   where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and ca.ClientHRAttemptContact=@EmailId--im.ClientHrContact=@EmailId or    
    and irf.IsDeleted=0      
    --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1      
@@ -140,7 +143,8 @@ else if(@roleId=4)
   if(@timeNow is not null)      
    Begin      
     select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
+	--ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
+	ca.ClientHRAttemptContact as ClientHrContact,
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
 	case     
@@ -174,7 +178,8 @@ else if(@roleId=4)
   else if((@startDate is not null) and (@endDate is not null))      
    Begin      
     select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
+	--ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,   
+	ca.ClientHRAttemptContact as ClientHrContact,
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
     case     
@@ -208,7 +213,8 @@ else if(@roleId=4)
   else      
    Begin      
     select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,           
+	--ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,   
+	ca.ClientHRAttemptContact as ClientHrContact,
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
 	case     
@@ -248,7 +254,8 @@ else
   if(@timeNow is not null)      
    Begin      
     select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
+	--ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,      
+	ca.ClientHRAttemptContact as ClientHrContact,
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
 	case     
@@ -283,7 +290,8 @@ else
   else if((@startDate is not null) and (@endDate is not null))      
    Begin      
     select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,     
+	--ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,    
+	ca.ClientHRAttemptContact as ClientHrContact,
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
 	case     
@@ -317,7 +325,8 @@ else
   else      
    Begin      
     select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, 
-	ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact,    
+	--ISNULL(ca.ClientHRAttemptContact, im.ClientHrContact) as ClientHrContact, 
+	ca.ClientHRAttemptContact as ClientHrContact,
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,      
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
 	case     
