@@ -3916,8 +3916,20 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                if (_meetingService.PublicCancelInterview(id))
                 {
+                    var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
+                    List<string> interviewers = new List<string>();
+                    if (!String.IsNullOrEmpty(result.interviewer))
+                    {
+                        interviewers.Add(result.interviewer);
+                    }
+                    if (!String.IsNullOrEmpty(result.EmailId))
+                    {
+                        interviewers.Add(result.EmailId);
+                    }
+                    _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                     return Json("Invitation cancelled successfully");
                 }
                 else
