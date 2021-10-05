@@ -824,8 +824,8 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
 
 [data-tooltip]:after {
     border-top: 8px solid hsl(0deg, 0%, 50%) !important;
-    border-right: 7px solid white !important;
-    border-left: 7px solid white !important;
+    border-right: 7px solid transparent !important;
+    border-left: 7px solid transparent !important;
 }
 
 .jd-title [data-tooltip]:after {
