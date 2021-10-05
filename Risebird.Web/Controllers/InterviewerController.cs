@@ -734,6 +734,13 @@ namespace Risebird.Web.Controllers
                 AssessmentselectList.Add(selectItem);
             }
             model.AssessmentGroupList = AssessmentselectList;
+            var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.IndiaServiceRateList = new SelectList(IndiaPrice, "ID", "Name");
+
+            var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.OutsideIndiaServiceRateList = new SelectList(OutSideIndiaPrice, "ID", "Name");
         }
 
         [HttpPost]

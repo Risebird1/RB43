@@ -9724,9 +9724,9 @@ button.close {
     border: 0;
 }
 .instainterview .text-danger {
-    position: absolute;
-    bottom: -25px;
-    left: 50px;
+    position: absolute!important;
+    bottom: -10px!important;
+    left: 50px!important;
 }
 .instainterview #SkillCollection_WeightageError {
     bottom: 6px !important;

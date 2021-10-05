@@ -2149,7 +2149,7 @@ input[type="radio"]:checked {
 }
 
 [data-tooltip]:after {
-    border-top: 8px solid hsl(0deg 0% 7%) !important;
+    border-top: 8px solid hsl(0deg 0% 56%) !important;
     border-right: 8px solid transparent !important;
     border-left: 8px solid transparent !important;
 }

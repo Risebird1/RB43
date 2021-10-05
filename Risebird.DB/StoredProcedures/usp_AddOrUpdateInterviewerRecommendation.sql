@@ -105,10 +105,13 @@ Begin Try
                   
                               
    END                     
+  declare @indiaProductRate int, @outsideIndiaProductRate int
+  set @indiaProductRate = CAST((@PerHourRateIndia * 1.5) as int)
+  set @outsideIndiaProductRate = CAST((@PerHourRateOutside * 1.5) as int)
+  
+  Update InterviewerProfile set AssessmentGroupId=@AssessmentGroupId,CodedResumeLink=@CodedResumeLink, IndiaProductRate = @indiaProductRate,
+  OutsideIndiaProductRate = @outsideIndiaProductRate where UserId=@Userid                      
                       
-  Update InterviewerProfile set AssessmentGroupId=@AssessmentGroupId,CodedResumeLink=@CodedResumeLink where UserId=@Userid                      
-                      
-                           
  Commit TRAN UpdateUserDetails;                        
 End Try                         
 Begin Catch                        
