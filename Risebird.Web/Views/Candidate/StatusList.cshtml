@@ -23,11 +23,11 @@
                 <div class="pull-right">
                     <div>
                         @*@if (ViewBag.Profile != "Client")
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Status." onclick="location.href='@Url.Action("AddStatus", "Candidate", new { candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate Status</font></span>
-                            </button>
-                        }*@
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Status." onclick="location.href='@Url.Action("AddStatus", "Candidate", new { candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate Status</font></span>
+                                </button>
+                            }*@
 
 
 
@@ -50,7 +50,7 @@
                         <div class="dataloading">
 
 
-                            <div >
+                            <div>
 
                                 <div id="tableID">
                                     <table id="statusTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -79,145 +79,123 @@
                                         <tbody>
                                             @foreach (var item in Model.CandidateStatusList)
                                             {
-                                            <tr id=@item.id>
+                                                <tr id=@item.id>
 
-                                                <td> @item.Date</td>
-                                                @if (item.StatusValue == "In Progress")
-                                                {
-                                                    <td style="color:green;font-weight:500"> @item.StatusValue</td>
-                                                }
-                                                else if (item.StatusValue == "New")
-                                                {
-                                                    <td style="color: dodgerblue;
-        font-weight: 500
-"> @item.StatusValue</td>
-                                                }
+                                                    <td> @item.Date</td>
+                                                    @if (item.StatusValue == "In Progress")
+                                                    {
+                                                        <td style="color:green;font-weight:500"> @item.StatusValue</td>
+                                                    }
+                                                    else if (item.StatusValue == "New")
+                                                    {
+                                                        <td style="color: dodgerblue;font-weight: 500"> @item.StatusValue</td>
+                                                    }
 
-                                                else if (item.StatusValue == "Waiting For Response")
-                                                {
-                                                    <td style="color: orange;
-        font-weight: 500
-"> @item.StatusValue</td>
-                                                }
-                                                else if (item.StatusValue == "Scheduled")
-                                                {
-                                                    <td style="color: deepskyblue;
-        font-weight: 500
-"> @item.StatusValue</td>
-                                                }
-                                                else if (item.StatusValue == "Irrelevant")
-                                                {
-                                                    <td style="color:orange"> @item.StatusValue</td>
-                                                }
-                                                else if (item.StatusValue == "Duplicate")
-                                                {
-                                                    <td style=" color: hotpink;
-        font-weight: 500
-"> @item.StatusValue</td>
-                                                }
-                                                else if (item.StatusValue == "Not Interested")
-                                                {
-                                                    <td style=" color: purple;
-        font-weight: 500
-"> @item.StatusValue</td>
-                                                }
-                                                else if (item.StatusValue == "Got Another Offer")
-                                                {
-                                                    <td style=" color: darkgreen;
-        font-weight: 500
-"> @item.StatusValue</td>
-                                                }
-                                                else if (item.StatusValue == "Hold")
-                                                {
-                                                    <td style="color: orangered;
-        font-weight: 500
-"> @item.StatusValue</td>
-                                                }
-                                                else
-                                                {
-                                                    <td> @item.StatusValue</td>
-                                                }
+                                                    else if (item.StatusValue == "Waiting For Response")
+                                                    {
+                                                        <td style="color: orange;font-weight: 500"> @item.StatusValue</td>
+                                                    }
+                                                    else if (item.StatusValue == "Scheduled")
+                                                    {
+                                                        <td style="color: deepskyblue;font-weight: 500"> @item.StatusValue</td>
+                                                    }
+                                                    else if (item.StatusValue == "Irrelevant")
+                                                    {
+                                                        <td style="color:orange"> @item.StatusValue</td>
+                                                    }
+                                                    else if (item.StatusValue == "Duplicate")
+                                                    {
+                                                        <td style=" color: hotpink;font-weight: 500"> @item.StatusValue</td>
+                                                    }
+                                                    else if (item.StatusValue == "Not Interested")
+                                                    {
+                                                        <td style=" color:purple;font-weight: 500"> @item.StatusValue</td>
+                                                    }
+                                                    else if (item.StatusValue == "Got Another Offer")
+                                                    {
+                                                        <td style=" color: darkgreen;font-weight: 500"> @item.StatusValue</td>
+                                                    }
+                                                    else if (item.StatusValue == "Hold")
+                                                    {
+                                                        <td style="color: orangered;font-weight: 500"> @item.StatusValue</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td> @item.StatusValue</td>
+                                                    }
 
-                                                <td>
-                                                    <div >
-                                                        <div >
-                                                            @if (item.Comments!=null && item.Comments.Length > 18)
-                                                            {
-
-                                                                <a href="#" data-tooltip="@item.Comments"><textarea style=" height: 50px;
-        border: 0px;
-        font-size: 14px;
-        width: 100%;
-        resize: none;
-      ">@item.Comments</textarea></a>
-                                                            }
-
-                                                            else
-                                                            {<textarea style="        height: 50px;
-        width: 100%;
-        
-        font-size: 14px;
-        resize: none;
-">@item.Comments</textarea>}
-                                                        </div>
-                                                    </div>
-
-                                                </td>
-
-
-
-
-
-
-
-
-
-
-
-
-                                                @if (item.AudioFileLink != null && item.AudioFileLink != "")
-                                                {
                                                     <td>
-                                                        <audio src='@item.AudioFileLink' asp-append-version="true" controls></audio>
+                                                        <div>
+                                                            <div>
+                                                                @if (item.Comments != null && item.Comments.Length > 18)
+                                                                {
+
+                                                                    <a href="#" data-tooltip="@item.Comments"><textarea style=" height: 50px;border: 0px; font-size: 14px;width: 100%;resize: none;">@item.Comments</textarea></a>
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    <textarea style=" height: 50px;width: 100%;font-size: 14px;resize: none;">@item.Comments</textarea>
+                                                                }
+                                                            </div>
+                                                        </div>
+
                                                     </td>
 
-                                                }
-                                                else
-                                                {
-                                                    <td> </td>
-                                                }
-
-
-
-                                            <td class="text-center action">
-
-                                                @if (Model.Profile == "Admin" || (Model.Profile == "HR" && item.IsManuallyDeletable))
-                                                {
-                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                        <span onclick="location.href = '@Url.Action("EditStatus", "Candidate", new { id = item.id, candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" title="Edit" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                                        </span>
-                                                    </button>
-
-
-                                                }
-                                                @if (Model.Profile == "Admin" || (Model.Profile == "HR" && item.IsManuallyDeletable))
-                                                {
-                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                        <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                }
-                                                
 
 
 
 
 
-                                            </td>
 
-                                            </tr>
+
+
+
+
+
+                                                    @if (item.AudioFileLink != null && item.AudioFileLink != "")
+                                                    {
+                                                        <td>
+                                                            <audio src='@item.AudioFileLink' asp-append-version="true" controls></audio>
+                                                        </td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td> </td>
+                                                    }
+
+
+
+                                                    <td class="text-center action">
+
+                                                        @if (Model.Profile == "Admin" || (Model.Profile == "HR" && item.IsManuallyDeletable))
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="location.href = '@Url.Action("EditStatus", "Candidate", new { id = item.id, candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" title="Edit" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                </span>
+                                                            </button>
+
+
+                                                        }
+                                                        @if (Model.Profile == "Admin" || (Model.Profile == "HR" && item.IsManuallyDeletable))
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                        }
+
+
+
+
+
+
+                                                    </td>
+
+                                                </tr>
 
 
                                             }
@@ -238,7 +216,7 @@
             <!-- end col-md-12 -->
         </div>
 
-        
+
 
         <!-- end row -->
     </div>
@@ -280,7 +258,7 @@
                 },
                     function ()
                     {
-                        
+
                         location.reload(true);
 
                     }

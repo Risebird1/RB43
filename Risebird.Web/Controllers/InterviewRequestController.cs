@@ -174,6 +174,13 @@ namespace Risebird.Web.Controllers
                                     Subject = "New Interview Request: " + meeting.JdTitle + " - " + meeting.PrimarySkill
                                 };
                                 var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill);
+                                //Send a mail to Client
+                                Mail _mail1 = new Mail
+                                {
+                                    TO = meeting.RequestedBy,
+                                    Subject = "New Interview Request: " + meeting.JdTitle + " - " + meeting.PrimarySkill
+                                };
+                                var emailsend1 = _notificationHelper.InterviewRequestAddClientNotification(_mail1, meeting.JdTitle, meeting.PrimarySkill);
                                 TempData["SuccessErrorMessageInterview"] = "Request Created Successfully.";
                                 return RedirectToAction("Index");
                             }
@@ -363,9 +370,9 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to assign the request, please try to assign again.");
             }
         }
-        public ActionResult SetIRFCreated(int id)
+        public ActionResult SetIRFCreated(int id, string IRFId)
         {
-            var result = _interviewRequestService.SetIRFCreated(id);
+            var result = _interviewRequestService.SetIRFCreated(id, IRFId);
             if (result)
             {
                 //Send mail for confirmation

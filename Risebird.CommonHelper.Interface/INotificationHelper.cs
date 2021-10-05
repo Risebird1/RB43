@@ -66,5 +66,6 @@ namespace Risebird.CommonHelper.Interface
         string InterviewRequestEditNotification(Mail model, string JdTitle, string PrimarySkill);
         string InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole);
         string InterviewRequestCompletedNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole);
+        string InterviewRequestAddClientNotification(Mail model, string JdTitle, string PrimarySkill);
     }
 }

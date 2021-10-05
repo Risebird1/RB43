@@ -53,7 +53,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("ActualLevelId", typeof(int));
                     foreach (var item in meeting.TechSkill)
                     {
-                        techSkillDt.Rows.Add(meeting.id, item.LevelId, item.SkillId, 0);
+                        techSkillDt.Rows.Add(meeting.id, item.LevelId, item.SkillId, item.Weightage);
                     }
                     SqlCommand cmdTechSkill = new SqlCommand("usp_InterviewRequestTechSkillBulkInsert", con);
                     cmdTechSkill.CommandType = CommandType.StoredProcedure;
@@ -115,7 +115,7 @@ namespace Risebird.Repository
                     model = result.FirstOrDefault();
                 }
                 //Fetch Skills
-                var querySkill = "Select * from TransInterviewRequestSkills Where IRFID=@id";
+                var querySkill = "Select IRFId,LevelId,SkillId,ActualLevelId as Weightage from TransInterviewRequestSkills Where IRFID=@id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query<InstaTechSkill>(querySkill, parameters);
@@ -157,13 +157,14 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<bool> SetIRFCreated(int id)
+        public async Task<bool> SetIRFCreated(int id, string IRFId)
         {
             try
             {
-                var query = "Update InterviewRequests set IsIRFCreated=1 Where Id=@id";
+                var query = "Update InterviewRequests set IsIRFCreated=1 and IRFId =@IRFId Where Id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
+                parameters.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query(query, parameters);

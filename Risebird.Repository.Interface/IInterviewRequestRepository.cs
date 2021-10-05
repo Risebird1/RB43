@@ -12,6 +12,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewRequestVM>> GetAllInterviewRequests(string emailID, string profileName);
         Task<InterviewRequestVM> FetchInterviewRequestById(int id);
         Task<bool> AssignInerviewRequest(int userid, int id);
-        Task<bool> SetIRFCreated(int id);
+        Task<bool> SetIRFCreated(int id,string IRFId);
     }
 }
