@@ -1176,8 +1176,9 @@
                 if (data[i].assessmentGroupId.length > 20) {
                     html += '  <div class="article">';
                     html += '  <p style="margin-bottom:0px;">' + data[i].assessmentGroupId.substring(0, 20) + '</p>';
-                    html += '   <p class="moretext1_' + data[i].id + ' moretext">' + data[i].assessmentGroupId.substring(20, data[i].assessmentGroupId.length - 20) + '</p>';
+                    html += '   <p class="moretext1_'+ data[i].id +' moretext">' + data[i].assessmentGroupId.substring(20, data[i].assessmentGroupId.length) + '</p>';
                     html += '</div>';
+                    html += ' <a onclick="moreless1(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read1_' + data[i].id + '" href="#">Read more</a>';
                 }
                 else {
                     html += '<div class="article"><p>' + data[i].assessmentGroupId.substring(0, data[i].assessmentGroupId.length) + '</p></div>';
@@ -1186,7 +1187,7 @@
             else {
                 html += '<div></div>';
             }
-            html += ' <a onclick="moreless1(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read1_' + data[i].id + '" href="#">Read more</a>';
+           
             html += '</div>';
             html += ' </td>';
             html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
