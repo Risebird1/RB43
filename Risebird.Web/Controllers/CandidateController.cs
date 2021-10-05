@@ -238,7 +238,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                         {
-                            if(firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                            if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
                             {
                                 candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                             }
@@ -3970,6 +3970,23 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("");
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicStatusList(int irfId, int candidateId)
+        {
+            try
+            {
+                var model = new CandidateStatusListVM();
+                model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
+                model.CandidateId = candidateId;
+                model.IRFId = irfId;
+                return Json(model);
+            }
+            catch (Exception)
+            {
+                return Json("Failed");
             }
         }
     }
