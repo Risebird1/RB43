@@ -24,8 +24,8 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[IsLeadInterviewer] [bit] NULL DEFAULT 0,
 	[IsApproved] [bit] NOT NULL,
 	[Isinstaavailable] [bit] NOT NULL,
-	[IsProductDomain] [bit] NOT NULL DEFAULT 1,
-	[IsServiceDomain] [bit] NOT NULL DEFAULT 1,
+	--[IsProductDomain] [bit] NOT NULL DEFAULT 1,
+	--[IsServiceDomain] [bit] NOT NULL DEFAULT 1,
 	[IndiaServiceRate] [int] NULL,
 	[IndiaProductRate] [int] NULL,
 	[OutsideIndiaServiceRate] [int] NULL,
@@ -222,24 +222,24 @@ BEGIN
     ALTER TABLE InterviewerProfile
     Add Isinstaavailable bit
 END
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'IsProductDomain')
-      AND Object_ID = Object_ID(N'InterviewerProfile'))
-BEGIN
-    alter table InterviewerProfile
-    add IsProductDomain bit not null default 1
-END
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'IsServiceDomain')
-      AND Object_ID = Object_ID(N'InterviewerProfile'))
-BEGIN
-    alter table InterviewerProfile
-    add IsServiceDomain bit not null default 1
-END
+--IF NOT EXISTS(
+--    SELECT *
+--    FROM sys.columns
+--    WHERE Name IN (N'IsProductDomain')
+--      AND Object_ID = Object_ID(N'InterviewerProfile'))
+--BEGIN
+--    alter table InterviewerProfile
+--    add IsProductDomain bit not null default 1
+--END
+--IF NOT EXISTS(
+--    SELECT *
+--    FROM sys.columns
+--    WHERE Name IN (N'IsServiceDomain')
+--      AND Object_ID = Object_ID(N'InterviewerProfile'))
+--BEGIN
+--    alter table InterviewerProfile
+--    add IsServiceDomain bit not null default 1
+--END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns

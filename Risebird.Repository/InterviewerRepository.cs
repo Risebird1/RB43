@@ -261,8 +261,8 @@ namespace Risebird.Repository
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
             parameters.Add("@Isinstaavailable", entity.Isinstaavailable);
             parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
-            parameters.Add("@IsServiceDomain", entity.IsServiceDomain);
-            parameters.Add("@IsProductDomain", entity.IsProductDomain);
+            //parameters.Add("@IsServiceDomain", entity.IsServiceDomain);
+            //parameters.Add("@IsProductDomain", entity.IsProductDomain);
             parameters.Add("@IndiaServiceRate", entity.IndiaServiceRate);
             parameters.Add("@IndiaProductRate", entity.IndiaProductRate);
             parameters.Add("@OutsideIndiaServiceRate", entity.OutsideIndiaServiceRate);

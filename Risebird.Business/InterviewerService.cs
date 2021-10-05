@@ -75,7 +75,8 @@ namespace Risebird.Business
                     }
                     interviewerProfile.NickName = NickName;
                 }
-
+                interviewerProfile.IndiaProductRate = Convert.ToInt16(interviewerProfile.IndiaServiceRate * 1.5);
+                interviewerProfile.OutsideIndiaProductRate = Convert.ToInt16(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
@@ -92,6 +93,8 @@ namespace Risebird.Business
                 interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
                 interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
+                interviewerProfile.IndiaProductRate = Convert.ToInt16(interviewerProfile.IndiaServiceRate * 1.5);
+                interviewerProfile.OutsideIndiaProductRate = Convert.ToInt16(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
@@ -807,6 +810,7 @@ namespace Risebird.Business
                 {
                     reportModel.AssessmentGroupId = string.Join(',', reportModel.AssessmentGroupIdArray);
                 }
+                
                 var result = await _interviewerRepository.InterviewerRecommendation(reportModel);
                 return result;
             }
