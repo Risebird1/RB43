@@ -360,6 +360,11 @@
                                                                             {
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative;cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
                                                                             }
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                                <span onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')" title="Candidate Status" class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                                </span>
+                                                                            </button>
                                                                         </td>
                                                                         <td>
                                                                             @if ((item.CurrentMeetingStatus == 4) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || ((item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
@@ -506,6 +511,45 @@
                 </div>
                 <div class="col-md-12 text-right clearfix">
                     <input type="button" onclick="closemySchedulingLinkpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myStatusListpopup" class="modal modal-wrap modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-link"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Status List<label id="txtIRFID"></label>(<label id="txtcandidatename"></label>)</h5>
+            </div>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemyStatusListpopup()">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="scrollbox">
+                        <div class="table-responsive">
+                            <table width="100%" cellpadding="0" cellspacing="0" class="table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Comments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divStatusListlink">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemyStatusListpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
                 </div>
             </div>
         </div>
@@ -820,6 +864,7 @@
         var modal = document.getElementById("mySchedulingLinkpopup");
         modal.style.display = "none";
     }
+
     function copyToClipboard(elementId) {
         var element = document.getElementById("calendlyLink_" + elementId);
         var href = element.href;
@@ -830,6 +875,71 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text_' + elementId).text('Copied');
+    }
+    function closemyStatusListpopup() {
+        var modal = document.getElementById("myStatusListpopup");
+        modal.style.display = "none";
+    }
+    function PublicStatusList(irfId, candidateId, irfName, candidateName) {
+        $("#txtIRFID").text(irfName);
+        $("#txtcandidatename").text(candidateName);
+        $.ajax({
+            url: '/Candidate/PublicStatusList',
+            type: 'POST',
+            data: { 'irfId': irfId, 'candidateId': candidateId },
+            success: function (data) {
+                var modal = document.getElementById("myStatusListpopup");
+                modal.style.display = "block";
+                bindstatusListdata(data.candidateStatusList);
+            }
+        });
+    }
+    function bindstatusListdata(data) {
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr><td>' + data[i].date.replace("T", " ") + '</td>';
+            if (data[i].statusValue == "In Progress") {
+                html += '    <td style="color:green;font-weight:500"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "New") {
+                html += '<td style="color: dodgerblue;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Waiting For Response") {
+                html += '<td style="color: orange;font-weight: 500"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Scheduled") {
+                html += '<td style="color: deepskyblue;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Irrelevant") {
+                html += '<td style="color:orange"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Duplicate") {
+                html += '<td style=" color: hotpink;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Not Interested") {
+                html += '<td style=" color:purple;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Got Another Offer") {
+                html += '<td style=" color: darkgreen;font-weight: 500"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Hold") {
+                html += '<td style="color: orangered;font-weight: 500"> ' + data[i].statusValue + '</td>';
+            }
+            else {
+                html += '<td>' + data[i].statusValue + '</td>';
+            }
+            html += '<td><div>';
+            if (data[i].comments != null && data[i].comments.Length > 18) {
+
+                html += '  <a href="#" data-tooltip="' + data[i].comments + '"><textarea style=" height: 50px;border: 0px; font-size: 14px;width: 100%;resize: none;">' + data[i].comments + '</textarea></a>';
+            }
+            else {
+                html += ' <textarea style=" height: 50px;width: 100%;font-size: 14px;resize: none;">' + data[i].comments + '</textarea>';
+            }
+            html += '</div></td>';
+            html += '</tr>';
+        }
+        $("#divStatusListlink").empty().html(html);
     }
 </script>
 

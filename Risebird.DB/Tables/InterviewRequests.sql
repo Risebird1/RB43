@@ -14,11 +14,21 @@ CREATE TABLE [dbo].[InterviewRequests](
 	[Country] [varchar](50) NULL,
 	[Assignto] [int] NULL,
 	[IsIRFCreated] [bit] NULL,
+	[IRFId] [varchar](15) NULL,
  CONSTRAINT [PK_InterviewRequests] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IRFId')
+      AND Object_ID = Object_ID(N'InterviewRequests'))
+BEGIN
+    ALTER TABLE InterviewRequests
+    Add IRFId varchar(15) NULL
 END
 GO
 

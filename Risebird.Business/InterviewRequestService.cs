@@ -76,11 +76,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public bool SetIRFCreated(int id)
+        public bool SetIRFCreated(int id,string IRFId)
         {
             try
             {
-                return _interviewRequestRepository.SetIRFCreated(id).Result;
+                return _interviewRequestRepository.SetIRFCreated(id, IRFId).Result;
             }
             catch (Exception ex)
             {
