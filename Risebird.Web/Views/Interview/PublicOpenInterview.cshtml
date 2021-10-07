@@ -1,0 +1,692 @@
+﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using System.Text.RegularExpressions
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Open Interviews";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Keep the Page Content Here.-->
+<script>
+    var Header = "<div id='openinterview_1'>Open Interviews</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
+<input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
+<div class="main-panel" id="main-panel">
+    <div class="mt50">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Open Interviews</h4></div>
+                </div>
+
+                <div class="pull-right ">
+                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space", onchange = "FilterInterviews(this.value);" })
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+
+
+                            <div id="tableID" class="second">
+                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="col-sm-12 col-md-6">
+
+                                    </div>
+                                    <!--<div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
+                                        <div id="meeting_filter" class="dataTables_filter">
+                                            <div class="searchbox">
+                                                <div class="searchCon">
+
+                                                    <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                                    <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
+                                                    <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>-->
+                                    @*<button style="display:none;" type="button" id="x">x</button>*@
+
+                                    <!--</div>
+                                            </div>
+                                        </div>
+                                    </div>-->
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-12 nopad">
+                                        <div class="table-responsive">
+                                            <table id="OpeninterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Slot</th>
+                                                        <th>Duration</th>
+                                                        <th id="openinterview_2">Candidate Name</th>
+                                                        <th>JD-Skills</th>
+                                                        <th id="openinterview_3">Resume</th>
+                                                        @*<th id="openinterview_4">JD Link</th>*@
+
+                                                        @if (Model.Count() == 0)
+                                                        {
+                                                            <th id="openinterview_6" class="disabled-sorting text-right">Actions</th>
+                                                        }
+                                                        else
+                                                        {
+                                                            <th class="disabled-sorting text-right">Actions</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Slot</th>
+                                                        <th>Duration</th>
+                                                        <th>Candidate Name</th>
+                                                        <th>JD-Skills</th>
+                                                        <th>Resume</th>
+                                                        @*<th>JD Link</th>*@
+
+
+                                                        <th class="disabled-sorting text-right">Actions</th>
+
+
+                                                    </tr>
+                                                </tfoot>
+                                                <tbody>
+
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr id=@item.id>
+                                                            <td> @item.interviewDate </td>
+                                                            <td> @item.interviewSlot </td>
+                                                            <td> @item.interviewDuration </td>
+                                                            <td> @item.candidateName</td>
+                                                            <td>
+                                                                <button type="button" class="clickhere_btn pull-left">
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
+                                                                </button>
+                                                                <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
+                                                            </td>
+                                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                                            {
+                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
+                                                            }
+                                                            @*@if (item.JDLink != null && item.JDLink != "")
+                                                                {
+                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No JD</td>
+                                                                }*@
+
+
+
+                                                            <td class="text-right">
+                                                                <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("PublicAssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,emailid=ViewBag.emailid,uniqueid=ViewBag.Id})'" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+<div id="PublicShareVideo" class="modal modal-bg">
+    @if (ViewBag.PageType == "Public")
+    {
+        <div class="blk-bg"></div>
+    }
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="text-areadiv">
+                        <input type="text" id="txtvideoemailid" class="form-control" />
+                    </div>
+                    <div class="mt-10 text-right">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
+
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeIRFSkillModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body">
+                <div style="padding:10px" id="divcandidateskills">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        if ($("#txtVideostatus").val() == "Public") {
+            var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
+        }
+    });
+    function SubmitEmail() {
+        if ($("#txtvideoemailid").val().trim() != "") {
+            localStorage.setItem('PublicOPenInterviewEmailid', $("#txtvideoemailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/Interview/PublicOpenInterviewInvite",
+                data: { id: $("#hidtxtid").val(), Emailid: $("#txtvideoemailid").val().trim() },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location = "/Interview/PublicOpenInterview?emailid=" + $("#txtvideoemailid").val() + "&id=" + $("#hidtxtid").val();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#OpeninterviewList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+
+        var table = $('#OpeninterviewList').DataTable();
+
+
+    });
+
+
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+    }
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#OpeninterviewList").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#OpeninterviewList").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#OpeninterviewList").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+    function FilterInterviews(filterValue) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/PublicGetFilteredOpenInterviews",
+            data: { 'filterValue': filterValue, 'emailid': $("#hidtxtemailid").val() },
+            success: function (data) {
+                if (data == '' && filterValue == 'seven') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'all') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#OpeninterviewList').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#OpeninterviewList').DataTable();
+
+
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+    function openSkillpopup(id) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/FetchSkillDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("IRFSkillModel");
+                var skill_id_pop = $("#skill_id_" + id).val();
+                $("#skill_id_pop").text(skill_id_pop);
+                modal.style.display = "block";
+                bindSkillData(data);
+            }
+        });
+    }
+    function closeIRFSkillModel() {
+        var model = document.getElementById("IRFSkillModel");
+        model.style.display = "none";
+    }
+    function bindSkillData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
+        html += '  <th width="70%" class="table_heading">Skill Name<span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].levelName + '</td>';
+            html += '    <td>' + data[i].skillName + '</td>';
+            html += '  <td>' + data[i].weightage + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divcandidateskills").empty().html(html);
+    }
+</script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        hopscotch.registerHelper('addOverlay', function () {
+            $('body').append('<div class="overlay"></div>');
+        });
+
+        hopscotch.registerHelper('removeOverlay', function () {
+            $('.overlay').fadeOut(function () {
+                $(this).remove();
+                $('.helper').remove();
+            });
+        });
+
+        hopscotch.listen('show', function () {
+            var elementObject = $(hopscotch.getCurrTarget(tour));
+            var element = $('#' + elementObject[0].id);
+
+            element.prev().removeClass('overlay-relative');
+            element.addClass('overlay-relative');
+
+            if ($('.helper').length !== 0) {
+
+                // Use Helper Layer for hilight target element.
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+
+            } else {
+
+                // Add Helper Layer for highlight target element.
+                var newHelper = '<div class="helper"></div>';
+                $('body').append(newHelper);
+
+                var helper = $('.helper');
+                var padding = 5;
+                var helperPosX = element.position().left - padding;
+                var helperPosY = element.position().top - padding;
+                var targetWidth = element.outerWidth();
+                var targetHeight = element.outerHeight();
+
+                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+
+                helper.css('width', targetWidth);
+                helper.css('height', targetHeight);
+                helper.offset({ left: helperPosX, top: helperPosY });
+            }
+
+        });
+
+        var tour = {
+            id: "hello-hopscotch",
+            showCloseButton: false,
+            steps: [
+
+
+                {
+                    title: "Open Interviews",
+                    content: "View all Open Interviews detail here and click on next button to know its features",
+                    target: "openinterview_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('#openinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('#openinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+
+
+                {
+                    title: "Candidate Name",
+                    content: "Showing the Candidate Name here",
+                    target: "openinterview_2",
+                    showPrevButton: true,
+                    placement: "bottom",
+                    zindex: 999999,
+                    xOffset: 10,
+                    onPrev: function () {
+
+                        $('#openinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+
+                        $('#openinterview_2').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+
+                },
+                {
+                    title: "Resume",
+                    content: "Showing Resume here",
+                    target: "openinterview_3",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#openinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#openinterview_3').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+
+                {
+                    title: "JD Link",
+                    content: "Find the JD Link here",
+                    target: "openinterview_4",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "bottom",
+                    xOffset: 'center',
+                    arrowOffset: 'center',
+                    onNext: function () {
+                        $('#openinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#openinterview_4').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+                {
+                    title: "Actions",
+                    content: "Once an interview is scheduled you can see assign button",
+                    target: "openinterview_6",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#openinterview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#openinterview_6').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "Assign",
+                    content: "Click here to assign an interview based on your availability",
+                    target: "openinterview_7",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    placement: "left",
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#openinterview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#openinterview_7').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+
+                {
+                    title: "My Interview",
+                    content: "Click on My Interview menu to see its features",
+                    target: "openinterview_8",
+                    placement: "bottom",
+                    showPrevButton: true,
+                    zindex: 999999,
+                    yOffset: -20,
+                    xOffset: 10,
+                    onNext: function () {
+                        $('#openinterview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onPrev: function () {
+                        $('#openinterview_8').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    }
+                },
+                {
+                    title: "My Interviews",
+                    content: "Click on My Interviews menu to see its features",
+                    target: "myinterview_1",
+                    placement: "bottom",
+                    showPrevButton: true,
+
+                    highlight: true,
+                    zindex: 999999,
+                    yOffset: 10,
+
+                    onCTA: function () {
+                        hopscotch.showStep(2);
+                        $('#myinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+                    },
+                    onNext: function () {
+                        $('#myinterview_1').removeClass('overlay-relative');
+                        $('.helper').remove();
+
+                    }
+                },
+            ],
+            onStart: ["addOverlay"],
+            onEnd: ["removeOverlay"],
+        };
+
+        hopscotch.startTour(tour);
+
+    </script>
+
+}
+
