@@ -23,7 +23,6 @@ namespace Risebird.Web.Controllers
     public class FinanceController : Controller
     {
         private readonly IMeetingService _meetingService;
-        private static List<RBInterviewDetails> _modelDetails;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private static string SearchValue;
@@ -288,7 +287,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageStartCount = 0;
                         ViewBag.PageEndCount = 0;
                     }
-                    _modelDetails = model;
+                    HttpContext.Session.SetString("financemodel", JsonConvert.SerializeObject(model));
                     if (TempData["PaymentMessage"] != null)
                     {
                         ViewBag.Message = TempData["PaymentMessage"].ToString();
@@ -473,7 +472,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 int Page = 1;
-                var model = _modelDetails;
+                var model = JsonConvert.DeserializeObject<List<RBInterviewDetails>>(HttpContext.Session.GetString("financemodel"));
                 SearchValue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
@@ -652,7 +651,7 @@ namespace Risebird.Web.Controllers
                     Pagestart = 0;
                     Pageend = 0;
                 }
-                _modelDetails = model;
+                HttpContext.Session.SetString("financemodel", JsonConvert.SerializeObject(model));
                 return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds, totalpaidamount = totalpaidamount, totalinterviewamount = totalinterviewamount, totaldroppedamount = totaldroppedamount, totalNoShowamount = totalNoShowamount, pendingAmount = pendingAmount, qcamount = qcamount });
             }
             catch (Exception ex)

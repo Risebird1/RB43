@@ -3103,6 +3103,34 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool PublicCancelInterview(int meetingid)
+        {
+            try
+            {
+                if (_meetingRespository.CancelInterview(meetingid))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<int> GetUniqueInterviewerByEmailId(string emailId, string id)
+        {
+            try
+            {
+                return await _meetingRespository.GetUniqueInterviewerByEmailId(emailId, id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
     }
 }
 

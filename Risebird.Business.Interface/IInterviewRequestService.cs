@@ -11,6 +11,7 @@ namespace Risebird.Business.Interface
         IEnumerable<InterviewRequestVM> GetAllInterviewRequests(string emailId, string profileName);
         InterviewRequestVM FetchInterviewRequestById(int id);
         bool AssignInerviewRequest(int userid, int id);
-        bool SetIRFCreated(int id);
+        bool SetIRFCreated(int id, string IRFId);
+        string FetchInterviewerNameByEmailid(string emailid);
     }
 }

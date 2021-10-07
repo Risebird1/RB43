@@ -261,6 +261,12 @@ namespace Risebird.Repository
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
             parameters.Add("@Isinstaavailable", entity.Isinstaavailable);
             parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            //parameters.Add("@IsServiceDomain", entity.IsServiceDomain);
+            //parameters.Add("@IsProductDomain", entity.IsProductDomain);
+            parameters.Add("@IndiaServiceRate", entity.IndiaServiceRate);
+            parameters.Add("@IndiaProductRate", entity.IndiaProductRate);
+            parameters.Add("@OutsideIndiaServiceRate", entity.OutsideIndiaServiceRate);
+            parameters.Add("@OutsideIndiaProductRate", entity.OutsideIndiaProductRate);
 
             return parameters;
         }
@@ -1844,6 +1850,8 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@CodedResumeLink", reportDetails.CodedResumeLink);
                     parametersRecomm.Add("@Trained", reportDetails.Trained);
                     parametersRecomm.Add("@DomainName", "");
+                    parametersRecomm.Add("@IndiaProductRate", reportDetails.IndiaProductRate);
+                    parametersRecomm.Add("@OutsideIndiaProductRate", reportDetails.OutsideIndiaProductRate);
 
                     if (reportDetails.Domain == "Other")
                     {

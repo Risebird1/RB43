@@ -70,38 +70,48 @@
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> My Interviews</h4></div>
+                <div class="col-md-10 pull-left">
+                    <div class="pull-left myinterview">
+                     
+                            <div class="marquees">
+                                <ul class="marquees-content">
+                                    <li style="border: 0px; padding: 0px;  line-height: 30px;">In order to ensure your privacy please add your Coded Resume in My Profile section. We recommend you to remove your Name (add your coded name provided by Risebird) , Email ID, Contact Details and Current Company details. Also add one paragraph about your Interviewing Experience.</li>
+                                </ul>
+                            </div>
+                     
+                        <div class="mobile-view"> <h4 class="card-title"> My Interviews</h4></div>
+                    </div>
                 </div>
 
-                <div class="pull-right">
+                <div class="col-md-2 pull-left">
                     <div class="pull-right">
+                        <div class="pull-right">
 
 
-                        <div class="pull-left">  <div id="myinterview_2">  <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i></div></div>
+                            <div class="pull-left">  <div id="myinterview_2">  <i type="submit" class="fa fa-file-excel-o excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i></div></div>
 
-                        <div class="pull-left">
-                            @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                                </button>*@
-                        </div>
-                        <div class="pull-left filtercon">
-                            <div id="myinterview_3">
-                                <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
-                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-toggle="modal" data-target="#filterModal">
-
-                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                        <div class="mdc-button__ripple"></div>
-                                    </button>
-                                </a>
+                            <div class="pull-left">
+                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
+                        </button>*@
                             </div>
+                            <div class="pull-left filtercon">
+                                <div id="myinterview_3">
+                                    <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-toggle="modal" data-target="#filterModal">
+
+                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                            <div class="mdc-button__ripple"></div>
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+
+
+
                         </div>
-
-
 
                     </div>
-
                 </div>
             </div>
 
@@ -316,11 +326,11 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;">Date </th>
-                                                            <th >Slot</th>
-                                                            <th >Skills</th>
+                                                            <th style="text-align:left">Slot</th>
+                                                            <th style="text-align:left">JD-Skills</th>
                                                             <th id="myinterview_4">Candidate Name</th>
                                                             <th>Interview level</th>
-                                                            <th id="myinterview_5" style="padding-left:10px;">JD Link</th>
+                                                            @*<th id="myinterview_5">JD Link</th>*@
                                                             <th>Skill Channel</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
@@ -333,11 +343,11 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;width:12%">Date</th>
-                                                            <th >Slot</th>
-                                                            <th >Skills</th>
+                                                            <th>Slot</th>
+                                                            <th>JD-Skills</th>
                                                             <th style="width:18%;">Candidate Name</th>
                                                             <th>Interview level</th>
-                                                            <th  style="padding-left:10px;">JD Link</th>
+                                                            @*<th>JD Link</th>*@
                                                             <th>Skill Channel</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Link</th>
@@ -361,10 +371,10 @@
                                                             <tr id=@item.id>
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row">&nbsp;</td>
                                                                 <td>
-                                                                    @item.interviewDate
+                                                                    <div> @item.interviewDate</div>
                                                                     @if (item.Timer > 0)
                                                                     {
-                                                                        <br /><span class="time-left-txt">Time left to fill the feedback:</span><div><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated in 2 hours of the Interview Time then this interview will not be billable </span></a></div>
+                                                                <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
                                                                     }
                                                                 </td>
                                                                 @if (@item.interviewSlot == "Morning")
@@ -412,15 +422,15 @@
 
 
                                                                 <td> @item.HeuristicProfileTypeDesc </td>
-                                                                @if (item.JDLink != null && item.JDLink != "")
-                                                                {
-                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No JD</td>
-                                                                }
-                                                                <td > @item.IRFID </td>
+                                                                @*@if (item.JDLink != null && item.JDLink != "")
+                                                                    {
+                                                                        <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No JD</td>
+                                                                    }*@
+                                                                <td style="text-align: center"> @item.IRFID </td>
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -1000,7 +1010,7 @@
             textMsg = "Unassigning at this hour will lead to a penalty. Note: Update Risebird HR, before unassigning interview."
         }
         else {
-            textMsg = "Unassigned interview at the last minute results in reducing your quality score.  Note: Please make sure to update Risebird HR, before unassigning interview.";
+            textMsg = "As per Client SLA unassigning the interview at last minute may result deduction of Rs 250 to Rs 1000 from your payment.";
         }
 
 
@@ -1235,7 +1245,11 @@
             html += '<tr id=' + data[i].id + '>';
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>'
 
-            html += ' <td> ' + data[i].interviewDate + ' </td>';
+            html += ' <td><div>' + data[i].interviewDate + '</div>';
+            if (data[i].timer > 0){
+                html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">'+ data[i].timer+'</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>';
+            }
+            html += '  </td>';
             if (data[i].interviewSlot == "Morning") {
                 html += '   <td><a style="color:darkorange;font-weight: bold">' + data[i].interviewSlot + '</a></td>';
 
@@ -1780,6 +1794,7 @@
 
     function startTimer() {
         var presentTime1 = document.getElementsByClassName('timer');
+        var presentTab = document.getElementsByClassName('time_tab');
         for (var i = 0; i < presentTime1.length; i++) {
             var presentTime = presentTime1[i].innerHTML + ':00';
             var timeArray = presentTime.split(/[:]+/);
@@ -1788,6 +1803,14 @@
             if (s == 59) { m = m - 1 }
             if (m < 0) {
                 return
+            }
+            if (m >= 120) {
+                presentTime1[i].style.display = 'none';
+                presentTab[i].style.display = 'none';
+            }
+            else {
+                presentTime1[i].style.display = 'block';
+                presentTab[i].style.display = 'block';
             }
             presentTime1[i].innerHTML = m + ":" + s;
 
@@ -1805,4 +1828,15 @@
         if (sec < 0) { sec = "59" };
         return sec;
     }
+</script>
+<script>
+    const root = document.documentElement;
+    const marqueeElementsDisplayed = getComputedStyle(root).getPropertyValue("--marquee-elements-displayed");
+    const marqueeContent = document.querySelector("ul.marquees-content");
+
+    root.style.setProperty("--marquee-elements", marqueeContent.children.length);
+    marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
+   for (let i = 0; i < marqueeElementsDisplayed; i++) {
+      marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
+  }
 </script>

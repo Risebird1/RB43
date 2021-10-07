@@ -41,6 +41,7 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ICandidateService _candidateService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -49,7 +50,7 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -65,6 +66,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _httpClient = factory.GetHttpClient();
             _whatsAppHelper = whatsAppHelper;
+            _candidateService = candidateService;
         }
 
 
@@ -1913,12 +1915,12 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 120)
+                            if (timediff.TotalMinutes >= 0)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
-                               
+
                             }
-                           // item.Timer = 60;
+                            // item.Timer = 60;
 
 
                         }
@@ -2171,7 +2173,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 120)
+                            if (timediff.TotalMinutes >= 0)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
@@ -4702,8 +4704,21 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                     if (profileName == "Candidate")
                     {
-                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        //if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        if (_meetingService.PublicCancelInterview(id))
                         {
+                            var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                            var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
+                            List<string> interviewers = new List<string>();
+                            if (!String.IsNullOrEmpty(result.interviewer))
+                            {
+                                interviewers.Add(result.interviewer);
+                            }
+                            if (!String.IsNullOrEmpty(result.EmailId))
+                            {
+                                interviewers.Add(result.EmailId);
+                            }
+                            _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                             //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
                             return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
                         }
@@ -5790,7 +5805,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes <= 120)
+                            if (timediff.TotalMinutes >= 0)
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
@@ -6134,6 +6149,147 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("MyInterview");
                 }
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> PublicOpenInterview(string emailid, string id)
+        {
+            try
+            {
+                ViewBag.emailid = emailid;
+                ViewBag.id = id;
+                var Emailid = String.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var meetings = _meetingService.GetAllOpenInterviews(emailid);
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                var list = new SelectList(new[]{ new { ID = "Today", Name = "Today"},
+                                                         new { ID = "Tomorrow", Name = "Tomorrow"  },
+                                                         new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                                                         new { ID = "All", Name = "All"},
+                        }, "ID", "Name", "All");
+
+                ViewData["list"] = list;
+                if (TempData["SuccessErrorMessage"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                    TempData.Remove("SuccessErrorMessage");
+                }
+                if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                return View(meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+            }
+        }
+        public async Task<IActionResult> PublicOpenInterviewInvite(string id)
+        {
+            var model = new List<Meeting>();
+            ViewBag.Id = id;
+            ViewBag.PageType = "Public";
+            var list = new SelectList(new[]{ new { ID = "Today", Name = "Today"},
+                                                         new { ID = "Tomorrow", Name = "Tomorrow"  },
+                                                         new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                                                         new { ID = "All", Name = "All"},
+                        }, "ID", "Name", "All");
+
+            ViewData["list"] = list;
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View("PublicOpenInterview", model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            var role = await _meetingService.GetUniqueInterviewerByEmailId(Emailid, id);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have access.");
+            }
+        }
+        public async Task<IActionResult> PublicGetFilteredOpenInterviews(string filterValue, string emailid)
+        {
+            try
+            {
+                var meetings = _meetingService.GetAllOpenInterviews(emailid);
+
+                if (filterValue == "Today")
+                {
+                    meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
+                    if (meetings.Count() == 0)
+                    {
+                        return new EmptyResult();
+                    }
+
+                }
+                else if (filterValue == "Tomorrow")
+                {
+                    meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
+                    if (meetings.Count() == 0)
+                    {
+                        return new EmptyResult();
+                    }
+                }
+                else if (filterValue == "Next Seven Days")
+                {
+                    meetings = meetings.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
+                    if (meetings.Count() == 0)
+                    {
+                        return new EmptyResult();
+                    }
+                }
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                return PartialView("GetFilteredOpenInterviews", meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> PublicAssignYourself(int id, string InterviewDate, string emailid, string uniqueid)
+        {
+            try
+            {
+                var Emailid = String.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                var result = _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
+                TempData["SuccessErrorMessage"] = result;
+                ViewBag.Message = result;
+                return RedirectToAction("PublicOpenInterview", new { emailid = emailid, id = uniqueid });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicOpenInterview", new { emailid = emailid, id = uniqueid });
             }
         }
     }

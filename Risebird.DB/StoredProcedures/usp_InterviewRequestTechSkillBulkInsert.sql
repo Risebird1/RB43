@@ -10,20 +10,23 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE PROCEDURE [dbo].[usp_InterviewRequestTechSkillBulkInsert]        
-(        
-      @TechSkillBulkData AS [dbo].[TransInstaTechSkill_TableType] READONLY        
-)        
-AS        
-BEGIN        
-SET NOCOUNT ON;        
-  DELETE from TransInterviewRequestSkills where IRFID in (Select IRFId From @TechSkillBulkData)      
-      
-INSERT INTO [dbo].[TransInterviewRequestSkills](        
- [IRFId] ,        
- [LevelId],        
- [SkillId])        
-        
-SELECT IRFId,LevelId,SkillId FROM @TechSkillBulkData        
-END   
+CREATE PROCEDURE [dbo].[usp_InterviewRequestTechSkillBulkInsert]          
+(          
+      @TechSkillBulkData AS [dbo].[TransInstaTechSkill_TableType] READONLY          
+)          
+AS          
+BEGIN          
+SET NOCOUNT ON;          
+  DELETE from TransInterviewRequestSkills where IRFID in (Select IRFId From @TechSkillBulkData)        
+--This row performs bulk copy of object DataTable to Table in SQL          
+INSERT INTO [dbo].[TransInterviewRequestSkills](          
+ [IRFId] ,          
+ [LevelId],          
+ [SkillId],
+ [ActualLevelId])          
+          
+SELECT IRFId,LevelId,SkillId,ActualLevelId FROM @TechSkillBulkData          
+END 
+
+
 GO

@@ -57,7 +57,7 @@ a.infos {
         z-index: -1;
         font-size: 14px;
         width: 208px;
-        color:#fff;
+        color: #fff;
         border-radius: 2px;
         background: #a09f9f;
         visibility: hidden;
@@ -1049,6 +1049,67 @@ table tr td:hover, .table-striped tbody tr:hover {
 .navbar-brand a {
     text-decoration: none;
 }
+.myinterview .marquees {
+    color: red !important;
+    height: 2.5vw;
+    width: 103%!important;
+    font-family: Arial, Helvetica, sans-serif;
+}
+    .myinterview .marquees ul li {
+        line-height: 37px !important;
+        font-size: 14px !important;
+    }
+
+.myinterview .marquees-content {
+    margin-bottom: 0rem;
+    list-style: none;
+    /*height: 100%;*/
+    /*  display: flex;
+    animation: scrolling var(--marquee-animation-duration) linear infinite;*/
+    display: flex;
+    width: 200%;
+    position: relative;
+    overflow: hidden;
+    animation: marquee 30s linear infinite;
+}
+
+
+
+.marquee {
+    font-size: 16px;
+    color: #cf2d2d;
+    font-family: 'Courier New', Courier, monospace;
+    height: 2.5vw;
+    overflow: hidden;
+    position: relative;
+    background: none;
+}
+    /* nested div inside the container */
+    .marquee div {
+        display: block;
+        width: 190%;
+        position: relative;
+        overflow: hidden;
+        animation: marquee 5s linear infinite;
+    }
+    /* span with text */
+    .marquee span {
+        float: left;
+        width: 50%;
+    }
+/* keyframe */
+@keyframes marquee {
+    0% {
+        left: 0;
+    }
+
+    100% {
+        left: -100%;
+    }
+}
+
+
+
 
 .marquees {
     width: var(--marquee-width);
@@ -9655,17 +9716,19 @@ button.close {
         color: #333;
     }
 /* end To top */
-.excel-file {
-    margin-right: 5px;
-    color: green;
-    font-size: 35px !important;
-    margin-left: 5px;
-    border: 0;
-}
+
+
+    .excel-file {
+        margin-right: 5px;
+        color: green;
+        font-size: 35px !important;
+        margin-left: 5px;
+        border: 0;
+    }
 .instainterview .text-danger {
-    position: absolute;
-    bottom: -25px;
-    left: 50px;
+    position: absolute!important;
+    bottom: -10px!important;
+    left: 50px!important;
 }
 .instainterview #SkillCollection_WeightageError {
     bottom: 6px !important;
@@ -9828,7 +9891,13 @@ button.close {
     height: 25px;
     border: 0px;
 }
-
+.sector {
+    position: relative;
+    left: 15px;
+    width: 15px;
+    height: 15px;
+    margin-left:10px;
+}
 .ref-btn {
     position: absolute;
     top: 11px;
@@ -9903,6 +9972,8 @@ button.close {
 .br-g {
     border-bottom: 1px #ccccccfc solid !important;
 }
+
+
 
 .instainterview .form-group label {
     /* display: block; */

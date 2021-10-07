@@ -251,6 +251,17 @@ textarea::-webkit-scrollbar {
 .user-menu:before {
     background: #ec8840;
 }
+#myStatusListpopup .table-bordered td {
+    border: 1px solid #dee2e6;
+    BACKGROUND: #FFF;
+    PADDING: 0PX 10PX;
+}
+
+    #myStatusListpopup .table-bordered td textarea {
+        margin: 5PX;
+        background: #fff;
+        border: 1px solid #dee2e6;
+    }
 #reportForm .videoConplayer {
     background: #fff;
 }

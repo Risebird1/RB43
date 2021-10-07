@@ -734,6 +734,13 @@ namespace Risebird.Web.Controllers
                 AssessmentselectList.Add(selectItem);
             }
             model.AssessmentGroupList = AssessmentselectList;
+            var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.IndiaServiceRateList = new SelectList(IndiaPrice, "ID", "Name");
+
+            var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.OutsideIndiaServiceRateList = new SelectList(OutSideIndiaPrice, "ID", "Name");
         }
 
         [HttpPost]
@@ -2517,6 +2524,56 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> SendPublicURLInterviewer(string Emailid)
+        {
+            try
+            {
+                Guid uniqueid = Guid.NewGuid();
+                var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + uniqueid;
+                if (!String.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + _uniqueid;
+                }
+                Mail _mail1 = new Mail
+                {
+                    TO = Emailid,
+                    CC = "talent@risebird.io",
+                    Subject = "Candidate Status Update"
+                };
+                var emailsend1 = _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl);
+                if (emailsend1.Contains("successfully"))
+                    return Json("Success");
+                else
+                    return Json("Failed");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> CopyPublicURLInterviewer(string Emailid)
+        {
+            try
+            {
+                Guid uniqueid = Guid.NewGuid();
+                var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + uniqueid;
+                if (!String.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + _uniqueid;
+                }
+                return Json(sendreporturl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
             }
         }
     }

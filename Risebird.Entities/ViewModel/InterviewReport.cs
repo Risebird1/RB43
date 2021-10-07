@@ -334,6 +334,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Trained")]
         [Required(ErrorMessage = "This field is required.")]
         public int Trained { get; set; }
+        public int IndiaProductRate { get; set; }
+        public int OutsideIndiaProductRate { get; set; }
     }
     public class RBInterviewDetails
     {

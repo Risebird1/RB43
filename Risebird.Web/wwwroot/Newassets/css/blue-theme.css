@@ -316,7 +316,17 @@ input [type='radio']:checked:after {
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }
+#myStatusListpopup .table-bordered td {
+    border: 1px solid #dee2e6;
+    BACKGROUND: #FFF;
+    PADDING: 0PX 10PX;
+}
 
+    #myStatusListpopup .table-bordered td textarea {
+        margin: 5PX;
+        background: #fff;
+        border: 1px solid #dee2e6;
+    }
 .assessment h1 {
     color: #1d3b5f !important
 }
@@ -824,8 +834,8 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
 
 [data-tooltip]:after {
     border-top: 8px solid hsl(0deg, 0%, 50%) !important;
-    border-right: 7px solid white !important;
-    border-left: 7px solid white !important;
+    border-right: 7px solid transparent !important;
+    border-left: 7px solid transparent !important;
 }
 
 .jd-title [data-tooltip]:after {

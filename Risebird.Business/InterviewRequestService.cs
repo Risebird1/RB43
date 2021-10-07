@@ -68,7 +68,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _interviewRequestRepository.AssignInerviewRequest(userid,id).Result;
+                return _interviewRequestRepository.AssignInerviewRequest(userid, id).Result;
             }
             catch (Exception ex)
             {
@@ -76,16 +76,29 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public bool SetIRFCreated(int id)
+        public bool SetIRFCreated(int id, string IRFId)
         {
             try
             {
-                return _interviewRequestRepository.SetIRFCreated(id).Result;
+                return _interviewRequestRepository.SetIRFCreated(id, IRFId).Result;
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public string FetchInterviewerNameByEmailid(string emailid)
+        {
+            try
+            {
+                var result = _interviewRequestRepository.FetchInterviewerNameByEmailid(emailid).Result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
             }
         }
     }

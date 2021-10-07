@@ -41,6 +41,7 @@ namespace Risebird.Entities.ViewModel
         public string CandidateName { get; set; }
         public string IRFId { get; set; }
         public int irfIntId { get; set; }
+        public string candidateEmail { get; set; }
     }
 }
 

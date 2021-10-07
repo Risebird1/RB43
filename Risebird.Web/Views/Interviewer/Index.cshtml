@@ -517,7 +517,12 @@
                                                                     <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
                                                                 </button>
                                                             </span>
-
+                                                            @*<button class="mdc-fab app-fab--absolute " aria-label="Share Public URL">
+                                                                <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
+                                                                <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                            </button>*@
                                                         </td>
                                                     </tr>
 
@@ -826,7 +831,41 @@
         </div>
     </div>
 </div>
-
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @if (ViewBag.Message != null)
 {
@@ -1169,15 +1208,16 @@
                                                         {
                 html += '   <td>No</td>';
                                                         }
-            
+
             html += '<td class="interview-com">';
             html += ' <div id="section">';
             if (data[i].assessmentGroupId != null && data[i].assessmentGroupId != "") {
                 if (data[i].assessmentGroupId.length > 20) {
                     html += '  <div class="article">';
                     html += '  <p style="margin-bottom:0px;">' + data[i].assessmentGroupId.substring(0, 20) + '</p>';
-                    html += '   <p class="moretext1_' + data[i].id + ' moretext">' + data[i].assessmentGroupId.substring(20, data[i].assessmentGroupId.length - 20) + '</p>';
+                    html += '   <p class="moretext1_'+ data[i].id +' moretext">' + data[i].assessmentGroupId.substring(20, data[i].assessmentGroupId.length) + '</p>';
                     html += '</div>';
+                    html += ' <a onclick="moreless1(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read1_' + data[i].id + '" href="#">Read more</a>';
                 }
                 else {
                     html += '<div class="article"><p>' + data[i].assessmentGroupId.substring(0, data[i].assessmentGroupId.length) + '</p></div>';
@@ -1186,7 +1226,7 @@
             else {
                 html += '<div></div>';
             }
-            html += ' <a onclick="moreless1(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read1_' + data[i].id + '" href="#">Read more</a>';
+
             html += '</div>';
             html += ' </td>';
             html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
@@ -1231,6 +1271,12 @@
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Assessments">';
             html += '<a href = "/Interviewer/AssessmentForApproval/' + data[i].id + '?EmailAddress=' + data[i].emailId+'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></a>';
             html += ' </button>';
+            html += '<button class="mdc-fab app-fab--absolute " aria-label="Share Public URL"><input type="hidden" id="hidpublicemail_' + i + '" value="' + data[i].emailId+'" />';
+            html += '<span onclick="javascript:SendPublicURLJson(' + i+');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>';
+            html += '</button>';
+            html += '<button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">';
+            html += '<span onclick="javascript:CopyPublicUrlJson('+i+');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>';
+            html += '</button>';
             html += '</td>';
             html += '  </tr>';
             html += '   <tr class="collapse ' + data[i].id + '">';
@@ -1479,8 +1525,84 @@
         var modal = document.getElementById("myCallModal");
         modal.style.display = "none";
     }
-
-
+    function SendPublicURLJson(index) {
+        var EmailId = $("#hidpublicemail_" + index).val();
+        SendPublicURL(EmailId);
+    }
+    function CopyPublicUrlJson(index) {
+        var EmailId = $("#hidpublicemail_" + index).val();
+        CopyPublicUrl(EmailId);
+    }
+    function SendPublicURL(EmailId) {
+        swal.fire({
+            title: 'Are you sure you want to send Public Url for client user ' + EmailId + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Send it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interviewer/SendPublicURLInterviewer',
+                        data: { 'Emailid': EmailId },
+                        type: 'POST',
+                        success: function (result) {
+                            if (result == "Success") {
+                                swal.fire({
+                                    title: 'Sent!',
+                                    type: 'success',
+                                    html: '<p>Public URL send successfully.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            } else {
+                                swal.fire({
+                                    title: 'Fail to sent!',
+                                    type: 'error',
+                                    html: '<p>Fail to send the public URL, Please try again.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error Sending!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        })
+    }
+    function CopyPublicUrl(EmailId) {
+        $.ajax({
+            url: '/Interviewer/CopyPublicURLInterviewer',
+            data: { 'Emailid': EmailId },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtvideoUrls").text(result);
+            }
+        });
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
 </script>
 <script type="text/javascript">
 

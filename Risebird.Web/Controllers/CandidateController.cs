@@ -41,6 +41,7 @@ namespace Risebird.Web.Controllers
         private readonly IClientService _clientService;
         private readonly ICalendlyHelper _calendlyHelper;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IIRFRepository _irfRepository;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
@@ -48,7 +49,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper)
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -64,6 +65,7 @@ namespace Risebird.Web.Controllers
             _calendlyHelper = calendlyHelper;
             _clientService = clientService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _irfRepository = irfRepository;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -238,7 +240,10 @@ namespace Risebird.Web.Controllers
                         }
                         if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                         {
-                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                            if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                            {
+                                candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                            }
                         }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -519,7 +524,10 @@ namespace Risebird.Web.Controllers
                         }
                         if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                         {
-                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                            if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                            {
+                                candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                            }
                         }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -803,7 +811,10 @@ namespace Risebird.Web.Controllers
                     }
                     if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                     {
-                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
                     }
                     //add candidate to final model
                     if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -1042,7 +1053,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
                         ViewBag.Profile = profileName;
-
+                        var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim();
+                        ClientRole = ClientRole.Replace("\"", "");
+                        ViewBag.ClientRole = ClientRole;
                         var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
                         var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                         if (profileName == "Recruiter")
@@ -1070,6 +1083,7 @@ namespace Risebird.Web.Controllers
                             candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
+
                         ViewBag.TotalCount = candidateList.Count;
 
                         ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -3847,17 +3861,17 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
-        public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid)
+        public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid, string id)
         {
             try
             {
                 HttpContext.Session.Remove("PublicCandidateStatusfilters");
-                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
             }
 
         }
@@ -3909,13 +3923,27 @@ namespace Risebird.Web.Controllers
             }
         }
         [AllowAnonymous]
-        [HttpGet]
-        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail)
+        [HttpPost]
+        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId)
         {
             try
             {
-                if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                if (_meetingService.PublicCancelInterview(id))
                 {
+                    var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
+                    var result1 = _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
+                    List<string> interviewers = new List<string>();
+                    if (!String.IsNullOrEmpty(result.interviewer))
+                    {
+                        interviewers.Add(result.interviewer);
+                    }
+                    if (!String.IsNullOrEmpty(result.EmailId))
+                    {
+                        interviewers.Add(result.EmailId);
+                    }
+                    _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                     return Json("Invitation cancelled successfully");
                 }
                 else
@@ -3946,6 +3974,23 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("");
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicStatusList(int irfId, int candidateId)
+        {
+            try
+            {
+                var model = new CandidateStatusListVM();
+                model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
+                model.CandidateId = candidateId;
+                model.IRFId = irfId;
+                return Json(model);
+            }
+            catch (Exception)
+            {
+                return Json("Failed");
             }
         }
     }

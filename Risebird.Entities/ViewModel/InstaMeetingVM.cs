@@ -69,6 +69,7 @@ namespace Risebird.Entities.ViewModel
         public int ActualLevelId { get; set; }
         public string SkillName { get; set; }
         public string SkillId { get; set; }
+        public int Weightage { get; set; }
     }
     public class InstaZoomMeetingVM
     {

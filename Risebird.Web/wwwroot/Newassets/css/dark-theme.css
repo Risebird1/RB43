@@ -2149,11 +2149,21 @@ input[type="radio"]:checked {
 }
 
 [data-tooltip]:after {
-    border-top: 8px solid hsl(0deg 0% 7%) !important;
+    border-top: 8px solid hsl(0deg 0% 56%) !important;
     border-right: 8px solid transparent !important;
     border-left: 8px solid transparent !important;
 }
+#myStatusListpopup .table-bordered td {
+    border: 1px solid #494c4e;
+    BACKGROUND: #131313;
+    PADDING: 0PX 10PX;
+}
 
+    #myStatusListpopup .table-bordered td textarea {
+        margin: 5PX;
+        background: #131313;
+        border: 1px solid #494c4e;
+    }
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;
