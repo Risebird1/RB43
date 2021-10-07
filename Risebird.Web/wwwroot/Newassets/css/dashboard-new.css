@@ -9716,13 +9716,15 @@ button.close {
         color: #333;
     }
 /* end To top */
-.excel-file {
-    margin-right: 5px;
-    color: green;
-    font-size: 35px !important;
-    margin-left: 5px;
-    border: 0;
-}
+
+
+    .excel-file {
+        margin-right: 5px;
+        color: green;
+        font-size: 35px !important;
+        margin-left: 5px;
+        border: 0;
+    }
 .instainterview .text-danger {
     position: absolute!important;
     bottom: -10px!important;
