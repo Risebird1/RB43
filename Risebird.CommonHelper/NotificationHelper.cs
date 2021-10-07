@@ -305,13 +305,10 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                StringBuilder msgBody = new StringBuilder("Dear Users,");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
-                msgBody.AppendLine(
-                    "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
-                msgBody.Append("\n");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");               
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
 
