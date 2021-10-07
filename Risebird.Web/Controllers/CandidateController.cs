@@ -41,6 +41,7 @@ namespace Risebird.Web.Controllers
         private readonly IClientService _clientService;
         private readonly ICalendlyHelper _calendlyHelper;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IIRFRepository _irfRepository;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
@@ -48,7 +49,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper)
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -64,6 +65,7 @@ namespace Risebird.Web.Controllers
             _calendlyHelper = calendlyHelper;
             _clientService = clientService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _irfRepository = irfRepository;
         }
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -3859,17 +3861,17 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
-        public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid)
+        public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid, string id)
         {
             try
             {
                 HttpContext.Session.Remove("PublicCandidateStatusfilters");
-                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
             }
 
         }
@@ -3921,13 +3923,15 @@ namespace Risebird.Web.Controllers
             }
         }
         [AllowAnonymous]
-        [HttpGet]
-        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail)
+        [HttpPost]
+        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId)
         {
             try
             {
                 if (_meetingService.PublicCancelInterview(id))
                 {
+                    var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
+                    var result1 = _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
                     var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                     var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                     List<string> interviewers = new List<string>();

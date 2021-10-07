@@ -5140,5 +5140,26 @@ namespace Risebird.Repository
             }
 
         }
+        public async Task<int> GetUniqueInterviewerByEmailId(string emailId, string id)
+        {
+            try
+            {
+                var query = "Select id From InterviewerPublicURLs where EmailId = @emailId and uniqueid=@uniqueid ";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailId", emailId);
+                dynamicParameters.Add("@uniqueid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+
+        }
     }
 }

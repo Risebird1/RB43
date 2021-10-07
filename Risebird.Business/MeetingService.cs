@@ -3119,6 +3119,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<int> GetUniqueInterviewerByEmailId(string emailId, string id)
+        {
+            try
+            {
+                return await _meetingRespository.GetUniqueInterviewerByEmailId(emailId, id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
     }
 }
 

@@ -1659,7 +1659,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewRequestAddNotification(Mail model, string JdTitle, string PrimarySkill)
+        public string InterviewRequestAddNotification(Mail model, string JdTitle, string PrimarySkill, string Client)
         {
             try
             {
@@ -1671,7 +1671,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { JdTitle, PrimarySkill };
+                object[] parameters = new object[] { Client, JdTitle, PrimarySkill };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestAddNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -1684,7 +1684,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewRequestEditNotification(Mail model, string JdTitle, string PrimarySkill)
+        public string InterviewRequestEditNotification(Mail model, string JdTitle, string PrimarySkill, string RequestedBy)
         {
             try
             {
@@ -1696,7 +1696,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { JdTitle, PrimarySkill };
+                object[] parameters = new object[] { JdTitle, PrimarySkill, RequestedBy };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestEditNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -1709,7 +1709,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole)
+        public string InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer)
         {
             try
             {
@@ -1721,7 +1721,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { JdTitle, PrimarySkill, Country, JobRole };
+                object[] parameters = new object[] { JdTitle, PrimarySkill, interviewer };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestAssignationNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -1734,7 +1734,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string InterviewRequestCompletedNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole)
+        public string InterviewRequestCompletedNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole, string CalendlyLink, string IRFID)
         {
             try
             {
@@ -1746,7 +1746,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { JdTitle, PrimarySkill, Country, JobRole };
+                object[] parameters = new object[] { JdTitle, PrimarySkill, Country, JobRole, CalendlyLink, IRFID };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewRequestCompletedNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
