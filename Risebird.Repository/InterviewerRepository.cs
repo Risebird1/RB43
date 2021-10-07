@@ -1850,6 +1850,8 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@CodedResumeLink", reportDetails.CodedResumeLink);
                     parametersRecomm.Add("@Trained", reportDetails.Trained);
                     parametersRecomm.Add("@DomainName", "");
+                    parametersRecomm.Add("@IndiaProductRate", reportDetails.IndiaProductRate);
+                    parametersRecomm.Add("@OutsideIndiaProductRate", reportDetails.OutsideIndiaProductRate);
 
                     if (reportDetails.Domain == "Other")
                     {

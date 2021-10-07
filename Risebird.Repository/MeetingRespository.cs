@@ -5089,5 +5089,56 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+
+        /// <summary>
+        /// Gets all the interviews which are yet unassigned with 3 hours to go
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetUnassignedOpenInterviews", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<string>> GetIRFActiveInterviewers(string irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.QueryAsync<string>(con, "usp_GetIRFActiveInterviewers", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.Result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
     }
 }

@@ -89,15 +89,17 @@ Declare @v_ProfileId int;
    [IsLeadInterviewer] = @IsLeadInterviewer,          
    [IsApproved] = @IsApproved,          
    [AssessmentGroupId]=@AssessmentGroupId,
-   [Isinstaavailable]=@Isinstaavailable,
+   [Isinstaavailable]=@Isinstaavailable
    --[IsServiceDomain] =@IsServiceDomain,
    --[IsProductDomain] = @IsProductDomain,
-   [IndiaServiceRate] = @IndiaServiceRate,
-   [IndiaProductRate] = @IndiaProductRate,
-   [OutsideIndiaServiceRate] = @OutsideIndiaServiceRate,
-   [OutsideIndiaProductRate] = @OutsideIndiaProductRate
+   --[IndiaServiceRate] = @IndiaServiceRate,
+   --[IndiaProductRate] = @IndiaProductRate,
+   --[OutsideIndiaServiceRate] = @OutsideIndiaServiceRate,
+   --[OutsideIndiaProductRate] = @OutsideIndiaProductRate
  where userId = @UserId;          
-           
+    
+	
+
   select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;          
           
   delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId          
@@ -114,7 +116,24 @@ Declare @v_ProfileId int;
           
   delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId       
       
-  select @InterviewerProfileId=@v_ProfileId    
+  select @InterviewerProfileId=@v_ProfileId 
+  
+  select * from InterviewerRecommendation
+
+  if exists(select id from InterviewerRecommendation where Userid = @UserId)
+  begin
+	update InterviewerRecommendation set 
+	PerHourRateIndia = @IndiaServiceRate,
+	PerHourRateOutside =@OutsideIndiaServiceRate,
+	IndiaProductRate =@IndiaProductRate,
+	OutsideIndiaProductRate =@OutsideIndiaProductRate
+	where Userid =@UserId
+  end
+  else
+  begin
+	insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)
+	values (@UserId, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)
+  end
           
 End          
           
@@ -168,13 +187,13 @@ Declare @v_User_Id int;
    [IsLeadInterviewer],          
    [IsApproved],          
    [AssessmentGroupId],
-   [Isinstaavailable],
+   [Isinstaavailable])
    --[IsServiceDomain],
    --[IsProductDomain],
-   [IndiaServiceRate],
-   [IndiaProductRate],
-   [OutsideIndiaServiceRate],
-   [OutsideIndiaProductRate])          
+   --[IndiaServiceRate],
+   --[IndiaProductRate],
+   --[OutsideIndiaServiceRate],
+   --[OutsideIndiaProductRate])          
        VALUES          
            (@v_User_Id,          
    @NickName,          
@@ -197,15 +216,30 @@ Declare @v_User_Id int;
    @IsLeadInterviewer,          
    @IsApproved,          
    @AssessmentGroupId,
-   @Isinstaavailable,
+   @Isinstaavailable)
    --@IsServiceDomain,
    --@IsProductDomain,
-   @IndiaServiceRate,
-   @IndiaProductRate,
-   @OutsideIndiaServiceRate,
-   @OutsideIndiaProductRate)          
+   --@IndiaServiceRate,
+   --@IndiaProductRate,
+   --@OutsideIndiaServiceRate,
+   --@OutsideIndiaProductRate          
     
- select @InterviewerProfileId=(select id from InterviewerProfile where UserId=@v_User_Id)    
+ select @InterviewerProfileId=(select id from InterviewerProfile where UserId=@v_User_Id)
+ 
+ if exists(select id from InterviewerRecommendation where Userid = @v_User_Id)
+  begin
+	update InterviewerRecommendation set 
+	PerHourRateIndia = @IndiaServiceRate,
+	PerHourRateOutside =@OutsideIndiaServiceRate,
+	IndiaProductRate =@IndiaProductRate,
+	OutsideIndiaProductRate =@OutsideIndiaProductRate
+	where Userid =@UserId
+  end
+  else
+  begin
+	insert into InterviewerRecommendation (Userid, PerHourRateIndia, PerHourRateOutside, IndiaProductRate, OutsideIndiaProductRate)
+	values (@v_User_Id, @IndiaServiceRate, @OutsideIndiaServiceRate, @IndiaProductRate, @OutsideIndiaProductRate)
+  end
          
 End          
  
