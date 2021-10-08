@@ -170,15 +170,15 @@ namespace Risebird.Web.Controllers
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                                 Mail _mail = new Mail
                                 {
-                                    TO = "ashutosh@risebird.io",//;vaibhaw_sachan@risebird.io;talent@risebird.io",
-                                    Subject = "New Interview Request: " + meeting.JdTitle + " - " + meeting.PrimarySkill
+                                    TO = "ashutosh@risebird.io; vaibhaw_sachan @risebird.io; talent @risebird.io",
+                                    Subject = "New Interview Request: " + meeting.JdTitle
                                 };
-                                var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill);
+                                var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
                                 //Send a mail to Client
                                 Mail _mail1 = new Mail
                                 {
                                     TO = meeting.RequestedBy,
-                                    Subject = "New Interview Request: " + meeting.JdTitle + " - " + meeting.PrimarySkill
+                                    Subject = "New Interview Request: " + meeting.JdTitle
                                 };
                                 var emailsend1 = _notificationHelper.InterviewRequestAddClientNotification(_mail1, meeting.JdTitle, meeting.PrimarySkill);
                                 TempData["SuccessErrorMessageInterview"] = "Request Created Successfully.";
@@ -293,12 +293,17 @@ namespace Risebird.Web.Controllers
                             if (_interviewRequestService.CreateInerviewRequest(meeting))
                             {
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
+                                var emaildids = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io";
+                                if (!String.IsNullOrEmpty(meeting.Assignto))
+                                {
+                                    emaildids = emaildids + ";" + meeting.Assignto;
+                                }
                                 Mail _mail = new Mail
                                 {
-                                    TO = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io",
-                                    Subject = "Interview Request Updates: " + meeting.JdTitle + " - " + meeting.PrimarySkill
+                                    TO = emaildids,
+                                    Subject = "Interview Request has been updated: " + meeting.JdTitle
                                 };
-                                var emailsend = _notificationHelper.InterviewRequestEditNotification(_mail, meeting.JdTitle, meeting.PrimarySkill);
+                                var emailsend = _notificationHelper.InterviewRequestEditNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
                                 TempData["SuccessErrorMessageInterview"] = "Request updated Successfully.";
                                 return RedirectToAction("Index");
                             }
@@ -357,12 +362,13 @@ namespace Risebird.Web.Controllers
                 var model = _interviewRequestService.FetchInterviewRequestById(id);
                 model.CountryName = ((InterviewRequestCountry)Convert.ToInt32(model.Country)).GetDescription();
                 model.JobLevelName = ((JobLevels)Convert.ToInt32(model.JobLevel)).GetDescription();
+                var interviewername = _interviewRequestService.FetchInterviewerNameByEmailid(model.Assignto);
                 Mail _mail = new Mail
                 {
                     TO = model.Assignto,
-                    Subject = "New Interview Request Assignment: " + model.JdTitle + " - " + model.PrimarySkill
+                    Subject = "New Interview Request Assigned: " + model.JdTitle
                 };
-                var emailsend = _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, model.CountryName, model.JobLevelName);
+                var emailsend = _notificationHelper.InterviewRequestAssignationNotification(_mail, model.JdTitle, model.PrimarySkill, interviewername);
                 return Json("Successfully assigned.");
             }
             else
@@ -372,19 +378,24 @@ namespace Risebird.Web.Controllers
         }
         public ActionResult SetIRFCreated(int id, string IRFId)
         {
-            var result = _interviewRequestService.SetIRFCreated(id, IRFId);
+            var result = _interviewRequestService.SetIRFCreated(id, IRFId.Trim());
             if (result)
             {
                 //Send mail for confirmation
                 var model = _interviewRequestService.FetchInterviewRequestById(id);
                 model.CountryName = ((InterviewRequestCountry)Convert.ToInt32(model.Country)).GetDescription();
                 model.JobLevelName = ((JobLevels)Convert.ToInt32(model.JobLevel)).GetDescription();
+                var CalendlyLink = String.Empty;
+                if (!String.IsNullOrEmpty(model.CalendlyLink))
+                {
+                    CalendlyLink = model.CalendlyLink;
+                }
                 Mail _mail = new Mail
                 {
                     TO = model.RequestedBy,
-                    Subject = "New Interview Request Created: " + model.JdTitle + " - " + model.PrimarySkill
+                    Subject = "New Interview Request has been created: " + model.JdTitle
                 };
-                var emailsend = _notificationHelper.InterviewRequestCompletedNotification(_mail, model.JdTitle, model.PrimarySkill, model.CountryName, model.JobLevelName);
+                var emailsend = _notificationHelper.InterviewRequestCompletedNotification(_mail, model.JdTitle, model.PrimarySkill, model.CountryName, model.JobLevelName, CalendlyLink, IRFId);
                 TempData["SuccessErrorMessageInterview"] = "Request marked as created successfully.";
                 return RedirectToAction("Index");
             }

@@ -62,10 +62,12 @@ namespace Risebird.CommonHelper.Interface
         string InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName);
         string InstaClientInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
         string SendPublicUrlToClient(Mail model, string UrlDetails);
-        string InterviewRequestAddNotification(Mail model, string JdTitle, string PrimarySkill);
-        string InterviewRequestEditNotification(Mail model, string JdTitle, string PrimarySkill);
-        string InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole);
-        string InterviewRequestCompletedNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole);
+        string InterviewRequestAddNotification(Mail model, string JdTitle, string PrimarySkill, string Client);
+        string InterviewRequestEditNotification(Mail model, string JdTitle, string PrimarySkill, string RequestedBy);
+        string InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer);
+        string InterviewRequestCompletedNotification(Mail model, string JdTitle, string PrimarySkill, string Country, string JobRole, string CalendlyLink, string IRFID);
         string InterviewRequestAddClientNotification(Mail model, string JdTitle, string PrimarySkill);
+        string SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
+        string SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName);
     }
 }
