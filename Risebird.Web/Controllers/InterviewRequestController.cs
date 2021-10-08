@@ -170,7 +170,7 @@ namespace Risebird.Web.Controllers
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                                 Mail _mail = new Mail
                                 {
-                                    TO = "ashutosh@risebird.io",//;vaibhaw_sachan@risebird.io;talent@risebird.io",
+                                    TO = "ashutosh@risebird.io; vaibhaw_sachan @risebird.io; talent @risebird.io",
                                     Subject = "New Interview Request: " + meeting.JdTitle
                                 };
                                 var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
@@ -378,7 +378,7 @@ namespace Risebird.Web.Controllers
         }
         public ActionResult SetIRFCreated(int id, string IRFId)
         {
-            var result = _interviewRequestService.SetIRFCreated(id, IRFId);
+            var result = _interviewRequestService.SetIRFCreated(id, IRFId.Trim());
             if (result)
             {
                 //Send mail for confirmation
