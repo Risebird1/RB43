@@ -191,7 +191,7 @@
                                                                         </td>
 
                                                                         <td>
-                                                                            @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @*ID = "droplevel",*@ @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SelectabilityEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@, })
+                                                                            @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @*ID = "droplevel",*@ @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SelectabilityEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
 
                                                                         </td>
                                                                         <td>
@@ -346,7 +346,7 @@
                                                                         </td>
 
                                                                         <td>
-                                                                            @Html.DropDownListFor(m => m.TechSkillEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'TechSkillEvaluatorReportCollection')", @disabled = "disabled" })
+                                                                            @Html.DropDownListFor(m => m.TechSkillEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'TechSkillEvaluatorReportCollection')" })
 
                                                                         </td>
                                                                         <td>
@@ -426,7 +426,7 @@
                                                                         </td>
 
                                                                         <td>
-                                                                            @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')", @disabled = "disabled"@*, onmouseover = "getOption(this)"*@ })
+                                                                            @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
 
                                                                         </td>
                                                                         <td>
