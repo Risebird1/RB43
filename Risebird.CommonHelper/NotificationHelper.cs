@@ -297,11 +297,11 @@ namespace Risebird.CommonHelper
                 foreach (var mail in interviewers)
                 {
                     msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-                }               
+                }
                 StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interview date: " + interviewDate + " .");
                 msgBody.AppendLine(
                     "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
                 msgBody.Append("\n");
@@ -1769,6 +1769,60 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
+
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
+                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                if (irfOwnersAndRestrictedIrfOwners != null && irfOwnersAndRestrictedIrfOwners.Count != 0)
+                {
+                    foreach (var clientEmail in irfOwnersAndRestrictedIrfOwners)
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
+                    }
+                }
+                object[] parameters = new object[] { CandidateName, interviewDate };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
+                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(CandidateEmail, null));
+                StringBuilder msgBody = new StringBuilder("Dear ," + CandidateName);
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interview date: " + interviewDate + " .");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                msg.HtmlContent = msgBody.ToString();
 
                 return SendMail(msg).Result;
             }
