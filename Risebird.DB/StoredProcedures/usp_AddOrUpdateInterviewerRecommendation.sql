@@ -30,8 +30,10 @@ CREATE PROCEDURE [dbo].[usp_AddOrUpdateInterviewerRecommendation](
   @Userid int,   
   @AssessmentGroupId varchar(100),  
   @CodedResumeLink varchar(max),  
- @Trained int,  
-  @DomainName varchar(50)    
+  @Trained int,  
+  @DomainName varchar(50),
+  @IndiaProductRate int,
+  @OutsideIndiaProductRate int
                     
   )                    
 AS                        
@@ -59,7 +61,10 @@ Begin Try
  ProfileType=@ProfileType,              
  CompentencyLevel=@CompentencyLevel,  
  Trained=ISNULL(@Trained,Trained), 
- DomainName=@DomainName    
+ DomainName=@DomainName,
+ IndiaProductRate=@IndiaProductRate,    
+ OutsideIndiaProductRate=@OutsideIndiaProductRate    
+
          
  WHERE       Userid=@Userid                         
                         
@@ -83,7 +88,10 @@ Begin Try
   ProfileType,              
   CompentencyLevel,            
   Userid,    
-  DomainName,Trained)                         
+  DomainName,
+  Trained,
+  IndiaProductRate,
+  OutsideIndiaProductRate)                         
     VALUES                        
       (@interviewId,                        
        @CompanySize,                        
@@ -100,17 +108,17 @@ Begin Try
   @ProfileType,              
   @CompentencyLevel,            
   @Userid,    
-  @DomainName, @Trained)                  
+  @DomainName, 
+  @Trained,
+  @IndiaProductRate,
+  @OutsideIndiaProductRate)                  
                       
                   
                               
    END                     
-  declare @indiaProductRate int, @outsideIndiaProductRate int
-  set @indiaProductRate = CAST((@PerHourRateIndia * 1.5) as int)
-  set @outsideIndiaProductRate = CAST((@PerHourRateOutside * 1.5) as int)
+ 
   
-  Update InterviewerProfile set AssessmentGroupId=@AssessmentGroupId,CodedResumeLink=@CodedResumeLink, IndiaProductRate = @indiaProductRate,
-  OutsideIndiaProductRate = @outsideIndiaProductRate where UserId=@Userid                      
+  Update InterviewerProfile set AssessmentGroupId=@AssessmentGroupId,CodedResumeLink=@CodedResumeLink where UserId=@Userid                      
                       
  Commit TRAN UpdateUserDetails;                        
 End Try                         

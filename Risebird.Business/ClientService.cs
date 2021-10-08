@@ -258,5 +258,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid)
+        {
+            try
+            {
+                return await _clientRepository.PublicInterviewerUrlSave(emailId, uniqueid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

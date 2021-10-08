@@ -810,7 +810,16 @@ namespace Risebird.Business
                 {
                     reportModel.AssessmentGroupId = string.Join(',', reportModel.AssessmentGroupIdArray);
                 }
-                
+                if(!string.IsNullOrEmpty(reportModel.PerHourRateIndia))
+                {
+                    reportModel.IndiaProductRate = Convert.ToInt32((Convert.ToInt16(reportModel.PerHourRateIndia) * 1.5));
+
+                }
+                if (!string.IsNullOrEmpty(reportModel.PerHourRateOutside))
+                {
+                    reportModel.OutsideIndiaProductRate = Convert.ToInt32((Convert.ToInt16(reportModel.PerHourRateOutside) * 1.5));
+
+                }
                 var result = await _interviewerRepository.InterviewerRecommendation(reportModel);
                 return result;
             }
