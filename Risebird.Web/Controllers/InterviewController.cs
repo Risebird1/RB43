@@ -1588,7 +1588,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetAllOpenInterviews(emailid);
                         //meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
+                        ViewBag.emailid = emailid;
                         var list = new SelectList(new[]
 {
     new { ID = "Today", Name = "Today"},
@@ -1915,9 +1915,8 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes >= 0)
-                            {
-                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus==2 || item.MeetingStatus == null) )
+                            { item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
                             }
                             // item.Timer = 60;
@@ -2173,7 +2172,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes >= 0)
+                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
@@ -5805,7 +5804,7 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes >= 0)
+                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
