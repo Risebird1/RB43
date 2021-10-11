@@ -91,7 +91,7 @@
 
                                                 <!-- name of file chosen -->
                                                 <span id="file-chosen">No file chosen</span>
-                                                @Html.ValidationMessageFor(model => model.JDFile, "", new { @class = "text-danger jd-error" })
+                                                @Html.ValidationMessageFor(model => model.JDFile, "", new { @class = "jdfile-error" })
                                             </div>
                                         </div>
                                     </div>
@@ -144,13 +144,13 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                         @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
                                                         </td>
                                                         <td>
-                                                            @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
+                                                          @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
                                                         </td>
-                                                        <td>
-                                                            @Html.TextBox("TechSkill[0].Weightage", "", new { @class = "form-control", @type = "number", @max = "100", @min = "1" })
+                                                        <td style="border-right: 1px solid #dee2e6 !important;">
+                                                          @Html.TextBox("TechSkill[0].Weightage", "", new { @class = "form-control", @type = "number", @max = "100", @min = "1" })
                                                         </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
