@@ -122,6 +122,9 @@
                     <div class="pull-right">
                         <div>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" title="Create Interview Request" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">Interview Request</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" title="Scheduling Links" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
                             </button>
                             <span>
@@ -1087,6 +1090,9 @@
                 document.getElementById("Q1_" + i).checked = false;
             }
         }
+    }
+    function openCreateRequest(emailid, id) {
+        window.location.href = "/InterviewRequest/PublicCreateInterviewRequest?emailid=" + emailid + "&id=" + id;
     }
 </script>
 

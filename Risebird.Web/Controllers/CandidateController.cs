@@ -3495,7 +3495,10 @@ namespace Risebird.Web.Controllers
                     }
                     if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                     {
-                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
                     }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
@@ -3596,7 +3599,10 @@ namespace Risebird.Web.Controllers
                     }
                     if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                     {
-                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
                     }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
@@ -3931,7 +3937,7 @@ namespace Risebird.Web.Controllers
                 if (_meetingService.PublicCancelInterview(id))
                 {
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
-                    var result1 = _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
                     var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                     var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                     List<string> interviewers = new List<string>();
