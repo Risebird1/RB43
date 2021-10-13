@@ -14,6 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string RequiredSkill { get; set; }
         [Display(Name = "Requested Date")]
         public DateTime RequestedDate { get; set; }
+        [Required]
         [Display(Name = "Assessment Group")]
         public string AssessmentGroup { get; set; }
         [Display(Name = "Candidate Name")]
@@ -45,6 +46,7 @@ namespace Risebird.Entities.ViewModel
         public IFormFile JDFile { get; set; }
         [Display(Name = "Assessment Group List ")]
         public SelectList AssessmentGroupList { get; set; }
+        [Required]
         [Display(Name = "Insta Request Name ")]
         public string InstaRequestName { get; set; }
         public IList<InstaTechSkill> TechSkill { get; set; }

@@ -60,12 +60,12 @@ namespace Risebird.Web
                 })
                 .AddAzureAdB2C(options => Configuration.Bind("Authentication:AzureAdB2C", options))
                 .AddCookie();
-            services.AddSession(o =>
-            {
-                o.Cookie.Name = "Risebirdportal.Session";
-                o.Cookie.HttpOnly = true;
-                o.Cookie.IsEssential = true;
-            });
+            //services.AddSession(o =>
+            //{
+            //    o.Cookie.Name = "Risebirdportal.Session";
+            //    o.Cookie.HttpOnly = true;
+            //    o.Cookie.IsEssential = true;
+            //});
 
 
             services.Configure<BrotliCompressionProviderOptions>(options =>
@@ -89,7 +89,8 @@ namespace Risebird.Web
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(1440);
+                //options.IdleTimeout = TimeSpan.FromMinutes(1440);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.Name = "Risebirdportal.Session";
                 options.Cookie.HttpOnly = true;
             });
