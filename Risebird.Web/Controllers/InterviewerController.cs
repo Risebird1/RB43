@@ -2542,9 +2542,9 @@ namespace Risebird.Web.Controllers
                 {
                     TO = Emailid,
                     CC = "talent@risebird.io",
-                    Subject = "Candidate Status Update"
+                    Subject = "Open Interviews URL"
                 };
-                var emailsend1 = _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl);
+                var emailsend1 = _notificationHelper.SendPublicUrlToInterviewer(_mail1, sendreporturl);
                 if (emailsend1.Contains("successfully"))
                     return Json("Success");
                 else

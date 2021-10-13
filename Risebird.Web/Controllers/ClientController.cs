@@ -1203,9 +1203,13 @@ namespace Risebird.Web.Controllers
                 }
 
 
-                if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0 || m.QCStatus == 2))
+                if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
                 {
                     m.intervieweStatusStatDesc = "QC Pending(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
+                }
+                else if((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == 2))
+                {
+                    m.intervieweStatusStatDesc = "QC Failed(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
                 }
                 if (m.intervieweStatusStatDesc == null)
                 {
