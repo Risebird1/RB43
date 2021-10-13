@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,9 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;
         private readonly IIRFService _irfService;
-        public InterviewRequestController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInterviewRequestService interviewRequestService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IIRFService irfService)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
+        public InterviewRequestController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInterviewRequestService interviewRequestService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -40,7 +43,9 @@ namespace Risebird.Web.Controllers
             _irfRepository = irfRepository;
             _userService = userService;
             _irfService = irfService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -93,6 +98,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpGet]
         public async Task<IActionResult> CreateInterviewRequest()
         {
             try
@@ -154,10 +160,32 @@ namespace Risebird.Web.Controllers
                         {
                             if (meeting.JDFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
-                                meeting.JDLink = blob.Uri.ToString();
+                                var fileName = meeting.JDFile.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.JDFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(fileName);
+                                        meeting.JDLink = blob.Uri.ToString();
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                        await SetInterviewRequestSelectLists();
+                                        return View(meeting);
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                    await SetInterviewRequestSelectLists();
+                                    return View(meeting);
+                                }
                             }
                             else
                             {
@@ -170,7 +198,7 @@ namespace Risebird.Web.Controllers
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                                 Mail _mail = new Mail
                                 {
-                                    TO = "ashutosh@risebird.io; vaibhaw_sachan @risebird.io; talent @risebird.io",
+                                    TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io; talent@risebird.io",
                                     Subject = "New Interview Request: " + meeting.JdTitle
                                 };
                                 var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
@@ -213,6 +241,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        [HttpGet]
         public async Task<IActionResult> EditInterviewRequest(int id)
         {
             try
@@ -275,10 +304,32 @@ namespace Risebird.Web.Controllers
                         {
                             if (meeting.JDFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
-                                meeting.JDLink = blob.Uri.ToString();
+                                var fileName = meeting.JDFile.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.JDFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(fileName);
+                                        meeting.JDLink = blob.Uri.ToString();
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                        await SetInterviewRequestSelectLists();
+                                        return View(meeting);
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                    await SetInterviewRequestSelectLists();
+                                    return View(meeting);
+                                }
                             }
                             else if (!String.IsNullOrEmpty(meeting.JDLink))
                             {
@@ -376,6 +427,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to assign the request, please try to assign again.");
             }
         }
+        [HttpGet]
         public ActionResult SetIRFCreated(int id, string IRFId)
         {
             var result = _interviewRequestService.SetIRFCreated(id, IRFId.Trim());
@@ -405,7 +457,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
+        [HttpGet]
         public async Task<IActionResult> PublicCreateInterviewRequest(string emailid, string id)
         {
             try
@@ -420,6 +472,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.id = id;
                 var model = new InterviewRequestVM();
                 model.RequestedBy = emailid;
+                model.uniqueid = id;
                 var skills = _irfRepository.GetSkills();
                 await SetInterviewRequestSelectLists();
                 var Skillset = skills;
@@ -468,10 +521,32 @@ namespace Risebird.Web.Controllers
                 {
                     if (meeting.JDFile != null)
                     {
-                        await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
-                        meeting.JDLink = blob.Uri.ToString();
+                        var fileName = meeting.JDFile.FileName.Replace(" ", "_");
+                        FileInfo fi = new FileInfo(fileName);
+                        if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                || fileMimeType == "application/pdf")
+                            {
+                                await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                meeting.JDLink = blob.Uri.ToString();
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                await SetInterviewRequestSelectLists();
+                                return View(meeting);
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                            await SetInterviewRequestSelectLists();
+                            return View(meeting);
+                        }
                     }
                     else
                     {
@@ -484,7 +559,7 @@ namespace Risebird.Web.Controllers
                         //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                         Mail _mail = new Mail
                         {
-                            TO = "ashutosh@risebird.io; vaibhaw_sachan @risebird.io; talent @risebird.io",
+                            TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io; talent@risebird.io",
                             Subject = "New Interview Request: " + meeting.JdTitle
                         };
                         var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
