@@ -38,7 +38,14 @@ body {
     .clearfix:after {
         clear: both;
     }
-
+.jdfile-error {
+    bottom: -20px !important;
+    color: #E04B4A !important;
+    font-size: 12px !important;
+    padding: 0px !important;
+    position: absolute;
+    left: 20px;
+}
 a.infos {
     width: 30px;
     height: 43px;
@@ -9955,9 +9962,7 @@ button.close {
     border-right: 0px !important
 }
 
-
-
-#SelectabilityTable.table-bordered td:nth-child(6) {
+    #SelectabilityTable.table-bordered td:nth-child(6) {
     border-right: 0px !important
 }
 

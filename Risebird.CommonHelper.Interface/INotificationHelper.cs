@@ -69,5 +69,6 @@ namespace Risebird.CommonHelper.Interface
         string InterviewRequestAddClientNotification(Mail model, string JdTitle, string PrimarySkill);
         string SendInterviewCancelledMailClient(string interviewDate, string CandidateName, List<string> irfOwnersAndRestrictedIrfOwners = null);
         string SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName);
+        string SendPublicUrlToInterviewer(Mail model, string UrlDetails);
     }
 }

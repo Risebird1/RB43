@@ -28,11 +28,11 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">Open Interviews</h4></div>
                 </div>
-                @*<div class="pull-right ">
+                <div class="pull-right ">
                     <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
                         <span onclick="javascript:CopyPublicUrl('@ViewBag.emailid');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                     </button>
-                </div>*@
+                </div>
                 <div class="pull-right ">
                     @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space", onchange = "FilterInterviews(this.value);" })
 

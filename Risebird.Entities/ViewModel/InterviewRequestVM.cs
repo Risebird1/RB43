@@ -34,5 +34,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsSetToComplete { get; set; }
         public string IRFId { get; set; }
         public string CalendlyLink { get; set; }
+        public string uniqueid { get; set; }
     }
 }
