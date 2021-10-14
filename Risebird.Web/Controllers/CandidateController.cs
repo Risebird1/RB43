@@ -3443,9 +3443,9 @@ namespace Risebird.Web.Controllers
                 {
                     var firstData = new CandidateTimelineData();
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
-                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
                     else
                     {
@@ -3494,7 +3494,10 @@ namespace Risebird.Web.Controllers
                     }
                     if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                     {
-                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
                     }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
@@ -3544,9 +3547,9 @@ namespace Risebird.Web.Controllers
                 {
                     var firstData = new CandidateTimelineData();
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
-                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
                     else
                     {
@@ -3595,7 +3598,10 @@ namespace Risebird.Web.Controllers
                     }
                     if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
                     {
-                        candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
                     }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
@@ -3687,13 +3693,17 @@ namespace Risebird.Web.Controllers
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
+                    var firstData = new CandidateTimelineData();
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
-                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        data = data.Where(x => x.confirmationStatus != 2);
-                        data = data.OrderByDescending(x => x.InterviewId);
+                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
-                    var firstData = data.FirstOrDefault();
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
+                    firstData = data.FirstOrDefault();
 
                     var candidateTimeline = new CandidateTimelineVM();
 
@@ -3930,7 +3940,7 @@ namespace Risebird.Web.Controllers
                 if (_meetingService.PublicCancelInterview(id))
                 {
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
-                    var result1 = _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
                     var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                     var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                     List<string> interviewers = new List<string>();

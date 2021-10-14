@@ -20,6 +20,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using RestSharp;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
+using System.IO;
 
 namespace Risebird.Web.Controllers
 {
@@ -34,7 +36,8 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingService _meetingService;
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -45,7 +48,10 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _irfRepository = irfRepository;
             _userService = userService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> InstaIRF()
         {
             try
@@ -90,6 +96,8 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> CreateRequest()
         {
             try
@@ -154,10 +162,47 @@ namespace Risebird.Web.Controllers
                         {
                             if (meeting.JDFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
-                                meeting.JDLink = blob.Uri.ToString();
+                                var fileName = meeting.JDFile.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
+                                        meeting.JDLink = blob.Uri.ToString();
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                        if (profileName == "SeniorHR")
+                                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                        meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        return View(meeting);
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                    var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                    if (profileName == "SeniorHR")
+                                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                    meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                    return View(meeting);
+                                }
+                            }
+                            if (meeting.TechSkill.Count() < 2)
+                            {
+                                ModelState.AddModelError(string.Empty, "Please Add atlest 2 skills!");
+                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                if (profileName == "SeniorHR")
+                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                return View(meeting);
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
@@ -197,6 +242,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> EditRequest(int id)
         {
             try
@@ -262,10 +309,47 @@ namespace Risebird.Web.Controllers
                         {
                             if (meeting.JDFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
-                                meeting.JDLink = blob.Uri.ToString();
+                                var fileName = meeting.JDFile.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(meeting.JDFile.FileName.Replace(" ", ""));
+                                        meeting.JDLink = blob.Uri.ToString();
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                        if (profileName == "SeniorHR")
+                                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                        meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        return View("EditRequest", meeting);
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                    var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                    if (profileName == "SeniorHR")
+                                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                    meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                    return View("EditRequest", meeting);
+                                }
+                            }
+                            if (meeting.TechSkill.Count() < 2)
+                            {
+                                ModelState.AddModelError(string.Empty, "Please Add atlest 2 skills!");
+                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                if (profileName == "SeniorHR")
+                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                return View(meeting);
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
@@ -282,7 +366,8 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                            if (profileName == "SeniorHR")
+                                Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
                             meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                             return View("EditRequest", meeting);
                         }
@@ -503,10 +588,34 @@ namespace Risebird.Web.Controllers
                             }
                             if (meeting.ResumeFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(meeting.ResumeFile.FileName.Replace(" ", ""), "resumes", meeting.ResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.ResumeFile.FileName.Replace(" ", ""));
-                                uploadedFileURL = blob.Uri.ToString();
+                                var fileName = meeting.ResumeFile.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
+                                {
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.ResumeFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.ResumeFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(fileName);
+                                        uploadedFileURL = blob.Uri.ToString();
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                        meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        return View("Add", meeting);
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                    var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                    meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                    return View("Add", meeting);
+                                }
                             }
                             if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                             {
@@ -605,19 +714,43 @@ namespace Risebird.Web.Controllers
                         {
                             if ((meetingUpdated.ResumeFile != null))
                             {
-                                await _azureStorageHelper.InsertBlob(meetingUpdated.ResumeFile.FileName.Replace(" ", ""), "resumes", meetingUpdated.ResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meetingUpdated.ResumeFile.FileName.Replace(" ", ""));
-                                string uploadedFileURL = blob.Uri.ToString();
-                                if (uploadedFileURL == null)
+                                var fileName = meetingUpdated.ResumeFile.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
+                                if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
                                 {
-                                    var model = new AddUpdateMeetingVM();
-                                    ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meetingUpdated.ResumeFile);
+                                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(fileName, "resumes", meetingUpdated.ResumeFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                        var blob = containerRef.GetBlockBlobReference(fileName);
+                                        string uploadedFileURL = blob.Uri.ToString();
+                                        if (uploadedFileURL == null)
+                                        {
+                                            var model = new AddUpdateMeetingVM();
+                                            ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                            var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                            meetingUpdated.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                            return View(model);
+                                        }
+                                        meetingUpdated.ResumeLink = uploadedFileURL;
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                        meetingUpdated.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        return View("Edit", meetingUpdated);
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                     var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                                     meetingUpdated.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
-                                    return View(model);
+                                    return View("Edit", meetingUpdated);
                                 }
-                                meetingUpdated.ResumeLink = uploadedFileURL;
                             }
                             else if (meetingUpdated.ResumeLink == null || meetingUpdated.ResumeLink == "")
                             {
@@ -706,6 +839,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        [HttpGet]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateName, string Role)
         {
             try
@@ -1173,6 +1307,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+
         public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
         {
             _zoommetingobject.type = 2;

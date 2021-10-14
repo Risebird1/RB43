@@ -187,10 +187,10 @@ namespace Risebird.Entities.ViewModel
         //[Display(Name = "Service Domain")]
         //public bool IsServiceDomain { get; set; }
 
-        [Display(Name = "Service Rate(India)")]
+        [Display(Name = "Service Rate (India)")]
         public int IndiaServiceRate { get; set; }
 
-        [Display(Name = "Service Rate(Outside India)")]
+        [Display(Name = "Service Rate (Outside India)")]
         public int OutsideIndiaServiceRate { get; set; }
 
         [Display(Name = "Product Rate(India)")]
