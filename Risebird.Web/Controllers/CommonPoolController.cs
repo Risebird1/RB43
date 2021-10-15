@@ -49,6 +49,7 @@ namespace Risebird.Web.Controllers
         /// <param name="Page"></param>
         /// <returns></returns>
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index(int? Page, string searchvalue)
         {
             try
@@ -407,6 +408,7 @@ namespace Risebird.Web.Controllers
         /// Method to reset applied filters on index page
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> ResetCommonPoolFilter()
         {
             try
@@ -435,6 +437,7 @@ namespace Risebird.Web.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> VideoPage(int id, string irfid, string actionstatus)
         {
             try
@@ -1055,6 +1058,7 @@ namespace Risebird.Web.Controllers
         /// Method to reset applied filters on mainframe VideoPage
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> ResetVideoPageFilter()
         {
             try
@@ -1083,6 +1087,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <param name="irfId"></param>
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -1102,6 +1107,7 @@ namespace Risebird.Web.Controllers
 
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
+        
         [HttpPost]
         public JsonResult VideoLike(string value, string videoid)
         {
@@ -1140,12 +1146,14 @@ namespace Risebird.Web.Controllers
             }
 
         }
+       
         [HttpPost]
         public JsonResult publicVideoShare(string value, string videoid)
         {
             _meetingService.VedioShare(value, videoid);
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult VideoComment(string comment, string videoid)
         {
@@ -1153,6 +1161,7 @@ namespace Risebird.Web.Controllers
             _meetingService.VedioComment(comment, videoid, email);
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult UpdateVideoComment(string videoid)
         {
@@ -1161,6 +1170,8 @@ namespace Risebird.Web.Controllers
             var comments = _meetingService.GetvedioComments(id);
             return Json(comments);
         }
+        
+        [HttpGet]
         public JsonResult CandidateShortList(string videoid)
         {
             var email = HttpContext.Session.GetString("email");
@@ -1184,6 +1195,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(result);
         }
+        
         [HttpPost]
         public JsonResult CandidateSuitable(string videoid, string Comment)
         {
@@ -1206,6 +1218,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult VedioShared(string Emailids, string videoid, string Name, string skills)
         {
@@ -1242,6 +1255,8 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
+        
+        [HttpGet]
         public JsonResult ShareVideoLinkToMail(string Emailids, string videoid, string Name, string comment, string skills, string resumeLink)
         {
             var email = HttpContext.Session.GetString("email");
@@ -1265,6 +1280,8 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
+        
+        [HttpGet]
         public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl)
         {
             //Start:Save View counts of vedio
@@ -1281,6 +1298,8 @@ namespace Risebird.Web.Controllers
             //End:Save View counts of vedio
             return Json("Succecss");
         }
+        
+        [HttpGet]
         public JsonResult LockorUnlockVideo(string imid, int islock, string emailid = null)
         {
             if (HttpContext.Session.GetString("email") != null)
@@ -1298,7 +1317,9 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult SelectedCandidate()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1409,6 +1430,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public IActionResult SelectedCandidate(InterviewFilter filter)
@@ -1493,7 +1515,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetSelectedCandidateFilter()
         {
             try
@@ -1515,16 +1539,22 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
+        [HttpGet]
         public JsonResult FetchClientUsers(string ClientName)
         {
             var result = _meetingService.FetchClientUsers(ClientName);
             return Json(result);
         }
+        
+        [HttpGet]
         public JsonResult SetCandidateAvailability(string imid, int isavailable)
         {
             var result = _meetingService.SetCandidateAvailability(imid, isavailable);
             return Json(result);
         }
+        
+        [HttpGet]
         public JsonResult MoveToCP(string imid, int movetocp)
         {
             var result = _meetingService.MoveToCP(imid, movetocp);

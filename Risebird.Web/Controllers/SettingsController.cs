@@ -23,6 +23,8 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try

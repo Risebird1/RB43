@@ -36,6 +36,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -167,6 +168,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetAccountFilter()
         {
             try
@@ -258,6 +260,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(Account model)
@@ -294,6 +297,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult ArchiveAccount(int id)
         {
             try
@@ -335,6 +339,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult UnArchiveAccount(int id)
         {
             try
@@ -374,7 +379,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredProjects(int clientId)
         {
             try
@@ -412,7 +419,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetEditFilteredProjects(int clientId, int accountId)
         {
             try
@@ -464,7 +473,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> UserProfile()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -499,6 +510,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> UserProfile(InterviewerProfileVM userProfile)
@@ -575,6 +587,8 @@ namespace Risebird.Web.Controllers
             return View();
 
         }
+
+        [HttpGet]
         private void GetAllSelectList(InterviewerProfileVM model)
         {
             var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))

@@ -46,6 +46,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             try
@@ -242,6 +243,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteClient(int id)
         {
             try
@@ -272,10 +274,12 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("List");
             }
         }
+
         /// <summary>
         /// Fetch All Jd Records according to Role
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> CreateJd()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -321,6 +325,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [HttpPost]
         public IActionResult CreateJd(ClientDetails fillters)
         {
@@ -372,6 +377,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         /// <summary>
         /// Craete New Jd
         /// </summary>
@@ -442,6 +448,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         /// <summary>
         /// Add New Candidate For JD
         /// </summary>
@@ -471,6 +478,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [HttpPost]
         public IActionResult CandidateJDScore(CandidateCuratedScoreVM model)
         {
@@ -511,11 +519,14 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         /// <summary>
         /// Edit existing JD
         /// </summary>
         /// <param name="assessmentid"></param>
         /// <returns></returns>
+        /// 
+        [HttpGet]
         public JsonResult EditJd(int assessmentid)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -564,6 +575,8 @@ namespace Risebird.Web.Controllers
                 return Json("fail");
             }
         }
+
+        [HttpGet]
         public IActionResult CandidateRelatedJD(int interviewid)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -634,10 +647,12 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         /// <summary>
         /// Client Wallet Details
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult RisebirdPay()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -665,6 +680,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [HttpPost]
         public JsonResult WalletDetails(string action)
         {
@@ -707,6 +723,7 @@ namespace Risebird.Web.Controllers
                 return Json("SignOut");
             }
         }
+
         [HttpPost]
         public JsonResult AddWalletPoints(int points, string comment)
         {
@@ -743,6 +760,8 @@ namespace Risebird.Web.Controllers
                 return Json("SignOut");
             }
         }
+
+        [HttpGet]
         public IActionResult ResetCandidate(int Clientjdid, string candidateEmail)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -766,6 +785,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [HttpPost]
         public JsonResult DeleteJd(int assessmentid)
         {
@@ -1141,7 +1161,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         private void SetMeetingsProperties(List<MeetingVM> meetings)
         {
             foreach (var m in meetings)
@@ -1219,6 +1239,7 @@ namespace Risebird.Web.Controllers
             return;
         }
 
+        [HttpGet]
         private List<MeetingVM> ApplyAllMeetingsFilter(InterviewFilter filter, List<MeetingVM> meetings)
         {
             if (filter.StartDate != null && filter.EndDate != null)
@@ -1358,7 +1379,9 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetAllPriorityClientMeetingsFilter(string Emailid)
         {
             try
@@ -1592,7 +1615,6 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-
         public IActionResult Report(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
@@ -1645,6 +1667,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -2336,6 +2360,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetSelectedPriorityClientMeetingsfilters()
         {
             try
@@ -2980,7 +3005,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<IActionResult> VerifyJoiningAudio(int candidateId, string CandidateName, int irfId, int meetingId)
         {
@@ -3010,6 +3034,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [Authorize]
         [HttpPost]
         [DisableRequestSizeLimit]
@@ -3064,6 +3089,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SelectedMeetings");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public IActionResult RejectedMeetings(int? Page, string searchValue)
@@ -3273,6 +3299,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [HttpPost]
         public JsonResult RejectedClientMeetingsJson(string searchValue)
         {
@@ -3429,7 +3456,9 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetRejectClientMeetingsFilter()
         {
             try
@@ -3451,6 +3480,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public FileContentResult RejectedPriorityExporttoExcel()
@@ -3549,6 +3579,7 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public IActionResult PublicReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
@@ -3583,6 +3614,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllMeetings");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> NotScheduledMeetings(int? Page, string searchValue)
@@ -3666,6 +3698,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> SendInvite(string irfId, string IRFName, string emailId)
@@ -3705,6 +3738,7 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
@@ -3740,6 +3774,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllMeetings");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ReScheduleMeetings()
@@ -3827,6 +3862,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> ReScheduleMeetings(InterviewFilter filter)
@@ -3908,6 +3944,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> ResetReScheduleMeetingsFilter()
         {
             try
@@ -3928,6 +3966,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> NotScheduledMeetings(InterviewFilter filter, int? Page, string searchValue)
@@ -4003,6 +4042,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> ResetNotScheduleMeetingsFilter()
         {
             try
@@ -4023,6 +4064,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public IActionResult InstaAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
@@ -4058,6 +4100,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllMeetings");
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> PublicAllMeetings()
         {
             int? Page = 1;
@@ -4082,6 +4126,7 @@ namespace Risebird.Web.Controllers
             ViewBag.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).Distinct();
             return View("AllMeetings", meetings.ToPagedList(Page ?? 1, 10));
         }
+        
         [HttpPost]
         public async Task<JsonResult> PublicAllMeetings(string Emailid)
         {
@@ -4095,6 +4140,7 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have Client access.");
             }
         }
+        
         [HttpPost]
         public async Task<JsonResult> SendPublicURLClientUser(string Emailid)
         {
@@ -4125,6 +4171,7 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
+        
         [HttpPost]
         public async Task<JsonResult> CopyPublicURLClientUser(string Emailid)
         {
