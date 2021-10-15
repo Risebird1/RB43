@@ -20,6 +20,8 @@ namespace Risebird.Web.Controllers
             _joinabilityService = joinabilityService;
             _applicationErrorLogger = applicationErrorLogger;
         }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -45,6 +47,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddJoinability(JoinabilityMatrix model)
@@ -85,6 +88,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> AddJoinability()
         {
@@ -106,6 +110,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> EditJoinability(int id)
         {
@@ -170,6 +175,8 @@ namespace Risebird.Web.Controllers
                 return View("Index");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> DeleteJoinabilityMatrix(int id)
         {
             try

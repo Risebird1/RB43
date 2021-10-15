@@ -34,6 +34,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -95,6 +96,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index(TemplateFilter filter)
@@ -147,6 +149,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetTemplateFilter()
         {
             try
@@ -170,6 +173,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             try
@@ -204,12 +208,15 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         private void SetTemplateParameters(SkillChannelTemplateVM model)
         {
             model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup"); ;
             model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
             model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
         }
+        
+        [HttpGet]
         private void SetEditTemplateParameters(EditSkillChannelTemplateVM model)
         {
             model.AssessmentGroupList = new SelectList(_interviewerService.FetchAssessmentGroups(), "id", "AssessmentGroup"); ;
@@ -220,6 +227,7 @@ namespace Risebird.Web.Controllers
         }
         
         [Authorize]
+        [HttpGet]
         public SelectList GetInterviewers(string assessmentgroupid)
         {
 
@@ -235,6 +243,7 @@ namespace Risebird.Web.Controllers
             //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
             return new SelectList(list, "Value", "Text");
         }
+        
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -330,6 +339,7 @@ namespace Risebird.Web.Controllers
         //}
 
         [Authorize]
+        [HttpGet]
         public async Task<string> GetInterviewerSkillsByUserId(int userId)
         {
             var name = await _irfService.GetInterviewerSkillsByUserId(userId);
@@ -354,6 +364,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             try

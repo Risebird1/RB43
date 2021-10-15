@@ -21,6 +21,7 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -85,6 +86,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> AddSelectability()
         {
@@ -106,6 +108,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> EditSelectability(int id)
         {
@@ -170,6 +173,8 @@ namespace Risebird.Web.Controllers
                 return View("Index");
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> DeleteSelectabilityMatrix(int id)
         {
             try
