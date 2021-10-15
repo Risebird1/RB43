@@ -488,7 +488,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (!String.IsNullOrEmpty(emailid))
                 {
-                    if (Emailid != emailid)
+                    if (!string.IsNullOrEmpty(Emailid) && Emailid != emailid)
                     {
                         return RedirectToAction("PublicAllMeetings", new { id = id });
                     }
