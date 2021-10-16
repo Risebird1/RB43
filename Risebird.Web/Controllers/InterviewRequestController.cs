@@ -471,7 +471,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
                 var model = new InterviewRequestVM();
-                model.RequestedBy = emailid;
+               // model.RequestedBy = emailid;
                 model.uniqueid = id;
                 var skills = _irfRepository.GetSkills();
                 await SetInterviewRequestSelectLists();
