@@ -20,6 +20,8 @@ namespace Risebird.Web.Controllers
             _profileService = profileService;
             _applicationErrorLogger = applicationErrorLogger;
         }
+        
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -172,6 +174,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteProfile(int id)
         {
             try

@@ -41,7 +41,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Mail(Mail mail)
         {
@@ -64,6 +63,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
         [HttpPost]
         public async Task<JsonResult> SuportMail(string To, string Subject, string Body)
         {

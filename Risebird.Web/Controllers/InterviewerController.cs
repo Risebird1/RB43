@@ -66,7 +66,7 @@ namespace Risebird.Web.Controllers
 
 
         #region Interviewer Profile functions
-
+        [HttpGet]
         public async Task<IActionResult> Index(int? Page, string searchValue)
         {
             try
@@ -233,6 +233,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> Index(int? Page, InterviewFilter filter, string searchValue)
         {
@@ -389,6 +390,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> ResetInterviewerIndexFilter()
         {
             try
@@ -635,6 +638,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
         private void GetAllSelectList(InterviewerProfileVM model)
         {
             //=========Availability============
@@ -765,6 +770,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public JsonResult IsNickNameExists(string NickName, int UserId)
         {
             //check if the NickName exists
@@ -777,6 +783,7 @@ namespace Risebird.Web.Controllers
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
 
+        [HttpGet]
         public JsonResult IsEmailIdExists(string EmailId, int UserId)
         {
             //check if the Email Id exists
@@ -788,6 +795,7 @@ namespace Risebird.Web.Controllers
             else
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
+        
         [HttpPost]
         public JsonResult EmailIdVilidation(string EmailId, int UserId)
         {
@@ -800,7 +808,6 @@ namespace Risebird.Web.Controllers
             else
                 return Json("Not", new Newtonsoft.Json.JsonSerializerSettings());
         }
-
 
         #endregion
 
@@ -862,6 +869,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("IndexEmployer", new { id = IProfileId });
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddEmployerDetails(InterviewerProfessional interviewerProfessional)
@@ -894,6 +902,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
             }
         }
+
+        [HttpGet]
         private void GetAllEmployerSelectList()
         {
             ViewBag.ExperienceRange = new SelectList(_interviewerService.GetExperienceRange(), "id", "Description");
@@ -985,7 +995,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> DeleteEmployerDetails(int id, int IProfileId)
         {
             try
@@ -1017,7 +1027,6 @@ namespace Risebird.Web.Controllers
                 return Json(new { url = Url.Action("IndexEmployer", "Interviewer", new { id = IProfileId }) });
             }
         }
-
 
 
         #endregion
@@ -1074,6 +1083,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview", "Interview");
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> MyProfile(InterviewerProfileVM interviewerProfile)
         {
@@ -1240,7 +1250,6 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
 
         [Authorize]
         [HttpGet]
@@ -1649,6 +1658,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         //[HttpPost]
         public async Task<IActionResult> AssignYourself(int id, DateTime InterviewDate)
         {
@@ -1684,6 +1694,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenInterviewerAssessment");
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnassignYourself(int id)
@@ -1729,6 +1740,8 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+
+        [HttpGet]
         public IActionResult AddReport(int interviewId, int iscId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string backUrl = null)
         {
             try
@@ -1861,6 +1874,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterviewerAssessment");
             }
         }
+        
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -2006,6 +2021,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="Page"></param>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult InterviewerAssessment(int? Page)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -2037,6 +2053,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
+        [HttpGet]
         public IActionResult AddAssessments()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -2083,6 +2101,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
+
         [HttpPost]
         public IActionResult AddAssessments(AssignmentVM model)
         {
@@ -2122,6 +2142,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
+        [HttpGet]
         public IActionResult AssessmentForApproval(int id, string EmailAddress)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -2157,6 +2179,7 @@ namespace Risebird.Web.Controllers
         /// <param name="assessmentid"></param>
         /// <param name="status"></param>
         /// <returns></returns>
+        [HttpGet]
         public JsonResult ChangeStatusAssessment(int assessmentid, int status)
         {
             var model = _interviewerService.ChangeStatusAssessment(assessmentid, status);
@@ -2170,6 +2193,7 @@ namespace Risebird.Web.Controllers
         /// <param name="assessment"></param>
         /// <param name="comments"></param>
         /// <returns></returns>
+        [HttpGet]
         public JsonResult ShareAssessmentcomment(int assessmentid, string EmailAddress, string assessment, string comments)
         {
             Mail _mail = new Mail
@@ -2184,6 +2208,7 @@ namespace Risebird.Web.Controllers
         /// Edit Assessment Details By interviewer
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult EditAssessment(int id)
         {
             var result = _irfService.FetchAssessmentdetails(id);
@@ -2211,6 +2236,7 @@ namespace Risebird.Web.Controllers
             model.AssessmentLevellist = new SelectList(_assessmentLevel, "ID", "Name");
             return View(model);
         }
+        
         [HttpPost]
         public IActionResult EditAssessment(AssignmentVM model)
         {
@@ -2218,9 +2244,7 @@ namespace Risebird.Web.Controllers
             return RedirectToAction("InterviewerAssessment");
         }
 
-
         [HttpPost]
-
         public JsonResult InterviewerProfileJson(string searchValue)
         {
             try
@@ -2332,6 +2356,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> InterviewerRecommendation(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -2440,6 +2465,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpPost]
         public JsonResult BankDetailsJson(int interviewerid)
         {
@@ -2447,6 +2473,7 @@ namespace Risebird.Web.Controllers
             return Json(results.Result);
 
         }
+        
         [HttpPost]
         public async Task<JsonResult> AvailDetailsJson(int interviewerid)
         {
@@ -2461,7 +2488,9 @@ namespace Risebird.Web.Controllers
             }
             return Json(results);
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> FeedbackDetails(string type)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -2526,6 +2555,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [HttpPost]
         public async Task<JsonResult> SendPublicURLInterviewer(string Emailid)
         {
@@ -2556,6 +2586,7 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
+        
         [HttpPost]
         public async Task<JsonResult> CopyPublicURLInterviewer(string Emailid)
         {

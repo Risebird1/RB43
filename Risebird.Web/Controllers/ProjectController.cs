@@ -36,6 +36,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -101,6 +102,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public IActionResult Index(ProjectFilter filter)
@@ -169,7 +171,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> ResetProjectFilter()
         {
             try
@@ -312,6 +314,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult DeleteProject(string id)
         {
             try
@@ -353,6 +356,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult UnArchiveProject(int id)
         {
             try
@@ -393,6 +397,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetFilteredIRF(string clientId)
         {
             try
@@ -453,6 +458,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> GetEditFilteredIRF(string clientId, string projectId)
         {
             try
@@ -838,6 +845,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Stats(string id, string name)
         {
             //TempData["id"] = id;
@@ -1257,8 +1265,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-
 
         [HttpPost]
         public JsonResult ProjectInterviewMeetingsJson(string searchValue)

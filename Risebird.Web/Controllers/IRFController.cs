@@ -65,6 +65,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -659,7 +660,7 @@ namespace Risebird.Web.Controllers
         }
 
 
-
+        [HttpGet]
         public async Task<IActionResult> ResetIRFFilter()
         {
             try
@@ -789,7 +790,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         private void SetAddIRFProperties(IRFVm model)
         {
             var skills = _irfRepository.GetSkills();
@@ -877,12 +878,15 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public string GetInterviewerSkills(int id)
         {
             var name = _irfService.GetInterviewerSkills(id);
             return name;
         }
+        
         [Authorize]
+        [HttpGet]
         public string GetInterviewerSkillsFromProfile(int id)
         {
             var name = _iInterviewerSkillsService.GetInterviewerSkills(id);
@@ -890,12 +894,15 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public string GetRecruiterDomain(string userId)
         {
             return _irfService.GetRecruiterDomain(Convert.ToInt16(userId));
 
         }
+        
         [Authorize]
+        [HttpGet]
         public SelectList GetInterviewers(string assessmentgroupid)
         {
 
@@ -913,6 +920,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public string GetQCSkills(string id)
         {
             return _irfService.GetQCSkills(Convert.ToInt16(id));
@@ -920,25 +928,28 @@ namespace Risebird.Web.Controllers
 
         //GetClientUserRole
         [Authorize]
+        [HttpGet]
         public string GetClientUserRole(string id)
         {
             return _irfService.GetClientUserRole(Convert.ToInt16(id));
         }
 
         [Authorize]
+        [HttpGet]
         public string GetQuestionSkills(string id)
         {
             return _irfService.GetQuestionSkills(id);
         }
 
-
         [Authorize]
+        [HttpGet]
         public async Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId)
         {
             return await _irfService.GetTechSkillofSkillChannelByQuestion(question, irfId);
         }
 
         [Authorize]
+        [HttpGet]
         public bool CheckUniqueness(string value)
         {
             return _irfService.CheckUniqueness(value);
@@ -1140,6 +1151,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ArchiveIRF(int id)
         {
             try
@@ -1170,7 +1182,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> UnArchiveIRF(int id)
         {
             try
@@ -1566,8 +1580,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
@@ -1602,7 +1614,6 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-
         public async Task<IActionResult> EditIRF(IRFVm model)
         {
             try
@@ -1754,6 +1765,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         private void SetEditIRFProperties(IRFVm model)
         {
             string prof = HttpContext.Session.GetString("profileName");
@@ -1851,6 +1863,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Stats(string id, string irfId)
         {
             TempData["id"] = id;
@@ -2010,6 +2023,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -2192,6 +2206,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public SelectList GetClientUser(int clientId)
         {
             var list = new List<SelectListItem>();
@@ -2436,6 +2451,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Candidates(string id, string irfName, int? Page, string searchValue)
@@ -2856,7 +2872,7 @@ namespace Risebird.Web.Controllers
         //    return null;
         //}
 
-
+        [HttpGet]
         public IActionResult ShowCalendly(string irfName, string calendlyLink, int type)
         {
             ViewBag.IRFName = irfName;
@@ -3215,8 +3231,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
-
         [HttpGet]
         public IActionResult EnrollVoiceItUser(int candidateId, string candidateEmail, int irfId, string irfName)
         {
@@ -3255,7 +3269,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Candidates", new { id = irfId, irfName = irfName });
             }
         }
-
 
         [Authorize]
         [HttpPost]
@@ -3315,7 +3328,9 @@ namespace Risebird.Web.Controllers
 
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult PauseIRF(int irfId, string irfName)
         {
             try
@@ -3355,7 +3370,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public IActionResult PlayIRF(int irfId, string irfName)
         {
             try
@@ -3395,6 +3412,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> InterviewerDetail(int? Page, string Searchvalue)
         {
             try
@@ -3465,6 +3484,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> InterviewerDetailById(string Id, string Videoid)
         {
             try
@@ -3509,6 +3530,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public bool Subscribe(int id)
         {
             try
@@ -3529,6 +3551,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public bool UnSubscribe(int id)
         {
             try
@@ -3559,6 +3582,7 @@ namespace Risebird.Web.Controllers
         //    return new SelectList(listItems, "Value", "Text", listItems.First().Value);
         //}
 
+        [HttpGet]
         public bool SaveCandidateStatus(int candidateId, int statusValue)
         {
             var result = _irfService.SaveCandidateStatus(candidateId, statusValue);
@@ -3750,6 +3774,7 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+        
         [Authorize]
         [HttpGet]
         public IActionResult AddUpdateCuratedGroupUsers(int id)
@@ -3798,6 +3823,8 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+        
+        [HttpGet]
         public IActionResult CuratedIndex()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -3935,6 +3962,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetCuratedIndexFilter()
         {
             try
@@ -3957,6 +3985,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetIRFInterviewerMembers(int irfId)
         {
             try
@@ -3976,6 +4005,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="Page"></param>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> InterviewerEntitle(int? Page)
         {
             try
@@ -4056,6 +4086,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
         public ActionResult EditAssessment(int assessmentid)
         {
             var model = new Assessment();
@@ -4102,12 +4134,14 @@ namespace Risebird.Web.Controllers
             return PartialView(model);
             //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
         }
+        
         /// <summary>
         /// Fetch Assessment Related to Assessment Group
         /// </summary>
         /// <param name="Page"></param>
         /// <param name="id"></param>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> InterviewerEntitleDetails(int? Page, int id)
         {
             try
@@ -4213,10 +4247,12 @@ namespace Risebird.Web.Controllers
             }
             return RedirectToAction("InterviewerEntitle");
         }
+        
         /// <summary>
         /// Assessment Detailed page
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult AssessmentDetails(int id)
         {
             var result = _irfService.FetchAssessmentdetails(id);
@@ -4234,6 +4270,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+        
         [HttpPost]
         public JsonResult AssessmentLike(int id)
         {
@@ -4251,6 +4288,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
@@ -4291,8 +4329,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-
-
         [HttpGet]
         public IActionResult AddCandidateStatus(int candidateId, int irfId, string rfName, string candidateName)
         {
@@ -4325,7 +4361,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
             }
         }
-
 
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -4487,6 +4522,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> DeleteCandidateStatus(int id)
         {
             try
@@ -4519,6 +4555,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [HttpPost]
         public JsonResult CandidatesJson(string searchValue)
         {
@@ -4564,8 +4601,7 @@ namespace Risebird.Web.Controllers
             return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
         }
 
-
-
+        [HttpGet]
         public JsonResult InterviewMeetingsJson(string searchValue)
         {
             int Page = 1;
@@ -4612,6 +4648,7 @@ namespace Risebird.Web.Controllers
             return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
         }
 
+        [HttpGet]
         public JsonResult SelectedInterviewMeetingsJson(string searchValue)
         {
             int Page = 1;
@@ -4655,6 +4692,8 @@ namespace Risebird.Web.Controllers
 
             return Json(new { result = selectedMeeting.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = selectedMeeting.Count });
         }
+
+        [HttpGet]
         public JsonResult MultipleCandidateInvitesJson(string searchValue)
         {
             int Page = 1;
@@ -4699,6 +4738,8 @@ namespace Risebird.Web.Controllers
 
             return Json(new { result = modelList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = modelList.Count });
         }
+
+        [HttpGet]
         public async Task<IActionResult> GetCandidateStatus(int id, string irfId)
         {
             var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -4852,7 +4893,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> GetCandidateStatus(int id, string irfId, CandidateTimelineFilter filter)
@@ -5039,7 +5079,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetCandidateTimelineFilter(int id)
         {
             try
@@ -5061,6 +5103,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<FileContentResult> GetCandidateStatusExportToExcel(int id, string searchValue)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -5384,7 +5428,9 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public JsonResult SendEmailForCandidateFeedbackByIRF(string IRFId)
         {
             var modelData = new List<SurveyVM>();
@@ -5427,6 +5473,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public IActionResult PublicAddReport(int interviewId, int irfId, bool IsSelected = false)
@@ -5461,6 +5508,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public IActionResult ExecutiveReport(int interviewId, int irfId, bool IsSelected = false)
@@ -5496,6 +5544,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [HttpPost]
         public JsonResult CheckEditCondition(string IRFId)
         {
@@ -5534,6 +5583,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> NotScheduledCandidate(string IRFId)
@@ -5572,6 +5622,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public IActionResult InstaAddReport(int interviewId, int irfId, bool IsSelected = false)
@@ -5608,8 +5659,8 @@ namespace Risebird.Web.Controllers
 
         }
 
-
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> SkillChannelDetails()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -5696,6 +5747,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> ResetSkillChannelDetailsFilter()
         {
             try
@@ -5718,6 +5771,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> CloneSkillChannnel()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -5747,6 +5801,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> CloneSkillChannnel(InterviewFilter filter)
         {
@@ -5778,6 +5833,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetCloneSkillChannnelFilter()
         {
             try
@@ -5800,6 +5856,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public JsonResult FetchSkillDetails(int id)
         {
             var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);

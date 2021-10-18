@@ -25,11 +25,13 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
         // GET: TwilioCalls/Generate
+        [HttpGet]
         public JsonResult Generate(string page)
         {
             var token = GenerateToken();
@@ -37,6 +39,7 @@ namespace Risebird.Web.Controllers
             return Json(new { token });
         }
 
+        [HttpGet]
         public string GenerateToken()
         {
             var scopes = new HashSet<IScope>

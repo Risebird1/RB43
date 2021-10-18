@@ -67,6 +67,8 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _irfRepository = irfRepository;
         }
+        
+        [HttpGet]
         public async Task<IActionResult> CandidateTimeline()
         {
             var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -344,6 +346,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("CandidateTimeline");
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> CandidateTimeline(CandidateTimelineFilter filter)
         {
@@ -627,6 +630,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
+        [HttpGet]
         public async Task<FileContentResult> CandidateStatusExporttoExcel(/*string modelData*/)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -1013,6 +1017,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetCandidateTimelineFilter()
         {
             try
@@ -1203,6 +1208,7 @@ namespace Risebird.Web.Controllers
             }
             else { return Json("Failed"); }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Add(string irfId, string irfName)
@@ -1244,6 +1250,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("GetCandidates", new { id = irfId, irfName = irfName });
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(Candidate model)
@@ -1385,6 +1392,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> ExportCandidateList(string irfId, string irfName)
@@ -1820,7 +1828,6 @@ namespace Risebird.Web.Controllers
             return new SelectList(listItems, "Value", "Text", listItems.First().Value);
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Report(int candidateId, int irfId, string rfName)
         {
@@ -1972,7 +1979,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         //[ValidateAntiForgeryToken]
         //[HttpPost]
         //public async Task<IActionResult> AddStatus(CandidateStatus model)
@@ -2035,8 +2041,6 @@ namespace Risebird.Web.Controllers
         //        return RedirectToAction("StatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
         //    }
         //}
-
-
 
         [HttpPost]
         public async Task<IActionResult> AddStatus()
@@ -2139,7 +2143,6 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-
 
         [HttpGet]
         public async Task<IActionResult> EditStatus(int id, int candidateId, int irfId, string rfName, string candidateName)
@@ -2271,6 +2274,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> OpenInvites()
@@ -2392,6 +2396,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+
         [HttpPost]
         public JsonResult InterestList(string IRFID)
         {
@@ -2407,6 +2412,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> Video(int id)
         {
             try
@@ -2641,6 +2647,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -2661,6 +2668,7 @@ namespace Risebird.Web.Controllers
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
 
+        [HttpGet]
         public JsonResult ChangeCandidateStatus(int videoid, string Status)
         {
             try
@@ -2881,8 +2889,6 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
@@ -2920,6 +2926,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> AutoCallCandidate(string phoneNumber, int irfId, int candidateId)
         {
             try
@@ -2942,6 +2949,7 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> CancelInterviewProcess(int id)
@@ -2955,6 +2963,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
@@ -3330,6 +3339,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> CandidateResumesExporttoExcel(int irfId, string irfName)
@@ -3420,6 +3430,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicCandidateStatus(string emailid, string id)
         {
             try
@@ -3520,6 +3532,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id)
         {
@@ -3635,6 +3648,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicAllMeetings(string id)
         {
             var model = new List<CandidateTimelineVM>();
@@ -3649,6 +3664,7 @@ namespace Risebird.Web.Controllers
             }
             return View("PublicCandidateStatus", model);
         }
+
         [HttpPost]
         public async Task<JsonResult> PublicAllMeetings(string id, string Emailid)
         {
@@ -3663,6 +3679,8 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
+
+        [HttpGet]
         public async Task<FileContentResult> PublicCandidateStatusExporttoExcel(string emailid)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -3870,6 +3888,8 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid, string id)
         {
             try
@@ -3884,6 +3904,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicAllMeetingsAdmin()
         {
             var model = new List<CandidateTimelineVM>();
@@ -3897,6 +3919,7 @@ namespace Risebird.Web.Controllers
             }
             return View("PublicCandidateStatus", model);
         }
+
         [HttpPost]
         public async Task<JsonResult> PublicAllMeetingsAdmin(string Emailid)
         {
@@ -3910,6 +3933,7 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
@@ -3931,6 +3955,7 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+        
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId)
@@ -3968,6 +3993,7 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not cancel invite!");
             }
         }
+        
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> FetchSchedulingLinks(string emailid)
@@ -3987,6 +4013,7 @@ namespace Risebird.Web.Controllers
                 return Json("");
             }
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> PublicStatusList(int irfId, int candidateId)
