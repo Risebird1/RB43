@@ -139,6 +139,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRequest(InstaMeetingVM meeting)
@@ -286,6 +287,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditRequest(InstaMeetingVM meeting)
@@ -389,6 +391,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("InstaIRF");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
             try
@@ -463,6 +467,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> Index(int id, InterviewFilter filter)
         {
@@ -523,6 +528,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> Add(int Requestedid)
         {
@@ -557,6 +563,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(InstaMeetingVM meeting)
@@ -663,6 +670,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -696,6 +704,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(InstaMeetingVM meetingUpdated)
@@ -792,6 +801,8 @@ namespace Risebird.Web.Controllers
             }
         }
         //Fetch Skills On AssessmentGroupId
+        
+        [HttpGet]
         public JsonResult FetchAssessmentGroupSkills(int id)
         {
             var Skills = _instaInterviewService.FetchSkillsByAssessmentGroup(id);
@@ -900,6 +911,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenInterview");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> MyInterview()
         {
@@ -974,6 +986,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> MyInterview(MyInterviewFilter filter)
         {
@@ -1042,6 +1055,8 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
+        [HttpGet]
         public IActionResult ResetMyInterviewFilter()
         {
             try
@@ -1062,6 +1077,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+        
         [HttpGet]
         public IActionResult AddReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
         {
@@ -1123,6 +1139,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+        
         [HttpPost]
         [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
@@ -1240,6 +1257,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+        
         [HttpGet]
         public IActionResult PublicReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
         {
@@ -1273,6 +1291,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+        
         [HttpGet]
         public IActionResult InstaAddReport(int interviewId, int Requestedid, bool isClient = false, string actiontype = null)
         {
@@ -1308,6 +1327,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
         {
             _zoommetingobject.type = 2;
@@ -1333,6 +1353,8 @@ namespace Risebird.Web.Controllers
             convertedResponse.InterviewDate = indianTime;
             return convertedResponse;
         }
+
+        [HttpGet]
         public string ZoomToken()
         {
             DateTime Expiry = DateTime.UtcNow.AddDays(1);
@@ -1352,6 +1374,7 @@ namespace Risebird.Web.Controllers
             var tokenString = handler.WriteToken(secToken);
             return tokenString;
         }
+        
         [HttpGet]
         public FileContentResult InstaInterviewsExporttoExcel(int id)
         {

@@ -23,6 +23,7 @@ namespace Risebird.Web.Controllers
 
         #region Skill Functions
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             try
@@ -48,6 +49,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> AddSkill()
         {
@@ -175,6 +177,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteSkill(int id)
         {
             try
@@ -210,6 +213,7 @@ namespace Risebird.Web.Controllers
 
         #region Skill Level Functions
 
+        [HttpGet]
         public async Task<IActionResult> SkillLevel()
         {
             try
@@ -359,6 +363,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteSkillLevel(int id)
         {
             try

@@ -23,7 +23,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
         }
 
-
+        [HttpGet]
         public IActionResult Index(string controllerName = null, string actMethod = null)
         {
             try
@@ -85,7 +85,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> SuportIndex()
         {
             try
@@ -234,7 +234,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             try

@@ -39,6 +39,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -158,7 +159,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetMCQFilter()
         {
             try
@@ -179,6 +182,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
+        [HttpGet]
         public async Task<IActionResult> Download(string filename)
         {
             if (filename == null)
@@ -194,12 +199,15 @@ namespace Risebird.Web.Controllers
             return File(memory, GetContentType(path), Path.GetFileName(path));
         }
 
+        [HttpGet]
         private string GetContentType(string path)
         {
             var types = GetMimeTypes();
             var ext = Path.GetExtension(path).ToLowerInvariant();
             return types[ext];
         }
+
+        [HttpGet]
         private Dictionary<string, string> GetMimeTypes()
         {
             return new Dictionary<string, string>
@@ -368,6 +376,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Questionpage(string Id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -395,6 +404,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         #region CandidateSkillTest
+        [HttpGet]
         public IActionResult SkillTest(string Id)
         {
             ViewBag.Questionsetid = Id;
@@ -441,6 +451,7 @@ namespace Risebird.Web.Controllers
             ViewBag.VideoRecording = itemshareupdate.Videorecording;
             return View(modelset);
         }
+        
         [HttpPost]
         public async Task<JsonResult> CandidateSelectQuestionsD(string id)
         {
@@ -466,6 +477,7 @@ namespace Risebird.Web.Controllers
             modeldetailset._questionlist = _questionlist;
             return Json(modeldetailset);
         }
+        
         [HttpPost]
         public async Task<JsonResult> CandidateQuestionsD()
         {
@@ -594,11 +606,13 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public IActionResult TestComplete(string status)
         {
             ViewBag.Action = status;
             return View();
         }
+        
         [HttpPost]
         public async Task<JsonResult> SubmitTest()
         {
@@ -677,6 +691,7 @@ namespace Risebird.Web.Controllers
 
         #region MCQ Actions
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> CandidateTestDetails(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -877,6 +892,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [HttpPost]
         public async Task<JsonResult> DeleteCandidate(string id, string indexid)
         {

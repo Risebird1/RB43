@@ -324,7 +324,7 @@
                                                     @*<th style="text-align:center">Call</th>*@
                                                 </tr>
                                             </tfoot>
-                                            <tbody>
+                                            <tbody style="text-align:left">
                                                 @foreach (var item in Model)
                                                 {
                                                     <tr id=@item.imid>
@@ -363,7 +363,7 @@
                                                             {
 
 
-                                                                <td class="cadName">
+                                                                <td class="cadName text-left">
                                                                     <a onclick="" data-tooltip="@item.candidateName"> @item.candidateName.Substring(0, 18)... </a>
                                                                 </td>
                                                             }
@@ -371,7 +371,7 @@
 
                                                             else
                                                             {
-                                                                <td class="cadName">
+                                                                <td class="cadName text-left">
                                                                     <a onclick=""> @item.candidateName </a>
                                                                 </td>
                                                             }
@@ -394,7 +394,7 @@
                                                             {
 
 
-                                                                <td class="cadName">
+                                                                <td class="cadName text-left">
                                                                     <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 10)... </a>
                                                                 </td>
                                                             }
@@ -402,7 +402,7 @@
 
                                                             else
                                                             {
-                                                                <td class="cadName">
+                                                                <td class="cadName text-left">
                                                                     <a onclick=""> @item.candidateEmail </a>
                                                                 </td>
                                                             }
@@ -415,7 +415,7 @@
                                                         }
 
 
-                                                        <td> @item.PrimarySkill </td>
+                                                        <td class="text-left"> @item.PrimarySkill </td>
 
 
                                                         @if (item.interviewer != null && item.interviewer != "")
@@ -425,7 +425,7 @@
                                                             {
 
 
-                                                                <td class="cadName">
+                                                                <td class="cadName text-left">
                                                                     <a onclick="" data-tooltip="@item.interviewer"> @item.interviewer.Substring(0, 10)... </a>
                                                                 </td>
                                                             }
@@ -433,7 +433,7 @@
 
                                                             else
                                                             {
-                                                                <td class="cadName">
+                                                                <td class="cadName text-left">
                                                                     <a onclick=""> @item.interviewer </a>
                                                                 </td>
                                                             }
@@ -451,19 +451,19 @@
 
                                                         @if (item.confirmationStatus.Trim() == "Cancelled")
                                                         {
-                                                            <td class="text-center">
+                                                            <td class="text-left">
 
                                                                 <a style="color:red"> @item.confirmationStatus</a>
                                                             </td>
                                                         }
                                                         else
                                                         {
-                                                            <td class="text-center"> @item.confirmationStatus</td>
+                                                            <td class="text-left"> @item.confirmationStatus</td>
                                                         }
 
                                                         @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                         {
-                                                            <td>Scheduled</td>
+                                                            <td class="text-left">Scheduled</td>
                                                         }
                                                         else if (item.confirmationStatus.Trim() == "Cancelled")
                                                         {
@@ -471,13 +471,13 @@
                                                         }
                                                         else if (@item.interviewDate < DateTime.Now && @item.MeetingStatusStatusDesc == "Scheduled")
                                                         {
-                                                            <td>Pending</td>
+                                                            <td class="text-left">Pending</td>
                                                         }
                                                         else
                                                         {
-                                                            <td> @item.MeetingStatusStatusDesc</td>
+                                                            <td class="text-left"> @item.MeetingStatusStatusDesc</td>
                                                         }
-                                                        <td> @item.intervieweStatusStatDesc</td>
+                                                        <td class="text-left"> @item.intervieweStatusStatDesc</td>
                                                         @if (item.encodedresumeLink != null && item.encodedresumeLink != "")
                                                         {
                                                             <td>
@@ -790,7 +790,6 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-
             order: [],
             responsive: true,
             language: {

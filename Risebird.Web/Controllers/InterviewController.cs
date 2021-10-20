@@ -71,6 +71,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -213,6 +214,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public FileContentResult InterviewsExporttoExcel()
@@ -524,6 +526,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> MultipleCandidateInvites()
         {
             try
@@ -891,6 +894,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetInterviewFilter()
         {
             try
@@ -914,6 +918,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetMyInterviewFilter()
         {
             try
@@ -939,6 +944,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetClientSelectedMeetingsfilters()
         {
             try
@@ -962,6 +968,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetClientMeetingsFilter()
         {
             try
@@ -983,7 +990,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetAllPriorityClientMeetingsFilter()
         {
             try
@@ -1129,6 +1138,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredInterviews(string filterValue)
         {
             try
@@ -1507,6 +1517,7 @@ namespace Risebird.Web.Controllers
         }
 
 
+        [HttpGet]
         private void SetAddUpdateMeetingParameters(AddUpdateMeetingVM meetingToUpdate)
         {
             var list = new List<SelectListItem>
@@ -1543,6 +1554,8 @@ namespace Risebird.Web.Controllers
             }
             return;
         }
+        
+        [HttpGet]
         public async Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string IRFId)
         {
             try
@@ -1706,6 +1719,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredOpenInterviews(string filterValue)
         {
             try
@@ -2201,6 +2215,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredMyInterviews(string filterValue)
         {
             try
@@ -2270,6 +2285,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> QCInterview()
@@ -2799,10 +2815,8 @@ namespace Risebird.Web.Controllers
 
         }
 
-
         [Authorize]
         [HttpGet]
-
         public IActionResult GetAllPriorityClientFilteredMeetings(string filterValue)
         {
             try
@@ -2911,7 +2925,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
 
         [Authorize]
         [HttpGet]
@@ -3046,6 +3059,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddComments(int interviewId)
@@ -3189,9 +3203,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate)
         {
             try
@@ -3229,7 +3242,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public async Task<IActionResult> QCAssignYourself(int id)
         {
             try
@@ -3309,6 +3322,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnAssignQC(int id)
@@ -3354,7 +3368,6 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
             try
@@ -3667,6 +3680,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewComments model)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -3715,6 +3729,7 @@ namespace Risebird.Web.Controllers
             model.PreparationStatusList = new SelectList(preparationStatuses, "ID", "Name");
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -3831,6 +3846,7 @@ namespace Risebird.Web.Controllers
         //}
 
         //GetClientsByRoles
+        [HttpGet]
         public SelectList GetClientsByRoles(string val)
         {
             var list = new List<SelectListItem>();
@@ -3848,6 +3864,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public bool ChangeApproval(string imid, string value, string comment)
         {
             var result = _meetingService.PostApproval(imid, value, comment);
@@ -3863,6 +3880,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
             try
@@ -3887,7 +3905,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
+        [HttpGet]
         public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus)
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -3905,7 +3925,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-
         [HttpGet]
         public ActionResult getApprovalStatusList()
         {
@@ -3918,6 +3937,7 @@ namespace Risebird.Web.Controllers
                 Description = x.Name
             }).ToList()));
         }
+        
         [HttpGet]
         public ActionResult getQCStatusList()
         {
@@ -3969,6 +3989,7 @@ namespace Risebird.Web.Controllers
             }).ToList()));
         }
 
+        [HttpGet]
         public bool ChangeSelection(string imid, string value, string comment)
         {
             var result = _meetingService.PostSelectionStatus(imid, value, comment);
@@ -3983,8 +4004,6 @@ namespace Risebird.Web.Controllers
             return result;
 
         }
-
-
 
         /// <summary>
         /// Export selected candidates data to excel
@@ -4182,8 +4201,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
-
 
         [Authorize]
         [HttpGet]
@@ -4689,6 +4706,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CancelInterview(int id, DateTime interviewDate, string candidateEmail)
@@ -4831,8 +4849,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
-
         [HttpGet]
         public async Task<IActionResult> VerifyMyInterviewAudio(int candidateId, int irfId, int meetingId)
         {
@@ -4916,6 +4932,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public bool GetTimeDifference(string interviewDate, int interviewUnassignedMinutes)
         {
             //var date2 = DateTime.Now.AddMinutes(interviewUnassignedMinutes);
@@ -4930,10 +4947,12 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public int GetInterviewUnassignedMinutes()
         {
             return _settingsService.GetInterviewUnassignedMinutes();
         }
+        
         [HttpPost]
         public JsonResult Intrestreaction(string vedioid, string Status)
         {
@@ -4973,12 +4992,14 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult ShortListreaction(string vedioid, string Status)
         {
             _meetingService.ShortListreaction(vedioid, Status);
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult ShortListList(string IRFID)
         {
@@ -4992,6 +5013,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+        
         [HttpPost]
         public JsonResult InterestList(string IRFID)
         {
@@ -5006,6 +5028,7 @@ namespace Risebird.Web.Controllers
             return Json(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteInterview(int id, string controllerName, string irfId)
         {
             try
@@ -5078,7 +5101,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public IActionResult Broadcast(string message, string subject, string receiver, int irfid)
         {
 
@@ -5134,6 +5157,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> CandidateVideoPage(int id)
         {
             try
@@ -5365,6 +5389,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpPost]
         public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
@@ -5417,7 +5442,9 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public JsonResult VideoDetailsJsonView(int interviewid)
         {
             try
@@ -5479,7 +5506,6 @@ namespace Risebird.Web.Controllers
         //        return Json("Fail");
         //    }
         //}
-
 
         [HttpGet]
         public async Task<IActionResult> AnalyseSentiment(int imid)
@@ -5545,6 +5571,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
+        [HttpGet]
         public IActionResult UploadInterviewVideoes(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -5637,8 +5665,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
-
         [HttpPost]
         public JsonResult FetchCandidateFeedback(int interviewid)
         {
@@ -5647,6 +5673,7 @@ namespace Risebird.Web.Controllers
             var resultset = result.Where(x => x.interviewid == interviewid).FirstOrDefault();
             return Json(resultset);
         }
+        
         [HttpPost]
         public JsonResult ResendFeedbackform(int interviewid, string CandidateEmail)
         {
@@ -5833,7 +5860,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [HttpGet]
         public IActionResult UploadInterviewAudio(int interviewId, string candidateEmail, string irfName, DateTime interviewDate, string candidateName)
         {
@@ -5963,6 +5989,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult ReassignMeetingByEI(string id)
         {
             var meetings = _meetingService.FetchOpenMeetingById(id);
@@ -5974,14 +6001,18 @@ namespace Risebird.Web.Controllers
             }
             return View(meetings);
         }
+        
         [AllowAnonymous]
+        [HttpGet]
         public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
         {
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
             var codedname = _meetingService.FetchInterviewerCodedName(Emailid);
             return Json(new { meetings = meetings, codedname = codedname });
         }
+        
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult InstaAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
             try
@@ -6037,6 +6068,8 @@ namespace Risebird.Web.Controllers
                 }
             }
         }
+        
+        [HttpGet]
         public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
@@ -6075,6 +6108,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [HttpGet]
         public IActionResult PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
@@ -6150,6 +6184,7 @@ namespace Risebird.Web.Controllers
                 }
             }
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> PublicOpenInterview(string emailid, string id)
@@ -6191,6 +6226,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> PublicOpenInterviewInvite(string id)
         {
             var model = new List<Meeting>();
@@ -6211,6 +6248,7 @@ namespace Risebird.Web.Controllers
             }
             return View("PublicOpenInterview", model);
         }
+        
         [HttpPost]
         public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
         {
@@ -6225,6 +6263,8 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicGetFilteredOpenInterviews(string filterValue, string emailid)
         {
             try
@@ -6265,7 +6305,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> PublicAssignYourself(int id, string InterviewDate, string emailid, string uniqueid)
         {
             try

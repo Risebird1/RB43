@@ -258,6 +258,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> HRAssignYourself(int id, string InterviewDate)
         {
             try
@@ -294,6 +295,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetHROpenInterviewFilter()
         {
             try
@@ -632,6 +634,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> HRUnassignYourself(int id)
@@ -675,6 +678,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetHRInterviewFilter()
         {
             try
@@ -1008,6 +1012,7 @@ namespace Risebird.Web.Controllers
 
 
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CallCatalogue()
@@ -1079,6 +1084,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CallCatalogue(InterviewFilter filter)
@@ -1141,7 +1147,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetCallCatalogueFilter()
         {
             try

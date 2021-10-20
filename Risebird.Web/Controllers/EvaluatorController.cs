@@ -29,12 +29,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> OpenEvaluatorEvaluations()
@@ -75,6 +69,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         //[HttpPost]
         public async Task<IActionResult> AssignSelectabilityYourself(int id)
         {
@@ -111,7 +106,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenEvaluatorEvaluations");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         //[HttpPost]
         public async Task<IActionResult> AssignJoinabilityYourself(int id)
         {
@@ -656,6 +653,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("RecruiterCandidates");
             }
         }
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]

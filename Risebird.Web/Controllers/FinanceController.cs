@@ -47,6 +47,8 @@ namespace Risebird.Web.Controllers
         /// Interviewer or QC check payment status and request for payment with details
         /// </summary>
         /// <returns></returns>
+        
+        [HttpGet]
         public async Task<IActionResult> RBPayment()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -84,6 +86,7 @@ namespace Risebird.Web.Controllers
         /// Interviewer or QC can export the details in excel sheet for future process
         /// </summary>
         /// <returns></returns>
+        
         [Authorize]
         [HttpGet]
         public FileContentResult ExportRBDetails()
@@ -201,6 +204,7 @@ namespace Risebird.Web.Controllers
         /// Interviewer or QC share payment details with Finance team for releasing payment
         /// </summary>
         /// <returns></returns>
+        
         [HttpGet]
         public async Task<IActionResult> ShareWithFN()
         {
@@ -237,6 +241,8 @@ namespace Risebird.Web.Controllers
         /// Finance Team or Admin can see all coming request for payment
         /// </summary>
         /// <returns></returns>
+        
+        [HttpGet]
         public async Task<IActionResult> FNPayment(int? Page, string searchValue)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -313,6 +319,7 @@ namespace Risebird.Web.Controllers
         /// <param name="id"></param>
         /// <param name="flag"></param>
         /// <returns></returns>
+        
         [HttpPost]
         public async Task<JsonResult> GetInterviewerPaymentDetails(int id, int flag, DateTime st, DateTime se)
         {
@@ -346,6 +353,7 @@ namespace Risebird.Web.Controllers
         /// <param name="Points"></param>
         /// <param name="Comment"></param>
         /// <returns></returns>
+        
         [HttpPost]
         public async Task<JsonResult> AddPointsforInterviewer(int id, int Points, string Comment, DateTime PointDate)
         {
@@ -358,6 +366,7 @@ namespace Risebird.Web.Controllers
         /// <param name="emailid"></param>
         /// <param name="query"></param>
         /// <returns></returns>
+        
         [HttpPost]
         public JsonResult SendQuerybyFN(string emailid, string query)
         {
@@ -383,6 +392,8 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        
+        [HttpGet]
         public async Task<JsonResult> ConfirmPayment(int id, int index, string email, string amount, DateTime st, DateTime se)
         {
 
@@ -466,6 +477,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="searchValue"></param>
         /// <returns></returns>
+        
         [HttpPost]
         public JsonResult FNPaymentJson(string searchValue)
         {
@@ -520,6 +532,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="term"></param>
         /// <returns></returns>
+        
         [HttpPost]
         public async Task<JsonResult> FetchInterviewer(string term)
         {
@@ -533,6 +546,7 @@ namespace Risebird.Web.Controllers
         /// <param name="Comment"></param>
         /// <param name="Amount"></param>
         /// <returns></returns>
+        
         [HttpPost]
         public async Task<JsonResult> AdvancePayment(string Interviewer, string Comment, int Amount)
         {
@@ -577,6 +591,7 @@ namespace Risebird.Web.Controllers
         /// <param name="st"></param>
         /// <param name="se"></param>
         /// <returns></returns>
+        
         [HttpPost]
         public async Task<JsonResult> FNGenerateInvoiceJson(int? PageSet, DateTime st, DateTime se)
         {
@@ -666,6 +681,7 @@ namespace Risebird.Web.Controllers
         /// <param name="st"></param>
         /// <param name="se"></param>
         /// <returns></returns>
+        
         [Authorize]
         [HttpGet]
         public FileContentResult ExportGenerateFNPayment(DateTime st, DateTime se)
@@ -817,6 +833,7 @@ namespace Risebird.Web.Controllers
         /// Finance Team may Export data in Excel sheet
         /// </summary>
         /// <returns></returns>
+        
         [Authorize]
         [HttpGet]
         public FileContentResult ExportFNPayment()
@@ -968,7 +985,9 @@ namespace Risebird.Web.Controllers
         /// Finance Team may be find History of payment that is done by finance team to interviewer
         /// </summary>
         /// <returns></returns>
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> PaymentHistory()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1026,6 +1045,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PaymentHistory(CandidateTimelineFilter filter)
@@ -1083,6 +1103,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
+        [HttpGet]
         public IActionResult ResetFinaceHistoryFilter()
         {
             try
@@ -1104,11 +1126,13 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult PaymentDescription()
         {
             return View();
 
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> ExportPaymentHistory()
@@ -1224,6 +1248,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> InvoiceDetails()
@@ -1291,6 +1316,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> InvoiceDetails(InvoiceFilter filter)
@@ -1351,6 +1377,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetInvoiceDetails()
         {
             try
@@ -1371,6 +1398,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> GetInvoiceDetails(int id, string startdate, string enddate, string Clientname, string jobcountry)
         {
@@ -1388,6 +1416,7 @@ namespace Risebird.Web.Controllers
             model.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
             return PartialView(model);
         }
+        
         [HttpPost]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> GetInvoiceDetails(InvoiceDetailsVM model)
@@ -1405,6 +1434,7 @@ namespace Risebird.Web.Controllers
             TempData["SuccessErrorMessageCandidate"] = result;
             return RedirectToAction("InvoiceDetails");
         }
+        
         [HttpPost]
         public async Task<JsonResult> GetPaymentHistoryDetailsView(int id)
         {

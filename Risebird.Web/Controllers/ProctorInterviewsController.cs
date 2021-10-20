@@ -46,6 +46,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -159,6 +160,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetNonExistingVMs()
         {
             try
@@ -173,6 +175,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> AddNonExistingVMs(NonExistingVMViewModel model)
         {
@@ -373,7 +376,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult GetUserList(int profileId, int vmId)
         {
             if (HttpContext.Session.GetString("email") != null)
@@ -450,7 +453,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> ProctorVMQuestions(ProctorQuestionsViewModel model)
@@ -483,7 +485,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
 
         [Authorize]
         [HttpGet]
@@ -532,7 +533,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> SetCurrentQuestion(string newIndex)
         {
             try
@@ -564,6 +565,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> RemoveVM(int vmId)
         {
             try

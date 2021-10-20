@@ -15,16 +15,13 @@ namespace Risebird.Web.Controllers
             _risebirdpayservice = risebirdpayservice;
             _clientService = clientService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         /// <summary>
         /// Detailed View
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult ClientDetails(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -48,6 +45,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [HttpPost]
         public JsonResult WalletDetails(string action, int ClientId)
         {
@@ -121,6 +119,7 @@ namespace Risebird.Web.Controllers
                 return Json("SignOut");
             }
         }
+        
         [HttpPost]
         public JsonResult DeductWalletPoints(int points, string comment, int ClientId)
         {
