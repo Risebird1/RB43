@@ -300,7 +300,53 @@ input [type='radio']:checked:after {
 .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
     background: #2CA8FF;
 }
+#calender h4 {
+    color: #173457;
+}
+#calender #current-day {
+    background: #218eff !important;
+}
+#calender .weekday {
+    color: #4a8eff;
+}
+.txttimezone-con {
+    color: #13344c;
+    background: #cadbf9;
+}
 
+.resume {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 4px 13px 0px 13px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 20px;
+    vertical-align: middle;
+    border: 2px solid #56a9ff;
+    border-radius: 40px;
+    cursor: pointer !important;
+}
+
+    .resume label {
+        cursor: pointer !important;
+    }
+
+.form-field-calender .resume .form-label {
+    color: #56a9ff !important;
+    cursor: pointer !important;
+}
+.time-btn {
+    border: 1px solid #56a9ff !important;
+    color: #218eff;
+    left: 30px;
+    background: none !important;
+}
+    .time-btn:hover {
+        border: 2px solid #56a9ff !important;
+    }
 .filavatar {
     background: #42a5f5 !important;
 }
@@ -506,7 +552,13 @@ textarea::-webkit-scrollbar-thumb {
     background: #ececee url(../img/blue-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
-
+.form-field-calender input.form-control[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    display:none;
+}
+.form-field-calender input.form-control[type="datetime-local"] {
+    background: #fff url(../img/blue-timdate.png) 96% 45% no-repeat !important;
+    background-size: 3.5% !important;
+}
 .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
     background: #fff url(../img/blue-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
@@ -785,8 +837,10 @@ textarea::-webkit-scrollbar-thumb {
 .mdc-fab {
     background: #54a5f6 !important;
 }
-
-.image-upload label {
+.trash-btn {
+    background: #d20505 !important;
+}
+    .image-upload label {
     background-color: #fff;
     color: #54a5f5;
     padding: 0 0.3rem !important;
@@ -957,6 +1011,9 @@ table {
     .razorpay_btn button.form-control {
         width: 33.3%;
         float: left;
+    }
+    .align-r {
+        text-align: left!important;
     }
 }
 

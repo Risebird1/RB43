@@ -167,16 +167,16 @@
 
                                                                 @if (item.ClientHrContact != null && item.ClientHrContact != "")
                                                                 {
-                                                                    @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 15)
+                                                                    @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 18)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 15)... </a>
+                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 18)... </a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
                                                                         <td>
-                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact.Substring(0, 18)...  </a>
                                                                         </td>
                                                                     }
                                                                 }
