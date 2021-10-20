@@ -2158,12 +2158,29 @@ input[type="radio"]:checked {
     BACKGROUND: #131313;
     PADDING: 0PX 10PX;
 }
+.resume {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 4px 13px 0px 13px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 20px;
+    vertical-align: middle;
+    border: 2px solid #000;
+    border-radius: 40px;
+}
 
     #myStatusListpopup .table-bordered td textarea {
         margin: 5PX;
         background: #131313;
         border: 1px solid #494c4e;
     }
+.form-field-calender .resume .form-label {
+    color: #000 !important;
+}
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;

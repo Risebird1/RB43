@@ -683,6 +683,24 @@ table.journey {
 .client .table-bordered td {
     border-right: 1px solid #dee2e6 !important;
 }
+.resume {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 4px 13px 0px 13px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 20px;
+    vertical-align: middle;
+    border: 2px solid #929292;
+    border-radius: 40px;
+}
+
+.form-field-calender .resume .form-label {
+    color: #929292 !important;
+}
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
     color: #47484a!important;
 }
