@@ -1,0 +1,296 @@
+﻿@model Risebird.Entities.ViewModel.daytimes_report
+@{
+    ViewData["Title"] = "Edit Event";
+}
+<script>
+    var Header = "<div>Edit Event</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/css/Calender.css" rel="stylesheet" />
+<link href="~/css/dashboard-new.css" rel="stylesheet" />
+<link href="~/Newassets/css/bootstrap.min.css?v=9" rel="stylesheet" />
+<div class="main-panel">
+
+    <div class="clearfix">
+        <div class="pt30">
+            <div class="event">
+                <div class="calendar-con clearfix">
+
+                    <div class="form-field-calender">
+                        <form action="@Url.Action("EditEvent", "InterviewScheduler")" method="post" id="form">
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    @Html.HiddenFor(m => m.id)
+                                    @Html.LabelFor(m => m.EventName, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
+                                    @Html.TextBoxFor(m => m.EventName, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left" })
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    @Html.LabelFor(m => m.SkillChannel, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
+                                    @Html.DropDownListFor(m => m.SkillChannel, Model.IRFList, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left" })
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    @Html.LabelFor(m => m.duration, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
+                                    @Html.DropDownListFor(m => m.duration, Model.IntervalList, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-6 pull-left" })
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    @Html.LabelFor(m => m.StartDate, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
+                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
+                                    <div class="clearfix"></div> <span class="text-danger col-lg-8 col-md-8 col-sm-12 col-xs-12 align-r col-md-offset-4 col-lg-offset-4" id="startDateCheck" style="display:none;"></span></div>
+                                
+                                <div class="col-md-12 form-group">
+                                    @Html.LabelFor(m => m.EndDate, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
+                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+                                    <div class="clearfix"></div><span class="text-danger col-lg-8 col-md-8 col-sm-12 col-xs-12 align-r col-md-offset-4 col-lg-offset-4" id="endDateCheck" style="display:none;"></span>
+                                </div>
+                            </div>
+                            <div class="addEvent">
+                                <table>
+                                    @for (int i = 0; i < Model.setvalue.Count(); i++)
+                                    {
+                                        <tr>
+                                            <td>@Html.CheckBoxFor(m => m.setvalue[i].dayCheck, new { @onclick = "changevalue(this.id,this.checked)", @style = "margin-right:10px;width:15px;height:15px;" })</td>
+                                            <td>@Model.setvalue[i].Daytype @Html.HiddenFor(m => m.setvalue[i].Daytype)</td>
+
+                                            <td class="time-date">
+                                                @if (Model.setvalue[i].dayCheck)
+                                                {
+                                                    <table id="setvalue_check_@i">
+                                                        <tbody>
+                                                            @if (Model.setvalue[i].dayvalue.Count() > 0)
+                                                            {
+                                                                @for (int j = 0; j < Model.setvalue[i].dayvalue.Count(); j++)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.DropDownListFor(m => m.setvalue[i].dayvalue[j].Start, Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                            @Html.DropDownListFor(m => m.setvalue[i].dayvalue[j].End, Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                            <span onclick="AddRow(@i)" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                            <span onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" class="trash-btn mdc-fab app-fab--absolute "><i class="far fa  fa-trash"></i></span>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.DropDownList("setvalue[" + i + "].dayvalue[0].Start", Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                        @Html.DropDownList("setvalue[" + i + "].dayvalue[0].End", Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                        <input type="button" value="plus" onclick="AddRow(@i)" />
+                                                                        <input type="button" value="delete" onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" />
+                                                                    </td>
+
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                    <table id="setvalue_uncheck_@i" style="display:none">
+                                                        <tr>
+                                                            <td>
+                                                                Not access
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                }
+                                                else
+                                                {
+                                                    <table id="setvalue_check_@i" style="display:none">
+                                                        <tbody>
+                                                            @if (Model.setvalue[i].dayvalue.Count() > 0)
+                                                            {
+                                                                @for (int j = 0; j < Model.setvalue[i].dayvalue.Count(); j++)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.DropDownListFor(m => m.setvalue[i].dayvalue[j].Start, Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                            @Html.DropDownListFor(m => m.setvalue[i].dayvalue[j].End, Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="button" value="plus" onclick="AddRow(@i)" />
+                                                                            <input type="button" value="delete" onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" />
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.DropDownList("setvalue[" + i + "].dayvalue[0].Start", Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                        @Html.DropDownList("setvalue[" + i + "].dayvalue[0].End", Model.timeslots, new { @class = "form-control col-lg-3 col-md-3 col-sm-3 col-xs-3 marginRight pull-left" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="button" value="plus" onclick="AddRow(@i)" />
+                                                                        <input type="button" value="delete" onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" />
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                    <table id="setvalue_uncheck_@i">
+                                                        <tr>
+                                                            <td>
+                                                                Not access
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-9">
+                                <div class="form-group align-r">
+                                    <a href="/InterviewScheduler/SchedulerList" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-right:5px; text-decoration:none;">Back to List</a>
+                                    <input type="submit" value="Save" class="mdc-button mdc-button--raised pull-right" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function changevalue(id, val) {
+        var a = id.split("_")[1];
+        if (val) {
+            document.getElementById("setvalue_uncheck_" + a).style.display = "none";
+            document.getElementById("setvalue_check_" + a).style.display = "block";
+        } else {
+            document.getElementById("setvalue_uncheck_" + a).style.display = "block";
+            document.getElementById("setvalue_check_" + a).style.display = "none";
+        }
+    }
+    function AddRow(id) {
+        var $ttc = $("#setvalue_check_" + id).find("tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#setvalue_check_" + id + " tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () {
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)_(\d+)__(\D+)$/);
+            if (parts != null)
+                return parts[1] + "[" + parts[2] + "]." + parts[3] + "[" + ++parts[4] + "]." + parts[5]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)_(\d+)__(\D+)$/);
+            if (parts != null)
+                return parts[1] + "_" + parts[2] + "__" + parts[3] + "_" + ++parts[4] + "__" + parts[5]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () {
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/);
+            return parts[1] + "[" + parts[2] + "]." + parts[3]; // build new value
+        })
+        var rowCount = $('#setvalue_check_' + id + ' tr').length;
+        var finalIndex = rowCount - 1;
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#setvalue_check_" + id).find("tbody tr:last").after($tr);
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+    }
+
+    function DeleteRow(element, collectionName, tdOne, tdTwo, id) {
+        if ($("#setvalue_check_" + id).find('tr').length === 1) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $("#setvalue_check_" + id).find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById("setvalue_" + id + "__" + collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = "setvalue_" + id + "__" + collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = "setvalue[" + id + "]." + collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById("setvalue_" + id + "__" + collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = "setvalue_" + id + "__" + collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = "setvalue[" + id + "]." + collectionName + "[" + (i - 1) + "]." + tdTwo;
+                }
+            }
+        }
+    }
+    function checkStartDate(val) {
+        if (val == "") {
+            document.getElementById("startDateCheck").innerHTML = "";
+            return;
+        }
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var StartDate = new Date(year, month, date);
+        var d = new Date();
+        var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        if (StartDate < currentDate) {
+            document.getElementById("startDateCheck").style.display = "block";
+            document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
+            document.getElementById("StartDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("startDateCheck").style.display = "none";
+            document.getElementById("startDateCheck").innerHTML = "";
+        }
+        if (document.getElementById("EndDate").value != "") {
+            checkEndDate(document.getElementById("EndDate").value);
+        }
+    }
+
+    function checkEndDate(val) {
+
+        if (val == "") {
+            return;
+        }
+        var startDateValue = document.getElementById("StartDate").value;
+
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var endDate = new Date(year, month, date);
+
+        if (startDateValue == "") {
+            document.getElementById("endDateCheck").style.display = "block";
+            document.getElementById("endDateCheck").innerHTML = "Kindly fill the Start Date field.";
+            document.getElementById("StartDate").focus();
+            return;
+        }
+        var yearStart = startDateValue.substring(0, 4);
+        var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
+        var dateStart = startDateValue.substring(8, 10);
+        var startDate = new Date(yearStart, monthStart, dateStart);
+        if (endDate <= startDate) {
+            //document.getElementById("btnUpload").disabled = true;
+            document.getElementById("endDateCheck").style.display = "block";
+            document.getElementById("endDateCheck").innerHTML = "End Date should be greater than Start Date";
+            document.getElementById("EndDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("endDateCheck").style.display = "none";
+            document.getElementById("endDateCheck").innerHTML = "";
+            return;
+        }
+    }
+</script>

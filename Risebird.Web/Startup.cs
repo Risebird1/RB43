@@ -225,6 +225,9 @@ namespace Risebird.Web
             services.AddScoped<IFileMimeTypeHelper, FileMimeTypeHelper>();
             services.AddScoped<IInterviewRequestService, InterviewRequestService>();
             services.AddScoped<IInterviewRequestRepository, InterviewRequestRepository>();
+            services.AddScoped<IInterviewSchedulerService, InterviewSchedulerService>();
+            services.AddScoped<IInterviewSchedulerRepository, InterviewSchedulerRepository>();
+            services.AddScoped<IRisebirdMeetingsRepository, RisebirdMeetingsRepository>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

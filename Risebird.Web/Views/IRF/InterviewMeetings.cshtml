@@ -399,7 +399,7 @@
             html += '  <td> ' + new Date(data[i].interviewDate).toLocaleString() + ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
 
-                if (data[i].isOnline == 1 && data[i].candidateName.Length > 20) {
+                if (data[i].isOnline == 1 && data[i].candidateName.length > 20) {
                     html += '   <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 20) + '...  </a></td>';
                 }
                 else {
@@ -422,21 +422,21 @@
 
 
             if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
+                html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
             }
             else {
-                html += '   <td>No Report</td>';
+                html += '<td>No Report</td>';
             }
             if (data[i].resumeLink != null && data[i].resumeLink != "") {
-                html += '      <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
+                html += '<td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
             }
             else {
-                html += '    <td>No Resume</td>';
+                html += '<td>No Resume</td>';
             }
 
             if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 20) {
                 if (data[i].clientHrContact != null) {
-                    html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20) + '... </a></td>';
+                    html += '<td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20) + '... </a></td>';
                 }
 
 
@@ -448,14 +448,14 @@
             }
             else {
                 if (data[i].clientHrContact != null) {
-                    html += '   <td>  <a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
+                    html += '<td><a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
                 }
                 else { html += ' <td></td>'; }
 
 
             }
             if (data[i].confirmationStatus.trim() == "Cancelled") {
-                html += '    <td class="text-center"> <a style="color:red">' + data[i].confirmationStatus + '</a></td>';
+                html += '<td class="text-center"> <a style="color:red">' + data[i].confirmationStatus + '</a></td>';
 
 
             }
@@ -469,10 +469,10 @@
                 html += '    <td>No Interview Link</td>';
             }
             if (data[i].meetingStatusStatusDesc != null) {
-                html += '   <td>' + data[i].meetingStatusStatusDesc + ' </td>';
+                html += '<td>' + data[i].meetingStatusStatusDesc + ' </td>';
             }
             else {
-                html += '  <td></td>';
+                html += '<td></td>';
             }
             if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
                 if (data[i].intervieweStatusStatDesc != null) {
@@ -485,30 +485,30 @@
             }
 
             else {
-                html += '    <td></td>';
+                html += '<td></td>';
             }
 
-            html += '  </tr>';
+            html += '</tr>';
 
-            html += '    <tr class="collapse ' + data[i].imid + '">';
+            html += '<tr class="collapse ' + data[i].imid + '">';
 
-            html += '    <td colspan="999" class="child-section">';
-            html += '   <table class="table table-striped ">';
-            html += '     <tr>';
-            html += '     <th>Candidate Contact</th>';
-            html += '    <th>Current Employer</th>';
-            html += '   <th>Expected Salary</th>';
-            html += '   <th>Expected Joining Time</th>';
-            html += '    <th>Preferred Location</th>';
-            html += '    <th>Staffing Agency</th>';
-            html += ' </tr>';
-            html += '    <tr>';
+            html += ' <td colspan="999" class="child-section">';
+            html += '<table class="table table-striped ">';
+            html += '<tr>';
+            html += '<th>Candidate Contact</th>';
+            html += '<th>Current Employer</th>';
+            html += '<th>Expected Salary</th>';
+            html += '<th>Expected Joining Time</th>';
+            html += ' <th>Preferred Location</th>';
+            html += '<th>Staffing Agency</th>';
+            html += '</tr>';
+            html += '<tr>';
             if (data[i].mobileNumber != null) {
-                html += '  <td>' + data[i].mobileNumber + '</td>';
+                html += '<td>' + data[i].mobileNumber + '</td>';
 
             }
             else {
-                html += '  <td>No Contact</td>';
+                html += '<td>No Contact</td>';
             }
 
 
