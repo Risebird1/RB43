@@ -725,7 +725,7 @@ namespace Risebird.Web.Controllers
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.DaySlotList = new SelectList(daySlot, "ID", "Name");
             var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
-            var tagList = _interviewerService.GetAllTagsFromIRF().Result;
+           
             var selectList = new List<SelectListItem>();
             var AssessmentselectList = new List<SelectListItem>();
             foreach (var item in Assessmentgroup)

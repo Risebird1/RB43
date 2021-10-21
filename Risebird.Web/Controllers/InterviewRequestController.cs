@@ -169,7 +169,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
                                     if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        || fileMimeType == "application/pdf")
+                                               || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                     {
                                         await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.JDFile);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -317,7 +317,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
                                     if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        || fileMimeType == "application/pdf")
+                                               || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                     {
                                         await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.JDFile);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -485,7 +485,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
                 var model = new InterviewRequestVM();
-                model.RequestedBy = emailid;
+               // model.RequestedBy = emailid;
                 model.uniqueid = id;
                 var skills = _irfRepository.GetSkills();
                 await SetInterviewRequestSelectLists();
@@ -502,7 +502,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (!String.IsNullOrEmpty(emailid))
                 {
-                    if (Emailid != emailid)
+                    if (!string.IsNullOrEmpty(Emailid) && Emailid != emailid)
                     {
                         return RedirectToAction("PublicAllMeetings", new { id = id });
                     }
@@ -542,7 +542,7 @@ namespace Risebird.Web.Controllers
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                || fileMimeType == "application/pdf")
+                                              || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
                                 await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.JDFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
