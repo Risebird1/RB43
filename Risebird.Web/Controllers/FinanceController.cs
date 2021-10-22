@@ -31,8 +31,10 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IProjectService _projectService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService)
+
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,6 +44,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
             _projectService = projectService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -1423,12 +1426,19 @@ namespace Risebird.Web.Controllers
         {
             if (model.fileupload != null)
             {
-                var uploadedFileURL = String.Empty;
-                await _azureStorageHelper.InsertBlob(model.fileupload.FileName.Replace(" ", ""), "invoicefiles", model.fileupload);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
-                var blob = containerRef.GetBlockBlobReference(model.fileupload.FileName.Replace(" ", ""));
-                uploadedFileURL = blob.Uri.ToString();
-                model.filelink = uploadedFileURL;
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.fileupload);
+
+                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        || fileMimeType == "application/pdf")
+                {
+                    var uploadedFileURL = string.Empty;
+                    await _azureStorageHelper.InsertBlob(model.fileupload.FileName.Replace(" ", ""), "invoicefiles", model.fileupload);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+                    var blob = containerRef.GetBlockBlobReference(model.fileupload.FileName.Replace(" ", ""));
+                    uploadedFileURL = blob.Uri.ToString();
+                    model.filelink = uploadedFileURL;
+                }
+                
             }
             var result = await _meetingService.SaveInvoiceDetails(model);
             TempData["SuccessErrorMessageCandidate"] = result;

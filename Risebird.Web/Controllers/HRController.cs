@@ -26,14 +26,17 @@ namespace Risebird.Web.Controllers
         //private readonly IConfiguration _configuration;
         private static List<Meeting> _modelDetail;
         private static string Searchvalue;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
 
 
-        public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper)
+
+        public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
@@ -966,17 +969,23 @@ namespace Risebird.Web.Controllers
                 {
                     if (Request.Form.Files.Count() > 0)
                     {
-                        var imageFile = Request.Form.Files[0];
-                        await _azureStorageHelper.InsertBlob(imageFile.FileName, "images", imageFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("images");
-                        var blob = containerRef.GetBlockBlobReference(imageFile.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-                        if (string.IsNullOrEmpty(uploadedFileURL))
-                        {
-                            TempData["SuccessErrorMessageHR"] = "Error uploading the image!";
-                            return false;
-                        }
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
 
+                        if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
+                                || fileMimeType == "image/tiff")
+                        {
+                            var imageFile = Request.Form.Files[0];
+                            await _azureStorageHelper.InsertBlob(imageFile.FileName, "images", imageFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("images");
+                            var blob = containerRef.GetBlockBlobReference(imageFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            if (string.IsNullOrEmpty(uploadedFileURL))
+                            {
+                                TempData["SuccessErrorMessageHR"] = "Error uploading the image!";
+                                return false;
+                            }
+                        }
+                        
                     }
                     else
                     {
