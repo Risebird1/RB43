@@ -46,6 +46,9 @@ body {
     position: absolute;
     left: 20px;
 }
+.b-right {
+    border-right: 1px #ccc solid !important;
+}
 a.infos {
     width: 30px;
     height: 43px;
