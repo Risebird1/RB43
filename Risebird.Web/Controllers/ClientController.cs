@@ -32,8 +32,9 @@ namespace Risebird.Web.Controllers
         private static string Searchvalueproiprity;
         private static List<MeetingVM> _modelDetails;
         private readonly IIRFService _irfService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService)
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -44,6 +45,7 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _irfService = irfService;
             _userService = userService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [HttpGet]
@@ -114,21 +116,33 @@ namespace Risebird.Web.Controllers
                         string uploadedVideoURL = string.Empty;
                         if (client.LogoFile != null)
                         {
-                            var fileName = client.LogoFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            client.LogoLink = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.LogoFile);
+                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
+                                || fileMimeType == "image/tiff")
+                            {
+                                var fileName = client.LogoFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                client.LogoLink = uploadedFileURL;
+                            }
+                            
                         }
                         if (client.VideoFile != null)
                         {
-                            var fileName = client.VideoFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            uploadedVideoURL = blob.Uri.ToString();
-                            client.CompanyVideoLink = uploadedVideoURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.VideoFile);
+                            if (fileMimeType == "video/mp4" || fileMimeType == "video/mpeg"
+                                || fileMimeType == "video/quicktime")
+                            {
+                                var fileName = client.VideoFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                uploadedVideoURL = blob.Uri.ToString();
+                                client.CompanyVideoLink = uploadedVideoURL;
+                            }
+                            
                         }
                         if (_clientService.AddClient(client))
                         {
@@ -198,21 +212,33 @@ namespace Risebird.Web.Controllers
                         string uploadedVideoURL = string.Empty;
                         if (client.LogoFile != null)
                         {
-                            var fileName = client.LogoFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            client.LogoLink = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.LogoFile);
+                            if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
+                                || fileMimeType == "image/tiff")
+                            {
+                                var fileName = client.LogoFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                client.LogoLink = uploadedFileURL;
+                            }
+                            
                         }
                         if (client.VideoFile != null)
                         {
-                            var fileName = client.VideoFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            uploadedVideoURL = blob.Uri.ToString();
-                            client.CompanyVideoLink = uploadedVideoURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(client.VideoFile);
+                            if (fileMimeType == "video/mp4" || fileMimeType == "video/mpeg"
+                                || fileMimeType == "video/quicktime")
+                            {
+                                var fileName = client.VideoFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                uploadedVideoURL = blob.Uri.ToString();
+                                client.CompanyVideoLink = uploadedVideoURL;
+                            }
+                            
                         }
                         if (_clientService.UpdateClient(client))
                         {
@@ -413,11 +439,18 @@ namespace Risebird.Web.Controllers
                     }
                     if (model._clientjddetails.JdFile != null)
                     {
-                        _azureStorageHelper.InsertBlob(model._clientjddetails.JdFile.FileName, "videos", model._clientjddetails.JdFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                        var blob = containerRef.GetBlockBlobReference(model._clientjddetails.JdFile.FileName);
-                        string uploadedvideoFileURL = blob.Uri.ToString();
-                        model._clientjddetails.Filelink = uploadedvideoFileURL;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model._clientjddetails.JdFile);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        || fileMimeType == "application/pdf")
+                        {
+                            _azureStorageHelper.InsertBlob(model._clientjddetails.JdFile.FileName, "videos", model._clientjddetails.JdFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            var blob = containerRef.GetBlockBlobReference(model._clientjddetails.JdFile.FileName);
+                            string uploadedvideoFileURL = blob.Uri.ToString();
+                            model._clientjddetails.Filelink = uploadedvideoFileURL;
+                        }
+                        
                     }
 
                     var result = _clientService.AddClientJd(model._clientjddetails);
@@ -3053,19 +3086,25 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload failed.");
-                                return View("VerifyAudio", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    return View("VerifyAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+                            
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "joining");
                         TempData["SuccessErrorMessageInterview"] = result;

@@ -169,7 +169,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
                                     if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        || fileMimeType == "application/pdf")
+                                               || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                     {
                                         await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -317,7 +317,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
                                     if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        || fileMimeType == "application/pdf")
+                                              || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                     {
                                         await _azureStorageHelper.InsertBlob(meeting.JDFile.FileName.Replace(" ", ""), "resumes", meeting.JDFile);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -601,7 +601,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.ResumeFile);
                                     if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        || fileMimeType == "application/pdf")
+                                              || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                     {
                                         await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.ResumeFile);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -729,7 +729,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meetingUpdated.ResumeFile);
                                     if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        || fileMimeType == "application/pdf")
+                                              || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                     {
                                         await _azureStorageHelper.InsertBlob(fileName, "resumes", meetingUpdated.ResumeFile);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");

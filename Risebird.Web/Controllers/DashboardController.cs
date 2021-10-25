@@ -27,7 +27,9 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private IConfiguration _configuration;
         private readonly IMeetingService _meetingService;
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -36,6 +38,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _configuration = configuration;
             _meetingService = meetingService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
@@ -434,10 +437,17 @@ namespace Risebird.Web.Controllers
             }
             if (model.Jdfile != null)
             {
-                await _azureStorageHelper.InsertBlob(model.Jdfile.FileName, "resumes", model.Jdfile);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
-                model.JdLink = blob.Uri.ToString();
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.Jdfile);
+
+                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                || fileMimeType == "application/pdf")
+                {
+                    await _azureStorageHelper.InsertBlob(model.Jdfile.FileName, "resumes", model.Jdfile);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                    var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
+                    model.JdLink = blob.Uri.ToString();
+                }
+                
             }
 
             if (model.isEditable)
@@ -623,17 +633,31 @@ namespace Risebird.Web.Controllers
                     }
                     if (model.CV != null)
                     {
-                        await _azureStorageHelper.InsertBlob(model.CV.FileName, "resumes", model.CV);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(model.CV.FileName);
-                        model.CVLink = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CV);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.CV.FileName, "resumes", model.CV);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.CV.FileName);
+                            model.CVLink = blob.Uri.ToString();
+                        }
+                        
                     }
                     if (model.CodedCV != null)
                     {
-                        await _azureStorageHelper.InsertBlob(model.CodedCV.FileName, "resumes", model.CodedCV);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(model.CodedCV.FileName);
-                        model.CodedCVLink = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CodedCV);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.CodedCV.FileName, "resumes", model.CodedCV);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.CodedCV.FileName);
+                            model.CodedCVLink = blob.Uri.ToString();
+                        }
+                        
                     }
                     var result = await _dashboardService.AddChannelInterviewer(model);
                     if (result == "Success")
