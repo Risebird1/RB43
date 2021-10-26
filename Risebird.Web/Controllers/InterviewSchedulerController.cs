@@ -34,7 +34,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _sasUrlHelper = sasUrlHelper;
             _configuration = configuration;
-            //_risebirdMeetings = risebirdMeetings;
+            _risebirdMeetings = risebirdMeetings;
         }
         public IActionResult Index()
         {
