@@ -4601,7 +4601,7 @@ namespace Risebird.Web.Controllers
             return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
         }
 
-        [HttpGet]
+        [HttpPost]
         public JsonResult InterviewMeetingsJson(string searchValue)
         {
             int Page = 1;
@@ -4648,7 +4648,7 @@ namespace Risebird.Web.Controllers
             return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
         }
 
-        [HttpGet]
+        [HttpPost]
         public JsonResult SelectedInterviewMeetingsJson(string searchValue)
         {
             int Page = 1;
@@ -4693,7 +4693,7 @@ namespace Risebird.Web.Controllers
             return Json(new { result = selectedMeeting.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = selectedMeeting.Count });
         }
 
-        [HttpGet]
+        [HttpPost]
         public JsonResult MultipleCandidateInvitesJson(string searchValue)
         {
             int Page = 1;
