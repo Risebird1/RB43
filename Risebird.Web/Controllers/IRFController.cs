@@ -43,8 +43,9 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly ITemplateService _templateService;
         private readonly IClientService _clientService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService)
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -61,6 +62,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _templateService = templateService;
             _clientService = clientService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
 
@@ -746,19 +748,31 @@ namespace Risebird.Web.Controllers
                         }
                         if (irfDetails.JDFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(irfDetails.JDFile.FileName, "resumes", irfDetails.JDFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(irfDetails.JDFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            irfDetails.JDLink = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(irfDetails.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(irfDetails.JDFile.FileName, "resumes", irfDetails.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(irfDetails.JDFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                irfDetails.JDLink = uploadedFileURL;
+                            }
+                            
                         }
                         if (irfDetails.CompanyDetailFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(irfDetails.CompanyDetailFile.FileName, "resumes", irfDetails.CompanyDetailFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(irfDetails.CompanyDetailFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            irfDetails.CompanyDetails = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(irfDetails.CompanyDetailFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(irfDetails.CompanyDetailFile.FileName, "resumes", irfDetails.CompanyDetailFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(irfDetails.CompanyDetailFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                irfDetails.CompanyDetails = uploadedFileURL;
+                            }
+                            
                         }
                         var domain = Request.Scheme + "://" + Request.Host.Value;
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
@@ -1672,19 +1686,25 @@ namespace Risebird.Web.Controllers
                         }
                         if ((model.JDFile != null))
                         {
-
-                            await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
-                            string uploadedFileURL = blob.Uri.ToString();
-                            if (uploadedFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
-                                return RedirectToAction("Index");
+                                await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                                string uploadedFileURL = blob.Uri.ToString();
+                                if (uploadedFileURL == null)
+                                {
+                                    TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                    return RedirectToAction("Index");
+
+                                }
+                                model.JDLink = uploadedFileURL;
 
                             }
 
-                            model.JDLink = uploadedFileURL;
+
                         }
                         else if (model.JDLink == null || model.JDLink == "")
                         {
@@ -1692,19 +1712,24 @@ namespace Risebird.Web.Controllers
                         }
                         if ((model.CompanyDetailFile != null))
                         {
-
-                            await _azureStorageHelper.InsertBlob(model.CompanyDetailFile.FileName, "resumes", model.CompanyDetailFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(model.CompanyDetailFile.FileName);
-                            string uploadedFileURL = blob.Uri.ToString();
-                            if (uploadedFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CompanyDetailFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
-                                return RedirectToAction("Index");
+                                await _azureStorageHelper.InsertBlob(model.CompanyDetailFile.FileName, "resumes", model.CompanyDetailFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(model.CompanyDetailFile.FileName);
+                                string uploadedFileURL = blob.Uri.ToString();
+                                if (uploadedFileURL == null)
+                                {
+                                    TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                    return RedirectToAction("Index");
 
+                                }
+                                model.CompanyDetails = uploadedFileURL;
                             }
 
-                            model.CompanyDetails = uploadedFileURL;
+
                         }
                         else if (model.CompanyDetails == null || model.CompanyDetails == "")
                         {
@@ -1943,20 +1968,27 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.AudioLink = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.AudioLink = uploadedaudioFileURL;
-                            }
+
+                            
                         }
                         if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         {
@@ -1973,22 +2005,29 @@ namespace Risebird.Web.Controllers
                             //var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
                             //var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
                             //string uploadedvideoFileURL = blob.Uri.ToString();
-                            AzureCall _call = new AzureCall(_configuration);
-                            //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
-                            var resulttype = _call.CallApiUpload(model.VideoFile);
-                            resulttype = resulttype.Replace("\"", "");
-                            var uploadedvideoFileURL = resulttype;
-                            if (uploadedvideoFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
+                            if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                            || fileMimeType == "video/quicktime")
                             {
-                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
-                            }
-                            else
-                            {
-                                model.VideoLink = uploadedvideoFileURL;
+                                AzureCall _call = new AzureCall(_configuration);
+                                //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                                var resulttype = _call.CallApiUpload(model.VideoFile);
+                                resulttype = resulttype.Replace("\"", "");
+                                var uploadedvideoFileURL = resulttype;
+                                if (uploadedvideoFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.VideoLink = uploadedvideoFileURL;
+                                }
                             }
                         }
+
+                            
                         else if (model.PageVideoLink != null)
                         {
                             model.VideoLink = model.PageVideoLink;
@@ -4380,20 +4419,27 @@ namespace Risebird.Web.Controllers
                         model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav")
                             {
-                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
-                                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
+                                    return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
 
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+                            
                         }
 
                         if (await _irfService.AddCandidateStatus(model))
@@ -4476,20 +4522,26 @@ namespace Risebird.Web.Controllers
                         model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav")
                             {
-                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
-                                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
+                                    return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
 
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+                           
                         }
 
                         if (await _irfService.EditCandidateStatus(model))
