@@ -74,7 +74,7 @@
                                                     @Html.LabelFor(model => model.RequestedBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                     <span class="red">*</span>
                                                 </div>
-                                                @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control br-g", @required = "required" } })
+                                                @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control br-g", @required = "required", @type = "email" } })
                                                 @Html.ValidationMessageFor(model => model.RequestedBy, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
@@ -144,13 +144,13 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                         @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                            @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
                                                         </td>
                                                         <td>
-                                                          @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
+                                                            @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
                                                         </td>
                                                         <td style="border-right: 1px solid #dee2e6 !important;">
-                                                          @Html.TextBox("TechSkill[0].Weightage", "", new { @class = "form-control", @type = "number", @max = "100", @min = "1" })
+                                                            @Html.TextBox("TechSkill[0].Weightage", "", new { @class = "form-control", @type = "number", @max = "100", @min = "1" })
                                                         </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>

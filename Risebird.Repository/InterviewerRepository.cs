@@ -1997,5 +1997,28 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_FetchAllInterviewerupcommingInterviewes", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return (List<CommonInterviewDetailsVM>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }
