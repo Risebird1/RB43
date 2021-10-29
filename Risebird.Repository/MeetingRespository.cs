@@ -1403,7 +1403,7 @@ namespace Risebird.Repository
                         }
                         else
                         {
-                            parametersPoints.Add("@Points", 25);
+                            parametersPoints.Add("@Points", 15);
                         }
                     }
                     else if (reportDetails.MeetingStatus == 5)
