@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -7,6 +8,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -24,7 +26,11 @@ namespace Risebird.Business
         private readonly string twilioAuthToken;
         private readonly string twilioAccountSID;
         private readonly string twilioVoiceCallNumber;
-        public CandidateService(ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IIRFService irfService, IIRFRepository irfRepository, ITwilioHelper twilioHelper)
+        private readonly IEvaluatorRepository _evaluatorRespository;
+        private readonly IMeetingRespository _meetingRespository;
+
+
+        public CandidateService(ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IIRFService irfService, IIRFRepository irfRepository, ITwilioHelper twilioHelper, IEvaluatorRepository evaluatorRespository, IMeetingRespository meetingRespository)
         {
             _candidateRepository = candidateRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -35,6 +41,8 @@ namespace Risebird.Business
             twilioVoiceCallNumber = _configuration["TwilioSettings:CallerNumber"];
             _irfRepository = irfRepository;
             _twilioHelper = twilioHelper;
+            _evaluatorRespository = evaluatorRespository;
+            _meetingRespository = meetingRespository;
         }
 
         public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
@@ -246,5 +254,128 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<FitmentReportModel> GetFitmentReportReport(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var selectabilityReport = await _evaluatorRespository.GetSelectabilityReport(candidateId, irfId);
+
+                //var model = new EvaluatorReport();
+                var model = new FitmentReportModel();
+                var levels = await _meetingRespository.GetLevels();
+
+                if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    //model.IsEdited = true;
+                    model.SelectabilityReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
+
+                }
+                else
+                {
+                   // model.IsEdited = false;
+
+                    var selectabilityDetails = await _evaluatorRespository.GetTransSelectability(irfId);
+                    var selectabilityList = new List<SelectabilityEvaluatorReport>();
+                    foreach (var item in selectabilityDetails)
+                    {
+                        SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport
+                        {
+                            CandidateId = candidateId,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
+                        selectabilityList.Add(obj);
+                    }
+
+                    model.SelectabilityReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
+                }
+                var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(candidateId, irfId);
+
+                
+
+                if (joinabilityReport != null && joinabilityReport.Any())
+                {
+                    //model.IsEdited = true;
+                    model.JoinabilityReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
+
+                }
+                else
+                {
+                    //model.IsEdited = false;
+
+                    var joinabilityDetails = await _meetingRespository.GetTransJoinability(irfId);
+                    var joinabilityList = new List<JoinabilityHRReport>();
+                    foreach (var item in joinabilityDetails)
+                    {
+                        JoinabilityHRReport obj = new JoinabilityHRReport
+                        {
+                            CandidateId = candidateId,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
+                        joinabilityList.Add(obj);
+                    }
+
+                    model.JoinabilityReportCollection = (IList<JoinabilityHRReport>)joinabilityList;
+                }
+
+                if ((joinabilityReport != null && joinabilityReport.Any()) || (selectabilityReport !=null && selectabilityReport.Any()))
+                {
+                    model.IsEdited = true;
+                }
+                else
+                {
+                    model.IsEdited = false;
+                }
+
+                //get all values from database
+
+                var candidateDetails = await _candidateRepository.GetCandidateForFitmentReport(candidateId, irfId);
+
+                model.CandidateName = candidateDetails.Name;
+                model.ResumeLink = candidateDetails.ResumeLink;
+                model.IRFId = irfId;
+                model.IRFName = candidateDetails.IRFName;
+                model.CandidateEmailId = candidateDetails.EmailId;
+               
+                model.FitmentStatus = candidateDetails.FitmentStatus;
+                model.PriorityStatus = candidateDetails.PriorityStatus;
+                model.CompletionStatus = candidateDetails.CompletionStatus;
+                model.SelectabilityComments = candidateDetails.SelectabilityComments;
+                model.JoinabilityComments = candidateDetails.JoinabilityComments;
+                model.Level = new SelectList(levels, "id", "Name");
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> AddEditFitmentReport(FitmentReportModel model)
+        {
+            try
+            {
+                return await _candidateRepository.AddEditFitmentReport(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }
