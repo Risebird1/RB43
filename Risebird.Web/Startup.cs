@@ -121,13 +121,13 @@ namespace Risebird.Web
             }
 
             app.UseSession();
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-               // HttpOnly = HttpOnlyPolicy.Always,
-                //Secure = CookieSecurePolicy.Always,
-                MinimumSameSitePolicy = SameSiteMode.None
+            //app.UseCookiePolicy(new CookiePolicyOptions
+            //{
+            //   // HttpOnly = HttpOnlyPolicy.Always,
+            //    //Secure = CookieSecurePolicy.Always,
+            //    MinimumSameSitePolicy = SameSiteMode.None
 
-            });
+            //});
             app.UseAuthentication();
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseResponseCompression();
