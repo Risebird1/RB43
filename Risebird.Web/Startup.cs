@@ -60,12 +60,7 @@ namespace Risebird.Web
                 })
                 .AddAzureAdB2C(options => Configuration.Bind("Authentication:AzureAdB2C", options))
                 .AddCookie();
-            //services.AddSession(o =>
-            //{
-            //    o.Cookie.Name = "Risebirdportal.Session";
-            //    o.Cookie.HttpOnly = true;
-            //    o.Cookie.IsEssential = true;
-            //});
+          
 
 
             services.Configure<BrotliCompressionProviderOptions>(options =>
@@ -117,7 +112,7 @@ namespace Risebird.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                //app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseSession();
