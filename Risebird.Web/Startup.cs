@@ -112,7 +112,7 @@ namespace Risebird.Web
             }
             else
             {
-                //app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Index");
             }
 
             app.UseSession();
