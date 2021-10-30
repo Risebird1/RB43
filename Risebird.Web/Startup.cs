@@ -90,9 +90,9 @@ namespace Risebird.Web
             services.AddSession(options =>
             {
                 //options.IdleTimeout = TimeSpan.FromMinutes(1440);
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(120);
                 options.Cookie.Name = "Risebirdportal.Session";
-                options.Cookie.HttpOnly = true;
+                //options.Cookie.HttpOnly = true;
             });
             //Set this values according to your requirements  
             services.Configure<FormOptions>(o =>
@@ -123,8 +123,8 @@ namespace Risebird.Web
             app.UseSession();
             app.UseCookiePolicy(new CookiePolicyOptions
             {
-                HttpOnly = HttpOnlyPolicy.Always,
-                Secure = CookieSecurePolicy.Always,
+               // HttpOnly = HttpOnlyPolicy.Always,
+                //Secure = CookieSecurePolicy.Always,
                 MinimumSameSitePolicy = SameSiteMode.None
 
             });

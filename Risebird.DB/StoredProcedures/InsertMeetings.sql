@@ -151,7 +151,7 @@ Begin
 	--declare
 	--@profileId int = (select id from [Profile] where [Name]='Candidate')
 	
-	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber) values (@profileId, @candidateName, @candidateEmail, 1,@textreminder)
+	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber,WhatsappNumber) values (@profileId, @candidateName, @candidateEmail, 1,@textreminder,@textreminder)
 
 	declare 
 	@cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)
