@@ -83,9 +83,8 @@ namespace Risebird.Web
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
-            {
-                //options.IdleTimeout = TimeSpan.FromMinutes(1440);
-                options.IdleTimeout = TimeSpan.FromMinutes(120);
+            {               
+                options.IdleTimeout = TimeSpan.FromMinutes(180);
                 options.Cookie.Name = "Risebirdportal.Session";
                 //options.Cookie.HttpOnly = true;
             });
