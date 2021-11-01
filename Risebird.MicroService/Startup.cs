@@ -51,7 +51,11 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<ICalendlyHelper, CalendlyHelper>();
             builder.Services.AddScoped<IZoomHelper, ZoomHelper>();
             builder.Services.AddScoped<ISASUrlHelper, SASUrlHelper>();
-
+            builder.Services.AddScoped<IInterviewerService, InterviewerService>();
+            builder.Services.AddScoped<IClientService, ClientService>();
+            builder.Services.AddScoped<IInterviewerRepository, InterviewerRepository>();
+            builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
+            builder.Services.AddScoped<IClientRepository, ClientRepository>();            
         }
 
 
