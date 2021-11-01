@@ -31,7 +31,8 @@ namespace Risebird.Web.Controllers
         private static List<int> Shortlistvideoids = new List<int>();
         private IInterviewerService _interviewerService;
         private readonly IUserService _userService;
-        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService, IUserService userService)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
             _iInterviewerSkillsService = InterviewerSkillsService;
@@ -43,6 +44,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _interviewerService = interviewerService;
             _userService = userService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
@@ -247,13 +249,20 @@ namespace Risebird.Web.Controllers
                         string uploadedFileURL = string.Empty;
                         if (InterviewerSkillsDetails.JDFile != null)
                         {
-                            var fileName = InterviewerSkillsDetails.JDFile.FileName.Replace(" ", "_");
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(InterviewerSkillsDetails.JDFile);
 
-                            await _azureStorageHelper.InsertBlob(fileName, "resumes", InterviewerSkillsDetails.JDFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            InterviewerSkillsDetails.JDLink = uploadedFileURL;
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                var fileName = InterviewerSkillsDetails.JDFile.FileName.Replace(" ", "_");
+
+                                await _azureStorageHelper.InsertBlob(fileName, "resumes", InterviewerSkillsDetails.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                InterviewerSkillsDetails.JDLink = uploadedFileURL;
+                            }
+                            
                         }
                         if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
                         {
@@ -358,19 +367,26 @@ namespace Risebird.Web.Controllers
 
                         if ((model.JDFile != null))
                         {
-                            var fileName = model.JDFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(fileName, "resumes", model.JDFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            string uploadedFileURL = blob.Uri.ToString();
-                            if (uploadedFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Could not upload JD file.";
-                                return RedirectToAction("Index");
+                                var fileName = model.JDFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(fileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                string uploadedFileURL = blob.Uri.ToString();
+                                if (uploadedFileURL == null)
+                                {
+                                    TempData["SuccessErrorMessageISCInterviewer"] = "Could not upload JD file.";
+                                    return RedirectToAction("Index");
 
+                                }
+
+                                model.JDLink = uploadedFileURL;
                             }
-
-                            model.JDLink = uploadedFileURL;
+                            
                         }
                         else if (model.JDLink == null || model.JDLink == "")
                         {
