@@ -27,8 +27,10 @@ namespace Risebird.Web.Controllers
         private ISupportService _supportService;
         private ISkillService _skillService;
         private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -36,6 +38,7 @@ namespace Risebird.Web.Controllers
             _supportService = supportService;
             _skillService = skillService;
             _azureStorageHelper = azureStorageHelper;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
@@ -574,13 +577,20 @@ namespace Risebird.Web.Controllers
             {
                 if (Request.Form.Files.Count() > 0)
                 {
-                    var file = Request.Form.Files[0];
-                    var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
-                    await _azureStorageHelper.InsertBlob(filename, "videos", file);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                    var blob = containerRef.GetBlockBlobReference(filename);
-                    string uploadedvideoFileURL = blob.Uri.ToString();
-                    values.VideoLink = uploadedvideoFileURL;
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                        || fileMimeType == "video/quicktime")
+                    {
+                        var file = Request.Form.Files[0];
+                        var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+                        await _azureStorageHelper.InsertBlob(filename, "videos", file);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        values.VideoLink = uploadedvideoFileURL;
+
+                    }
+                    
                 }
                 HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
                 return Json("");
@@ -640,13 +650,19 @@ namespace Risebird.Web.Controllers
                 _list.Feedbackreating = rating;
                 if (Request.Form.Files.Count() > 0)
                 {
-                    var file = Request.Form.Files[0];
-                    var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
-                    await _azureStorageHelper.InsertBlob(filename, "videos", file);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                    var blob = containerRef.GetBlockBlobReference(filename);
-                    string uploadedvideoFileURL = blob.Uri.ToString();
-                    _list.VideoLink = uploadedvideoFileURL;
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                        || fileMimeType == "video/quicktime")
+                    {
+                        var file = Request.Form.Files[0];
+                        var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+                        await _azureStorageHelper.InsertBlob(filename, "videos", file);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        _list.VideoLink = uploadedvideoFileURL;
+                    }
+                    
                 }
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
