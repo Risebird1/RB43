@@ -208,9 +208,10 @@
                                                                     {
 
 
-                                                                        <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
-                                                                        </td>
+                                                            <td class="cadEmail">
+                                                                @*<a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>*@
+                                                                <span class="cname">  @item.EmailId</span>
+</td>
                                                                     }
 
 
@@ -329,7 +330,7 @@
 
                                                                     </span>
                                                                 </button>
-                                                                <br />
+                                                               
 
                                                                 <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                     <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
@@ -1361,7 +1362,7 @@
                 if (data[i].emailId.length > 18) {
 
                     html += '  <td class="cadEmail">';
-                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
+                    html += ' <span class="cname"> ' + data[i].emailId +'</span>';
                     html += '   </td>';
                 }
 
@@ -1439,7 +1440,7 @@
             html += '<i class="fa fa-dot-circle"></i>';
             html += '</span>';
             html += '</button>';
-            html += '  <br/><button class="mdc-fab app-fab--absolute" aria-label="Edit">';
+            html += '<button class="mdc-fab app-fab--absolute" aria-label="Edit">';
             html += '<a style="color:#fff;" href = "/Candidate/Edit?id=' + data[i].id + '&irfName=' + irfname + '&irfId=' + irfid + '" title="Edit" class="mdc-fab__icon material-icons">';
             html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>';
             html += '   </a></button>';
@@ -1455,6 +1456,13 @@
                 html += ' <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>';
                 html += ' </a ></button>';
             }
+             if (profile == "Admin" || profile == "SeniorHR" || profile == "Client" || profile == "HR") {
+                 html += '  <button class="mdc-fab app-fab--absolute" aria-label="Fitment Report">';
+                 html += '  <a href = "/Candidate/FitmentReport?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&rfName=' + data[i].irfName + '" title="Fitment Report" class="mdc-fab__icon material-icons">';
+                 html += ' <img style="width:75%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA8ElEQVRIid2VTQ6CMBBGp8ZDqPFAJngEj0F0a4ILL4UX0FPIDcQFrp4LpoZAW6DExPglBFK+mTf9mVTk7wRsgIJ+HWMB9wHJ4yE2cohHdf42YBwkEjAcMgHghBhXsIiIMabzr+1xqR03D1U6NEkIOosBjNHXAVFL5JJvz35/iYAtkANPoNTvJBTQ2wcN7ynQE9kkgFYOUAEpsHRAujMZAbioNW3HNpRPAZRqXQQAjymbbIv4HE+jEpG19bgAhaea9syu+t45ctixW7es+sr03moNX6JDFbAHVvocgJd3k8cIyHyF4DumEZCEurlKHI32BprPJ5GLOEwZAAAAAElFTkSuQmCC" />';
+                 html += ' </a>';
+                 html += ' </button>';
+                 }
 
             if (profile != "Client") {
                 html += ' <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">';
