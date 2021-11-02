@@ -74,7 +74,7 @@
                                                     @Html.LabelFor(model => model.RequestedBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                     <span class="red">*</span>
                                                 </div>
-                                                @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control br-g", @required = "required" } })
+                                                @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control br-g", @required = "required", @type = "email" } })
                                                 @Html.ValidationMessageFor(model => model.RequestedBy, "", new { @class = "text-danger" })
                                             </div>
                                         </div>

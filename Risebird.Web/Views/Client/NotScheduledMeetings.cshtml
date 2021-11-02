@@ -90,6 +90,7 @@
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
+                            <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("NotScheduledMeetingstoExcel", "Client")'"></i></span>
                         </div>
                         <div style="float:left">
                         </div>
@@ -487,10 +488,12 @@
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="        top: -10px;
+                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top">
+                                                                                            <span class="btn-call" style="        top: -10px;
         position: relative;
         cursor: pointer;
-" title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+" title="Click here to call the candidate."><span class="fa fa-phone"></span></span>
+                                                                                        </span>
                                                                                     }
                                                                                 </td>
                                                                             </tr>

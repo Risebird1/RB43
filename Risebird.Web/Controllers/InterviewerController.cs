@@ -43,8 +43,10 @@ namespace Risebird.Web.Controllers
         private static string Searchvalue;
         private static string Searchvalueprofile;
         private static string SearchvalueInterviewer;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper)
 
         {
             _interviewerService = interviewerService;
@@ -61,6 +63,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _irfService = irfService;
             _userRepository = userRepository;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
 
@@ -467,23 +470,35 @@ namespace Risebird.Web.Controllers
                         {
                             if (interviewerProfile.ResumeFile != null)
                             {
-                                var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
-                                await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.ResumeLink = uploadedFileURL;
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+                                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.ResumeLink = uploadedFileURL;
+                                }
+                                
 
                             }
                             if (interviewerProfile.CodedResumeFile != null)
                             {
-                                var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
 
-                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                    await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                }
+                                
                             }
                         }
                         else
@@ -589,24 +604,36 @@ namespace Risebird.Web.Controllers
                         {
                             if (interviewerProfile.ResumeFile != null)
                             {
-                                var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
 
-                                await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.ResumeLink = uploadedFileURL;
+                                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.ResumeLink = uploadedFileURL;
+                                }
+                                
 
                             }
                             if (interviewerProfile.CodedResumeFile != null)
                             {
-                                var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
 
-                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                    await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                }
+                                
                             }
                         }
 
@@ -1099,20 +1126,32 @@ namespace Risebird.Web.Controllers
                     {
                         if (interviewerProfile.ResumeFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ResumeLink = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.ResumeLink = uploadedFileURL;
+                            }
+                            
 
                         }
                         if (interviewerProfile.ImageUpload != null)
                         {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ImageUpload.FileName, "profileimages", interviewerProfile.ImageUpload);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ImageUpload.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ImageURL = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ImageUpload);
+                            if (fileMimeType == "image/jpeg" || fileMimeType == "image/x-icon"
+                                                || fileMimeType == "image/tiff")
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.ImageUpload.FileName, "profileimages", interviewerProfile.ImageUpload);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ImageUpload.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.ImageURL = uploadedFileURL;
+                            }
+                            
                         }
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {
@@ -1804,20 +1843,25 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.ThumbnailImage = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.ThumbnailImage = uploadedaudioFileURL;
-                            }
+
                         }
                         string uploadedvideoFileURL = string.Empty;
 
@@ -2430,12 +2474,18 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.CodedResumeFile != null)
                         {
-                            var codedResumeFileName = model.CodedResumeFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", model.CodedResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                            var uploadedFileURL = blob.Uri.ToString();
-                            model.CodedResumeLink = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CodedResumeFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                var codedResumeFileName = model.CodedResumeFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", model.CodedResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                                var uploadedFileURL = blob.Uri.ToString();
+                                model.CodedResumeLink = uploadedFileURL;
+                            }
+                            
                         }
                         if (_interviewerService.InterviewerRecommendation(model).Result)
                         {

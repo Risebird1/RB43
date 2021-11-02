@@ -34,8 +34,8 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly ICandidateService _candidateService;
         private readonly IWhatsAppHelper _whatsAppHelper;
-
-        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService, ICandidateService candidateService, IWhatsAppHelper whatsAppHelper)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService, ICandidateService candidateService, IWhatsAppHelper whatsAppHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +48,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _candidateService = candidateService;
             _whatsAppHelper = whatsAppHelper;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
 
@@ -1777,11 +1778,17 @@ namespace Risebird.Web.Controllers
                 {
                     if (_newobject.IreportModel.VideoFile != null)
                     {
-                        await _azureStorageHelper.InsertBlob(_newobject.IreportModel.VideoFile.FileName, "videos", _newobject.IreportModel.VideoFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                        var blob = containerRef.GetBlockBlobReference(_newobject.IreportModel.VideoFile.FileName);
-                        string uploadedvideoFileURL = blob.Uri.ToString();
-                        _newobject.IreportModel.VideoLink = uploadedvideoFileURL;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(_newobject.IreportModel.VideoFile);
+                        if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                            || fileMimeType == "video/quicktime")
+                        {
+                            await _azureStorageHelper.InsertBlob(_newobject.IreportModel.VideoFile.FileName, "videos", _newobject.IreportModel.VideoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            var blob = containerRef.GetBlockBlobReference(_newobject.IreportModel.VideoFile.FileName);
+                            string uploadedvideoFileURL = blob.Uri.ToString();
+                            _newobject.IreportModel.VideoLink = uploadedvideoFileURL;
+                        }
+                        
                     }
                     var result = await _meetingService.AddSharedVideoDetails(_newobject.IreportModel);
                     var Emailids = _newobject.IreportModel.SharedEmailAddress;

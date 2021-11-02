@@ -1,11 +1,14 @@
-﻿
+﻿/* CSS Document */
+
+
 
 body {
     font-family: Arial, sans-serif;
 }
+
 table,
 td {
- /*   border: 1px solid #23232324;*/
+    /*   border: 1px solid #23232324;*/
     cursor: copy;
 }
 
@@ -25,7 +28,7 @@ table {
     border-radius: 8px;
     box-shadow: 0 2px 3px 0 rgb(113 163 250 / 10%),0 1px 10px 0 rgb(52 58 68 / 12%) !important;
     border-color: transparent;
-   width: 450px;
+    width: 450px;
 }
 
 /* .font {
@@ -50,22 +53,30 @@ table {
 
 .color {
     color: #fefdfd;
-    background-color: #fff!important;
+    background-color: #fff !important;
 }
 
 .border-color {
-   background-color: #fff!important;
+    background-color: #fff !important;
+}
+
+.action-btn {
+    width: 100px;
+    margin: 10px 20px 0px 0px;
+    float: right;
 }
 
 .off-color {
     color: #7c7ef8;
 }
+
 .cal-myr {
     padding: 5px 0px 0px 8px;
     margin: 0px 0px 10px 5px;
     font-size: 19px;
     color: #666A73;
 }
+
 .form-field-calender #file-chosen {
     margin-left: 0.8rem;
     font-family: sans-serif;
@@ -74,6 +85,7 @@ table {
     font-size: 16px;
     left: -16px;
 }
+
 .date-time-txt {
     color: #06c29c;
     font-size: 16px;
@@ -87,11 +99,13 @@ table {
         left: -6px;
         top: -2px;
     }
+
 .time-date {
     padding-left: 30px;
 }
-    .time-date .form-field-calender select.form-control{
-        width:200px;
+
+    .time-date .form-field-calender select.form-control {
+        width: 200px;
     }
 
 .checkbox-style {
@@ -100,6 +114,7 @@ table {
     margin-right: 10px;
     position: absolute;
 }
+
 .checkbox-div {
     font-family: "Proxima Nova",sans-serif;
     font-size: 16px;
@@ -113,62 +128,86 @@ table {
     width: 100%;
     float: left;
 }
+
     .checkbox-div span {
         float: left;
         padding-left: 30px;
         line-height: 18px;
     }
 
-    .pull-left {
-        float: left;
-    }
-.marginTop10{
-    margin-top:10px;
+.pull-left {
+    float: left;
 }
-.addEvent table{
-    box-shadow:none!important;
-    border:0px!important;
+
+.marginTop10 {
+    margin-top: 10px;
 }
+
+.addEvent table {
+    box-shadow: none !important;
+    border: 0px !important;
+}
+
     .addEvent table td:hover, .addEvent table tr td:hover, .addEvent .table-striped tbody tr:hover {
-        box-shadow: none!important;
+        box-shadow: none !important;
     }
-    .calendar-con {
-        min-width: 600px;
-        max-width: 1100px;
-        margin: 40px auto 40px auto;
-        /* max-height: 600px;*/
-        border: 1px solid var(--text-color-level3, rgba(26, 26, 26, 0.1));
-        border-radius: 8px;
-        box-shadow: 0 1px 8px 0 rgb(0 0 0 / 8%);
-        background: #fff;
-        padding: 40px 0px;
-    }
+
+.calendar-con {
+    min-width: 600px;
+    max-width: 1100px;
+    margin: 40px auto 40px auto;
+    /* max-height: 600px;*/
+    border: 1px solid var(--text-color-level3, rgba(26, 26, 26, 0.1));
+    border-radius: 8px;
+    box-shadow: 0 1px 8px 0 rgb(0 0 0 / 8%);
+    background: #fff;
+    padding: 40px 0px;
+}
+
 .txttimezone-con {
     position: relative;
-    left: 85px;
+    left: 15px;
     background: #dbdbdb8c;
-    width: 300px;
+    width: 450px;
     border-radius: 200px;
     text-align: center;
     color: #686363;
-    padding: 10px 0px 0px 10px;
+    padding: 4px 0px 4px 10px;
 }
-    .txttimezone-con:hover{
- /*       border:1px grey solid;*/
-        cursor:pointer;
+.drop-timezone:focus{outline:none;}
+.drop-timezone {
+    border: 0px;
+    text-align: left;
+    width: 95%;
+    float: left;
+    background: none;
+}
+
+    .txttimezone-con:hover {
+        /*       border:1px grey solid;*/
+        cursor: pointer;
     }
+
+.active-stat {
+    float: left;
+    width: auto;
+    margin: 10px 10px 0px 10px;
+}
+
 .logo-box {
     width: 85px;
-    height: 75px;
+    height: 85px;
     margin-bottom: 10px;
-    border-radius: 50%;
-    position: relative;
+    border-radius: 5%;
     background: white;
+    display: table;
     box-shadow: 0 2px 3px 0 rgb(113 163 250 / 10%), 0 1px 10px 0 rgb(52 58 68 / 12%) !important;
 }
-.logo-company {
-    position: relative;
-    top: 23px;
+
+.log-wrap {
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
 }
 
 .form-field-calender h2 {
@@ -178,6 +217,7 @@ table {
     line-height: 1.2;
     color: #000;
 }
+
 .form-field-calender .form-label {
     color: #000 !important;
     /* font-weight: 600!important; */
@@ -185,12 +225,14 @@ table {
     margin-bottom: 8px;
     font-weight: bold;
     font-size: 14px;
-    padding:0px;
+    padding: 0px;
 }
+
 .form-field-calender .form-control[readonly] {
     background-color: #fff;
     opacity: 1;
 }
+
 .form-field-calender .form-control, .form-field-calender input[type="text"], input[type="password"], textarea, textarea.form-control {
     border: 1px #9d9d9d solid !important;
     padding: 10px 18px 10px 18px;
@@ -201,12 +243,13 @@ table {
     background: #fff;
     border: 1px solid #ddd;
     font-family: 'Roboto', sans-serif;
-    font-size: 14px!important;
+    font-size: 14px !important;
     font-weight: 300;
     line-height: 44px;
     color: #888;
     border-radius: 4px;
 }
+
 .form-field-calender select.form-control {
     border: 1px #9d9d9d solid !important;
     padding: 10px 18px 10px 18px;
@@ -222,17 +265,21 @@ table {
     color: #888;
     border-radius: 4px;
 }
-    .marginRight{
-    margin-right:10px!important;
-    margin-bottom:10px!important;
+
+.marginRight {
+    margin-right: 10px !important;
+    margin-bottom: 10px !important;
 }
+
 .form-field-calender .form-control:focus {
     border: 2px #9d9d9d solid;
 }
+
 .form-field-calender {
     padding-left: 40px;
     border-left: 1px #8080805c solid;
 }
+
 #calenderTimeslot {
     margin-top: 40px;
     height: 320px;
@@ -240,9 +287,11 @@ table {
     overflow-x: hidden;
     width: 225px;
 }
-.align-r{
-    text-align:right;
+
+.align-r {
+    text-align: right;
 }
+
 #current-day-info {
     min-height: 100vh;
     width: 34%;
@@ -254,7 +303,11 @@ table {
         border-bottom: 1px solid;
         color: white;
     }
-#calender table tr td:hover{box-shadow:none!important;}
+
+#calender table tr td:hover {
+    box-shadow: none !important;
+}
+
 .time {
     text-align: center;
     padding-bottom: 5vh;
@@ -270,6 +323,12 @@ table {
         text-decoration-style: wavy;
         text-decoration-color: green;
     }
+
+.active-stat {
+    float: left;
+    width: auto;
+    margin: 10px 10px 0px 10px;
+}
 
 #current-day-info h2 {
     font-size: 6.2vh;
@@ -302,6 +361,7 @@ table {
         opacity: 0.4;
         color: black;
     }
+
 #calender h4 {
     color: #173457;
 }
@@ -313,18 +373,20 @@ table {
 #calender .weekday {
     color: #4a8eff;
 }
+
 .event .calendar-con {
     min-width: 600px;
     max-width: 800px;
     margin: 40px auto 40px auto;
 }
- .event .calendar-con .form-field-calender{
- border:0px;
- }
 
- .event .calendar-con .form-field-calender .form-label {
-     font-size:15px;
-}
+    .event .calendar-con .form-field-calender {
+        border: 0px;
+    }
+
+        .event .calendar-con .form-field-calender .form-label {
+            font-size: 15px;
+        }
 
 .time-txt {
     padding-left: 7px;
@@ -334,6 +396,7 @@ table {
     font-size: 15px;
     color: grey;
 }
+
 .add-text {
     clear: both;
     padding: 10px 0px;
@@ -341,6 +404,7 @@ table {
     font-weight: 400;
     color: #6a6767;
 }
+
 .company-info h4 {
     font-weight: bold;
     font-size: 15px;
@@ -349,12 +413,14 @@ table {
     padding: 0px;
     color: #767676;
 }
+
 .company-info h1 {
     margin: 15px 0px;
     font-weight: bold;
     font-size: 25px;
     line-height: 32px;
 }
+
 .txttimezone-con {
     color: #13344c;
     background: #cadbf9;
@@ -375,7 +441,7 @@ table {
 
 #calender {
     width: 45%;
- /*   min-height: 100vh;*/
+    /*   min-height: 100vh;*/
     display: flex;
     padding-left: 40px;
     border-left: 1px #8080805c solid;
@@ -404,7 +470,7 @@ table {
         padding: 10px 10px 5px 10px;
         font-size: 19px;
         font-weight: 600;
-       /* color: #666A73;*/
+        /* color: #666A73;*/
     }
 
     #calender h3 {
@@ -417,7 +483,7 @@ table {
 
     #calender .weekday {
         background: #fff !important;
-       /* color: #666A73;*/
+        /* color: #666A73;*/
         text-transform: uppercase;
         font-weight: 700;
         font-size: 14px;
@@ -425,51 +491,137 @@ table {
         /* border: 1px solid transparent; */
         /* border-bottom: 1px solid white !important; */
     }
-.icon-div{
-    float:right;
+
+.icon-div {
+    float: right;
 }
+
 #calender .icon {
     font-size: 1rem;
     color: #978e8e;
     padding: 0px 10px;
     margin-right: 5px;
 }
-        #calender .icon:hover {
-            opacity: 0.6;background:red;
-        }
 
-    #calender tbody td {
-        /*   height: 9.2vh;
-        width: 6.5vw;
-        font-size: 1.3vw;
-        font-weight: 600;
-        vertical-align: top;
-        padding: 0.5vw;
-        transition: font-size 0.4s ease;*/
-        font-size: 15px;
-        text-align: center;
-        color: #666A73 !important;
-        height: 44px;
-        background: #fff !important;
+    #calender .icon:hover {
+        opacity: 0.6;
+  /*      background: red;*/
+    }
+.custom-select {
+    position: relative;
+    font-family: Arial;
+    background: none !important;
+    border: 0px !important;
+    font-size: 13px !important;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057 !important;
+    text-align: left;
+}
+
+    .custom-select select {
+        display: none; /*hide original SELECT element: */
     }
 
-        #calender tbody td:hover {
-     /*       font-size: 2vw;*/
-        }
-#current-day img{
-    display:none;
+
+
+    /* Style the arrow inside the select element: */
+.select-selected:after {
+    position: absolute;
+    content: "";
+    top: 14px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-color: #042d57 transparent transparent transparent;
+}
+
+    /* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+    border-color: transparent transparent #042d57 transparent;
+    top: 7px;
+}
+
+/* style the items (options), including the selected item: */
+.select-items div, .select-selected {
+    padding: 6px 16px;
+   
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    cursor: pointer;
+}
+.select-selected {
+    position: relative;
+    top: -5px;
+}
+    /* Style items (options): */
+    .select-items {
+        position: absolute;
+        bottom: 42px;
+        left: -5px;
+        right: 0;
+        z-index: 99;
+        background: var(--container-background-color, #ffffff);
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+        height: 230px;
+        overflow-y: scroll;
+    }
+
+/* Hide the items when the select box is closed: */
+.select-hide {
+    display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+#calender tbody td {
+    font-size: 15px;
+    width: 44px !important;
+    text-align: center;
+    color: #666A73 !important;
+    height: 44px;
+    background: #fff !important;
+}
+
+    #calender tbody td:hover {
+        /*       font-size: 2vw;*/
+    }
+
+#current-day img {
+    display: none;
 }
 
 #calenderTimeslot table, #calenderTimeslot table tr td:hover {
     box-shadow: none !important;
     border: none !important;
 }
-#calender #current-day {
-    color:#fff!important;
-    position: relative;
-    display: block;
+#calender table {
+    border-collapse: separate;
+    border-spacing: 15px 5px;
+}
+#calender tbody td.active-slot {
+    background-color: #56a9ff !important;
+    color: #fff !important;
+    font-weight: bold;
+    opacity: 1 !important;
+    border-radius: 50%;
     width: 44px;
     height: 44px;
+    color: #fff;
+    padding: 0px 5px;
+}
+.currMonth{background:#fff}
+
+#calender #current-day {
+    color: #fff !important;
+    background: #56a9ff!important;
+    position: relative;
+/*    display: block;
+    width: 44px;
+    height: 44px;*/
     line-height: 41px;
     margin-right: auto;
     margin-left: auto;
@@ -482,18 +634,18 @@ table {
     border-radius: 50%;
 }
 
-    #calender img {
-        width: 4.7rem;
-        vertical-align: top;
-        position: relative;
-        top: 0.1vw;
-        left: 20px;
-    }
+#calender img {
+    width: 4.7rem;
+    vertical-align: top;
+    position: relative;
+    top: 0.1vw;
+    left: 20px;
+}
 
-    #calender .day {
-        display: block;
-        max-height: 10px;
-    }
+#calender .day {
+    display: block;
+    max-height: 10px;
+}
 
 .tooltip {
     display: none;
@@ -552,6 +704,7 @@ table {
 .fade-out {
     animation: fade-out 0.5s ease-out;
 }
+
 
 @keyframes fade-in {
     0% {
@@ -871,8 +1024,10 @@ table {
     top: 0.8vw;
     left: 1px;
 }
+#current-day {
+    background-color: #56a9ff !important;
+}
 @media only screen and (max-width: 768px) {
-
     #calendar table {
         width: 300px !important;
     }

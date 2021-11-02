@@ -1,8 +1,8 @@
 ﻿const calenderMonthDOM = document.getElementById("cal-month"),
     calenderYearDOM = document.getElementById("cal-year");
 
-document.querySelector(".fa-chevron-left").addEventListener("click", nextMonth);
-document.querySelector(".fa-chevron-right").addEventListener("click", prevMonth);
+document.querySelector(".fa-chevron-left").addEventListener("click", prevMonth);
+document.querySelector(".fa-chevron-right").addEventListener("click", nextMonth);
 
 const now = new Date();
 //for testing purposes use 'let' instead of 'const'
@@ -434,6 +434,7 @@ function nextMonth() {
     }
     currentFullMonth = currentFullYear.months[monthsStr[state.todayMonth]];
     showCalenderInfo();
+    setvalues();
 }
 
 function prevMonth() {
@@ -445,6 +446,7 @@ function prevMonth() {
     }
     currentFullMonth = currentFullYear.months[monthsStr[state.todayMonth]];
     showCalenderInfo();
+    setvalues();
 }
 
 function showCalenderInfo() {

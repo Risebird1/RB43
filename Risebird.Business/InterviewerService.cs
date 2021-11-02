@@ -810,7 +810,7 @@ namespace Risebird.Business
                 {
                     reportModel.AssessmentGroupId = string.Join(',', reportModel.AssessmentGroupIdArray);
                 }
-                if(!string.IsNullOrEmpty(reportModel.PerHourRateIndia))
+                if (!string.IsNullOrEmpty(reportModel.PerHourRateIndia))
                 {
                     reportModel.IndiaProductRate = Convert.ToInt32((Convert.ToInt16(reportModel.PerHourRateIndia) * 1.5));
 
@@ -878,6 +878,19 @@ namespace Risebird.Business
             try
             {
                 var result = await _interviewerRepository.fetchClientFeedbackbyInterviewer(emailid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview()
+        {
+            try
+            {
+                var result = await _interviewerRepository.FetchAllInterviewerallUpcomingInterview();
                 return result;
             }
             catch (Exception e)

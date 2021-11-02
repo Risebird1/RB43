@@ -83,7 +83,7 @@
 
                                                 <div class="card-footer action scheduling">
                                                     <div class="col-md-12 nopad">
-                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-left" id="irf-card-footer">
+                                                        <div class="active-stat" id="irf-card-footer">
                                                             @if (@item.IsActive)
                                                             {
                                                                 <h6 style="color: green;"> Active</h6>
@@ -93,40 +93,42 @@
                                                                 <h6 style="color: black;"> Deactive</h6>
                                                             }
                                                         </div>
-                                                        <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10 pull-right">
+                                                        <div class="stats-bttm-btn pull-right">
                                                             <a hidden id="resumeLink_@item.id" target="_blank" href=@item.EventUrl></a>
-                                                            <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
-                                                                <p class="special-text">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
-                                                                    <span id="special_text_@item.id" class="special-text__tooltip">
-                                                                        Copy Link
-                                                                    </span>
-                                                                </p>
-                                                            </button>
-                                                          
+                                                            <div class="action-btn">
+                                                                <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
+                                                                    <p class="special-text">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                                                        <span id="special_text_@item.id" class="special-text__tooltip">
+                                                                            Copy Link
+                                                                        </span>
+                                                                    </p>
+                                                                </button>
 
-                                                            @if (item.IsActive)
-                                                            {<div class="text-center action">
-                                                                    <div class="switch-btn">
-                                                                        <div class="material-toggle" onclick="DeactiveEvent(@item.id)" title="Click here to Deactive">
-                                                                            <input class="switch" id="MoveToCP_@item.id" type="checkbox" checked="checked" value="false" name="Deactive">
-                                                                            <label for="Deactive" class=""></label>
-                                                                        </div>
 
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div class="text-center action">
-                                                                    <div class="switch-btn">
-                                                                        <div class="material-toggle" onclick="ActiveEvent(@item.id)" title="Click here to Active">
-                                                                            <input class="switch" id="MoveToCP_@item.id" type="checkbox" value="false" name="Active">
-                                                                            <label for="Active" class=""></label>
+                                                                @if (item.IsActive)
+                                                                {<div class="text-center action">
+                                                                        <div class="switch-btn">
+                                                                            <div class="material-toggle" onclick="DeactiveEvent(@item.id)" title="Click here to Deactive">
+                                                                                <input class="switch" id="MoveToCP_@item.id" type="checkbox" checked="checked" value="false" name="Deactive">
+                                                                                <label for="Deactive" class=""></label>
+                                                                            </div>
+
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="text-center action">
+                                                                        <div class="switch-btn">
+                                                                            <div class="material-toggle" onclick="ActiveEvent(@item.id)" title="Click here to Active">
+                                                                                <input class="switch" id="MoveToCP_@item.id" type="checkbox" value="false" name="Active">
+                                                                                <label for="Active" class=""></label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
