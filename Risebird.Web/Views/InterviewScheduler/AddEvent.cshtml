@@ -17,7 +17,7 @@
                 <div class="calendar-con clearfix">
 
                     <div class="form-field-calender">
-                        <form action="@Url.Action("AddEvent", "InterviewScheduler")" method="post" id="form">
+                        <form action="@Url.Action("AddEvent", "InterviewScheduler")" onsubmit="return CheckConditions();" method="post" id="form">
 
                             <div class="row">
                                 <div class="col-md-12 form-group">
@@ -26,7 +26,9 @@
                                 </div>
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.SkillChannel, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
-                                    @Html.DropDownListFor(m => m.SkillChannel, Model.IRFList, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left" })
+                                    @*@Html.DropDownListFor(m => m.SkillChannel, Model.IRFList, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left" })*@
+                                    @Html.TextBoxFor(m => m.SkillChannel, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left", @maxlength = "10", @onblur = "checkUniqueness(this.value)" })
+                                    @Html.ValidationMessageFor(model => model.SkillChannel, "", new { @id = "uniqueMsg", @class = "text-danger" })
                                 </div>
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.duration, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
@@ -67,6 +69,13 @@
                                                                             <span onclick="AddRow(@i)" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                             <span onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" class="trash-btn mdc-fab app-fab--absolute "><i class="far fa  fa-trash"></i></span>
                                                                         </td>
+
+
+
+
+
+
+
                                                                         <!--<td>
                                                                         <span onclick="AddRow(@i)" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>-->
                                                                         @*<input type="button" value="plus" onclick="AddRow(@i)" />*@
@@ -300,5 +309,46 @@
             return;
         }
     }
+    function checkUniqueness() {
+        var letterNumber = /^[0-9a-zA-Z]+$/;
+        var val = document.getElementById("SkillChannel").value;
+        if (val == "") {
+            document.getElementById("uniqueMsg").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            return false;
+        }
+        else if (val.length != 10) {
+            document.getElementById("SkillChannel").focus();
+            document.getElementById("uniqueMsg").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            return false;
+        }
+        else if (!(val.match(letterNumber))) {
+            document.getElementById("SkillChannel").focus();
+            document.getElementById("uniqueMsg").innerHTML = "Only Letters and Numbers are allowed.";
+            return false;
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/IRF/CheckUniqueness",
+                data: { 'value': val },
+                success: function (response) {
+                    if (response == false) {
+                        document.getElementById("uniqueMsg").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
+                        document.getElementById("SkillChannel").focus();
+                        return false;
+                    }
+                    else {
+                        document.getElementById("uniqueMsg").innerHTML = "";
+                        return true;
+                    }
+                }
+            });
+            return true;
+        }
+    }
+    function CheckConditions() {
+        return checkUniqueness();
+    }
+
 </script>
 

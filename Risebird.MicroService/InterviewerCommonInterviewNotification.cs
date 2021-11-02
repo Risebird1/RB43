@@ -51,6 +51,10 @@ namespace Risebird.MicroService
                                 sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite/" + _uniqueid;
                             }
                         }
+                        else
+                        {
+                            sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite/" + item.uniqueid;
+                        }
                         try
                         {
                             //Email Message Send
