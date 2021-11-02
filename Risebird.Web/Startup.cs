@@ -117,17 +117,17 @@ namespace Risebird.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Index");
             }
 
             app.UseSession();
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-                HttpOnly = HttpOnlyPolicy.Always,
-                Secure = CookieSecurePolicy.Always,
-                MinimumSameSitePolicy = SameSiteMode.None
+            //app.UseCookiePolicy(new CookiePolicyOptions
+            //{
+            //    HttpOnly = HttpOnlyPolicy.Always,
+            //    Secure = CookieSecurePolicy.Always,
+            //    MinimumSameSitePolicy = SameSiteMode.None
 
-            });
+            //});
             app.UseAuthentication();
             app.UseCors(options => options.AllowAnyOrigin());
             app.UseResponseCompression();
@@ -135,13 +135,13 @@ namespace Risebird.Web
             //app.UseAntiforgeryTokens();
             app.UseHttpsRedirection();
 
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
+            app.UseStatusCodePagesWithReExecute("/Index");
             app.UseStaticFiles();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}");
             });
         }
 
