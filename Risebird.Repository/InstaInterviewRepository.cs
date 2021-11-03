@@ -517,5 +517,27 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public string CheckForInstaAssign(int meetingid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(
+                         con, "Select Interviewer from [dbo].[InstaInterviewMeetings] where id = @meetingid", new { meetingid }, commandType: Text);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 }
