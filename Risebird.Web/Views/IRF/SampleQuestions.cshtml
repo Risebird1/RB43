@@ -29,7 +29,7 @@
                                 <div class="card-header">
                                     <h4 class="card-title">Sample Questions (Add Your Questions Here)</h4>
                                 </div>
-
+                                
                                 <div style="width:100%; float:left;height:10px;"></div>
                                 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
@@ -46,7 +46,7 @@
                                             <tbody>
                                                 @if (Model.SkillCollection.Count() == 0)
                                                 {
-                                                    <tr>
+                                                    <tr >
                                                         <td class="b-right">
 
                                                             @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
@@ -81,7 +81,7 @@
                                                     for (int i = 0; i < Model.SkillCollection.Count(); i++)
                                                     {
 
-                                                        @if (((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId) || Model.SkillCollection[i].UserId == null) || Model.Profile == "Admin")
+                                                        @if(((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId) || Model.SkillCollection[i].UserId==null) || Model.Profile=="Admin")
                                                         {
                                                             isDisplayable = true;
 
@@ -91,69 +91,69 @@
                                                             isDisplayable = false;
                                                         }
                                                         string rowDisplayStatus = isDisplayable ? "visible" : "collapse";
-                                                        <tr style="visibility: @rowDisplayStatus;">
-
-                                                            <td>
-                                                                @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)@*|| Model.Profile=="Admin"*@)
-{
-@Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
-
-}
-else
-{
-var newList = new List<SelectListItem>();
-newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault().Text });
-
-@Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
-
-}
-
-                                                            </td>
-
-                                                            <td>
-                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                    <div class="talktext">
-                                                                        @if (Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)
-                                                                        {
-                                                                            @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
-
-                                                                        }
-
-                                                                    </div>
-                                                                </div>
-
-
-                                                            </td>
-
-                                                            <td class="text-center">
-                                                                <div class="sample-btn">
-                                                                    @*<span id="btnPlus_@i" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
-
-                                                                    @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
+                                                        <tr style="visibility: @rowDisplayStatus;" >
+                                                                
+                                                                <td>
+                                                                    @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId) @*|| Model.Profile=="Admin"*@)
                                                                     {
-                                                                        isDeletetable = true;
+                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
                                                                     }
                                                                     else
                                                                     {
-                                                                        isDeletetable = false;
+                                                                        var newList = new List<SelectListItem>();
+                                                                        newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault().Text });
+
+                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
+
                                                                     }
-                                                                    @{
-                                                                        string displayStatus = isDeletetable ? "block" : "none";
-                                                                    }
-                                                                    <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                </div>
 
-                                                            </td>
-                                                            @Html.HiddenFor(m => m.SkillCollection[i].UserId)
-                                                        </tr>
+                                                                </td>
+
+                                                                <td >
+                                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                        <div class="talktext">
+                                                                            @if (Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)
+                                                                            {
+                                                                                @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+
+                                                                            }
+
+                                                                        </div>
+                                                                    </div>
 
 
+                                                                </td>
+
+                                                                <td  class="text-center">
+                                                                    <div class="sample-btn">
+                                                                        @*<span id="btnPlus_@i" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
+
+                                                                        @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
+                                                                        {
+                                                                            isDeletetable = true;
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            isDeletetable = false;
+                                                                        }
+                                                                        @{
+                                                                            string displayStatus = isDeletetable ? "block" : "none";
+                                                                        }
+                                                                        <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                    </div>
+
+                                                                </td>
+                                                                @Html.HiddenFor(m => m.SkillCollection[i].UserId)
+                                                            </tr>
+
+                                                        
                                                     }
                                                 }
 
@@ -166,7 +166,7 @@ newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text 
 
                             <div class="card-footer ">
                                 <div class="row">
-
+                                    
                                     <div class="col-md-12 mc-button-area">
                                         <div class="pull-left">
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -262,7 +262,7 @@ newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text 
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
-
+        
         //var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillTable tr").length - 1;
 

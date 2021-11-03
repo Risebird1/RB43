@@ -117,8 +117,8 @@ namespace Risebird.Web
             app.UseSession();
             //app.UseCookiePolicy(new CookiePolicyOptions
             //{
-            //   // HttpOnly = HttpOnlyPolicy.Always,
-            //    //Secure = CookieSecurePolicy.Always,
+            //    HttpOnly = HttpOnlyPolicy.Always,
+            //    Secure = CookieSecurePolicy.Always,
             //    MinimumSameSitePolicy = SameSiteMode.None
 
             //});
@@ -129,13 +129,13 @@ namespace Risebird.Web
             //app.UseAntiforgeryTokens();
             app.UseHttpsRedirection();
 
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
+            app.UseStatusCodePagesWithReExecute("/Index");
             app.UseStaticFiles();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}");
             });
         }
 
@@ -219,6 +219,10 @@ namespace Risebird.Web
             services.AddScoped<IFileMimeTypeHelper, FileMimeTypeHelper>();
             services.AddScoped<IInterviewRequestService, InterviewRequestService>();
             services.AddScoped<IInterviewRequestRepository, InterviewRequestRepository>();
+            services.AddScoped<IInterviewSchedulerService, InterviewSchedulerService>();
+            services.AddScoped<IInterviewSchedulerRepository, InterviewSchedulerRepository>();
+            services.AddScoped<IRisebirdMeetingsRepository, RisebirdMeetingsRepository>();
+            services.AddScoped<IZoomHelper, ZoomHelper>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

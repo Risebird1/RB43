@@ -42,6 +42,8 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ICandidateService _candidateService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -50,7 +52,7 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -67,10 +69,12 @@ namespace Risebird.Web.Controllers
             _httpClient = factory.GetHttpClient();
             _whatsAppHelper = whatsAppHelper;
             _candidateService = candidateService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -213,6 +217,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public FileContentResult InterviewsExporttoExcel()
@@ -524,6 +529,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> MultipleCandidateInvites()
         {
             try
@@ -891,6 +897,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetInterviewFilter()
         {
             try
@@ -914,6 +921,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetMyInterviewFilter()
         {
             try
@@ -939,6 +947,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetClientSelectedMeetingsfilters()
         {
             try
@@ -962,6 +971,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetClientMeetingsFilter()
         {
             try
@@ -983,7 +993,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetAllPriorityClientMeetingsFilter()
         {
             try
@@ -1129,6 +1141,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredInterviews(string filterValue)
         {
             try
@@ -1252,12 +1265,20 @@ namespace Risebird.Web.Controllers
                                 SetAddUpdateMeetingParameters(meeting);
                                 return View("Add", meeting);
                             }
+
                             if (meeting.File != null)
                             {
-                                await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.File.FileName);
-                                uploadedFileURL = blob.Uri.ToString();
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.File);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(meeting.File.FileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                }
+                                else
+                                    uploadedFileURL = meeting.resumeLink;
 
                             }
                             else
@@ -1444,21 +1465,27 @@ namespace Risebird.Web.Controllers
                             //String uploadedFileURL = String.Empty;
                             if ((meetingUpdated.File != null))
                             {
-
-                                await _azureStorageHelper.InsertBlob(meetingUpdated.File.FileName, "resumes", meetingUpdated.File);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meetingUpdated.File.FileName);
-                                string uploadedFileURL = blob.Uri.ToString();
-                                if (uploadedFileURL == null)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meetingUpdated.File);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                 {
-                                    var model = new AddUpdateMeetingVM();
-                                    ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
-                                    SetAddUpdateMeetingParameters(model);
-                                    return View("Edit", model);
+                                    await _azureStorageHelper.InsertBlob(meetingUpdated.File.FileName, "resumes", meetingUpdated.File);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(meetingUpdated.File.FileName);
+                                    string uploadedFileURL = blob.Uri.ToString();
+                                    if (uploadedFileURL == null)
+                                    {
+                                        var model = new AddUpdateMeetingVM();
+                                        ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                        SetAddUpdateMeetingParameters(model);
+                                        return View("Edit", model);
 
+                                    }
+
+                                    meetingUpdated.resumeLink = uploadedFileURL;
                                 }
 
-                                meetingUpdated.resumeLink = uploadedFileURL;
+                                
                             }
                             else if (meetingUpdated.resumeLink == null || meetingUpdated.resumeLink == "")
                             {
@@ -1507,6 +1534,7 @@ namespace Risebird.Web.Controllers
         }
 
 
+        [HttpGet]
         private void SetAddUpdateMeetingParameters(AddUpdateMeetingVM meetingToUpdate)
         {
             var list = new List<SelectListItem>
@@ -1543,6 +1571,8 @@ namespace Risebird.Web.Controllers
             }
             return;
         }
+        
+        [HttpGet]
         public async Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string IRFId)
         {
             try
@@ -1706,6 +1736,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredOpenInterviews(string filterValue)
         {
             try
@@ -2201,6 +2232,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredMyInterviews(string filterValue)
         {
             try
@@ -2270,6 +2302,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> QCInterview()
@@ -2799,10 +2832,8 @@ namespace Risebird.Web.Controllers
 
         }
 
-
         [Authorize]
         [HttpGet]
-
         public IActionResult GetAllPriorityClientFilteredMeetings(string filterValue)
         {
             try
@@ -2911,7 +2942,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
 
         [Authorize]
         [HttpGet]
@@ -3046,6 +3076,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddComments(int interviewId)
@@ -3099,57 +3130,72 @@ namespace Risebird.Web.Controllers
 
                             if (interviewComments.AadharFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(interviewComments.AadharFile.FileName, "documents", interviewComments.AadharFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("documents");
-                                var blob = containerRef.GetBlockBlobReference(interviewComments.AadharFile.FileName);
-                                string uploadedAadharFileURL = blob.Uri.ToString();
-                                if (uploadedAadharFileURL == null)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewComments.AadharFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                 {
-                                    ModelState.AddModelError(String.Empty, "Aadhar Upload has failed.");
-                                    GetStatusList(interviewComments);
-                                    return View("InterviewComments", interviewComments);
+                                    await _azureStorageHelper.InsertBlob(interviewComments.AadharFile.FileName, "documents", interviewComments.AadharFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("documents");
+                                    var blob = containerRef.GetBlockBlobReference(interviewComments.AadharFile.FileName);
+                                    string uploadedAadharFileURL = blob.Uri.ToString();
+                                    if (uploadedAadharFileURL == null)
+                                    {
+                                        ModelState.AddModelError(String.Empty, "Aadhar Upload has failed.");
+                                        GetStatusList(interviewComments);
+                                        return View("InterviewComments", interviewComments);
+                                    }
+                                    else
+                                    {
+                                        interviewComments.AadharFileLink = uploadedAadharFileURL;
+                                    }
                                 }
-                                else
-                                {
-                                    interviewComments.AadharFileLink = uploadedAadharFileURL;
-                                }
+                                
                             }
                             if (interviewComments.AudioFile != null)
                             {
-
-                                await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                                var blob = containerRef.GetBlockBlobReference(interviewComments.AudioFile.FileName);
-                                string uploadedaudioFileURL = blob.Uri.ToString();
-
-                                if (uploadedaudioFileURL == null)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewComments.AudioFile);
+                                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                    GetStatusList(interviewComments);
-                                    return View("InterviewComments", interviewComments);
+                                    await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                    var blob = containerRef.GetBlockBlobReference(interviewComments.AudioFile.FileName);
+                                    string uploadedaudioFileURL = blob.Uri.ToString();
+                                    if (uploadedaudioFileURL == null)
+                                    {
+                                        ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                        GetStatusList(interviewComments);
+                                        return View("InterviewComments", interviewComments);
+                                    }
+                                    else
+                                    {
+                                        interviewComments.AudioLink = uploadedaudioFileURL;
+                                    }
                                 }
-                                else
-                                {
-                                    interviewComments.AudioLink = uploadedaudioFileURL;
-                                }
+
+                                
                             }
                             if (interviewComments.VideoFile != null)
                             {
-
-                                await _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", interviewComments.VideoFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                                var blob = containerRef.GetBlockBlobReference(interviewComments.VideoFile.FileName);
-                                string uploadedvideoFileURL = blob.Uri.ToString();
-                                if (uploadedvideoFileURL == null)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewComments.VideoFile);
+                                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                                    || fileMimeType == "video/quicktime")
                                 {
-                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                                    GetStatusList(interviewComments);
-                                    //return View("InterviewComments", interviewComments);
+                                    await _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", interviewComments.VideoFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                                    var blob = containerRef.GetBlockBlobReference(interviewComments.VideoFile.FileName);
+                                    string uploadedvideoFileURL = blob.Uri.ToString();
+                                    if (uploadedvideoFileURL == null)
+                                    {
+                                        ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                        GetStatusList(interviewComments);
+                                        //return View("InterviewComments", interviewComments);
+                                    }
+                                    else
+                                    {
+                                        interviewComments.VideoLink = uploadedvideoFileURL;
+                                    }
                                 }
-                                else
-                                {
-                                    interviewComments.VideoLink = uploadedvideoFileURL;
-                                }
+                                
                             }
 
                             if (_meetingService.UpdateComments(interviewComments, emailid))
@@ -3189,9 +3235,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate)
         {
             try
@@ -3229,7 +3274,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public async Task<IActionResult> QCAssignYourself(int id)
         {
             try
@@ -3309,6 +3354,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnAssignQC(int id)
@@ -3354,7 +3400,6 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
             try
@@ -3482,41 +3527,52 @@ namespace Risebird.Web.Controllers
 
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.ThumbnailImage = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.ThumbnailImage = uploadedaudioFileURL;
-                            }
+                                
                         }
                         string uploadedvideoFileURL = string.Empty;
 
                         if (model.VideoFile != null)
                         {
-                            AzureCall _call = new AzureCall(_configuration);
-                            //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
-                            var resulttype = _call.CallApiUpload(model.VideoFile);
-                            resulttype = resulttype.Replace("\"", "");
-                            uploadedvideoFileURL = resulttype;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
+                            if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                                || fileMimeType == "video/quicktime")
+                            {
+                                AzureCall _call = new AzureCall(_configuration);
+                                //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                                var resulttype = _call.CallApiUpload(model.VideoFile);
+                                resulttype = resulttype.Replace("\"", "");
+                                uploadedvideoFileURL = resulttype;
 
-                            if (uploadedvideoFileURL == null)
-                            {
-                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
+                                if (uploadedvideoFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.VideoLink = uploadedvideoFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.VideoLink = uploadedvideoFileURL;
-                            }
+                            
                         }
                         else if (model.PageVideoLink != null)
                         {
@@ -3667,6 +3723,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewComments model)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -3715,6 +3772,7 @@ namespace Risebird.Web.Controllers
             model.PreparationStatusList = new SelectList(preparationStatuses, "ID", "Name");
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -3831,6 +3889,7 @@ namespace Risebird.Web.Controllers
         //}
 
         //GetClientsByRoles
+        [HttpGet]
         public SelectList GetClientsByRoles(string val)
         {
             var list = new List<SelectListItem>();
@@ -3848,6 +3907,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public bool ChangeApproval(string imid, string value, string comment)
         {
             var result = _meetingService.PostApproval(imid, value, comment);
@@ -3863,6 +3923,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
             try
@@ -3887,7 +3948,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
+        [HttpGet]
         public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus)
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -3905,7 +3968,6 @@ namespace Risebird.Web.Controllers
 
         }
 
-
         [HttpGet]
         public ActionResult getApprovalStatusList()
         {
@@ -3918,6 +3980,7 @@ namespace Risebird.Web.Controllers
                 Description = x.Name
             }).ToList()));
         }
+        
         [HttpGet]
         public ActionResult getQCStatusList()
         {
@@ -3969,6 +4032,7 @@ namespace Risebird.Web.Controllers
             }).ToList()));
         }
 
+        [HttpGet]
         public bool ChangeSelection(string imid, string value, string comment)
         {
             var result = _meetingService.PostSelectionStatus(imid, value, comment);
@@ -3983,8 +4047,6 @@ namespace Risebird.Web.Controllers
             return result;
 
         }
-
-
 
         /// <summary>
         /// Export selected candidates data to excel
@@ -4182,8 +4244,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
-
 
         [Authorize]
         [HttpGet]
@@ -4689,6 +4749,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CancelInterview(int id, DateTime interviewDate, string candidateEmail)
@@ -4794,19 +4855,25 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload failed.");
-                                return View("VerifyAudio", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    return View("VerifyAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
+
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+                            
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "interview");
                         TempData["SuccessErrorMessageInterview"] = result;
@@ -4830,8 +4897,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> VerifyMyInterviewAudio(int candidateId, int irfId, int meetingId)
@@ -4879,19 +4944,25 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload failed.");
-                                return View("VerifyMyInterviewAudio", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    return View("VerifyMyInterviewAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
+
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+                            
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "interview");
                         TempData["SuccessErrorMessage"] = result;
@@ -4916,6 +4987,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public bool GetTimeDifference(string interviewDate, int interviewUnassignedMinutes)
         {
             //var date2 = DateTime.Now.AddMinutes(interviewUnassignedMinutes);
@@ -4930,10 +5002,12 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public int GetInterviewUnassignedMinutes()
         {
             return _settingsService.GetInterviewUnassignedMinutes();
         }
+        
         [HttpPost]
         public JsonResult Intrestreaction(string vedioid, string Status)
         {
@@ -4973,12 +5047,14 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult ShortListreaction(string vedioid, string Status)
         {
             _meetingService.ShortListreaction(vedioid, Status);
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult ShortListList(string IRFID)
         {
@@ -4992,6 +5068,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+        
         [HttpPost]
         public JsonResult InterestList(string IRFID)
         {
@@ -5006,6 +5083,7 @@ namespace Risebird.Web.Controllers
             return Json(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteInterview(int id, string controllerName, string irfId)
         {
             try
@@ -5068,17 +5146,26 @@ namespace Risebird.Web.Controllers
             string uploadedfbaudioFileURL = string.Empty;
             if (file != null)
             {
-                await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                var blob = containerRef.GetBlockBlobReference(fileName);
-                uploadedfbaudioFileURL = blob.Uri.ToString();
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                {
+                    await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedfbaudioFileURL = blob.Uri.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+                
             }
             _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL, candidateType);
             return uploadedfbaudioFileURL;
         }
 
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public IActionResult Broadcast(string message, string subject, string receiver, int irfid)
         {
 
@@ -5134,6 +5221,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> CandidateVideoPage(int id)
         {
             try
@@ -5365,6 +5453,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpPost]
         public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
@@ -5417,7 +5506,9 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public JsonResult VideoDetailsJsonView(int interviewid)
         {
             try
@@ -5480,7 +5571,6 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-
         [HttpGet]
         public async Task<IActionResult> AnalyseSentiment(int imid)
         {
@@ -5520,7 +5610,17 @@ namespace Risebird.Web.Controllers
                     var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
 
                     model.VideoFileName = model.imid + "_" + file.FileName;
-                    await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", file);
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                        || fileMimeType == "video/quicktime")
+                    {
+                        await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", file);
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Failed!";
+
+                    }
                     HttpClient httpClient = new HttpClient();
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
@@ -5545,6 +5645,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
+        [HttpGet]
         public IActionResult UploadInterviewVideoes(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -5594,10 +5696,17 @@ namespace Risebird.Web.Controllers
                     IFormFileCollection files1 = model.Files;
                     foreach (IFormFile item in files1)
                     {
-                        await _azureStorageHelper.InsertBlob(item.FileName, "videos", item);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                        var blob = containerRef.GetBlockBlobReference(item.FileName);
-                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        string uploadedvideoFileURL = null;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(item);
+                        if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                            || fileMimeType == "video/quicktime")
+                        {
+                            await _azureStorageHelper.InsertBlob(item.FileName, "videos", item);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            var blob = containerRef.GetBlockBlobReference(item.FileName);
+                            uploadedvideoFileURL = blob.Uri.ToString();
+                        }
+                        
                         var rowvalue = Convert.ToInt32(item.Name.Split("[")[1].Split("]")[0]);
                         if (uploadedvideoFileURL == null)
                         {
@@ -5637,8 +5746,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
-
         [HttpPost]
         public JsonResult FetchCandidateFeedback(int interviewid)
         {
@@ -5647,6 +5754,7 @@ namespace Risebird.Web.Controllers
             var resultset = result.Where(x => x.interviewid == interviewid).FirstOrDefault();
             return Json(resultset);
         }
+        
         [HttpPost]
         public JsonResult ResendFeedbackform(int interviewid, string CandidateEmail)
         {
@@ -5833,7 +5941,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [HttpGet]
         public IActionResult UploadInterviewAudio(int interviewId, string candidateEmail, string irfName, DateTime interviewDate, string candidateName)
         {
@@ -5898,21 +6005,26 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            //string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
-                            {
-                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
-                                return View("UploadInterviewAudio", model);
-                            }
-                            else
-                            {
-                                model.AudioFileUrl = uploadedaudioFileURL;
-                            }
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
 
+                            {
+                                //string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                    return View("UploadInterviewAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileUrl = uploadedaudioFileURL;
+                                }
+                            }
+                            
                             //var path = $"http://localhost:7071/api/SpeechToTextService";
                             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SpeechToTextService";
                             var functionKey = "VFkRiakLwh93q4fzZ9xx69AvKnTSbNVKQSzIaHswCMO/CgCiiOsNNQ==";
@@ -5963,6 +6075,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult ReassignMeetingByEI(string id)
         {
             var meetings = _meetingService.FetchOpenMeetingById(id);
@@ -5974,14 +6087,18 @@ namespace Risebird.Web.Controllers
             }
             return View(meetings);
         }
+        
         [AllowAnonymous]
+        [HttpGet]
         public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
         {
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
             var codedname = _meetingService.FetchInterviewerCodedName(Emailid);
             return Json(new { meetings = meetings, codedname = codedname });
         }
+        
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult InstaAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
             try
@@ -6037,6 +6154,8 @@ namespace Risebird.Web.Controllers
                 }
             }
         }
+        
+        [HttpGet]
         public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
@@ -6075,6 +6194,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [HttpGet]
         public IActionResult PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
@@ -6150,6 +6270,7 @@ namespace Risebird.Web.Controllers
                 }
             }
         }
+        
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> PublicOpenInterview(string emailid, string id)
@@ -6191,6 +6312,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> PublicOpenInterviewInvite(string id)
         {
             var model = new List<Meeting>();
@@ -6211,6 +6334,7 @@ namespace Risebird.Web.Controllers
             }
             return View("PublicOpenInterview", model);
         }
+        
         [HttpPost]
         public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
         {
@@ -6225,6 +6349,8 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicGetFilteredOpenInterviews(string filterValue, string emailid)
         {
             try
@@ -6265,7 +6391,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> PublicAssignYourself(int id, string InterviewDate, string emailid, string uniqueid)
         {
             try

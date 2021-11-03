@@ -116,6 +116,9 @@ namespace Risebird.Entities.ViewModel
         public string ProfileSource { get; set; }
         [Display(Name = "WhatsApp Number")]
         public string WhatsappNumber { get; set; }
+        public int FitmentStatus { get; set; }
+        public int PriorityStatus { get; set; }
+        public int CompletionStatus { get; set; }
 
     }
 }

@@ -67,6 +67,8 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _irfRepository = irfRepository;
         }
+        
+        [HttpGet]
         public async Task<IActionResult> CandidateTimeline()
         {
             var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -344,6 +346,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("CandidateTimeline");
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> CandidateTimeline(CandidateTimelineFilter filter)
         {
@@ -627,6 +630,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
+        [HttpGet]
         public async Task<FileContentResult> CandidateStatusExporttoExcel(/*string modelData*/)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -1013,6 +1017,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetCandidateTimelineFilter()
         {
             try
@@ -1079,7 +1084,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
@@ -1165,7 +1170,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                 }
@@ -1203,6 +1208,7 @@ namespace Risebird.Web.Controllers
             }
             else { return Json("Failed"); }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Add(string irfId, string irfName)
@@ -1244,6 +1250,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("GetCandidates", new { id = irfId, irfName = irfName });
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(Candidate model)
@@ -1385,6 +1392,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> ExportCandidateList(string irfId, string irfName)
@@ -1762,19 +1770,26 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
-                                return View("UploadAudio", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                    return View("UploadAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+                                
+                            
                         }
 
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -1819,7 +1834,6 @@ namespace Risebird.Web.Controllers
 
             return new SelectList(listItems, "Value", "Text", listItems.First().Value);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Report(int candidateId, int irfId, string rfName)
@@ -1870,6 +1884,81 @@ namespace Risebird.Web.Controllers
                     {
 
                         if (await _evaluatorService.AddSelectabilityReport(model))
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Data saved successfully";
+                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FitmentReport(int candidateId, int irfId, string rfName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                {
+                    var model = await _candidateService.GetFitmentReportReport(candidateId, irfId);
+                    //model.HRReport = await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId);
+                    //model.TechSkillEvaluatorReportCollection = await _evaluatorService.GetTechReport(candidateId, irfId);
+                    //model.SkillGeneralEvaluatorReportCollection = await _evaluatorService.GetSkillGeneralReport(candidateId, irfId);
+                    //model.CandidateAudioCollection = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).ToList().Where(x => !x.IsVoiceBiometric).ToList();
+                    model.Profile = profileName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("GetCandidates", new { id = irfId, irfName = rfName });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> FitmentReport(FitmentReportModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+
+                        if (await _candidateService.AddEditFitmentReport(model))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Data saved successfully";
                             return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
@@ -1972,7 +2061,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         //[ValidateAntiForgeryToken]
         //[HttpPost]
         //public async Task<IActionResult> AddStatus(CandidateStatus model)
@@ -2036,8 +2124,6 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-
-
         [HttpPost]
         public async Task<IActionResult> AddStatus()
         {
@@ -2089,20 +2175,29 @@ namespace Risebird.Web.Controllers
                             if (Request.Form.Files.Count() > 0)
                             {
                                 var audioFile = Request.Form.Files[0];
-                                await _azureStorageHelper.InsertBlob(audioFile.FileName, "audios", audioFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                                var blob = containerRef.GetBlockBlobReference(audioFile.FileName);
-                                string uploadedaudioFileURL = blob.Uri.ToString();
-                                if (uploadedaudioFileURL == null)
+                                if(audioFile!=null)
                                 {
-                                    TempData["SuccessErrorMessageCandidate"] = "Audio Upload failed.";
-                                    return Json(false);
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(audioFile);
+                                    if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                                    || fileMimeType == "audio/x-wav")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(audioFile.FileName, "audios", audioFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                        var blob = containerRef.GetBlockBlobReference(audioFile.FileName);
+                                        string uploadedaudioFileURL = blob.Uri.ToString();
+                                        if (uploadedaudioFileURL == null)
+                                        {
+                                            TempData["SuccessErrorMessageCandidate"] = "Audio Upload failed.";
+                                            return Json(false);
 
+                                        }
+                                        else
+                                        {
+                                            model.AudioFileLink = uploadedaudioFileURL;
+                                        }
+                                    }
                                 }
-                                else
-                                {
-                                    model.AudioFileLink = uploadedaudioFileURL;
-                                }
+                                
                             }
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
@@ -2139,7 +2234,6 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-
 
         [HttpGet]
         public async Task<IActionResult> EditStatus(int id, int candidateId, int irfId, string rfName, string candidateName)
@@ -2192,20 +2286,26 @@ namespace Risebird.Web.Controllers
                         model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav") 
                             {
-                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
-                                return RedirectToAction("StatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
+                                    return RedirectToAction("StatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
 
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+                            
                         }
 
                         if (await _irfService.EditCandidateStatus(model))
@@ -2271,6 +2371,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> OpenInvites()
@@ -2392,6 +2493,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+
         [HttpPost]
         public JsonResult InterestList(string IRFID)
         {
@@ -2407,6 +2509,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> Video(int id)
         {
             try
@@ -2641,6 +2744,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -2661,6 +2765,7 @@ namespace Risebird.Web.Controllers
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
 
+        [HttpGet]
         public JsonResult ChangeCandidateStatus(int videoid, string Status)
         {
             try
@@ -2881,8 +2986,6 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
@@ -2920,6 +3023,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> AutoCallCandidate(string phoneNumber, int irfId, int candidateId)
         {
             try
@@ -2942,6 +3046,7 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> CancelInterviewProcess(int id)
@@ -2955,6 +3060,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
@@ -3331,6 +3437,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> CandidateResumesExporttoExcel(int irfId, string irfName)
@@ -3421,6 +3528,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicCandidateStatus(string emailid, string id)
         {
             try
@@ -3521,6 +3630,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id)
         {
@@ -3636,6 +3746,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicAllMeetings(string id)
         {
             var model = new List<CandidateTimelineVM>();
@@ -3650,6 +3762,7 @@ namespace Risebird.Web.Controllers
             }
             return View("PublicCandidateStatus", model);
         }
+
         [HttpPost]
         public async Task<JsonResult> PublicAllMeetings(string id, string Emailid)
         {
@@ -3664,6 +3777,8 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
+
+        [HttpGet]
         public async Task<FileContentResult> PublicCandidateStatusExporttoExcel(string emailid)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -3871,6 +3986,8 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid, string id)
         {
             try
@@ -3885,6 +4002,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> PublicAllMeetingsAdmin()
         {
             var model = new List<CandidateTimelineVM>();
@@ -3898,6 +4017,7 @@ namespace Risebird.Web.Controllers
             }
             return View("PublicCandidateStatus", model);
         }
+
         [HttpPost]
         public async Task<JsonResult> PublicAllMeetingsAdmin(string Emailid)
         {
@@ -3911,6 +4031,7 @@ namespace Risebird.Web.Controllers
                 return Json("Emailid don't have access.");
             }
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
@@ -3932,6 +4053,7 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+        
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId)
@@ -3969,6 +4091,7 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not cancel invite!");
             }
         }
+        
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> FetchSchedulingLinks(string emailid)
@@ -3988,6 +4111,7 @@ namespace Risebird.Web.Controllers
                 return Json("");
             }
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> PublicStatusList(int irfId, int candidateId)

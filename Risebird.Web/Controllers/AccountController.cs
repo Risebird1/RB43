@@ -24,8 +24,9 @@ namespace Risebird.Web.Controllers
         private IAccountService _accountService;
         private IConfiguration _configuration;
         private IInterviewerService _interviewerService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService)
+        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -33,9 +34,11 @@ namespace Risebird.Web.Controllers
             _accountService = accountService;
             _configuration = configuration;
             _interviewerService = interviewerService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -167,6 +170,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetAccountFilter()
         {
             try
@@ -258,6 +262,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(Account model)
@@ -294,6 +299,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult ArchiveAccount(int id)
         {
             try
@@ -335,6 +341,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult UnArchiveAccount(int id)
         {
             try
@@ -374,7 +381,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredProjects(int clientId)
         {
             try
@@ -412,7 +421,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetEditFilteredProjects(int clientId, int accountId)
         {
             try
@@ -464,7 +475,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> UserProfile()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -499,6 +512,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> UserProfile(InterviewerProfileVM userProfile)
@@ -513,30 +527,51 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (userProfile.ImageUpload != null)
                 {
-                    await _azureStorageHelper.InsertBlob(userProfile.ImageUpload.FileName, "profileimages", userProfile.ImageUpload);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
-                    var blob = containerRef.GetBlockBlobReference(userProfile.ImageUpload.FileName);
-                    uploadedFileURL = blob.Uri.ToString();
-                    userProfile.ImageURL = uploadedFileURL;
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(userProfile.ImageUpload);
+                    if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
+                        || fileMimeType == "image/tiff")
+                    {
+                        await _azureStorageHelper.InsertBlob(userProfile.ImageUpload.FileName, "profileimages", userProfile.ImageUpload);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
+                        var blob = containerRef.GetBlockBlobReference(userProfile.ImageUpload.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        userProfile.ImageURL = uploadedFileURL;
+                    }
+                   
                 }
                 if (profileName == "Interviewer")
                 {
+                    
                     if (userProfile.ResumeFile != null)
                     {
-                        await _azureStorageHelper.InsertBlob(userProfile.ResumeFile.FileName, "resumes", userProfile.ResumeFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(userProfile.ResumeFile.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-                        userProfile.ResumeLink = uploadedFileURL;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(userProfile.ResumeFile);
 
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(userProfile.ResumeFile.FileName, "resumes", userProfile.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(userProfile.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            userProfile.ResumeLink = uploadedFileURL;
+                        }
+                        
                     }
                     if (userProfile.CodedResumeFile != null)
                     {
-                        await _azureStorageHelper.InsertBlob(userProfile.CodedResumeFile.FileName.Replace(" ", "_"), "resumes", userProfile.CodedResumeFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(userProfile.CodedResumeFile.FileName.Replace(" ", "_"));
-                        uploadedFileURL = blob.Uri.ToString();
-                        userProfile.CodedResumeLink = uploadedFileURL;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(userProfile.CodedResumeFile);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(userProfile.CodedResumeFile.FileName.Replace(" ", "_"), "resumes", userProfile.CodedResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(userProfile.CodedResumeFile.FileName.Replace(" ", "_"));
+                            uploadedFileURL = blob.Uri.ToString();
+                            userProfile.CodedResumeLink = uploadedFileURL;
+                        }
+
+                        
 
                     }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
@@ -575,6 +610,8 @@ namespace Risebird.Web.Controllers
             return View();
 
         }
+
+        [HttpGet]
         private void GetAllSelectList(InterviewerProfileVM model)
         {
             var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))

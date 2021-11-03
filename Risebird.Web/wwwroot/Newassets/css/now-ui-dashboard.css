@@ -11234,6 +11234,9 @@ svg {
 .click {
     color: #53a5f5;
     text-decoration: underline !important;
+    text-transform: uppercase!important;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 #dupmeeting_filter input {

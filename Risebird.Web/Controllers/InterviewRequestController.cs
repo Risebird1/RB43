@@ -45,6 +45,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
         }
+        
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -98,6 +99,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> CreateInterviewRequest()
         {
@@ -137,6 +139,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateInterviewRequest(InterviewRequestVM meeting)
@@ -241,6 +244,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> EditInterviewRequest(int id)
         {
@@ -281,8 +285,11 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
+
+        [HttpGet]
         public async Task<IActionResult> EditInterviewRequest(InterviewRequestVM meeting)
         {
             try
@@ -387,6 +394,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
         public async Task SetInterviewRequestSelectLists()
         {
             ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -397,12 +406,14 @@ namespace Risebird.Web.Controllers
                            select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.CountryList = new SelectList(_country, "ID", "Name");
         }
+        
         [HttpPost]
         public JsonResult FetchCoordinators()
         {
             var coordinatorlist = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
             return Json(new { result = coordinatorlist });
         }
+        
         [HttpPost]
         public JsonResult AssignCoordinator(int userid, int id)
         {
@@ -427,6 +438,8 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to assign the request, please try to assign again.");
             }
         }
+
+
         [HttpGet]
         public ActionResult SetIRFCreated(int id, string IRFId)
         {
@@ -457,6 +470,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> PublicCreateInterviewRequest(string emailid, string id)
         {
@@ -505,6 +519,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PublicCreateInterviewRequest(InterviewRequestVM meeting)

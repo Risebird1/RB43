@@ -188,7 +188,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select cm.id, CASE WHEN ul.LastName is not null THEN ul.FirstName + ' ' + ul.LastName ELSE ul.FirstName END as [Name], ca.ResumeLink, ul.EmailId, ca.CurrentEmployer, ca.[Location] from CandidatesMaster cm join UserList ul on ul.id = cm.UserId join Candidate ca on ca.CandidateMasterId = cm.id  where cm.id = @id";
+                var query = "select cm.id, CASE WHEN ul.LastName is not null THEN ul.FirstName + ' ' + ul.LastName ELSE ul.FirstName END as [Name], ca.ResumeLink, ul.EmailId, ca.CurrentEmployer, ca.[Location], IRF.IRFId as IRFName from CandidatesMaster cm join UserList ul on ul.id = cm.UserId join Candidate ca on ca.CandidateMasterId = cm.id join IRF on IRF.id = ca.IRFId where cm.id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

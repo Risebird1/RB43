@@ -27,8 +27,10 @@ namespace Risebird.Web.Controllers
         private ISupportService _supportService;
         private ISkillService _skillService;
         private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -36,9 +38,11 @@ namespace Risebird.Web.Controllers
             _supportService = supportService;
             _skillService = skillService;
             _azureStorageHelper = azureStorageHelper;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -158,7 +162,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetMCQFilter()
         {
             try
@@ -179,6 +185,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
+        [HttpGet]
         public async Task<IActionResult> Download(string filename)
         {
             if (filename == null)
@@ -194,12 +202,15 @@ namespace Risebird.Web.Controllers
             return File(memory, GetContentType(path), Path.GetFileName(path));
         }
 
+        [HttpGet]
         private string GetContentType(string path)
         {
             var types = GetMimeTypes();
             var ext = Path.GetExtension(path).ToLowerInvariant();
             return types[ext];
         }
+
+        [HttpGet]
         private Dictionary<string, string> GetMimeTypes()
         {
             return new Dictionary<string, string>
@@ -368,6 +379,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Questionpage(string Id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -395,6 +407,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         #region CandidateSkillTest
+        [HttpGet]
         public IActionResult SkillTest(string Id)
         {
             ViewBag.Questionsetid = Id;
@@ -441,6 +454,7 @@ namespace Risebird.Web.Controllers
             ViewBag.VideoRecording = itemshareupdate.Videorecording;
             return View(modelset);
         }
+        
         [HttpPost]
         public async Task<JsonResult> CandidateSelectQuestionsD(string id)
         {
@@ -466,6 +480,7 @@ namespace Risebird.Web.Controllers
             modeldetailset._questionlist = _questionlist;
             return Json(modeldetailset);
         }
+        
         [HttpPost]
         public async Task<JsonResult> CandidateQuestionsD()
         {
@@ -562,13 +577,20 @@ namespace Risebird.Web.Controllers
             {
                 if (Request.Form.Files.Count() > 0)
                 {
-                    var file = Request.Form.Files[0];
-                    var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
-                    await _azureStorageHelper.InsertBlob(filename, "videos", file);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                    var blob = containerRef.GetBlockBlobReference(filename);
-                    string uploadedvideoFileURL = blob.Uri.ToString();
-                    values.VideoLink = uploadedvideoFileURL;
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                        || fileMimeType == "video/quicktime")
+                    {
+                        var file = Request.Form.Files[0];
+                        var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+                        await _azureStorageHelper.InsertBlob(filename, "videos", file);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        values.VideoLink = uploadedvideoFileURL;
+
+                    }
+                    
                 }
                 HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
                 return Json("");
@@ -594,11 +616,13 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public IActionResult TestComplete(string status)
         {
             ViewBag.Action = status;
             return View();
         }
+        
         [HttpPost]
         public async Task<JsonResult> SubmitTest()
         {
@@ -626,13 +650,19 @@ namespace Risebird.Web.Controllers
                 _list.Feedbackreating = rating;
                 if (Request.Form.Files.Count() > 0)
                 {
-                    var file = Request.Form.Files[0];
-                    var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
-                    await _azureStorageHelper.InsertBlob(filename, "videos", file);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                    var blob = containerRef.GetBlockBlobReference(filename);
-                    string uploadedvideoFileURL = blob.Uri.ToString();
-                    _list.VideoLink = uploadedvideoFileURL;
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                        || fileMimeType == "video/quicktime")
+                    {
+                        var file = Request.Form.Files[0];
+                        var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+                        await _azureStorageHelper.InsertBlob(filename, "videos", file);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        _list.VideoLink = uploadedvideoFileURL;
+                    }
+                    
                 }
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
@@ -677,6 +707,7 @@ namespace Risebird.Web.Controllers
 
         #region MCQ Actions
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> CandidateTestDetails(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -877,6 +908,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [HttpPost]
         public async Task<JsonResult> DeleteCandidate(string id, string indexid)
         {

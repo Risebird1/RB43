@@ -12,7 +12,6 @@ body {
 .share-btn, .view-video {
     color: #504d4d !important
 }
-
 .availbg {
     background: #fff;
 }
@@ -238,7 +237,47 @@ textarea::-webkit-scrollbar {
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
     color: #ec8840 !important;
 }
+#calender h4 {
+    color: #d74a0a;
+}
 
+#calender #current-day {
+    background: #e96529!important;
+}
+
+#calender .weekday {
+    color: #e96529;
+}
+
+.txttimezone-con {
+    color: #7c2c08;
+    background: #f9834396;
+}
+.resume {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 4px 13px 0px 13px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 20px;
+    vertical-align: middle;
+    border: 2px solid #e96b28; border-radius: 40px;
+}
+.form-field-calender .resume .form-label {
+    color: #e96b28 !important;
+}
+    .time-btn {
+        border: 1px solid #e96529 !important;
+        color: #e96529;
+        background: none !important;
+    }
+
+    .time-btn:hover {
+        border: 2px solid #e96529 !important;
+    }
 .welcome {
     background: #ec8840;
     padding: 6px 5px;

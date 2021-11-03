@@ -33,6 +33,8 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
+        
+        [HttpGet]
         public IActionResult Index(int id)
         {
             SurveyVM model = new SurveyVM();
@@ -41,6 +43,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Status = "";
             return View(model);
         }
+        
         [HttpPost]
         public async Task<IActionResult> Index(SurveyVM model)
         {
@@ -94,6 +97,8 @@ namespace Risebird.Web.Controllers
             ViewBag.Status = "Complete";
             return View();
         }
+
+        [HttpGet]
         public IActionResult InterviewerSurvey(int id)
         {
             SurveyVM model = new SurveyVM();
@@ -101,6 +106,8 @@ namespace Risebird.Web.Controllers
             model.Type = "Interviewer";
             return View("Index", model);
         }
+
+        [HttpGet]
         public IActionResult CandidateFeedBack()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -226,6 +233,7 @@ namespace Risebird.Web.Controllers
 
 
         }
+        
         [HttpPost]
         public IActionResult CandidateFeedBack(CandidateTimelineFilter filter)
         {
@@ -349,7 +357,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetCandidateFeedBackFilter()
         {
             try
@@ -371,6 +381,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public IActionResult CandidateFeedBackByIRFId(string IRFId)
         {
             var modelData = new List<SurveyVM>();
@@ -410,6 +422,8 @@ namespace Risebird.Web.Controllers
             ViewBag.IRFId = IRFId;
             return View("CandidateFeedBack", modelData);
         }
+
+        [HttpGet]
         public FileContentResult CandidateFeedbackExporttoExcel()
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -565,6 +579,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public FileContentResult CandidateFeedBackByIRFIdExporttoExcel(string IRFId)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -668,6 +684,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
+        [HttpGet]
         public JsonResult FetchCandidateFeedBackDetails()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)

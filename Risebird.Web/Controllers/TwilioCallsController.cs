@@ -19,17 +19,20 @@ namespace Risebird.Web.Controllers
 
         //}
         private IAzureStorageHelper _azureStorageHelper;
-        public TwilioCallsController(IAzureStorageHelper azureStorageHelper)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        public TwilioCallsController(IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _azureStorageHelper = azureStorageHelper;
-
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
         // GET: TwilioCalls/Generate
+        [HttpPost]
         public JsonResult Generate(string page)
         {
             var token = GenerateToken();
@@ -37,6 +40,7 @@ namespace Risebird.Web.Controllers
             return Json(new { token });
         }
 
+        
         public string GenerateToken()
         {
             var scopes = new HashSet<IScope>
@@ -60,7 +64,12 @@ namespace Risebird.Web.Controllers
 
             if (file != null)
             {
-                await _azureStorageHelper.InsertBlob(filename, "audios", file[0]);
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                {
+                    await _azureStorageHelper.InsertBlob(filename, "audios", file[0]);
+
+                }
 
             }
 

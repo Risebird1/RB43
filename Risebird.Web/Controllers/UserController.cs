@@ -33,8 +33,9 @@ namespace Risebird.Web.Controllers
         private static string SearchInterviewers;
         private ITwilioHelper _twiliohelper;
         private readonly IConfiguration _configuration;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration)
+                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration, IFileMimeTypeHelper fileMimeTypeHelper)
 
         {
             _userService = userService;
@@ -45,10 +46,11 @@ namespace Risebird.Web.Controllers
             _profileService = profileService;
             _twiliohelper = twiliohelper;
             _configuration = configuration;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         #region User Fucntions
-
+        [HttpGet]
         public IActionResult Index()
         {
             try
@@ -281,7 +283,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         #region Client User Functions
-
+        [HttpGet]
         public IActionResult ClientUsers()
         {
             try
@@ -396,6 +398,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteClientUser(int id)
         {
             try
@@ -535,6 +538,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetNavigation(int userId)
         {
             try
@@ -567,6 +571,7 @@ namespace Risebird.Web.Controllers
 
         #region Interviewer Functions
 
+        [HttpGet]
         public IActionResult Interviewers(int? Page, string searchValue)
         {
             try
@@ -685,10 +690,15 @@ namespace Risebird.Web.Controllers
 
                     if (interviewer.File != null)
                     {
-                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewer.File);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                        }
                     }
                     else
                         uploadedFileURL = interviewer.ResumeLink;
@@ -784,12 +794,16 @@ namespace Risebird.Web.Controllers
 
                     if (interviewer.File != null)
                     {
-
-                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewer.File);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                        }
+                        
                         if (uploadedFileURL == null)
                         {
                             ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
@@ -891,6 +905,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteInterviewer(int id)
         {
             try
@@ -1025,6 +1040,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         #region QCInterviewer Functions
+        [HttpGet]
         public IActionResult QCInterviewers()
         {
             try
@@ -1079,10 +1095,16 @@ namespace Risebird.Web.Controllers
 
                     if (qcinterviewer.File != null)
                     {
-                        await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(qcinterviewer.File);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+
+                        }
 
                     }
                     else if (qcinterviewer.ResumeLink != null)
@@ -1179,12 +1201,16 @@ namespace Risebird.Web.Controllers
                     {
                         if (qcInterviewer.File != null)
                         {
-
-                            await _azureStorageHelper.InsertBlob(qcInterviewer.File.FileName, "resumes", qcInterviewer.File);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(qcInterviewer.File.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(qcInterviewer.File);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(qcInterviewer.File.FileName, "resumes", qcInterviewer.File);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(qcInterviewer.File.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                            }
+                            
                             if (uploadedFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
@@ -1253,6 +1279,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteQCInterviewer(int id)
         {
             try
@@ -1298,6 +1325,7 @@ namespace Risebird.Web.Controllers
 
         #region Resume Evaluator functions
 
+        [HttpGet]
         public IActionResult ResumeEvaluators(int? Page, string searchValue)
 
         {
@@ -1512,6 +1540,7 @@ namespace Risebird.Web.Controllers
 
         #region Recruiter functions
 
+        [HttpGet]
         public IActionResult Recruiters(int? Page, string searchValue)
         {
             try
@@ -1629,6 +1658,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> EditRecruiter(int id)
         {
             try
@@ -1684,6 +1714,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteRecruiter(int id)
         {
             try
@@ -1840,7 +1871,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [HttpPost]
         public JsonResult ResumeEvaluatorsJson(string searchValue)
         {
@@ -1896,6 +1926,8 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+        
+        [HttpGet]
         public async Task<JsonResult> makecall(string sid, int interviewid, string IRFId, string CandidateEmail)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1935,6 +1967,8 @@ namespace Risebird.Web.Controllers
                 return Json(ex);
             }
         }
+
+        [HttpGet]
         private void GetClientsSelectList(UserList model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1958,7 +1992,9 @@ namespace Risebird.Web.Controllers
                 model.ClientList = _ClientList;
             }
         }
+
         #region InstaZoomAccounts
+        [HttpGet]
         public IActionResult InstaZoomAccounts()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1985,12 +2021,14 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [HttpPost]
         public JsonResult DeleteInstaZoomAccount(int Accountid)
         {
             var resultset = _userService.DeleteInstaZoomAccount(Accountid);
             return Json(resultset);
         }
+        
         [HttpPost]
         public JsonResult AddInstaZoomAccount(string AccountEmail)
         {

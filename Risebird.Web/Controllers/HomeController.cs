@@ -81,7 +81,7 @@ namespace Risebird.Web.Controllers
                     int role = 0;
                     if (menus.FirstOrDefault()?.profileName == "Client")
                     {
-                        role =  _clientService.GetClientRoleByEmailId(emailId).Result;
+                        role = _clientService.GetClientRoleByEmailId(emailId).Result;
                     }
 
                     HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty);

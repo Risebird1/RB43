@@ -267,5 +267,17 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public string CheckForInstaAssign(int meetingid)
+        {
+            try
+            {
+                return _instaInterviewRepository.CheckForInstaAssign(meetingid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 }

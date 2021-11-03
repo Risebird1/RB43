@@ -38,6 +38,7 @@ body {
     .clearfix:after {
         clear: both;
     }
+
 .jdfile-error {
     bottom: -20px !important;
     color: #E04B4A !important;
@@ -46,9 +47,7 @@ body {
     position: absolute;
     left: 20px;
 }
-.b-right {
-    border-right: 1px #ccc solid !important;
-}
+
 a.infos {
     width: 30px;
     height: 43px;
@@ -145,6 +144,13 @@ a.infos {
 
 #scoreChart tspan {
     font-size: 12px;
+}
+
+.scheduling .statusInfo {
+    max-width: 100%;
+    padding: 0px 10px;
+    flex: 0 0 100%;
+    float: none;
 }
 
 #style-2::-webkit-scrollbar, .style-2::-webkit-scrollbar {
@@ -1059,12 +1065,14 @@ table tr td:hover, .table-striped tbody tr:hover {
 .navbar-brand a {
     text-decoration: none;
 }
+
 .myinterview .marquees {
     color: red !important;
     height: 2.5vw;
-    width: 103%!important;
+    width: 103% !important;
     font-family: Arial, Helvetica, sans-serif;
 }
+
     .myinterview .marquees ul li {
         line-height: 37px !important;
         font-size: 14px !important;
@@ -1635,6 +1643,9 @@ audio {
 
 table.journey td.cadName, table.journey td.cadEmail {
     max-width: 195px;
+}
+.candidate .journey td.cadEmail {
+ width:17%;
 }
 
 table.journey td.cadSkill {
@@ -2593,6 +2604,7 @@ table.journey td.cadSkill {
 #tblbodyCandidate .action .mdc-fab {
     width: 29px !important;
     height: 30px !important;
+    margin: 0px 0px 10px 2px;
 }
 
     #tblbodyCandidate .action .mdc-fab.record-btn {
@@ -2603,6 +2615,7 @@ table.journey td.cadSkill {
         position: relative;
         left: 2px;
         top: -2px;
+        margin: 0px 7px 0px 3px;
     }
 
         #tblbodyCandidate .action .mdc-fab.record-btn .fa {
@@ -2614,7 +2627,8 @@ table.journey td.cadSkill {
         }
 
 #tblbodyCandidate .action {
-    width: 235px
+    width: 235px;
+    white-space: normal;
 }
 /* Position tooltip above the element */
 .selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
@@ -4898,7 +4912,7 @@ textarea {
     color: #2a9e2a;
     padding-top: 4px;
     position: absolute;
-    right: 9%;
+    right: 13%;
     top: 20px;
 }
 
@@ -5683,6 +5697,28 @@ button .btn {
         width: 285px !important;
         height: 160px !important;
     }
+    .select-selected {
+        padding: 6px 6px !important;
+    }
+        #calenderTimeslot {
+        width: 180px !important;
+        height: auto !important;
+    }
+
+    #calender h4 {
+        font-size: 19px !important;
+    }
+
+    .calendar-con table {
+        width: 100% !important;
+    }
+
+    .txttimezone-con {
+         background: #dbdbdb8c;
+        width: 100%!important;
+        display: block !important;
+        margin: 10px auto 20px auto !important;
+    }
 
     body.sidebar-mini .top-panel {
         padding: 0px 10px 0px 10px !important;
@@ -6045,8 +6081,16 @@ button .btn {
         margin-bottom: 0px !important;
     }
 
+    #calenderTimeslot {
+        width: 190px !important;
+    }
+
     .tabCon .tabs {
         display: none;
+    }
+
+    .calendar-con {
+        padding: 40px 0px 0px 0px !important;
     }
 
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
@@ -6115,7 +6159,16 @@ button .btn {
     .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
         font-size: 11px !important;
     }
-
+    #calenderTimeslot{left:20px;}
+    .event .calendar-con {
+        min-width: 90% !important;
+        max-width: 90% !important;
+        margin: 40px auto 40px auto;
+        padding: 20px 20px !important;
+    }
+    .candidate .journey td.cadEmail {
+        width: 130px!important;
+    }
     .filter-note {
         right: 15%
     }
@@ -6191,6 +6244,28 @@ button .btn {
         margin-bottom: 10px;
     }
 
+  
+
+    #calender {
+        padding-left: 25px !important;
+    }
+
+    .time-btn {
+        width: 110px !important;
+    }
+
+    .calendar-con table {
+        width: 300px !important;
+    }
+
+    #calenderTimeslot {
+        margin-top: 40px;
+        height: 320px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 155px !important;
+    }
+
     .edit_request [class*="pl-"] {
         padding-left: 13px !important;
     }
@@ -6224,6 +6299,7 @@ button .btn {
         bottom: 735% !important;
         right: 0% !important;
     }
+
 
     .mc-button-area.text-left .mdc-button {
         margin-top: 2px;
@@ -6300,9 +6376,49 @@ button .btn {
 }
 
 @media (max-width: 767px) {
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+    .action-btn {
+        width: 100px;
+        margin: 0px auto;
+    }
+    .candidate .journey td.cadEmail {
+        width: 130px!important;
+    }
+    .scheduling .action {
+        position: inherit;
+    }
+    .custom-select{font-size:12px!important;}
+    .select-selected {
+        padding: 6px 0px !important;
+    }
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         width: 350px !important;
         height: 200px !important;
+    }
+
+    .event .calendar-con table {
+        width: 100% !important;
+        float: right;
+    }
+
+    .txttimezone-con {
+        position: initial;
+        left: 6px !important;
+        background: #dbdbdb8c;
+        width: 100%!important;
+        border-radius: 200px;
+        text-align: center;
+        color: #686363;
+        padding: 10px 0px 0px 10px;
+        margin: 0px auto !important;
+        display: block !important;
+    }
+
+    #calender table {
+        width: 100% !important;
+    }
+
+    #calender {
+        border: 0px !important;
     }
 
     .support svg {
@@ -6532,6 +6648,35 @@ button .btn {
     #scoreChart tspan {
         font-size: 11.5px;
     }
+    .custom-select{line-height:17px!important;}
+    .txttimezone-con {
+        width: 300px !important;
+        min-height: 50px;
+       
+    }
+    .currMonth {
+        padding: 0px 11px !important;
+    }
+    #calender table {
+        border-collapse: separate;
+        border-spacing: 4px 9px!important;
+    }
+    #calender {
+        width: 100% !important;
+    }
+    #calenderTimeslot {
+        width: 120px !important;
+    }
+
+    .time-btn {
+        width: 95px !important;
+        left: 0px !important;
+    }
+
+    #calender {
+        width: 325px !important;
+        padding-left: 10px !important;
+    }
 
     .filter-note {
         width: 100% !important;
@@ -6597,8 +6742,17 @@ button .btn {
         display: none !important;
     }
 
+    #calenderTimeslot {
+        width: 100% !important;
+        margin-top: 0px !important;
+    }
+
     #scoreChart tspan {
         font-size: 11px;
+    }
+
+    .time-btn {
+        width: 100% !important;
     }
 
     .filter-note {
@@ -6631,11 +6785,21 @@ button .btn {
     }
 }
 
+@media (max-width: 375px) {
+    .scheduling .action {
+        position: absolute;
+        top: 6px;
+        right: 95px;
+    }
+}
+
 @media (max-width: 360px) {
     #scoreChart tspan {
         font-size: 9.3px;
     }
-
+    #calenderTimeslot {
+        left: 0px!important;
+    }
     .note-meeting {
         width: 100% !important;
         top: -11px !important;
@@ -9728,22 +9892,25 @@ button.close {
 /* end To top */
 
 
-    .excel-file {
-        margin-right: 5px;
-        color: green;
-        font-size: 35px !important;
-        margin-left: 5px;
-        border: 0;
-    }
-.instainterview .text-danger {
-    position: absolute!important;
-    bottom: -10px!important;
-    left: 50px!important;
+.excel-file {
+    margin-right: 5px;
+    color: green;
+    font-size: 35px !important;
+    margin-left: 5px;
+    border: 0;
 }
+
+.instainterview .text-danger {
+    position: absolute !important;
+    bottom: -10px !important;
+    left: 50px !important;
+}
+
 .instainterview #SkillCollection_WeightageError {
     bottom: 6px !important;
     position: relative !important;
 }
+
 .instainterview #ExpectedInterviews-error {
     position: relative;
     left: 45px;
@@ -9764,16 +9931,19 @@ button.close {
 #entitleTable [data-tooltip]:before {
     margin-left: -30px;
 }
-    .jd-error {
+
+.jd-error {
     position: absolute !important;
     bottom: -23px;
     left: 50px;
 }
+
 .clear-field {
     width: 100%;
     float: left;
     margin-top: 20px;
 }
+
 .stats .card-chart .card-header {
     border: 0;
     margin: 0;
@@ -9901,13 +10071,15 @@ button.close {
     height: 25px;
     border: 0px;
 }
+
 .sector {
     position: relative;
     left: 15px;
     width: 15px;
     height: 15px;
-    margin-left:10px;
+    margin-left: 10px;
 }
+
 .ref-btn {
     position: absolute;
     top: 11px;
@@ -9965,7 +10137,46 @@ button.close {
     border-right: 0px !important
 }
 
-    #SelectabilityTable.table-bordered td:nth-child(6) {
+.scheduling #irf-card-footer {
+    left: 4px;
+}
+
+.scheduling .copy-btn {
+    float: right;
+    margin: 1px 0px 0px 0px !important;
+}
+
+.scheduling.card-footer .stats-bttm-btn {
+    padding: 2px 10px 0px 0px !important;
+    text-align: right;
+}
+
+.active-stat {
+    float: left;
+    width: auto;
+    margin: 5px 10px 0px 10px;
+}
+
+.scheduling.card-footer .special-text__tooltip {
+    bottom: 75%;
+    transition: inherit;
+}
+
+.scheduling .special-text__tooltip::after {
+    left: 85px;
+}
+
+.event-name {
+    line-height: 40px;
+}
+
+.scheduling .action {
+    position: absolute;
+    top: 6px;
+    right: 55px;
+}
+
+#SelectabilityTable.table-bordered td:nth-child(6) {
     border-right: 0px !important
 }
 
@@ -9988,7 +10199,7 @@ button.close {
     font-size: 12px;
     color: blue;
     position: relative;
-  /*  background: #fff;*/
+    /*  background: #fff;*/
     top: -22px;
     width: auto;
     font-size: 15px !important;
@@ -12552,6 +12763,32 @@ div.tagsinput {
         top: 11px;
     }
 
+    .event .calendar-con {
+        min-width: 90% !important;
+        max-width: 90% !important;
+        margin: 40px auto 40px auto;
+        padding: 0px 20px !important;
+    }
+
+    .form-field-calender {
+        padding-left: 10px !important;
+        border-left: 0px #8080805c solid !important;
+    }
+
+    #calender {
+        width: 70% !important;
+    }
+
+    .calendar-con {
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    #calendar table {
+        width: 100% !important;
+        border: 0px solid #d7dee0 !important;
+    }
+
     .curated-name {
         margin: 0px 0px !important;
     }
@@ -12692,4 +12929,5 @@ div.tagsinput {
     display: none;
 }
 /* CSS Document */
+
 
