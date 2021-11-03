@@ -758,7 +758,7 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 irfDetails.JDLink = uploadedFileURL;
                             }
-                            
+
                         }
                         if (irfDetails.CompanyDetailFile != null)
                         {
@@ -772,7 +772,7 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 irfDetails.CompanyDetails = uploadedFileURL;
                             }
-                            
+
                         }
                         var domain = Request.Scheme + "://" + Request.Host.Value;
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
@@ -898,7 +898,7 @@ namespace Risebird.Web.Controllers
             var name = _irfService.GetInterviewerSkills(id);
             return name;
         }
-        
+
         [Authorize]
         [HttpGet]
         public string GetInterviewerSkillsFromProfile(int id)
@@ -914,7 +914,7 @@ namespace Risebird.Web.Controllers
             return _irfService.GetRecruiterDomain(Convert.ToInt16(userId));
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public SelectList GetInterviewers(string assessmentgroupid)
@@ -1196,7 +1196,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnArchiveIRF(int id)
@@ -1988,7 +1988,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
 
-                            
+
                         }
                         if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         {
@@ -2027,7 +2027,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                            
+
                         else if (model.PageVideoLink != null)
                         {
                             model.VideoLink = model.PageVideoLink;
@@ -3367,7 +3367,7 @@ namespace Risebird.Web.Controllers
 
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult PauseIRF(int irfId, string irfName)
@@ -3813,7 +3813,7 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult AddUpdateCuratedGroupUsers(int id)
@@ -3862,7 +3862,7 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-        
+
         [HttpGet]
         public IActionResult CuratedIndex()
         {
@@ -4173,7 +4173,7 @@ namespace Risebird.Web.Controllers
             return PartialView(model);
             //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
         }
-        
+
         /// <summary>
         /// Fetch Assessment Related to Assessment Group
         /// </summary>
@@ -4286,7 +4286,7 @@ namespace Risebird.Web.Controllers
             }
             return RedirectToAction("InterviewerEntitle");
         }
-        
+
         /// <summary>
         /// Assessment Detailed page
         /// </summary>
@@ -4309,7 +4309,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
-        
+
         [HttpPost]
         public JsonResult AssessmentLike(int id)
         {
@@ -4327,7 +4327,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
@@ -4439,7 +4439,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                             }
-                            
+
                         }
 
                         if (await _irfService.AddCandidateStatus(model))
@@ -4541,7 +4541,7 @@ namespace Risebird.Web.Controllers
                                     model.AudioFileLink = uploadedaudioFileURL;
                                 }
                             }
-                           
+
                         }
 
                         if (await _irfService.EditCandidateStatus(model))
@@ -4607,7 +4607,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpPost]
         public JsonResult CandidatesJson(string searchValue)
         {
@@ -5131,7 +5131,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ResetCandidateTimelineFilter(int id)
@@ -5480,7 +5480,7 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public JsonResult SendEmailForCandidateFeedbackByIRF(string IRFId)
@@ -5525,7 +5525,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public IActionResult PublicAddReport(int interviewId, int irfId, bool IsSelected = false)
@@ -5560,7 +5560,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public IActionResult ExecutiveReport(int interviewId, int irfId, bool IsSelected = false)
@@ -5596,7 +5596,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpPost]
         public JsonResult CheckEditCondition(string IRFId)
         {
@@ -5635,7 +5635,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> NotScheduledCandidate(string IRFId)
@@ -5674,7 +5674,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public IActionResult InstaAddReport(int interviewId, int irfId, bool IsSelected = false)
@@ -5853,7 +5853,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CloneSkillChannnel(InterviewFilter filter)
         {
@@ -5924,6 +5924,94 @@ namespace Risebird.Web.Controllers
                 item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             return Json(transTechSkills);
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> SkillChannelDetailstoExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("SkillChannelDetails");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                ViewBag.Profile = profileName;
+                var irfList = new List<IRF>();
+                if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
+                {
+                    irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                }
+                else
+                {
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                    }
+                    else
+                    {
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                    }
+                }
+
+                Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 15;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "JD Title";
+                Sheet.Cells[1, 2].Value = "Total Candidates";
+                Sheet.Cells[1, 3].Value = "Completed Interviews";
+                Sheet.Cells[1, 4].Value = "Selected Interviews";
+                Sheet.Cells[1, 5].Value = "Rejected Interviews";
+                Sheet.Cells[1, 6].Value = "Not Scheduled Count";
+                Sheet.Cells[1, 7].Value = "Rescheduled Count";
+                Sheet.Cells[1, 8].Value = "Future Scheduled Count";
+                Sheet.Cells[1, 9].Value = "Risebird Channel Owner";
+                Sheet.Cells[1, 10].Value = "Skill Channel";
+                Sheet.Cells[1, 11].Value = "Client";
+                Sheet.Cells[1, 12].Value = "Country";
+                Sheet.Cells[1, 13].Value = "Billing Owner";
+                int i = 2;
+                if (irfList.Count() > 0)
+                {
+                    foreach (var item in irfList)
+                    {
+                        Sheet.Cells[i, 1].Value = item.JDTiltle.Split('|')[0];
+                        Sheet.Cells[i, 2].Value = item.CandidateCount;
+                        Sheet.Cells[i, 3].Value = item.CompletedInterviews;
+                        Sheet.Cells[i, 4].Value = item.SelectedMeetings;
+                        Sheet.Cells[i, 5].Value = item.RejectedMeetings;
+                        Sheet.Cells[i, 6].Value = item.NotScheduledCount;
+                        Sheet.Cells[i, 7].Value = item.ReScheduledCount;
+                        Sheet.Cells[i, 8].Value = item.FutureScheduledMeetings;
+                        Sheet.Cells[i, 9].Value = item.RisebirdHREmail;
+                        Sheet.Cells[i, 10].Value = item.IRFId;
+                        Sheet.Cells[i, 11].Value = item.ClientCompName;
+                        Sheet.Cells[i, 12].Value = item.JobCountry;
+                        Sheet.Cells[i, 13].Value = item.BillingOwnerEmailId;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
         }
     }
 }
