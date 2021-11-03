@@ -28,8 +28,8 @@ namespace Risebird.MicroService
             _whatsAppHelper = whatsAppHelper;
             _clientService = clientService;
         }
-        [FunctionName("InterviewerCommonInterviewNotification")]
-        //public async void Run([TimerTrigger("0 0 */6 * * *")] TimerInfo myTimer, ILogger log)
+
+        [FunctionName("InterviewerCommonInterviewNotification")]       
         public async void Run([TimerTrigger("0 0 8,16,21 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
