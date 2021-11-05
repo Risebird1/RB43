@@ -45,15 +45,15 @@ namespace Risebird.MicroService
                         {
                             Guid uniqueid = Guid.NewGuid();
                             var _uniqueid = await _clientService.PublicInterviewerUrlSave(item.EmailId, uniqueid.ToString());
-                            sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite/" + uniqueid;
+                            sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
                             if (!String.IsNullOrEmpty(_uniqueid))
                             {
-                                sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite/" + _uniqueid;
+                                sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
                             }
                         }
                         else
                         {
-                            sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite/" + item.uniqueid;
+                            sendreporturl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" + item.uniqueid;
                         }
                         try
                         {
