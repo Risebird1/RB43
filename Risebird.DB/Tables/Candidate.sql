@@ -380,7 +380,7 @@ END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'Type')
+    WHERE Name IN (N'CompletionStatus')
       AND Object_ID = Object_ID(N'Candidate'))
 BEGIN
     ALTER TABLE Candidate

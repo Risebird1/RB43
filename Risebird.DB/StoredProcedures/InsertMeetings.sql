@@ -35,7 +35,7 @@ AS
 Begin  
 declare @InterviewId int;   
 declare @WhatsApp varchar(15)
-Set @WhatsApp= Replace(@textreminder,'+91','')
+Set @WhatsApp= Replace(@textreminder,'+91 ','')
 if(LEN(@WhatsApp)!=10)
 begin
 Set @WhatsApp=''

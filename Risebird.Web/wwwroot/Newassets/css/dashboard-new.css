@@ -1644,6 +1644,9 @@ audio {
 table.journey td.cadName, table.journey td.cadEmail {
     max-width: 195px;
 }
+.candidate .journey td.cadEmail {
+ width:17%;
+}
 
 table.journey td.cadSkill {
     max-width: 150px;
@@ -2601,6 +2604,7 @@ table.journey td.cadSkill {
 #tblbodyCandidate .action .mdc-fab {
     width: 29px !important;
     height: 30px !important;
+    margin: 0px 0px 10px 2px;
 }
 
     #tblbodyCandidate .action .mdc-fab.record-btn {
@@ -2611,6 +2615,7 @@ table.journey td.cadSkill {
         position: relative;
         left: 2px;
         top: -2px;
+        margin: 0px 7px 0px 3px;
     }
 
         #tblbodyCandidate .action .mdc-fab.record-btn .fa {
@@ -2622,7 +2627,8 @@ table.journey td.cadSkill {
         }
 
 #tblbodyCandidate .action {
-    width: 235px
+    width: 235px;
+    white-space: normal;
 }
 /* Position tooltip above the element */
 .selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
@@ -6160,7 +6166,9 @@ button .btn {
         margin: 40px auto 40px auto;
         padding: 20px 20px !important;
     }
-
+    .candidate .journey td.cadEmail {
+        width: 130px!important;
+    }
     .filter-note {
         right: 15%
     }
@@ -6372,7 +6380,9 @@ button .btn {
         width: 100px;
         margin: 0px auto;
     }
-
+    .candidate .journey td.cadEmail {
+        width: 130px!important;
+    }
     .scheduling .action {
         position: inherit;
     }

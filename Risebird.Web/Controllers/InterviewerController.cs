@@ -236,7 +236,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Index(int? Page, InterviewFilter filter, string searchValue)
         {
@@ -393,7 +393,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> ResetInterviewerIndexFilter()
         {
@@ -481,7 +481,7 @@ namespace Risebird.Web.Controllers
                                     uploadedFileURL = blob.Uri.ToString();
                                     interviewerProfile.ResumeLink = uploadedFileURL;
                                 }
-                                
+
 
                             }
                             if (interviewerProfile.CodedResumeFile != null)
@@ -498,7 +498,7 @@ namespace Risebird.Web.Controllers
                                     uploadedFileURL = blob.Uri.ToString();
                                     interviewerProfile.CodedResumeLink = uploadedFileURL;
                                 }
-                                
+
                             }
                         }
                         else
@@ -616,7 +616,7 @@ namespace Risebird.Web.Controllers
                                     uploadedFileURL = blob.Uri.ToString();
                                     interviewerProfile.ResumeLink = uploadedFileURL;
                                 }
-                                
+
 
                             }
                             if (interviewerProfile.CodedResumeFile != null)
@@ -633,7 +633,7 @@ namespace Risebird.Web.Controllers
                                     uploadedFileURL = blob.Uri.ToString();
                                     interviewerProfile.CodedResumeLink = uploadedFileURL;
                                 }
-                                
+
                             }
                         }
 
@@ -752,7 +752,7 @@ namespace Risebird.Web.Controllers
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.DaySlotList = new SelectList(daySlot, "ID", "Name");
             var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
-           
+
             var selectList = new List<SelectListItem>();
             var AssessmentselectList = new List<SelectListItem>();
             foreach (var item in Assessmentgroup)
@@ -822,7 +822,7 @@ namespace Risebird.Web.Controllers
             else
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
-        
+
         [HttpPost]
         public JsonResult EmailIdVilidation(string EmailId, int UserId)
         {
@@ -896,7 +896,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("IndexEmployer", new { id = IProfileId });
             }
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddEmployerDetails(InterviewerProfessional interviewerProfessional)
@@ -1110,7 +1110,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview", "Interview");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> MyProfile(InterviewerProfileVM interviewerProfile)
         {
@@ -1136,7 +1136,7 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 interviewerProfile.ResumeLink = uploadedFileURL;
                             }
-                            
+
 
                         }
                         if (interviewerProfile.ImageUpload != null)
@@ -1151,7 +1151,7 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 interviewerProfile.ImageURL = uploadedFileURL;
                             }
-                            
+
                         }
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {
@@ -1918,7 +1918,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterviewerAssessment");
             }
         }
-        
+
         [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
@@ -2097,7 +2097,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpGet]
         public IActionResult AddAssessments()
         {
@@ -2145,7 +2145,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
 
         [HttpPost]
         public IActionResult AddAssessments(AssignmentVM model)
@@ -2186,7 +2186,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpGet]
         public IActionResult AssessmentForApproval(int id, string EmailAddress)
         {
@@ -2280,7 +2280,7 @@ namespace Risebird.Web.Controllers
             model.AssessmentLevellist = new SelectList(_assessmentLevel, "ID", "Name");
             return View(model);
         }
-        
+
         [HttpPost]
         public IActionResult EditAssessment(AssignmentVM model)
         {
@@ -2485,7 +2485,7 @@ namespace Risebird.Web.Controllers
                                 var uploadedFileURL = blob.Uri.ToString();
                                 model.CodedResumeLink = uploadedFileURL;
                             }
-                            
+
                         }
                         if (_interviewerService.InterviewerRecommendation(model).Result)
                         {
@@ -2515,7 +2515,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpPost]
         public JsonResult BankDetailsJson(int interviewerid)
         {
@@ -2523,7 +2523,7 @@ namespace Risebird.Web.Controllers
             return Json(results.Result);
 
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> AvailDetailsJson(int interviewerid)
         {
@@ -2538,7 +2538,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(results);
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> FeedbackDetails(string type)
@@ -2605,7 +2605,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> SendPublicURLInterviewer(string Emailid)
         {
@@ -2613,10 +2613,10 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
                 if (!String.IsNullOrEmpty(_uniqueid))
                 {
-                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + _uniqueid;
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
                 }
                 Mail _mail1 = new Mail
                 {
@@ -2636,7 +2636,7 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> CopyPublicURLInterviewer(string Emailid)
         {
@@ -2644,10 +2644,10 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
                 if (!String.IsNullOrEmpty(_uniqueid))
                 {
-                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite/" + _uniqueid;
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
                 }
                 return Json(sendreporturl);
             }

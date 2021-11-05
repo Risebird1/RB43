@@ -4186,10 +4186,10 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + uniqueid;
                 if (!String.IsNullOrEmpty(_uniqueid))
                 {
-                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + _uniqueid;
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }
                 Mail _mail1 = new Mail
                 {
@@ -4217,10 +4217,10 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + uniqueid;
                 if (!String.IsNullOrEmpty(_uniqueid))
                 {
-                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + _uniqueid;
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }
                 return Json(sendreporturl);
             }
@@ -4432,7 +4432,7 @@ namespace Risebird.Web.Controllers
                     Sheet.Column(a).Width = 40;
                 }
                 Sheet.Cells[1, 1].Value = "Added Date";
-                Sheet.Cells[1, 2].Value = "Status";
+                Sheet.Cells[1, 2].Value = "Client Name";
                 Sheet.Cells[1, 3].Value = "JD Title";
                 Sheet.Cells[1, 4].Value = "Candidate Name";
                 Sheet.Cells[1, 5].Value = "Candidate Email";
@@ -4446,14 +4446,7 @@ namespace Risebird.Web.Controllers
                     foreach (var item in meetings)
                     {
                         Sheet.Cells[i, 1].Value = item.dtCreatedOn.ToString("MM/dd/yyyy HH:mm");
-                        if (item.confirmationStatus == "2")
-                        {
-                            Sheet.Cells[i, 2].Value = "Cancelled";
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 2].Value = item.MeetingStatusStatusDesc;
-                        }
+                        Sheet.Cells[i, 2].Value = item.ClientName;
                         Sheet.Cells[i, 3].Value = item.JDTiltle;
                         Sheet.Cells[i, 4].Value = item.candidateName;
                         Sheet.Cells[i, 5].Value = item.candidateEmail;
