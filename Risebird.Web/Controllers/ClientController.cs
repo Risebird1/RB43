@@ -854,6 +854,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Emailid = "";
+                    ViewBag.emailid = emailid;
                     if (profileName == "Client")
                     {
                         var role = await _clientService.GetClientRoleByEmailId(emailid);
@@ -1039,6 +1040,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Emailid = "";
+                    ViewBag.emailid = emailid;
                     if (profileName == "Client")
                     {
                         if (filter != null)

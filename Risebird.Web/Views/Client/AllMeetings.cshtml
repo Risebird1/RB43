@@ -55,6 +55,7 @@
     var Header = "<div id='allinterview_1'>All Scheduled Interviews</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1235" />
 @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
@@ -522,7 +523,7 @@
                                                                             <th id="allinterview_8">Interview Status</th>
                                                                             <th id="allinterview_9">Report</th>
                                                                         }
-
+                                                                        <th>Action</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tfoot>
@@ -541,6 +542,7 @@
                                                                             <th>Interview Status</th>
                                                                             <th>Report</th>
                                                                         }
+                                                                        <th>Action</th>
                                                                     </tr>
                                                                 </tfoot>
                                                                 <tbody id="tblbodyPriority">
@@ -726,11 +728,8 @@
                                                                             @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                             {
                                                                                 <td>@item.intervieweStatusStatDesc</td>
-
-
-                                                                                @if ((item.MeetingStatus == 4) @*&& ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))*@)
+                                                                                @if ((item.MeetingStatus == 4))
                                                                                 {
-
                                                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
                                                                                 }
                                                                                 else
@@ -738,6 +737,12 @@
                                                                                     <td>No Report</td>
                                                                                 }
                                                                             }
+                                                                            <td>
+                                                                                @if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                                                {
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fa fa-close"></span></span></span>
+                                                                                }
+                                                                            </td>
                                                                         </tr>
                                                                         @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                         {
@@ -1229,7 +1234,7 @@
                                                                             <th id="allinterview_8">Interview Status</th>
                                                                             <th id="allinterview_9">Report</th>
                                                                         }
-
+                                                                        <th>Action</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tfoot>
@@ -1248,6 +1253,7 @@
                                                                             <th>Interview Status</th>
                                                                             <th>Report</th>
                                                                         }
+                                                                        <th>Action</th>
                                                                     </tr>
                                                                 </tfoot>
                                                                 <tbody id="tblbodyPriority">
@@ -1435,16 +1441,22 @@
                                                                                 <td>@item.intervieweStatusStatDesc</td>
 
 
-                                                                                @if ((item.MeetingStatus == 4) @*&& (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2))*@)
-                                                                                {
+                                                                                @if ((item.MeetingStatus == 4)@*&& (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2))*@)
+{
 
-                                                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td>No Report</td>
-                                                                                }
+<td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a> </td>
+}
+else
+{
+<td>No Report</td>
+}
                                                                             }
+                                                                            <td>
+                                                                                @if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                                                {
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fa fa-close"></span></span></span>
+                                                                                }
+                                                                            </td>
                                                                         </tr>
                                                                         @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                         {
@@ -2021,6 +2033,17 @@
                 }
             });
         }
+    }
+    function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
+        $.ajax({
+            url: '/Candidate/PublicCancelInterview',
+            type: 'POST',
+            data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
+            success: function (data) {
+                swal.fire(data);
+                window.location.href = "/Client/AllMeetings";
+            }
+        });
     }
 </script>
 <script>
