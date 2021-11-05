@@ -4186,10 +4186,10 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + uniqueid;
                 if (!String.IsNullOrEmpty(_uniqueid))
                 {
-                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + _uniqueid;
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }
                 Mail _mail1 = new Mail
                 {
@@ -4217,10 +4217,10 @@ namespace Risebird.Web.Controllers
             {
                 Guid uniqueid = Guid.NewGuid();
                 var _uniqueid = await _clientService.PublicClientUrlSave(Emailid, uniqueid.ToString());
-                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + uniqueid;
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + uniqueid;
                 if (!String.IsNullOrEmpty(_uniqueid))
                 {
-                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings/" + _uniqueid;
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Candidate/PublicAllMeetings?id=" + _uniqueid;
                 }
                 return Json(sendreporturl);
             }

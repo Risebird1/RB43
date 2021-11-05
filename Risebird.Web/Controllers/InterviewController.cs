@@ -86,6 +86,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         ViewBag.profile = profileName;
@@ -794,6 +795,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         ViewBag.profile = profileName;
@@ -1485,7 +1487,7 @@ namespace Risebird.Web.Controllers
                                     meetingUpdated.resumeLink = uploadedFileURL;
                                 }
 
-                                
+
                             }
                             else if (meetingUpdated.resumeLink == null || meetingUpdated.resumeLink == "")
                             {
@@ -1571,7 +1573,7 @@ namespace Risebird.Web.Controllers
             }
             return;
         }
-        
+
         [HttpGet]
         public async Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string IRFId)
         {
@@ -1946,8 +1948,9 @@ namespace Risebird.Web.Controllers
                             TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                             DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
                             var timediff = time - indianTime;
-                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus==2 || item.MeetingStatus == null) )
-                            { item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
+                            {
+                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
 
                             }
                             // item.Timer = 60;
@@ -2302,7 +2305,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> QCInterview()
@@ -3076,7 +3079,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddComments(int interviewId)
@@ -3149,7 +3152,7 @@ namespace Risebird.Web.Controllers
                                         interviewComments.AadharFileLink = uploadedAadharFileURL;
                                     }
                                 }
-                                
+
                             }
                             if (interviewComments.AudioFile != null)
                             {
@@ -3172,7 +3175,7 @@ namespace Risebird.Web.Controllers
                                     }
                                 }
 
-                                
+
                             }
                             if (interviewComments.VideoFile != null)
                             {
@@ -3195,7 +3198,7 @@ namespace Risebird.Web.Controllers
                                         interviewComments.VideoLink = uploadedvideoFileURL;
                                     }
                                 }
-                                
+
                             }
 
                             if (_meetingService.UpdateComments(interviewComments, emailid))
@@ -3354,7 +3357,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnAssignQC(int id)
@@ -3545,7 +3548,7 @@ namespace Risebird.Web.Controllers
                                     model.ThumbnailImage = uploadedaudioFileURL;
                                 }
                             }
-                                
+
                         }
                         string uploadedvideoFileURL = string.Empty;
 
@@ -3572,7 +3575,7 @@ namespace Risebird.Web.Controllers
                                     model.VideoLink = uploadedvideoFileURL;
                                 }
                             }
-                            
+
                         }
                         else if (model.PageVideoLink != null)
                         {
@@ -3948,7 +3951,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus)
@@ -3980,7 +3983,7 @@ namespace Risebird.Web.Controllers
                 Description = x.Name
             }).ToList()));
         }
-        
+
         [HttpGet]
         public ActionResult getQCStatusList()
         {
@@ -4749,7 +4752,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CancelInterview(int id, DateTime interviewDate, string candidateEmail)
@@ -4873,7 +4876,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                             }
-                            
+
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "interview");
                         TempData["SuccessErrorMessageInterview"] = result;
@@ -4962,7 +4965,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                             }
-                            
+
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "interview");
                         TempData["SuccessErrorMessage"] = result;
@@ -5007,7 +5010,7 @@ namespace Risebird.Web.Controllers
         {
             return _settingsService.GetInterviewUnassignedMinutes();
         }
-        
+
         [HttpPost]
         public JsonResult Intrestreaction(string vedioid, string Status)
         {
@@ -5047,14 +5050,14 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
-        
+
         [HttpPost]
         public JsonResult ShortListreaction(string vedioid, string Status)
         {
             _meetingService.ShortListreaction(vedioid, Status);
             return Json("Success");
         }
-        
+
         [HttpPost]
         public JsonResult ShortListList(string IRFID)
         {
@@ -5068,7 +5071,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
-        
+
         [HttpPost]
         public JsonResult InterestList(string IRFID)
         {
@@ -5158,7 +5161,7 @@ namespace Risebird.Web.Controllers
                 {
                     return null;
                 }
-                
+
             }
             _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL, candidateType);
             return uploadedfbaudioFileURL;
@@ -5453,7 +5456,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpPost]
         public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
@@ -5506,7 +5509,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public JsonResult VideoDetailsJsonView(int interviewid)
@@ -5645,7 +5648,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpGet]
         public IActionResult UploadInterviewVideoes(int id)
         {
@@ -5706,7 +5709,7 @@ namespace Risebird.Web.Controllers
                             var blob = containerRef.GetBlockBlobReference(item.FileName);
                             uploadedvideoFileURL = blob.Uri.ToString();
                         }
-                        
+
                         var rowvalue = Convert.ToInt32(item.Name.Split("[")[1].Split("]")[0]);
                         if (uploadedvideoFileURL == null)
                         {
@@ -5754,7 +5757,7 @@ namespace Risebird.Web.Controllers
             var resultset = result.Where(x => x.interviewid == interviewid).FirstOrDefault();
             return Json(resultset);
         }
-        
+
         [HttpPost]
         public JsonResult ResendFeedbackform(int interviewid, string CandidateEmail)
         {
@@ -6024,7 +6027,7 @@ namespace Risebird.Web.Controllers
                                     model.AudioFileUrl = uploadedaudioFileURL;
                                 }
                             }
-                            
+
                             //var path = $"http://localhost:7071/api/SpeechToTextService";
                             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SpeechToTextService";
                             var functionKey = "VFkRiakLwh93q4fzZ9xx69AvKnTSbNVKQSzIaHswCMO/CgCiiOsNNQ==";
@@ -6087,7 +6090,7 @@ namespace Risebird.Web.Controllers
             }
             return View(meetings);
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
@@ -6096,7 +6099,7 @@ namespace Risebird.Web.Controllers
             var codedname = _meetingService.FetchInterviewerCodedName(Emailid);
             return Json(new { meetings = meetings, codedname = codedname });
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public IActionResult InstaAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
@@ -6154,7 +6157,7 @@ namespace Risebird.Web.Controllers
                 }
             }
         }
-        
+
         [HttpGet]
         public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
@@ -6194,7 +6197,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpGet]
         public IActionResult PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
@@ -6270,7 +6273,7 @@ namespace Risebird.Web.Controllers
                 }
             }
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> PublicOpenInterview(string emailid, string id)
@@ -6312,7 +6315,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> PublicOpenInterviewInvite(string id)
         {
@@ -6334,7 +6337,7 @@ namespace Risebird.Web.Controllers
             }
             return View("PublicOpenInterview", model);
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
         {
@@ -6391,7 +6394,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> PublicAssignYourself(int id, string InterviewDate, string emailid, string uniqueid)
