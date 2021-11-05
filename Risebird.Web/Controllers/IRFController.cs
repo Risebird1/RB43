@@ -5908,7 +5908,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [HttpGet]
+        [HttpPost]
         public JsonResult FetchSkillDetails(int id)
         {
             var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
