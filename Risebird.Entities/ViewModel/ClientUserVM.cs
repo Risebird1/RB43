@@ -40,5 +40,7 @@ namespace Risebird.Entities.ViewModel
         public string UserPassword { get; set; }
         [Display(Name = "Whatsapp Number")]
         public string WhatsappNumber { get; set; }
+        [Display(Name = "Password Reset after first login/Password aging")]
+        public bool IsPasswordReset { get; set; }
     }
 }

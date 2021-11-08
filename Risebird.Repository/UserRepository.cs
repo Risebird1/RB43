@@ -403,8 +403,10 @@ namespace Risebird.Repository
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
+
             if (isAdd)
             {
+                parameters.Add("@IsPasswordReset", entity.IsPasswordReset);
                 if (entity.SelectedClient.HasValue)
                     parameters.Add("@selectedClientId", entity.SelectedClient);
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
@@ -831,7 +833,7 @@ namespace Risebird.Repository
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@EmailId", emailId); 
+                parameters.Add("@EmailId", emailId);
                 parameters.Add("@SessionId", sessionId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
