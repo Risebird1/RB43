@@ -1397,19 +1397,14 @@ namespace Risebird.Repository
 
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
-                        if (reportDetails.VideoDuration == 0)
-                        {
-                            parametersPoints.Add("@Points", 0);
-                        }
-                        else
-                        {
-                            parametersPoints.Add("@Points", 15);
-                        }
+                        float duration = (float)reportDetails.VideoDuration;
+                        float baseValue = 15;
+                        float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
+                        parametersPoints.Add("@Points", pointPercent);
                     }
                     else if (reportDetails.MeetingStatus == 5)
                     {
                         parametersPoints.Add("@Points", 0);
-
                     }
                     else if (reportDetails.MeetingStatus == 4)
                     {

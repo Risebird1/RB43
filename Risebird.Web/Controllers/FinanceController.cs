@@ -704,7 +704,7 @@ namespace Risebird.Web.Controllers
                     {
                         //var model = _meetingService.FetchAllFNDetail();
                         var model = _meetingService.FNAllGeneratedInvoiceDetails(st, se.AddDays(1));
-                        var Interviewers = model.Result.Select(x => x.InterviewerEmailid).Distinct().ToList();
+                        var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -855,7 +855,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var model = _meetingService.FetchAllFNDetail();
-                        var Interviewers = model.Result.Select(x => x.InterviewerEmailid).Distinct().ToList();
+                        var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
