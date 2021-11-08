@@ -34,7 +34,12 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-                var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (_userService.CheckMultiSession(emailId).Result)
+                {
+                    return RedirectToAction("Index", "MultiSession");
+                }
+                var sessionId = HttpContext.Session.Id;
+                var menus = _userService.GetMenuBasedOnUserEmailld(emailId, sessionId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
                 var username = _userService.GetCurrentUsername(emailId);

@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
 {
     public interface IUserService
     {
-        List<Menu> GetMenuBasedOnUserEmailld(string emailId);
+        List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId=null);
         List<UserList> GetRisebirdUsers();
         List<ClientUserVM> GetClientUsers(string EmailId);
         List<InterviewerVM> GetInterviewers();
@@ -62,5 +62,7 @@ namespace Risebird.Business.Interface
         bool DeleteInstaZoomAccount(int Accountid);
         bool AddInstaZoomAccount(string AccountEmail);
         string GetCurrentUsername(string emailId);
+        Task<bool> CheckMultiSession(string emailId);
+        Task<bool> ClearSessionForOthersUsers(string emailId);
     }
 }

@@ -7,7 +7,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IUserRepository
     {
-        IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId);
+        IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId);
         IEnumerable<UserList> GetRisebirdUsers();
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<InterviewerVM> GetInterviewersDetails();
@@ -66,5 +66,7 @@ namespace Risebird.Repository.Interface
         bool DeleteInstaZoomAccount(int Accountid);
         bool AddInstaZoomAccount(string AccountEmail);
         string GetCurrentUsername(string emailId);
+        bool CheckMultiSession(string emailId);
+        bool ClearSessionForOthersUsers(string emailId);
     }
 }

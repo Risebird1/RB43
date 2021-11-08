@@ -5,6 +5,6 @@ namespace Risebird.CommonHelper.Interface
 {
     public interface IPasswordHelper
     {
-        Task<string> GenerateUserPassword(UserDetails user);
+        Task<string> GenerateUserPassword(UserDetails user, bool forcePasswordChangeNextLogin = false);
     }
 }

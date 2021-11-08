@@ -16,7 +16,7 @@ namespace Risebird.CommonHelper
 
         }
 
-        public async Task<string> GenerateUserPassword(UserDetails user)
+        public async Task<string> GenerateUserPassword(UserDetails user, bool forcePasswordChangeNextLogin = false)
         {
             Random rand = new Random(); // <-- Make this static somewhere
 
@@ -40,7 +40,7 @@ namespace Risebird.CommonHelper
                 EmailId = user.EmailId,
                 UserPassword = password
             };
-            if (await _b2CClientService.CreateUser(userobj))
+            if (await _b2CClientService.CreateUser(userobj, forcePasswordChangeNextLogin))
             {
                 return userobj.UserPassword;
             }

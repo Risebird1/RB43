@@ -23,16 +23,41 @@ namespace Risebird.Business
             _passwordHelper = passwordHelper;
         }
 
-        public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
+        public List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId=null)
         {
             try
             {
-                return _userRepository.GetMenuBasedOnUserEmailld(emailId).ToList();
+                return _userRepository.GetMenuBasedOnUserEmailld(emailId, sessionId).ToList();
             }
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<bool> CheckMultiSession(string emailId)
+        {
+            try
+            {
+                return _userRepository.CheckMultiSession(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return true;
+            }
+        }
+
+        public async Task<bool> ClearSessionForOthersUsers(string emailId)
+        {
+            try
+            {
+                return _userRepository.ClearSessionForOthersUsers(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
 
@@ -163,7 +188,8 @@ namespace Risebird.Business
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
-                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
+                // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
+                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails,false).Result;
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
