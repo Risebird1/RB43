@@ -23,7 +23,7 @@ namespace Risebird.Business
             _passwordHelper = passwordHelper;
         }
 
-        public List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId=null)
+        public List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
         {
             try
             {
@@ -189,7 +189,7 @@ namespace Risebird.Business
                 };
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
                 // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
-                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails,false).Result;
+                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, clientUser.IsPasswordReset).Result;
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 

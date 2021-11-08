@@ -27,7 +27,18 @@ BEGIN
        DECLARE @updatedPoints int  
        if(@meetingStatus = 1 or @meetingStatus=3)
 			begin
-			 set @updatedPoints = Round(@perSuccessRate/4, 0)
+			  if(@videoDuration=0)
+					Begin
+						set @updatedPoints=0
+					End
+				Else if(@videoDuration>=15)
+					Begin
+						set @updatedPoints=Round((15*@perSuccessRate)/60,0)
+					End
+				else
+					Begin
+						set @updatedPoints=Round((@videoDuration*@perSuccessRate)/60, 0)
+					End
 			end
 	   Else if(@meetingStatus=5)
 			begin
