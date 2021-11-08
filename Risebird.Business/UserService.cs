@@ -188,7 +188,8 @@ namespace Risebird.Business
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
-                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
+                // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
+                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails,false).Result;
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
