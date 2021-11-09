@@ -15,7 +15,6 @@ CREATE TABLE [dbo].[UserList](
 			[Isonline] [bit] NULL,	
 			[UserPassword] [nvarchar](60) NULL,
 			[WhatsappNumber] [varchar](15) NULL,
-			[IsPasswordReset] [bit] NULL,
 			[PasswordCreation] [Datetime] NULL,
 			CONSTRAINT [FK_User_Group] FOREIGN KEY (idProfile) REFERENCES Profile(id),
  CONSTRAINT [PK_UserList] PRIMARY KEY CLUSTERED 					
@@ -54,15 +53,7 @@ BEGIN
     ALTER TABLE UserList
     Add [WhatsappNumber] [varchar](15) NULL
 END
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'IsPasswordReset')
-      AND Object_ID = Object_ID(N'UserList'))
-BEGIN
-    ALTER TABLE UserList
-    Add [IsPasswordReset] [bit] NULL
-END
+
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns

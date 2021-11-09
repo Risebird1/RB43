@@ -899,5 +899,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public Task<List<string>> FetchAllPasswordResetDetails(int noofdays)
+        {
+            try
+            {
+                var comments = _interviewerRepository.FetchAllPasswordResetDetails(noofdays);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

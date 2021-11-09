@@ -1889,5 +1889,29 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public string SendPasswordresetNotification(Mail model)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification"));
+                foreach (var mail in toMails)
+                {
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PasswordresetNotification.html");
+                string msgBody = string.Format(rawEmail, null);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }
