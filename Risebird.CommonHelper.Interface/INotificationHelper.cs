@@ -71,5 +71,6 @@ namespace Risebird.CommonHelper.Interface
         string SendInterviewCancelledMailCandidate(string CandidateEmail, string interviewDate, string CandidateName);
         string SendPublicUrlToInterviewer(Mail model, string UrlDetails);
         string SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount);
+        string SendPasswordresetNotification(Mail model);
     }
 }

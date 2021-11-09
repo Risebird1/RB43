@@ -66,5 +66,6 @@ namespace Risebird.Repository.Interface
         Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid);
         string FetchClientName(string IRFId);
         Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview();
+        Task<List<string>> FetchAllPasswordResetDetails(int noofdays);
     }
 }

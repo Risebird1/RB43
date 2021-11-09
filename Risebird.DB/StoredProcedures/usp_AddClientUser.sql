@@ -32,13 +32,13 @@ Begin Try
           
   IF NOT EXISTS( SELECT 1 FROM [UserList] Where [EmailId] = @userEmailId)           
   BEGIN          
-   INSERT INTO [UserList] ([idProfile],[FirstName],[LastName],[EmailId],[IsActive],[MobileNumber],[UserPassword],[WhatsappNumber],[IsPasswordReset],[PasswordCreation])          
-          VALUES (4,@userFirstName,@userLastName,@userEmailId,1,@userMobileNumber,@UserPassword,@WhatsappNumber,@IsPasswordReset,GetDate() )          
+   INSERT INTO [UserList] ([idProfile],[FirstName],[LastName],[EmailId],[IsActive],[MobileNumber],[UserPassword],[WhatsappNumber],[PasswordCreation])          
+          VALUES (4,@userFirstName,@userLastName,@userEmailId,1,@userMobileNumber,@UserPassword,@WhatsappNumber,GetDate() )          
           
    set @generatedUserId = SCOPE_IDENTITY();          
           
-   INSERT INTO [dbo].[ClientUser] ([ClientId],[UserId],[RoleId])          
-        VALUES (@selectedClientId ,@generatedUserId ,@selectedClientRoleId)          
+   INSERT INTO [dbo].[ClientUser] ([ClientId],[UserId],[RoleId],[IsPasswordReset])          
+        VALUES (@selectedClientId ,@generatedUserId ,@selectedClientRoleId,@IsPasswordReset)          
   END          
   ELSE          
   BEGIN          
