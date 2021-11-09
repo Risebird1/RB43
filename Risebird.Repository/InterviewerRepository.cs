@@ -2024,13 +2024,13 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select EmailId from UserList Where id in(Select UserId From ClientUser where IsPasswordReset=1) and DATEDIFF(day, PasswordCreation, GetDate())>=@noofdays";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@noofdays", noofdays);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<string>(query, dynamicParameters);
-                    return (List<string>)result;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@noofdays", noofdays);
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_FetchPasswordresetDetails", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return (List<string>)results;
                 }
             }
             catch (SqlException e)
