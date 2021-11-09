@@ -2020,5 +2020,29 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<string>> FetchAllPasswordResetDetails(int noofdays)
+        {
+            try
+            {
+                var query = "Select EmailId from UserList Where id in(Select UserId From ClientUser where IsPasswordReset=1) and DATEDIFF(day, PasswordCreation, GetDate())>=@noofdays";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@noofdays", noofdays);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, dynamicParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+
     }
 }

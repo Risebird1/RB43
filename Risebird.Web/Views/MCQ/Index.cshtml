@@ -30,7 +30,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
 <div class="main-panel" id="main-panel">
-   
+
     <!--  <div class="panel-header panel-header-sm"></div>-->
 
 
@@ -356,7 +356,7 @@
                     <div class="col-md-12">
                         <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     </div>
-                   <div class="col-md-12">   <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
+                    <div class="col-md-12">   <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
@@ -598,7 +598,7 @@
         }
     }
     function ViewDetails(id) {
-        window.location.href = "Questionpage/" + id;
+        window.location.href = "Questionpage?Id=" + id;
     }
     function ResetFilter() {
            window.location.href = "/MCQ/ResetMCQFilter";
