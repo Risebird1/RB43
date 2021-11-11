@@ -5289,7 +5289,7 @@ button .btn {
 }
 
 #statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search, #meeting_filter #search, #irfTable_filter #search, #MyInterviewList_filter #search, #OpeninterviewList_filter #search {
-    right: 55px;
+    right: 50px;
 }
 
 .indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update {
@@ -5330,7 +5330,7 @@ button .btn {
     right: 30px;
 }
 
-.survey #interviewer_filter input[type=search].form-control {
+.survey #interviewer_filter input[type=search].form-control, #interviewer_filter input[type=search] {
     background: #FFF !important;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -5343,7 +5343,7 @@ button .btn {
     z-index: 0;
 }
 
-.notschedulemeeting #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update, .unassigned-int #trigger-update {
+.notschedulemeeting #trigger-update, .OpenInterviewerAssessment #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update, .unassigned-int #trigger-update {
     right: 35px;
     top: 11px;
 }
@@ -10230,7 +10230,7 @@ button.close {
 }
 
 #meeting_filter #search {
-    right: 40px;
+    right: 35px;
 }
 
 .instainterview #meeting_filter #search {

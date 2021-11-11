@@ -34,7 +34,7 @@
                     </button>
                 </div>
                 <div class="pull-right ">
-                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space", onchange = "FilterInterviews(this.value);" })
+                    <span style="float:left;line-height:36px;">Sort By:</span>   @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space",@style="margin:0px 5px;width:150px;", onchange = "FilterInterviews(this.value);" })
 
                 </div>
             </div>

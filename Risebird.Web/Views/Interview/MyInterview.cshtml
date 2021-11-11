@@ -1293,15 +1293,18 @@
             }
 
             html += '  <td> ' + data[i].interviewDuration + ' </td>';
-            if (data[i].jdLink != null && data[i].jdLink != "") {
-                /**/
-                html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
-                /**/
+            //if (data[i].jdLink != null && data[i].jdLink != "") {
+            //    html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
+            //}
+            //else {
+            //    html += ' <td>No JD</td>';
+            //}
+            if (data[i].companyDetails != null && data[i].companyDetails != "") {
+                html += '   <td><a id="companylinkId" target="_blank" title="Company Instructions" href=' + data[i].companyDetails + '>Company Instructions</a></td>';
             }
             else {
-                html += ' <td>No JD</td>';
+                html += '<td>No Company Instructions</td>';
             }
-            html += ' <td style="text-align: center">' + data[i].irfid + '</td>';
             if (data[i].resumeLink != null && data[i].resumeLink != "") {
                 html += ' <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
             }
@@ -1355,7 +1358,7 @@
             html += '  <th>Interview Status</th>';
             html += '  <th>Co-ordinating HR</th>';
 
-            html += '  <th>Company Detail</th>';
+            html += '  <th>Skill Channel</th>';
 
             html += '  </tr>';
             html += '  <tr>';
@@ -1394,13 +1397,7 @@
             else {
                 html += ' <td></td>';
             }
-
-            if (data[i].companyDetails != null && data[i].companyDetails != "") {
-                html += '   <td><a id="companylinkId" target="_blank" title="Company Instructions" href=' + data[i].companyDetails + '>Company Instructions</a></td>';
-            }
-            else {
-                html += '<td>No Company Instructions</td>';
-            }
+            html += ' <td style="text-align: center">' + data[i].irfid + '</td>';
             html += '  </tr>';
             html += '  </table>';
             html += '  </td>';
