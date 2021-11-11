@@ -72,13 +72,13 @@
             <div class="card-header bg-w clearfix">
                 <div class="col-md-10 pull-left">
                     <div class="pull-left myinterview">
-                     
-                            <div class="marquees">
-                                <ul class="marquees-content">
-                                    <li style="border: 0px; padding: 0px;  line-height: 30px;">In order to ensure your privacy please add your <b>Coded Resume</b> in My Profile section. We recommend you to remove your Email ID, Contact Details, Current Company details , Name and add your coded name (provided by Risebird) in your <b>Coded Resume</b>. Also add one paragraph about your Interviewing Experience.</li>
-                                </ul>
-                            </div>
-                     
+
+                        <div class="marquees">
+                            <ul class="marquees-content">
+                                <li style="border: 0px; padding: 0px;  line-height: 30px;">In order to ensure your privacy please add your <b>Coded Resume</b> in My Profile section. We recommend you to remove your Email ID, Contact Details, Current Company details , Name and add your coded name (provided by Risebird) in your <b>Coded Resume</b>. Also add one paragraph about your Interviewing Experience.</li>
+                            </ul>
+                        </div>
+
                         <div class="mobile-view"> <h4 class="card-title"> My Interviews</h4></div>
                     </div>
                 </div>
@@ -92,8 +92,8 @@
 
                             <div class="pull-left">
                                 @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                        </button>*@
+                                        <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
+                                    </button>*@
                             </div>
                             <div class="pull-left filtercon">
                                 <div id="myinterview_3">
@@ -331,7 +331,7 @@
                                                             <th id="myinterview_4">Candidate Name</th>
                                                             <th>Interview level</th>
                                                             @*<th id="myinterview_5">JD Link</th>*@
-                                                            <th>Skill Channel</th>
+                                                            <th>Interview Instructions</th>
                                                             <th id="myinterview_6">Resume</th>
                                                             <th id="myinterview_7">Meeting Link</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
@@ -348,7 +348,7 @@
                                                             <th style="width:18%;">Candidate Name</th>
                                                             <th>Interview level</th>
                                                             @*<th>JD Link</th>*@
-                                                            <th>Skill Channel</th>
+                                                            <th>Interview Instructions</th>
                                                             <th>Resume</th>
                                                             <th>Meeting Link</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
@@ -374,7 +374,7 @@
                                                                     <div> @item.interviewDate</div>
                                                                     @if (item.Timer > 0)
                                                                     {
-                                                                <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
+                                                                        <div class="time_tab"> <span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>
                                                                     }
                                                                 </td>
                                                                 @if (@item.interviewSlot == "Morning")
@@ -430,7 +430,14 @@
                                                                     {
                                                                         <td>No JD</td>
                                                                     }*@
-                                                                <td style="text-align: center"> @item.IRFID </td>
+                                                                @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                                                                {
+                                                                    <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ","%20")>Instructions</a></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Instructions</td>
+                                                                }
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -500,8 +507,7 @@
                                                                             <th>Meeting Status</th>
                                                                             <th>Interview Status</th>
                                                                             <th>Co-ordinating HR</th>
-                                                                            <th>Company Detail</th>
-
+                                                                            <th>Skill Channel</th>
 
                                                                         </tr>
 
@@ -535,15 +541,8 @@
                                                                             <td>@item.MeetingStatusDesc</td>
                                                                             <td>@item.InterviewStatusDesc</td>
                                                                             <td>@item.HRCoordinatorEmailId</td>
+                                                                            <td style="text-align: center"> @item.IRFID </td>
 
-                                                                            @if (item.CompanyDetails != null && item.CompanyDetails != "")
-                                                                            {
-                                                                                <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Company Instructions</a></td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No Company Instructions</td>
-                                                                            }
 
                                                                         </tr>
                                                                     </table>
@@ -1246,8 +1245,8 @@
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>'
 
             html += ' <td><div>' + data[i].interviewDate + '</div>';
-            if (data[i].timer > 0){
-                html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">'+ data[i].timer+'</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>';
+            if (data[i].timer > 0) {
+                html += '<div class="time_tab"><span class="time-left-txt">Time left to fill the feedback:</span><div class="time-clock pull-left"><span class="timer">' + data[i].timer + '</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 2 hours of the Interview Time then this interview will not be billable </span></a></div>';
             }
             html += '  </td>';
             if (data[i].interviewSlot == "Morning") {
@@ -1294,15 +1293,18 @@
             }
 
             html += '  <td> ' + data[i].interviewDuration + ' </td>';
-            if (data[i].jdLink != null && data[i].jdLink != "") {
-                /**/
-                html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
-                /**/
+            //if (data[i].jdLink != null && data[i].jdLink != "") {
+            //    html += ' <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=' + data[i].jdLink + '>' + data[i].jdTiltle + ' </a></td>';
+            //}
+            //else {
+            //    html += ' <td>No JD</td>';
+            //}
+            if (data[i].companyDetails != null && data[i].companyDetails != "") {
+                html += '   <td><a id="companylinkId" target="_blank" title="Company Instructions" href=' + data[i].companyDetails + '>Company Instructions</a></td>';
             }
             else {
-                html += ' <td>No JD</td>';
+                html += '<td>No Company Instructions</td>';
             }
-            html += ' <td style="text-align: center">' + data[i].irfid + '</td>';
             if (data[i].resumeLink != null && data[i].resumeLink != "") {
                 html += ' <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
             }
@@ -1356,7 +1358,7 @@
             html += '  <th>Interview Status</th>';
             html += '  <th>Co-ordinating HR</th>';
 
-            html += '  <th>Company Detail</th>';
+            html += '  <th>Skill Channel</th>';
 
             html += '  </tr>';
             html += '  <tr>';
@@ -1395,13 +1397,7 @@
             else {
                 html += ' <td></td>';
             }
-
-            if (data[i].companyDetails != null && data[i].companyDetails != "") {
-                html += '   <td><a id="companylinkId" target="_blank" title="Company Instructions" href=' + data[i].companyDetails + '>Company Instructions</a></td>';
-            }
-            else {
-                html += '<td>No Company Instructions</td>';
-            }
+            html += ' <td style="text-align: center">' + data[i].irfid + '</td>';
             html += '  </tr>';
             html += '  </table>';
             html += '  </td>';
@@ -1836,7 +1832,7 @@
 
     root.style.setProperty("--marquee-elements", marqueeContent.children.length);
     marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
-   for (let i = 0; i < marqueeElementsDisplayed; i++) {
-      marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
-  }
+    for (let i = 0; i < marqueeElementsDisplayed; i++) {
+        marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
+    }
 </script>

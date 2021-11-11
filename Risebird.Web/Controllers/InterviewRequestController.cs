@@ -288,8 +288,6 @@ namespace Risebird.Web.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        [HttpGet]
         public async Task<IActionResult> EditInterviewRequest(InterviewRequestVM meeting)
         {
             try

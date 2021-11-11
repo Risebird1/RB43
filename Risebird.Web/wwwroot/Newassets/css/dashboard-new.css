@@ -38,7 +38,13 @@ body {
     .clearfix:after {
         clear: both;
     }
-
+.survey .table > tbody > tr > td{
+    vertical-align:top;
+    padding:25px 5px 5px 5px!important;
+}
+.survey .cadName [data-tooltip]:after {
+    left: 60%!important;
+}
 .jdfile-error {
     bottom: -20px !important;
     color: #E04B4A !important;
@@ -47,7 +53,57 @@ body {
     position: absolute;
     left: 20px;
 }
+.interviewer a.info span:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #9e9999;
+    position: absolute;
+    bottom: -5px;
+    left: 95px;
+}
 
+.interviewer .star-rating {
+    /*border: solid 1px #ccc;*/
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 2.0em;
+    justify-content: space-around;
+    padding: 0 .2em;
+    text-align: center;
+    width: 220px;
+    margin-bottom: 10px;
+}
+
+    .interviewer .star-rating input {
+        display: none;
+    }
+
+    .interviewer .star-rating label {
+        color: #b7b7b7;
+        cursor: pointer;
+        padding: 0px !important;
+        font-size: 25px !important;
+    }
+
+    .interviewer .star-rating :checked ~ label {
+        color: #f90;
+    }
+
+    .interviewer .star-rating label:hover,
+    .interviewer .star-rating label:hover ~ label {
+        color: #fc0;
+    }
+/* text pops up when icon is in hover state */
+
+.interviewer a.info:hover span {
+    bottom: 24px;
+    visibility: visible;
+    opacity: 1;
+    z-index: 1000;
+}
 a.infos {
     width: 30px;
     height: 43px;
@@ -142,17 +198,77 @@ a.infos {
     right: 25px;
 }
 
+
+
 #scoreChart tspan {
     font-size: 12px;
 }
-
-.scheduling .statusInfo {
-    max-width: 100%;
-    padding: 0px 10px;
-    flex: 0 0 100%;
-    float: none;
+#memberTableBody .table > tbody > tr > td{
+padding:5px;
 }
 
+#memberTableBody .table-striped tbody tr > td:hover, #memberTableBody .table-striped tbody tr:hover {
+    box-shadow: none !important;
+}
+    .scheduling .statusInfo {
+        max-width: 100%;
+        padding: 0px 10px;
+        flex: 0 0 100%;
+        float: none;
+    }
+#interviewer blockquote {
+    border: 0px solid #DDD;
+   /* padding: 0.5em 1em 0.5em 1em;*/
+   padding:0px;
+    border-radius: 0.2em;
+    position: relative;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    font-size: 12px;
+   
+  
+}
+    #interviewer blockquote p {
+        font-size: 15px;
+        text-indent: 0em;
+        margin: 0em 0 0.25em 0;
+        line-height: 23px;
+        z-index: 1;
+        color: #a1a1a1;
+        overflow-y: auto;
+        white-space: initial;
+        height: 100px;
+        padding: 0px 10px 0px 30px;
+    }
+
+        #interviewer blockquote p::before {
+            font-family: Georgia;
+            content: "“";
+            font-size: 4.5em;
+            position: relative;
+            left: 0em;
+            top: 0.25em;
+            color: #999;
+            height: 5px !important;
+            display: block;
+            left: -0.45em;
+        }
+        #interviewer blockquote p::after {
+            font-family: Georgia;
+            content: "”";
+            font-size: 5em;
+            position: absolute;
+            right: 0em;
+            bottom: -80px;
+            color: #DDD;
+            z-index: 10;
+            padding-bottom: 35px;
+        }
 #style-2::-webkit-scrollbar, .style-2::-webkit-scrollbar {
     width: 4px;
     height: 9px;
@@ -2599,8 +2715,10 @@ table.journey td.cadSkill {
 .interviewer .cadName [data-tooltip]:before {
     margin-left: -25px;
 }
-
-
+.show{display:block;}
+.hide {
+    display: none;
+}
 #tblbodyCandidate .action .mdc-fab {
     width: 29px !important;
     height: 30px !important;
@@ -4819,7 +4937,7 @@ textarea.form-control {
 #SkillTable .interviewer .star-rating {
     width: 320px;
 }
-
+.survey .interviewer .star-rating{width:165px;}
 .sample-btn .fa-trash:before {
     line-height: 29px;
 }
@@ -5171,7 +5289,7 @@ button .btn {
 }
 
 #statusTable_filter #search, #interviewersTbl_filter #search, .notschedulemeeting #meeting_filter #search, #profile_filter #search, #meeting_filter #search, #irfTable_filter #search, #MyInterviewList_filter #search, #OpeninterviewList_filter #search {
-    right: 55px;
+    right: 50px;
 }
 
 .indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update {
@@ -5212,7 +5330,7 @@ button .btn {
     right: 30px;
 }
 
-.survey #interviewer_filter input[type=search].form-control {
+.survey #interviewer_filter input[type=search].form-control, #interviewer_filter input[type=search] {
     background: #FFF !important;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -5225,7 +5343,7 @@ button .btn {
     z-index: 0;
 }
 
-.notschedulemeeting #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update, .unassigned-int #trigger-update {
+.notschedulemeeting #trigger-update, .OpenInterviewerAssessment #trigger-update, .survey #trigger-update, .candidate-timeline #trigger-update, .resume #trigger-update, .unassigned-int #trigger-update {
     right: 35px;
     top: 11px;
 }
@@ -6376,7 +6494,17 @@ button .btn {
 }
 
 @media (max-width: 767px) {
-    .action-btn {
+    #clientduser li{
+        width:100%;
+        float:left;
+    }
+        #clientduser li:nth-child(5) .dtr-title {
+            float:left;
+        }
+        #clientduser li:nth-child(5) .dtr-data {
+            float: left;
+        }
+        .action-btn {
         width: 100px;
         margin: 0px auto;
     }
@@ -6914,8 +7042,8 @@ input[type='radio'] {
     input[type='radio']:before {
         content: '';
         display: block;
-        width: 60%;
-        height: 60%;
+        width: 63%;
+        height: 63%;
         margin: 20% auto;
         border-radius: 50%;
     }
@@ -6934,7 +7062,9 @@ input[type='radio'] {
     filter: alpha(opacity = 50);
     text-align: center;
 }
-
+.card-management .card-blue .card-header {
+    min-height:35px;
+}
 .publicsharing-icon {
     position: relative;
     top: 10px;
@@ -10100,7 +10230,7 @@ button.close {
 }
 
 #meeting_filter #search {
-    right: 40px;
+    right: 35px;
 }
 
 .instainterview #meeting_filter #search {

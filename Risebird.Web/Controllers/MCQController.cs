@@ -952,7 +952,7 @@ namespace Risebird.Web.Controllers
                 var resultset = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
                 var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
                 var timmer = details.Timer + " min";
-                string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest/" + Id;
+                string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Id;
                 Mail _mail = new Mail
                 {
                     TO = Emailids,

@@ -403,8 +403,10 @@ namespace Risebird.Repository
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
+
             if (isAdd)
             {
+                parameters.Add("@IsPasswordReset", entity.IsPasswordReset);
                 if (entity.SelectedClient.HasValue)
                     parameters.Add("@selectedClientId", entity.SelectedClient);
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
@@ -826,13 +828,13 @@ namespace Risebird.Repository
         /// </summary>
         /// <param name="emailId"></param>
         /// <returns></returns>
-        public IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId)
+        public IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@EmailId", emailId); // Normal parametersmeters 
-
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@SessionId", sessionId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
@@ -848,6 +850,49 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public bool CheckMultiSession(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var isOldSessionLoggedOut = SqlMapper.Query<bool>(
+                    con, "select top 1 uss.IsActive from [dbo].[UserSessions] uss join UserList us on uss.UserId= us.id where us.EmailId = @EmailId order by uss.Id desc", new { EmailId = emailId }, commandType: Text).FirstOrDefault();
+                    return isOldSessionLoggedOut;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public bool ClearSessionForOthersUsers(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<bool>(
+                       con, "update uss  set IsActive =0,Logout=GETUTCDATE()  from [dbo].[UserSessions] uss  join UserList us on uss.UserId= us.id  where us.EmailId = @emailId", new { value = true, emailId = emailId }, commandType: Text).FirstOrDefault();
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
 
         public IEnumerable<string> GetAllHrsEmailld()

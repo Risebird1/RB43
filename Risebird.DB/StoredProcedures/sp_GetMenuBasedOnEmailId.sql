@@ -10,14 +10,26 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[sp_GetMenuBasedOnEmailId]   
-  @EmailId nvarchar(300)     
+  @EmailId nvarchar(300),
+  @SessionId varchar(300)
 AS  
 BEGIN  
+
+IF NOT EXISTS (SELECT 1  FROM  UserSessions usn inner join UserList us on us.id = usn.UserId  WHERE  usn.SessionId = @SessionId and usn.IsActive=1 and us.IsActive=1)      
+ BEGIN      
+ insert into UserSessions
+	 ([UserId],
+	[SessionId],
+	[IsActive])	
+	select id,@SessionId,1 from [dbo].[UserList] us WHERE EmailId like @EmailId 
+END
+
 
 	DECLARE @lastLogin AS varchar(200), @profile varchar(50), @roleId int;    
 	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId LIKE @EmailId  
 	set @roleId =0
 	
+
 	set @profile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id=ul.idProfile where EmailId like @EmailId and ul.IsActive=1)
 	
 

@@ -2020,5 +2020,29 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<string>> FetchAllPasswordResetDetails(int noofdays)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@noofdays", noofdays);
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_FetchPasswordresetDetails", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return (List<string>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+
     }
 }
