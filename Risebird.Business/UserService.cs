@@ -59,20 +59,7 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
-        }
-
-        public async Task<bool> ClearSessionForOthersUsers(string emailId)
-        {
-            try
-            {
-                return _userRepository.ClearSessionForOthersUsers(emailId);
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
+        }       
 
         #region User Service Functions
 
