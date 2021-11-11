@@ -27,8 +27,10 @@
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.SkillChannel, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
                                     @*@Html.DropDownListFor(m => m.SkillChannel, Model.IRFList, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left" })*@
-                                    @Html.TextBoxFor(m => m.SkillChannel, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left", @maxlength = "10", @onblur = "checkUniqueness(this.value)" })
-                                    @Html.ValidationMessageFor(model => model.SkillChannel, "", new { @id = "uniqueMsg", @class = "text-danger" })
+                                    <div class=" col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left nopad">
+                                        @Html.TextBoxFor(m => m.SkillChannel, new { @class = "form-control", @maxlength = "10", @onblur = "checkUniqueness(this.value)" })
+                                        @Html.ValidationMessageFor(model => model.SkillChannel, "", new { @id = "uniqueMsg", @class = "text-danger" })
+                                    </div>
                                 </div>
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.duration, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
