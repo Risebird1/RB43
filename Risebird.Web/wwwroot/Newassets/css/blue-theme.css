@@ -666,8 +666,8 @@ textarea::-webkit-scrollbar-thumb {
     border-top: 1px solid #dee2e6 !important;
     border-top: 1px solid #dee2e6 !important;
 }
-    .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #f7f7f7;
+.mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
+    background: #f1f1f1;
     color: #888 !important;
 }
 
