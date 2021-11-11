@@ -173,58 +173,6 @@
         /* pop-up text arrow */
 
 
-        .interviewer a.info span:before {
-            content: '';
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid #9e9999;
-            position: absolute;
-            bottom: -5px;
-            left: 95px;
-        }
-
-.interviewer .star-rating {
-    /*border: solid 1px #ccc;*/
-    display: flex;
-    flex-direction: row-reverse;
-    font-size: 2.0em;
-    justify-content: space-around;
-    padding: 0 .2em;
-    text-align: center;
-    width: 220px;
-    margin-bottom: 10px;
-}
-
-    .interviewer .star-rating input {
-        display: none;
-    }
-
-    .interviewer .star-rating label {
-        color: #b7b7b7;
-        cursor: pointer;
-        padding: 0px !important;
-        font-size: 25px !important;
-    }
-
-    .interviewer .star-rating :checked ~ label {
-        color: #f90;
-    }
-
-    .interviewer .star-rating label:hover,
-    .interviewer .star-rating label:hover ~ label {
-        color: #fc0;
-    }
-    /* text pops up when icon is in hover state */
-
-    .interviewer a.info:hover span {
-        bottom: 24px;
-        visibility: visible;
-        opacity: 1;
-        z-index: 1000;
-    }
-
 
 
 

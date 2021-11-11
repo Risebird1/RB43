@@ -146,11 +146,13 @@
                                                                                 }
                                                                             </td>
                                                                             <td class="text-left">
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
+                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;left: -2px; cursor:pointer;" title="Send Invite"><span class="fa fa-send-o"></span></span></span>
                                                                                 @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                 {
-                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="        top: -7px;
+        position: relative;
+        cursor: pointer;" title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
                                                                                 }
                                                                             </td>
                                                                         </tr>

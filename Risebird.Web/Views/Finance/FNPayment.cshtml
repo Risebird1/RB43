@@ -469,24 +469,44 @@
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
-        for (var i = 1; i <= pagecount; i++) {
+        var abc = currentpage - 5;
+        var pagevale = pagecount - currentpage;
+        if (pagevale < 9) {
+            abc = pagecount - 9;
+        }
+        if (abc < 0) {
+            abc = 1;
+        } else {
+            abc = currentpage - 1;
+        }
+
+        var next = abc + 2;
+        var nextset = abc + 10;
+        var previousset = abc + 9;
+        if (next = pagecount) {
+            next = pagecount;
+        }
+        if (nextset >= pagecount) {
+            nextset = pagecount;
+        }
+        for (var i = abc; i <= pagecount; i++) {
             if (i == currentpage) {
                 html += '   <li class="active"><span>' + i + '</span></li>';
-            } else if (i <= 10) {
+            } else if (i <= previousset) {
                 if (Generateinvoiceflag == 2) {
                     html += '<li><a onclick="FinacneChangePage(' + i + ')">' + i + '</a></li> ';
                 } else {
                     html += '<li><a href="/Finance/FNPayment?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '&st=' + St_date + '&se=' + Se_date + '">' + i + '</a></li>';
                 }
-            } else if (i == 11) {
+            } else if (i == nextset) {
                 if (Generateinvoiceflag == 2) {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(2)" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 }
                 else {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
             } else {
@@ -495,11 +515,11 @@
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 if (Generateinvoiceflag == 2) {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(2)" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 } else {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
             }
@@ -897,15 +917,15 @@
         $(".Fnactive-header").addClass("mdc-button--raised");
         bindtableDataChangeMonth();
         bindPagesChangeMonth();
-        $("#txtAmount").text("Amount: " + data.totalAmount);
-        $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
-        $("#txtTdsdeducted").text("Tds: " + data.tds);
-        $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
-        $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
-        $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
-        $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
-        $("#txtpendingamount").text("Pending Amount: " + data.pendingAmount);
-        $("#txtqcamount").text("QC Amount: " + data.qcamount);
+        $("#txtAmount").text("Amount: 0");
+        $("#txtPayableAmount").text("Payable Amount: 0");
+        $("#txtTdsdeducted").text("Tds: 0");
+        $("#txtpaidamount").text("Paid Amount: 0");
+        $("#txtinterviewamount").text("Interview Amount: 0");
+        $("#txtnoshowamount").text("No Show Amount: 0");
+        $("#txtdroppedamount").text("Dropped Amount: 0");
+        $("#txtpendingamount").text("Pending Amount: 0");
+        $("#txtqcamount").text("QC Amount: 0");
     }
     function bindtableDataChangeMonth() {
         var html = '';

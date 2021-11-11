@@ -24,7 +24,7 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder)
+            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder,string staffingAgenecy)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -56,7 +56,7 @@ namespace Risebird.Repository
             //string IRFID = string.Empty;
             string prefferedLocation = string.Empty;
             string expectedPerHourRate = string.Empty;
-            string staffingAgenecy = string.Empty;
+            //string staffingAgenecy = string.Empty;
             string joiningTime = string.Empty;
             //string interviewOnDevice = string.Empty;
             string currentEmployerName = string.Empty;
@@ -98,11 +98,11 @@ namespace Risebird.Repository
                 cmd.Parameters.Add(new SqlParameter("@comfirmationStatus", comfirmationStatus));//
                 cmd.Parameters.Add(new SqlParameter("@prefferedLocation", prefferedLocation));
                 cmd.Parameters.Add(new SqlParameter("@expectedPerHourRate", expectedPerHourRate));
-                cmd.Parameters.Add(new SqlParameter("@staffingAgenecy", staffingAgenecy));
+                cmd.Parameters.Add(new SqlParameter("@staffingAgenecy", staffingAgenecy));//
                 cmd.Parameters.Add(new SqlParameter("@joiningTime", joiningTime));
                 cmd.Parameters.Add(new SqlParameter("@interviewOnDevice", interviewOnDevice));//
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
-                cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));
+                cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));//
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));//
                 SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
                 outPutVal.Direction = ParameterDirection.Output;
