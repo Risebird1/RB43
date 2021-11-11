@@ -261,7 +261,7 @@
                                                         </div>
 
                                                         <div class="form-group">
-                                                            Upload Company Details
+                                                            Upload Interview Instructions
 
                                                             <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                                                 <div class="mdc-radio mdc-radio--touch">
@@ -274,7 +274,7 @@
                                                                 </div>
                                                             </div>
 
-                                                            Provide Company Details
+                                                            Provide Interview Instructions
 
                                                             <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                                                 <div class="mdc-radio mdc-radio--touch">
@@ -305,13 +305,13 @@
 
                                                         </div>
                                                         <div class="form-group" style="display:none" id="linkcdDiv">
-                                                            @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                            @Html.Label("Interview Instructions", "Interview Instructions", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                                             @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
 
                                                         </div>
                                                         <div class="" style="display:none" id="uploadcdDiv">
-                                                            @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.Label("Interview Instructions File", "Interview Instructions File", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                                             @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
@@ -320,7 +320,7 @@
                                                             @{
                                                                 if (!String.IsNullOrEmpty(Model.CompanyDetails))
                                                                 {
-                                                                    <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Company Details</a>
+                                                                                                                        <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Interview Instructions</a>
                                                                 }
                                                             }
                                                         </div>
