@@ -196,5 +196,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews();
         Task<IEnumerable<string>> GetIRFActiveInterviewers(string irfId);
         Task<int> GetUniqueInterviewerByEmailId(string emailId, string id);
+        Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
     }
 }
