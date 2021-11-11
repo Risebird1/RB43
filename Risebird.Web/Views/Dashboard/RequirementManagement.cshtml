@@ -226,7 +226,7 @@
                         <div class="row">
                             @foreach (var item in Model)
                             {
-                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 card-management" style="margin-top: 15px;">
                                     <div class="card-content-holder border card-blue">
                                         <div class="card-header">
                                             <div class="row">
@@ -248,9 +248,8 @@
                                                 <div class="statusInfo" style="padding:0px 50px">
                                                     <div class="group inner list-group-item-text">
                                                         <div class="row second">
-                                                            <div class="client-field"> Interviewer Count:</div>  <div>@item.InterviewerCount</div>
-                                                        </div> <br />
-
+                                                            <div class="client-field"> Interviewer Count:</div>  <div class="client-field">@item.InterviewerCount</div>
+                                                        </div>
                                                         <div class="row three"> <span>IRFID:</span><a href="#">@item.IRFIDs</a></div> <br />
 
                                                         <div class="row four">

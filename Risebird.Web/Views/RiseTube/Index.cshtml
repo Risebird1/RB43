@@ -419,13 +419,13 @@
                                                                 <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
 
                                                                     <span>End Client:</span>
-                                                                    <span>
+                                                                    <span class="endclient">
 
                                                                         @if (item.ClientName != null && item.ClientName != "")
                                                                         {
                                                                             @if (@item.ClientName.Length > 10)
                                                                             {
-                                                                                <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.ClientName</span></a>
+                                                                                <a href="#" data-tooltip="@item.ClientName"> <span class="expected-timing">@item.ClientName</span></a>
                                                                             }
                                                                             else
                                                                             {
