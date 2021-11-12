@@ -285,5 +285,59 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public int AutoCreateEvent(daytimes_report model)
+        {
+            try
+            {
+                Guid _guid = Guid.NewGuid();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", model.id);
+                dynamicParameters.Add("@EventName", model.EventName);
+                dynamicParameters.Add("@SkillChannel", model.SkillChannel);
+                dynamicParameters.Add("@StartDate", model.StartDate);
+                dynamicParameters.Add("@EndDate", model.EndDate);
+                dynamicParameters.Add("@duration", model.duration);
+                dynamicParameters.Add("@Uniqueid", _guid.ToString());
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    int eventid = eventids.FirstOrDefault();
+                    //Insert bulk DayType
+                    DataTable timeslot = new DataTable();
+                    timeslot.Columns.Add("Daytype", typeof(string));
+                    timeslot.Columns.Add("Start", typeof(string));
+                    timeslot.Columns.Add("End", typeof(string));
+                    timeslot.Columns.Add("dayCheck", typeof(bool));
+                    timeslot.Columns.Add("Eventid", typeof(int));
+                    foreach (var item in model.setvalue)
+                    {
+                        foreach (var timeitem in item.dayvalue)
+                        {
+                            timeslot.Rows.Add(item.Daytype, timeitem.Start, timeitem.End, item.dayCheck, eventid);
+                        }
+                    }
+                    //Start:Need to change
+                    SqlCommand cmdTechReport = new SqlCommand("usp_EventTimeSlotsBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdTechReport.Parameters.Add(new SqlParameter("@EventTimeslotBulkData", SqlDbType.Structured));
+                    cmdTechReport.Parameters["@EventTimeslotBulkData"].Value = timeslot;
+                    con.Open();
+                    var changes = cmdTechReport.ExecuteNonQuery();
+                    if (cmdTechReport.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    //END:Need to change
+                    return eventid;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return 0;
+        }
     }
 }
