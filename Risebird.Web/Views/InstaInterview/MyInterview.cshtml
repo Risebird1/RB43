@@ -251,6 +251,7 @@
                                                                                         @item.RequiredSkill.Substring(26, @item.RequiredSkill.Length - 26)
                                                                                     </p>
                                                                                 </div>
+                                                                                <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
                                                                             }
                                                                             else
                                                                             {
@@ -266,7 +267,7 @@
                                                                         {
                                                                             <div></div>
                                                                         }
-                                                                        <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+
                                                                     </div>
                                                                 </td>
                                                                 @if (item.JDLink != null && item.JDLink != "")

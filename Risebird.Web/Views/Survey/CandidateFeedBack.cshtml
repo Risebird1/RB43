@@ -332,7 +332,6 @@ else
                                                             <label for="Question1_1_@i" class="star">&#9733;</label>
                                                         </div>
 
-
                                                     </td>
                                                         <td class="interviewer">
                                                             @*@item.Question2 out of 5*@
@@ -602,7 +601,7 @@ else
     }
 
     $(document).ready(function () {
-
+        SetRating();
         applyDataTable();
 
     });
@@ -808,7 +807,7 @@ else
 
 </script>
 <script>
-    $(document).ready(function () {
+    function SetRating() {
         var indexCount = $('#txtrate').val();
         for (var i = 0; i < indexCount; i++) {
             var Question1_Value = document.getElementById("Question1_" + i).value;
@@ -824,5 +823,5 @@ else
                 $('#Question6_' + Question6_Value + '_' + i).attr('checked', 'checked');
             }
         }
-    });
+    }
 </script>
