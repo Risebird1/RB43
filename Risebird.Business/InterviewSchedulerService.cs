@@ -167,5 +167,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public int AutoCreateEvent(daytimes_report model)
+        {
+            try
+            {
+                return _interviewSchedulerRepository.AutoCreateEvent(model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
     }
 }
