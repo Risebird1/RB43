@@ -21,5 +21,6 @@ namespace Risebird.Repository.Interface
         Task<string> FetchJDTitle(string IRFId);
         string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accountemail);
         ScheculeInterviewIRFVM fetchIRFClientDetails(string IRFId);
+        int AutoCreateEvent(daytimes_report model);
     }
 }

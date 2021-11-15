@@ -44,8 +44,9 @@ namespace Risebird.Web.Controllers
         private readonly ITemplateService _templateService;
         private readonly IClientService _clientService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IInterviewSchedulerService _interviewSchedulerservice;
 
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -63,6 +64,7 @@ namespace Risebird.Web.Controllers
             _templateService = templateService;
             _clientService = clientService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _interviewSchedulerservice = interviewSchedulerservice;
         }
 
 
@@ -775,6 +777,10 @@ namespace Risebird.Web.Controllers
 
                         }
                         var domain = Request.Scheme + "://" + Request.Host.Value;
+                        //Start: Auto Generate Scheduling Link
+                        var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling");
+                        irfDetails.CalendlyLink = _schedulinglink;
+                        //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
                             TempData["SuccessErrorMessage"] = "Skills Channel is added Successfully";
@@ -6012,6 +6018,38 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
+        }
+
+        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
+        {
+            var model_Second = new List<daytimes_second>();
+            var sun = new List<perdaytime>();
+            var mon = new List<perdaytime>();
+            sun.Add(new perdaytime { Start = "8", End = "23" });
+            mon.Add(new perdaytime { Start = "6", End = "9" });
+            mon.Add(new perdaytime { Start = "19", End = "24" });
+            model_Second.Add(new daytimes_second { Daytype = "sunday", dayCheck = true, dayvalue = sun });
+            model_Second.Add(new daytimes_second { Daytype = "monday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "tuesday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "wednesday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "thursday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "friday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "saturday", dayCheck = true, dayvalue = sun });
+            var model_report = new daytimes_report();
+            model_report.setvalue = model_Second;
+            model_report.StartDate = eventStartdate.AddHours(16);
+            model_report.EndDate = eventStartdate.AddDays(60);
+            model_report.EventName = EventName;
+            model_report.SkillChannel = SkillChannel;
+            model_report.duration = 60;
+            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
+            var model = _interviewSchedulerservice.FetchEventById(eventid);
+            if (model != null)
+            {
+                var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;
+                return eventurl;
+            }
+            return "";
         }
     }
 }
