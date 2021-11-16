@@ -311,7 +311,7 @@ namespace Risebird.Web.Controllers
                         CC = "",
                         Subject = "Invitation: kamini Test Data and Talent Team @ " + indianTime + "(IST)"
                     };
-                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime);
+                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name);
                     ViewBag.Start = 4;
                     ViewBag.interviewDate = interviewdatetime;
                     return View(model);
