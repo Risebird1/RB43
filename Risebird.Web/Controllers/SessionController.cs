@@ -121,7 +121,7 @@ namespace Risebird.Web.Controllers
                     var sessionId = HttpContext.Session.Id;
                     var userClaims = User.Identity as ClaimsIdentity;
                     string emailId = userClaims?.FindFirst("emails")?.Value;
-                    var updated = _accountService.Signout(emailId);
+                    var updated = _accountService.Signout(emailId,sessionId);
                     var callbackUrl = Url.Action(nameof(SignedOut), "Session", values: null, protocol: Request.Scheme);
                     var token = HttpContext.Session.GetString("Token");
                     var path = $"https://{AzureAdB2COptions.TenantName}.b2clogin.com/{AzureAdB2COptions.TenantName}.onmicrosoft.com/{AzureAdB2COptions.SignUpSignInPolicyId}/oauth2/v2.0/logout?post_logout_redirect_uri={AzureAdB2COptions.RedirectUri}";
