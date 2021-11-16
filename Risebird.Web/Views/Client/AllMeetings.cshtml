@@ -1269,7 +1269,7 @@
                                                                         <tr id="@item.imid" data-changes="1">
                                                                             @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
                                                                             {
-                                                                                <td style="width:10px;padding:5px!important;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                                <td style="width:10px;padding:5px 8px!important;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                                                                             }
                                                                             <td> @item.interviewDate </td>
 
@@ -1779,7 +1779,7 @@ else
         for (var i = 0; i < data.length; i++) {
             html += '  <tr id="' + data[i].imid + '" data-changes="1">';
             if ($('#hidcilentrole').val() != $('#hidclientdes').val()) {
-                html += ' <td style="width:10px;padding:5px!important;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
+                html += ' <td style="width:10px;padding:5px 8px!important;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             }
             html += ' <td> ' + new Date(data[i].interviewDate).toLocaleString() + ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
