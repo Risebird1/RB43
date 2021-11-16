@@ -304,11 +304,15 @@ namespace Risebird.Web.Controllers
                 var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies);
                 if (result)
                 {
+                    if (zoomLink.accountemail == "me")
+                    {
+                        zoomLink.accountemail = "host@risebird.io";
+                    }
                     //Send Mail Notification
                     Mail _mail = new Mail
                     {
                         TO = model.Email,
-                        CC = "",
+                        CC = zoomLink.accountemail,
                         Subject = "Invitation: " + model.Name + " @ " + indianTime + "(IST)"
                     };
                     var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name);
