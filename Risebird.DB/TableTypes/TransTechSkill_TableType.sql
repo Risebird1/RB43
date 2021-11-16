@@ -7,10 +7,11 @@ CREATE TYPE [dbo].[TransTechSkill_TableType] AS TABLE(
 	[IRFId] [int] NOT NULL,
 	[LevelId] [int] NULL,
 	[SkillId] [int] NULL,
-	[Weightage] [int] NULL
+	[Weightage] [int] NULL,
+	[Concepts] [varchar](50) NULL,
+	[Natureofquestion] [varchar](50) NULL,
+	[Timelimit] [int] NULL
 )
 
 End
 GO
-
-

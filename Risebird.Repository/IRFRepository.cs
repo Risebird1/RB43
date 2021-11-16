@@ -781,11 +781,14 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("LevelId", typeof(int));
                         techSkillDt.Columns.Add("SkillId", typeof(int));
                         techSkillDt.Columns.Add("Weightage", typeof(int));
+                        techSkillDt.Columns.Add("Concepts", typeof(string));
+                        techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                        techSkillDt.Columns.Add("Timelimit", typeof(int));
 
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
-                            techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage);
+                            techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -1153,11 +1156,14 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("LevelId", typeof(int));
                         techSkillDt.Columns.Add("SkillId", typeof(int));
                         techSkillDt.Columns.Add("Weightage", typeof(int));
-
+                        techSkillDt.Columns.Add("Concepts", typeof(string));
+                        techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                        techSkillDt.Columns.Add("Timelimit", typeof(int));
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
-                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage);
+                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -1616,8 +1622,7 @@ namespace Risebird.Repository
         public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
         {
             try
-            {
-                var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
+            { var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
