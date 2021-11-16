@@ -36,6 +36,7 @@ namespace Risebird.Entities.ViewModel
         public string IRFname { get; set; }
         public int imid { get; set; }
         public string CalendlyLink { get; set; }
+        public string staffingAgency { get; set; }
     }
 
     public class TimelineStatus
