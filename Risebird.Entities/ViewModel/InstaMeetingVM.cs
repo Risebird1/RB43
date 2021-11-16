@@ -14,7 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string RequiredSkill { get; set; }
         [Display(Name = "Requested Date")]
         public DateTime RequestedDate { get; set; }
-       
+
         [Display(Name = "Assessment Group")]
         public string AssessmentGroup { get; set; }
         [Display(Name = "Candidate Name")]
@@ -46,7 +46,7 @@ namespace Risebird.Entities.ViewModel
         public IFormFile JDFile { get; set; }
         [Display(Name = "Assessment Group List ")]
         public SelectList AssessmentGroupList { get; set; }
-       
+
         [Display(Name = "Insta Request Name ")]
         public string InstaRequestName { get; set; }
         public IList<InstaTechSkill> TechSkill { get; set; }
@@ -99,6 +99,7 @@ namespace Risebird.Entities.ViewModel
         public long id { get; set; }
         public string join_url { get; set; }
         public DateTime InterviewDate { get; set; }
+        public string accountemail { get; set; }
     }
     public class ZoomAccountDetailsVM
     {
