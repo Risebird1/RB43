@@ -27,14 +27,16 @@ namespace Risebird.Web.Controllers
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IConfiguration _configuration;
         private readonly IRisebirdMeetingsRepository _risebirdMeetings;
+        private readonly INotificationHelper _notificationHelper;
 
-        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings)
+        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper)
         {
             _interviewSchedulerservice = interviewSchedulerservice;
             _azureStorageHelper = azureStorageHelper;
             _sasUrlHelper = sasUrlHelper;
             _configuration = configuration;
             _risebirdMeetings = risebirdMeetings;
+            _notificationHelper = notificationHelper;
         }
         public IActionResult Index()
         {
@@ -302,6 +304,14 @@ namespace Risebird.Web.Controllers
                 var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies);
                 if (result)
                 {
+                    //Send Mail Notification
+                    Mail _mail = new Mail
+                    {
+                        TO = model.Email,
+                        CC = "",
+                        Subject = "Invitation: kamini Test Data and Talent Team @ " + indianTime + "(IST)"
+                    };
+                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime);
                     ViewBag.Start = 4;
                     ViewBag.interviewDate = interviewdatetime;
                     return View(model);
@@ -519,6 +529,7 @@ namespace Risebird.Web.Controllers
             if (String.IsNullOrEmpty(accountEmail))
                 accountEmail = "me";
             var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+            zoomlink.accountemail = accountEmail;
             var succeresult = _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
         }
