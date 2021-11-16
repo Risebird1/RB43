@@ -309,7 +309,7 @@ namespace Risebird.Web.Controllers
                     {
                         TO = model.Email,
                         CC = "",
-                        Subject = "Invitation: kamini Test Data and Talent Team @ " + indianTime + "(IST)"
+                        Subject = "Invitation: " + model.Name + " @ " + indianTime + "(IST)"
                     };
                     var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name);
                     ViewBag.Start = 4;
