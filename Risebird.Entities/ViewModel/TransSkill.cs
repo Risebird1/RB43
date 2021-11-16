@@ -11,6 +11,9 @@ namespace Risebird.Entities.ViewModel
         public int LevelId { get; set; }
         public string LevelName { get; set; }
         public int Weightage { get; set; }
+        public string Concepts { get; set; }
+        public string Natureofquestion { get; set; }
+        public int Timelimit { get; set; }
     }
     public class TransSkillGeneral
     {

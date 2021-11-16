@@ -461,7 +461,7 @@
     function showhidepass(id) {
         var value = document.getElementById("password-field_" + id);
         if (value.getAttribute("type") == "text") {
-            alert('test');
+           
             value.setAttribute("type", "password");
             $("#secret_" + id).addClass('show');
             $("#secret_" + id).removeClass('hide');
@@ -470,7 +470,7 @@
             $("#toggle-password_" + id).removeClass("fa-eye-slash");
         }
         else {
-            alert('tests');
+         
             value.setAttribute("type", "text");
             $("#password-field_" + id).removeClass('passshow');
             $("#toggle-password_" + id).addClass("fa-eye-slash");
