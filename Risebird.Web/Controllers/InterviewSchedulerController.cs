@@ -306,7 +306,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (zoomLink.accountemail == "me")
                     {
-                        zoomLink.accountemail = "host@risebird.io"
+                        zoomLink.accountemail = "host@risebird.io";
                     }
                     //Send Mail Notification
                     Mail _mail = new Mail
