@@ -118,6 +118,7 @@ namespace Risebird.Web.Controllers
                 if (User.Identity.IsAuthenticated)
                 {
                     //to db change
+                    var sessionId = HttpContext.Session.Id;
                     var userClaims = User.Identity as ClaimsIdentity;
                     string emailId = userClaims?.FindFirst("emails")?.Value;
                     var updated = _accountService.Signout(emailId);
