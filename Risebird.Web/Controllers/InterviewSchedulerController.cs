@@ -322,7 +322,7 @@ namespace Risebird.Web.Controllers
                     Mail _mail = new Mail
                     {
                         TO = model.Email,
-                        CC = "",
+                        CC = zoomLink.accountemail,
                         Subject = "Invitation: " + model.Name + " @ " + indianTime + "(IST)"
                     };
                     var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue);
