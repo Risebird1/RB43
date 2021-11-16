@@ -3583,6 +3583,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IRFname = firstData.IRFname;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
+                    candidateTimeline.staffingAgency = firstData.staffingAgency;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
