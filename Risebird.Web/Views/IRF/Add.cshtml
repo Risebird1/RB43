@@ -414,64 +414,84 @@
                                                                     <tr>
 
                                                                         <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                                                        <th width="65%" class="table_heading">Skill Name<span class="red">*</span></th>
-                                                                        <th width="10%" class="table_heading">Weightage<span class="red">*</span></th>
+                                                                        <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Concepts</th>
+                                                                        <th width="30%" class="table_heading">Nature of questions</th>
+                                                                        <th width="10%" class="table_heading">Time limit</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
                                                                     {
-                                                                        <tr>
-                                                                            <td>
-                                                                                @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
 
-                                                                            </td>
-                                                                            <td>
-                                                                                @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
-                                                                            </td>
-                                                                            <td>
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
-                                                                            </td>
-                                                                            <td class="action text-center">
+                                                                        </td>
+                                                                        <td>
+                                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text">
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text">
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number">
+                                                                        </td>
+                                                                        <td class="action text-center">
 
-                                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
-                                                                            </td>
-                                                                        </tr>
+                                                                        </td>
+                                                                    </tr>
 
                                                                     }
                                                                     else
                                                                     {
                                                                         for (int i = 0; i < Model.SkillCollection.Count(); i++)
                                                                         {
-                                                                            <tr>
+                                                                <tr>
 
-                                                                                <td>
+                                                                    <td>
 
-                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
 
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
-                                                                                </td>
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                                    </td>
 
-                                                                                <td>
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                    <td>
+                                                                        @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
-                                                                                </td>
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line" } })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line" } })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number"} })
+                                                                    </td>
+                                                                    <td class="action text-center">
+                                                                        <div>
 
-                                                                                <td class="action text-center">
-                                                                                    <div>
+                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                                    </div>
-                                                                                </td>
-                                                                            </tr>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
 
                                                                         }
                                                                     }
