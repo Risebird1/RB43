@@ -1537,7 +1537,7 @@
 
         if (val == "") {
             document.getElementById("startDateCheck").innerHTML = "";
-            return;
+            return true;
         }
         var year = val.substring(0, 4);
         var month = parseInt(val.substring(5, 7)) - 1;
@@ -1578,14 +1578,14 @@
         var month = parseInt(val.substring(5, 7)) - 1;
         var date = val.substring(8, 10);
         var endDate = new Date(year, month, date);
-
+        endDate.setMonth(endDate.getMonth() + 4);
         //start Date object creation
 
         if (startDateValue == "") {
             document.getElementById("endDateCheck").style.display = "block";
             document.getElementById("endDateCheck").innerHTML = "Kindly fill the Start Date field.";
             document.getElementById("StartDate").focus();
-            return;
+            return true;
         }
         var yearStart = startDateValue.substring(0, 4);
         var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
@@ -1598,14 +1598,27 @@
             document.getElementById("endDateCheck").style.display = "block";
             document.getElementById("endDateCheck").innerHTML = "End Date should be greater than Start Date";
             document.getElementById("EndDate").focus();
-            return;
+            return true;
+        }
+
+        else if (((endDate - startDate) / (1000 * 3600 * 24)) > 120) {
+            document.getElementById("btnUpload").disabled = true;
+            document.getElementById("endDateCheck").style.display = "block";
+            document.getElementById("endDateCheck").innerHTML = "End Date & Start Date difference should not be greater than 120 days";
+            document.getElementById("EndDate").focus();
+            return true;
         }
         else {
             document.getElementById("endDateCheck").style.display = "none";
             document.getElementById("endDateCheck").innerHTML = "";
             //document.getElementById("btnUpload").disabled = false;
-            return;
+            return false;
         }
+
+       
+
+
+
     }
 
     //checkUniqueness(this.value)
@@ -2773,7 +2786,9 @@
                 else {
                     $('#error_JDLink').text("");
                 }
-
+                if ($('#StartDate').val() != "") {
+                    flag = checkStartDate($('#StartDate').val());
+                }
                 if ($('#RisebirdHr').val() == "") {
                     $('#error_RisebirdHr').text("The Channel Owner field is required.");
                     flag = true;
@@ -2983,7 +2998,18 @@
                 }
             }
         }
+        if (tab_skill == "SkillCollection") {
+            var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
+            for (i = 0; i < drpdowns1.length; i++) {
+                var interviewId = $("#" + drpdowns1[i].id).val();
 
+                if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
+                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
+                    return true;
+                }
+
+            }
+        }
         if (tab_skill == "Joinability") {
             var drpdowns2 = $('[id^=' + tab_skill + '][id$="Type"]');
             for (i = 0; i < drpdowns2.length; i++) {
