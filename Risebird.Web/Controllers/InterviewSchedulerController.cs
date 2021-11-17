@@ -235,7 +235,7 @@ namespace Risebird.Web.Controllers
                     {
                         var fileMimeType = GetFileMimeType(model.ResumeFile);
                         if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            || fileMimeType == "application/pdf")
+                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                         {
                             await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", model.ResumeFile, fi.Extension);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -306,7 +306,17 @@ namespace Risebird.Web.Controllers
                 if (result)
                 {
                     string timezonevalue = string.Empty;
-                    var offsetvalue = ((-model.offset / 60) + ":" + ((model.offset % 60) < 0 ? (-model.offset % 60) : (model.offset % 60))).ToString();
+                    string hh = string.Empty;
+                    var valuecheck = (-model.offset / 60);
+                    if (valuecheck < 10 && valuecheck > 0)
+                    {
+                        hh = "0" + valuecheck;
+                    }
+                    if (valuecheck > -10 && valuecheck < 0)
+                    {
+                        hh = "-0" + valuecheck.ToString().Replace("-", "");
+                    }
+                    var offsetvalue = (hh + ":" + ((model.offset % 60) < 0 ? (-model.offset % 60) : (model.offset % 60))).ToString();
                     var timeZones = TimeZoneInfo.GetSystemTimeZones();
                     foreach (TimeZoneInfo timeZone in timeZones)
                     {
