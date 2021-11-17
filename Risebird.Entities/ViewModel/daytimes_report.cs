@@ -78,6 +78,7 @@ namespace Risebird.Entities.ViewModel
         public bool Checkbox6 { get; set; }
         public string MobileNumber { get; set; }
         public string CountryCode { get; set; }
+        public string ClientName { get; set; }
     }
     public class TimeslotsVM
     {

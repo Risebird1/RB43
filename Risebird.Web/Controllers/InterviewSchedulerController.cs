@@ -204,6 +204,7 @@ namespace Risebird.Web.Controllers
                 {
                     model._IRFDetails = new ScheculeInterviewIRFVM();
                 }
+                model.ClientName = model._IRFDetails.Name;
             }
             else
             {
@@ -325,7 +326,7 @@ namespace Risebird.Web.Controllers
                         CC = zoomLink.accountemail,
                         Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
                     };
-                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue);
+                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue, model.ClientName);
                     ViewBag.Start = 4;
                     ViewBag.interviewDate = interviewdatetime;
                     return View(model);
