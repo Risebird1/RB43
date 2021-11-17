@@ -95,17 +95,46 @@
                                                         @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 col-sm-4 pull-left">
-                                                    <div class="form-group" style="margin-bottom:20px;">
-                                                        <div class="mandate">
-                                                            @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+
+
+                                                <div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
+
+
+                                                    <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                        <div class="mdc-radio mdc-radio--touch">
+                                                            <input class="mdc-radio__native-control" type="radio" id="link" name="link" value="UploadLink" checked onclick="RadioLinkChanged(this.value)">
+                                                            <div class="mdc-radio__background">
+                                                                <div class="mdc-radio__outer-circle"></div>
+                                                                <div class="mdc-radio__inner-circle"></div>
+                                                            </div>
+                                                            <div class="mdc-radio__ripple"></div>
                                                         </div>
-                                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Calendly Link is auto generated." } })
+                                                    </div>
+                                                    <label class="control-label  desp-label">Calendly Link </label>
+                                                    <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                        <div class="mdc-radio mdc-radio--touch">
+                                                            <input class="mdc-radio__native-control" type="radio" id="link1" name="link" value="SchedulingLink" onclick="RadioLinkChanged(this.value)">
+                                                            <div class="mdc-radio__background">
+                                                                <div class="mdc-radio__outer-circle"></div>
+                                                                <div class="mdc-radio__inner-circle"></div>
+                                                            </div>
+                                                            <div class="mdc-radio__ripple"></div>
+                                                        </div>
+                                                    </div>
+                                                    <label class="control-label  desp-label">Risebird Scheduler </label>
+                                                    <div class="form-group" style="display:block" id="CalendlyLinkDiv">
+                                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                         @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @id = "error_CalendlyLink", @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="form-group" style="display:none" id="SchedulinglinkDiv">
+
+                                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
 
                                                     </div>
-                                                </div>
 
+                                                </div>
+                                            
 
                                                 <div style="clear: both;height:0px;">&nbsp;</div>
                                                 <div class="col-md-4 col-sm-4 pull-left">
@@ -225,7 +254,7 @@
                                                             Upload Interview Instructions
                                                             <input id="companydetails" name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">
                                                             Provide Interview Instructions Link
-                                                            <input id="companydetails" name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)"  style="position:relative;top:3px;margin:0px 5px;">
+                                                            <input id="companydetails" name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">
                                                         </div>
                                                         <div class="form-group" style="display:none" id="linkcdDiv">
                                                             @Html.Label("Interview Instructions", "Interview Instructions", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1154,6 +1183,22 @@
 </script>
 
 <script>
+
+    function RadioLinkChanged(val) {
+        if (val == 'UploadLink') {
+            document.getElementById("CalendlyLinkDiv").style.display = "block";
+            document.getElementById("SchedulinglinkDiv").style.display = "none";
+            document.getElementById("calendlylink").value = '';
+
+        }
+        else {
+            document.getElementById("CalendlyLinkDiv").style.display = "none";
+            document.getElementById("SchedulinglinkDiv").style.display = "block";
+            document.getElementById("scheduler").value = '';
+
+        }
+
+    }
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -2654,13 +2699,15 @@
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
                 flag = !checkUniqueness();
-                //if ($('#CalendlyLink').val() == "") {
-                //    $('#error_CalendlyLink').text("The CalendlyLink field is required.");
-                //    flag = true;
-                //}
-                //else {
-                //    $('#error_CalendlyLink').text("");
-                //}
+                if (document.getElementById('link').checked) {
+                    if ($('#CalendlyLink').val() == "") {
+                        $('#error_CalendlyLink').text("The CalendlyLink field is required.");
+                        flag = true;
+                    }
+                    else {
+                        $('#error_CalendlyLink').text("");
+                    }
+                }
                 if ($('#PriorityLevel').val() == "") {
                     $('#error_PriorityLevel').text("The PriorityLevel field is required.");
                     flag = true;
