@@ -493,6 +493,7 @@ namespace Risebird.Business
                 model.PerMintuteRate = IRF.PerMintuteRate;
                 model.QualityController = (IList<TransQualityController>)(transQualityController);
                 model.RisebirdHr = IRF.RisebirdHr;
+                model.CompanyDetails = IRF.CompanyDetails;
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
                 model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
                 model.Selectability = (IList<TransSelectability>)(transSelectability);

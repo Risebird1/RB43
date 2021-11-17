@@ -1725,9 +1725,9 @@ namespace Risebird.Web.Controllers
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                 || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                await _azureStorageHelper.InsertBlob(model.CompanyDetailFile.FileName, "resumes", model.CompanyDetailFile);
+                                await _azureStorageHelper.InsertBlob(model.CompanyDetailFile.FileName.Replace(" ","_"), "resumes", model.CompanyDetailFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(model.CompanyDetailFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(model.CompanyDetailFile.FileName.Replace(" ", "_"));
                                 string uploadedFileURL = blob.Uri.ToString();
                                 if (uploadedFileURL == null)
                                 {

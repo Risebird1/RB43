@@ -1569,7 +1569,7 @@
     function checkEndDate(val) {
 
         if (val == "") {
-            return;
+            return true;
         }
         var startDateValue = document.getElementById("StartDate").value;
 
@@ -1578,7 +1578,7 @@
         var month = parseInt(val.substring(5, 7)) - 1;
         var date = val.substring(8, 10);
         var endDate = new Date(year, month, date);
-        endDate.setMonth(endDate.getMonth() + 4);
+       
         //start Date object creation
 
         if (startDateValue == "") {
@@ -1592,7 +1592,7 @@
         var dateStart = startDateValue.substring(8, 10);
         var startDate = new Date(yearStart, monthStart, dateStart);
 
-
+        debugger;
         if (endDate <= startDate) {
             //document.getElementById("btnUpload").disabled = true;
             document.getElementById("endDateCheck").style.display = "block";
