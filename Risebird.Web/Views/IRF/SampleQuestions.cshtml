@@ -102,7 +102,7 @@
                                                                     else
                                                                     {
                                                                         var newList = new List<SelectListItem>();
-                                                                        newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault().Text });
+                                                                        newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
 
                                                                         @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
 
