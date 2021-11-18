@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -327,25 +328,29 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public string Signout(string EmailId)
+        public string Signout(string EmailId, string sessionId)
         {
             try
             {
-                string query = "Update UserList set IsOnline=0, LastLogout=GETDATE() where EmailId=@EmailId";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@EmailId", EmailId);
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", EmailId);
+                parameters.Add("@SessionId", sessionId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query(query, dynamicParameters);
-                    return "success";
+                     SqlMapper.Query<string>(con, "[dbo].[sp_UpdateSingoutDetails]", parameters,
+                        commandType: StoredProcedure);
+                   
                 }
-
             }
             catch (SqlException ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "";
             }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
         }
 
 
