@@ -62,8 +62,8 @@ namespace Risebird.Repository
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
                     parameters.Add("EmailId", emailId);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseInterviewMeetings", parameters,
-                        commandType: CommandType.StoredProcedure);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseInterviewMeetings", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
             }
