@@ -339,5 +339,23 @@ namespace Risebird.Repository
             }
             return 0;
         }
+        public int FetchEventidByUniqueid(string _uniqueid)
+        {
+            try
+            {
+                var query = "Select id from ScheduleInterviewEvent where uniqueid=@uniqueid and IsActive=1";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@uniqueid", _uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dp);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
     }
 }
