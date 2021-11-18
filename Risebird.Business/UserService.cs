@@ -59,7 +59,7 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
-        }
+        }       
 
         #region User Service Functions
 

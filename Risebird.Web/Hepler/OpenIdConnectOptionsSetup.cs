@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
@@ -28,10 +29,11 @@ namespace Risebird.Web.Hepler
 
         public class OpenIdConnectOptionsSetup : IConfigureNamedOptions<OpenIdConnectOptions>
         {
-
-            public OpenIdConnectOptionsSetup(IOptions<AzureAdB2COptions> b2cOptions)
+            private readonly IHostingEnvironment _hostingEnvironment;
+            public OpenIdConnectOptionsSetup(IOptions<AzureAdB2COptions> b2cOptions, IHostingEnvironment hostingEnvironment)
             {
                 AzureAdB2COptions = b2cOptions.Value;
+                _hostingEnvironment = hostingEnvironment;
             }
 
             public AzureAdB2COptions AzureAdB2COptions { get; set; }
@@ -88,6 +90,21 @@ namespace Risebird.Web.Hepler
                 else if (context.Failure is OpenIdConnectProtocolException && context.Failure.Message.Contains("access_denied"))
                 {
                     context.Response.Redirect("/");
+                }
+                else if (context.Failure.Message.Contains("Correlation failed"))
+                {
+                    if (_hostingEnvironment.IsProduction())
+                    {
+                        context.Response.Redirect("https://portal.risebird.io");
+                    }
+                    else if (_hostingEnvironment.IsDevelopment())
+                    {
+                        context.Response.Redirect("https://localhost:44329/");
+                    }
+                    else
+                    {
+                        context.Response.Redirect("https://qa.portal.risebird.io/");
+                    }
                 }
                 else
                 {

@@ -777,9 +777,12 @@ namespace Risebird.Web.Controllers
 
                         }
                         var domain = Request.Scheme + "://" + Request.Host.Value;
-                        //Start: Auto Generate Scheduling Link
-                        var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling");
-                        irfDetails.CalendlyLink = _schedulinglink;
+                        //Start: Auto Generate Scheduling Link 
+                        if (String.IsNullOrEmpty(irfDetails.CalendlyLink))
+                        {
+                            var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling");
+                            irfDetails.CalendlyLink = _schedulinglink;
+                        }
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {

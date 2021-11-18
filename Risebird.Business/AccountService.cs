@@ -207,11 +207,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string Signout(string EmailId)
+        public string Signout(string EmailId, string sessionId)
         {
             try
             {
-                return _accountRepository.Signout(EmailId);
+                return _accountRepository.Signout(EmailId, sessionId);
             }
             catch (Exception e)
             {
