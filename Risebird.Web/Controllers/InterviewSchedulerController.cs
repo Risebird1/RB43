@@ -204,6 +204,7 @@ namespace Risebird.Web.Controllers
                 {
                     model._IRFDetails = new ScheculeInterviewIRFVM();
                 }
+                model.ClientName = model._IRFDetails.Name;
             }
             else
             {
@@ -234,7 +235,7 @@ namespace Risebird.Web.Controllers
                     {
                         var fileMimeType = GetFileMimeType(model.ResumeFile);
                         if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            || fileMimeType == "application/pdf")
+                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                         {
                             await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", model.ResumeFile, fi.Extension);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -304,6 +305,26 @@ namespace Risebird.Web.Controllers
                 var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies);
                 if (result)
                 {
+                    string timezonevalue = string.Empty;
+                    string hh = string.Empty;
+                    var valuecheck = (-model.offset / 60);
+                    if (valuecheck < 10 && valuecheck > 0)
+                    {
+                        hh = "0" + valuecheck;
+                    }
+                    if (valuecheck > -10 && valuecheck < 0)
+                    {
+                        hh = "-0" + valuecheck.ToString().Replace("-", "");
+                    }
+                    var offsetvalue = (hh + ":" + ((model.offset % 60) < 0 ? (-model.offset % 60) : (model.offset % 60))).ToString();
+                    var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                    foreach (TimeZoneInfo timeZone in timeZones)
+                    {
+                        if (timeZone.DisplayName.Contains(offsetvalue))
+                        {
+                            timezonevalue = timeZone.DisplayName;
+                        }
+                    }
                     if (zoomLink.accountemail == "me")
                     {
                         zoomLink.accountemail = "host@risebird.io";
@@ -313,9 +334,9 @@ namespace Risebird.Web.Controllers
                     {
                         TO = model.Email,
                         CC = zoomLink.accountemail,
-                        Subject = "Invitation: " + model.Name + " @ " + indianTime + "(IST)"
+                        Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
                     };
-                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name);
+                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue, model.ClientName);
                     ViewBag.Start = 4;
                     ViewBag.interviewDate = interviewdatetime;
                     return View(model);
