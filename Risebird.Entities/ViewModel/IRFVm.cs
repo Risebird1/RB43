@@ -148,7 +148,7 @@ namespace Risebird.Entities.ViewModel
         public string OldCompanyDetails { get; set; }
         public int TemplateId { get; set; }
         public int clonevalue { get; set; }
-
+        public string SchedulingLink { get; set; }
     }
     public class InterviewerIds
     {

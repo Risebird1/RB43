@@ -38,6 +38,16 @@ body {
     .clearfix:after {
         clear: both;
     }
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
+    background: #fff!important;
+}
+
+#tab-1 .form-group input.form-control.text-box.single-line{margin-top:5px!important;}
+.irf-radiowrap {
+    padding: 25px 10px 0px 10px;
+    float: left;
+}
+
 .survey .table > tbody > tr > td{
     vertical-align:top;
     padding:25px 5px 5px 5px!important;
@@ -6474,6 +6484,10 @@ button .btn {
     #clientduser li{
         width:100%;
         float:left;
+    }
+    .irf-radiowrap {
+        padding: 0px 5px 0px 5px;
+        float: left;
     }
         #clientduser li:nth-child(5) .dtr-title {
             float:left;

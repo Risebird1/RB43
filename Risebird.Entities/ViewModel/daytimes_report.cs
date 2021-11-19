@@ -44,6 +44,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsActive { get; set; }
         public SelectList IRFList { get; set; }
         public SelectList IntervalList { get; set; }
+        public int Eventtype { get; set; }
     }
     public class ScheculeInterview
     {
@@ -78,6 +79,7 @@ namespace Risebird.Entities.ViewModel
         public bool Checkbox6 { get; set; }
         public string MobileNumber { get; set; }
         public string CountryCode { get; set; }
+        public string ClientName { get; set; }
     }
     public class TimeslotsVM
     {

@@ -127,17 +127,53 @@
                                                         </div>
                                                     </div>
                                                 }
+                                                @if (!Model.IsClone)
+                                                {
+                                                    <div class="col-md-4 col-sm-4 pull-left">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @id = "error_CalendlyLink", @class = "text-danger" })
 
-                                                <div class="col-md-4 col-sm-4 pull-left">
-                                                    <div class="form-group">
-                                                        <div class="mandate">
-                                                            @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                         </div>
-                                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @id = "error_CalendlyLink", @class = "text-danger" })
-
                                                     </div>
-                                                </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
+                                                        <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                            <div class="mdc-radio mdc-radio--touch">
+                                                                <input class="mdc-radio__native-control" type="radio" id="link" name="link" value="UploadLink" checked onclick="RadioLinkChanged(this.value)">
+                                                                <div class="mdc-radio__background">
+                                                                    <div class="mdc-radio__outer-circle"></div>
+                                                                    <div class="mdc-radio__inner-circle"></div>
+                                                                </div>
+                                                                <div class="mdc-radio__ripple"></div>
+                                                            </div>
+                                                        </div>
+                                                        <label class="control-label  desp-label">Calendly Link </label>
+                                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                            <div class="mdc-radio mdc-radio--touch">
+                                                                <input class="mdc-radio__native-control" type="radio" id="link1" name="link" value="SchedulingLink" onclick="RadioLinkChanged(this.value)">
+                                                                <div class="mdc-radio__background">
+                                                                    <div class="mdc-radio__outer-circle"></div>
+                                                                    <div class="mdc-radio__inner-circle"></div>
+                                                                </div>
+                                                                <div class="mdc-radio__ripple"></div>
+                                                            </div>
+                                                        </div>
+                                                        <label class="control-label  desp-label">Risebird Scheduler </label>
+                                                        <div class="form-group" style="display:block" id="CalendlyLinkDiv">
+                                                            @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @id = "error_CalendlyLink", @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group" style="display:none" id="SchedulinglinkDiv">
+                                                            @Html.EditorFor(model => model.SchedulingLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
+                                                        </div>
+                                                    </div>
+                                                }
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group">
                                                         <div class="mandate">
@@ -304,13 +340,14 @@
 
 
                                                         </div>
-                                                        <div class="form-group" style="display:none" id="linkcdDiv">
+                                                        <div class="form-group" style="display:none;margin-bottom:10px;" id="linkcdDiv">
                                                             @Html.Label("Interview Instructions", "Interview Instructions", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                                             @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
 
                                                         </div>
-                                                        <div class="" style="display:none" id="uploadcdDiv">
+                                                        <div class="" style="        display: none;
+        margin-bottom: 10px;" id="uploadcdDiv">
                                                             @Html.Label("Interview Instructions File", "Interview Instructions File", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                                             @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
@@ -320,7 +357,7 @@
                                                             @{
                                                                 if (!String.IsNullOrEmpty(Model.CompanyDetails))
                                                                 {
-                                                                                                                        <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Interview Instructions</a>
+                                                                    <a id="companydetailsId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Interview Instructions</a>
                                                                 }
                                                             }
                                                         </div>
@@ -516,79 +553,79 @@
                                                                         <th width="30%" class="table_heading">Nature of questions</th>
                                                                         <th width="10%" class="table_heading">Time limit</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
-                                                                   
+
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
                                                                     {
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control " })
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control " })
 
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control " })
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength = "50">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength = "50">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
-                                                                        </td>
-                                                                        <td class="action text-center">
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control " })
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                                                                            </td>
+                                                                            <td class="action text-center">
 
-                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
-                                                                        </td>
-                                                                    </tr>
+                                                                            </td>
+                                                                        </tr>
                                                                     }
 
                                                                     else
                                                                     {
                                                                         for (int i = 0; i < Model.SkillCollection.Count(); i++)
                                                                         {
-                                                                <tr>
+                                                                            <tr>
 
-                                                                    <td>
+                                                                                <td>
 
-                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
 
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
-                                                                    </td>
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                                                </td>
 
-                                                                    <td>
-                                                                        @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
-                                                                    </td>
-                                                                    <td class="action text-center">
-                                                                        <div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
+                                                                                </td>
+                                                                                <td class="action text-center">
+                                                                                    <div>
 
-                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
 
                                                                         }
                                                                     }
@@ -1663,12 +1700,24 @@
     function checkTabValidation(activeTab) {
         var flag = false;
         if (activeTab.trim() == "Event Details") {
-            if ($('#CalendlyLink').val() == "") {
-                $('#error_CalendlyLink').text("The Calendly Link field is required.");
-                flag = true;
-            }
-            else {
-                $('#error_CalendlyLink').text("");
+            if (@Model.IsClone) {
+                if (document.getElementById('link').checked) {
+                    if ($('#CalendlyLink').val() == "") {
+                        $('#error_CalendlyLink').text("The CalendlyLink field is required.");
+                        flag = true;
+                    }
+                    else {
+                        $('#error_CalendlyLink').text("");
+                    }
+                }
+            } else {
+                if ($('#CalendlyLink').val() == "") {
+                    $('#error_CalendlyLink').text("The Calendly Link field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_CalendlyLink').text("");
+                }
             }
             if ($('#PriorityLevel').val() == "") {
                 $('#error_PriorityLevel').text("The Priority Level field is required.");
@@ -1954,7 +2003,7 @@
         for (j = 0; j < items.length; j++) {
             var total = total + parseInt($("#" + items[j].id).val());
         }
-       
+
         if (total != 100) {
             inCorrectCount = inCorrectCount + 1;
             // Label should be populated here
@@ -1984,7 +2033,7 @@
             var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
             for (i = 0; i < drpdowns1.length; i++) {
                 var interviewId = $("#" + drpdowns1[i].id).val();
-                
+
                 if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
                     document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
                     return true;
@@ -2211,7 +2260,18 @@
 
 </script>
 <script>
-
+    function RadioLinkChanged(val) {
+        if (val == 'UploadLink') {
+            document.getElementById("CalendlyLinkDiv").style.display = "block";
+            document.getElementById("SchedulinglinkDiv").style.display = "none";
+            document.getElementById("calendlylink").value = '';
+        }
+        else {
+            document.getElementById("CalendlyLinkDiv").style.display = "none";
+            document.getElementById("SchedulinglinkDiv").style.display = "block";
+            document.getElementById("SchedulingLink").value = '';
+        }
+    }
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -2519,13 +2579,12 @@
             document.getElementById("startDateCheck").style.display = "none";
             document.getElementById("startDateCheck").innerHTML = "";
             document.getElementById("btnUpload").disabled = false;
-           
+
 
         }
         if (document.getElementById("EndDate").value != "") {
-           return checkEndDate(document.getElementById("EndDate").value);
+            return checkEndDate(document.getElementById("EndDate").value);
         }
-
     }
 
     function checkEndDate(val) {
@@ -2561,7 +2620,7 @@
             document.getElementById("EndDate").focus();
             return true;
         }
-        else if (((endDate - startDate) / (1000 * 3600 * 24) ) > 120) {
+        else if (((endDate - startDate) / (1000 * 3600 * 24)) > 120) {
             document.getElementById("btnUpload").disabled = true;
             document.getElementById("endDateCheck").style.display = "block";
             document.getElementById("endDateCheck").innerHTML = "End Date & Start Date difference should not be greater than 120 days";

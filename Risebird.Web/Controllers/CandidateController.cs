@@ -3915,7 +3915,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 8].Value = "Current Status Date";
                 Sheet.Cells[1, 9].Value = "Staffing Agency EmailId";
                 Sheet.Cells[1, 10].Value = "Skill Channel ID";
-
+                Sheet.Cells[1, 11].Value = "Client Hr";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -3969,6 +3969,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 9].Value = string.Empty;
                         }
                         Sheet.Cells[i, 10].Value = item.IRFName;
+                        Sheet.Cells[i, 11].Value = item.HREmail;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
