@@ -35,7 +35,9 @@ textarea::-webkit-scrollbar-thumb {
 .card-blue .card-header .overlay-relative h6 {
     color: #fff;
 }
-
+.card-blue .card-footer.scheduling {
+    padding: 8px 0px 0px 0px;
+}
 
 #interviewerMemberModal .modal-lg {
     max-width: 870px !important;

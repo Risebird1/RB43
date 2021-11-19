@@ -151,7 +151,9 @@ table {
     .addEvent table td:hover, .addEvent table tr td:hover, .addEvent .table-striped tbody tr:hover {
         box-shadow: none !important;
     }
-
+#divcalenderdetails .calendar-con {
+    padding: 40px 0px 40px 0px;
+}
 .calendar-con {
     min-width: 600px;
     max-width: 1100px;
@@ -161,7 +163,7 @@ table {
     border-radius: 8px;
     box-shadow: 0 1px 8px 0 rgb(0 0 0 / 8%);
     background: #fff;
-    padding: 40px 0px;
+    padding: 40px 0px 0px 0px;
 }
 
 .txttimezone-con {
@@ -172,7 +174,7 @@ table {
     border-radius: 200px;
     text-align: center;
     color: #686363;
-    padding: 4px 0px 4px 10px;
+    padding: 6px 0px 6px 10px;
 }
 .drop-timezone:focus{outline:none;}
 .drop-timezone {
@@ -276,7 +278,7 @@ table {
 }
 
 .form-field-calender {
-    padding-left: 40px;
+    /*padding-left: 40px;*/
     border-left: 1px #8080805c solid;
 }
 
@@ -386,6 +388,7 @@ table {
 
         .event .calendar-con .form-field-calender .form-label {
             font-size: 15px;
+            padding-left: 40px;
         }
 
 .time-txt {
@@ -1027,8 +1030,14 @@ table {
 #current-day {
     background-color: #56a9ff !important;
 }
-@media only screen and (max-width: 768px) {
-    #calendar table {
-        width: 300px !important;
+@media only screen and (max-width: 1024px) {
+    #calender table {
+        border-collapse: separate;
+        border-spacing: 10px 5px;
     }
 }
+    @media only screen and (max-width: 768px) {
+        #calendar table {
+            width: 300px !important;
+        }
+    }
