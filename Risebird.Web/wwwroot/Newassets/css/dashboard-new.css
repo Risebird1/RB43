@@ -923,7 +923,7 @@ table tr td:hover, .table-striped tbody tr:hover {
 
 .divider-rm {
     position: relative;
-    left: -28px;
+    left: -80px;
     top: 2px;
 }
 
@@ -5809,7 +5809,11 @@ button .btn {
         width: 180px !important;
         height: auto !important;
     }
-
+    .support .divider-rm {
+        position: relative;
+        left: -75px;
+        top: 2px;
+    }
     #calender h4 {
         font-size: 19px !important;
     }
@@ -6171,13 +6175,12 @@ button .btn {
         max-width: 300px;
     }
 }
-
 @media only screen and (max-width:991px) {
     .tabCon .tab-main-box {
         padding: 20px 10px;
         margin-bottom: 10px;
     }
-
+    .support .divider-rm{display:none;}
     .mob_h {
         width: auto !important
     }
@@ -6770,11 +6773,11 @@ button .btn {
     .custom-select{line-height:17px!important;}
     .txttimezone-con {
         width: 300px !important;
-        min-height: 50px;
+        min-height:30px;
        
     }
     .currMonth {
-        padding: 0px 11px !important;
+        padding: 0px 12px !important;
     }
     #calender table {
         border-collapse: separate;
@@ -6789,7 +6792,7 @@ button .btn {
 
     .time-btn {
         width: 95px !important;
-        left: 0px !important;
+        left: 9px !important;
     }
 
     #calender {
@@ -10275,7 +10278,7 @@ button.close {
 .active-stat {
     float: left;
     width: auto;
-    margin: 5px 10px 0px 10px;
+    margin: 1px 10px 0px 10px;
 }
 
 .scheduling.card-footer .special-text__tooltip {
