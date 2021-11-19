@@ -46,7 +46,7 @@
 
 
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
+                            <input type="hidden" value="@Model.IsClone" id="hidisclone" />
                             <div>
                                 <div class="col-md-12">
                                     <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Skill Channel</h4></div>
@@ -1699,12 +1699,26 @@
 
     function checkTabValidation(activeTab) {
         var flag = false;
-         if ($('#CalendlyLink').val() == "") {
-                $('#error_CalendlyLink').text("The Calendly Link field is required.");
-                flag = true;
-            }
-            else {
-                $('#error_CalendlyLink').text("");
+        if (activeTab.trim() == "Event Details") {
+            var flagvalue = $("#hidisclone").val();
+            if (flagvalue == 'value') {
+                if (document.getElementById('link').checked) {
+                    if ($('#CalendlyLink').val() == "") {
+                        $('#error_CalendlyLink').text("The CalendlyLink field is required.");
+                        flag = true;
+                    }
+                    else {
+                        $('#error_CalendlyLink').text("");
+                    }
+                }
+            } else {
+                if ($('#CalendlyLink').val() == "") {
+                    $('#error_CalendlyLink').text("The Calendly Link field is required.");
+                    flag = true;
+                }
+                else {
+                    $('#error_CalendlyLink').text("");
+                }
             }
             if ($('#PriorityLevel').val() == "") {
                 $('#error_PriorityLevel').text("The Priority Level field is required.");
