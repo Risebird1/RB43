@@ -569,7 +569,7 @@ modal-content .modal-body {
     border-radius: 4px 4px 0 0;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+   /* border-bottom: 1px rgba(0, 0, 0, 0.29) solid;*/
 }
 
     .mdc-card .modal .form-control:focus {

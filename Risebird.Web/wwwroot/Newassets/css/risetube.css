@@ -1571,7 +1571,7 @@ table {
     background: whitesmoke;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    /*border-bottom: 1px rgba(0, 0, 0, 0.29) solid;*/
 }
 
 .card-text-label {
