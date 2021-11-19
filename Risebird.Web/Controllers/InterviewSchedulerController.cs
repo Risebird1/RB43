@@ -89,7 +89,7 @@ namespace Risebird.Web.Controllers
                 return View(model);
             }
         }
-        public IActionResult EditEvent(int eventid)
+        public IActionResult EditEvent(int eventid, int eventtype)
         {
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -113,6 +113,7 @@ namespace Risebird.Web.Controllers
                 model.setvalue = model_Second;
             }
             SetDropDownTime(model);
+            model.Eventtype = eventtype;
             return View(model);
         }
         [HttpPost]
@@ -121,7 +122,14 @@ namespace Risebird.Web.Controllers
             var result = _interviewSchedulerservice.CreateEvent(model);
             if (result)
             {
-                return RedirectToAction("SchedulerList");
+                if (model.Eventtype == 1)
+                {
+                    return RedirectToAction("Index", "IRF");
+                }
+                else
+                {
+                    return RedirectToAction("SchedulerList");
+                }
             }
             else
             {
@@ -603,5 +611,10 @@ namespace Risebird.Web.Controllers
             return tokenString;
         }
         #endregion
+        public IActionResult IRFSchedulerEventEdit(string id)
+        {
+            var eventid = _interviewSchedulerservice.FetchEventidByUniqueid(id);
+            return RedirectToAction("EditEvent", new { eventid = eventid, eventtype = 1 });
+        }
     }
 }

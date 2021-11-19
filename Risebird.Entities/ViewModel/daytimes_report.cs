@@ -44,6 +44,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsActive { get; set; }
         public SelectList IRFList { get; set; }
         public SelectList IntervalList { get; set; }
+        public int Eventtype { get; set; }
     }
     public class ScheculeInterview
     {
