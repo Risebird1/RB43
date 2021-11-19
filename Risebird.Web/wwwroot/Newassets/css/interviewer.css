@@ -492,7 +492,9 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
 }
 
 
-
+.border-lv {
+    border-left: 1px dotted #ccc;
+}
 
 .mdc-card-wrapper__text-section {
     padding: 16px;

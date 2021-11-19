@@ -481,14 +481,14 @@ table {
 
 .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
     padding: 10px !important;
     color: #9A9A9A !important;
 }
 
 [type="date"].form-control {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
 }
 
 [type="datetime-local"] {

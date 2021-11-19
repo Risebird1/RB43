@@ -111,7 +111,7 @@
                                                 <form action="@Url.Action("CandidateFeedBack", "Survey")" method="post" id="form">
                                                     <div class="modal-body survey">
                                                         <div class="row">
-                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <label class="control-label  col-md-12 col-sm-12 desp-label" for="ProfileSource">
                                                                         JD Title
@@ -129,7 +129,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-6 col-sm-6  border-lv">
                                                                 @if (ViewBag.ProfileName == "Admin")
                                                                 {
                                                                     <div class="form-group">
@@ -149,21 +149,22 @@
                                                                         </div>
                                                                     </div>
                                                                 }
-                                                                <div class="form-group">
-                                                                    <div>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
-                                                                                <font style="font-size:12px;"> Reset Filter</font>
-                                                                            </button>
-                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="        float: right;
-        margin-bottom: 10px;
-">
-                                                                                <font style="font-size:12px;"> Apply Filter</font>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                
                                                             </div>
+
+                                                            <div class="col-md-12 col-sm-12">
+                                                            <div class="form-group">
+                                                              <div>
+                                                              <div class="col-md-12 col-sm-12">
+                                                             <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
+                                                             <font style="font-size:12px;"> Reset Filter</font>
+                                                             </button>
+                                                              <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float: right; margin-bottom: 10px;">
+                                                              <font style="font-size:12px;"> Apply Filter</font>
+                                                               </button>
+        </div>
+    </div>
+</div></div>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -475,13 +476,6 @@ else
                                                             <input type="radio" id="Question6_1_@i" name="rating3_@i" value="1"/>
                                                             <label for="Question6_1_@i" class="star">&#9733;</label>
                                                         </div>
-
-
-
-
-
-
-
                                                     </td>
                                                     <td>
                                                         @if (item.CommentforInterviewer != null && item.CommentforInterviewer != "")
@@ -489,8 +483,6 @@ else
                                                             <div style="width:250px;">
                                                                 <div class="talktext">
                                                                     <blockquote><p class="style-2"> @item.CommentforInterviewer</p></blockquote>
-
-
                                                                 </div>
                                                             </div>
                                                         }

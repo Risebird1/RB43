@@ -40,7 +40,7 @@
 
 <div class="main-panel" id="main-panel">
 
-    <div class="mt50">
+    <div class="mt50 col-md-12">
         @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
@@ -95,7 +95,7 @@
 
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                         @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
