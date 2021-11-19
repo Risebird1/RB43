@@ -1725,7 +1725,7 @@ namespace Risebird.Web.Controllers
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                 || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                await _azureStorageHelper.InsertBlob(model.CompanyDetailFile.FileName.Replace(" ","_"), "resumes", model.CompanyDetailFile);
+                                await _azureStorageHelper.InsertBlob(model.CompanyDetailFile.FileName.Replace(" ", "_"), "resumes", model.CompanyDetailFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
                                 var blob = containerRef.GetBlockBlobReference(model.CompanyDetailFile.FileName.Replace(" ", "_"));
                                 string uploadedFileURL = blob.Uri.ToString();
@@ -1756,6 +1756,13 @@ namespace Risebird.Web.Controllers
                                 return RedirectToAction("Index");
                             }
                             var domain = Request.Scheme + "://" + Request.Host.Value;
+                            //Start: Auto Generate Scheduling Link 
+                            if (String.IsNullOrEmpty(model.CalendlyLink))
+                            {
+                                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                                model.CalendlyLink = _schedulinglink;
+                            }
+                            //End: Auto Generate Scheduling Link
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully!";

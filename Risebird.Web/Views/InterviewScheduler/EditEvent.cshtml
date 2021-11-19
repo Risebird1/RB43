@@ -18,6 +18,7 @@
 
                     <div class="form-field-calender">
                         <form action="@Url.Action("EditEvent", "InterviewScheduler")" method="post" id="form">
+                            @Html.HiddenFor(m => m.Eventtype)
                             <div class="row">
                                 <div class="col-md-12 form-group">
                                     @Html.HiddenFor(m => m.id)
@@ -145,13 +146,22 @@
                                 </table>
                             </div>
                             <div class="clearfix"></div>
-                            <div class="col-md-9">
-                                <div class="form-group align-r">
-                                    <a href="/InterviewScheduler/SchedulerList" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-right:5px; text-decoration:none;">Back to List</a>
-                                    <input type="submit" value="Save" class="mdc-button mdc-button--raised pull-right" />
+                            <div class="card-footer">
+                                <div class="col-md-9">
+                                    <div class="form-group align-r" style="margin-bottom:0px;">
+                                        @if (Model.Eventtype == 1)
+                                        {
+                                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-right:5px; text-decoration:none;">Back to List</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/InterviewScheduler/SchedulerList" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-right:5px; text-decoration:none;">Back to List</a>
+                                        }
+                                        <input type="submit" value="Save" class="mdc-button mdc-button--raised pull-right" />
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                                </div>
+</form>
                     </div>
                 </div>
             </div>
