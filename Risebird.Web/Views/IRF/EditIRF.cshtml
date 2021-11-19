@@ -1699,25 +1699,12 @@
 
     function checkTabValidation(activeTab) {
         var flag = false;
-        if (activeTab.trim() == "Event Details") {
-            if (@Model.IsClone) {
-                if (document.getElementById('link').checked) {
-                    if ($('#CalendlyLink').val() == "") {
-                        $('#error_CalendlyLink').text("The CalendlyLink field is required.");
-                        flag = true;
-                    }
-                    else {
-                        $('#error_CalendlyLink').text("");
-                    }
-                }
-            } else {
-                if ($('#CalendlyLink').val() == "") {
-                    $('#error_CalendlyLink').text("The Calendly Link field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_CalendlyLink').text("");
-                }
+         if ($('#CalendlyLink').val() == "") {
+                $('#error_CalendlyLink').text("The Calendly Link field is required.");
+                flag = true;
+            }
+            else {
+                $('#error_CalendlyLink').text("");
             }
             if ($('#PriorityLevel').val() == "") {
                 $('#error_PriorityLevel').text("The Priority Level field is required.");
