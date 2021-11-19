@@ -796,13 +796,13 @@ table.journey {
 
 .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
     padding: 10px !important;
 }
 
 [type="date"] {
     background: #f5f5f5 url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
     padding: 10px !important;
 }
 
