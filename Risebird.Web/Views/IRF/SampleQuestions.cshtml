@@ -93,22 +93,32 @@
                                                         string rowDisplayStatus = isDisplayable ? "visible" : "collapse";
                                                         <tr style="visibility: @rowDisplayStatus;" >
                                                                 
-                                                                <td>
-                                                                    @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId) @*|| Model.Profile=="Admin"*@)
-                                                                    {
-                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+                                                            <td>
+                                                                @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)@*|| Model.Profile=="Admin"*@)
+                                                                {
+                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
+                                                                }
+                                                                else
+                                                                {
+                                                                    var newList = new List<SelectListItem>();
+                                                                    newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
+
+                                                                    if (newList != null && newList.Count() > 0)
+                                                                    {
+                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
                                                                     }
                                                                     else
                                                                     {
-                                                                        var newList = new List<SelectListItem>();
-                                                                        newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
+                                                                        var handleList = new List<SelectListItem>();
+                                                                        handleList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = Model.SkillCollection[i].SkillName });
 
-                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
+                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, handleList, new { @class = "select-css form-control", @disabled = "disabled" })
 
                                                                     }
 
-                                                                </td>
+                                                                }
+                                                            </td>
 
                                                                 <td >
                                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">

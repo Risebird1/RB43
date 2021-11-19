@@ -1990,7 +1990,7 @@ namespace Risebird.Repository
             {
 
 
-                var query = "Select * from TechSkillComments where IRFId = @IRFId";
+                var query = "Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
