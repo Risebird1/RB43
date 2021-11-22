@@ -841,6 +841,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var profilename = HttpContext.Session.GetString("profileName")?.Trim();
                 profilename = profilename.Replace("\"", "");
+                model.LoggedEmail = emailid;
                 if (profilename == "SeniorHR")
                     ViewBag.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
             }
@@ -906,6 +907,40 @@ namespace Risebird.Web.Controllers
         {
             var name = _irfService.GetInterviewerSkills(id);
             return name;
+        }
+
+        [Authorize]
+        public async Task<int> GetInterviewerRate(int userId, int? companyType)
+        {
+
+            try
+            {
+                var rate = await _irfService.GetInterviewerRate(userId, companyType);
+                return rate;
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        [Authorize]
+        public async Task<int> GetInterviewerQCRate(int userId)
+        {
+
+            try
+            {
+                var rate = await _irfService.GetInterviewerQCRate(userId);
+                return rate;
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
         }
 
         [Authorize]
