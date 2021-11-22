@@ -206,7 +206,7 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownListFor(model => model.CompanyType, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line"@*, @onchange = "TechSkillChanged()"*@ })
 
 
                                                             @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
@@ -227,9 +227,13 @@
                                                                 @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
 
-                                                            @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @{
+                                                                var countryTypeList = new List<SelectListItem>();
+                                                                countryTypeList.Add(new SelectListItem() { Value = "1", Text = "India" });
+                                                                countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Outside India" });
+                                                            }
 
-
+                                                            @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "#error_JobCountry", @class = "text -danger" })
 
                                                         </div>
@@ -763,8 +767,16 @@
 
                                                                             </td>
                                                                             <td>
+                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                {
+                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
 
-                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                                                                                }
                                                                             </td>
                                                                             <td class="action text-center">
 
@@ -788,7 +800,17 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                                                                                    }
+
+
 
                                                                                 </td>
                                                                                 <td class="action text-center">
@@ -841,8 +863,16 @@
 
                                                                             </td>
                                                                             <td>
+                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                {
+                                                                                    @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
 
-                                                                                @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                }
+
                                                                             </td>
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
@@ -866,7 +896,14 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                    }
 
                                                                                 </td>
                                                                                 <td class="action text-center">
@@ -921,8 +958,15 @@
 
                                                                             </td>
                                                                             <td>
+                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                {
+                                                                                    @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
 
-                                                                                @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                }
 
                                                                             </td>
                                                                             <td class="action text-center">
@@ -948,7 +992,14 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                    }
 
                                                                                 </td>
                                                                                 <td class="action text-center">
@@ -1393,22 +1444,53 @@
 
     function TechSkillChanged() {
         var Assessmentgroupid = $("#AssessmentGroupId").val();
-        var skills = "";
+        //var skills = "";
+        //var countryType = $("#JobCountry").val();
+        //var profileType = $("#Heuristicsscore").val();
+        var companyType = $("#CompanyType").val();
         var interviewerSkills;
+        var interviewerRate;
+        var interviewerQCRate=350;
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewers",
-            data: { 'assessmentgroupid': Assessmentgroupid },
+            data: {
+                'assessmentgroupid': Assessmentgroupid,
+            },
             success: function (data) {
-                $.ajax({
-                    type: "GET",
-                    async: false,
-                    url: "/IRF/GetInterviewerSkills",
-                    data: { 'id': data[0].value },
-                    success: function (result) {
-                        interviewerSkills = result;
-                    }
-                });
+
+                if (data.length > 0) {
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        url: "/IRF/GetInterviewerSkills",
+                        data: { 'id': data[0].value },
+                        success: function (result) {
+                            interviewerSkills = result;
+                        }
+                    });
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        url: "/IRF/GetInterviewerRate",
+                        data: { 'userId': data[0].value, 'companyType': companyType },
+                        success: function (result) {
+                            interviewerRate = result;
+                        }
+                    });
+
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        url: "/IRF/GetInterviewerQCRate",
+                        data: { 'userId': data[0].value },
+                        success: function (result) {
+                            interviewerQCRate = result;
+                        }
+                    });
+                }
+
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
                     $("#" + drpdowns[i].id + " option").remove();
@@ -1464,7 +1546,7 @@
                             }
                         }
                         //InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
-                        BindSkills(drpdowns[i].id, interviewerSkills);
+                        BindSkillsAndRate(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate);
                     }
                     for (i = 0; i < drpdownsEI.length; i++) {
                         //$("#" + drpdowns[i].id).append(option);
@@ -1487,7 +1569,7 @@
                             //drpdwnId.append(option);
                         });
                         //EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
-                        BindSkills(drpdownsEI[i].id, interviewerSkills);
+                        BindSkillsAndRate(drpdownsEI[i].id, interviewerSkills, 'EmergencyInterviewerCollection_' + i + '__PerSuccessRate', interviewerRate);
 
                     }
 
@@ -1512,7 +1594,9 @@
                             //drpdwnId.append(option);
                         });
                         //QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
-                        BindSkills(drpdownsQC[i].id, interviewerSkills);
+                        //BindSkills(drpdownsQC[i].id, interviewerSkills);
+                        BindSkillsAndRate(drpdownsQC[i].id, interviewerSkills, 'QualityController_' + i + '__PerSuccessRate', interviewerQCRate);
+
 
                     }
 
@@ -1931,6 +2015,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=number]").val("");
 
         $tr.find("a").val("");
 
@@ -1981,7 +2066,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
-
+        $tr.find("input[type=number]").val("");
         $tr.find("a").val("");
 
         // add cloned row as last row
@@ -2174,6 +2259,7 @@
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=number]").val("");
 
         $tr.find("a").val("");
 
@@ -2193,12 +2279,16 @@
 
     }
 
-    function BindSkills(id, data) {
+    function BindSkillsAndRate(id, data, rateElementId = null, rate = null) {
         var num = id.match(/(\d+)/);
         var index = num[0];
         var idArray = id.split('_');
         var skillElementid = idArray[0] + '_' + index + '__PrimarySkill';
         $("#" + skillElementid).val(data);
+        if (rate != null && rateElementId != null) {
+            $("#" + rateElementId).val(rate);
+
+        }
     }
 
     function CheckDuplicate(idInitials, searchFor, value, currentIndex) {
@@ -2226,12 +2316,17 @@
     }
 
     function InterviewerChanged(val, id) {
+        debugger;
         var index = id.split('_')[1];
         var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
         if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
             return;
         }
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
+        var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
+        var companyType = $("#CompanyType").val();
+
+
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
@@ -2241,6 +2336,15 @@
             }
         });
 
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerRate",
+            data: { 'userId': val, 'companyType': companyType },
+            success: function (result) {
+                $("#" + rateElementid).val(result);
+            }
+        });
 
     }
     function EmergencyInterviewerChanged(val, id) {
@@ -2253,6 +2357,9 @@
 
         //var index = id.charAt(31);
         var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
+        var rateElementid = 'EmergencyInterviewerCollection_' + index + '__PerSuccessRate';
+        var companyType = $("#CompanyType").val();
+
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
@@ -2262,6 +2369,15 @@
             }
         });
 
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerRate",
+            data: { 'userId': val, 'companyType' : companyType },
+            success: function (result) {
+                $("#" + rateElementid).val(result);
+            }
+        });
 
     }
 
@@ -2306,6 +2422,8 @@
 
        // var index = id.charAt(18);
         var skillElementid = 'QualityController_' + index + '__PrimarySkill';
+        var rateElementid = 'QualityController_' + index + '__PerSuccessRate';
+
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
@@ -2315,27 +2433,41 @@
             }
         });
 
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerQCRate",
+            data: { 'userId': val },
+            success: function (data) {
+                $("#" + rateElementid).val(data);
+            }
+        });
+
 
     }
 
 
     $(document).ready(function () {
         if (@Model.TemplateId == null || @Model.TemplateId== 0) {
-            TechSkillChanged();
+            //TechSkillChanged();
             //Perform Ajax request.
 
             var id = $("#InterviewerCollection_0__UserId").val();
-            $.ajax({
-                type: "GET",
-                url: "/IRF/GetInterviewerSkills",
-                data: { 'id': id },
-                success: function (data) {
-                    $("#InterviewerCollection_0__PrimarySkill").val(data);
-                    $("#QualityController_0__PrimarySkill").val(data);
-                    $("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
+            if (id != null && id != 0) {
+                $.ajax({
+                    type: "GET",
+                    url: "/IRF/GetInterviewerSkills",
+                    data: { 'id': id },
+                    success: function (data) {
+                        $("#InterviewerCollection_0__PrimarySkill").val(data);
+                        $("#QualityController_0__PrimarySkill").val(data);
+                        $("#EmergencyInterviewerCollection_0__PrimarySkill").val(data);
 
-                }
-            });
+                    }
+                });
+            }
+
+
 
             var userId = $("#RecruiterCollection_0__UserId").val();
             $.ajax({

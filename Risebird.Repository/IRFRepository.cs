@@ -200,6 +200,60 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<int> GetInterviewerRate(int userId, string companyType = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+
+                    parameters.Add("@userId", userId);
+                    parameters.Add("@companyType", companyType);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRate", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+
+            }
+        }
+        public async Task<int> GetInterviewerQCRate(int userId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+
+                    parameters.Add("@userId", userId);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerQCRate", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+
+            }
+        }
+
         public IEnumerable<Interviewer> GetIRFInterviewerSkills(string assessmentgroupid)
         {
             try

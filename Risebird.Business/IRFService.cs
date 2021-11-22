@@ -2084,5 +2084,38 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<int> GetInterviewerQCRate(int userId)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewerQCRate(userId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<int> GetInterviewerRate(int userId, int? companyType)
+        {
+            try
+            {
+                string companyTypeDesc = null;
+                if (companyType != null && companyType.HasValue)
+                {
+                    companyTypeDesc = ((CompanyType)companyType).GetDescription();
+                }
+                var rate = await _irfRepository.GetInterviewerRate(userId, companyTypeDesc);
+                return rate;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
     }
 }
