@@ -31,9 +31,9 @@ BEGIN
 					Begin
 						set @updatedPoints=0
 					End
-				Else if(@videoDuration>=15)
+				Else if(@videoDuration>=6)
 					Begin
-						set @updatedPoints=Round((15*@perSuccessRate)/60,0)
+						set @updatedPoints=Round((6*@perSuccessRate)/60,0)
 					End
 				else
 					Begin
@@ -50,9 +50,9 @@ BEGIN
 					Begin
 						set @updatedPoints=0
 					End
-				Else if(@videoDuration>=35)
+				Else if(@videoDuration>=30)
 					Begin
-						set @updatedPoints=Round((35*@perSuccessRate)/60,0)
+						set @updatedPoints=Round((30*@perSuccessRate)/60,0)
 					End
 				else
 					Begin
