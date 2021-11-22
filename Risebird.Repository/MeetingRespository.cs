@@ -1398,7 +1398,7 @@ namespace Risebird.Repository
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
                         float duration = (float)reportDetails.VideoDuration;
-                        float baseValue = 15;
+                        float baseValue = 6;
                         float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
                         parametersPoints.Add("@Points", pointPercent);
                     }
@@ -1411,7 +1411,7 @@ namespace Risebird.Repository
                         float duration = (float)reportDetails.VideoDuration;
                         if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
                         {
-                            float baseValue = 35;
+                            float baseValue = 30;
 
                             float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
                             parametersPoints.Add("@Points", pointPercent);
