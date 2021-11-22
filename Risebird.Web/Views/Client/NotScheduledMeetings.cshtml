@@ -414,10 +414,20 @@
                                                                         {
                                                                             <tr data-changes="1">
                                                                                 <td>@item.dtCreatedOn</td>
-                                                                                <td class="candidate-details">
+                                                                                <td class="candidate-hr">
                                                                                     @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                     {
-                                                                                        <div class="mtop-5">@item.JDTiltle</div>
+                                                                                        @if (item.ClientHrContact.Length > 13)
+                                                                                        {
+                                                                                            <a onclick="" data-tooltip="@item.JDTiltle"><span class="hrname"> @item.JDTiltle</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a onclick=""> @item.JDTiltle </a>
+                                                                                        }
+
+
+                                                                                       
                                                                                     }
                                                                                     else
                                                                                     {
