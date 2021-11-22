@@ -67,7 +67,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _irfRepository = irfRepository;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> CandidateTimeline()
         {
@@ -1788,8 +1788,8 @@ namespace Risebird.Web.Controllers
                                     model.AudioFileLink = uploadedaudioFileURL;
                                 }
                             }
-                                
-                            
+
+
                         }
 
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -2175,7 +2175,7 @@ namespace Risebird.Web.Controllers
                             if (Request.Form.Files.Count() > 0)
                             {
                                 var audioFile = Request.Form.Files[0];
-                                if(audioFile!=null)
+                                if (audioFile != null)
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(audioFile);
                                     if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
@@ -2197,7 +2197,7 @@ namespace Risebird.Web.Controllers
                                         }
                                     }
                                 }
-                                
+
                             }
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
@@ -2288,7 +2288,7 @@ namespace Risebird.Web.Controllers
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
                             if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
-                            || fileMimeType == "audio/x-wav") 
+                            || fileMimeType == "audio/x-wav")
                             {
                                 await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
@@ -2305,7 +2305,7 @@ namespace Risebird.Web.Controllers
                                     model.AudioFileLink = uploadedaudioFileURL;
                                 }
                             }
-                            
+
                         }
 
                         if (await _irfService.EditCandidateStatus(model))
@@ -3840,6 +3840,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.IRFName = firstData.IRFName;
                     candidateTimeline.Phone = firstData.Phone;
+                    candidateTimeline.interviewDate = firstData.interviewDate.ToString();
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
                     var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
@@ -3916,6 +3917,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 9].Value = "Staffing Agency EmailId";
                 Sheet.Cells[1, 10].Value = "Skill Channel ID";
                 Sheet.Cells[1, 11].Value = "Client Hr";
+                Sheet.Cells[1, 12].Value = "Interview Date";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -3970,6 +3972,7 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 10].Value = item.IRFName;
                         Sheet.Cells[i, 11].Value = item.HREmail;
+                        Sheet.Cells[i, 12].Value = item.interviewDate;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4055,7 +4058,7 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
-        
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId)
@@ -4093,7 +4096,7 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not cancel invite!");
             }
         }
-        
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> FetchSchedulingLinks(string emailid)
