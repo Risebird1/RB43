@@ -47,7 +47,7 @@ namespace Risebird.Entities.ViewModel
         public int ClientId { get; set; }
         [DisplayName("Job Country")]
         [Required]
-        [RegularExpression("^[a-zA-Z]{1,20}$", ErrorMessage = "Kindly Enter only letters.")]
+        //[RegularExpression("^[a-zA-Z]{1,20}$", ErrorMessage = "Kindly Enter only letters.")]
         public string JobCountry { get; set; }
 
         [DisplayName("Start Date")]
