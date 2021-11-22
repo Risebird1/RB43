@@ -3131,6 +3131,18 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public async Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes()
+        {
+            try
+            {
+                return await _meetingRespository.FetchAllUnassignedInterviewes();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 

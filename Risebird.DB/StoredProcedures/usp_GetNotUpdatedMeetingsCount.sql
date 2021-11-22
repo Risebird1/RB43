@@ -11,59 +11,63 @@ SET QUOTED_IDENTIFIER ON
 GO
 
   
-CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                     
-@currentdate datetime,
-@Emailid varchar(150)  
-AS                            
-Begin                           
-Declare @Role varchar(150)  
-Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid  
-if(@Role='SeniorHR')  
+  
+    
+CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                       
+@currentdate datetime,  
+@Emailid varchar(150)    
+AS                              
+Begin                             
+Declare @Role varchar(150)    
+Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid    
+if(@Role='SeniorHR')    
+BEGIN    
+select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId    
+ left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                            
+(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId    
+ left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid ) as UnfilledMeetingStatusCount,                            
+(select Count(im.id) from InterviewMeetings im   
+join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid  
+inner join InterviewComments ic on ic.InterviewId= im.id                     
+left join QCFeedbackReport qc on qc.InterviewId = im.id                    
+where confirmationStatus=1 and                    
+(ic.InterviewStatus=2 or ic.InterviewStatus=4 )                    
+and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null)                    
+and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid ) as UnfilledInterviewStatusCount,                            
+(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId    
+ left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and isAutoCancelled=1  and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid ) as UnfilledCommentsCount,                            
+(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId    
+ left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and (zoomLink is null or zoomLink='') and interviewDate>@currentdate and ulsh.Emailid= @Emailid) as MissingZoomLink,            
+(Select Count(*) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1            
+left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid     
+join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid    
+join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid  
+where ulsh.Emailid= @Emailid and (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate())) as UnAttendedZoomLink,
+        
+(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId    
+ left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid) as MissingVideoLink        
+END  
+ELSE  
 BEGIN  
-select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId  
- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                          
-(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId  
- left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid ) as UnfilledMeetingStatusCount,                          
-(select Count(im.id) from InterviewMeetings im 
-join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid
-inner join InterviewComments ic on ic.InterviewId= im.id                   
-left join QCFeedbackReport qc on qc.InterviewId = im.id                  
-where confirmationStatus=1 and                  
-(ic.InterviewStatus=2 or ic.InterviewStatus=4 )                  
-and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null)                  
-and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid ) as UnfilledInterviewStatusCount,                          
-(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId  
- left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and HRCoordinatorEmailId is null and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid ) as UnfilledCommentsCount,                          
-(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId  
- left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and (zoomLink is null or zoomLink='') and interviewDate>@currentdate and ulsh.Emailid= @Emailid) as MissingZoomLink,          
-(Select Count(*) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1          
-left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid   
-join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid  
-join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid
-where ulsh.Emailid= @Emailid and (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate())) as UnAttendedZoomLink,      
-(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId  
- left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid) as MissingVideoLink      
-END
-ELSE
-BEGIN
-select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                          
-(select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledMeetingStatusCount,                          
-(select Count(im.id) from InterviewMeetings im                   
-inner join InterviewComments ic on ic.InterviewId= im.id                   
-left join QCFeedbackReport qc on qc.InterviewId = im.id                  
-where confirmationStatus=1 and                  
-(ic.InterviewStatus=2 or ic.InterviewStatus=4 )                  
-and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null)                  
-and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledInterviewStatusCount,                          
-(select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and HRCoordinatorEmailId is null and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledCommentsCount,                          
-(select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and (zoomLink is null or zoomLink='') and interviewDate>@currentdate) as MissingZoomLink,          
-(Select Count(*) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1          
-left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid   
-join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid  
-where (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate())) as UnAttendedZoomLink,      
-(select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7) as MissingVideoLink      
-END
-End  
-
+select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                            
+(select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledMeetingStatusCount,                            
+(select Count(im.id) from InterviewMeetings im                     
+inner join InterviewComments ic on ic.InterviewId= im.id                     
+left join QCFeedbackReport qc on qc.InterviewId = im.id                    
+where confirmationStatus=1 and                    
+(ic.InterviewStatus=2 or ic.InterviewStatus=4 )                    
+and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null)                    
+and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledInterviewStatusCount,                            
+(select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledCommentsCount,                            
+(select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and (zoomLink is null or zoomLink='') and interviewDate>@currentdate) as MissingZoomLink,            
+(Select Count(*) from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1            
+left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid     
+join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid    
+where (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate())) as UnAttendedZoomLink,        
+(select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7) as MissingVideoLink        
+END  
+End    
+  
+    
   
 GO
