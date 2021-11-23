@@ -1145,6 +1145,7 @@
                                                                                     }
 
 
+
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
@@ -2648,20 +2649,20 @@
 
         var d = new Date();
         var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-        if (StartDate < currentDate) {
-            document.getElementById("btnUpload").disabled = true;
-            document.getElementById("startDateCheck").style.display = "block";
-            document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
-            document.getElementById("StartDate").focus();
-            return true;
-        }
-        else {
-            document.getElementById("startDateCheck").style.display = "none";
-            document.getElementById("startDateCheck").innerHTML = "";
-            document.getElementById("btnUpload").disabled = false;
+        //if (StartDate < currentDate) {
+        //    document.getElementById("btnUpload").disabled = true;
+        //    document.getElementById("startDateCheck").style.display = "block";
+        //    document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
+        //    document.getElementById("StartDate").focus();
+        //    return true;
+        //}
+        //else {
+        //    document.getElementById("startDateCheck").style.display = "none";
+        //    document.getElementById("startDateCheck").innerHTML = "";
+        //    document.getElementById("btnUpload").disabled = false;
 
 
-        }
+        //}
         if (document.getElementById("EndDate").value != "") {
             return checkEndDate(document.getElementById("EndDate").value);
         }
