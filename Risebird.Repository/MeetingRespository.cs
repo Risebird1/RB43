@@ -5156,5 +5156,22 @@ namespace Risebird.Repository
             }
 
         }
+        public async Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchAllUnassignedInterviewAutoCancel", null,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<UnassignedInterviewVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
