@@ -1171,7 +1171,7 @@ namespace Risebird.Web.Controllers
             return Json(comments);
         }
         
-        [HttpGet]
+        [HttpPost]
         public JsonResult CandidateShortList(string videoid)
         {
             var email = HttpContext.Session.GetString("email");
@@ -1256,7 +1256,7 @@ namespace Risebird.Web.Controllers
             return Json("");
         }
         
-        [HttpGet]
+        [HttpPost]
         public JsonResult ShareVideoLinkToMail(string Emailids, string videoid, string Name, string comment, string skills, string resumeLink)
         {
             var email = HttpContext.Session.GetString("email");
