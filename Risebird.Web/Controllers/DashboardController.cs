@@ -1033,11 +1033,11 @@ namespace Risebird.Web.Controllers
                         }
                         else if (actionstatus == "UnAssignedCoordianter" && actiontype == 0)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Unassigned RB Coordinator";
+                            ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
                         }
                         else if (actionstatus == "UnAssignedCoordianter" && actiontype == 1)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / PENDING CANDIDATE FEEDBACK";
+                            ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
                         }
                         else if (actionstatus == "ZoomLink")
                         {

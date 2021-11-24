@@ -2097,7 +2097,7 @@ namespace Risebird.Business
                 return 0;
             }
         }
-        public async Task<int> GetInterviewerRate(int userId, int? companyType)
+        public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
         {
             try
             {
@@ -2106,7 +2106,7 @@ namespace Risebird.Business
                 {
                     companyTypeDesc = ((CompanyType)companyType).GetDescription();
                 }
-                var rate = await _irfRepository.GetInterviewerRate(userId, companyTypeDesc);
+                var rate = await _irfRepository.GetInterviewerRate(userId, companyTypeDesc, countryType);
                 return rate;
             }
 

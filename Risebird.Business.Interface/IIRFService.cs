@@ -97,6 +97,6 @@ namespace Risebird.Business.Interface
         IEnumerable<SkillCahnnelDetailsVM> GetAllSkillChannelDetails();
         Task<List<MeetingVM>> GetIRFInterviewMeetingsForClient(int id, string profileName, string email);
         Task<int> GetInterviewerQCRate(int userId);
-        Task<int> GetInterviewerRate(int userId, int? companyType);
+        Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null);
     }
 }

@@ -89,10 +89,12 @@
 
                                 <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                     <div class="form-group">
+
+                                        <input name="companydetails" class="radio-top" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
                                         Upload Company Logo
-                                        <input name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                        <input name="companydetails" class="radio-top" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="margin-left:10px;">
+
                                         Provide Logo URL
-                                        <input name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)">
                                     </div>
                                     <div class="form-group" style="display:none" id="linkDiv">
                                         @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -111,10 +113,11 @@
 
                                 <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                     <div class="form-group">
+                                        <input name="companyVideoDetails" class="radio-top" value="Upload" type="radio" onclick="RadioVideo(this.value)">
                                         Upload Company Video(GIF)
-                                        <input name="companyVideoDetails" value="Upload" type="radio" onclick="RadioVideo(this.value)">
+                                        <input name="companyVideoDetails" class="radio-top" value="Link" type="radio" onclick="RadioVideo(this.value)" style="margin-left:10px;">
                                         Provide Video URL(GIF)
-                                        <input name="companyVideoDetails" value="Link" type="radio" onclick="RadioVideo(this.value)">
+
                                     </div>
                                     <div class="form-group" style="display:none" id="linkVideoDiv">
                                         @Html.LabelFor(model => model.CompanyVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -131,8 +134,8 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                    <div class="form-group">
+                                <div class="col-md-12 col-sm-12 pull-left">
+                                    <div class="form-group col-md-6 nopad">
                                         @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
                                         @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })

@@ -265,7 +265,7 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css " })
+                                                            @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css ", @onchange = "TechSkillChanged()" })
 
                                                             @Html.ValidationMessageFor(model => model.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
                                                         </div>
@@ -287,7 +287,7 @@
                                                                 countryTypeList.Add(new SelectListItem() { Value = "2", Text = "Outside India" });
                                                             }
 
-                                                            @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
                                                             @*@Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control  text-box single-line" } })*@
                                                             @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
                                                         </div>
@@ -1143,6 +1143,7 @@
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                     }
+
 
 
                                                                                 </td>
@@ -2489,9 +2490,19 @@
 
     function TechSkillChanged() {
         var Assessmentgroupid = $("#AssessmentGroupId").val();
-
+        var countryType = $("#JobCountry").val();
         var interviewerSkills;
         var companyType = $("#CompanyType").val();
+        var interviewerQCRate;
+        if (countryType == "1") {
+            interviewerQCRate = 350;
+        }
+        else if (countryType == "2") {
+            interviewerQCRate = 500;
+        }
+        else {
+            interviewerQCRate = 0;
+        }
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewers",
@@ -2512,21 +2523,21 @@
                         type: "GET",
                         async: false,
                         url: "/IRF/GetInterviewerRate",
-                        data: { 'userId': data[0].value, 'companyType': companyType },
+                        data: { 'userId': data[0].value, 'companyType': companyType, 'countryType': countryType  },
                         success: function (result) {
                             interviewerRate = result;
                         }
                     });
 
-                    $.ajax({
-                        type: "GET",
-                        async: false,
-                        url: "/IRF/GetInterviewerQCRate",
-                        data: { 'userId': data[0].value },
-                        success: function (result) {
-                            interviewerQCRate = result;
-                        }
-                    });
+                    //$.ajax({
+                    //    type: "GET",
+                    //    async: false,
+                    //    url: "/IRF/GetInterviewerQCRate",
+                    //    data: { 'userId': data[0].value },
+                    //    success: function (result) {
+                    //        interviewerQCRate = result;
+                    //    }
+                    //});
                 }
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
@@ -2568,6 +2579,7 @@
                         //InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
                         //BindSkills(drpdowns[i].id, interviewerSkills);
                         BindSkillsAndRate(drpdowns[i].id, interviewerSkills, 'InterviewerCollection_' + i + '__PerSuccessRate', interviewerRate);
+
 
 
                     }
@@ -2648,20 +2660,20 @@
 
         var d = new Date();
         var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-        if (StartDate < currentDate) {
-            document.getElementById("btnUpload").disabled = true;
-            document.getElementById("startDateCheck").style.display = "block";
-            document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
-            document.getElementById("StartDate").focus();
-            return true;
-        }
-        else {
-            document.getElementById("startDateCheck").style.display = "none";
-            document.getElementById("startDateCheck").innerHTML = "";
-            document.getElementById("btnUpload").disabled = false;
+        //if (StartDate < currentDate) {
+        //    document.getElementById("btnUpload").disabled = true;
+        //    document.getElementById("startDateCheck").style.display = "block";
+        //    document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
+        //    document.getElementById("StartDate").focus();
+        //    return true;
+        //}
+        //else {
+        //    document.getElementById("startDateCheck").style.display = "none";
+        //    document.getElementById("startDateCheck").innerHTML = "";
+        //    document.getElementById("btnUpload").disabled = false;
 
 
-        }
+        //}
         if (document.getElementById("EndDate").value != "") {
             return checkEndDate(document.getElementById("EndDate").value);
         }
@@ -3269,6 +3281,7 @@
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
         var companyType = $("#CompanyType").val();
+        var countryType = $("#JobCountry").val();
 
         $.ajax({
             type: "GET",
@@ -3283,7 +3296,7 @@
             type: "GET",
             async: false,
             url: "/IRF/GetInterviewerRate",
-            data: { 'userId': val, 'companyType': companyType },
+            data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
             success: function (result) {
                 $("#" + rateElementid).val(result);
             }
@@ -3298,6 +3311,7 @@
         var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'EmergencyInterviewerCollection_' + index + '__PerSuccessRate';
         var companyType = $("#CompanyType").val();
+        var countryType = $("#JobCountry").val();
 
         $.ajax({
             type: "GET",
@@ -3307,11 +3321,22 @@
                 $("#" + skillElementid).val(data);
             }
         });
+
         $.ajax({
             type: "GET",
             async: false,
             url: "/IRF/GetInterviewerRate",
-            data: { 'userId': val, 'companyType' : companyType },
+            data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
+            success: function (result) {
+                $("#" + rateElementid).val(result);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerRate",
+            data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
             success: function (result) {
                 $("#" + rateElementid).val(result);
             }
@@ -3367,15 +3392,30 @@
             }
         });
 
-        $.ajax({
-            type: "GET",
-            async: false,
-            url: "/IRF/GetInterviewerQCRate",
-            data: { 'userId': val },
-            success: function (data) {
-                $("#" + rateElementid).val(data);
-            }
-        });
+        var countryType = $("#JobCountry").val();
+        //var profileType = $("#Heuristicsscore").val();
+
+        var interviewerQCRate;
+        if (countryType == "1") {
+            interviewerQCRate = 350;
+        }
+        else if (countryType == "2") {
+            interviewerQCRate = 500;
+        }
+        else {
+            interviewerQCRate = 0;
+        }
+        $("#" + rateElementid).val(interviewerQCRate);
+
+        //$.ajax({
+        //    type: "GET",
+        //    async: false,
+        //    url: "/IRF/GetInterviewerQCRate",
+        //    data: { 'userId': val },
+        //    success: function (data) {
+        //        $("#" + rateElementid).val(data);
+        //    }
+        //});
 
 
     }

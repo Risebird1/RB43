@@ -38,8 +38,19 @@ body {
     .clearfix:after {
         clear: both;
     }
+.laptop-view {
+    display: none;
+}
+.w60{
+    width:60%;
+    float:left;
+}
+.w40 {
+    width: 40%;
+    float: left;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
-    background: #fff!important;
+ /*   background: #fff!important;*/
 }
 
 #tab-1 .form-group input.form-control.text-box.single-line{margin-top:5px!important;}
@@ -165,7 +176,34 @@ a.infos {
         opacity: 1;
         z-index: 1000;
     }
+.InvoiceDetails #search {
+    right: 55px!important;
+}
 
+.InvoiceDetails #trigger-update {
+    right: 35px !important;
+}
+
+#dupmeeting_filter #trigger-update {
+    right: 22px !important;
+}
+.InvoiceDetails .multiselect.btn {
+    padding: 10px 15px;
+}
+.border-rv {
+    border-right: 1px dotted #ccc;
+}
+    .interviewer .multiselect.btn {
+    padding: 10px 15px;
+    margin: 10px 1px 0px 1px;
+    background: #fff !important;
+}
+.interviewer .multiselect.dropdown-toggle:after {
+    color: #9a9a9a !important;
+    position: relative;
+    left: 95px;
+    top: 2px;
+}
 .time-left-txt {
     position: relative;
     top: 9px;
@@ -5252,7 +5290,10 @@ button .btn {
     width: 200px;
     margin: 0px auto !important;
 }
-
+.radio-top {
+    position: relative;
+    top: 5px;
+}
 #reportForm table tr td:hover, #candidateForm table tr td:hover {
     box-shadow: none !important
 }
@@ -5268,7 +5309,7 @@ button .btn {
     max-height: 100px !important;
 }
 
-.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, #entitleTable_filter input[type=search].form-control, .candidate_resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus {
+.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, #entitleTable_filter input[type=search].form-control, .candidate_resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus, #dupmeeting_filter input[type=search], #dupmeeting_filter input[type=search]:focus, #activityTable_filter input[type=search], #activityTable_filter input[type=search]:focus {
     background: #FFF;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -5285,7 +5326,7 @@ button .btn {
     right: 50px;
 }
 
-.indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update {
+.indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update, #activityTable_filter #trigger-update {
     right: 20px;
 }
 
@@ -5638,6 +5679,11 @@ button .btn {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
+
+    .laptop-view {
+        display: block !important;
+        height: 5px;
+    }
     .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 36%
     }
@@ -5668,7 +5714,7 @@ button .btn {
         top: 7px;
         position: relative;
     }
-
+  
     .rbpay .modal .form-control {
         height: 40px;
         border: 0px;
@@ -6273,6 +6319,16 @@ button .btn {
     .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
         font-size: 11px !important;
     }
+
+    .w60 {
+        width: 55%;
+        float:left;
+    }
+
+    .w40 {
+        width: 45%;
+       float:right;
+    }
     #calenderTimeslot{left:20px;}
     .event .calendar-con {
         min-width: 90% !important;
@@ -6773,6 +6829,8 @@ button .btn {
 }
 
 @media (max-width: 480px) {
+  
+   
     #scoreChart tspan {
         font-size: 11.5px;
     }
@@ -10621,7 +10679,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     border: 0px !important;
 }
 
-#dupmeeting_filter input[type=search], .dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
+.dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 256px;
@@ -12895,7 +12953,21 @@ div.tagsinput {
         right: 27px;
         top: 11px;
     }
+    #skill_card .pskill {
+        display: block !important;
+        text-align: center;
+        margin: 0px auto 20px auto;
+        line-height: 11px;
+    }
+    .w60 {
+        width: 100%;
+        text-align: center;
+    }
 
+    .w40 {
+        width: 100%;
+        text-align: center;
+    }
     .event .calendar-con {
         min-width: 90% !important;
         max-width: 90% !important;

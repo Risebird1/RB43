@@ -910,12 +910,12 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public async Task<int> GetInterviewerRate(int userId, int? companyType)
+        public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
         {
 
             try
             {
-                var rate = await _irfService.GetInterviewerRate(userId, companyType);
+                var rate = await _irfService.GetInterviewerRate(userId, companyType, countryType);
                 return rate;
 
             }
@@ -1647,6 +1647,14 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     var model = await _irfService.GetEditIRF(id, isClone);
+                    int abc;
+                    if(!int.TryParse(model.JobCountry, out abc))
+                    {
+                        if (model.JobCountry.ToUpper() == "INDIA") {
+                            model.JobCountry = "1";
+                        }
+                        else { model.JobCountry = "2"; }
+                    }
                     model.IsClone = isClone;
                     SetEditIRFProperties(model);
                     //TempData["JDLink"] = model.JDLink;

@@ -4,13 +4,16 @@
     ViewData["Title"] = "MCQ Questions";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    var Header = "<div>MCQ Questions</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+    @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
                 <div class="navbar-toggle">
@@ -25,7 +28,7 @@
                 </a>
             </div>
         </div>
-    </nav>
+    </nav>*@
     <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"></div>-->
 

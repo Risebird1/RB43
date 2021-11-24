@@ -5157,5 +5157,41 @@ namespace Risebird.Repository
             }
 
         }
+        public async Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchAllUnassignedInterviewAutoCancel", null,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<UnassignedInterviewVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool UpdateCancelInterviewDetails(int meetingid)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set isAutoCancelled=1 where id=@meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
