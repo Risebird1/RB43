@@ -72,6 +72,7 @@ namespace Risebird.CommonHelper.Interface
         string SendPublicUrlToInterviewer(Mail model, string UrlDetails);
         string SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount);
         string SendPasswordresetNotification(Mail model);
-        string SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name,string timezonevalue,string ClientName);
+        string SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName);
+        string SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink);
     }
 }

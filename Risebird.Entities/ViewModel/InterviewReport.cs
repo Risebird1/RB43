@@ -366,6 +366,7 @@ namespace Risebird.Entities.ViewModel
         public string IRFId { get; set; }
         public bool IsEmergency { get; set; }
         public int TotalAmount { get; set; }
+        public string ExpectedDate { get; set; }
     }
     public class SchedulingLinkVM
     {

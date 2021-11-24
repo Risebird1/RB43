@@ -44,6 +44,7 @@ namespace Risebird.MicroService
                     {
                         if (_meetingService.PublicCancelInterview(item.Interviewid))
                         {
+                            var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
                             var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);
                             var result1 = await _irfService.AddCandidateStatus("System", candidateId, item.Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
@@ -59,7 +60,7 @@ namespace Risebird.MicroService
                             }
                             var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                             var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName);
+                            var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         }
                     }
                     catch (Exception ex)
