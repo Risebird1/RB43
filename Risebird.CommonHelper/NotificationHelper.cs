@@ -1782,7 +1782,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancelled");
                 msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
@@ -1817,7 +1817,7 @@ namespace Risebird.CommonHelper
                 StringBuilder msgBody = new StringBuilder("Dear ," + CandidateName);
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interview date: " + interviewDate + " .");
+                msgBody.AppendLine("You have received this communication as your interview has been cancelled for interview date: " + interviewDate + " due to some unforeseen circumstances.");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");

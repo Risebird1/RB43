@@ -1145,6 +1145,7 @@
                                                                                     }
 
 
+
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
@@ -3318,6 +3319,16 @@
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerRate",
+            data: { 'userId': val, 'companyType': companyType, 'countryType': countryType },
+            success: function (result) {
+                $("#" + rateElementid).val(result);
             }
         });
 
