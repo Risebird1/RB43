@@ -154,6 +154,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
         Task<IEnumerable<SkillCahnnelDetailsVM>> GetAllSkillChannelDetails();
         Task<int> GetInterviewerQCRate(int userId);
-        Task<int> GetInterviewerRate(int userId, string companyType = null);
+        Task<int> GetInterviewerRate(int userId, string companyType = null, int? countryType = null);
     }
 }

@@ -12,15 +12,16 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_GetInterviewerRate]          
 @userId int,
-@companyType varchar(50) = null
+@companyType varchar(50) = null,
+@countryType int = null
 AS          
 Begin  
-declare @country int, @rate int
+declare @rate int--@country int, 
 
---set @rate =1000
-set @country = (select Country from InterviewerProfile where UserId =@userId)
+set @rate =1000
+--set @country = (select Country from InterviewerProfile where UserId =@userId)
 
-if(@country =26) --India
+if(@countryType = 1) --India
 begin
 	if(@companyType='Product')
 	begin

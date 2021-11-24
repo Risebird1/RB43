@@ -910,12 +910,12 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public async Task<int> GetInterviewerRate(int userId, int? companyType)
+        public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
         {
 
             try
             {
-                var rate = await _irfService.GetInterviewerRate(userId, companyType);
+                var rate = await _irfService.GetInterviewerRate(userId, companyType, countryType);
                 return rate;
 
             }
