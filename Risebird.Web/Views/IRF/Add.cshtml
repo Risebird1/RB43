@@ -2324,6 +2324,7 @@
     }
 
     function InterviewerChanged(val, id) {
+        debugger;
         var index = id.split('_')[1];
         var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
         if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
@@ -2439,6 +2440,16 @@
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerQCRate",
+            data: { 'userId': val },
+            success: function (data) {
+                $("#" + rateElementid).val(data);
             }
         });
 

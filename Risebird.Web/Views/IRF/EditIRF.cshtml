@@ -2582,6 +2582,7 @@
 
 
 
+
                     }
 
                     for (i = 0; i < drpdownsEI.length; i++) {
@@ -3319,6 +3320,15 @@
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
+            }
+        });
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "/IRF/GetInterviewerRate",
+            data: { 'userId': val, 'companyType' : companyType },
+            success: function (result) {
+                $("#" + rateElementid).val(result);
             }
         });
 
