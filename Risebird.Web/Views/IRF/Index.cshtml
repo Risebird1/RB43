@@ -524,7 +524,7 @@
                                                                     }
                                                                 }
                                                             }
-                                                            @if (item.CalendlyLink.Contains("InterviewScheduler"))
+                                                            @if (item.CalendlyLink!=null && item.CalendlyLink.Contains("InterviewScheduler"))
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute subc" aria-label="Edit Scheduler Event">
                                                                     <span onclick="javascript:EditSchedulerEvent('@item.CalendlyLink')" title="Edit Scheduler Event" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-calendar-check-o"></i></span>
