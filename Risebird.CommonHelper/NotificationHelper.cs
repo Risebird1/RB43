@@ -1955,7 +1955,7 @@ namespace Risebird.CommonHelper
                 StringBuilder msgBody = new StringBuilder("Dear ," + CandidateName);
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled for interview date: " + interviewDate + " due to unforeseen circumstances. Kindly reschedule your interview using below rescheduling link.");
+                msgBody.AppendLine("You have received this communication as your interview has been cancelled for interview date: " + interviewDate + " due to unforeseen circumstances. Kindly reschedule your interview using below rescheduling link.");
                 msgBody.Append("\n");
                 msgBody.Append("<a href=\"" + rescheduingLink + "\">Rescheuling Link</a>");
                 msgBody.Append("\n");
