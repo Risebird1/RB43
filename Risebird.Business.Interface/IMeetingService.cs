@@ -165,5 +165,6 @@ namespace Risebird.Business.Interface
         bool PublicCancelInterview(int meetingid);
         Task<int> GetUniqueInterviewerByEmailId(string emailId, string id);
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
+        bool UpdateCancelInterviewDetails(int meetingid);
     }
 }

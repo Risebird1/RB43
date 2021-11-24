@@ -927,23 +927,6 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public async Task<int> GetInterviewerRate(int userId, int? companyType)
-        {
-
-            try
-            {
-                var rate = await _irfService.GetInterviewerRate(userId, companyType);
-                return rate;
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return 0;
-            }
-        }
-
-        [Authorize]
         public async Task<int> GetInterviewerQCRate(int userId)
         {
 

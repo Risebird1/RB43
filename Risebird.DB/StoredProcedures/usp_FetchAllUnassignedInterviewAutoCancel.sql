@@ -18,6 +18,7 @@ Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail Fro
 
 END
 
+
 GO
 
 

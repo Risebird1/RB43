@@ -5174,5 +5174,24 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public bool UpdateCancelInterviewDetails(int meetingid)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set isAutoCancelled=1 where id=@meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

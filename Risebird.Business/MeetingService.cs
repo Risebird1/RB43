@@ -3143,6 +3143,22 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool UpdateCancelInterviewDetails(int meetingid)
+        {
+            try
+            {
+                if (_meetingRespository.UpdateCancelInterviewDetails(meetingid))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

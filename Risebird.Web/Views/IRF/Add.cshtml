@@ -2324,7 +2324,6 @@
     }
 
     function InterviewerChanged(val, id) {
-        debugger;
         var index = id.split('_')[1];
         var searchFor = '[id^="InterviewerCollection"][id$="UserId"]';
         if (CheckDuplicate('InterviewerCollection', searchFor, val, index)) {
@@ -2443,15 +2442,32 @@
             }
         });
 
-        $.ajax({
-            type: "GET",
-            async: false,
-            url: "/IRF/GetInterviewerQCRate",
-            data: { 'userId': val },
-            success: function (data) {
-                $("#" + rateElementid).val(data);
-            }
-        });
+
+
+        var countryType = $("#JobCountry").val();
+        //var profileType = $("#Heuristicsscore").val();
+        
+        var interviewerQCRate;
+        if (countryType == "1") {
+            interviewerQCRate = 350;
+        }
+        else if (countryType == "2") {
+            interviewerQCRate = 500;
+        }
+        else {
+            interviewerQCRate = 0;
+        }
+        $("#" + rateElementid).val(interviewerQCRate);
+
+        //$.ajax({
+        //    type: "GET",
+        //    async: false,
+        //    url: "/IRF/GetInterviewerQCRate",
+        //    data: { 'userId': val },
+        //    success: function (data) {
+        //        $("#" + rateElementid).val(data);
+        //    }
+        //});
 
 
 
