@@ -200,7 +200,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<int> GetInterviewerRate(int userId, string companyType = null)
+        public async Task<int> GetInterviewerRate(int userId, string companyType = null, int? countryType = null)
         {
             try
             {
@@ -210,6 +210,7 @@ namespace Risebird.Repository
 
                     parameters.Add("@userId", userId);
                     parameters.Add("@companyType", companyType);
+                    parameters.Add("@countryType", countryType);
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewerRate", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
