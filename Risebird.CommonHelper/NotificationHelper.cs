@@ -1817,7 +1817,7 @@ namespace Risebird.CommonHelper
                 StringBuilder msgBody = new StringBuilder("Dear ," + CandidateName);
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interview date: " + interviewDate + " .");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled for interview date: " + interviewDate + " due to unforeseen circumstances.");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
@@ -1936,6 +1936,33 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
+                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(CandidateEmail, null));
+                StringBuilder msgBody = new StringBuilder("Dear ," + CandidateName);
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled for interview date: " + interviewDate + " due to unforeseen circumstances. Kindly reschedule your interview using below rescheduling link.");
+                msgBody.Append("\n");
+                msgBody.Append("<a href=\"" + rescheduingLink + "\">Rescheuling Link</a>");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                msg.HtmlContent = msgBody.ToString();
+
                 return SendMail(msg).Result;
             }
             catch (Exception)

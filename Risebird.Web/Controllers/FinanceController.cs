@@ -73,6 +73,14 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.submit = "false";
                     }
+                    foreach (var item in model)
+                    {
+                        var _onemoth = item.Date.AddMonths(1).DayOfWeek;
+                        int diff = (7 + (_onemoth - DayOfWeek.Monday)) % 7;
+                        var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
+                        var _lastdate = _firstdate.AddDays(6);
+                        item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                    }
                     return View(model);
                 }
                 else
