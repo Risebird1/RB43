@@ -32,7 +32,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("AutoInterviewcancellation")]
-        public async void Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log)
+        public async void Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function(AutoInterviewcancellation) executed at: {DateTime.Now}");
             try
