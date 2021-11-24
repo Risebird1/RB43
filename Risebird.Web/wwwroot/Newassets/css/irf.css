@@ -742,7 +742,9 @@ input[type=number] {
         font-weight: bold;
         padding-right: 7px;
     }
-
+#skill_card .pskill {
+    display: block!important;
+}
 .pskill {
     display: inline-block;
     width: 120px;
