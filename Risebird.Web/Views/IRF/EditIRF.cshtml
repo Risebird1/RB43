@@ -2685,7 +2685,8 @@
             return true;
         }
         var startDateValue = document.getElementById("StartDate").value;
-
+        var d = new Date();
+        var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
         //end Date object creation
         var year = val.substring(0, 4);
         var month = parseInt(val.substring(5, 7)) - 1;
@@ -2712,10 +2713,10 @@
             document.getElementById("EndDate").focus();
             return true;
         }
-        else if (((endDate - startDate) / (1000 * 3600 * 24)) > 120) {
+        else if (((endDate - currentDate) / (1000 * 3600 * 24)) > 120) {
             document.getElementById("btnUpload").disabled = true;
             document.getElementById("endDateCheck").style.display = "block";
-            document.getElementById("endDateCheck").innerHTML = "End Date & Start Date difference should not be greater than 120 days";
+            document.getElementById("endDateCheck").innerHTML = "End Date & Current Date difference should not be greater than 120 days";
             document.getElementById("EndDate").focus();
             return true;
         }
