@@ -38,8 +38,19 @@ body {
     .clearfix:after {
         clear: both;
     }
+.laptop-view {
+    display: none;
+}
+.w60{
+    width:60%;
+    float:left;
+}
+.w40 {
+    width: 40%;
+    float: left;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
-    background: #fff!important;
+ /*   background: #fff!important;*/
 }
 
 #tab-1 .form-group input.form-control.text-box.single-line{margin-top:5px!important;}
@@ -5668,6 +5679,11 @@ button .btn {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
+
+    .laptop-view {
+        display: block !important;
+        height: 5px;
+    }
     .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 36%
     }
@@ -6303,6 +6319,16 @@ button .btn {
     .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
         font-size: 11px !important;
     }
+
+    .w60 {
+        width: 55%;
+        float:left;
+    }
+
+    .w40 {
+        width: 45%;
+       float:right;
+    }
     #calenderTimeslot{left:20px;}
     .event .calendar-con {
         min-width: 90% !important;
@@ -6803,6 +6829,8 @@ button .btn {
 }
 
 @media (max-width: 480px) {
+  
+   
     #scoreChart tspan {
         font-size: 11.5px;
     }
@@ -12925,7 +12953,21 @@ div.tagsinput {
         right: 27px;
         top: 11px;
     }
+    #skill_card .pskill {
+        display: block !important;
+        text-align: center;
+        margin: 0px auto 20px auto;
+        line-height: 11px;
+    }
+    .w60 {
+        width: 100%;
+        text-align: center;
+    }
 
+    .w40 {
+        width: 100%;
+        text-align: center;
+    }
     .event .calendar-con {
         min-width: 90% !important;
         max-width: 90% !important;
