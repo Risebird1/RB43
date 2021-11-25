@@ -2267,6 +2267,22 @@
 
 <script>
     $(document).ready(function () {
+        var countryType = $("#JobCountry").val();
+        var interviewerQCRate;
+        if (countryType == "1") {
+            interviewerQCRate = 350;
+        }
+        else if (countryType == "2") {
+            interviewerQCRate = 500;
+        }
+        else {
+            interviewerQCRate = 0;
+        }
+
+        var rateEmements = $('[id^="QualityController"][id$="PerSuccessRate"]');
+        for (i = 0; i < rateEmements.length; i++) {
+            $("#" + rateEmements[i].id).val(interviewerQCRate);
+        }
 
         if ('@Model.IsClone'=='True' && '@Model.isDuplicateEntries' == 'False') {
             document.getElementById("IRFId").value = '';
