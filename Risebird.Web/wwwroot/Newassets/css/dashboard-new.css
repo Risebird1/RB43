@@ -66,6 +66,9 @@ input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
 .survey .cadName [data-tooltip]:after {
     left: 60%!important;
 }
+.selectedmeeting .candidate-details .mtop-5 [data-tooltip]:before {
+    margin-left: 0px!important;
+}
 .jdfile-error {
     bottom: -20px !important;
     color: #E04B4A !important;
@@ -878,7 +881,7 @@ table tr td:hover, .table-striped tbody tr:hover {
     border: 0px;
     float: right;
     margin: -2px 0px;
-    padding: 0px 5px;
+    padding: 0px 3px;
 }
 
 .rating-box {
@@ -1463,6 +1466,10 @@ audio {
 
 .availbg td {
     border: 0px;
+}
+.commonpool .available {
+    width: 60px;
+    margin: 0px;
 }
 
 .available {
@@ -5679,7 +5686,12 @@ button .btn {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-
+    .video-title .candidate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
     .laptop-view {
         display: block !important;
         height: 5px;
@@ -5778,15 +5790,21 @@ button .btn {
     }
     .hremail{width:260px!important}
     .join-time {
-        width: 110px;
+        width: 160px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: inline-block;
-        top: 5px;
-        position: relative;
-    }
 
+    }
+    .commonpool .join-time {
+        width: 95px !important;
+        top: 0px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
     .single-video-left .join-time {
         top: 15px !important;
     }
@@ -7266,6 +7284,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     color: #606060;
     font-weight: 500;
     font-size: 13px;
+    padding-left: 3px;
 }
 
 .form-control {

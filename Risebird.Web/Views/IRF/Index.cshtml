@@ -308,7 +308,39 @@
                                                 <div class="card-header">
                                                     <div class="w-full">
                                                         <div class="w60">
-                                                            <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
+                                                            @if (item.IRFId != null && item.IRFId != "")
+                                                            {
+                                                                @if (item.IRFId.Length > 40)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.IRFId">
+                                                                        <h6 class="pskill" title="@item.IRFId">@item.IRFId.Substring(0, 40)</h6>
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <h6 class="pskill" title="@item.IRFId">@item.IRFId</h6>
+                                                                }
+                                                            }
+                                                            else
+                                                            {<h6></h6>}
+
+                                                           
+                                                            @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                            {
+                                                                @if (item.JDTiltle.Length > 40)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.JDTiltle">
+                                                                        <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0].Substring(0, 40))</span>
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span>
+                                                                }
+                                                            }
+                                                            else
+                                                            {<span></span>}
+
                                                         </div>
 
                                                         <div class="w40 card-header-buttons action">
@@ -500,7 +532,7 @@
                                                                 </button>
 
                                                             }
-                                                            @if (Model.Profile == "Admin")
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "SeniorHR")
                                                             {<span class="laptop-view"> <br /></span>}
                                                                 @if (Model.Profile != "CuratedUser")
                                                                 {
