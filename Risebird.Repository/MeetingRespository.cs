@@ -1922,6 +1922,19 @@ namespace Risebird.Repository
                     var result = SqlMapper.Query<int>(con, "usp_SaveQCFeedback", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                 }
+                DynamicParameters parametersPoints = new DynamicParameters();
+                if (qcStatus == 1)
+                {
+                    parametersPoints.Add("@Points", 100);
+                    parametersPoints.Add("@interviewId", imid);
+                    parametersPoints.Add("@Type", "Quality Controller");
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        SqlMapper.Query(con, "usp_InterviewAddPoints", parametersPoints,
+                                        commandType: CommandType.StoredProcedure);
+                    }
+
+                }
                 return true;
             }
             catch (SqlException ex)
