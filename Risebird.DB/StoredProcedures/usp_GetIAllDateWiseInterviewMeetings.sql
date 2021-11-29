@@ -37,7 +37,9 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                   
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,          
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,          
-  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR, ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR from  InterviewMeetings im                    
+  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR,
+  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired
+  from  InterviewMeetings im                    
   inner join IRF on im.IRFId = IRF.IRFId                    
   left join UserList ulc on im.candidateEmail= ulc.EmailId                  
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                  
@@ -67,7 +69,8 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                   
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,          
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,          
-  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR             
+  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,
+  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired             
   from InterviewMeetings im                    
   inner join IRF on im.IRFId = IRF.IRFId                    
   left join UserList ulc on im.candidateEmail= ulc.EmailId                  
@@ -99,7 +102,8 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                   
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,          
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,          
-  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR              
+  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,
+  ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired              
   from InterviewMeetings im                    
   inner join IRF on im.IRFId = IRF.IRFId  
   join SeniorHR sh on sh.Clientid=IRF.ClientId
@@ -130,7 +134,8 @@ else
   ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId                   
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,          
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,          
-  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR              
+  qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,
+  ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired              
   from InterviewMeetings im                    
   inner join IRF on im.IRFId = IRF.IRFId                    
   left join UserList ulc on im.candidateEmail= ulc.EmailId                  
