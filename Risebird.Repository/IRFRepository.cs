@@ -2227,6 +2227,7 @@ namespace Risebird.Repository
             parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@BillingOwner", entity.BillingOwner);
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
+            parameters.Add("@IsQCRequired", entity.IsQCRequired);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;

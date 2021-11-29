@@ -37,7 +37,8 @@ GO
 @Heuristicsscore int,        
 @PrimarySkillInvite varchar(100),        
 @BillingOwner int,     
-@AssessmentGroupId varchar(100),    
+@AssessmentGroupId varchar(100),
+@IsQCRequired bit,
 @idIrf int output            
             
 AS            
@@ -69,7 +70,8 @@ Begin
    ,[Heuristicsscore]        
    ,[PrimarySkillInvite]      
    ,[BillingOwner]    
-   ,[AssessmentGroupId])            
+   ,[AssessmentGroupId]
+   ,[IsQCRequired])            
        VALUES            
            (@IRFId,            
    @clientName,            
@@ -95,7 +97,8 @@ Begin
    @Heuristicsscore,        
    @PrimarySkillInvite,      
    @BillingOwner,    
-   @AssessmentGroupId)      
+   @AssessmentGroupId,
+   @IsQCRequired)      
        
     
 select @idIrf = SCOPE_IDENTITY()    
