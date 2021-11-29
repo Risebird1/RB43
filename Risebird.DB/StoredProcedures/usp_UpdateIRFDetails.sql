@@ -37,6 +37,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @PrimarySkillInvite varchar(100),  
 @BillingOwner int,  
 @AssessmentGroupId varchar(100),
+@IsQCRequired bit,
 @idIrf int output        
         
 AS        
@@ -78,6 +79,7 @@ begin tran
 	   ,[PrimarySkillInvite]=@PrimarySkillInvite    
 	   ,[BillingOwner]=@BillingOwner
 	   ,[AssessmentGroupId]=@AssessmentGroupId
+	   ,[IsQCRequired] = @IsQCRequired
 	Where id =@id        
     
 	
