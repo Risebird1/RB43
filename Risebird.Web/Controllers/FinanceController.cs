@@ -146,6 +146,7 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var item in model.Result)
                             {
+                                int _location = 0;
                                 Sheet.Cells[i, 1].Value = item.Comment;
                                 Sheet.Cells[i, 2].Value = item.InterviewId;
                                 Sheet.Cells[i, 3].Value = item.Type;
@@ -153,7 +154,25 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 5].Value = item.Points;
                                 Sheet.Cells[i, 8].Value = item.Date;
                                 Sheet.Cells[i, 9].Value = item.Status;
-                                Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                if (String.IsNullOrEmpty(item.PreferredLocation))
+                                {
+                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                }
+                                else if (int.TryParse(item.PreferredLocation, out _location))
+                                {
+                                    if (_location == 1)
+                                    {
+                                        Sheet.Cells[i, 10].Value = "India";
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = "OutSide India";
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                }
                                 Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                 if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
@@ -753,6 +772,7 @@ namespace Risebird.Web.Controllers
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.InterviewerEmailid == interviewer).ToList())
                                 {
+                                    int _location = 0;
                                     Sheet.Cells[i, 1].Value = item.IRFId;
                                     Sheet.Cells[i, 2].Value = item.Date.ToString();
                                     Sheet.Cells[i, 3].Value = item.candidateEmail;
@@ -762,7 +782,26 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 7].Value = item.Comment;
                                     Sheet.Cells[i, 8].Value = item.InterviewerEmailid;
                                     Sheet.Cells[i, 9].Value = item.Type;
-                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    if (String.IsNullOrEmpty(item.PreferredLocation))
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
+                                    else if (int.TryParse(item.PreferredLocation, out _location))
+                                    {
+                                        if (_location == 1)
+                                        {
+                                            Sheet.Cells[i, 10].Value = "India";
+                                        }
+                                        else
+                                        {
+                                            Sheet.Cells[i, 10].Value = "OutSide India";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
+
                                     Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                     Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
@@ -905,6 +944,7 @@ namespace Risebird.Web.Controllers
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.InterviewerEmailid == interviewer).ToList())
                                 {
+                                    int _location = 0;
                                     Sheet.Cells[i, 1].Value = item.IRFId;
                                     Sheet.Cells[i, 2].Value = item.Date.ToString();
                                     Sheet.Cells[i, 3].Value = item.candidateEmail;
@@ -914,7 +954,25 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 7].Value = item.Comment;
                                     Sheet.Cells[i, 8].Value = item.InterviewerEmailid;
                                     Sheet.Cells[i, 9].Value = item.Type;
-                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    if (String.IsNullOrEmpty(item.PreferredLocation))
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
+                                    else if (int.TryParse(item.PreferredLocation, out _location))
+                                    {
+                                        if (_location == 1)
+                                        {
+                                            Sheet.Cells[i, 10].Value = "India";
+                                        }
+                                        else
+                                        {
+                                            Sheet.Cells[i, 10].Value = "OutSide India";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
                                     Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                     Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
