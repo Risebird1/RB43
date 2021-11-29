@@ -49,6 +49,9 @@ body {
     width: 40%;
     float: left;
 }
+.rightpad{
+    padding-right:7px;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
  /*   background: #fff!important;*/
 }
@@ -65,6 +68,9 @@ input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
 }
 .survey .cadName [data-tooltip]:after {
     left: 60%!important;
+}
+.selectedmeeting .candidate-details .mtop-5 [data-tooltip]:before {
+    margin-left: 0px!important;
 }
 .jdfile-error {
     bottom: -20px !important;
@@ -568,7 +574,9 @@ table tr td:hover, .table-striped tbody tr:hover {
     bottom: 130px !important;
     right: -400% !important;
 }
-
+.client .candidate-details .mtop-5 strong{
+line-height:25px;
+}
 .jumbotron {
     background: none !important;
     margin: 0px !important;
@@ -878,7 +886,7 @@ table tr td:hover, .table-striped tbody tr:hover {
     border: 0px;
     float: right;
     margin: -2px 0px;
-    padding: 0px 5px;
+    padding: 0px 3px;
 }
 
 .rating-box {
@@ -1463,6 +1471,10 @@ audio {
 
 .availbg td {
     border: 0px;
+}
+.commonpool .available {
+    width: 60px;
+    margin: 0px;
 }
 
 .available {
@@ -5679,7 +5691,12 @@ button .btn {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-
+    .video-title .candidate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
     .laptop-view {
         display: block !important;
         height: 5px;
@@ -5778,15 +5795,21 @@ button .btn {
     }
     .hremail{width:260px!important}
     .join-time {
-        width: 110px;
+        width: 160px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: inline-block;
-        top: 5px;
-        position: relative;
-    }
 
+    }
+    .commonpool .join-time {
+        width: 95px !important;
+        top: 0px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
     .single-video-left .join-time {
         top: 15px !important;
     }
@@ -5944,12 +5967,12 @@ button .btn {
 
     .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
         width: 100% !important;
-        display: inline-table;
-        white-space: pre-wrap;
+        display: block;
+        white-space: initial;
     }
 
         .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
-            line-height: 6px;
+            line-height: 15px;
         }
 
     .candidate-hr .hrname {
@@ -6977,6 +7000,22 @@ button .btn {
         top: 6px;
         right: 95px;
     }
+    #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
+        margin-bottom: 10px;
+    }
+
+    .filter-note {
+        width: 210px !important;
+        right: 40% !important;
+        top: 40px !important;
+        line-height: 16px;
+    }
+    .support {
+        position: absolute;
+        left: auto;
+        right: 25px !important;
+        top: 12px !important;
+    }
 }
 
 @media (max-width: 360px) {
@@ -7014,8 +7053,7 @@ button .btn {
     .support {
         position: absolute;
         left: auto;
-        right: 131px !important;
-        top: 28px !important;
+       
     }
 
     .main-img-user {
@@ -7266,6 +7304,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     color: #606060;
     font-weight: 500;
     font-size: 13px;
+    padding-left: 3px;
 }
 
 .form-control {

@@ -58,7 +58,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
@@ -1398,8 +1398,8 @@ namespace Risebird.Repository
 
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
-                        float duration = (float)reportDetails.VideoDuration;
-                        float baseValue = 6;
+                        var duration = reportDetails.VideoDuration;
+                        int baseValue = 6;
                         float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
                         parametersPoints.Add("@Points", pointPercent);
                     }
@@ -1409,10 +1409,10 @@ namespace Risebird.Repository
                     }
                     else if (reportDetails.MeetingStatus == 4)
                     {
-                        float duration = (float)reportDetails.VideoDuration;
+                        int duration = reportDetails.VideoDuration;
                         if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
                         {
-                            float baseValue = 30;
+                            int baseValue = 30;
 
                             float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
                             parametersPoints.Add("@Points", pointPercent);
@@ -1424,49 +1424,10 @@ namespace Risebird.Repository
                         }
 
                     }
-
-
-
-
+                    
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
                     parametersPoints.Add("@Type", "Interview");
-                    //if (reportDetails.IsQC == true)
-                    //{
-                    //    parametersPoints.Add("@Type", "Quality Controller");
-                    //}
-                    //else
-                    //{
-                    //    parametersPoints.Add("@Type", "Interview");
-                    //}
-                    //if (reportDetails.IsEdited)
-                    //{
-                    //    var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
-                    //                        commandType: CommandType.StoredProcedure);
-
-                    //}
-                    //else
-                    //{
-                    //    //add to interviewReport table
-                    //    string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
-                    //    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
-                    //    {
-                    //        reportDetails.IRFId,
-                    //        reportDetails.InterviewId,
-                    //        reportDetails.CandidateName,
-                    //        reportDetails.confirmationStatus,
-                    //        reportDetails.OverallScore,
-                    //        reportDetails.Rating,
-                    //        reportDetails.TechSkillComments,
-                    //        reportDetails.SkillGeneralComments,
-                    //        reportDetails.SelectabilityComments,
-                    //        reportDetails.JoinabilityComments,
-                    //        reportDetails.ProctoringCount
-
-                    //    }).Result;
-
-                    //}
-
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
 
@@ -1584,7 +1545,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
 
-                    if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3 || reportDetails.MeetingStatus == 5 || reportDetails.MeetingStatus == 4)
+                    if (reportDetails.MeetingStatus != 2)
                     {
                         try
                         {

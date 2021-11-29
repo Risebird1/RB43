@@ -1201,10 +1201,10 @@ namespace Risebird.Web.Controllers
         {
             foreach (var m in meetings)
             {
-                if (m.InterviewStatus.HasValue)
-                {
-                    m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                }
+                //if (m.InterviewStatus.HasValue)
+                //{
+                //    m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                //}
                 if (m.L2InterviewStatus.HasValue)
                 {
                     m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
@@ -1229,9 +1229,12 @@ namespace Risebird.Web.Controllers
                 {
                     m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                 }
-                if (m.QCStatus.HasValue)
+                if(m.IsQCRequired)
                 {
-                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                    if (m.QCStatus.HasValue)
+                    {
+                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                    }
                 }
                 if (m.IsApproved.HasValue && m.IsApproved != -1)
                 {
@@ -1257,15 +1260,30 @@ namespace Risebird.Web.Controllers
 
                 }
 
+                if(m.IsQCRequired)
+                {
+                    if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
+                    {
+                        m.intervieweStatusStatDesc = "QC Pending(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
+                    }
+                    else if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == 2))
+                    {
+                        m.intervieweStatusStatDesc = "QC Failed(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
+                    }
+                    else if (m.InterviewStatus.HasValue)
+                    {
+                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
 
-                if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
-                {
-                    m.intervieweStatusStatDesc = "QC Pending(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
+                    }
                 }
-                else if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == 2))
+                else
                 {
-                    m.intervieweStatusStatDesc = "QC Failed(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
+                    if (m.InterviewStatus.HasValue)
+                    {
+                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                    }
                 }
+                
                 if (m.intervieweStatusStatDesc == null)
                 {
                     m.intervieweStatusStatDesc = string.Empty;
@@ -2125,9 +2143,12 @@ namespace Risebird.Web.Controllers
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                             }
-                            if (m.QCStatus.HasValue)
+                            if(m.IsQCRequired)
                             {
-                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                if (m.QCStatus.HasValue)
+                                {
+                                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                }
                             }
                             if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
@@ -2301,9 +2322,12 @@ namespace Risebird.Web.Controllers
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                             }
-                            if (m.QCStatus.HasValue)
+                            if(m.IsQCRequired)
                             {
-                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                if (m.QCStatus.HasValue)
+                                {
+                                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                }
                             }
                             if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
@@ -2760,9 +2784,12 @@ namespace Risebird.Web.Controllers
                     {
                         m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                     }
-                    if (m.QCStatus != null && m.QCStatus.HasValue)
+                    if(m.IsQCRequired)
                     {
-                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                        if (m.QCStatus != null && m.QCStatus.HasValue)
+                        {
+                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                        }
                     }
                     if (m.IsApproved != null && m.IsApproved.HasValue)
                     {

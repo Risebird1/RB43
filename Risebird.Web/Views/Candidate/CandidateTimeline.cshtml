@@ -353,18 +353,18 @@
 
                                                                             @if (item.CandidateName != null && item.CandidateName != "")
                                                                             {
-                                                                                @if (item.CandidateName.Length > 20)
+                                                                                @if (item.CandidateName.Length > 30)
                                                                                 {
 
 
                                                                                     <td class="cadName text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName</a>
+                                                                                        <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 30)...</a>
                                                                                     </td>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <td class="text-left pl15">
-                                                                                        <a onclick=""> @item.CandidateName </a>
+                                                                                         @item.CandidateName
                                                                                     </td>
                                                                                 }
                                                                             }
@@ -377,12 +377,12 @@
 
                                                                             @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
                                                                             {
-                                                                                @if (item.CandidateEmailId.Length > 20)
+                                                                                @if (item.CandidateEmailId.Length > 30)
                                                                                 {
 
 
                                                                                     <td class="cadEmail text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId</a>
+                                                                                        <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 30)...</a>
                                                                                     </td>
                                                                                 }
 
@@ -403,18 +403,18 @@
                                                                             @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                                             {
 
-                                                                                @if (item.PrimarySkill.Length > 15)
+                                                                                @if (item.PrimarySkill.Length > 35)
                                                                                 {
 
 
                                                                                     <td class="cadEmail text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill </a>
+                                                                                        <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill.Substring(0, 35)...</a>
                                                                                     </td>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <td class="text-left pl15">
-                                                                                        <a onclick="">@item.PrimarySkill</a>
+                                                                                       @item.PrimarySkill
                                                                                     </td>
                                                                                 }
 
@@ -434,18 +434,18 @@
                                                                             @if (item.HREmail != null && item.HREmail != "")
                                                                             {
 
-                                                                                @if (item.HREmail.Length > 15)
+                                                                                @if (item.HREmail.Length > 35)
                                                                                 {
 
 
                                                                                     <td class="cadEmail text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail</a>
+                                                                                        <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail.Substring(0, 35)...</a>
                                                                                     </td>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <td class="text-left pl15">
-                                                                                        <a onclick="">@item.HREmail</a>
+                                                                                        @item.HREmail
                                                                                     </td>
                                                                                 }
 
@@ -1000,12 +1000,12 @@
 
                                                                             @if (item.CandidateName != null && item.CandidateName != "")
                                                                             {
-                                                                                @if (item.CandidateName.Length > 20)
+                                                                                @if (item.CandidateName.Length > 30)
                                                                                 {
 
 
                                                                                     <td class="cadName text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName</a>
+                                                                                        <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 30)...</a>
                                                                                     </td>
                                                                                 }
                                                                                 else
@@ -1024,12 +1024,12 @@
 
                                                                             @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
                                                                             {
-                                                                                @if (item.CandidateEmailId.Length > 20)
+                                                                                @if (item.CandidateEmailId.Length > 30)
                                                                                 {
 
 
                                                                                     <td class="cadEmail text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId</a>
+                                                                                        <a onclick="" data-tooltip="@item.CandidateEmailId">@item.CandidateEmailId.Substring(0, 30)...</a>
                                                                                     </td>
                                                                                 }
 
@@ -1050,18 +1050,18 @@
                                                                             @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                                             {
 
-                                                                                @if (item.PrimarySkill.Length > 15)
+                                                                                @if (item.PrimarySkill.Length > 35)
                                                                                 {
 
 
                                                                                     <td class="cadEmail text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill </a>
+                                                                                        <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill.Substring(0, 35)...</a>
                                                                                     </td>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <td class="text-left pl15">
-                                                                                        <a onclick="">@item.PrimarySkill</a>
+                                                                                        @item.PrimarySkill
                                                                                     </td>
                                                                                 }
 
@@ -1081,18 +1081,18 @@
                                                                             @if (item.HREmail != null && item.HREmail != "")
                                                                             {
 
-                                                                                @if (item.HREmail.Length > 15)
+                                                                                @if (item.HREmail.Length > 35)
                                                                                 {
 
 
                                                                                     <td class="cadEmail text-left pl15">
-                                                                                        <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail</a>
+                                                                                        <a onclick="" data-tooltip="@item.HREmail"> @item.HREmail.Substring(0, 35)...</a>
                                                                                     </td>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <td class="text-left pl15">
-                                                                                        <a onclick="">@item.HREmail</a>
+                                                                                        @item.HREmail
                                                                                     </td>
                                                                                 }
 

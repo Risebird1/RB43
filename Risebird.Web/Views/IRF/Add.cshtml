@@ -184,6 +184,32 @@
                                                         @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; " })
                                                     </div>
 
+                                                </div>
+                                                <div class="col-md-4 col-sm-4">
+
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+
+
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
+
+
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                          fill="none"
+                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+
+
+                                                        </div>
+                                                        @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; " })
+                                                    </div>
+
 
                                                 </div>
                                             </div>
@@ -1228,6 +1254,22 @@
 </script>
 
 <script>
+
+    $('#IsQCRequired').on('change', function () {
+        CheckQCRequired()
+    });
+
+    function CheckQCRequired() {
+        var value = document.getElementById("IsQCRequired").checked;
+        if (value) {
+            document.getElementById('rtab-9').style.display = "block";
+            document.getElementById('count_qc').style.display = "block";
+        }
+        else {
+            document.getElementById('rtab-9').style.display = "none";
+            document.getElementById('count_qc').style.display = "none";
+        }
+    }
 
     function RadioLinkChanged(val) {
         if (val == 'UploadLink') {
@@ -2505,6 +2547,8 @@
         document.getElementById('CompanyType').value = 2;
 
 
+        CheckQCRequired();
+
         if (@Model.TemplateId == null || @Model.TemplateId== 0) {
             //TechSkillChanged();
             //Perform Ajax request.
@@ -2871,9 +2915,18 @@
 
             else if (activeTab.trim() == "E.Interviewer") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-9").addClass("active");
-                document.getElementById("tab-9").style.display = "block";
-                document.getElementById("tab-10").style.display = "none";
+                var isQcRequired = document.getElementById('IsQCRequired').checked;
+                if (isQcRequired) {
+                    $("#rtab-9").addClass("active");
+                    document.getElementById("tab-9").style.display = "block";
+                    document.getElementById("tab-10").style.display = "none";
+                }
+                else {
+                    $("#rtab-8").addClass("active");
+                    document.getElementById("tab-8").style.display = "block";
+                    document.getElementById("tab-10").style.display = "none";
+                }
+
             }
 
             else if (activeTab.trim() == "Coordinator") {
@@ -3087,9 +3140,18 @@
                 flag = checkInterviewerDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                    $("#rtab-9").addClass("active");
-                    document.getElementById("tab-9").style.display = "block";
-                    document.getElementById("tab-8").style.display = "none";
+                    var isQcRequired = document.getElementById('IsQCRequired').checked;
+                    if (isQcRequired) {
+                        $("#rtab-9").addClass("active");
+                        document.getElementById("tab-9").style.display = "block";
+                        document.getElementById("tab-8").style.display = "none";
+                    }
+                    else {
+                        $("#rtab-10").addClass("active");
+                        document.getElementById("tab-10").style.display = "block";
+                        document.getElementById("tab-8").style.display = "none";
+                    }
+
                 }
             }
             else if (activeTab.trim() == "QC") {
