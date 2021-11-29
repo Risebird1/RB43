@@ -41,7 +41,7 @@ if(@roleId=1)
   IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,          
   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,          
-  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR          
+  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired          
   from InterviewMeetings im           
   inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -72,8 +72,8 @@ else if(@roleId=4)
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,           
   ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,          
   IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,      
-  ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,          ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,          
-  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR          
+  ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments, ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,          
+  cm.id as CandidateId, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired        
   from InterviewMeetings im           
  inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           
@@ -105,7 +105,7 @@ else
   IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,          
   ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,          
   ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,          
-  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR          
+  cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired            
   from InterviewMeetings im           
   inner join IRF on im.IRFId = IRF.IRFId           
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId           

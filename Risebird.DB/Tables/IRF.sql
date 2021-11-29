@@ -26,7 +26,8 @@ CREATE TABLE [dbo].[IRF](
             [BussinessType][varchar](4) NULL,
             [Heuristicsscore][int] NULL,
             [idProgress][int] NOT NULL DEFAULT 1,
-            [PrimarySkillInvite][varchar](100) NULL
+            [PrimarySkillInvite][varchar](100) NULL,
+            [IsQCRequired][bit] NULL
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -189,6 +190,17 @@ BEGIN
     ALTER TABLE IRF
     Add AssessmentGroupId varchar(100)
 	END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsQCRequired')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsQCRequired bit
+	END
+
 END
 
 

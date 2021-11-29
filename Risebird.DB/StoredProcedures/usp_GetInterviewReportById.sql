@@ -19,7 +19,9 @@ AS
 Begin
 
 
-select ip.*, ic.*, IRF.JobLevel,IRF.IRFId as IRFName, irf.IsBiometricEnabled, im.resumeLink, im.interviewDate,im.currentEmployerName, im.JoiningBiometryScore, im.InterviewBiometryScore from InterviewReport ip
+select ip.*, ic.*, IRF.JobLevel,IRF.IRFId as IRFName, irf.IsBiometricEnabled, im.resumeLink, im.interviewDate,im.currentEmployerName, 
+im.JoiningBiometryScore, im.InterviewBiometryScore, irf.IsQCRequired 
+from InterviewReport ip
 inner join IRF on ip.IRFId = IRF.id 
 inner join [InterviewComments] ic on ic.InterviewId = ip.InterviewId
 inner join [InterviewMeetings] im on im.id = ip.InterviewId

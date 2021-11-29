@@ -149,6 +149,9 @@ namespace Risebird.Entities.ViewModel
         public int TemplateId { get; set; }
         public int clonevalue { get; set; }
         public string SchedulingLink { get; set; }
+
+        [DisplayName("QC Required")]
+        public bool IsQCRequired { get; set; }
     }
     public class InterviewerIds
     {
@@ -239,6 +242,7 @@ namespace Risebird.Entities.ViewModel
         public int NotScheduledCount { get; set; }
         public int ReScheduledCount { get; set; }
         public int FutureScheduledMeetings { get; set; }
+        public bool IsQCRequired { get; set; }
 
     }
     public class SkillCahnnelDetailsVM
