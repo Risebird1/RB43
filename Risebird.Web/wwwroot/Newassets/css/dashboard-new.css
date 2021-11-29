@@ -49,6 +49,9 @@ body {
     width: 40%;
     float: left;
 }
+.rightpad{
+    padding-right:7px;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
  /*   background: #fff!important;*/
 }
@@ -571,7 +574,9 @@ table tr td:hover, .table-striped tbody tr:hover {
     bottom: 130px !important;
     right: -400% !important;
 }
-
+.client .candidate-details .mtop-5 strong{
+line-height:25px;
+}
 .jumbotron {
     background: none !important;
     margin: 0px !important;
@@ -5962,12 +5967,12 @@ button .btn {
 
     .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
         width: 100% !important;
-        display: inline-table;
-        white-space: pre-wrap;
+        display: block;
+        white-space: initial;
     }
 
         .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
-            line-height: 6px;
+            line-height: 15px;
         }
 
     .candidate-hr .hrname {
@@ -6995,6 +7000,22 @@ button .btn {
         top: 6px;
         right: 95px;
     }
+    #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
+        margin-bottom: 10px;
+    }
+
+    .filter-note {
+        width: 210px !important;
+        right: 40% !important;
+        top: 40px !important;
+        line-height: 16px;
+    }
+    .support {
+        position: absolute;
+        left: auto;
+        right: 25px !important;
+        top: 12px !important;
+    }
 }
 
 @media (max-width: 360px) {
@@ -7032,8 +7053,7 @@ button .btn {
     .support {
         position: absolute;
         left: auto;
-        right: 131px !important;
-        top: 28px !important;
+       
     }
 
     .main-img-user {
