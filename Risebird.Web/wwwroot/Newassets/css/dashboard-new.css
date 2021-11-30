@@ -49,6 +49,9 @@ body {
     width: 40%;
     float: left;
 }
+.rightpad{
+    padding-right:7px;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
  /*   background: #fff!important;*/
 }
@@ -571,7 +574,9 @@ table tr td:hover, .table-striped tbody tr:hover {
     bottom: 130px !important;
     right: -400% !important;
 }
-
+.client .candidate-details .mtop-5 strong{
+line-height:25px;
+}
 .jumbotron {
     background: none !important;
     margin: 0px !important;
@@ -658,7 +663,11 @@ table tr td:hover, .table-striped tbody tr:hover {
             border-bottom: 0;
             font-size: 18px;
         }
-
+.tab-checkbox {
+    position: relative;
+    top: 4px;
+    left: -10px;
+}
 .interviewer .recommendation .multiselect .multiselect-selected-text {
     width: 98%;
     text-align: left;
@@ -5962,12 +5971,12 @@ button .btn {
 
     .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
         width: 100% !important;
-        display: inline-table;
-        white-space: pre-wrap;
+        display: block;
+        white-space: initial;
     }
 
         .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
-            line-height: 6px;
+            line-height: 15px;
         }
 
     .candidate-hr .hrname {
@@ -6252,7 +6261,7 @@ button .btn {
     }
     .support .divider-rm{display:none;}
     .mob_h {
-        width: auto !important
+        width: 63% !important
     }
 
     .single-video {
@@ -6432,7 +6441,7 @@ button .btn {
         margin-bottom: 10px;
     }
 
-  
+
 
     #calender {
         padding-left: 25px !important;
@@ -6545,7 +6554,11 @@ button .btn {
 
     .user.user-r {
         top: 4px;
-        right: 55px !important;
+        right: -259px !important;
+    }
+
+    .main-notification-title span {
+        top: 0px !important
     }
 
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
@@ -6561,8 +6574,49 @@ button .btn {
     .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
         top: 10px !important;
     }
-}
 
+    .divider-lm {
+        display: none;
+    }
+
+    .navbar .navbar-brand {
+        font-size: 10px;
+    }
+
+    .topbar-item {
+        top: 3px !important;
+        position: relative;
+        right: 0px !important;
+    }
+
+    .user.user-r .main-img-user {
+        top: -34px !important;
+    }
+    .tabCon .tab-main-box {
+        padding: 20px 10px;
+    }
+    .tab-main-box .col-md-4.col-sm-4 {
+        padding-right: 5px!important;
+        padding-left: 5px!important;
+    }
+    .tab-box label {
+        padding: 0px 0px 0px 5px !important;
+        font-size: 12px !important;
+    }
+
+    .tab-main-box .mdc-radio {
+        width: 13px!important;
+        height: 13px!important;
+    }
+    .tab-box .form-group {
+        margin-bottom: 0px !important;
+    }
+    #CalendlyLinkDiv {
+        position: relative;
+        top: -6px;
+    }
+    }
+}
 @media (max-width: 767px) {
     #clientduser li{
         width:100%;
@@ -6995,6 +7049,22 @@ button .btn {
         top: 6px;
         right: 95px;
     }
+    #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
+        margin-bottom: 10px;
+    }
+
+    .filter-note {
+        width: 210px !important;
+        right: 40% !important;
+        top: 40px !important;
+        line-height: 16px;
+    }
+    .support {
+        position: absolute;
+        left: auto;
+        right: 25px !important;
+        top: 12px !important;
+    }
 }
 
 @media (max-width: 360px) {
@@ -7032,8 +7102,7 @@ button .btn {
     .support {
         position: absolute;
         left: auto;
-        right: 131px !important;
-        top: 28px !important;
+       
     }
 
     .main-img-user {
