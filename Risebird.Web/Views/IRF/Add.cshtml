@@ -57,7 +57,7 @@
                                             <li><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a><span id="count_SkillGeneral" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-7" class="text-center" id="rtab-7">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
-                                            <li><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>
+                                            <li id="qc"><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>
                                             <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
                                             <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
@@ -98,28 +98,30 @@
 
 
                                                 <div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
-                                                    <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                                        <div class="mdc-radio mdc-radio--touch">
-                                                            <input class="mdc-radio__native-control" type="radio" id="link" name="link" value="UploadLink" checked onclick="RadioLinkChanged(this.value)">
-                                                            <div class="mdc-radio__background">
-                                                                <div class="mdc-radio__outer-circle"></div>
-                                                                <div class="mdc-radio__inner-circle"></div>
+                                                    <div>
+                                                        <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                            <div class="mdc-radio mdc-radio--touch">
+                                                                <input class="mdc-radio__native-control" type="radio" id="link" name="link" value="UploadLink" checked onclick="RadioLinkChanged(this.value)">
+                                                                <div class="mdc-radio__background">
+                                                                    <div class="mdc-radio__outer-circle"></div>
+                                                                    <div class="mdc-radio__inner-circle"></div>
+                                                                </div>
+                                                                <div class="mdc-radio__ripple"></div>
                                                             </div>
-                                                            <div class="mdc-radio__ripple"></div>
                                                         </div>
-                                                    </div>
-                                                    <label class="control-label  desp-label">Calendly Link </label>
-                                                    <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                        <div class="mdc-radio mdc-radio--touch">
-                                                            <input class="mdc-radio__native-control" type="radio" id="link1" name="link" value="SchedulingLink" onclick="RadioLinkChanged(this.value)">
-                                                            <div class="mdc-radio__background">
-                                                                <div class="mdc-radio__outer-circle"></div>
-                                                                <div class="mdc-radio__inner-circle"></div>
+                                                        <label class="control-label  desp-label">Calendly Link </label>
+                                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                            <div class="mdc-radio mdc-radio--touch">
+                                                                <input class="mdc-radio__native-control" type="radio" id="link1" name="link" value="SchedulingLink" onclick="RadioLinkChanged(this.value)">
+                                                                <div class="mdc-radio__background">
+                                                                    <div class="mdc-radio__outer-circle"></div>
+                                                                    <div class="mdc-radio__inner-circle"></div>
+                                                                </div>
+                                                                <div class="mdc-radio__ripple"></div>
                                                             </div>
-                                                            <div class="mdc-radio__ripple"></div>
                                                         </div>
+                                                        <label class="control-label  desp-label">Risebird Scheduler </label>
                                                     </div>
-                                                    <label class="control-label  desp-label">Risebird Scheduler </label>
                                                     <div class="form-group" style="display:block" id="CalendlyLinkDiv">
                                                         @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                         @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @id = "error_CalendlyLink", @class = "text-danger" })
@@ -181,7 +183,33 @@
 
 
                                                         </div>
-                                                        @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; " })
+                                                        @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-4 col-sm-4">
+
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+
+
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
+
+
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                          fill="none"
+                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+
+
+                                                        </div>
+                                                        @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
 
                                                 </div>
@@ -1262,10 +1290,12 @@
     function CheckQCRequired() {
         var value = document.getElementById("IsQCRequired").checked;
         if (value) {
+            document.getElementById('qc').style.display = "block";
             document.getElementById('rtab-9').style.display = "block";
             document.getElementById('count_qc').style.display = "block";
         }
         else {
+            document.getElementById('qc').style.display = "none";
             document.getElementById('rtab-9').style.display = "none";
             document.getElementById('count_qc').style.display = "none";
         }

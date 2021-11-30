@@ -62,7 +62,7 @@
                                             <li><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
                                             <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection!=null?@Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
-                                            <li><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
+                                            <li id="qc"><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
                                             <li><a href="#" id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>
                                             @*<li><a href="#" rel="tab-11" id="rtab-11" class="">Resume Evaluator</a></li>*@
                                             <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@Model.HRCollection.Count()</span></li>
@@ -242,7 +242,7 @@
 
 
                                                         </div>
-                                                        @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; " })
+                                                        @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
 
                                                 </div>
@@ -268,7 +268,7 @@
 
 
                                                         </div>
-                                                        @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; " })
+                                                        @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
                                                 </div>
                                             </div>
@@ -2382,10 +2382,12 @@
     function CheckQCRequired() {
         var value = document.getElementById("IsQCRequired").checked;
         if (value) {
+            document.getElementById('qc').style.display = "block";
             document.getElementById('rtab-9').style.display = "block";
             document.getElementById('count_qc').style.display = "block";
         }
         else {
+            document.getElementById('qc').style.display = "none";
             document.getElementById('rtab-9').style.display = "none";
             document.getElementById('count_qc').style.display = "none";
         }
