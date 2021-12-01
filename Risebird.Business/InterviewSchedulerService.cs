@@ -191,5 +191,17 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public bool UpdateSchedulingLinkDetails(string _uniqueid)
+        {
+            try
+            {
+                return _interviewSchedulerRepository.UpdateSchedulingLinkDetails(_uniqueid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
