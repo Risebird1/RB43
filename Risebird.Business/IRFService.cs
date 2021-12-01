@@ -28,9 +28,10 @@ namespace Risebird.Business
         private readonly ITwilioHelper _twilioHelper;
         private readonly ICalendlyHelper _calendlyHelper;
         private readonly ICandidateRepository _candidateRepository;
+        private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,6 +43,7 @@ namespace Risebird.Business
             _twilioHelper = twilioHelper;
             _calendlyHelper = calendlyHelper;
             _candidateRepository = candidateRepository;
+            _interviewSchedulerRepository = interviewSchedulerRepository;
         }
 
         #region IRF Functions
@@ -1062,8 +1064,21 @@ namespace Risebird.Business
                     //var staffingAgency = await _candidateRepository.GetCandidateStaffingAgency(candidate.id);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-                    string oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
-
+                    string oneTimeSchedulingLink = String.Empty;
+                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    {
+                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
+                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                        {
+                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        }
+                    }
+                    else
+                    {
+                        oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                    }
                     if (irf.BussinessType == "B2B")
                     {
                         //_notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
@@ -1080,7 +1095,14 @@ namespace Risebird.Business
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
                     _whatsapp.Header = client.Name;
-                    _whatsapp.Event = "Interview Schedule";
+                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    {
+                        _whatsapp.Event = "Interview Schedule Risebird";
+                    }
+                    else
+                    {
+                        _whatsapp.Event = "Interview Schedule";
+                    }
                     _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
                     if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
                     {
@@ -1891,7 +1913,22 @@ namespace Risebird.Business
                                {
                                    var candidate = _irfRepository.GetCandidateByIRF(irfId, candidateEmail).Result;
                                    string mailResult = string.Empty;
-                                   string oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                                   string oneTimeSchedulingLink = String.Empty;
+                                   if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                                   {
+                                       string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
+                                       var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                                       oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                       if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                                       {
+                                           oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                       }
+                                   }
+                                   else
+                                   {
+                                       oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                                   }
+
                                    if (irf.BussinessType == "B2B")
                                    {
                                        mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);

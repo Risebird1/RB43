@@ -52,8 +52,11 @@ body {
 .rightpad{
     padding-right:7px;
 }
+#divvideodetailsmodel .table > tbody > tr > th {
+    padding: 4px 5px!important;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
- /*   background: #fff!important;*/
+    /*   background: #fff!important;*/
 }
 
 #tab-1 .form-group input.form-control.text-box.single-line{margin-top:5px!important;}
@@ -2776,14 +2779,22 @@ table.journey td.cadSkill {
         top: -2px;
         margin: 0px 7px 0px 3px;
     }
-
-        #tblbodyCandidate .action .mdc-fab.record-btn .fa {
-            font-size: 15px;
-            color: #f4a5a5;
-            position: relative;
-            left: 0px;
-            top: -1px;
-        }
+.single-video-left .video-title [data-tooltip] {
+    top: 0px;
+}
+.video-title [data-tooltip]:before {
+    bottom: 150%!important;
+}
+.video-title [data-tooltip]:after {
+    bottom: 138%!important;
+}
+#tblbodyCandidate .action .mdc-fab.record-btn .fa {
+    font-size: 15px;
+    color: #f4a5a5;
+    position: relative;
+    left: 0px;
+    top: -1px;
+}
 
 #tblbodyCandidate .action {
     width: 235px;
@@ -5695,7 +5706,13 @@ button .btn {
     /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-    .video-title .candidate {
+    .single-video-left .video-title [data-tooltip] {
+        top: 15px;
+    }
+    .single-video-left .join-time {
+        width: 125px;
+    }
+        .video-title .candidate {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

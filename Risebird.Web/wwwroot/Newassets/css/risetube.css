@@ -1056,7 +1056,6 @@ textarea::-webkit-scrollbar-thumb {
     width: 100%;
     height: 406px;
     border: 2px #524c4cab solid;
-    margin-bottom: 10px;
 }
 
 .comment-area .talktext {
@@ -1759,7 +1758,7 @@ table {
 }
 
 .single-video {
-    margin-bottom: 15px;
+    margin-bottom: 0px;
 }
 
     .single-video .fa-check:before {

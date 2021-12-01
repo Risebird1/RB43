@@ -209,8 +209,8 @@
 
 
                                                             <td class="cadEmail">
-                                                                @*<a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>*@
-                                                                <span class="cname">  @item.EmailId</span>
+                                                                <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
+                                                               
 </td>
                                                                     }
 
@@ -1362,7 +1362,7 @@
                 if (data[i].emailId.length > 18) {
 
                     html += '  <td class="cadEmail">';
-                    html += ' <span class="cname"> ' + data[i].emailId +'</span>';
+                    html += ' <a onclick="" data-tooltip="'+ data[i].emailId +'"><span class="cname"> ' + data[i].emailId +'</span></a>';
                     html += '   </td>';
                 }
 

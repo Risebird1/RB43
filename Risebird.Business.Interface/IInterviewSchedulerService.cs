@@ -23,5 +23,6 @@ namespace Risebird.Business.Interface
         ScheculeInterviewIRFVM fetchIRFClientDetails(string IRFId);
         int AutoCreateEvent(daytimes_report model);
         int FetchEventidByUniqueid(string _uniqueid);
+        bool UpdateSchedulingLinkDetails(string _uniqueid);
     }
 }
