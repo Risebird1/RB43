@@ -121,6 +121,7 @@ namespace Risebird.Web.Controllers
                             filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
                             filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                             filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
+                            filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
 
                             model = model.Where(c =>
                                (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -130,7 +131,8 @@ namespace Risebird.Web.Controllers
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
-                          && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)).ToList();
+                          && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
+                          && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
 
                         }
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
@@ -164,6 +166,8 @@ namespace Risebird.Web.Controllers
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
+                        var _isleadinterviewer = from LeadInterviewerenum s in Enum.GetValues(typeof(LeadInterviewerenum))
+                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
@@ -174,6 +178,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
+                        ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
 
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
@@ -290,6 +295,7 @@ namespace Risebird.Web.Controllers
                         filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
                         filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                         filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
+                        filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
 
                         model = model.Where(c =>
                              (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -299,7 +305,9 @@ namespace Risebird.Web.Controllers
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
                            && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
                            && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
-                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)).ToList();
+                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
+                           && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
+
 
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in model)
@@ -321,6 +329,8 @@ namespace Risebird.Web.Controllers
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
+                        var _isleadinterviewer = from LeadInterviewerenum s in Enum.GetValues(typeof(LeadInterviewerenum))
+                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
@@ -331,7 +341,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
-
+                        ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
