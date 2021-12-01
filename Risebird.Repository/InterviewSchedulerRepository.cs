@@ -27,7 +27,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from ScheduleInterviewEvent";
+                var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<daytimes_report>(query, null);
@@ -133,7 +133,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and uniqueid=@uniqueid and IsActive=1";
+                var query = "Select * from ScheduleInterviewEvent sie where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -187,7 +187,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and uniqueid=@uniqueid and IsActive=1";
+                var query = "Select * From ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and SkillChannel in(Select SkillChannelRelation from ScheduleInterviewEvent where SkillChannel Is null and uniqueid=@uniqueid and Isnull(IsOnetimeUsed,0)=0) union Select * from ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -355,6 +355,58 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 return 0;
+            }
+        }
+        public bool UpdateSchedulingLinkDetails(string _uniqueid)
+        {
+            try
+            {
+                var query = "Update ScheduleInterviewEvent set IsOnetimeUsed=1 where Uniqueid=@uniqueid and IsActive=1";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@uniqueid", _uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dp);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public string GenerateOneTimeEvent(string olduniqueid)
+        {
+            try
+            {
+                daytimes_report resultset = new daytimes_report();
+                var query = "Select * from ScheduleInterviewEvent where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@uniqueid", olduniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<daytimes_report>(query, dp);
+                    resultset = (daytimes_report)results.FirstOrDefault();
+                }
+                Guid _guid = Guid.NewGuid();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EventName", resultset.EventName);
+                dynamicParameters.Add("@SkillChannel", resultset.SkillChannel);
+                dynamicParameters.Add("@StartDate", resultset.StartDate);
+                dynamicParameters.Add("@EndDate", resultset.EndDate);
+                dynamicParameters.Add("@duration", resultset.duration);
+                dynamicParameters.Add("@Uniqueid", _guid.ToString());
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var eventids = SqlMapper.Query<int>(con, "usp_GenerateOneTimeInterviewEvent", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    int eventid = eventids.FirstOrDefault();
+                    return _guid.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }

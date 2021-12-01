@@ -42,6 +42,7 @@ namespace Risebird.Web.Controllers
         private readonly ICalendlyHelper _calendlyHelper;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IIRFRepository _irfRepository;
+        private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
@@ -49,7 +50,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository)
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -66,6 +67,7 @@ namespace Risebird.Web.Controllers
             _clientService = clientService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _irfRepository = irfRepository;
+            _interviewSchedulerRepository = interviewSchedulerRepository;
         }
 
         [HttpGet]
@@ -3071,7 +3073,22 @@ namespace Risebird.Web.Controllers
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
-                string oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(result.irfIntId).Result;
+                string oneTimeSchedulingLink = String.Empty;
+                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                {
+                    string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
+                    var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                    oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                    if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                    {
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                    }
+                }
+                else
+                {
+                    oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(result.irfIntId).Result;
+                }
+
 
 
                 List<string> interviewers = new List<string>();
@@ -3087,7 +3104,14 @@ namespace Risebird.Web.Controllers
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
-                _whatsapp.Event = "Interview Reschedule Send";
+                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                {
+                    _whatsapp.Event = "Interview Reschedule Send Risebird";
+                }
+                else
+                {
+                    _whatsapp.Event = "Interview Reschedule Send";
+                }
                 _whatsapp.InterviewDate = result.interviewDate.ToString();
                 _whatsapp.Header = result.ClientName;
                 _whatsapp.MessageValue = result.JDTiltle;

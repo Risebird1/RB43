@@ -36,5 +36,6 @@ namespace Risebird.Entities.ViewModel
         public string[] OutSideIndiaRate { get; set; }
         public string[] CompanyType { get; set; }
         public string[] Domain { get; set; }
+        public string[] IsLeadInterviewer { get; set; }
     }
 }

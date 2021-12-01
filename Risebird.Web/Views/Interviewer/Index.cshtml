@@ -20,6 +20,7 @@
     string[] CompanyType = new string[] { };
     string[] Domain = new string[] { };
     string[] AssessmentGroup = new string[] { };
+    string[] IsLeadInterviewer = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters") != null)
 {
@@ -33,6 +34,7 @@
     CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
     Domain = filter.Domain != null ? filter.Domain : new string[] { };
     AssessmentGroup = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+    IsLeadInterviewer = filter.IsLeadInterviewer != null ? filter.IsLeadInterviewer : new string[] { };
 
 }
 
@@ -274,7 +276,25 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12 col-sm-12" style="position: relative; top: -40px;">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsLeadInterviewer">Is Lead Interviewer</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="IsLeadInterviewer" name="IsLeadInterviewer" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.IsLeadInterviewer)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-sm-12" style="position: relative;">
 
 
                                                         <div>
@@ -1710,6 +1730,12 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
+        $("#IsLeadInterviewer").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
         $("#IsIntrested").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
@@ -1741,6 +1767,7 @@
         var companyType =  @Html.Raw(Json.Serialize(CompanyType));
         var domain =  @Html.Raw(Json.Serialize(Domain));
         var assessmentGroup =  @Html.Raw(Json.Serialize(AssessmentGroup));
+        var isLeadInterviewer =  @Html.Raw(Json.Serialize(IsLeadInterviewer));
 
 
         $("#AssessmentGroup").val(AssessmentGrouparr);
@@ -1752,6 +1779,7 @@
         $("#CompanyType").val(companyType);
         $("#Domain").val(domain);
         $("#AssessmentGroup").val(assessmentGroup);
+        $("#IsLeadInterviewer").val(isLeadInterviewer);
     }
 
 
