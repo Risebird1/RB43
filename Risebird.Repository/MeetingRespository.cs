@@ -5154,5 +5154,22 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchCandidateMeetingsForReminders", null,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<UnassignedInterviewVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

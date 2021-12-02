@@ -1359,7 +1359,7 @@ namespace Risebird.Business
 
                                         }
                                     }
-                                    
+
                                 }
 
                             }
@@ -1390,7 +1390,7 @@ namespace Risebird.Business
                             if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
-                                
+
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
                                     if (!reportModel.IsQCRequired)
@@ -1410,7 +1410,7 @@ namespace Risebird.Business
                                             await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
                                         }
                                     }
-                                    
+
                                 }
 
                             }
@@ -3174,6 +3174,18 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder()
+        {
+            try
+            {
+                return await _meetingRespository.FetchCandidateMeetingsForReminder();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

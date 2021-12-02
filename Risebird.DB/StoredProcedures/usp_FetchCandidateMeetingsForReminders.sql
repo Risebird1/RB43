@@ -1,0 +1,34 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_FetchCandidateMeetingsForReminders'))
+BEGIN
+    DROP PROCEDURE dbo.usp_FetchCandidateMeetingsForReminders
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO              
+Create Procedure usp_FetchCandidateMeetingsForReminders
+As    
+BEGIN    
+--For 2 hr
+Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail,im.interviewDate,ul.FirstName,2 as Typefunction 
+From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId left join Userlist ul on ul.EmailId=im.candidateEmail
+where interviewDate>=dateadd(minute,420,GetDate()) and interviewDate<=dateadd(minute,450,GetDate()) and Isnull(IsCandidateResponsed,0)=1
+union all
+--For 6 hr
+Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail,im.interviewDate,ul.FirstName,6 as Typefunction  
+From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId left join Userlist ul on ul.EmailId=im.candidateEmail
+where interviewDate>=dateadd(minute,450,GetDate()) and interviewDate<=dateadd(minute,690,GetDate()) and Isnull(IsCandidateResponsed,0)=1
+union all
+--For 24 hr
+Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail,im.interviewDate,ul.FirstName,24 as Typefunction  
+From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId left join Userlist ul on ul.EmailId=im.candidateEmail
+where interviewDate>=dateadd(minute,690,GetDate()) and interviewDate<=dateadd(minute,1770,GetDate()) and Isnull(IsCandidateResponsed,0)=1
+END  
+Go
+  
+
+
+
+  
