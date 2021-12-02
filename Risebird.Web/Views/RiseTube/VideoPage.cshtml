@@ -527,7 +527,7 @@
                                                                         { <span></span>}
                                                                         &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
 
-                                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right mt-10" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
                                                                         @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
@@ -1091,7 +1091,7 @@
                                                                                 <div class="tab-pane tab_content" id="link3">
                                                                                     <div>
                                                                                         <div class="table-responsive-sm">
-                                                                                            <table class="table table-bordered mbn" id="SkillTable">
+                                                                                            <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="SkillTable">
                                                                                                 <thead>
                                                                                                     <tr>
                                                                                                         <th width="30%">Skill Name</th>
@@ -1155,7 +1155,7 @@
                                                                                             <div class="table-responsive-sm ">
                                                                                                 @if (Model.IreportModel.QuestionsList != null)
                                                                                                 {
-                                                                                                    <table class="table table-bordered mbn disQus" id="QuestionsTable">
+                                                                                                    <table class="table table-bordered mbn disQus" cellpadding="0" cellspacing="0" id="QuestionsTable">
                                                                                                         <thead>
                                                                                                             <tr>
                                                                                                                 <th width="40%">Questions</th>
@@ -1249,7 +1249,7 @@
                                                                                 <div id="link5" class="tab_content">
                                                                                     <div>
                                                                                         <div class="table-responsive-sm">
-                                                                                            <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                                                            <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="SkillGeneralTable">
                                                                                                 <thead>
                                                                                                     <tr>
                                                                                                         <th width="30%">Type</th>
@@ -1321,7 +1321,7 @@
                                                                                     <div>
                                                                                         <div class="table-responsive-sm">
 
-                                                                                            <table class="table table-bordered mbn" id="JoinabilityTable">
+                                                                                            <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="JoinabilityTable">
                                                                                                 <thead>
                                                                                                     <tr>
                                                                                                         <th width="30%">Type</th>
@@ -1393,7 +1393,7 @@
                                                                                     <div>
                                                                                         <div class="table-responsive-sm">
 
-                                                                                            <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                                                            <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="SelectabilityTable">
                                                                                                 <thead>
                                                                                                     <tr>
                                                                                                         <th width="30%">Type</th>

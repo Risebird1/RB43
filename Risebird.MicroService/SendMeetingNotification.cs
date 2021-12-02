@@ -5,6 +5,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
 
 namespace Risebird.MicroService
@@ -17,8 +18,9 @@ namespace Risebird.MicroService
         private readonly IDashboardService _dashboardService;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ICalendlyHelper _calendlyHelper;
+        private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
 
-        public SendMeetingNotification(IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ICalendlyHelper calendlyHelper)
+        public SendMeetingNotification(IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ICalendlyHelper calendlyHelper, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -26,6 +28,7 @@ namespace Risebird.MicroService
             _dashboardService = dashboardService;
             _whatsAppHelper = whatsAppHelper;
             _calendlyHelper = calendlyHelper;
+            _interviewSchedulerRepository = interviewSchedulerRepository;
         }
         [FunctionName("SendMeetingNotification")]
         public async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
@@ -143,8 +146,21 @@ namespace Risebird.MicroService
                     }
                     else if (item.EmailType == "Reschedule")
                     {
-                        string oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(item.irfId).Result;
-
+                        string oneTimeSchedulingLink = String.Empty;
+                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        {
+                            string stepfirst = item.CalendlyLink.Split("?")[item.CalendlyLink.Split("?").Length];
+                            var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                            {
+                                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            }
+                        }
+                        else
+                        {
+                            oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(item.irfId).Result;
+                        }
                         Mail _mail = new Mail
                         {
                             TO = item.candidateEmail,
@@ -154,7 +170,14 @@ namespace Risebird.MicroService
                         var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
-                        _whatsapp.Event = "Interview Reschedule";
+                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        {
+                            _whatsapp.Event = "Interview Reschedule Risebird";
+                        }
+                        else
+                        {
+                            _whatsapp.Event = "Interview Reschedule";
+                        }
                         if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
                             _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");

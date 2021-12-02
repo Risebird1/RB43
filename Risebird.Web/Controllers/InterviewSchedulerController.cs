@@ -205,6 +205,10 @@ namespace Risebird.Web.Controllers
             if (result != null && result.Count() > 0)
             {
                 model.InterviewChannelId = result.FirstOrDefault().SkillChannel;
+                if (String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
+                {
+                    model.InterviewChannelId = result.FirstOrDefault().SkillChannelRelation;
+                }
                 model.Uniqueid = result.FirstOrDefault().Uniqueid;
                 ViewBag.Start = 1;
                 model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
@@ -216,6 +220,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
+                model._IRFDetails = new ScheculeInterviewIRFVM();
                 ViewBag.Start = 3;
             }
             return View(model);
@@ -313,6 +318,7 @@ namespace Risebird.Web.Controllers
                 var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies);
                 if (result)
                 {
+                    var updatelinkDetails = _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                     string timezonevalue = string.Empty;
                     string hh = string.Empty;
                     var valuecheck = (-model.offset / 60);
