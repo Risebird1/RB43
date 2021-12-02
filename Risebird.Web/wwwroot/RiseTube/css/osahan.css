@@ -859,9 +859,17 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     text-decoration: none;
 }
-.video-title .candidate-name {
-    width:70px;
+.video-title .candidate {
+    position: relative;
+    top: 5px;
 }
+.commonpool .video-title .candidate {
+    position: relative;
+    top: 1px;
+}
+    .video-title .candidate-name {
+        width: 70px;
+    }
     .video-title {
     margin-bottom: 5px;
 }

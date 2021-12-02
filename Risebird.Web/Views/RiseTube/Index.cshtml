@@ -285,11 +285,11 @@
                                                                         {
                                                                             @if (@item.candidateName.Length > 10)
                                                                             {
-                                                                                <a class="pull-left"  href="#" data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName.Substring(0, 10)..</span> </a>
+                                                                                <a class="pull-left"  href="#" data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate" style="position:relative;top:1px;">@item.candidateName.Substring(0, 10)..</span> </a>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <span class="candidate pull-left">@item.candidateName</span>}
+                                                                                <span class="candidate pull-left" style="position:relative;top:1px;">@item.candidateName</span>}
 
                                                                         }
                                                                         else
