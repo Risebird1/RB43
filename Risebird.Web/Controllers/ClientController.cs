@@ -1253,6 +1253,10 @@ namespace Risebird.Web.Controllers
                         m.MeetingStatusStatusDesc = "Status Pending";
 
                     }
+                    else if (m.MeetingStatus.HasValue && (m.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || m.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || m.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                    {
+                        m.MeetingStatusStatusDesc = MeetingStatus.Completed.GetDescription();//"Completed"
+                    }
                 }
                 else
                 {

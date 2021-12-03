@@ -1472,6 +1472,10 @@
         else {
             document.getElementById('InterviewerComment').disabled = false;
             document.getElementById("interviewerComment_Error").innerHTML = "";
+            if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+                document.getElementById("InterviewStatus").disabled = true;
+
+            }
 
         }
         //$('.droprating option').wrap('<span>');
@@ -1898,7 +1902,21 @@
             document.getElementById("meetingStatus_Error").innerHTML = "";
         }
         if (value != 4) {
-            document.getElementById("InterviewStatus").value = '';
+            if (value == 6) {
+                //dropped but selected
+                document.getElementById("InterviewStatus").value = '2';
+            }
+            else if (value == 7) {
+                //dropped but rejected
+                document.getElementById("InterviewStatus").value = '3';
+            }
+            else if (value == 8) {
+                //dropped but borderline
+                document.getElementById("InterviewStatus").value = '4';
+            }
+            else {
+                document.getElementById("InterviewStatus").value = '';
+            }
             document.getElementById("InterviewStatus").disabled = true;
         }
         else {
