@@ -70,7 +70,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int? pageNumber)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -170,6 +170,23 @@ namespace Risebird.Web.Controllers
                         }
                         model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
+                    
+                    model.IRFFilterList = model.IRFList;
+                    if (model.IRFList != null && model.IRFList.Count() >= 0)
+                    {
+                        try
+                        {
+                            model.IRFList = model.IRFList.ToList().GetRange(0, 15);
+                        }
+                        catch (ArgumentException)
+                        {
+                            int maxIndex = model.IRFList.Count() - 1;
+                            int count = (maxIndex + 1);
+                            model.IRFList = model.IRFList.ToList().GetRange(0, count);
+
+                        }
+
+                    }
 
                     model.Profile = profileName;
                     return View(model);
@@ -267,8 +284,180 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     model.IRFList = irfList.OrderByDescending(x => x.EndDate).ToList();
+                    model.IRFFilterList = model.IRFList;
                     model.Profile = profileName;
+                    if (model.IRFList != null && model.IRFList.Count() >= 0)
+                    {
+                        try
+                        {
+                            model.IRFList = model.IRFList.ToList().GetRange(0, 15);
+                        }
+                        catch (ArgumentException)
+                        {
+                            int maxIndex = model.IRFList.Count() - 1;
+                            int count = (maxIndex + 1);
+                            model.IRFList = model.IRFList.ToList().GetRange(0, count);
+
+                        }
+
+                    }
+                    
                     return View(model);
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult IndexPartial(int? pageNumber)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
+                {
+                    var model = new IRFViewModel();
+                    var irfList = _irfService.GetAllIRFs(emailid, profileName);
+                    irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
+                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
+                    foreach (var item in model.IRFList)
+                    {
+                        if (item.IsPaused)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                            item.IRFStatus = "Paused";
+                        }
+                        else if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.IRFStatus = "Active";
+                        }
+                    }
+                    if (profileName != null && profileName.Contains("Client"))
+                    {
+                        model.IsClientUser = true;
+                    }
+
+                    if (TempData["SuccessErrorMessage"] != null)
+                    {
+                        model.Message = TempData["SuccessErrorMessage"].ToString();
+                        TempData.Remove("SuccessErrorMessage");
+                    }
+                    if (HttpContext.Session.GetString("IRFfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            model.IRFList = irfList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
+                        }
+                        else
+                        {
+                            model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
+                        }
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+                        filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray());
+                        filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray());
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientCompName).ToArray() : filter.ClientName = filter.ClientName;
+                        filter.EndClientName = filter.EndClientName ?? model.IRFList.Select(x => x.ClientName).ToArray();
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+
+                        model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                        && filter.RFID.Contains(c.IRFId)
+                        && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
+                        && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
+                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientCompName) : c.ClientCompName == null)
+                        && (filter.EndClientName.Count() > 0 ? filter.EndClientName.Contains(c.ClientName) : c.ClientName == null)
+                        && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
+
+                        if (model.IRFList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+                        {
+                            model.IRFList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                        }
+                        foreach (var item in model.IRFList)
+                        {
+                            if (item.IsPaused)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                                item.IRFStatus = "Paused";
+                            }
+
+                            else if (item.IsDeleted)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                item.IRFStatus = "Archived";
+                            }
+
+                            else if (item.EndDate >= DateTime.Now)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                                item.IRFStatus = "Active";
+                            }
+                            else
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                item.IRFStatus = "Archived";
+                            }
+                        }
+                        model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
+                    }
+                    if (pageNumber.HasValue)
+                    {
+                        if(model.IRFList != null && (model.IRFList.Count() >= (pageNumber.Value - 1) * 15))
+                        {
+                            try
+                            {
+                                model.IRFList = model.IRFList?.ToList().GetRange((pageNumber.Value - 1) * 15, 15);
+                            }
+                            catch (ArgumentException)
+                            {
+                                int maxIndex = model.IRFList.Count() - 1;
+                                int count = (maxIndex - ((pageNumber.Value - 1) * 15) + 1);
+                                model.IRFList = model.IRFList.ToList().GetRange((pageNumber.Value - 1) * 15, count);
+                            }
+                        }
+                        else
+                        {
+                            model.IRFList = null;
+                        }
+                    }
+                    else
+                    {
+                        if (model.IRFList != null && model.IRFList.Count() >= 0)
+                        {
+                            try
+                            {
+                                model.IRFList = model.IRFList.ToList().GetRange(0, 15);
+                            }
+                            catch (ArgumentException)
+                            {
+                                int maxIndex = model.IRFList.Count() - 1;
+                                int count = (maxIndex + 1);
+                                model.IRFList = model.IRFList.ToList().GetRange(0, count);
+
+                            }
+                        }
+                        
+                    }
+                    model.Profile = profileName;
+                    return PartialView("IRFIndexPartial", model);
 
                 }
                 else
