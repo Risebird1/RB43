@@ -128,6 +128,10 @@ namespace Risebird.Web.Controllers
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
                                     }
+                                    //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                    //{
+                                    //    item.MeetingStatusStatusDesc = "Completed";
+                                    //}
                                 }
                                 else
                                 {
@@ -211,6 +215,10 @@ namespace Risebird.Web.Controllers
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
                                     }
+                                    //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                    //{
+                                    //    item.MeetingStatusStatusDesc = "Completed";
+                                    //}
                                 }
                                 else
                                 {
@@ -311,6 +319,10 @@ namespace Risebird.Web.Controllers
                                 item.MeetingStatusStatusDesc = "Status Pending";
 
                             }
+                            //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                            //{
+                            //    item.MeetingStatusStatusDesc = "Completed";
+                            //}
                         }
                         else
                         {
@@ -906,6 +918,10 @@ namespace Risebird.Web.Controllers
                                     item.MeetingStatusStatusDesc = "Status Pending";
 
                                 }
+                                //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                //{
+                                //    item.MeetingStatusStatusDesc = "Completed";
+                                //}
                             }
                             else
                             {

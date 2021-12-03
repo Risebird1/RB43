@@ -48,6 +48,18 @@ namespace Risebird.Entities.Enum
         [Description("No Show(Interviewer)")]
         NoShowInterviewer = 5,
 
+        [Display(Name = "Dropped (Selected)")]
+        [Description("Dropped (Selected)")]
+        DroppedSelected = 6,
+
+        [Display(Name = "Dropped (Rejected)")]
+        [Description("Dropped (Rejected)")]
+        DroppedRejected = 7,
+
+        [Display(Name = "Dropped (Border Line)")]
+        [Description("Dropped (Border Line)")]
+        DroppedBorderLine = 8
+
     }
 
     public enum OfferStatus
