@@ -27,18 +27,45 @@
 
 @if (ViewBag.PageStatus == "PublicExternal")
 {
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+        .now-ui-icons.design_bullet-list-67:before {
+            display: none;
+        }
+    </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
 @if (ViewBag.PageStatus == "Public")
 {
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+        .sidebar .nav li{
+            display:none;
+        }
+        .now-ui-icons.design_bullet-list-67:before {
+            display: none;
+        }
+    </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
 @if (ViewBag.PageReport == "Insta")
 {
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+        .now-ui-icons.design_bullet-list-67:before {
+            display: none;
+        }
+    </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
