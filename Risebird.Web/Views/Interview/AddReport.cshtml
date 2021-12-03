@@ -31,7 +31,7 @@
 {
     <style>
         .sidebar-mini .sidebar:hover {
-            width: 80px!important;
+            width: 80px !important;
         }
     </style>
     <script>
@@ -44,6 +44,9 @@
         .sidebar-mini .sidebar:hover {
             width: 80px !important;
         }
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
     </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
@@ -55,12 +58,28 @@
         .sidebar-mini .sidebar:hover {
             width: 80px !important;
         }
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
     </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
-
+@if (ViewBag.PageReport == "PublicExternal")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
+    </style>
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
 <div class="main-panel" id="main-panel">
 
     <div class="loader text-center">
@@ -195,7 +214,9 @@
                                                 @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group" style="margin-bottom:0px;">
-                                                <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                <label class="text-danger" id="meetingStatus_Error" style="        color: red;
+        margin-left: 12px;
+        font-size: 12px"></label>
                                             </div>
                                             @*<div class="form-group">
                                                     @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -212,7 +233,7 @@
                                                 @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group" style="margin-bottom:0px;">
-                                                <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -255,7 +276,7 @@
 
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:0px;">
-                                                            <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                            <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                                         </div>
 
                                                     </div>

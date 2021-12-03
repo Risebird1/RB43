@@ -535,12 +535,12 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.AddInterviewerProfile(interviewerProfile).Result)
                         {
-                            TempData["MessageInterviewer"] = "Interviewer Profile is added Successfully";
+                            TempData["MessageInterviewer"] = "Interviewer Profile has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = "Interviewer Profile addition is Failed";
+                            TempData["MessageInterviewer"] = "Interviewer Profile addition has been Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -649,7 +649,7 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.EditInterviewerProfile(interviewerProfile).Result)
                         {
-                            TempData["MessageInterviewer"] = "Interviewer updated Successfully";
+                            TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
@@ -1165,12 +1165,12 @@ namespace Risebird.Web.Controllers
                         }
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {
-                            TempData["MyProfileMessage"] = "Profile updated Successfully";
+                            TempData["MyProfileMessage"] = "Profile has been updated Successfully!";
                             return RedirectToAction("MyProfile");
                         }
                         else
                         {
-                            TempData["MyProfileMessage"] = "Profile update failed";
+                            TempData["MyProfileMessage"] = "Failed to update Profile";
                             return RedirectToAction("MyProfile");
                         }
                     }
@@ -1901,7 +1901,7 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.AddInterviewerReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageLeadInterviewer"] = "Report saved Successfully";
+                            TempData["SuccessErrorMessageLeadInterviewer"] = "Report has been saved Successfully!";
                             return RedirectToAction("MyInterviewerAssessment");
                         }
                         else
@@ -2499,7 +2499,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (_interviewerService.InterviewerRecommendation(model).Result)
                         {
-                            TempData["MessageInterviewer"] = "Recommendation saved Successfully";
+                            TempData["MessageInterviewer"] = "Recommendation has been saved Successfully!";
                             return RedirectToAction("Index");
                         }
                         else

@@ -401,12 +401,8 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-
-
-
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
                                             </thead>
@@ -417,7 +413,6 @@
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
-
                                                     <th>JD Title</th>
                                                     <th>Zoom Link</th>
                                                     <th>Interviewer</th>
@@ -426,7 +421,6 @@
                                                     <th>Interview Status</th>
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
-
                                                     <th>Zoom ID</th>
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
@@ -448,12 +442,8 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-
-
-
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
                                             </tfoot>
@@ -642,7 +632,7 @@
                                                             int start = item.intervieweStatusStatDesc.IndexOf("(");
                                                             int end = item.intervieweStatusStatDesc.IndexOf(")");
                                                             @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
+                                                            <td class="text-center">@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
 
                                                         }
                                                         else if (item.InterviewStatus == 2 && item.QCStatus == null)
@@ -650,7 +640,7 @@
                                                             int start = item.intervieweStatusStatDesc.IndexOf("(");
                                                             int end = item.intervieweStatusStatDesc.IndexOf(")");
                                                             @*<td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
+                                                            <td class="text-center">@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
 
                                                         }
                                                         else if (item.QCStatus == 2 && item.InterviewStatus == 4)
@@ -692,7 +682,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <td>@item.intervieweStatusStatDesc</td>
+                                                            <td class="text-center">@item.intervieweStatusStatDesc</td>
                                                         }
                                                     }
 
