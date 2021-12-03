@@ -24,17 +24,22 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 @if (ViewBag.PageStatus == "Public")
-    {
-        <script>
-            document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
-        </script>
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageReport == "Insta")
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+<style>
+    .sidebar-mini .sidebar:hover {
+        width: 80px !important;
     }
-    @if (ViewBag.PageReport == "Insta")
-    {
-        <script>
-            document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
-        </script>
-    }
+</style>
 <div class="main-panel" id="main-panel">
 
     <div class="loader text-center">
