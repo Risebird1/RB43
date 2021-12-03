@@ -170,6 +170,8 @@ namespace Risebird.Web.Controllers
                         }
                         model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
+                    
+                    model.IRFFilterList = model.IRFList;
                     if (model.IRFList != null && model.IRFList.Count() >= 0)
                     {
                         try
@@ -282,6 +284,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     model.IRFList = irfList.OrderByDescending(x => x.EndDate).ToList();
+                    model.IRFFilterList = model.IRFList;
                     model.Profile = profileName;
                     if (model.IRFList != null && model.IRFList.Count() >= 0)
                     {
