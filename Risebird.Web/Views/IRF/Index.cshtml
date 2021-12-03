@@ -162,7 +162,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    @foreach (var item in Model.IRFFilterList.Select(x => x.JDTiltle).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -180,7 +180,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="EndClientName" name="EndClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.ClientName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -198,7 +198,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.SubscriptionStatus).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -223,7 +223,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.ClientCompName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -240,7 +240,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.IRFId).Distinct().ToList())
+                                                                    @foreach (var item in Model.IRFFilterList.Select(x => x.IRFId).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
