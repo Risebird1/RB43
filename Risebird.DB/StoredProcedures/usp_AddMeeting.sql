@@ -35,7 +35,8 @@ Create PROCEDURE [dbo].[usp_AddMeeting]
 @currentEmployerName varchar(200),
 @MobileNumber nvarchar(200),
 @QCInterviewer varchar(200),
-@zoomMeetingId bigint
+@zoomMeetingId bigint,
+@uniqueid varchar(50)
 AS
 Begin
 
@@ -139,7 +140,7 @@ Begin
 	--declare
 	--@profileId int = (select id from [Profile] where [Name]='Candidate')
 	
-	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber) values (@profileId, @candidateName, @candidateEmail, 1,@MobileNumber)
+	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber,uniqueid) values (@profileId, @candidateName, @candidateEmail, 1,@MobileNumber,@uniqueid)
 
 	declare 
 	@cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)
@@ -204,10 +205,6 @@ Else
 
 
 END
-
-
-
-
 GO
 
 

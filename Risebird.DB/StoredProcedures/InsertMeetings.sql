@@ -8,8 +8,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-  
 Create PROCEDURE [dbo].[InsertMeetings]    
 @IRFId varchar(200),    
 @interviewDate varchar(200),    
@@ -29,7 +27,8 @@ Create PROCEDURE [dbo].[InsertMeetings]
 @interviewOnDevice varchar(500),    
 @currentEmployerName varchar(200),    
 @textreminder nvarchar(200),    
-@zoomMeetingId bigint,    
+@zoomMeetingId bigint,  
+@uniqueid varchar(50),
 @interviewIdOutput int out    
 AS    
 Begin    
@@ -161,7 +160,7 @@ Begin
  --declare    
  --@profileId int = (select id from [Profile] where [Name]='Candidate')    
      
- Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber,WhatsappNumber) values (@profileId, @candidateName, @candidateEmail, 1,@textreminder,@WhatsApp)    
+ Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber,WhatsappNumber,uniqueid) values (@profileId, @candidateName, @candidateEmail, 1,@textreminder,@WhatsApp,@uniqueid)    
     
  declare     
  @cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)    
@@ -320,9 +319,7 @@ Else
 End    
     
 END    
-    
-    
-  
+      
 
 GO
 

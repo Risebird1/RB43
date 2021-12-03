@@ -19,7 +19,8 @@ Create PROCEDURE [dbo].[usp_AddInterviewer]
 @userEmailId varchar(150),      
 @userMobileNumber nvarchar(200),      
 @isApproved bit,
-@Heuristicsscore int
+@Heuristicsscore int,
+@uniqueid varchar(50)
       
 AS      
 Begin      
@@ -37,7 +38,8 @@ Begin Transaction
          ,[LastName]      
          ,[EmailId]      
          ,[IsActive]      
-         ,[MobileNumber]      
+         ,[MobileNumber] 
+		 ,[uniqueid]
          )      
         VALUES      
          (      
@@ -46,7 +48,8 @@ Begin Transaction
          ,@userLastName      
          ,@userEmailId      
          ,1      
-         ,@userMobileNumber      
+         ,@userMobileNumber,
+		 @uniqueid
          )      
       
     set @generatedUserId = SCOPE_IDENTITY();      
@@ -87,3 +90,4 @@ Begin Transaction
   End Catch      
       
 End      
+GO

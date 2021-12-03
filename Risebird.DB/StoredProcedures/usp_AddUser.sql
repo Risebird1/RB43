@@ -19,7 +19,8 @@ Create PROCEDURE [dbo].[usp_AddUser]
 @userLastName varchar(150),        
 @userEmailId varchar(150),        
 @userMobileNumber nvarchar(200),  
-@WhatsappNumber varchar(15)  
+@WhatsappNumber varchar(15),
+@uniqueid varchar(50)
         
 AS        
 Begin        
@@ -33,7 +34,8 @@ declare @generatedUserId int;
          ,[EmailId]        
          ,[IsActive]        
          ,[MobileNumber],  
-   [WhatsappNumber]  
+   [WhatsappNumber],
+   [uniqueid]
          )        
         VALUES        
          (        
@@ -43,7 +45,8 @@ declare @generatedUserId int;
          ,@userEmailId        
          ,1        
          ,@userMobileNumber,  
-   @WhatsappNumber  
+   @WhatsappNumber,
+   @uniqueid
          )     
     
  set @generatedUserId=SCOPE_IDENTITY()    

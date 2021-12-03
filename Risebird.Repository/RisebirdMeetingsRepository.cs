@@ -24,7 +24,7 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder,string staffingAgenecy)
+            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -78,7 +78,7 @@ namespace Risebird.Repository
 
                 SqlCommand cmd = new SqlCommand(
                     "InsertMeetings", conn);
-
+                Guid guid = Guid.NewGuid();
                 // 2. set the command object so it knows
                 // to execute a stored procedure
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -104,6 +104,7 @@ namespace Risebird.Repository
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));//
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));//
+                cmd.Parameters.Add(new SqlParameter("@uniqueid", guid.ToString()));
                 SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
                 outPutVal.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(outPutVal);

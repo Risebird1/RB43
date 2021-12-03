@@ -778,6 +778,7 @@ namespace Risebird.Repository
         {
             try
             {
+                Guid _guid = Guid.NewGuid();
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", meeting.IRFId); // Normal parametersmeters           
@@ -800,6 +801,7 @@ namespace Risebird.Repository
                 parameters.Add("@MobileNumber", meeting.MobileNumber);
                 parameters.Add("@QCInterviewer", meeting.QCInterviewer);
                 parameters.Add("@zoomMeetingId", meeting.ZoomMeetingId);
+                parameters.Add("@uniqueid", _guid.ToString());
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddMeeting", parameters,
@@ -2451,10 +2453,12 @@ namespace Risebird.Repository
                 var emails = Emailids.Split(";");
                 foreach (var item in emails)
                 {
+                    Guid _guid = Guid.NewGuid();
                     var parameters = new DynamicParameters();
                     parameters.Add("@Email", item);
                     parameters.Add("@VedioId", vedioid);
                     parameters.Add("@EmailAddress", Userid);
+                    parameters.Add("@uniqueid", _guid.ToString());
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioSharedetails", parameters,

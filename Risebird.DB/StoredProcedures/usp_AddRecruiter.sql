@@ -15,7 +15,8 @@ CREATE PROCEDURE [dbo].[usp_AddRecruiter]
 @LastName varchar(200),
 @EmailId varchar(200),
 @MobileNumber varchar(200),
-@Domain varchar(100)
+@Domain varchar(100),
+@uniqueid varchar(50)
 
 AS
 Begin
@@ -33,7 +34,8 @@ INSERT INTO [dbo].[UserList]
 		   LastLogout,
 		   IsActive,
 		   ImageURL,
-		   MobileNumber
+		   MobileNumber,
+		   uniqueid
            )
      VALUES
            (@ProfileId,
@@ -44,7 +46,8 @@ null,
 null,
 1,
 null,
-@MobileNumber
+@MobileNumber,
+@uniqueid
 )
 
 declare

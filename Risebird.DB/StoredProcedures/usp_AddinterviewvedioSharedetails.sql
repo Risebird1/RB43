@@ -12,7 +12,8 @@ GO
 Create Procedure [dbo].[usp_AddinterviewvedioSharedetails]    
 @Email varchar(max),    
 @VedioId int,  
-@EmailAddress varchar(100)  
+@EmailAddress varchar(100),
+@uniqueid varchar(50)
 AS    
 Begin    
 Declare @emailUser varchar(100)
@@ -26,7 +27,8 @@ Select @id= Id from UserList where EmailId=@Email
 select @Icount=Count(*) from UserList where EmailId=@Email    
 if(@Icount=0)  
 Begin  
-Insert into UserList values(@profileid,@emailUser,@emailUser,@Email,null,null,1,null,null) 
+Insert into UserList(idProfile,FirstName,LastName,EmailId,LastLogin,LastLogout,IsActive,uniqueid)
+values(@profileid,@emailUser,@emailUser,@Email,null,null,1,@uniqueid) 
 Select @id= Id from UserList where EmailId=@Email     
 Insert into tblsharedvideo values(@id,@VedioId,@EmailAddress,GETDATE())   
 END

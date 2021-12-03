@@ -19,6 +19,7 @@ Create PROCEDURE [dbo].[usp_AddClientUser]
 @UserPassword nvarchar(60),     
 @WhatsappNumber varchar(15), 
 @IsPasswordReset bit,
+@uniqueid varchar(50),
 @message varchar(100) OUTPUT)          
           
 AS          
@@ -32,8 +33,8 @@ Begin Try
           
   IF NOT EXISTS( SELECT 1 FROM [UserList] Where [EmailId] = @userEmailId)           
   BEGIN          
-   INSERT INTO [UserList] ([idProfile],[FirstName],[LastName],[EmailId],[IsActive],[MobileNumber],[UserPassword],[WhatsappNumber],[PasswordCreation])          
-          VALUES (4,@userFirstName,@userLastName,@userEmailId,1,@userMobileNumber,@UserPassword,@WhatsappNumber,GetDate() )          
+   INSERT INTO [UserList] ([idProfile],[FirstName],[LastName],[EmailId],[IsActive],[MobileNumber],[UserPassword],[WhatsappNumber],[PasswordCreation],[uniqueid])          
+          VALUES (4,@userFirstName,@userLastName,@userEmailId,1,@userMobileNumber,@UserPassword,@WhatsappNumber,GetDate(),@uniqueid )          
           
    set @generatedUserId = SCOPE_IDENTITY();          
           
@@ -60,7 +61,7 @@ Begin Catch
           
 End Catch          
           
-End          
+End           
 
 GO 
 

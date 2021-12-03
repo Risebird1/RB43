@@ -219,7 +219,11 @@ namespace Risebird.Repository
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
-
+            if (entity.Id == 0)
+            {
+                Guid _guid = Guid.NewGuid();
+                parameters.Add("@uniqueid", _guid.ToString());
+            }
             return parameters;
         }
 
@@ -404,9 +408,12 @@ namespace Risebird.Repository
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
 
+
             if (isAdd)
             {
+                Guid _guid = Guid.NewGuid();
                 parameters.Add("@IsPasswordReset", entity.IsPasswordReset);
+                parameters.Add("@uniqueid", _guid.ToString());
                 if (entity.SelectedClient.HasValue)
                     parameters.Add("@selectedClientId", entity.SelectedClient);
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
@@ -650,6 +657,7 @@ namespace Risebird.Repository
 
         private DynamicParameters SetStoredProcedureParameterForInterviewer(InterviewerVM entity)
         {
+            Guid _guid = Guid.NewGuid();
             var parameters = new DynamicParameters();
 
             if (entity.id > 0)
@@ -664,6 +672,7 @@ namespace Risebird.Repository
             parameters.Add("@userEmailId", entity.EmailId.Trim().ToLower());
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
+            parameters.Add("@uniqueid", _guid.ToString());
             return parameters;
         }
 
@@ -938,12 +947,14 @@ namespace Risebird.Repository
         {
             try
             {
+                Guid _guid = Guid.NewGuid();
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@FirstName", resumeEvaluator.FirstName);
                 parameters.Add("@LastName", resumeEvaluator.LastName);
                 parameters.Add("@EmailId", resumeEvaluator.EmailId.Trim().ToLower());
                 parameters.Add("@MobileNumber", resumeEvaluator.MobileNumber);
+                parameters.Add("@uniqueid", _guid.ToString());
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddResumeEvaluator", parameters,
@@ -1061,6 +1072,7 @@ namespace Risebird.Repository
         {
             try
             {
+                Guid _guid = Guid.NewGuid();
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@FirstName", recruiter.FirstName);
@@ -1068,6 +1080,7 @@ namespace Risebird.Repository
                 parameters.Add("@EmailId", recruiter.EmailId.Trim().ToLower());
                 parameters.Add("@MobileNumber", recruiter.MobileNumber);
                 parameters.Add("@Domain", recruiter.Domain);
+                parameters.Add("@uniqueid", _guid.ToString());
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddRecruiter", parameters,

@@ -224,6 +224,7 @@ namespace Risebird.Repository
 
         private DynamicParameters SetSPParametersForInterviewProfile(InterviewerProfileVM entity)
         {
+            Guid _guid = Guid.NewGuid();
             var parameters = new DynamicParameters();
             // For Add case, UserId will be null and for edit case, it will have some value
             parameters.Add("@UserId", entity.UserId);
@@ -267,6 +268,7 @@ namespace Risebird.Repository
             parameters.Add("@IndiaProductRate", entity.IndiaProductRate);
             parameters.Add("@OutsideIndiaServiceRate", entity.OutsideIndiaServiceRate);
             parameters.Add("@OutsideIndiaProductRate", entity.OutsideIndiaProductRate);
+            parameters.Add("@uniqueid", _guid.ToString());
 
             return parameters;
         }

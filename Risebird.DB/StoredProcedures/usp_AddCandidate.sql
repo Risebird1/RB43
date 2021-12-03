@@ -33,8 +33,8 @@ Create PROCEDURE [dbo].[usp_AddCandidate]
 @AvailableFreeLancing bit,  
 @ClientHRAttemptContact varchar(100),  
 @ProfileSource varchar(200),
-@WhatsappNumber varchar(15)
-    
+@WhatsappNumber varchar(15),
+@uniqueid varchar(50)    
 AS    
 Begin    
 declare    
@@ -52,7 +52,8 @@ INSERT INTO [dbo].[UserList]
      IsActive,    
      ImageURL,    
      MobileNumber,
-	 WhatsappNumber
+	 WhatsappNumber,
+	 uniqueid
            )    
      VALUES    
            (23,    
@@ -64,7 +65,8 @@ null,
 1,    
 null,    
 @Phone,
-@WhatsappNumber
+@WhatsappNumber,
+@uniqueid
 )    
     
 declare    

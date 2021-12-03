@@ -20,7 +20,8 @@ Create PROCEDURE [dbo].usp_AddQuickCandidate
 @date datetime,    
 @ClientHREmail varchar(200),    
 @ProfileSource varchar(200),   
-@WhatsappNumber varchar(15),  
+@WhatsappNumber varchar(15),
+@uniqueid varchar(50),
 @operationStatus varchar(200) out    
     
       
@@ -53,7 +54,8 @@ Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)
   IsActive,      
   ImageURL,      
   MobileNumber,  
-  WhatsappNumber)      
+  WhatsappNumber,
+  uniqueid)      
        
   VALUES      
   (23,      
@@ -65,7 +67,8 @@ Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)
   1,      
   null,      
   @Phone,  
-  @WhatsappNumber)      
+  @WhatsappNumber,
+  @uniqueid)      
       
   declare      
   @UserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)      
@@ -139,6 +142,7 @@ Begin
 End      
       
 END    
+GO
     
     
   

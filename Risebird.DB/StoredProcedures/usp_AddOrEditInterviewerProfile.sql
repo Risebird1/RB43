@@ -47,7 +47,8 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @IndiaServiceRate int,
 @IndiaProductRate int,
 @OutsideIndiaServiceRate int,
-@OutsideIndiaProductRate int
+@OutsideIndiaProductRate int,
+@uniqueid varchar(50)
           
 AS          
           
@@ -150,7 +151,8 @@ Declare @v_User_Id int;
    [IsActive],          
    [MobileNumber],    
    [UserPassword],  
-   [WhatsappNumber])          
+   [WhatsappNumber],
+   [uniqueid])          
              
        VALUES          
            (3,          
@@ -160,7 +162,8 @@ Declare @v_User_Id int;
    @IsActive,          
    @MobileNumber,    
    @UserPassword,  
-   @WhatsappNumber)        
+   @WhatsappNumber,
+   @uniqueid)        
           
  -- Collect the user ID from UserList tbl          
  Select @v_User_Id = id from [dbo].[UserList] where EmailId = @EmailId;          

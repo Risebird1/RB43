@@ -14,7 +14,8 @@ CREATE PROCEDURE [dbo].[usp_AddResumeEvaluator]
 @FirstName varchar(200),
 @LastName varchar(200),
 @EmailId varchar(200),
-@MobileNumber varchar(200)
+@MobileNumber varchar(200),
+@uniqueid varchar(50)
 
 AS
 Begin
@@ -32,7 +33,8 @@ INSERT INTO [dbo].[UserList]
 		   LastLogout,
 		   IsActive,
 		   ImageURL,
-		   MobileNumber
+		   MobileNumber,
+		   uniqueid
            )
      VALUES
            (@ProfileId,
@@ -43,7 +45,8 @@ null,
 null,
 1,
 null,
-@MobileNumber
+@MobileNumber,
+@uniqueid
 )
 
 declare
