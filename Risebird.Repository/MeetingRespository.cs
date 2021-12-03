@@ -5178,15 +5178,15 @@ namespace Risebird.Repository
                 string query = string.Empty;
                 if (status == 1)
                 {
-                    query = "Update InterviewMeetings set IsCandidateResponsed=1 where id=@meetingid";
+                    query = "Update im set IsCandidateResponsed=1 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 else
                 {
-                    query = "Update InterviewMeetings set IsCandidateResponsed=1,confirmationStatus=2 where id=@meetingid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
-                //dynamicParameters.Add("@uniqueid", uniqueid);
+                dynamicParameters.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query(query, dynamicParameters);
