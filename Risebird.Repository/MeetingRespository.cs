@@ -1424,7 +1424,7 @@ namespace Risebird.Repository
                         }
 
                     }
-                    
+
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
                     parametersPoints.Add("@Type", "Interview");
@@ -5169,6 +5169,34 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (status == 1)
+                {
+                    query = "Update InterviewMeetings set IsCandidateResponsed=1 where id=@meetingid";
+                }
+                else
+                {
+                    query = "Update InterviewMeetings set IsCandidateResponsed=1,confirmationStatus=2 where id=@meetingid";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                //dynamicParameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

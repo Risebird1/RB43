@@ -3188,6 +3188,25 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            try
+            {
+                if (_meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid))
+                {
+                    if (status == 2)
+                    {
+                        var result1 = _irfService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

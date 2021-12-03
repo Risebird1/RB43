@@ -12,5 +12,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime interviewDate { get; set; }
         public string FirstName { get; set; }
         public int Typefunction { get; set; }
+        public int candidateid { get; set; }
+        public string uniqueid { get; set; }
     }
 }

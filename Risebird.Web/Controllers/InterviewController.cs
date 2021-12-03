@@ -115,7 +115,7 @@ namespace Risebird.Web.Controllers
 
                             foreach (var item in modelList)
                             {
-                                if(item.IsQCRequired)
+                                if (item.IsQCRequired)
                                 {
                                     item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
                                 }
@@ -136,7 +136,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                                 //interview status
-                                if(item.IsQCRequired)
+                                if (item.IsQCRequired)
                                 {
                                     if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
                                     {
@@ -188,11 +188,11 @@ namespace Risebird.Web.Controllers
                         {
 
                             modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
-                            modelList = modelList.Select(x => 
-                            { 
+                            modelList = modelList.Select(x =>
+                            {
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
                                 //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; 
-                                x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); 
+                                x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
                                 //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; 
                                 return x;
                             }).ToList();
@@ -6503,6 +6503,18 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("PublicOpenInterview", new { emailid = emailid, id = uniqueid });
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            if (_meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId))
+            {
+                return Json("Successfully status updated");
+            }
+            else
+            {
+                return Json("Fail to Update Status, Please try again");
             }
         }
     }
