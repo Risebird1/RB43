@@ -1407,7 +1407,7 @@ namespace Risebird.Repository
                     {
                         parametersPoints.Add("@Points", 0);
                     }
-                    else if (reportDetails.MeetingStatus == 4)
+                    else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus==6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
                     {
                         int duration = reportDetails.VideoDuration;
                         if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
