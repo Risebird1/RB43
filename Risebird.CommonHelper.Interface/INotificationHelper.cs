@@ -74,5 +74,7 @@ namespace Risebird.CommonHelper.Interface
         string SendPasswordresetNotification(Mail model);
         string SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName);
         string SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink);
+        string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton);
+        string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton);
     }
 }

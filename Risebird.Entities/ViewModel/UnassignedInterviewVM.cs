@@ -14,5 +14,6 @@ namespace Risebird.Entities.ViewModel
         public int Typefunction { get; set; }
         public int candidateid { get; set; }
         public string uniqueid { get; set; }
+        public string staffingAgency { get; set; }
     }
 }
