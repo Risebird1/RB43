@@ -6510,6 +6510,10 @@ namespace Risebird.Web.Controllers
         {
             if (_meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId))
             {
+                if (status == 2)
+                {
+                    //send mail scheduling link
+                }
                 return Json("Successfully status updated");
             }
             else

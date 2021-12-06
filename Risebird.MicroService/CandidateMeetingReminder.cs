@@ -50,6 +50,10 @@ namespace Risebird.MicroService
                         //Send Call, WhatsApp and mail
                         //With Yes/No Button
                     }
+                    else if (item.Typefunction == 1)
+                    {
+                        //send cancelation mails
+                    }
                 }
                 catch (Exception ex)
                 {
