@@ -68,7 +68,7 @@ namespace Risebird.MicroService
                         _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
-                    else if (item.Typefunction == 6)
+                    else if (item.Typefunction == 6 || item.Typefunction == 24)
                     {
                         //Send Notifications
                         Mail _mail = new Mail
@@ -86,24 +86,24 @@ namespace Risebird.MicroService
                         _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
-                    else if (item.Typefunction == 24)
-                    {
-                        //Send Notifications
-                        Mail _mail = new Mail
-                        {
-                            TO = item.CandidateEmail,
-                            Subject = "Risebird: Interview Reminder"
-                        };
-                        var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton);
-                        //Send Call, WhatsApp and mail
-                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                        _whatsAppVM.Emailid = item.CandidateEmail;
-                        _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                        _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
-                        _whatsAppVM.Event = "Interview Reminder";
-                        _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
-                        //With Yes/No Button
-                    }
+                    //else if (item.Typefunction == 24)
+                    //{
+                    //    //Send Notifications
+                    //    Mail _mail = new Mail
+                    //    {
+                    //        TO = item.CandidateEmail,
+                    //        Subject = "Risebird: Interview Reminder"
+                    //    };
+                    //    var emailresult = _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton);
+                    //    //Send Call, WhatsApp and mail
+                    //    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                    //    _whatsAppVM.Emailid = item.CandidateEmail;
+                    //    _whatsAppVM.InterviewDate = item.interviewDate.ToString();
+                    //    _whatsAppVM.buttonlink = !String.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+                    //    _whatsAppVM.Event = "Interview Reminder";
+                    //    _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+                    //    //With Yes/No Button
+                    //}
                     else if (item.Typefunction == 1)
                     {
                         if (_meetingService.PublicCancelInterview(item.Interviewid))
