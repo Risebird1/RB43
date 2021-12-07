@@ -60,12 +60,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_generalskillService.AddGeneralSkillMatrix(model))
                         {
-                            TempData["SuccessErrorMessage"] = "General Skill is added Successfully";
+                            TempData["SuccessErrorMessage"] = "General Skill has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding General Skill  is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add General Skill!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -146,12 +146,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_generalskillService.UpdateGeneralSkillMatrix(skillUpdated))
                         {
-                            TempData["SuccessErrorMessage"] = "GeneralSkill is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "General Skill has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Updating GenralSkill is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to update General Skill!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -168,7 +168,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Updating GenearlSkill Level is Failed";
+                TempData["SuccessErrorMessage"] = "Failed to update General Skill Level!";
                 return View("Index");
             }
         }
@@ -182,12 +182,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_generalskillService.DeleteGeneralSkillMatrix(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Skill is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Skill has been deleted Successfully!";
                         return Json(new { url = Url.Action("Index", "GeneralSkill") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Skill!";
                         return Json(new { url = Url.Action("Index", "GeneralSkill") });
                     }
                 }
@@ -199,7 +199,7 @@ namespace Risebird.Web.Controllers
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
+                TempData["SuccessErrorMessage"] = "Failed to delete Skill!";
                 return RedirectToAction("Index");
             }
         }

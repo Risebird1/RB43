@@ -491,12 +491,12 @@ namespace Risebird.Web.Controllers
             }
             if (model == "Success")
             {
-                return Json("Payment paid Successfully");
+                return Json("Payment has been done  Successfully!");
                 // TempData["PaymentMessage"] = "Payment paid Successfully";
             }
             else
             {
-                return Json("Fail To pay the payment");
+                return Json("Failed to pay the payment");
                 //TempData["PaymentMessage"] = "Fail To pay the payment";
             }
 
@@ -590,7 +590,7 @@ namespace Risebird.Web.Controllers
             var result = "";
             if (model == "Success")
             {
-                result = "Advance Payment is done successfully.";
+                result = "Advance Payment has been done Successfully!";
                 Mail _mail = new Mail
                 {
                     TO = Interviewer,
@@ -610,7 +610,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                result = "Fail to done the advance payment.";
+                result = "Failed to done the advance payment.";
             }
             return Json(result);
         }

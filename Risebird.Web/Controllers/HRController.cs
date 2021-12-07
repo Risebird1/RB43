@@ -997,7 +997,7 @@ namespace Risebird.Web.Controllers
                     var result = await _meetingService.SaveHRComment(id, comment, uploadedFileURL, loggedInUser, candidateDetails);
                     if (result)
                     {
-                        TempData["SuccessErrorMessageHR"] = "HR comments saved Successfully!";
+                        TempData["SuccessErrorMessageHR"] = "HR comments has been saved Successfully!";
 
                     }
                     else
