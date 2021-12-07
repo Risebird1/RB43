@@ -162,7 +162,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    @foreach (var item in Model.IRFFilterList.Select(x => x.JDTiltle).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -180,7 +180,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="EndClientName" name="EndClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.ClientName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -198,7 +198,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.SubscriptionStatus).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -223,7 +223,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.ClientCompName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -240,7 +240,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.IRFId).Distinct().ToList())
+                                                                    @foreach (var item in Model.IRFFilterList.Select(x => x.IRFId).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -300,7 +300,7 @@
 
                             <div id="skill_card">
                                 <input id="skill_irf_count" type="hidden" value="@Model.IRFList.Count()" />
-                                <div class="row">
+                                <div class="row" id="irfTilesBody">
                                     @foreach (var item in Model.IRFList)
                                     {
                                         <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
@@ -939,44 +939,77 @@
 </div>
 
 <script>
-    function searchResult() {
-        $('#candidateTable').DataTable();
-    }
-    function RefreshSearch() {
-        $('#meeting').DataTable().destroy();
-        setTimeout(function () {
-            applyDataTable();
-        }, 100);
-    }
 
+    var currentPageNumber = 1;
     $(document).ready(function () {
-        applyDataTable();
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                currentPageNumber += 1;
+                loadPageData(currentPageNumber);
+            }
+        });
+
     });
-    function applyDataTable() {
+    function loadPageData(currentPageNumber) {
 
-        var table = $('#meeting').DataTable({
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
+        $.ajax({
+            url: '/IRF/IndexPartial',
+            data: { 'pageNumber': (currentPageNumber) },
+            method: 'GET',
+            success: function (response) {
+                if (response != null && response != '') {
+                    var irfTable = $('#irfTilesBody');
+                    irfTable.append(response);
+                }
+                
             }
         });
-        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
 
-        $(".dataTables_filter").keyup(function (e) {
-            if ($('#txtmeeting_filter').val() == "") {
-                $("#x").hide();
-            }
-            else {
-                $("#x").show();
-            }
-        });
-        $("#x").click(function (e) {
-            $(".dataTables_filter input").val('');
-            $(this).hide();
-            //searchResult();
-        });
+    }
 
-    };
+</script>
+
+
+<script>
+    //function searchResult() {
+    //    $('#candidateTable').DataTable();
+    //}
+    //function RefreshSearch() {
+    //    $('#meeting').DataTable().destroy();
+    //    setTimeout(function () {
+    //        applyDataTable();
+    //    }, 100);
+    //}
+
+    //$(document).ready(function () {
+    //    applyDataTable();
+    //});
+    //function applyDataTable() {
+
+    //    var table = $('#meeting').DataTable({
+    //        language: {
+    //            search: "_INPUT_",
+    //            searchPlaceholder: "Search records",
+    //        }
+    //    });
+    //    $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+    //    $(".dataTables_filter").keyup(function (e) {
+    //        if ($('#txtmeeting_filter').val() == "") {
+    //            $("#x").hide();
+    //        }
+    //        else {
+    //            $("#x").show();
+    //        }
+    //    });
+    //    $("#x").click(function (e) {
+    //        $(".dataTables_filter input").val('');
+    //        $(this).hide();
+    //        //searchResult();
+    //    });
+
+    //};
 
 
 

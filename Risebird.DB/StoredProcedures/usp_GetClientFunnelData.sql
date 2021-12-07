@@ -32,7 +32,7 @@ if(@roleId=1)
   join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)    
   left join InterviewComments ic on ic.InterviewId=im.id    
   left join QCFeedbackReport qcfr on qcfr.InterviewId =im.id    
-  where (ClientHrContact=@emailId  or ca.ClientHRAttemptContact =@emailId) and confirmationStatus=1 and ic.MeetingStatus=4   
+  where (ClientHrContact=@emailId  or ca.ClientHRAttemptContact =@emailId) and confirmationStatus=1 and ic.MeetingStatus in (4,6,7,8) 
   and DATEDIFF(DAY, im.interviewDate, @timeNow)<30  
     
    select    
@@ -72,7 +72,7 @@ else if(@roleId=4)
   join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)    
   left join InterviewComments ic on ic.InterviewId=im.id    
   left join QCFeedbackReport qcfr on qcfr.InterviewId =im.id    
-  where staffingAgency=@emailId and confirmationStatus=1 and ic.MeetingStatus=4  
+  where staffingAgency=@emailId and confirmationStatus=1 and ic.MeetingStatus in (4,6,7,8) 
   and DATEDIFF(DAY, im.interviewDate, @timeNow)<=30  
     
    select    
@@ -118,7 +118,7 @@ else
      join IRF on im.IRFId=irf.IRFId join UserList ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.UserId = ul.id join Candidate ca on (ca.CandidateMasterId= cm.id and ca.IRFId=irf.id)    
      left join InterviewComments ic on ic.InterviewId=im.id    
      left join QCFeedbackReport qcfr on qcfr.InterviewId =im.id    
-     where im.IRFId in (select id from @listofIRF) and confirmationStatus=1 and ic.MeetingStatus=4   
+     where im.IRFId in (select id from @listofIRF) and confirmationStatus=1 and ic.MeetingStatus in (4,6,7,8)   
   and DATEDIFF(DAY, im.interviewDate, @timeNow)<=30  
    select    
     

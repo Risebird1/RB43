@@ -1326,6 +1326,18 @@ namespace Risebird.Business
         {
             try
             {
+                if(reportModel.MeetingStatus == (int)MeetingStatus.DroppedSelected)
+                {
+                    reportModel.InterviewStatus = (int)InterviewStatus.Selected;
+                }
+                else if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedRejected)
+                {
+                    reportModel.InterviewStatus = (int)InterviewStatus.Rejected;
+                }
+                else if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedBorderLine)
+                {
+                    reportModel.InterviewStatus = (int)InterviewStatus.BorderLine;
+                }
                 var result = await _meetingRespository.AddInterviewReport(reportModel);
                 if (result)
                 {
@@ -1334,8 +1346,17 @@ namespace Risebird.Business
                     {
                         if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                         {
-                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
-                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed)
+                            string statusDesc = string.Empty;
+                            if(reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
+                            {
+                                statusDesc = MeetingStatus.Completed.GetDescription();
+                            }
+                            else
+                            {
+                                statusDesc = ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription();
+                            }
+                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
+                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
 
@@ -1381,13 +1402,22 @@ namespace Risebird.Business
                         {
                             if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                             {
-                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
+                                string statusDesc = string.Empty;
+                                if (reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
+                                {
+                                    statusDesc = MeetingStatus.Completed.GetDescription();
+                                }
+                                else
+                                {
+                                    statusDesc = ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription();
+                                }
+                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
 
                             }
                         }
                         if (reportModel.OldInterviewStatus != reportModel.InterviewStatus)
                         {
-                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed)
+                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
 

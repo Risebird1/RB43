@@ -455,11 +455,11 @@ namespace Risebird.Web.Controllers
                 var result = await _dashboardService.AddChannelRequest(model);
                 if (result == "Success")
                 {
-                    TempData["SuccessErrorMessageInterview"] = "Channel Request updated Successfully.";
+                    TempData["SuccessErrorMessageInterview"] = "Channel Request has been updated Successfully!";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterview"] = "Fail to update channel request.";
+                    TempData["SuccessErrorMessageInterview"] = "Failed to update channel request!";
                 }
                 return RedirectToAction("RequirementManagement");
             }
@@ -476,13 +476,13 @@ namespace Risebird.Web.Controllers
                         Subject = $"Risebird: a new Channel request is created for " + model.Client
                     };
                     var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Requester);
-                    TempData["SuccessErrorMessageInterview"] = "Channel Request added Successfully.";
-                    ViewBag.Message = "Channel Request updated Successfully.";
+                    TempData["SuccessErrorMessageInterview"] = "Channel Request has been added Successfully!";
+                    ViewBag.Message = "Channel Request has been updated Successfully!";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterview"] = "Fail to add channel request.";
-                    ViewBag.Message = "Fail to add channel request.";
+                    TempData["SuccessErrorMessageInterview"] = "Failed to add channel request!";
+                    ViewBag.Message = "Failed to add channel request.";
                 }
                 if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 {
@@ -664,22 +664,22 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.isEditable)
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Interviewer Updated Successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Interviewer has been updated Successfully!";
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Interviewer added Successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Interviewer has been added Successfully!";
                         }
                     }
                     else
                     {
                         if (model.isEditable)
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Fail to update interviewer.";
+                            TempData["SuccessErrorMessageInterview"] = "Failed to update interviewer!";
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Fail to add interviewer.";
+                            TempData["SuccessErrorMessageInterview"] = "Failed to add interviewer!";
                         }
                     }
                     return RedirectToAction("Interviewer", "DashBoard", new { id = model.Channelid });
@@ -827,7 +827,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (_dashboardService.AddChannelApprovedInterviewer(model.ChannelInterviewersCollection, model.ChannelId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer added Successfully";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer has been added Successfully!";
                             return RedirectToAction("AddInterviewerList", new { id = model.ChannelId, channelname = model.ChannelTitle });
                         }
                         else
@@ -916,11 +916,11 @@ namespace Risebird.Web.Controllers
                         {
                             if (status == "Approved")
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer approved Successfully.";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer has been approved Successfully!";
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer unapproved Successfully.";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer has been unapproved Successfully!";
                             }
 
                             return RedirectToAction("AddInterviewerList", new { id = channelid, channelname = channelName });

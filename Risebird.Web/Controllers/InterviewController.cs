@@ -128,6 +128,10 @@ namespace Risebird.Web.Controllers
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
                                     }
+                                    //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                    //{
+                                    //    item.MeetingStatusStatusDesc = "Completed";
+                                    //}
                                 }
                                 else
                                 {
@@ -211,6 +215,10 @@ namespace Risebird.Web.Controllers
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
                                     }
+                                    //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                    //{
+                                    //    item.MeetingStatusStatusDesc = "Completed";
+                                    //}
                                 }
                                 else
                                 {
@@ -311,6 +319,10 @@ namespace Risebird.Web.Controllers
                                 item.MeetingStatusStatusDesc = "Status Pending";
 
                             }
+                            //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                            //{
+                            //    item.MeetingStatusStatusDesc = "Completed";
+                            //}
                         }
                         else
                         {
@@ -906,6 +918,10 @@ namespace Risebird.Web.Controllers
                                     item.MeetingStatusStatusDesc = "Status Pending";
 
                                 }
+                                //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                //{
+                                //    item.MeetingStatusStatusDesc = "Completed";
+                                //}
                             }
                             else
                             {
@@ -1370,7 +1386,7 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = meeting.resumeLink;
                             if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                             {
-                                ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                ModelState.AddModelError(String.Empty, "Resume Upload has been failed.");
                                 SetAddUpdateMeetingParameters(meeting);
                                 return View("Add", meeting);
                             }
@@ -1380,12 +1396,12 @@ namespace Risebird.Web.Controllers
                                 meeting.candidateEmail = meeting.candidateEmail.ToLower();
                                 if (_meetingService.AddMeeting(meeting))
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
+                                    TempData["SuccessErrorMessageInterview"] = "Meeting has been added Successfully!";
                                     return RedirectToAction("Index");
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
+                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting";
                                     return RedirectToAction("Index");
                                 }
                             }
@@ -1410,7 +1426,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
+                TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting.";
                 return RedirectToAction("Index");
             }
         }
@@ -1561,7 +1577,7 @@ namespace Risebird.Web.Controllers
                                     if (uploadedFileURL == null)
                                     {
                                         var model = new AddUpdateMeetingVM();
-                                        ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                        ModelState.AddModelError(String.Empty, "Resume Upload has been Failed.");
                                         SetAddUpdateMeetingParameters(model);
                                         return View("Edit", model);
 
@@ -1584,12 +1600,12 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated successfully";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated Successfully!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has Failed";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Failed to update Meeting.";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
 
                             }
@@ -1613,7 +1629,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has Failed";
+                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has been Failed";
                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
             }
         }
@@ -3272,7 +3288,7 @@ namespace Risebird.Web.Controllers
                                     string uploadedvideoFileURL = blob.Uri.ToString();
                                     if (uploadedvideoFileURL == null)
                                     {
-                                        ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                        ModelState.AddModelError(String.Empty, "Video Upload has been Failed.");
                                         GetStatusList(interviewComments);
                                         //return View("InterviewComments", interviewComments);
                                     }
@@ -3286,12 +3302,12 @@ namespace Risebird.Web.Controllers
 
                             if (_meetingService.UpdateComments(interviewComments, emailid))
                             {
-                                TempData["SuccessErrorMessageInterviewComment"] = "Comments added Successfully";
+                                TempData["SuccessErrorMessageInterviewComment"] = "Comments has been added Successfully!";
                                 return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Comments add failed";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments.";
                                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
                             }
                         }
@@ -3316,7 +3332,7 @@ namespace Risebird.Web.Controllers
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                TempData["SuccessErrorMessageInterview"] = "Comments add failed";
+                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments.";
                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
             }
         }
@@ -3413,12 +3429,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_meetingService.UnassignYourself(id, email.ToLower(), isPenalty))
                         {
-                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
+                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment has been done Successfully!";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                            TempData["SuccessErrorMessageMyInterview"] = "Sorry! Could not unassign!";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
                         }
                     }
@@ -3436,7 +3452,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                TempData["SuccessErrorMessageMyInterview"] = "Sorry! Could not unassign!";
                 return RedirectToAction("MyInterview");
             }
         }
@@ -3752,7 +3768,7 @@ namespace Risebird.Web.Controllers
                                 _whatsAppVM.Event = "Feedback Remainder";
                                 _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
-                            TempData["SuccessErrorMessageInterview"] = "Report saved successfully";
+                            TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
                             if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
@@ -3999,7 +4015,7 @@ namespace Risebird.Web.Controllers
             var result = _meetingService.PostApproval(imid, value, comment);
             if (result)
             {
-                TempData["SuccessErrorMessage"] = "Saved Successfully";
+                TempData["SuccessErrorMessage"] = "Saved Successfully!";
 
             }
             else
@@ -4019,7 +4035,7 @@ namespace Risebird.Web.Controllers
                 var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP, emailid);
                 if (result)
                 {
-                    TempData["SuccessErrorMessage"] = "Saved Successfully";
+                    TempData["SuccessErrorMessage"] = "Saved Successfully!";
 
                 }
                 else
@@ -4044,7 +4060,7 @@ namespace Risebird.Web.Controllers
             var result = _meetingService.SaveQCFeedback(imid, qcStatus, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled, oldQcStatus, emailid);
             if (result)
             {
-                TempData["SuccessErrorMessage"] = "Saved Successfully";
+                TempData["SuccessErrorMessage"] = "Saved Successfully!";
 
             }
             else
@@ -4124,7 +4140,7 @@ namespace Risebird.Web.Controllers
             var result = _meetingService.PostSelectionStatus(imid, value, comment);
             if (result)
             {
-                TempData["SuccessErrorMessageInterview"] = "Saved Successfully";
+                TempData["SuccessErrorMessageInterview"] = "Saved Successfully!";
 
             }
             else
@@ -4979,7 +4995,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Audio verification failed.";
+                TempData["SuccessErrorMessageInterview"] = "Audio verification has been Failed.";
                 return RedirectToAction("Index");
             }
         }
@@ -5068,7 +5084,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Audio verification failed.";
+                TempData["SuccessErrorMessage"] = "Audio verification has been Failed.";
                 return RedirectToAction("MyInterview");
             }
         }
@@ -5180,7 +5196,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (await _meetingService.DeleteInterview(id))
                     {
-                        TempData["SuccessErrorMessageUser"] = "Interview is deleted Successfully";
+                        TempData["SuccessErrorMessageUser"] = "Interview has been deleted Successfully!";
                         if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
@@ -5188,7 +5204,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageUser"] = "Delete Interview Failed";
+                        TempData["SuccessErrorMessageUser"] = "Failed to delete Interview";
                         if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
@@ -5207,7 +5223,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUser"] = "Delete Interview Failed";
+                TempData["SuccessErrorMessageUser"] = "Failed to delete Interview";
                 if (controllerName == "IRF")
                     return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                 else
@@ -5301,7 +5317,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Broadcast failed.";
+                TempData["SuccessErrorMessageInterview"] = "Broadcast has been Failed.";
                 return RedirectToAction("Index");
             }
         }
@@ -5557,7 +5573,7 @@ namespace Risebird.Web.Controllers
                 Subject = $"Risebird: {email} Interview video is shared with you"
             };
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, name, currenturl);
-            if (result.Contains("Mail sent successfully"))
+            if (result.Contains("Mail has been sent Successfully!"))
             {
                 return Json("Success");
             }
@@ -5712,7 +5728,7 @@ namespace Risebird.Web.Controllers
 
                     await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
-                    TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
+                    TempData["SuccessErrorMessageInterview"] = "Sentiment analysis has been started Successfully!";
                 }
                 else
                 {
@@ -5856,13 +5872,13 @@ namespace Risebird.Web.Controllers
             _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
             _whatsAppVM.Event = "Feedback Remainder";
             _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
-            if (emailsend == "Mail sent Successfully.")
+            if (emailsend == "Mail has been sent Successfully!")
             {
-                return Json("Feedback Form Send Successfully");
+                return Json("Feedback Form has been sent Successfully!");
             }
             else
             {
-                return Json("Fail to send feedback form, please try again.");
+                return Json("Failed to send feedback form, please try again.");
             }
         }
 
@@ -6118,7 +6134,7 @@ namespace Risebird.Web.Controllers
                             HttpClient httpClient = new HttpClient();
                             await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
-                            TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction("Index");
 
                         }
@@ -6133,7 +6149,7 @@ namespace Risebird.Web.Controllers
                             modelData.KeyWords = model.KeyWords;
 
                             await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
-                            TempData["SuccessErrorMessageInterview"] = "Keywords updated successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Keywords updated successfully!";
 
                             return RedirectToAction("Index");
                         }
@@ -6155,7 +6171,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
+                TempData["SuccessErrorMessageInterview"] = "Failed to upload Audio.";
                 return RedirectToAction("Index");
             }
         }

@@ -44,7 +44,7 @@ BEGIN
 			begin
 			 set @updatedPoints = 0
 			end
-	   Else if(@meetingStatus=4 and (@interviewStatus=3 or @interviewStatus=1))
+	   Else if((@meetingStatus=4 or @meetingStatus=7)and (@interviewStatus=3 or @interviewStatus=1))
 			Begin
 				if(@videoDuration=0)
 					Begin
@@ -59,7 +59,7 @@ BEGIN
 						set @updatedPoints=Round((@videoDuration*@perSuccessRate)/60, 0)
 					End
 			End
-		Else if(@meetingStatus=4 and (@interviewStatus=2 or @interviewStatus=4))
+		Else if((@meetingStatus=4 or @meetingStatus=6 or @meetingStatus=8) and (@interviewStatus=2 or @interviewStatus=4))
 			Begin
 				if(@videoDuration>=60)
 					begin

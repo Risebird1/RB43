@@ -26,25 +26,50 @@
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-@if (ViewBag.PageStatus == "PublicExternal")
-{
-    <script>
-        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
-    </script>
-}
+
+
 @if (ViewBag.PageStatus == "Public")
 {
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
+    </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
 @if (ViewBag.PageReport == "Insta")
 {
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
+    </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
-
+@if (ViewBag.PageReport == "PublicExternal")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+        .sidebar .navbar-minimize .btn {
+            display: none !important
+        }
+    </style>
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
 <div class="main-panel" id="main-panel">
 
     <div class="loader text-center">
@@ -179,7 +204,9 @@
                                                 @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group" style="margin-bottom:0px;">
-                                                <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                <label class="text-danger" id="meetingStatus_Error" style="        color: red;
+        margin-left: 12px;
+        font-size: 12px"></label>
                                             </div>
                                             @*<div class="form-group">
                                                     @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -196,7 +223,7 @@
                                                 @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                             </div>
                                             <div class="form-group" style="margin-bottom:0px;">
-                                                <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -239,7 +266,7 @@
 
                                                         </div>
                                                         <div class="form-group" style="margin-bottom:0px;">
-                                                            <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                            <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                                         </div>
 
                                                     </div>
@@ -488,7 +515,7 @@
                                                                 <td>
                                                                     @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
                                                                     {
-                                                                    <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId })" target="_blank"><input type="text" class="select-css form-control text-box single-line" /></a>
+                                                                        <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId })" target="_blank"><input type="text" class="select-css form-control text-box single-line" /></a>
                                                                     }
                                                                     else
                                                                     {
@@ -1456,6 +1483,10 @@
         else {
             document.getElementById('InterviewerComment').disabled = false;
             document.getElementById("interviewerComment_Error").innerHTML = "";
+            if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+                document.getElementById("InterviewStatus").disabled = true;
+
+            }
 
         }
         //$('.droprating option').wrap('<span>');
@@ -1882,7 +1913,21 @@
             document.getElementById("meetingStatus_Error").innerHTML = "";
         }
         if (value != 4) {
-            document.getElementById("InterviewStatus").value = '';
+            if (value == 6) {
+                //dropped but selected
+                document.getElementById("InterviewStatus").value = '2';
+            }
+            else if (value == 7) {
+                //dropped but rejected
+                document.getElementById("InterviewStatus").value = '3';
+            }
+            else if (value == 8) {
+                //dropped but borderline
+                document.getElementById("InterviewStatus").value = '4';
+            }
+            else {
+                document.getElementById("InterviewStatus").value = '';
+            }
             document.getElementById("InterviewStatus").disabled = true;
         }
         else {
@@ -2110,7 +2155,6 @@
                     div.className = "word";
                     div.innerHTML = obj.corrections[key][0];
                     div.orig = key;
-
                     div.onmouseover = function () {
                         var start = input.value.indexOf(this.orig);
                         input.selectionStart = start;

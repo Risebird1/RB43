@@ -146,12 +146,12 @@ namespace Risebird.Web.Controllers
                         }
                         if (_clientService.AddClient(client))
                         {
-                            TempData["SuccessErrorMessage"] = "Client added Successfully";
+                            TempData["SuccessErrorMessage"] = "Client has been added Successfully!";
                             return RedirectToAction("List");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Failed to add client!";
+                            TempData["SuccessErrorMessage"] = "Failed to add Client.";
                             return RedirectToAction("List");
                         }
                     }
@@ -242,12 +242,12 @@ namespace Risebird.Web.Controllers
                         }
                         if (_clientService.UpdateClient(client))
                         {
-                            TempData["SuccessErrorMessage"] = "Client is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Client has been updated Successfully!";
                             return RedirectToAction("List");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Client is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Client.";
                             return RedirectToAction("List");
                         }
                     }
@@ -278,12 +278,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_clientService.DeleteClient(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Client is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Client has been deleted Successfully!";
                         return Json(new { url = Url.Action("List", "Client") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deleting Client is Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Client.";
                         return Json(new { url = Url.Action("List", "Client") });
                     }
                 }
@@ -456,11 +456,11 @@ namespace Risebird.Web.Controllers
                     var result = _clientService.AddClientJd(model._clientjddetails);
                     if (result != "")
                     {
-                        TempData["SuccessErrorMessageInterviewer"] = "Client Jd is created Successfully";
+                        TempData["SuccessErrorMessageInterviewer"] = "Client Jd has been created Successfully!";
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageInterviewer"] = "Client Jd creation is Failed";
+                        TempData["SuccessErrorMessageInterviewer"] = "Failed to create Client Jd.";
                     }
                     if (result == "Success")
                     {
@@ -521,11 +521,11 @@ namespace Risebird.Web.Controllers
                 var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList(), model.candidateProfile);
                 if (result != "")
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Candidate is Updated Successfully";
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate has been updated Successfully!";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Candidate update is Failed";
+                    TempData["SuccessErrorMessageInterviewer"] = "Failed to update Candidate.";
                 }
                 if (model.candidateProfile == "AddCandidate")
                 {
@@ -804,11 +804,11 @@ namespace Risebird.Web.Controllers
                 var result = _clientService.ResetCandidate(Clientjdid, candidateEmail, emailid);
                 if (result != "")
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Candidate reset Successfully";
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate has been reset Successfully!";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Candidate reset is Failed";
+                    TempData["SuccessErrorMessageInterviewer"] = "Failed to reset Candidate.";
                 }
                 return RedirectToAction("CandidateJDScore", "Client", new { id = Clientjdid });
 
@@ -1252,6 +1252,10 @@ namespace Risebird.Web.Controllers
                     {
                         m.MeetingStatusStatusDesc = "Status Pending";
 
+                    }
+                    else if (m.MeetingStatus.HasValue && (m.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || m.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || m.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                    {
+                        m.MeetingStatusStatusDesc = MeetingStatus.Completed.GetDescription();//"Completed"
                     }
                 }
                 else
@@ -3783,7 +3787,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
                         {
-                            return Json("Invitation sent successfully!");
+                            return Json("Invitation has been sent Successfully!");
                         }
                         else
                         {
