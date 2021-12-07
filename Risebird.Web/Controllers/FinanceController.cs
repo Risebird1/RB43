@@ -1530,5 +1530,36 @@ namespace Risebird.Web.Controllers
             }
             return Json(new { result = model/*, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds */});
         }
+        [HttpGet]
+        public async Task<IActionResult> CustomerDetails()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var model = await _meetingService.FetchCustomerDetails();
+                    foreach (var item in model)
+                    {  if (item.JobCountry.ToUpper() == "INDIA" || item.JobCountry == "1") 
+                            {
+                                item.JobCountry = "INDIA";
+                            }
+                            else { item.JobCountry = "OUTSIDE INDIA"; }
+                      
+                        item.CompanyType=!String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

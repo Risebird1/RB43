@@ -207,12 +207,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Request Created Successfully.";
+                                TempData["SuccessErrorMessageInterview"] = "Request has been Created Successfully!";
                                 return RedirectToAction("InstaIRF");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to Create request.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to Create request!";
                                 return RedirectToAction("InstaIRF");
                             }
 
@@ -355,12 +355,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Request updated Successfully.";
+                                TempData["SuccessErrorMessageInterview"] = "Request has been updated Successfully!";
                                 return RedirectToAction("InstaIRF");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to update the request.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to update the request!";
                                 return RedirectToAction("InstaIRF");
                             }
 
@@ -636,12 +636,12 @@ namespace Risebird.Web.Controllers
                                 meeting.ResumeLink = uploadedFileURL;
                                 if (_instaInterviewService.AddInstaMeeting(meeting))
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
+                                    TempData["SuccessErrorMessageInterview"] = "Meeting has been added Successfully!";
                                     return RedirectToAction("Index", new { id = meeting.RequestId });
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
+                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting!";
                                     return RedirectToAction("Index", new { id = meeting.RequestId });
                                 }
                             }
@@ -767,12 +767,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.UpdateInstaMeeting(meetingUpdated))
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated successfully";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated Successfully!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.id });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has Failed";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Failed to update Meeting!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.id });
                             }
                         }
