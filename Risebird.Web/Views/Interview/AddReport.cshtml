@@ -27,17 +27,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-@if (ViewBag.PageStatus == "PublicExternal")
-{
-    <style>
-        .sidebar-mini .sidebar:hover {
-            width: 80px !important;
-        }
-    </style>
-    <script>
-        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
-    </script>
-}
+
 @if (ViewBag.PageStatus == "Public")
 {
     <style>
@@ -2165,7 +2155,6 @@
                     div.className = "word";
                     div.innerHTML = obj.corrections[key][0];
                     div.orig = key;
-
                     div.onmouseover = function () {
                         var start = input.value.indexOf(this.orig);
                         input.selectionStart = start;

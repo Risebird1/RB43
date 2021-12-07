@@ -223,12 +223,12 @@ namespace Risebird.Web.Controllers
                     //profileName = profileName.Replace("\"", "");
                     if (_accountService.AddAccount(model).Result)
                     {
-                        TempData["SuccessErrorMessageAccount"] = "Account added Successfully";
+                        TempData["SuccessErrorMessageAccount"] = "Account has been added Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageProject"] = "Adding Account has Failed";
+                        TempData["SuccessErrorMessageProject"] = "Failed to add Account!";
                         return RedirectToAction("Index");
                     }
 
@@ -241,7 +241,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageProject"] = "Adding Account has failed";
+                TempData["SuccessErrorMessageProject"] = "Failed to add Account!";
                 return RedirectToAction("Index");
             }
         }
@@ -275,12 +275,12 @@ namespace Risebird.Web.Controllers
                     //profileName = profileName.Replace("\"", "");
                     if (_accountService.UpdateAccount(model))
                     {
-                        TempData["SuccessErrorMessageAccount"] = "Account edited Successfully";
+                        TempData["SuccessErrorMessageAccount"] = "Account has been edited Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageAccount"] = "Editing Account has Failed";
+                        TempData["SuccessErrorMessageAccount"] = "Failed to edit Account!";
                         return RedirectToAction("Index");
                     }
 
@@ -293,7 +293,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageAccount"] = "Editing Account has failed";
+                TempData["SuccessErrorMessageAccount"] = "Failed to edit Account!";
                 return RedirectToAction("Index");
             }
         }
@@ -312,7 +312,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (_accountService.ArchiveAccount(id).Result)
                         {
-                            TempData["SuccessErrorMessageAccount"] = "Account archived Successfully.";
+                            TempData["SuccessErrorMessageAccount"] = "Account has been archived Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
@@ -354,12 +354,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_accountService.UnArchiveAccount(id).Result)
                         {
-                            TempData["SuccessErrorMessageAccount"] = "Account restored Successfully";
+                            TempData["SuccessErrorMessageAccount"] = "Account has been restored Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageAccount"] = "Account restore Failed";
+                            TempData["SuccessErrorMessageAccount"] = "Failed to restore Account!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -376,7 +376,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageAccount"] = "Account restore Failed";
+                TempData["SuccessErrorMessageAccount"] = "Failed to restore Account!";
                 return RedirectToAction("Index");
             }
 
@@ -580,12 +580,12 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
-                        TempData["MyProfileMessage"] = "Profile updated Successfully";
+                        TempData["MyProfileMessage"] = "Profile has been updated Successfully!";
                         return RedirectToAction("UserProfile");
                     }
                     else
                     {
-                        TempData["MyProfileMessage"] = "Profile update failed";
+                        TempData["MyProfileMessage"] = "Failed to update Profile!";
                         return RedirectToAction("UserProfile");
                     }
                 }
@@ -597,12 +597,12 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
-                        TempData["MyProfileMessage"] = "Profile updated Successfully";
+                        TempData["MyProfileMessage"] = "Profile has been updated Successfully!";
                         return RedirectToAction("UserProfile");
                     }
                     else
                     {
-                        TempData["MyProfileMessage"] = "Profile update failed";
+                        TempData["MyProfileMessage"] = "Failed to update Profile!";
                         return RedirectToAction("UserProfile");
                     }
                 }
