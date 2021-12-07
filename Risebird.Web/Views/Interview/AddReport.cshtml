@@ -1913,6 +1913,18 @@
         if (value != 2) {
             document.getElementById("meetingStatus_Error").innerHTML = "";
         }
+        //for dropped
+        if (value == 3) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped so early (5-10 mins) that a conclusive judgement regarding selection cannot be made.";
+
+        }
+        //for dropped with interview status 
+        if (value == 6 || value == 7 || value == 8) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped but ran for a duration long enough (20 or more mins) to pass a conclusive judgement regarding selection.";
+
+        }
+        
+
         if (value != 4) {
             if (value == 6) {
                 //dropped but selected
