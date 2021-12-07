@@ -491,12 +491,12 @@ namespace Risebird.Web.Controllers
             }
             if (model == "Success")
             {
-                return Json("Payment paid Successfully");
+                return Json("Payment has been done  Successfully!");
                 // TempData["PaymentMessage"] = "Payment paid Successfully";
             }
             else
             {
-                return Json("Fail To pay the payment");
+                return Json("Failed to pay the payment");
                 //TempData["PaymentMessage"] = "Fail To pay the payment";
             }
 
@@ -590,7 +590,7 @@ namespace Risebird.Web.Controllers
             var result = "";
             if (model == "Success")
             {
-                result = "Advance Payment is done successfully.";
+                result = "Advance Payment has been done Successfully!";
                 Mail _mail = new Mail
                 {
                     TO = Interviewer,
@@ -610,7 +610,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                result = "Fail to done the advance payment.";
+                result = "Failed to done the advance payment.";
             }
             return Json(result);
         }
@@ -1529,6 +1529,37 @@ namespace Risebird.Web.Controllers
                 item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
             }
             return Json(new { result = model/*, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds */});
+        }
+        [HttpGet]
+        public async Task<IActionResult> CustomerDetails()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var model = await _meetingService.FetchCustomerDetails();
+                    foreach (var item in model)
+                    {  if (item.JobCountry.ToUpper() == "INDIA" || item.JobCountry == "1") 
+                            {
+                                item.JobCountry = "INDIA";
+                            }
+                            else { item.JobCountry = "OUTSIDE INDIA"; }
+                      
+                        item.CompanyType=!String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }

@@ -51,7 +51,13 @@ namespace Risebird.Entities.ViewModel
     }
 
 
+    public class CustomerDetailsVM
+    {
+        public string IRFName { get; set; }
+        public string Name { get; set; }
+        public string JobCountry { get; set; }
+        public string CompanyType { get; set; }
+    }
 
 
-
-}
+    }

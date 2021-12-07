@@ -5154,5 +5154,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
+        {
+            try
+            {
+                var query = "SELECT IRFid as IRFName,Name,JobCountry,CompanyType FROM IRF INNER JOIN Client ON Client.id = IRF.ClientId";
+             
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CustomerDetailsVM>(query, null);
+                    return (List<CustomerDetailsVM>)results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
     }
+
+
 }
