@@ -11434,7 +11434,10 @@ body .top-panel {
 #mySchedulingLinkpopup table th {
     font-size: 15px;
 }
-
+#loader{
+    margin:50px auto;
+    width:150px;
+}
 .client-change .on-off {
     color: #393a3c;
 }
