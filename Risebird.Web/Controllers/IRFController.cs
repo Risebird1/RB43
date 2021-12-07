@@ -457,7 +457,14 @@ namespace Risebird.Web.Controllers
                         
                     }
                     model.Profile = profileName;
-                    return PartialView("IRFIndexPartial", model);
+                    if(model.IRFList == null || model.IRFList.Count()==0)
+                    {
+                        return Json(null);
+                    }
+                    else
+                    {
+                        return PartialView("IRFIndexPartial", model);
+                    }
 
                 }
                 else
