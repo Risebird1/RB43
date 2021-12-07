@@ -229,7 +229,7 @@ namespace Risebird.Web.Controllers
                         result = _evaluatorService.UnAssignSelectability(id);
                         if (result)
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Unassigned successfully.";
+                            TempData["SuccessErrorMessageEvaluator"] = "Unassignment has been Successfully!";
                             return Json(new { url = Url.Action("MyEvaluations", "Evaluator") });
                         }
                         else
@@ -306,7 +306,7 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddSelectabilityReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
+                            TempData["SuccessErrorMessageEvaluator"] = "Data has been saved Successfully!";
                             return RedirectToAction("MyEvaluations");
                         }
                         else
@@ -455,7 +455,7 @@ namespace Risebird.Web.Controllers
                         result = _evaluatorService.UnAssignJoinability(id);
                         if (result)
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Unassigned successfully.";
+                            TempData["SuccessErrorMessageEvaluator"] = "Unassignment has been done Successfully!";
                             return Json(new { url = Url.Action("MyHREvaluations", "Evaluator") });
                         }
                         else
@@ -531,7 +531,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (_evaluatorService.AddJoinabilityReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
+                            TempData["SuccessErrorMessageEvaluator"] = "Data has been saved Successfully!";
                             return RedirectToAction("MyHREvaluations");
                         }
                         else
@@ -672,7 +672,7 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddSelectabilityReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageRecruiter"] = "Data saved successfully";
+                            TempData["SuccessErrorMessageRecruiter"] = "Data has been saved Successfully!";
                             return RedirectToAction("RecruiterCandidates");
                         }
                         else
@@ -771,7 +771,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedaudioFileURL = blob.Uri.ToString();
                                 if (uploadedaudioFileURL == null)
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    ModelState.AddModelError(String.Empty, "Audio Upload failed!");
                                     return View("UploadAudio", model);
                                 }
                                 else
@@ -787,12 +787,12 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
                         {
-                            TempData["SuccessErrorMessageAudio"] = "Audio uploaded successfully";
+                            TempData["SuccessErrorMessageAudio"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction(actMethod);
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageAudio"] = "Audio Upload failed.";
+                            TempData["SuccessErrorMessageAudio"] = "Failed to upload Audio!";
                             return RedirectToAction(actMethod);
                         }
                     }
@@ -809,7 +809,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageAudio"] = "Audio Upload failed.";
+                TempData["SuccessErrorMessageAudio"] = "Audio Upload failed!";
                 return RedirectToAction(actMethod);
             }
         }
