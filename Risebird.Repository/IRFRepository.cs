@@ -2555,7 +2555,6 @@ namespace Risebird.Repository
         {
             try
             {
-                Guid _guid = Guid.NewGuid();
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", obj.IRFId);
                 parameters.Add("@Name", obj.Name?.Trim());
@@ -2581,7 +2580,6 @@ namespace Risebird.Repository
                 parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 parameters.Add("@ProfileSource", obj.ProfileSource);
                 parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
-                parameters.Add("@uniqueid", _guid.ToString());
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2643,7 +2641,6 @@ namespace Risebird.Repository
                     {
                         foreach (var obj in candidateList)
                         {
-                            Guid _guid = Guid.NewGuid();
                             DynamicParameters parameters = new DynamicParameters();
                             parameters.Add("@IRFId", obj.IRFId);
                             parameters.Add("@Name", obj.Name);
@@ -2668,7 +2665,6 @@ namespace Risebird.Repository
                             parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                             parameters.Add("@ProfileSource", obj.ProfileSource);
                             parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
-                            parameters.Add("@uniqueid", _guid.ToString());
 
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
@@ -4337,7 +4333,6 @@ namespace Risebird.Repository
                     {
                         foreach (var obj in candidateList)
                         {
-                            Guid _guid = Guid.NewGuid();
                             DynamicParameters parameters = new DynamicParameters();
                             parameters.Add("@IRFId", obj.IRFId);
                             parameters.Add("@Name", obj.Name);
@@ -4349,7 +4344,6 @@ namespace Risebird.Repository
                             parameters.Add("@ClientHREmail", obj.ClientHREmail);
                             parameters.Add("@ProfileSource", obj.ProfileSource);
                             parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
-                            parameters.Add("@uniqueid", _guid.ToString());
                             parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
 

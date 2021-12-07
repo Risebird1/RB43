@@ -229,7 +229,6 @@ namespace Risebird.Functions
 
                 SqlCommand cmd = new SqlCommand(
                     "InsertMeetings", conn);
-                Guid guid = Guid.NewGuid();
                 // 2. set the command object so it knows
                 // to execute a stored procedure
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -255,7 +254,6 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));
-                cmd.Parameters.Add(new SqlParameter("@uniqueid", guid.ToString()));
                 SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
                 outPutVal.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(outPutVal);
