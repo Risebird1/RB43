@@ -199,5 +199,7 @@ namespace Risebird.Repository.Interface
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
+        Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
+        bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid);
     }
 }

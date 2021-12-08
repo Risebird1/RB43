@@ -229,7 +229,6 @@ namespace Risebird.Functions
 
                 SqlCommand cmd = new SqlCommand(
                     "InsertMeetings", conn);
-
                 // 2. set the command object so it knows
                 // to execute a stored procedure
                 cmd.CommandType = CommandType.StoredProcedure;
