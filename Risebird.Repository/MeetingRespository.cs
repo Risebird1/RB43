@@ -1407,7 +1407,7 @@ namespace Risebird.Repository
                     {
                         parametersPoints.Add("@Points", 0);
                     }
-                    else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus==6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
+                    else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus == 6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
                     {
                         int duration = reportDetails.VideoDuration;
                         if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
@@ -5199,14 +5199,12 @@ namespace Risebird.Repository
                 return false;
             }
         }
-    }
-
         public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
         {
             try
             {
                 var query = "SELECT IRFid as IRFName,Name,JobCountry,CompanyType FROM IRF INNER JOIN Client ON Client.id = IRF.ClientId";
-             
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<CustomerDetailsVM>(query, null);
@@ -5221,8 +5219,5 @@ namespace Risebird.Repository
             }
 
         }
-
     }
-
-
 }
