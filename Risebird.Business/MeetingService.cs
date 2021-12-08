@@ -3237,6 +3237,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.FetchCustomerDetails();
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 
