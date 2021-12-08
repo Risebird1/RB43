@@ -3643,6 +3643,7 @@ namespace Risebird.Web.Controllers
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                 ViewBag.Profile = "Client";
+                ViewBag.PageStatus = "Public";
                 if (Emailid != emailid)
                 {
                     return RedirectToAction("PublicAllMeetings", new { id = id });
@@ -3763,6 +3764,7 @@ namespace Risebird.Web.Controllers
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
                 ViewBag.Profile = "Client";
+                ViewBag.PageStatus = "Public";
                 return View(model);
             }
             catch (Exception ex)
