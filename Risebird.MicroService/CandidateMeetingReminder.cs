@@ -21,8 +21,9 @@ namespace Risebird.MicroService
         private readonly IIRFService _irfService;
         private readonly IIRFRepository _irfRepository;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ITwilioHelper _twilioHelper;
 
-        public CandidateMeetingReminder(IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IMeetingService meetingService, IIRFService irfService, IIRFRepository irfRepository, IWhatsAppHelper whatsAppHelper)
+        public CandidateMeetingReminder(IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, ICandidateService candidateService, IMeetingService meetingService, IIRFService irfService, IIRFRepository irfRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
@@ -31,6 +32,7 @@ namespace Risebird.MicroService
             _irfService = irfService;
             _irfRepository = irfRepository;
             _whatsAppHelper = whatsAppHelper;
+            _twilioHelper = twilioHelper;
         }
         [FunctionName("CandidateMeetingReminder")]
         public async void Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
@@ -62,6 +64,7 @@ namespace Risebird.MicroService
                         _whatsAppVM.Event = "Interview Reminder Second";
                         _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
+                        await _twilioHelper.CandidateReminderCall(item.MobileNumber, item.FirstName, item.interviewDate.ToString());
                     }
                     else if (item.Typefunction == 6)
                     {
