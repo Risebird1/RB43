@@ -19,5 +19,6 @@ namespace Risebird.CommonHelper.Interface
         string WhatsAppSendFeedbackRemainder(WhatsAppVM whatsAppVM);
         string WhatsAppSendInterviewerFeedbackRemainder(WhatsAppVM whatsAppVM);
         string WhatsAppSendInterviewerCommonInterviewDetails(WhatsAppVM whatsAppVM);
+        string WhatsAppSendInterviewReminder(WhatsAppVM whatsAppVM);
     }
 }

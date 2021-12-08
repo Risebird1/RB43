@@ -267,7 +267,6 @@ namespace Risebird.Repository
             parameters.Add("@IndiaProductRate", entity.IndiaProductRate);
             parameters.Add("@OutsideIndiaServiceRate", entity.OutsideIndiaServiceRate);
             parameters.Add("@OutsideIndiaProductRate", entity.OutsideIndiaProductRate);
-
             return parameters;
         }
         private DynamicParameters SetSPParametersForSkills(InterviewerProfileVM entity)

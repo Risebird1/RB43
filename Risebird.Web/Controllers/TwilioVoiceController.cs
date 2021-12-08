@@ -27,5 +27,14 @@ namespace Risebird.Web.Controllers
             response.Say(message);
             return TwiML(response);
         }
+        [HttpPost]
+        public TwiMLResult CandidateReminderCall(string name, string interviewdate)
+        {
+            var response = new VoiceResponse();
+            var message = string.Format("Dear {0}! Greetings from RiseBird. This is to remind you that your interview is scheduled at {1}. Please confirm your availability by responding to the mail.",
+                name, interviewdate);
+            response.Say(message);
+            return TwiML(response);
+        }
     }
 }
