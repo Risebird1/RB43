@@ -271,7 +271,7 @@ else
     from InterviewMeetings im       
     inner join IRF on im.IRFId = IRF.IRFId       
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId       
-    join QCFeedbackReport QCF on im.id=QCF.InterviewId       
+    left join QCFeedbackReport QCF on im.id=QCF.InterviewId       
     left join UserList ulc on im.candidateEmail= ulc.EmailId      
     join CandidatesMaster cm on ulc.id= cm.UserId      
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId      
@@ -282,7 +282,7 @@ else
     and irf.IsDeleted=0      
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
     and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)      
-    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1      
+    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and ((irf.IsQCRequired=1 and QCF.QCStatus=1 ) or irf.IsQCRequired=0) 
     order by im.interviewDate desc      
       
       
@@ -307,7 +307,7 @@ else
     from InterviewMeetings im       
     inner join IRF on im.IRFId = IRF.IRFId       
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId       
-    join QCFeedbackReport QCF on im.id=QCF.InterviewId       
+    left join QCFeedbackReport QCF on im.id=QCF.InterviewId       
     left join UserList ulc on im.candidateEmail= ulc.EmailId      
     join CandidatesMaster cm on ulc.id= cm.UserId      
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId      
@@ -318,7 +318,7 @@ else
     and irf.IsDeleted=0      
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
     and cast(interviewDate as date) >= cast(@startDate as date) and cast(interviewDate as date) <= cast(@endDate as date)      
-    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1      
+    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0)      
     order by im.interviewDate desc      
       
    End      
@@ -342,7 +342,7 @@ else
     from InterviewMeetings im       
     inner join IRF on im.IRFId = IRF.IRFId       
     left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId       
-    join QCFeedbackReport QCF on im.id=QCF.InterviewId       
+    left join QCFeedbackReport QCF on im.id=QCF.InterviewId       
     left join UserList ulc on im.candidateEmail= ulc.EmailId      
     join CandidatesMaster cm on ulc.id= cm.UserId      
     join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId      
@@ -352,7 +352,7 @@ else
     where ul.EmailId LIKE @EmailId AND ul.IsActive=1      
     and irf.IsDeleted=0      
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
-    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and QCF.QCStatus=1      
+    and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0)      
     order by im.interviewDate desc      
           
    End      
