@@ -1218,7 +1218,7 @@ namespace Risebird.Repository
                         foreach (var item in irfDetails.SkillCollection)
                         {
                             techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
-                        
+
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -1677,7 +1677,8 @@ namespace Risebird.Repository
         public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
         {
             try
-            { var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
+            {
+                var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2554,7 +2555,6 @@ namespace Risebird.Repository
         {
             try
             {
-
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", obj.IRFId);
                 parameters.Add("@Name", obj.Name?.Trim());
@@ -2659,6 +2659,12 @@ namespace Risebird.Repository
                             parameters.Add("@Notice", obj.Notice);
                             parameters.Add("@AddedByUserId", userId);
                             parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
+                            parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
+                            parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
+                            parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
+                            parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
+                            parameters.Add("@ProfileSource", obj.ProfileSource);
+                            parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
 
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
