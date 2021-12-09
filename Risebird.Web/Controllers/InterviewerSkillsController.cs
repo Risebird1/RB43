@@ -266,12 +266,12 @@ namespace Risebird.Web.Controllers
                         }
                         if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel is added successfully!";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Adding Interviewer Skills Channel has failed!";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Failed to add Interviewer Skills Channel!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -401,12 +401,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(model).Result)
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel saved Successfully";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel dits were not saved!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel Edits were not saved!";
                                 return RedirectToAction("Index");
                             }
 
@@ -415,7 +415,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (_iInterviewerSkillsService.UpdateInterviewerSkills(model))
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel saved successfully!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
@@ -531,12 +531,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_iInterviewerSkillsService.UnArchiveISC(id).Result)
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restored Successfully.";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been restored Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restore Failed.";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Failed to restore Interviewer Skills Channel!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -553,7 +553,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restore Failed.";
+                TempData["SuccessErrorMessageISCInterviewer"] = "Failed to restore Interviewer Skills Channel!";
                 return RedirectToAction("Index");
             }
 
@@ -715,12 +715,12 @@ namespace Risebird.Web.Controllers
 
                         if (_iInterviewerSkillsService.AddUnApprovedInterviewer(model.UnApprovedInterviewersCollection, model.ISCId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer added Successfully";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer has been added Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = model.ISCId, InterviewerSkillidName = model.ISCName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer could not be added.";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Failed to add Interviewer!";
                             return RedirectToAction("GetISCInterviewers", new { id = model.ISCId, InterviewerSkillidName = model.ISCName });
                         }
                     }
@@ -849,7 +849,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (_iInterviewerSkillsService.SendInvite(iscId, emailId, interviewerProfileId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation sent successfully!";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
                         else
@@ -895,7 +895,7 @@ namespace Risebird.Web.Controllers
 
                         if (_iInterviewerSkillsService.CancelInvite(iscId, emailId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invite cancelled successfully!";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invite has been cancelled Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
                         else

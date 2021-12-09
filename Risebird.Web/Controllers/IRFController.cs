@@ -982,12 +982,12 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
-                            TempData["SuccessErrorMessage"] = "Skills Channel is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Skills Channel has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Skills Channel!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -1362,12 +1362,12 @@ namespace Risebird.Web.Controllers
 
                             if (_irfService.AddSkillComments(model))
                             {
-                                TempData["SuccessErrorMessageQuestions"] = "Questions saved Successfully";
+                                TempData["SuccessErrorMessageQuestions"] = "Questions has been saved Successfully!";
                                 return RedirectToAction("SampleQuestions", new { id = model.IRFId });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageQuestions"] = "Questions were not saved.";
+                                TempData["SuccessErrorMessageQuestions"] = "Failed to save the Questions!";
                                 return RedirectToAction("SampleQuestions", new { id = model.IRFId });
                             }
                         }
@@ -2004,7 +2004,7 @@ namespace Risebird.Web.Controllers
                             //End: Auto Generate Scheduling Link
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
@@ -2017,12 +2017,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully";
+                                TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -2289,7 +2289,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (_meetingService.AddInterviewReport(model, emailid).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                            TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
                             return RedirectToAction("AddReport", new { interviewId = model.InterviewId, irfId = model.IRFId });
                         }
                         else
@@ -3196,7 +3196,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Invitation sent successfully!";
+                            TempData["SuccessErrorMessageCandidate"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                         else
@@ -3242,7 +3242,7 @@ namespace Risebird.Web.Controllers
 
                         if (await _irfService.CancelInvite(Convert.ToInt32(irfId), emailId))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Invite cancelled successfully!";
+                            TempData["SuccessErrorMessageCandidate"] = "Invite has been cancelled Successfully!";
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                         else
@@ -3497,7 +3497,7 @@ namespace Risebird.Web.Controllers
 
                         if (_irfService.AddUpdateInterviewPlanner(model).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Interview Planner updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Interview Planner has been updated Successfully!";
                             return RedirectToAction("Index");
 
                         }
@@ -3637,12 +3637,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_irfService.PauseIRF(irfId, irfName))
                         {
-                            TempData["SuccessErrorMessage"] = "IRF paused Successfully";
+                            TempData["SuccessErrorMessage"] = "IRF has been paused Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "IRF pause Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to pause IRF!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -3679,12 +3679,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_irfService.PlayIRF(irfId, irfName))
                         {
-                            TempData["SuccessErrorMessage"] = "IRF enabled Successfully";
+                            TempData["SuccessErrorMessage"] = "IRF has been enabled Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "IRF enable Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to enable IRF!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -3882,11 +3882,11 @@ namespace Risebird.Web.Controllers
             var result = _irfService.SaveCandidateStatus(candidateId, statusValue);
             if (result)
             {
-                TempData["SuccessErrorMessageCandidate"] = "Candidate status saved Successfully";
+                TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
 
             }
             else
-                TempData["SuccessErrorMessageCandidate"] = "Failed to save candidate status";
+                TempData["SuccessErrorMessageCandidate"] = "Failed to save candidate status!";
 
             return result;
 
@@ -3997,12 +3997,12 @@ namespace Risebird.Web.Controllers
                     //profileName = profileName.Replace("\"", "");
                     if (_irfService.AddCuratedGroup(irfList, cgName).Result)
                     {
-                        TempData["SuccessErrorMessageCG"] = "Curated Group added Successfully";
+                        TempData["SuccessErrorMessageCG"] = "Curated Group has been added Successfully!";
                         return Json(true);
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageCG"] = "Adding Curated Group has Failed";
+                        TempData["SuccessErrorMessageCG"] = "Failed to add Curated Group!";
                         return Json(false);
                     }
 
@@ -4046,12 +4046,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_irfService.UpdateCuratedGroup(irfList, cgName, cgId))
                     {
-                        TempData["SuccessErrorMessageCG"] = "Curated Group edited successfully!";
+                        TempData["SuccessErrorMessageCG"] = "Curated Group has been edited Successfully!";
                         return Json(true);
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
+                        TempData["SuccessErrorMessageCG"] = "Failed to save changes for Curated Group!";
                         return Json(false);
                     }
 
@@ -4095,7 +4095,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (_irfService.AddUpdateCuratedGroupUsers(users, curatedGroupId))
                     {
-                        TempData["SuccessErrorMessageCG"] = "Curated Group users updated successfully!";
+                        TempData["SuccessErrorMessageCG"] = "Curated Group users has been updated Successfully!";
                         return Json(true);
                     }
                     else
@@ -4521,22 +4521,22 @@ namespace Risebird.Web.Controllers
             {
                 if (model._skilldetails.id > 0)
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Edit Successfully.";
+                    TempData["SuccessErrorMessageInterviewer"] = "Edited Successfully.";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Add Successfully.";
+                    TempData["SuccessErrorMessageInterviewer"] = "Added Successfully.";
                 }
             }
             else
             {
                 if (model._skilldetails.id > 0)
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Fail to edit";
+                    TempData["SuccessErrorMessageInterviewer"] = "Failed to edit";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Fail to add";
+                    TempData["SuccessErrorMessageInterviewer"] = "Failed to add";
                 }
             }
             return RedirectToAction("InterviewerEntitle");
@@ -4699,7 +4699,7 @@ namespace Risebird.Web.Controllers
 
                         if (await _irfService.AddCandidateStatus(model))
                         {
-                            TempData["SuccessErrorCandidateStatus"] = "Candidate status saved successfully.";
+                            TempData["SuccessErrorCandidateStatus"] = "Candidate status has been saved Successfully!";
                             return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
                         }
                         else
@@ -4801,7 +4801,7 @@ namespace Risebird.Web.Controllers
 
                         if (await _irfService.EditCandidateStatus(model))
                         {
-                            TempData["SuccessErrorCandidateStatus"] = "Candidate status updated successfully.";
+                            TempData["SuccessErrorCandidateStatus"] = "Candidate status has been updated Successfully!";
                             return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
                         }
                         else

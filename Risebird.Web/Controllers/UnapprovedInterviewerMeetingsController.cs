@@ -377,11 +377,11 @@ namespace Risebird.Web.Controllers
                             {
                                 if (meeting.IsEditable)
                                 {
-                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting is updated Successfully";
+                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting has been updated Successfully!";
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting is added Successfully";
+                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting has been added Successfully!";
                                 }
                                 return RedirectToAction("Index");
                             }
