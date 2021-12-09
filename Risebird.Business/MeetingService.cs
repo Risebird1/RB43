@@ -1380,7 +1380,7 @@ namespace Risebird.Business
 
                                         }
                                     }
-                                    
+
                                 }
 
                             }
@@ -1420,7 +1420,7 @@ namespace Risebird.Business
                             if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
-                                
+
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
                                     if (!reportModel.IsQCRequired)
@@ -1440,7 +1440,7 @@ namespace Risebird.Business
                                             await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
                                         }
                                     }
-                                    
+
                                 }
 
                             }
@@ -3204,6 +3204,50 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder()
+        {
+            try
+            {
+                return await _meetingRespository.FetchCandidateMeetingsForReminder();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            try
+            {
+                if (_meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid))
+                {
+                    if (status == 2)
+                    {
+                        var result1 = _irfService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.FetchCustomerDetails();
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

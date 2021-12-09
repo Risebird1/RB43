@@ -1407,7 +1407,7 @@ namespace Risebird.Repository
                     {
                         parametersPoints.Add("@Points", 0);
                     }
-                    else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus==6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
+                    else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus == 6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
                     {
                         int duration = reportDetails.VideoDuration;
                         if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
@@ -1424,7 +1424,7 @@ namespace Risebird.Repository
                         }
 
                     }
-                    
+
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
                     parametersPoints.Add("@Type", "Interview");
@@ -5153,6 +5153,71 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchCandidateMeetingsForReminders", null,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<UnassignedInterviewVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (status == 1)
+                {
+                    query = "Update im set IsCandidateResponsed=1 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                }
+                else
+                {
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
+        {
+            try
+            {
+                var query = "SELECT IRFid as IRFName,Name,JobCountry,CompanyType FROM IRF INNER JOIN Client ON Client.id = IRF.ClientId";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CustomerDetailsVM>(query, null);
+                    return (List<CustomerDetailsVM>)results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
     }
 }

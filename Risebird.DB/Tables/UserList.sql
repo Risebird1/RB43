@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[UserList](
 			[UserPassword] [nvarchar](60) NULL,
 			[WhatsappNumber] [varchar](15) NULL,
 			[PasswordCreation] [Datetime] NULL,
+            [uniqueid] [varchar](50) NULL,
 			CONSTRAINT [FK_User_Group] FOREIGN KEY (idProfile) REFERENCES Profile(id),
  CONSTRAINT [PK_UserList] PRIMARY KEY CLUSTERED 					
 (					
@@ -63,7 +64,15 @@ BEGIN
     ALTER TABLE UserList
     Add [PasswordCreation] [datetime] NULL
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'uniqueid')
+      AND Object_ID = Object_ID(N'UserList'))
+BEGIN
+    ALTER TABLE UserList
+    Add [uniqueid] [varchar](50) NULL
+END
 END
 
 GO

@@ -165,14 +165,16 @@ if(@searchValue is not null)
       inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId          
       inner join UserList ulc on ulc.EmailId = im.candidateEmail          
       inner join CandidatesMaster cm on ulc.id = cm.UserId          
-      inner join QCFeedbackReport QCF on im.id=QCF.InterviewId          
+      left join QCFeedbackReport QCF on im.id=QCF.InterviewId          
       inner join IRF on im.IRFId = IRF.IRFId              
       inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id          
       inner join dbo.UserList ul on ul.id = tc.ClientUserId          
       inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id      
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
-      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))    
+      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
+	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0) 
+	  and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))    
       and irf.IsDeleted=0 and im.ClientHrContact=@Emailid   
       and cast(interviewDate as date) >= cast (@startDate as date)    
       and cast(interviewDate as date) <= cast (@endDate as date)    
@@ -189,14 +191,16 @@ if(@searchValue is not null)
       inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId          
       inner join UserList ulc on ulc.EmailId = im.candidateEmail          
       inner join CandidatesMaster cm on ulc.id = cm.UserId          
-      inner join QCFeedbackReport QCF on im.id=QCF.InterviewId          
+      left join QCFeedbackReport QCF on im.id=QCF.InterviewId          
       inner join IRF on im.IRFId = IRF.IRFId              
       inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id          
       inner join dbo.UserList ul on ul.id = tc.ClientUserId          
       inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id     
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
-      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0)     
+      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
+	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0)
+	  and (ic.MoveToCP is null or ic.MoveToCP =0)     
       and irf.IsDeleted=0 and im.ClientHrContact=@Emailid   
       and cast(interviewDate as date) >= cast (@startDate as date)    
       and cast(interviewDate as date) <= cast (@endDate as date)    
@@ -217,14 +221,16 @@ BEGIN
       inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId          
       inner join UserList ulc on ulc.EmailId = im.candidateEmail          
       inner join CandidatesMaster cm on ulc.id = cm.UserId          
-      inner join QCFeedbackReport QCF on im.id=QCF.InterviewId          
+      left join QCFeedbackReport QCF on im.id=QCF.InterviewId          
       inner join IRF on im.IRFId = IRF.IRFId              
       inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id          
       inner join dbo.UserList ul on ul.id = tc.ClientUserId          
       inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id      
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
-      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))    
+      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
+	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0)
+	  and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))    
       --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)     
       and irf.IsDeleted=0    
       and cast(interviewDate as date) >= cast (@startDate as date)    
@@ -243,14 +249,16 @@ BEGIN
       inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId          
       inner join UserList ulc on ulc.EmailId = im.candidateEmail          
       inner join CandidatesMaster cm on ulc.id = cm.UserId          
-      inner join QCFeedbackReport QCF on im.id=QCF.InterviewId          
+      left join QCFeedbackReport QCF on im.id=QCF.InterviewId          
       inner join IRF on im.IRFId = IRF.IRFId              
       inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id          
       inner join dbo.UserList ul on ul.id = tc.ClientUserId          
       inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id     
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
-      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0)     
+      where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
+	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0)
+	  and (ic.MoveToCP is null or ic.MoveToCP =0)     
       --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)       
       and irf.IsDeleted=0    
       and cast(interviewDate as date) >= cast (@startDate as date)    
