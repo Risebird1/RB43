@@ -5139,7 +5139,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update InterviewMeetings set isAutoCancelled=1 where id=@meetingid";
+                var query = "Update InterviewMeetings set isAutoCancelled=1 where id=@meetingid and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 using (SqlConnection con = new SqlConnection(connectionString))

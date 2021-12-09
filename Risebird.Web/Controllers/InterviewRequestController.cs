@@ -212,12 +212,12 @@ namespace Risebird.Web.Controllers
                                     Subject = "New Interview Request: " + meeting.JdTitle
                                 };
                                 var emailsend1 = _notificationHelper.InterviewRequestAddClientNotification(_mail1, meeting.JdTitle, meeting.PrimarySkill);
-                                TempData["SuccessErrorMessageInterview"] = "Request Created Successfully.";
+                                TempData["SuccessErrorMessageInterview"] = "Request has been created Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to Create request.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to create Request!";
                                 return RedirectToAction("Index");
                             }
 
@@ -360,12 +360,12 @@ namespace Risebird.Web.Controllers
                                     Subject = "Interview Request has been updated: " + meeting.JdTitle
                                 };
                                 var emailsend = _notificationHelper.InterviewRequestEditNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
-                                TempData["SuccessErrorMessageInterview"] = "Request updated Successfully.";
+                                TempData["SuccessErrorMessageInterview"] = "Request has been updated Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to update the request.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to update Request!";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -459,7 +459,7 @@ namespace Risebird.Web.Controllers
                     Subject = "New Interview Request has been created: " + model.JdTitle
                 };
                 var emailsend = _notificationHelper.InterviewRequestCompletedNotification(_mail, model.JdTitle, model.PrimarySkill, model.CountryName, model.JobLevelName, CalendlyLink, IRFId);
-                TempData["SuccessErrorMessageInterview"] = "Request marked as created successfully.";
+                TempData["SuccessErrorMessageInterview"] = "Request has been marked as created Successfully!";
                 return RedirectToAction("Index");
             }
             else
@@ -583,12 +583,12 @@ namespace Risebird.Web.Controllers
                             Subject = "New Interview Request: " + meeting.JdTitle
                         };
                         var emailsend1 = _notificationHelper.InterviewRequestAddClientNotification(_mail1, meeting.JdTitle, meeting.PrimarySkill);
-                        TempData["SuccessErrorMessageInterview"] = "Request Created Successfully.";
+                        TempData["SuccessErrorMessageInterview"] = "Request has been created Successfully!";
                         return RedirectToAction("PublicCreateInterviewRequest", new { emailid = meeting.RequestedBy, id = meeting.uniqueid });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageInterview"] = "Failed to Create request.";
+                        TempData["SuccessErrorMessageInterview"] = "Failed to create Request!";
                         return RedirectToAction("PublicCreateInterviewRequest", new { emailid = meeting.RequestedBy, id = meeting.uniqueid });
                     }
                 }

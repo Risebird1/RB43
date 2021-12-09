@@ -102,29 +102,29 @@ namespace Risebird.MicroService
                         _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         //With Yes/No Button
                     }
-                    else if (item.Typefunction == 1)
-                    {
-                        if (_meetingService.PublicCancelInterview(item.Interviewid))
-                        {
-                            var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
-                            var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);
-                            var result1 = await _irfService.AddCandidateStatus("System", candidateId, item.Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
-                            var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
-                            var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
-                            List<string> interviewers = new List<string>();
-                            if (!String.IsNullOrEmpty(result.interviewer))
-                            {
-                                interviewers.Add(result.interviewer);
-                            }
-                            if (!String.IsNullOrEmpty(result.EmailId))
-                            {
-                                interviewers.Add(result.EmailId);
-                            }
-                            var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
-                        }
-                    }
+                    //else if (item.Typefunction == 1)
+                    //{
+                    //    if (_meetingService.PublicCancelInterview(item.Interviewid))
+                    //    {
+                    //        var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
+                    //        var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);
+                    //        var result1 = await _irfService.AddCandidateStatus("System", candidateId, item.Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    //        var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
+                    //        var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
+                    //        List<string> interviewers = new List<string>();
+                    //        if (!String.IsNullOrEmpty(result.interviewer))
+                    //        {
+                    //            interviewers.Add(result.interviewer);
+                    //        }
+                    //        if (!String.IsNullOrEmpty(result.EmailId))
+                    //        {
+                    //            interviewers.Add(result.EmailId);
+                    //        }
+                    //        var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                    //        var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    //        var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                    //    }
+                    //}
                 }
                 catch (Exception ex)
                 {

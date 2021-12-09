@@ -207,12 +207,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Request has been Created Successfully!";
+                                TempData["SuccessErrorMessageInterview"] = "Request has been created Successfully!";
                                 return RedirectToAction("InstaIRF");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to Create request!";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to create request!";
                                 return RedirectToAction("InstaIRF");
                             }
 
@@ -1225,7 +1225,7 @@ namespace Risebird.Web.Controllers
                                 };
                                 var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                             }
-                            TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                            TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
                             //return RedirectToAction("AddReport", new { interviewId = model.id, Requestedid = model.RequestId });
                             if (profileName == "Admin" || profileName == "SeniorHR")
                             {
