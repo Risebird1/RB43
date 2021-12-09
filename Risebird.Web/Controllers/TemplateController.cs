@@ -290,12 +290,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _templateService.AddTemplate(templateDetails, emailId))
                             {
-                                TempData["SuccessErrorMessageTemplate"] = "Template added Successfully";
+                                TempData["SuccessErrorMessageTemplate"] = "Template has been added Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageTemplate"] = "Failed to add Template";
+                                TempData["SuccessErrorMessageTemplate"] = "Failed to add Template!";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -448,12 +448,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _templateService.UpdateTemplate(templateDetails, emailId))
                             {
-                                TempData["SuccessErrorMessageTemplate"] = "Template updated Successfully";
+                                TempData["SuccessErrorMessageTemplate"] = "Template has been updated Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageTemplate"] = "Failed to update Template";
+                                TempData["SuccessErrorMessageTemplate"] = "Failed to update Template!";
                                 return RedirectToAction("Index");
                             }
                         }
