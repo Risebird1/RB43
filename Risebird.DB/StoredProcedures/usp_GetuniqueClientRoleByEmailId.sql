@@ -19,7 +19,7 @@ Begin
   
 select cu.RoleId from ClientUser cu join UserList ul on ul.id = cu.UserId 
 join ClientPublicURLs cp on cp.Emailid=ul.EmailId
-where ul.EmailId = @emailId  and  uniqueid=@uniqueid
+where ul.EmailId = @emailId  and  cp.uniqueid=@uniqueid
   
 End    
     
