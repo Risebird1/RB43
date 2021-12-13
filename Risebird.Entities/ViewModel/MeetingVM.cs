@@ -266,6 +266,7 @@ namespace Risebird.Entities.ViewModel
         public string CalendlyLink { get; set; }
         public bool IsQCRequired { get; set; }
         public bool IsCandidateResponsed { get; set; }
+        public bool CandidateResponse { get; set; }
     }
     public class VedioComments
     {

@@ -5398,7 +5398,16 @@ button .btn {
     height: 39px !important;
     padding: 9px 10px 9px 10px;
 }
+.leadinterviewer #search {
+    right: 50px;
+}
 
+.leadinterviewer #search {
+    right: 50px;
+}
+.leadinterviewer .ref-btn {
+    right: 30px;
+}
 .notschedulemeeting #search, .survey #search, .candidate-timeline #search, .candidate_resume #search, .unassigned-int #search {
     right: 65px;
     z-index: 0;
