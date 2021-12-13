@@ -935,7 +935,7 @@ namespace Risebird.Repository
                         }
 
                         //update trans QC table
-                        if (irfDetails.QualityController != null && irfDetails.QualityController.Count() > 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()))
+                        if (irfDetails.QualityController != null && irfDetails.QualityController.Count() > 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
                         {
                             DataTable qualityControllerDt = new DataTable();
                             qualityControllerDt.Columns.Add("IRFId", typeof(int));
@@ -1499,7 +1499,7 @@ namespace Risebird.Repository
 
                     //    }
                     //}
-                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()))
+                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired) 
                     {
                         try
                         {
