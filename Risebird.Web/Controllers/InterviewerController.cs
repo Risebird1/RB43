@@ -2667,6 +2667,34 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
+        public IActionResult LeadInterviewer()
+        {
+            var model = _interviewerService.GetInterviewers();
+            model = model.Where(x => x.IsLeadInterviewer == true).ToList();
+            model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
+            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            foreach (var item in model)
+            {
+                if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                {
+                    var Assessmentgroups = String.Empty;
+                    foreach (var groups in item.AssessmentGroupId.Split(","))
+                    {
+                        int assesmsnetid = Convert.ToInt32(groups);
+                        if (String.IsNullOrEmpty(Assessmentgroups))
+                        {
+                            Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                        }
+                        else
+                        {
+                            Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                        }
+                    }
+                    item.AssessmentGroupId = Assessmentgroups;
+                }
+            }
+            return View(model);
+        }
     }
 }
 

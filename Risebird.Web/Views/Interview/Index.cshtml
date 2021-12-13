@@ -339,8 +339,8 @@
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="IsCandidateResponsed" name="IsCandidateResponsed" class="form-control multiselect" multiple="multiple">
-                                                                        <option value="true">Yes</option>
-                                                                        <option value="false">No</option>
+                                                                        <option value="true">Responsed</option>
+                                                                        <option value="false">No Response</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -703,11 +703,11 @@
 
                                                         @if (item.IsCandidateResponsed)
                                                         {
-                                                            <td>Yes</td>
+                                                            <td>Responsed (@item.CandidateResponse)</td>
                                                         }
                                                         else
                                                         {
-                                                            <td>No</td>
+                                                            <td>No Response</td>
                                                         }
 
                                                         @if (item.resumeLink != null && item.resumeLink != "")
