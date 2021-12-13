@@ -145,7 +145,7 @@ namespace Risebird.Web.Controllers
 
                     if (_supportService.AddSupportHR(hrDetails))
                     {
-                        TempData["SuccessErrorMessageSupport"] = "Support HR is added successfully.";
+                        TempData["SuccessErrorMessageSupport"] = "Support HR has been added Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
@@ -212,7 +212,7 @@ namespace Risebird.Web.Controllers
 
                     if (_supportService.UpdateSupportHR(hrDetails))
                     {
-                        TempData["SuccessErrorMessageSupport"] = "Support HR updated successfully.";
+                        TempData["SuccessErrorMessageSupport"] = "Support HR has been updated Successfully!";
                         return RedirectToAction("Index");
                     }
                     else

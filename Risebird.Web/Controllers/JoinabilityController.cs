@@ -61,12 +61,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_joinabilityService.AddJoinabilityMatrix(model))
                         {
-                            TempData["SuccessErrorMessage"] = "Joinability Matrix is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Joinability Matrix has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Joinability Matrix  is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Joinability Matrix!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -148,12 +148,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_joinabilityService.UpdateJoinabilityMatrix(skillUpdated))
                         {
-                            TempData["SuccessErrorMessage"] = "Joinability is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Joinability has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Updating Joinability is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to update Joinability!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -185,12 +185,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_joinabilityService.DeleteJoinabilityMatrix(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Joinability is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Joinability has been deleted Successfully!";
                         return Json(new { url = Url.Action("Index", "Joinability") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deletion of Joinability Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Joinability!";
                         return Json(new { url = Url.Action("Index", "Joinability") });
                     }
                 }

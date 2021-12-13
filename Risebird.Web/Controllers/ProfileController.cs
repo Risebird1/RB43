@@ -81,12 +81,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_profileService.AddProfile(profile))
                         {
-                            TempData["SuccessErrorMessage"] = "Profile is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Profile has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding profile is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Profile!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -146,12 +146,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_profileService.UpdateProfile(profile))
                         {
-                            TempData["SuccessErrorMessage"] = "Profile is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Profile has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Updating Profile is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to update Profile!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -183,12 +183,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_profileService.DeleteProfile(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Profile is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Profile has been deleted Successfully!";
                         return Json(new { url = Url.Action("Index", "Profile") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deletion of Profile Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Profile!";
                         return Json(new { url = Url.Action("Index", "Profile") });
                     }
                 }

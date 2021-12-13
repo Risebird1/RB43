@@ -463,7 +463,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (await _proctorInterviewsService.UpdateVMQuestions(model))
                     {
-                        TempData["SuccessErrorMessageProctor"] = "Questions updated successfully!";
+                        TempData["SuccessErrorMessageProctor"] = "Questions has been updated Successfully!";
                         return RedirectToAction("Index");
                     }
                     else

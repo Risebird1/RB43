@@ -84,12 +84,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_skillService.AddSkill(skill))
                         {
-                            TempData["SuccessErrorMessage"] = "Skill is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Skill has been added Successfully!";
                             return RedirectToAction("List");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Skill!";
                             return RedirectToAction("List");
                         }
                     }
@@ -149,12 +149,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_skillService.UpdateSkill(skillUpdated))
                         {
-                            TempData["SuccessErrorMessage"] = "Skill is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Skill has been updated Successfully!";
                             return RedirectToAction("List");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Updating Skill is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to update Skill!";
                             return RedirectToAction("List");
                         }
                     }
@@ -186,12 +186,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_skillService.DeleteSkill(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Skill is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Skill has been deleted Successfully!";
                         return Json(new { url = Url.Action("List", "Skill") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Skill!";
                         return Json(new { url = Url.Action("List", "Skill") });
                     }
                 }
@@ -270,12 +270,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_skillService.AddSkillLevel(skillLevel))
                         {
-                            TempData["SuccessErrorMessage"] = "Skill Level is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Skill Level has added Successfully!";
                             return RedirectToAction("SkillLevel");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Skill Level is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Skill Level!";
                             return RedirectToAction("SkillLevel");
                         }
                     }
@@ -335,12 +335,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_skillService.UpdateSkillLevel(skillLevelUpdated))
                         {
-                            TempData["SuccessErrorMessage"] = "Skill Level is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Skill Level has been updated Successfully!";
                             return RedirectToAction("SkillLevel");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Updating Skill Level is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to update Skill Level!";
                             return RedirectToAction("SkillLevel");
                         }
                     }
@@ -372,12 +372,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_skillService.DeleteSkillLevel(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Skill Level is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Skill Level has been deleted Successfully!";
                         return Json(new { url = Url.Action("SkillLevel", "Skill") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deletion of SKill Level Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Skill Level!";
                         return Json(new { url = Url.Action("SkillLevel", "Skill") });
                     }
                 }

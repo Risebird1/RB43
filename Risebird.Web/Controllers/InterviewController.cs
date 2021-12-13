@@ -176,6 +176,7 @@ namespace Risebird.Web.Controllers
                             filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
                             filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                             filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
+                            filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
 
                             modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && filter.RFID.Contains(c.IRFId)
@@ -185,7 +186,8 @@ namespace Risebird.Web.Controllers
                             && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
                             && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
                             && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                            && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)).ToList();
+                            && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
+                            && ((filter.IsCandidateResponsed != null && filter.IsCandidateResponsed.Count() > 0) ? filter.IsCandidateResponsed.Contains(c.IsCandidateResponsed) : c.IsCandidateResponsed == false)).ToList();
 
                         }
                         else
@@ -965,6 +967,7 @@ namespace Risebird.Web.Controllers
                         filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                         filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
+                        filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
 
                         modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && filter.RFID.Contains(c.IRFId)
@@ -974,7 +977,8 @@ namespace Risebird.Web.Controllers
                         && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
                         && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
                         && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                        && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)).ToList();
+                        && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
+                        && ((filter.IsCandidateResponsed != null && filter.IsCandidateResponsed.Count() > 0) ? filter.IsCandidateResponsed.Contains(c.IsCandidateResponsed) : c.IsCandidateResponsed == false)).ToList();
 
 
                         return View(modelList);
@@ -6529,6 +6533,21 @@ namespace Risebird.Web.Controllers
                 if (status == 2)
                 {
                     //send mail scheduling link
+                    var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
+                    List<string> interviewers = new List<string>();
+                    if (!String.IsNullOrEmpty(result.interviewer))
+                    {
+                        interviewers.Add(result.interviewer);
+                    }
+                    if (!String.IsNullOrEmpty(result.EmailId))
+                    {
+                        interviewers.Add(result.EmailId);
+                    }
+                    var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                 }
                 return Json("Successfully status updated");
             }
