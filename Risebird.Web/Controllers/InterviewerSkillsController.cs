@@ -420,7 +420,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel edits were not saved!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel Edits were not saved!";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -439,7 +439,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel edits were not saved";
+                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel Edits were not saved";
                 return RedirectToAction("Index");
             }
         }

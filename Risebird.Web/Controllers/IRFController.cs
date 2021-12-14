@@ -1944,7 +1944,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedFileURL = blob.Uri.ToString();
                                 if (uploadedFileURL == null)
                                 {
-                                    TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                    TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
                                     return RedirectToAction("Index");
 
                                 }
@@ -1970,7 +1970,7 @@ namespace Risebird.Web.Controllers
                                 string uploadedFileURL = blob.Uri.ToString();
                                 if (uploadedFileURL == null)
                                 {
-                                    TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                    TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
                                     return RedirectToAction("Index");
 
                                 }
@@ -2040,7 +2040,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "IRF edits were not saved";
+                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved";
                 return RedirectToAction("Index");
             }
         }

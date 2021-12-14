@@ -1041,9 +1041,9 @@ ul.panel-controls > li > button {
 }
 
 .daily-interview {
-    -ms-flex: 0 0 63.333333%;
-    flex: 0 0 63.333333%;
-    max-width: 63.333333%;
+    -ms-flex: 0 0 66.666666%;
+    flex: 0 0 66.666666%;
+    max-width: 66.666666%;
     padding-right: 15px;
 }
 
