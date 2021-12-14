@@ -247,7 +247,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Failed to add Client.";
+                            TempData["SuccessErrorMessage"] = "Failed to update Client.";
                             return RedirectToAction("List");
                         }
                     }
