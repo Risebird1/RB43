@@ -1406,6 +1406,8 @@ namespace Risebird.Repository
                     else if (reportDetails.MeetingStatus == 5)
                     {
                         parametersPoints.Add("@Points", 0);
+                        //parametersPoints.Add("@Points", -200);
+                        //parametersPoints.Add("@Points", -350);
                     }
                     else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus == 6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
                     {
@@ -5178,11 +5180,11 @@ namespace Risebird.Repository
                 string query = string.Empty;
                 if (status == 1)
                 {
-                    query = "Update im set IsCandidateResponsed=1 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,CandidateResponse=1 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 else
                 {
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=1,interviewer=null from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);

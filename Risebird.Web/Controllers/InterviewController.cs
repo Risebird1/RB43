@@ -1405,7 +1405,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting";
+                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting!";
                                     return RedirectToAction("Index");
                                 }
                             }
@@ -1609,7 +1609,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Failed to update Meeting.";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Failed to update Meeting!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
 
                             }
@@ -3311,7 +3311,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments!";
                                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
                             }
                         }
@@ -5208,7 +5208,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageUser"] = "Failed to delete Interview";
+                        TempData["SuccessErrorMessageUser"] = "Failed to delete Interview!";
                         if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
@@ -6137,10 +6137,8 @@ namespace Risebird.Web.Controllers
 
                             HttpClient httpClient = new HttpClient();
                             await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
-
                             TempData["SuccessErrorMessageInterview"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction("Index");
-
                         }
                         else
                         {
@@ -6533,6 +6531,21 @@ namespace Risebird.Web.Controllers
                 if (status == 2)
                 {
                     //send mail scheduling link
+                    var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
+                    List<string> interviewers = new List<string>();
+                    if (!String.IsNullOrEmpty(result.interviewer))
+                    {
+                        interviewers.Add(result.interviewer);
+                    }
+                    if (!String.IsNullOrEmpty(result.EmailId))
+                    {
+                        interviewers.Add(result.EmailId);
+                    }
+                    var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                 }
                 return Json("Successfully status updated");
             }

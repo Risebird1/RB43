@@ -318,14 +318,16 @@ padding:5px;
 table tr td:hover, .table-striped tbody tr:hover {
     box-shadow: 3px 4px 8px 2px rgb(0 0 0 / 5%), 0 6px 20px 0 rgb(0 0 0 / 19%);
 }
-
-.fa-clock:before {
-    content: "\f017";
-    position: absolute;
-    left: 2px;
-    font-weight: 500;
-    font-size: 17px;
+table tr td.relatedvideo:hover {
+    box-shadow:none!important;
 }
+    .fa-clock:before {
+        content: "\f017";
+        position: absolute;
+        left: 2px;
+        font-weight: 500;
+        font-size: 17px;
+    }
 
 .nav .fa-user:before {
     content: "\f017";
@@ -5398,9 +5400,18 @@ button .btn {
     height: 39px !important;
     padding: 9px 10px 9px 10px;
 }
+.leadinterviewer #search {
+    right: 50px;
+}
 
+.leadinterviewer #search {
+    right: 50px;
+}
+.leadinterviewer .ref-btn {
+    right: 30px;
+}
 .notschedulemeeting #search, .survey #search, .candidate-timeline #search, .candidate_resume #search, .unassigned-int #search {
-    right: 65px;
+    right: 60px;
     z-index: 0;
 }
 
@@ -5832,7 +5843,7 @@ button .btn {
         display: inline-block;
     }
     .single-video-left .join-time {
-        top: 15px !important;
+        top: -1px !important;
     }
 
     .allmeeting .table > tbody > tr > td {

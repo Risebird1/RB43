@@ -1326,7 +1326,7 @@ namespace Risebird.Business
         {
             try
             {
-                if(reportModel.MeetingStatus == (int)MeetingStatus.DroppedSelected)
+                if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedSelected)
                 {
                     reportModel.InterviewStatus = (int)InterviewStatus.Selected;
                 }
@@ -1347,7 +1347,7 @@ namespace Risebird.Business
                         if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                         {
                             string statusDesc = string.Empty;
-                            if(reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
+                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
                             {
                                 statusDesc = MeetingStatus.Completed.GetDescription();
                             }
@@ -3222,14 +3222,7 @@ namespace Risebird.Business
         {
             try
             {
-                if (_meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid))
-                {
-                    if (status == 2)
-                    {
-                        var result1 = _irfService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
-                    }
-                }
-                return true;
+                return _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid);
             }
             catch (Exception ex)
             {
