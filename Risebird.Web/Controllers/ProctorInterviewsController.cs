@@ -55,6 +55,10 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+                if(emailid == "interview@risebird.io")
+                {
+                    profileName = "Admin";
+                }
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Candidate" || profileName == "ResumeEvaluator" || profileName == "Client" || profileName == "QualityController" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "Recruiter")
                 {
                     var model = new VirtualMachineVM();
@@ -256,6 +260,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    if (emailid == "interview@risebird.io")
+                    {
+                        profileName = "Admin";
+                    }
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser")
                     {
                         var model = new VMResetPassword();
@@ -319,8 +327,13 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null &&
                     HttpContext.Session.GetString("profileName") != null)
                 {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    if (emailid == "interview@risebird.io")
+                    {
+                        profileName = "Admin";
+                    }
                     if (profileName == "Admin")
                     {
                         if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password, userName))
