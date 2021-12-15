@@ -1406,6 +1406,8 @@ namespace Risebird.Repository
                     else if (reportDetails.MeetingStatus == 5)
                     {
                         parametersPoints.Add("@Points", 0);
+                        //parametersPoints.Add("@Points", -200);
+                        //parametersPoints.Add("@Points", -350);
                     }
                     else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus == 6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
                     {
