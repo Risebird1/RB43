@@ -1405,7 +1405,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting";
+                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting!";
                                     return RedirectToAction("Index");
                                 }
                             }
@@ -1609,7 +1609,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Failed to update Meeting.";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Failed to update Meeting!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
 
                             }
@@ -3311,7 +3311,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments.";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments!";
                                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
                             }
                         }
@@ -5208,7 +5208,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageUser"] = "Failed to delete Interview";
+                        TempData["SuccessErrorMessageUser"] = "Failed to delete Interview!";
                         if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
@@ -6137,10 +6137,8 @@ namespace Risebird.Web.Controllers
 
                             HttpClient httpClient = new HttpClient();
                             await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
-
                             TempData["SuccessErrorMessageInterview"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction("Index");
-
                         }
                         else
                         {
