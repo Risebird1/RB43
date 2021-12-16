@@ -462,58 +462,96 @@
                                                                         {
                                                                             @if (item.IsOnline == 1)
                                                                             {
-                                                                                <td class="candidate-details">
-                                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span><strong>Name:</strong>@item.candidateName</a>
-                                                                                    <div class="mtop-5">
-                                                                                        @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
-                                                                                        {
-
-                                                                                            @if (item.JDTiltle.Split("|")[0].Length > 38)
-                                                                                            {
-                                                                                                <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
-                                                                                            }
-
-
-
-                                                                                        }
-                                                                                        else
-                                                                                        {
-
-                                                                                        }
-                                                                                    </div>
-                                                                                </td>
+                                                                    <td class="candidate-details">
+                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span><strong>Name:</strong>@item.candidateName</a>
+                                                                      
+                                                                        <div class="mtop-5">
+                                                                            @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                            {
+                                                                                @if (item.candidateEmail.Length > 30)
+                                                                                {
+                                                                                    <a onclick="" data-tooltip="@item.candidateEmail"><strong>Email:</strong><span class="hrname">  @item.candidateEmail</span> </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <a onclick=""><strong>Email:</strong> @item.candidateEmail </a>
+                                                                                }
                                                                             }
                                                                             else
                                                                             {
 
-                                                                                <td class="candidate-details">
-                                                                                    <a onclick=""><span class="dot"></span>@item.candidateName</a>
-                                                                                    <div class="mtop-5">
-                                                                                        @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
-                                                                                        {
+                                                                            }
+                                                                        </div>
+                                                                        
+                                                                        <div class="mtop-5">
+                                                                            @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                                            {
 
-                                                                                            @if (item.JDTiltle.Split("|")[0].Length > 38)
-                                                                                            {
-                                                                                                <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
-                                                                                            }
+                                                                                @if (item.JDTiltle.Split("|")[0].Length > 38)
+                                                                                {
+                                                                                    <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
+                                                                                }
 
 
 
-                                                                                        }
-                                                                                        else
-                                                                                        {
+                                                                            }
+                                                                            else
+                                                                            {
 
-                                                                                        }
-                                                                                    </div>
-                                                                                </td>
+                                                                            }
+                                                                        </div>
+
+                                                                        
+                                                                    </td>
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                    <td class="candidate-details">
+                                                                        <a onclick=""><span class="dot"></span>@item.candidateName</a>
+                                                                        <div class="mtop-5">
+                                                                            @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                            {
+                                                                                @if (item.candidateEmail.Length > 30)
+                                                                                {
+                                                                                    <a onclick="" data-tooltip="@item.candidateEmail"><strong>Email:</strong><span class="hrname">  @item.candidateEmail</span> </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <a onclick=""><strong>Email:</strong> @item.candidateEmail </a>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                            }
+                                                                        </div>
+                                                                        <div class="mtop-5">
+                                                                            @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                                            {
+
+                                                                                @if (item.JDTiltle.Split("|")[0].Length > 38)
+                                                                                {
+                                                                                    <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
+                                                                                }
+
+
+
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                            }
+                                                                        </div>
+                                                                    </td>
 
 
                                                                             }
@@ -1525,14 +1563,44 @@
             html += '<tr id=' + data[i].imid + ' data-changes="1">'; html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += '<td class="interviewdate"> ' + new Date(data[i].interviewDate).toLocaleString() + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '"/></td>'; if (data[i].candidateName != null && data[i].candidateName != "") {
                 if (data[i].IsOnline == 1) {
-                    html += ' <td class="candidate-details"><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName + '</a>'; html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
+                    html += ' <td class="candidate-details"><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName + '</a>';
+                    html += '<div class="mtop-5">';
+                    if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
+                        if (data[i].candidateEmail.length > 38) {
+
+                            html += ' <a onclick="" data-tooltip="' + data[i].candidateEmail + '"><strong>Email:</strong><span class="hrname"> ' + data[i].candidateEmail + '</span> </a>';
+                        }
+                        else {
+                            html += '  <a onclick=""><strong>Email:</strong> ' + data[i].candidateEmail + ' </a>';
+                        }
+                    }
+                    else {
+
+                    }
+                    html += '</div>'; html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
                         if (data[i].jdTiltle.split("|")[0].length > 38) {
                             html += ' <a onClick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"><strong>Jd Title: </strong><span class="hrname"> ' + data[i].jdTiltle.split("|")[0] + '</span> </a>';
                         } else { html += '  <a onClick=""><strong>Jd Title: </strong> ' + data[i].jdTiltle.split("|")[0] + ' </a>'; }
                     } else { } html += '</div></td>';
                 }
                 else {
-                    html += '<td class="candidate-details"><a onClick=""><span class="dot"></span>' + data[i].candidateName + '</a>'; html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
+                    html += '<td class="candidate-details"><a onClick=""><span class="dot"></span>' + data[i].candidateName + '</a>'; html += '<div class="mtop-5">';
+                    if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
+                        if (data[i].candidateEmail.length > 38) {
+
+                            html += ' <a onclick="" data-tooltip="' + data[i].candidateEmail + '"><strong>Email:</strong><span class="hrname"> ' + data[i].candidateEmail + '</span> </a>';
+                        }
+                        else {
+                            html += '  <a onclick=""><strong>Email:</strong> ' + data[i].candidateEmail + ' </a>';
+                        }
+
+
+
+                    }
+                    else {
+
+                    }
+                    html += '</div>';html += ' <div class="mtop-5">'; if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
                         if (data[i].jdTiltle.split("|")[0].length > 38) {
                             html += ' <a onClick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"><strong>Jd Title: </strong><span class="hrname"> ' + data[i].jdTiltle.split("|")[0] + '</span> </a>';
                         } else { html += '<a onClick=""><strong>Jd Title: </strong> ' + data[i].jdTiltle.split("|")[0] + ' </a>'; }
