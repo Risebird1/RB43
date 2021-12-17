@@ -330,6 +330,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    emailid = emailid.Replace("\"", "");
                     if (emailid == "interview@risebird.io")
                     {
                         profileName = "Admin";
