@@ -426,33 +426,33 @@
 
                                                     </div>
                                                     <div class="col-md-4 col-sm-4 pl-1">
-
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
-                                                            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-2 button">&rsaquo;</button>
-                                                                <button type="button" class="down-2 button">&lsaquo;</button>
-                                                            </div>
-
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-3 button">&rsaquo;</button>
-                                                                <button type="button" class="down-3 button">&lsaquo;</button>
-                                                            </div>
+                                                        @Html.HiddenFor(m => m.PerMintuteRate)
+                                                        @*<div class="form-group">
+            <div class="mandate">
+                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+            </div>
+            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
+            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+            <div class="spinner">
+                <button type="button" class="up-2 button">&rsaquo;</button>
+                <button type="button" class="down-2 button">&lsaquo;</button>
+            </div>
 
 
-                                                        </div>
+        </div>*@
+
+                                                        @Html.HiddenFor(m => m.TotalBudget)
+                                                        @*<div class="form-group">
+            <div class="mandate">
+                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+            </div>
+            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
+            <div class="spinner">
+                <button type="button" class="up-3 button">&rsaquo;</button>
+                <button type="button" class="down-3 button">&lsaquo;</button>
+            </div>
+        </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -471,10 +471,11 @@
                                                             @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_JobLevel", @class = "text-danger" })
 
                                                         </div>
-                                                        <div class="form-group">
+                                                        @Html.HiddenFor(m => m.Type)
+                                                        @*<div class="form-group">
                                                             @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
                                                             @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-                                                        </div>
+                                                        </div>*@
 
                                                     </div>
                                                 </div>
@@ -2867,9 +2868,9 @@
         spinner3.value = value;
     };
 
-    function PerMinRateInterviewer() {
-        $("#InterviewerCollection_0__PerSuccessRate").val($("#PerMintuteRate").val());
-    }
+    //function PerMinRateInterviewer() {
+    //    $("#InterviewerCollection_0__PerSuccessRate").val($("#PerMintuteRate").val());
+    //}
 
 
 </script>
@@ -3078,13 +3079,13 @@
                 else {
                     $('#error_Heuristicsscore').text("");
                 }
-                if ($('#NoOfPosition').val() == "") {
-                    $('#error_NoOfPosition').text("The No of Positions field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_NoOfPosition').text("");
-                }
+                //if ($('#NoOfPosition').val() == "") {
+                //    $('#error_NoOfPosition').text("The No of Positions field is required.");
+                //    flag = true;
+                //}
+                //else {
+                //    $('#error_NoOfPosition').text("");
+                //}
 
                 if ($('#NoOfIntterview').val() == "") {
                     $('#error_NoOfIntterview').text("The No of Intterview field is required.");
@@ -3094,20 +3095,20 @@
                     $('#error_NoOfIntterview').text("");
                 }
 
-                if ($('#PerMintuteRate').val() == "") {
-                    $('#error_PerMintuteRate').text("The Per Interview Rate field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_PerMintuteRate').text("");
-                }
-                if ($('#TotalBudget').val() == "") {
-                    $('#error_TotalBudget').text("The Total Budget field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_TotalBudget').text("");
-                }
+                //if ($('#PerMintuteRate').val() == "") {
+                //    $('#error_PerMintuteRate').text("The Per Interview Rate field is required.");
+                //    flag = true;
+                //}
+                //else {
+                //    $('#error_PerMintuteRate').text("");
+                //}
+                //if ($('#TotalBudget').val() == "") {
+                //    $('#error_TotalBudget').text("The Total Budget field is required.");
+                //    flag = true;
+                //}
+                //else {
+                //    $('#error_TotalBudget').text("");
+                //}
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-3").addClass("active");
@@ -3269,13 +3270,23 @@
         }
         if (tab_skill == "SkillCollection") {
             var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
+            var drpdowns2 = $('[id^=' + tab_skill + '][id$="Concepts"]');
+            var drpdowns3 = $('[id^=' + tab_skill + '][id$="Natureofquestion"]');
             for (i = 0; i < drpdowns1.length; i++) {
                 var interviewId = $("#" + drpdowns1[i].id).val();
-
-                if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
-                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
-                    return true;
+                if ($("#" + drpdowns2[i].id).val() != '' && $("#" + drpdowns3[i].id).val() != '') {
+                    if (interviewId != '') {
+                        if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
+                            document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
+                            return true;
+                        }
+                    }
+                    else {
+                        document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
+                        return true;
+                    }
                 }
+               
 
             }
         }
