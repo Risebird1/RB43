@@ -5834,6 +5834,12 @@ button .btn {
         display: inline-block;
 
     }
+    .info-detail {
+        font-size: 14px!important;
+        position: relative;
+        top: -24px;
+        right: -10px
+    }
     .commonpool .join-time {
         width: 95px !important;
         top: 0px !important;
