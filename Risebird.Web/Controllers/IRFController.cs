@@ -1347,12 +1347,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (ModelState.IsValid)
                         {
+                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId)).Where(x => x.UserId == model.UserId);
 
-                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId));
                             if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                             {
                                 //duplicates exist
-                                ModelState.AddModelError("", "The skill,question combination added by you should contain unique entries.");
+                                ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
                                 var skills = _irfService.GetTechSkills(model.IRFId);
                                 ViewBag.Skills = new SelectList(skills, "id", "Name");
                                 model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
