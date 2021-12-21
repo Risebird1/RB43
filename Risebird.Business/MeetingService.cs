@@ -910,32 +910,43 @@ namespace Risebird.Business
                 {
                     _meetingRespository.UnassignYourself(meetingid);
                     //TimeSpan timeSpan = meeting.Result.interviewDate - DateTime.Now;
-                    var interviwers = new List<string>();
-                    if (isPenalty)
+                    if (meeting.Result.interviewtimedifference >= 0 && meeting.Result.interviewtimedifference <= 60)
                     {
-                        //update flag for Emergency Interview
-                        _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.Result.interviewDate);
-                        interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
+                        if (meeting.Result.interviewtimedifference <= 30)
+                        {
+                            //for 1/2 hr before apply penality on interviewer according to india and outside india
+                            _meetingRespository.ApplyInterviewPenalty(meetingid, meeting.Result.JobCountry, meeting.Result.interviewer);
+                        }
                     }
                     else
                     {
-                        interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
-                    }
+                        var interviwers = new List<string>();
+                        if (isPenalty)
+                        {
+                            //update flag for Emergency Interview
+                            _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.Result.interviewDate);
+                            interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
+                        }
+                        else
+                        {
+                            interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                        }
 
-                    if (interviwers != null)
-                    {
-                        interviwers.Remove(email);
-                        _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
+                        if (interviwers != null)
+                        {
+                            interviwers.Remove(email);
+                            _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
 
-                    }
-                    var hrs = _userService.GetAllHrsEmailld()?.ToList();
-                    if (hrs != null)
-                    {
-                        var candidateEmail = meeting.Result.candidateEmail;
-                        var Skillchannelid = meeting.Result.IRFId;
-                        var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
-                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
+                        }
+                        var hrs = _userService.GetAllHrsEmailld()?.ToList();
+                        if (hrs != null)
+                        {
+                            var candidateEmail = meeting.Result.candidateEmail;
+                            var Skillchannelid = meeting.Result.IRFId;
+                            var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
+                            _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
 
+                        }
                     }
                     return true;
                 }

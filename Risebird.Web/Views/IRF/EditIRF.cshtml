@@ -377,7 +377,7 @@
                                                             @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
 
                                                         </div>
-                                                        <div class="" style="        display: none;
+                                                        <div class="" style="display: none;
         margin-bottom: 10px;" id="uploadcdDiv">
                                                             @Html.Label("Interview Instructions File", "Interview Instructions File", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -410,19 +410,20 @@
                                                             <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
                                                             @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
                                                         </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @id = "error_NoOfPosition", @class = "text-danger" })
+                                                        @Html.HiddenFor(m => m.NoOfPosition)
+                                                        @*<div class="form-group">
+            <div class="mandate">
+                @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+            </div>
+            @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @id = "error_NoOfPosition", @class = "text-danger" })
 
 
-                                                            <div class="spinner">
-                                                                <button type="button" class="up button">&rsaquo;</button>
-                                                                <button type="button" class="down button">&lsaquo;</button>
-                                                            </div>
-                                                        </div>
+            <div class="spinner">
+                <button type="button" class="up button">&rsaquo;</button>
+                <button type="button" class="down button">&lsaquo;</button>
+            </div>
+        </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -511,28 +512,31 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 col-sm-4 pl-1">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-2 button">&rsaquo;</button>
-                                                                <button type="button" class="down-2 button">&lsaquo;</button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
-                                                            <div class="spinner">
-                                                                <button type="button" class="up-3 button">&rsaquo;</button>
-                                                                <button type="button" class="down-3 button">&lsaquo;</button>
-                                                            </div>
-                                                        </div>
+                                                        @Html.HiddenFor(m => m.PerMintuteRate)
+                                                        @*<div class="form-group">
+            <div class="mandate">
+                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+            </div>
+            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
+            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+            <div class="spinner">
+                <button type="button" class="up-2 button">&rsaquo;</button>
+                <button type="button" class="down-2 button">&lsaquo;</button>
+            </div>
+        </div>*@
+
+                                                        @Html.HiddenFor(m => m.TotalBudget)
+                                                        @*<div class="form-group">
+            <div class="mandate">
+                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+            </div>
+            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
+            <div class="spinner">
+                <button type="button" class="up-3 button">&rsaquo;</button>
+                <button type="button" class="down-3 button">&lsaquo;</button>
+            </div>
+        </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
@@ -551,16 +555,11 @@
 
                                                         </div>
 
-
-                                                        <div class="form-group">
-
-
+                                                        @Html.HiddenFor(m => m.Type)
+                                                        @*<div class="form-group">
                                                             @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
                                                             @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-
-
-
-                                                        </div>
+                                                        </div>*@
 
 
                                                     </div>
@@ -1887,13 +1886,13 @@
             else {
                 $('#error_Heuristicsscore').text("");
             }
-            if ($('#NoOfPosition').val() == "") {
-                $('#error_NoOfPosition').text("The No. of Positions field is required.");
-                flag = true;
-            }
-            else {
-                $('#error_NoOfPosition').text("");
-            }
+            //if ($('#NoOfPosition').val() == "") {
+            //    $('#error_NoOfPosition').text("The No. of Positions field is required.");
+            //    flag = true;
+            //}
+            //else {
+            //    $('#error_NoOfPosition').text("");
+            //}
 
             if ($('#NoOfIntterview').val() == "") {
                 $('#error_NoOfIntterview').text("The No. of Intterview field is required.");
@@ -1903,20 +1902,20 @@
                 $('#error_NoOfIntterview').text("");
             }
 
-            if ($('#PerMintuteRate').val() == "") {
-                $('#error_PerMintuteRate').text("The Per Interview Rate field is required.");
-                flag = true;
-            }
-            else {
-                $('#error_PerMintuteRate').text("");
-            }
-            if ($('#TotalBudget').val() == "") {
-                $('#error_TotalBudget').text("The Total Budget field is required.");
-                flag = true;
-            }
-            else {
-                $('#error_TotalBudget').text("");
-            }
+            //if ($('#PerMintuteRate').val() == "") {
+            //    $('#error_PerMintuteRate').text("The Per Interview Rate field is required.");
+            //    flag = true;
+            //}
+            //else {
+            //    $('#error_PerMintuteRate').text("");
+            //}
+            //if ($('#TotalBudget').val() == "") {
+            //    $('#error_TotalBudget').text("The Total Budget field is required.");
+            //    flag = true;
+            //}
+            //else {
+            //    $('#error_TotalBudget').text("");
+            //}
             if ($('#StartDate').val() != "") {
                 flag = checkStartDate($('#StartDate').val());
             }
@@ -2131,11 +2130,19 @@
             var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
             for (i = 0; i < drpdowns1.length; i++) {
                 var interviewId = $("#" + drpdowns1[i].id).val();
-
-                if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
-                    document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
-                    return true;
+                if ($("#" + drpdowns2[i].id).val() != '' && $("#" + drpdowns3[i].id).val() != '') {
+                    if (interviewId != '') {
+                        if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
+                            document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
+                            return true;
+                        }
+                    }
+                    else {
+                        document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
+                        return true;
+                    }
                 }
+
 
             }
         }
@@ -2337,10 +2344,10 @@
             document.getElementById("JobCountry").value = '';
             document.getElementById("StartDate").value = '';
             document.getElementById("EndDate").value = '';
-            document.getElementById("NoOfPosition").value = '';
+            //document.getElementById("NoOfPosition").value = '';
             document.getElementById("NoOfIntterview").value = '';
-            document.getElementById("PerMintuteRate").value = '';
-            document.getElementById("TotalBudget").value = '';
+            //document.getElementById("PerMintuteRate").value = '';
+            //document.getElementById("TotalBudget").value = '';
             document.getElementById("PrimarySkillInvite").value = '';
 
         }

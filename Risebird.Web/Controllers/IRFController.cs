@@ -913,7 +913,10 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 SetAddIRFProperties(model);
-
+                model.PerMintuteRate = 0;
+                model.TotalBudget = 0;
+                model.NoOfPosition = 0;
+                model.Type = "B2B";
                 return View(model);
             }
             else
