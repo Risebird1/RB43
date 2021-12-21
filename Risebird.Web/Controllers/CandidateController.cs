@@ -3572,6 +3572,7 @@ namespace Risebird.Web.Controllers
                 HttpContext.Session.Remove("PublicCandidateStatusfilters");
                 var candidateData = new List<CandidateTimelineData>();
                 candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                candidateData = candidateData.OrderByDescending(x => x.interviewDate).ToList();
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -3604,10 +3605,12 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
                     candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
-                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.staffingAgency = firstData.staffingAgency;
+                    candidateTimeline.IsCandidateResponsed = firstData.IsCandidateResponsed;
+                    candidateTimeline.CandidateResponse = firstData.CandidateResponse;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
@@ -3679,6 +3682,7 @@ namespace Risebird.Web.Controllers
                 {
                     candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, datatype, emailid)).ToList();
                 }
+                candidateData = candidateData.OrderByDescending(x => x.interviewDate).ToList();
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -3711,10 +3715,12 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
                     candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
-                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+                    candidateTimeline.IsCandidateResponsed = firstData.IsCandidateResponsed;
+                    candidateTimeline.CandidateResponse = firstData.CandidateResponse;
 
                     //schedule status
                     var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
@@ -3867,6 +3873,8 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IRFName = firstData.IRFName;
                     candidateTimeline.Phone = firstData.Phone;
                     candidateTimeline.interviewDate = firstData.interviewDate.ToString();
+                    candidateTimeline.IsCandidateResponsed = firstData.IsCandidateResponsed;
+                    candidateTimeline.CandidateResponse = firstData.CandidateResponse;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
                     var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();

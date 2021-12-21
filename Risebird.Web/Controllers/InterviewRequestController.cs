@@ -201,7 +201,7 @@ namespace Risebird.Web.Controllers
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                                 Mail _mail = new Mail
                                 {
-                                    TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io;shahkar_alam@risebird.io; talent@risebird.io",
+                                    TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io;shahkar_alam@risebird.io; talent@risebird.io;parvati_sg@risebird.io",
                                     Subject = "New Interview Request: " + meeting.JdTitle
                                 };
                                 var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
@@ -349,7 +349,7 @@ namespace Risebird.Web.Controllers
                             if (_interviewRequestService.CreateInerviewRequest(meeting))
                             {
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
-                                var emaildids = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io";
+                                var emaildids = "ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io;parvati_sg@risebird.io";
                                 if (!String.IsNullOrEmpty(meeting.Assignto))
                                 {
                                     emaildids = emaildids + ";" + meeting.Assignto;
@@ -572,7 +572,7 @@ namespace Risebird.Web.Controllers
                         //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
                         Mail _mail = new Mail
                         {
-                            TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io; talent@risebird.io",
+                            TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io; talent@risebird.io;parvati_sg@risebird.io",
                             Subject = "New Interview Request: " + meeting.JdTitle
                         };
                         var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);

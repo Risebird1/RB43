@@ -391,7 +391,7 @@
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
-                                                    <th>C.R. Response</th>
+                                                    <th>Candidate Response</th>
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
                                                     <th>Zoom ID</th>
@@ -433,7 +433,7 @@
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
-                                                    <th>C.R. Response</th>
+                                                    <th>Candidate Response</th>
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
                                                     <th>Zoom ID</th>
@@ -703,7 +703,14 @@
 
                                                         @if (item.IsCandidateResponsed)
                                                         {
-                                                            <td>Responsed (@item.CandidateResponse)</td>
+                                                            @if (item.CandidateResponse)
+                                                            {
+                                                                <td>Responsed (Yes)</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>Responsed (No)</td>
+                                                            }
                                                         }
                                                         else
                                                         {
