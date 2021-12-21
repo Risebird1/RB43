@@ -29,9 +29,9 @@
                                 <div class="card-header">
                                     <h4 class="card-title">Sample Questions (Add Your Questions Here)</h4>
                                 </div>
-                                
+
                                 <div style="width:100%; float:left;height:10px;"></div>
-                                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                                @*@Html.ValidationSummary(false, "", new { @class = "text-danger" })*@
 
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="sample-qs">
@@ -46,7 +46,7 @@
                                             <tbody>
                                                 @if (Model.SkillCollection.Count() == 0)
                                                 {
-                                                    <tr >
+                                                    <tr>
                                                         <td class="b-right">
 
                                                             @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
@@ -57,6 +57,7 @@
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
                                                                     <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" style="width:100%" name="SkillCollection[0].Comment" class="valid" aria-invalid="false"></textarea>
+                                                                    @*<span id="error_0"></span>*@
 
                                                                 </div>
                                                             </div>
@@ -81,7 +82,7 @@
                                                     for (int i = 0; i < Model.SkillCollection.Count(); i++)
                                                     {
 
-                                                        @if(((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId) || Model.SkillCollection[i].UserId==null) || Model.Profile=="Admin")
+                                                        @if (((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId) || Model.SkillCollection[i].UserId == null) || Model.Profile == "Admin")
                                                         {
                                                             isDisplayable = true;
 
@@ -91,80 +92,81 @@
                                                             isDisplayable = false;
                                                         }
                                                         string rowDisplayStatus = isDisplayable ? "visible" : "collapse";
-                                                        <tr style="visibility: @rowDisplayStatus;" >
-                                                                
+                                                        <tr style="visibility: @rowDisplayStatus;">
+
                                                             <td>
                                                                 @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)@*|| Model.Profile=="Admin"*@)
-                                                                {
-                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+{
+                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    var newList = new List<SelectListItem>();
-                                                                    newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
+                    }
+                    else
+                    {
+                        var newList = new List<SelectListItem>();
+                        newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
 
-                                                                    if (newList != null && newList.Count() > 0)
-                                                                    {
-                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        var handleList = new List<SelectListItem>();
-                                                                        handleList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = Model.SkillCollection[i].SkillName });
+                        if (newList != null && newList.Count() > 0)
+                        {
+                            @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
+                        }
+                        else
+                        {
+                            var handleList = new List<SelectListItem>();
+                            handleList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = Model.SkillCollection[i].SkillName });
 
-                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, handleList, new { @class = "select-css form-control", @disabled = "disabled" })
+                            @Html.DropDownListFor(m => m.SkillCollection[i].Skill, handleList, new { @class = "select-css form-control", @disabled = "disabled" })
 
-                                                                    }
-                                                                }
+                        }
+                    }
 
-                                                              
+
                                                             </td>
 
-                                                                <td >
-                                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                        <div class="talktext">
-                                                                            @if (Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)
-                                                                            {
-                                                                                @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
-
-                                                                            }
-
-                                                                        </div>
-                                                                    </div>
-
-
-                                                                </td>
-
-                                                                <td  class="text-center">
-                                                                    <div class="sample-btn">
-                                                                        @*<span id="btnPlus_@i" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
-
-                                                                        @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
+                                                            <td>
+                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                    <div class="talktext">
+                                                                        @if (Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)
                                                                         {
-                                                                            isDeletetable = true;
+                                                                            @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @required = "required" })
 
                                                                         }
                                                                         else
                                                                         {
-                                                                            isDeletetable = false;
+                                                                            @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly", @required = "required" })
+
                                                                         }
-                                                                        @{
-                                                                            string displayStatus = isDeletetable ? "block" : "none";
-                                                                        }
-                                                                        <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                        @*<span id="error_@i"></span>*@
+                                                                        @*@Html.ValidationMessageFor(m => m.SkillCollection[i].Comment)*@
                                                                     </div>
+                                                                </div>
 
-                                                                </td>
-                                                                @Html.HiddenFor(m => m.SkillCollection[i].UserId)
-                                                            </tr>
 
-                                                        
+                                                            </td>
+
+                                                            <td class="text-center">
+                                                                <div class="sample-btn">
+                                                                    @*<span id="btnPlus_@i" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>*@
+
+                                                                    @if (((Model.Profile == "Interviewer" || Model.Profile == "HR") && Model.SkillCollection[i].UserId == Model.UserId) || (Model.Profile == "Admin"))
+                                                                    {
+                                                                        isDeletetable = true;
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        isDeletetable = false;
+                                                                    }
+                                                                    @{
+                                                                        string displayStatus = isDeletetable ? "block" : "none";
+                                                                    }
+                                                                    <span id="btnMinus_@i" style="display:@displayStatus;float:right;" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment','UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                </div>
+
+                                                            </td>
+                                                            @Html.HiddenFor(m => m.SkillCollection[i].UserId)
+                                                        </tr>
+
+
                                                     }
                                                 }
 
@@ -174,10 +176,10 @@
                                 </div><!--end of col-md-12-->
 
                             </div>
-
-                            <div class="card-footer ">
+                            <div class="row"><div class="col-md-12 text-right" style="padding-right:30%"> <span id="error_0" ></span></div></div>
+                            <div class="card-footer mt-10">
                                 <div class="row">
-                                    
+
                                     <div class="col-md-12 mc-button-area">
                                         <div class="pull-left">
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -198,7 +200,7 @@
                                             @*@Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
 
                                         }
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -394,4 +396,25 @@
     }
 
 
+</script>
+
+<script>
+    function errorMessage() {
+        //var flag = false;
+        var items = $('[id^=SkillCollection][id$="Comment"]');
+        for (j = 0; j < items.length; j++) {
+            if ($('#SkillCollection_' + j + '__Comment').val() == '') {
+                var error = document.getElementById("error_0");
+                // Changing content and color of content
+                error.textContent = "Question field should not be blank";
+                error.style.color = "red";
+                //flag = true;
+                return false;
+            } 
+        }
+        //if (flag) {
+        //    return false;
+        //}
+        return true;
+    }
 </script>
