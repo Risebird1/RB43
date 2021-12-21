@@ -5219,7 +5219,40 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-
         }
+        public async Task<bool> ApplyInterviewPenalty(int meetingid, string JobCountry, string interviewer)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
+                if (JobCountry.ToUpper() == "INDIA" || JobCountry.ToUpper() == "1")
+                {
+                    parameters.Add("@points", -200);
+                }
+                else
+                {
+                    parameters.Add("@points", -350);
+                }
+                parameters.Add("@interviewer", interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "usp_applyInterviewerpenalty", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }
