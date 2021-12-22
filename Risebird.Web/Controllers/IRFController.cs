@@ -1310,9 +1310,16 @@ namespace Risebird.Web.Controllers
                     var result = _irfService.GetTechSkillComments(id);
                     //if (result.Count() > 0)
                     model.SkillCollection = result;
+                    var techSkills = new List<Skill>();
                     var skills = _irfService.GetTechSkills(id);
+
+                    foreach (var skill in skills)
+                    {
+                        techSkills.Add(new Skill { id = skill.id, Name = skill.Name.Replace("\t", "").Replace("\n", "").Replace("\r", ""), Description = skill.Description.Replace("\t", "").Replace("\n", "").Replace("\r", "") });
+                    }
+                    
                     ViewBag.Skills = new SelectList(skills, "id", "Name");
-                    model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                    model.SkillsOptionsData = JsonConvert.SerializeObject(techSkills);
                     model.IRFId = id;
                     model.Profile = profileName;
                     model.UserId = _irfService.GetUserId(emailid);
