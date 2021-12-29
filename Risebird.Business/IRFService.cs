@@ -330,7 +330,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.AddSkillComments(skillComments);
+                return _irfRepository.AddSkillComments(skillComments).Result;
             }
 
             catch (Exception e)

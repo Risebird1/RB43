@@ -1997,49 +1997,56 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public bool AddSkillComments(TechSkillComments obj)
+        public async Task<bool> AddSkillComments(TechSkillComments obj)
         {
             try
             {
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlDeletePrevious = "Delete from TechSkillComments where IRFId =@IRFId;";
-                    var deletedRows = con.Execute(sqlDeletePrevious, new
-                    {
-                        obj.IRFId,
 
-                    });
+                    DataTable techSkillCommentsDt = new DataTable();
+                    techSkillCommentsDt.Columns.Add("IRFId", typeof(int));
+                    techSkillCommentsDt.Columns.Add("Skill", typeof(int));
+                    techSkillCommentsDt.Columns.Add("Comment", typeof(string));
+                    techSkillCommentsDt.Columns.Add("UserId", typeof(int));
 
                     foreach (var item in obj.SkillCollection)
                     {
-
-                        string questionRow = "INSERT INTO TechSkillComments (IRFId, Skill, Comment, UserId) Values (@IRFId, @Skill, @Comment, @UserId);";
-                        var affectedRows = con.Execute(questionRow, new
-                        {
-                            obj.IRFId,
-                            Skill = Convert.ToInt16(item.Skill),
-                            item.Comment,
-                            item.UserId
-
-                        });
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt16(item.Skill), item.Comment, item.UserId);
                     }
+
+                    SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);
+                    cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@TechSkillCommentsBulkData", SqlDbType.Structured));
+                    cmdAddSkillComments.Parameters["@TechSkillCommentsBulkData"].Value = techSkillCommentsDt;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
+                    cmdAddSkillComments.Parameters["@IRFId"].Value = obj.IRFId;
+                    con.Open();
+
+                    if (await cmdAddSkillComments.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
                     return true;
+
                 }
 
             }
+
             catch (SqlException e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
-
         public IEnumerable<SkillComment> GetTechSkillComments(int id)
         {
             try

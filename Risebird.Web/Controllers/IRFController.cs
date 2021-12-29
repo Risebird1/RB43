@@ -1296,7 +1296,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SampleQuestions(int id)
+        public IActionResult SampleQuestions(int id, string irf = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1323,6 +1323,10 @@ namespace Risebird.Web.Controllers
                     model.IRFId = id;
                     model.Profile = profileName;
                     model.UserId = _irfService.GetUserId(emailid);
+                    if (!string.IsNullOrEmpty(irf))
+                    {
+                        model.IrfName = irf;
+                    }
                     if (TempData["SuccessErrorMessageQuestions"] != null)
                     {
                         model.Message = TempData["SuccessErrorMessageQuestions"].ToString();

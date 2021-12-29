@@ -26,7 +26,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransJoinability> GetTransJoinability(int id);
         IEnumerable<TransQualityController> GetTransQualityController(int id);
         IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id);
-        bool AddSkillComments(TechSkillComments obj);
+        Task<bool> AddSkillComments(TechSkillComments obj);
         Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> ArchiveIRF(int IRFId);
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
