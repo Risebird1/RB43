@@ -5184,7 +5184,7 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=1,interviewer=null from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0,interviewer=null from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
