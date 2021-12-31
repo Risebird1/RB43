@@ -1377,12 +1377,12 @@ namespace Risebird.Web.Controllers
                             if (_irfService.AddSkillComments(model))
                             {
                                 TempData["SuccessErrorMessageQuestions"] = "Questions has been saved Successfully!";
-                                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf= model.IrfName });
                             }
                             else
                             {
                                 TempData["SuccessErrorMessageQuestions"] = "Failed to save the Questions!";
-                                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
                             }
                         }
                         else
@@ -1413,7 +1413,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
-                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
+                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
             }
         }
 
