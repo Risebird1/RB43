@@ -313,9 +313,7 @@
         loader.style.top = top + "px";
         loader.style.left = left + "px";
     };
-    ShowProgress();
-
-    window.onload = function () {
+    ShowProgress();    window.onload = function () {
         setTimeout(function () {
             loader.style.display = "none";
             $(".dataloading").show();
@@ -324,7 +322,6 @@
     };
     //// script for loader ends here
 </script>
-
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
