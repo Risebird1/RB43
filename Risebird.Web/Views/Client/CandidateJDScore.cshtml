@@ -4,29 +4,15 @@
     ViewData["Title"] = "Candidate JD Score";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    var Header = "<div>CLIENT JD /  CANDIDATE LIST</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>
-                <a class="navbar-brand breadcrumscolor" href="/Client/CreateJD">Client JD</a>
-                <a class="navbar-brand">/ &nbsp;Candidate List</a>
-            </div>
 
-        </div>
-    </nav>
-    <!-- End Navbar -->
     <div class="mt50">
     </div>
     <div class="content client">
@@ -48,7 +34,7 @@
                                 @Html.HiddenFor(m => m.JDTitle)
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="table-responsive-sm">
-                                        <table class="table table-bordered mbn" id="scoreTable">
+                                        <table class="table table-bordered mbn" id="scoreTable" cellpadding="0" cellspacing="0">
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">Candidate Email</th>

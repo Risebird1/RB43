@@ -232,7 +232,20 @@
         <!-- end row -->
     </div>
 </div>
+<script>
+    function moreless1(id) {
 
+        $('.moretext1_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
