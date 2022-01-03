@@ -75,11 +75,35 @@ namespace Risebird.Web.Controllers
                     }
                     foreach (var item in model)
                     {
-                        var _onemoth = item.Date.AddMonths(1).DayOfWeek;
-                        int diff = (7 + (_onemoth - DayOfWeek.Monday)) % 7;
-                        var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
-                        var _lastdate = _firstdate.AddDays(6);
-                        item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        //var _onemoth = item.Date.AddMonths(1).DayOfWeek;
+                        //int diff = (7 + (_onemoth - DayOfWeek.Monday)) % 7;
+                        //var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
+                        //var _lastdate = _firstdate.AddDays(6);
+                        //item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        if (1 <= item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 7)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 1));
+                            var _lastdate = item.Date.AddMonths(1).AddDays(7 - item.Date.AddMonths(1).Day);
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
+                        else if (7 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 14)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 7));
+                            var _lastdate = item.Date.AddMonths(1).AddDays(14 - item.Date.AddMonths(1).Day);
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
+                        else if (14 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 21)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 14));
+                            var _lastdate = item.Date.AddMonths(1).AddDays(21 - item.Date.AddMonths(1).Day);
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
+                        else if (21 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 31)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 21));
+                            var _lastdate = item.Date.AddMonths(2).AddDays(-(item.Date.AddMonths(1).Day + 1));
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
                     }
                     return View(model);
                 }
@@ -1541,13 +1565,14 @@ namespace Risebird.Web.Controllers
                 {
                     var model = await _meetingService.FetchCustomerDetails();
                     foreach (var item in model)
-                    {  if (item.JobCountry.ToUpper() == "INDIA" || item.JobCountry == "1") 
-                            {
-                                item.JobCountry = "INDIA";
-                            }
-                            else { item.JobCountry = "OUTSIDE INDIA"; }
-                      
-                        item.CompanyType=!String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
+                    {
+                        if (item.JobCountry.ToUpper() == "INDIA" || item.JobCountry == "1")
+                        {
+                            item.JobCountry = "INDIA";
+                        }
+                        else { item.JobCountry = "OUTSIDE INDIA"; }
+
+                        item.CompanyType = !String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
                     }
                     return View(model);
                 }
