@@ -174,10 +174,9 @@ namespace Risebird.Web.Controllers
                     {
                         model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
                     }
+
                     HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
 
-
-                    //ViewBag.searchValue = searchValue != null ? searchValue : string.Empty;
                     if (model.IRFList != null)
                     {
                         model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
@@ -304,7 +303,6 @@ namespace Risebird.Web.Controllers
                         model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
                     }
 
-                    //ViewBag.searchValue = filter.searchValue != null ? filter.searchValue : string.Empty;
                     if (model.IRFList != null)
                     {
                         model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
