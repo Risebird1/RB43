@@ -70,7 +70,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(int? pageNumber)
+        public IActionResult Index(string searchValue = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -82,7 +82,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
-                    irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
+                    irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
                     model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
                     foreach (var item in model.IRFList)
                     {
@@ -170,7 +170,18 @@ namespace Risebird.Web.Controllers
                         }
                         model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
-                    
+                    if (!string.IsNullOrEmpty(searchValue))
+                    {
+                        model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
+                    }
+                    HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
+
+
+                    //ViewBag.searchValue = searchValue != null ? searchValue : string.Empty;
+                    if (model.IRFList != null)
+                    {
+                        model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
+                    }
                     model.IRFFilterList = model.IRFList;
                     if (model.IRFList != null && model.IRFList.Count() >= 0)
                     {
@@ -223,14 +234,16 @@ namespace Risebird.Web.Controllers
 
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
-                    irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
+
+                    irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
+
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                        irfList = irfList?.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                     }
                     else
                     {
-                        irfList = irfList.Where(x => x.EndDate.Date > DateTime.Now);
+                        irfList = irfList?.Where(x => x.EndDate.Date > DateTime.Now);
                     }
                     if (profileName != null && profileName.Contains("Client"))
                     {
@@ -244,7 +257,7 @@ namespace Risebird.Web.Controllers
                     filter.EndClientName = filter.EndClientName ?? irfList.Select(x => x.ClientName).ToArray();
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                    irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                    irfList = irfList?.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                     && filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
@@ -253,7 +266,7 @@ namespace Risebird.Web.Controllers
                     && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
 
 
-                    if (irfList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+                    if (irfList?.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
                         irfList = _irfService.GetAllIRFs(emailid, profileName).Where(x => x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
                         irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
@@ -283,7 +296,19 @@ namespace Risebird.Web.Controllers
                             item.IRFStatus = "Archived";
                         }
                     }
-                    model.IRFList = irfList.OrderByDescending(x => x.EndDate).ToList();
+                    model.IRFList = irfList?.OrderByDescending(x => x.EndDate).ToList();
+
+                    if (HttpContext.Session.GetString("IRFSearchValue") != null)
+                    {
+                        var searchValue = HttpContext.Session.GetString("IRFSearchValue");
+                        model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
+                    }
+
+                    //ViewBag.searchValue = filter.searchValue != null ? filter.searchValue : string.Empty;
+                    if (model.IRFList != null)
+                    {
+                        model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
+                    }
                     model.IRFFilterList = model.IRFList;
                     model.Profile = profileName;
                     if (model.IRFList != null && model.IRFList.Count() >= 0)
@@ -301,7 +326,7 @@ namespace Risebird.Web.Controllers
                         }
 
                     }
-                    
+
                     return View(model);
 
                 }
@@ -318,7 +343,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult IndexPartial(int? pageNumber)
+        public IActionResult IndexPartial(int? pageNumber, string searchValue = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -418,9 +443,13 @@ namespace Risebird.Web.Controllers
                         }
                         model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
+                    if (!string.IsNullOrEmpty(searchValue))
+                    {
+                        model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
+                    }
                     if (pageNumber.HasValue)
                     {
-                        if(model.IRFList != null && (model.IRFList.Count() >= (pageNumber.Value - 1) * 15))
+                        if (model.IRFList != null && (model.IRFList.Count() >= (pageNumber.Value - 1) * 15))
                         {
                             try
                             {
@@ -436,6 +465,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             model.IRFList = null;
+
                         }
                     }
                     else
@@ -454,10 +484,11 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-                        
+
                     }
                     model.Profile = profileName;
-                    if(model.IRFList == null || model.IRFList.Count()==0)
+
+                    if (model.IRFList == null || model.IRFList.Count() == 0)
                     {
                         return Json(null);
                     }

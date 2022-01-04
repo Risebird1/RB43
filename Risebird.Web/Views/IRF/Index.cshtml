@@ -18,6 +18,7 @@
     string[] ClientRole = new string[] { };
     string[] PrimarySkill = new string[] { };
     string[] EndClientName = new string[] { };
+    string searchValue = string.Empty;
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
@@ -35,6 +36,11 @@
     PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     EndClientName = filter.EndClientName != null ? filter.EndClientName : new string[] { };
 }
+@if (HttpContextAccessor.HttpContext.Session.GetString("IRFSearchValue") != null)
+{
+    searchValue = HttpContextAccessor.HttpContext.Session.GetString("IRFSearchValue");
+}
+
 <script>
     var Header = "<div id='skill_1'>Skills Channel</div>";
     $('#txtpageHeader').empty().html(Header);
@@ -47,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/v6.0/css/font-awesome.min.css">
+@*<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/v6.0/css/font-awesome.min.css">*@
 <div class="main-panel" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"></div>-->
@@ -64,6 +70,7 @@
 
                     <div class="pull-right">
                         <div class="mc-button-area text-left">
+
 
                             <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier<br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>' data-position='left' class="pull-left" style="margin-right: 5px;">
                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
@@ -106,6 +113,14 @@
                                     }
 
                                 }
+                                <div class="searchbox">
+                                    <div class="irf-search">
+                                        <input type="text" id="idtxtSearch" name="searchValue" value="@searchValue" class="form-control txtsearch1" placeholder="Please enter Skill Channel Name" @*AutoCompleteType="Disabled"*@>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn3" id="btnSearch" type="button" onclick="SearchSkillChannels()"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -136,7 +151,7 @@
 
 
 
-                                        <form action="@Url.Action("Index","IRF")" method="post" id="form">
+                                        <form action="@Url.Action("Index","IRF")" method="post" id="formFilter">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -647,6 +662,30 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  </path>
   </svg>
                                         @*<i class="fa fa-spinner fa-4x fa-spin"></i>*@
@@ -967,37 +1006,38 @@
 <script>
 
     var currentPageNumber = 1;
+    var maxPageCount = parseInt('@Model.MaxPageCount');
     $(document).ready(function () {
 
         $(window).scroll(function () {
-            if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-                currentPageNumber += 1;
-                loadPageData(currentPageNumber);
-                //document.getElementById("loader").style.display = 'none';
+            if (maxPageCount > currentPageNumber) {
+                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                    currentPageNumber += 1;
+                    loadPageData(currentPageNumber);
+                    //document.getElementById("loader").style.display = 'none';
 
-
+                }
             }
+
         });
 
     });
     function loadPageData(currentPageNumber) {
         var loader = document.getElementById("loader");
         loader.style.display = 'block';
+        var searchValue = document.getElementById("idtxtSearch").value;
 
         $.ajax({
             url: '/IRF/IndexPartial',
-            data: { 'pageNumber': (currentPageNumber) },
+            data: { 'pageNumber': (currentPageNumber), 'searchValue': searchValue},
             method: 'GET',
             success: function (response) {
-                debugger;
-                if (response != null && response != '') {
-                    //document.getElementById("loader").style.display = 'none';
+                if (response != null && response != '' && response!=false) {
                     var irfTable = $('#irfTilesBody');
                     loader.style.display = 'none';
                     irfTable.append(response);
                 }
                 else {
-                    debugger;
                     loader.style.display = 'none';
 
                 }
@@ -1007,8 +1047,21 @@
 
     }
 
-</script>
+    function SearchSkillChannels() {
+        var searchValue = document.getElementById("idtxtSearch").value;
+        window.location = "/IRF/Index?searchValue=" + searchValue;
+    }
 
+</script>
+<script>
+
+    var input = document.getElementById("idtxtSearch");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            SearchSkillChannels();
+        }
+    });
+</script>
 
 <script>
     //function searchResult() {
@@ -1693,7 +1746,7 @@
             $("#PrimarySkill").val(primarySkill);
             $("#EndClientName").val(endClientName);
 
-            var form = $("#form").serialize();
+            var form = $("#formFilter").serialize();
 
         }
 
@@ -1778,9 +1831,9 @@
     }
 </script>
 
-<script type="text/javascript">
-    $(".sb-container").scrollBox();
-</script>
+@*<script type="text/javascript">
+        $(".sb-container").scrollBox();
+    </script>*@
 
 <script>
     $("#minimizeSidebar").click(function () {
