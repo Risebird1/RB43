@@ -2062,7 +2062,7 @@
     function CheckTechSkills() {
         var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
         for (i = 0; i < questionItems.length; i++) {
-            var temp = $("#TechSkillReportCollection" + i + "__ActualLevelId").val();
+            var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
             if (temp == null || temp == '') {
                 document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
                 document.getElementById('TechSkills_CommentError').focus();
