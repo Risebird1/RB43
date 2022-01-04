@@ -172,7 +172,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (!string.IsNullOrEmpty(searchValue))
                     {
-                        model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
+                        model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
                     }
 
                     HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
@@ -300,7 +300,7 @@ namespace Risebird.Web.Controllers
                     if (HttpContext.Session.GetString("IRFSearchValue") != null)
                     {
                         var searchValue = HttpContext.Session.GetString("IRFSearchValue");
-                        model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
+                        model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
                     }
 
                     if (model.IRFList != null)
@@ -443,7 +443,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (!string.IsNullOrEmpty(searchValue))
                     {
-                        model.IRFList = model.IRFList.Where(x => x.IRFId.Contains(searchValue));
+                        model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
                     }
                     if (pageNumber.HasValue)
                     {
