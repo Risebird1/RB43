@@ -1,6 +1,4 @@
 /* CSS Document */
-
-
 body {
     background: #ebecf1 !important;
 }
@@ -12,6 +10,7 @@ body {
 .share-btn, .view-video {
     color: #504d4d !important
 }
+
 .availbg {
     background: #fff;
 }
@@ -111,6 +110,7 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 .user-menu {
     border: 2px #f3d6c3 solid;
 }
+
 .clickhere_btn {
     color: #ea7227 !important;
     background: #54a5f500;
@@ -134,9 +134,11 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
         text-transform: uppercase;
         box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
     }
+
 .client .table-bordered td {
     border-right: 1px solid #dee2e6 !important;
 }
+
 .client .mdc-card {
     background: #ebecf1;
 }
@@ -146,12 +148,14 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
     padding: 7px 7px !important;
     background: #f0f0f0;
 }
+
 .report-full-wrap #videoId {
     background: #fff;
     font-size: 12px;
     padding: 1px 7px;
     margin: 0px 10px;
 }
+
 table.dataTable thead .sorting:after {
     color: transparent
 }
@@ -194,49 +198,62 @@ textarea::-webkit-scrollbar {
     background: #f7f7f7;
     color: #888 !important;
 }
+
 .instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
     background: #f7f7f7 !important;
 }
+
 .instainterview .upload-area {
     background: #f7f7f7;
 }
+
 .instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
     background-color: rgb(233 112 39);
     border-right: 30px solid rgb(233 112 39);
 }
+
 .instainterview .multiple_row > h2 span {
     color: #ffffff;
     position: absolute;
     text-transform: uppercase;
 }
+
 .instainterview .form-group label.upload {
     color: #e97027;
 }
+
 .instainterview .table-bordered {
     border: 2px solid #e97027 !important;
 }
+
 .instainterview label.upload {
     border: 1px #b8b9b98f solid;
     color: #908c8c;
     border-radius: 0rem;
 }
+
 .dob [type="date"] {
     background: #ebecee url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 4.2% !important;
 }
+
 #reportForm .report-wrap, #reportForm .card-wrap {
     background: #fff;
 }
+
 .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
     background: #f7f7f7;
 }
- .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+
+    .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
         color: #544d4dc4 !important;
         font-weight: 400;
-}
+    }
+
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
     color: #ec8840 !important;
 }
+
 #calender h4 {
     color: #d74a0a;
 }
@@ -253,6 +270,7 @@ textarea::-webkit-scrollbar {
     color: #7c2c08;
     background: #f9834396;
 }
+
 .resume {
     position: relative;
     display: inline-flex;
@@ -264,32 +282,39 @@ textarea::-webkit-scrollbar {
     color: #fff;
     line-height: 20px;
     vertical-align: middle;
-    border: 2px solid #e96b28; border-radius: 40px;
+    border: 2px solid #e96b28;
+    border-radius: 40px;
 }
+
 .form-field-calender .resume .form-label {
     color: #e96b28 !important;
 }
-    .time-btn {
-        border: 1px solid #e96529 !important;
-        color: #e96529;
-        background: none !important;
-    }
+
+.time-btn {
+    border: 1px solid #e96529 !important;
+    color: #e96529;
+    background: none !important;
+}
 
     .time-btn:hover {
         border: 2px solid #e96529 !important;
     }
+
 .welcome {
     background: #ec8840;
     padding: 6px 5px;
     text-align: center;
 }
+
 .welcome-txt {
     font-size: 13px;
     text-transform: capitalize;
 }
+
 .user-menu:before {
     background: #ec8840;
 }
+
 #myStatusListpopup .table-bordered td {
     border: 1px solid #dee2e6;
     BACKGROUND: #FFF;
@@ -301,24 +326,30 @@ textarea::-webkit-scrollbar {
         background: #fff;
         border: 1px solid #dee2e6;
     }
+
 #reportForm .videoConplayer {
     background: #fff;
 }
+
 #reportForm table {
     background: #fff;
 }
+
 #reportForm .talk-bubble textarea {
     background: #fff !important;
 }
+
 #reportForm .textarealabel {
     color: #544d4d !important;
 }
+
 #QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
     border-right: 1px solid #dee2e6 !important;
     border-left: 0px solid #dee2e6 !important;
     border-top: 1px solid #dee2e6 !important;
     border-top: 1px solid #dee2e6 !important;
 }
+
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
     background: url("../../img/audio-button-set-4-transparent.png") #f5f5f5;
     background-size: 25px;
@@ -718,6 +749,7 @@ table.journey {
 .show-interest {
     color: #000;
 }
+
 .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
     background: #e96b28 !important;
     border-color: #e96b28 !important;
@@ -726,6 +758,7 @@ table.journey {
 .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
     background: #ffb23630 !important;
 }
+
 .table-striped.table-bordered th {
     background: rgba(179, 172, 172, 0.3) !important
 }
@@ -737,6 +770,7 @@ table.journey {
 #mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
     background-color: rgba(255,255,255,.05);
 }
+
 .bl-bg {
     background: #ebecf1;
 }
@@ -781,6 +815,15 @@ table.journey {
 
 #candidateStatusModal .file-upload-wrapper:hover:before {
     background: #e0590c;
+}
+
+.irf-search #btnSearch {
+    background: #ea6e28 !important;
+}
+
+.irf-search input {
+    background: #fff !important;
+    border: 1px solid #ddd !important;
 }
 
 .btnmeeting, .btnmeeting:hover {

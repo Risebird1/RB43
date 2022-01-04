@@ -1,5 +1,4 @@
 /* CSS Document */
-
 body {
     background: #ebecf1 !important;
 }
@@ -390,6 +389,7 @@ table.journey {
 .interviewer .radiobox {
     background: #f7f7f7;
 }
+
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
@@ -398,6 +398,7 @@ table.journey {
     background: #dddddf url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
+
 .table-striped.table-bordered th {
     background: rgba(179, 172, 172, 0.3) !important
 }
@@ -409,6 +410,7 @@ table.journey {
 #mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
     background-color: rgba(255,255,255,.05);
 }
+
 #candidateStatusModal .file-upload-wrapper:before {
     background: #929292;
 }
@@ -556,6 +558,15 @@ table.journey {
     line-height: 11px !important;
 }
 
+.irf-search input {
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+}
+
+.irf-search #btnSearch {
+    background: #929292 !important;
+}
+
 [type="date"] {
     background: #f5f5f5 url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
@@ -563,7 +574,7 @@ table.journey {
 
 .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size:5% !important;
+    background-size: 5% !important;
     padding: 10px !important;
 }
 
@@ -595,38 +606,48 @@ table.journey {
     background: #f7f7f7;
     color: #888 !important;
 }
+
 .instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
     background: #f7f7f7 !important;
 }
+
 .instainterview .upload-area {
     background: #f7f7f7;
 }
+
 .instainterview .table-bordered {
-    border: 2px solid rgb(148 148 149)!important;
+    border: 2px solid rgb(148 148 149) !important;
 }
+
 .instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
     background-color: rgb(149 149 150);
     border-right: 30px solid rgb(148 148 149);
 }
+
 .instainterview .form-group label.upload {
     color: #959596;
 }
+
 .instainterview .multiple_row > h2 span {
     color: #ffffff;
     position: absolute;
     text-transform: uppercase;
 }
+
 .instainterview label.upload {
     border: 1px #b8b9b98f solid;
     color: #908c8c;
     border-radius: 0rem;
 }
+
 #reportForm .report-wrap, #reportForm .card-wrap {
     background: #fff;
 }
+
 .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
     background: #f7f7f7;
 }
+
     .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
         color: #544d4dc4 !important;
         font-weight: 400;
@@ -635,21 +656,26 @@ table.journey {
 #reportForm .videoConplayer {
     background: #fff;
 }
+
 #reportForm table {
     background: #fff;
 }
+
 #reportForm .talk-bubble textarea {
     background: #fff !important;
 }
+
 #reportForm .textarealabel {
     color: #544d4d !important;
 }
+
 #QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
     border-right: 1px solid #dee2e6 !important;
     border-left: 0px solid #dee2e6 !important;
     border-top: 1px solid #dee2e6 !important;
     border-top: 1px solid #dee2e6 !important;
 }
+
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
     background: url("../../img/audio-button-set-4-transparent.png") #f5f5f5;
     background-size: 25px;
@@ -657,6 +683,7 @@ table.journey {
     background-position: 45%;
     z-index: 1000;
 }
+
 .clickhere_btn {
     color: #8a8a8a !important;
     background: #54a5f500;
@@ -680,9 +707,11 @@ table.journey {
         text-transform: uppercase;
         box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
     }
+
 .client .table-bordered td {
     border-right: 1px solid #dee2e6 !important;
 }
+
 .resume {
     position: relative;
     display: inline-flex;
@@ -701,9 +730,11 @@ table.journey {
 .form-field-calender .resume .form-label {
     color: #929292 !important;
 }
+
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
     color: #47484a!important;
 }
+
 #myStatusListpopup .table-bordered td {
     border: 1px solid #dee2e6;
     BACKGROUND: #FFF;
@@ -715,21 +746,25 @@ table.journey {
         background: #fff;
         border: 1px solid #dee2e6;
     }
+
 .report-full-wrap #videoId {
     background: #fff;
     font-size: 12px;
     padding: 1px 7px;
     margin: 0px 10px;
 }
+
 .welcome {
     background: #8a8a8a;
     padding: 6px 5px;
     text-align: center;
 }
+
 .welcome-txt {
     font-size: 13px;
     text-transform: capitalize;
 }
+
 .user-menu:before {
     background: #8a8a8a;
 }
