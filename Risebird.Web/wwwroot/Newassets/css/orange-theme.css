@@ -782,7 +782,13 @@ table.journey {
 #candidateStatusModal .file-upload-wrapper:hover:before {
     background: #e0590c;
 }
-
+.irf-search #btnSearch {
+    background: #ea6e28!important;
+}
+.irf-search input {
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+}
 .btnmeeting, .btnmeeting:hover {
     background: #ea6e28;
     border: 2px #ea6e2894 double;

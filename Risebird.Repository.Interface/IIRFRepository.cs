@@ -26,13 +26,13 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransJoinability> GetTransJoinability(int id);
         IEnumerable<TransQualityController> GetTransQualityController(int id);
         IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id);
-        bool AddSkillComments(TechSkillComments obj);
+        Task<bool> AddSkillComments(TechSkillComments obj);
         Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> ArchiveIRF(int IRFId);
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
-        IEnumerable<SkillComment> GetTechSkillComments(int id);
+        IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId=null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
         //bool CheckUniqueness(string value);
