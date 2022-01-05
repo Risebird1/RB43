@@ -54,10 +54,10 @@ namespace Risebird.MicroService
                             {
                                 interviewers.Add(result.interviewer);
                             }
-                            if (!String.IsNullOrEmpty(result.EmailId))
-                            {
-                                interviewers.Add(result.EmailId);
-                            }
+                            //if (!String.IsNullOrEmpty(result.EmailId))
+                            //{
+                            //    interviewers.Add(result.EmailId);
+                            //}
                             var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                             var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                             var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
