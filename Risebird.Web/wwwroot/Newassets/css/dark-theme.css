@@ -149,7 +149,7 @@ hr {
 }
 
 .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
-    background: #181818;
+    background: #181818!important;
     color: #9A9A9A !important;
 }
 
@@ -943,12 +943,16 @@ input[type="radio"]:checked {
     color: #8a8181 !important;
     border: 0px !important;
 }
-
-.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .modal .select2-container--default .select2-selection--multiple {
-    background-color: #181818 !important;
-    border-bottom: 1px solid #aaa !important;
+a {
+    color: #86888b;
 }
-
+.modal .select2-container--default .select2-selection--multiple {
+    background-color: #181818!important;
+}
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple {
+    background-color: #181818 !important;
+    border-bottom: 1px #c5baba solid!important;
+}
 [data-tooltip]:after {
     border-top: 8px solid hsl(0deg, 0%, 7%) !important;
     border-right: 8px solid transparent !important;

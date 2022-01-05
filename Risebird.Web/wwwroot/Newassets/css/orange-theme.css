@@ -886,12 +886,15 @@ table.journey {
     color: #ea6e24;
     border: 1px #e30a13 solid;
 }
-
-.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .modal .select2-container--default .select2-selection--multiple {
+ .modal .select2-container--default .select2-selection--multiple {
     background-color: white !important;
     border-bottom: 1px solid #aaa !important;
 }
 
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-bottom: 2px solid rgb(234, 110, 36) !important;
+    background-color: white !important;
+}
 .card .card-footer {
     background-color: #ecececb5;
     border: 0;
