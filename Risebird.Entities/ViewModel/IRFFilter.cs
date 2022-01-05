@@ -14,6 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string[] SubscriptionStatus { get; set; }
         public string[] ClientRole { get; set; }
         public string[] PrimarySkill { get; set; }
+        //public string searchValue { get; set; }
 
     }
     public class InvoiceFilter

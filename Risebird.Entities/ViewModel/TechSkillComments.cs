@@ -9,7 +9,6 @@ namespace Risebird.Entities.ViewModel
         {
             SkillCollection = (IList<SkillComment>)(new List<SkillComment>());
             IrfName = string.Empty;
-
         }
         public IList<SkillComment> SkillCollection { get; set; }
         public int IRFId { get; set; }
