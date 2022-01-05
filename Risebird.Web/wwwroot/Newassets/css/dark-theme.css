@@ -939,9 +939,9 @@ input[type="radio"]:checked {
 }
 
 [data-tooltip]:before {
-    background: #121212 !important;
-    color: #8a8181 !important;
-    border: 0px !important;
+    background: #121212!important;
+    color: #8a8181!important;
+    border: 0px!important;
 }
 a {
     color: #86888b;
