@@ -515,7 +515,7 @@
                                                                 <td>
                                                                     @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
                                                                     {
-                                                                        <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId })" target="_blank"><input type="text" class="select-css form-control text-box single-line" /></a>
+                                                                        <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css form-control text-box single-line" /></a>
                                                                     }
                                                                     else
                                                                     {

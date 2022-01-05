@@ -11370,7 +11370,28 @@ body .top-panel {
 .searchbox .searchCon {
     z-index: 0 !important
 }
-
+.irf-search {
+    width: 285px;
+    float: right;
+    margin: 10px 0px;
+}
+    .irf-search #btnSearch {
+        height: 38px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+        .irf-search #btnSearch svg {
+            position: relative;
+            top: -3px;
+        }
+.irf-search input {
+    width: 80%;
+    float: left;
+    height:38px;
+}
+.irf-search .input-group-btn .btn3{
+    margin:0px;
+}
 .dataTables_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
     width: 230px;
     background-color: #fff;
