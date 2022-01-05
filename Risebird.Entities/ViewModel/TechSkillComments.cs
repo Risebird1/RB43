@@ -8,6 +8,8 @@ namespace Risebird.Entities.ViewModel
         public TechSkillComments()
         {
             SkillCollection = (IList<SkillComment>)(new List<SkillComment>());
+            IrfName = string.Empty;
+
         }
         public IList<SkillComment> SkillCollection { get; set; }
         public int IRFId { get; set; }
@@ -16,5 +18,6 @@ namespace Risebird.Entities.ViewModel
         public string Profile { get; set; }
         public SelectList Skills { get; set; }
         public string SkillsOptionsData { get; set; }
+        public string IrfName { get; set; }
     }
 }

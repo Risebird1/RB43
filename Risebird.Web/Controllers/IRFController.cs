@@ -1296,7 +1296,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SampleQuestions(int id)
+        public IActionResult SampleQuestions(int id, string irf = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1307,7 +1307,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
                 {
                     TechSkillComments model = new TechSkillComments();
-                    var result = _irfService.GetTechSkillComments(id);
+                    var result = _irfService.GetTechSkillComments(id, emailid);
                     //if (result.Count() > 0)
                     model.SkillCollection = result;
                     var skills = _irfService.GetTechSkills(id);
@@ -1316,6 +1316,10 @@ namespace Risebird.Web.Controllers
                     model.IRFId = id;
                     model.Profile = profileName;
                     model.UserId = _irfService.GetUserId(emailid);
+                    if(!string.IsNullOrEmpty(irf))
+                    {
+                        model.IrfName = irf;
+                    }
                     if (TempData["SuccessErrorMessageQuestions"] != null)
                     {
                         model.Message = TempData["SuccessErrorMessageQuestions"].ToString();
@@ -1365,13 +1369,13 @@ namespace Risebird.Web.Controllers
 
                             if (_irfService.AddSkillComments(model))
                             {
-                                TempData["SuccessErrorMessageQuestions"] = "Questions has been saved Successfully!";
-                                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
+                                TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageQuestions"] = "Failed to save the Questions!";
-                                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
+                                TempData["SuccessErrorMessageQuestions"] = "Failed to save Question(s)!";
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
                             }
                         }
                         else
@@ -1402,7 +1406,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
-                return RedirectToAction("SampleQuestions", new { id = model.IRFId });
+                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
             }
         }
 
