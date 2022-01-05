@@ -1997,64 +1997,85 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public bool AddSkillComments(TechSkillComments obj)
+        
+        public async Task<bool> AddSkillComments(TechSkillComments obj)
         {
             try
             {
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlDeletePrevious = "Delete from TechSkillComments where IRFId =@IRFId;";
-                    var deletedRows = con.Execute(sqlDeletePrevious, new
-                    {
-                        obj.IRFId,
 
-                    });
+                    DataTable techSkillCommentsDt = new DataTable();
+                    techSkillCommentsDt.Columns.Add("IRFId", typeof(int));
+                    techSkillCommentsDt.Columns.Add("Skill", typeof(int));
+                    techSkillCommentsDt.Columns.Add("Comment", typeof(string));
+                    techSkillCommentsDt.Columns.Add("UserId", typeof(int));
 
                     foreach (var item in obj.SkillCollection)
                     {
-
-                        string questionRow = "INSERT INTO TechSkillComments (IRFId, Skill, Comment, UserId) Values (@IRFId, @Skill, @Comment, @UserId);";
-                        var affectedRows = con.Execute(questionRow, new
-                        {
-                            obj.IRFId,
-                            Skill = Convert.ToInt16(item.Skill),
-                            item.Comment,
-                            item.UserId
-
-                        });
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt16(item.Skill), item.Comment, item.UserId);
                     }
+
+                    SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);
+                    cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@TechSkillCommentsBulkData", SqlDbType.Structured));
+                    cmdAddSkillComments.Parameters["@TechSkillCommentsBulkData"].Value = techSkillCommentsDt;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
+                    cmdAddSkillComments.Parameters["@IRFId"].Value = obj.IRFId;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));
+                    cmdAddSkillComments.Parameters["@userId"].Value = obj.UserId;
+                    con.Open();
+
+                    if (await cmdAddSkillComments.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
                     return true;
+
                 }
 
             }
+
             catch (SqlException e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public IEnumerable<SkillComment> GetTechSkillComments(int id)
+        public IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId=null)
         {
             try
             {
 
 
-                var query = "Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId";
+                //var query = "Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId";
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@IRFId", id);
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    var results = con.Query<SkillComment>(query, dynamicParameters);
+                //    return results;
+                //}
+
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
+                dynamicParameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SkillComment>(query, dynamicParameters);
-                    return results;
-                }
+                    var result = SqlMapper.QueryAsync<SkillComment>(con, "usp_GetTechSkillComments", dynamicParameters,
+                        commandType: CommandType.StoredProcedure).Result;
+                    return result;
 
+                }
             }
             catch (SqlException ex)
             {

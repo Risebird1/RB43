@@ -22,7 +22,7 @@ namespace Risebird.Business.Interface
         SelectList GetQualityController();
         Task<IRFVm> GetEditIRF(int id, bool isClone = false);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
-        IList<SkillComment> GetTechSkillComments(int id);
+        IList<SkillComment> GetTechSkillComments(int id, string emailId=null);
         bool CheckUniqueness(string value);
 
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();

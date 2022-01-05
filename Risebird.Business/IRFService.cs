@@ -330,7 +330,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.AddSkillComments(skillComments);
+                return _irfRepository.AddSkillComments(skillComments).Result;
             }
 
             catch (Exception e)
@@ -719,11 +719,11 @@ namespace Risebird.Business
             }
         }
         #endregion
-        public IList<SkillComment> GetTechSkillComments(int id)
+        public IList<SkillComment> GetTechSkillComments(int id, string emailId=null)
         {
             try
             {
-                var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id);
+                var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id, emailId);
                 return result;
             }
 
