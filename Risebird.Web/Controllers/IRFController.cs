@@ -1344,7 +1344,7 @@ namespace Risebird.Web.Controllers
 
                     foreach (var skill in skills)
                     {
-                        techSkills.Add(new Skill { id = skill.id, Name = skill.Name.Replace("\t", "").Replace("\n", "").Replace("\r", ""), Description = skill.Description.Replace("\t", "").Replace("\n", "").Replace("\r", "") });
+                        techSkills.Add(new Skill { id = skill.id, Name = skill.Name?.Replace("\t", "").Replace("\n", "").Replace("\r", ""), Description = skill.Description?.Replace("\t", "").Replace("\n", "").Replace("\r", "") });
                     }
                     
                     ViewBag.Skills = new SelectList(skills, "id", "Name");
