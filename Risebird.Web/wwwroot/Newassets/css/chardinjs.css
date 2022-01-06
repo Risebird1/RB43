@@ -1,95 +1,131 @@
+/* CSS Document */
+
+/* CSS Document */
 .chardinjs-overlay {
-  position: absolute;
-  z-index: 9999990;
-  background-color: #000;
-  opacity: 0.93;
-  width: 100%;
-  left: 0;
-  top: 0;
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  -ms-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out; }
+    position: absolute;
+    z-index: 9999990;
+    background-color: #000;
+    opacity: 0.93;
+    width: 100%;
+    left: 0;
+    top: 0;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -ms-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}
 
 .chardinjs-helper-layer {
-  position: absolute;
-  z-index: 9999998;
-  color: white;
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  -ms-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out; }
-  .chardinjs-helper-layer.chardinjs-left {
-    border-left: solid 1px;
-    margin-left: -12px; }
-  .chardinjs-helper-layer.chardinjs-right {
-    border-right: solid 1px;
-    padding-right: 10px; }
-  .chardinjs-helper-layer.chardinjs-bottom {
-    border-bottom: solid 0px;
-    padding-bottom: 10px; }
-  .chardinjs-helper-layer.chardinjs-top {
-    border-top: solid 0px;
-    padding-top: 10px; }
+    position: absolute;
+    z-index: 9999998;
+    color: white;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -ms-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}
+
+    .chardinjs-helper-layer.chardinjs-left {
+        border-left: solid 1px;
+        margin-left: -12px;
+    }
+
+    .chardinjs-helper-layer.chardinjs-right {
+        border-right: solid 1px;
+        padding-right: 10px;
+    }
+
+    .chardinjs-helper-layer.chardinjs-bottom {
+        border-bottom: solid 0px;
+        padding-bottom: 10px;
+    }
+
+    .chardinjs-helper-layer.chardinjs-top {
+        border-top: solid 0px;
+        padding-top: 10px;
+    }
 
 .chardinjs-tooltip {
-  position: absolute;
-  -webkit-transition: opacity 0.1s ease-out;
-  -moz-transition: opacity 0.1s ease-out;
-  -ms-transition: opacity 0.1s ease-out;
-  -o-transition: opacity 0.1s ease-out;
-  transition: opacity 0.1s ease-out;
-  max-width: 200px; }
-  .chardinjs-tooltip.chardinjs-left {
-    margin-left: -75px;
-    padding-right: 10px; }
+    position: absolute;
+    -webkit-transition: opacity 0.1s ease-out;
+    -moz-transition: opacity 0.1s ease-out;
+    -ms-transition: opacity 0.1s ease-out;
+    -o-transition: opacity 0.1s ease-out;
+    transition: opacity 0.1s ease-out;
+    max-width: 200px;
+}
+
+    .chardinjs-tooltip.chardinjs-left {
+        margin-left: -75px;
+        padding-right: 10px;
+    }
+
     .chardinjs-tooltip.chardinjs-right {
         margin-right: -65px;
         padding-left: 10px;
     }
 
-.chardinjs-tooltip.chardinjs-bottom {
-    margin-bottom: -30px;
-    padding-top: 10px;
-}
-  .chardinjs-tooltip.chardinjs-top {
-    margin-top: -30px;
-    padding-bottom: 10px; }
-  .chardinjs-tooltip.chardinjs-right:before, .chardinjs-tooltip.chardinjs-left:after, .chardinjs-tooltip.chardinjs-bottom:before, .chardinjs-tooltip.chardinjs-top:after {
-    content: ".";
-    display: inline-block;
-    background-color: white;
-    height: 1px;
-    overflow: hidden;
-    position: absolute; }
-  .chardinjs-tooltip.chardinjs-right:before, .chardinjs-tooltip.chardinjs-left:after {
-    width: 50px;
-    top: 50%; }
-  .chardinjs-tooltip.chardinjs-bottom:before, .chardinjs-tooltip.chardinjs-top:after {
-    width: 1px;
-    height: 30px;
-    left: 50%; }
-  .chardinjs-tooltip.chardinjs-bottom:before {
-    top: -30px; }
-  .chardinjs-tooltip.chardinjs-top:after {
-    bottom: -30px; }
-  .chardinjs-tooltip.chardinjs-right:before {
-    left: -50px; }
-  .chardinjs-tooltip.chardinjs-left:after {
-    right: -50px; }
+    .chardinjs-tooltip.chardinjs-bottom {
+        margin-bottom: -30px;
+        padding-top: 10px;
+    }
+
+    .chardinjs-tooltip.chardinjs-top {
+        margin-top: -30px;
+        padding-bottom: 10px;
+    }
+
+        .chardinjs-tooltip.chardinjs-right:before, .chardinjs-tooltip.chardinjs-left:after, .chardinjs-tooltip.chardinjs-bottom:before, .chardinjs-tooltip.chardinjs-top:after {
+            content: ".";
+            display: inline-block;
+            background-color: white;
+            height: 1px;
+            overflow: hidden;
+            position: absolute;
+        }
+
+    .chardinjs-tooltip.chardinjs-right:before, .chardinjs-tooltip.chardinjs-left:after {
+        width: 50px;
+        top: 50%;
+    }
+
+    .chardinjs-tooltip.chardinjs-bottom:before, .chardinjs-tooltip.chardinjs-top:after {
+        width: 1px;
+        height: 30px;
+        left: 50%;
+    }
+
+    .chardinjs-tooltip.chardinjs-bottom:before {
+        top: -30px;
+    }
+
+    .chardinjs-tooltip.chardinjs-top:after {
+        bottom: -30px;
+    }
+
+    .chardinjs-tooltip.chardinjs-right:before {
+        left: -50px;
+    }
+
+    .chardinjs-tooltip.chardinjs-left:after {
+        right: -50px;
+    }
 
 .chardinjs-show-element {
-  z-index: 9999995;
-  opacity: 0.88; }
+    z-index: 9999995;
+    opacity: 0.88;
+}
 
 .chardinjs-relative-position {
-  position: relative; }
+    position: relative;
+}
 
 .chardinjs-no-fixed {
-  z-index: auto !important;
-  position: absolute !important; }
+    z-index: auto !important;
+    position: absolute !important;
+}
 
 
 [data-id="allinterview_3"] .chardinjs-tooltip.chardinjs-right, [data-id="selectedcandidate_3"] .chardinjs-tooltip.chardinjs-right {
@@ -123,57 +159,68 @@
         top: 46%;
     }
 
-[data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext, [data-id="notschedule_table"] .chardinjs-tooltiptext {
+[data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="staffallinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext, [data-id="notschedule_table"] .chardinjs-tooltiptext, [data-id="staffing_notschedule_table"] .chardinjs-tooltiptext {
     width: 500px;
 }
 
-    [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after {
+[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-bottom:before, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after {
     left: 50%;
 }
 
-[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after, [data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top:after {
+[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top:after, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top:after, [data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top:after, [data-id="staffing_notschedule_table"] .chardinjs-tooltip.chardinjs-top:after {
     bottom: -30px;
 }
 
-[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top {
+[data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top {
     left: 100px !important;
-    margin-top:-8px!important;
-}
-[data-id="survey-feedback"] .chardinjs-tooltip.chardinjs-bottom {
-    padding-bottom: 500px!important;
+    margin-top: -8px !important;
 }
 
-[data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top {
+[data-id="survey-feedback"] .chardinjs-tooltip.chardinjs-bottom {
+    padding-bottom: 500px !important;
+}
+
+[data-id="notschedule_table"] .chardinjs-tooltip.chardinjs-top, [data-id="staffing_notschedule_table"] .chardinjs-tooltip.chardinjs-top {
     left: 200px !important;
     margin-top: 50px !important;
 }
+
 [data-id="candidatefeedback_table"] .chardinjs-tooltip.chardinjs-top {
-        left: 200px !important;
-        margin-top: 10px;
- }
+    left: 200px !important;
+    margin-top: 10px;
+}
 
 [data-id="commonpool_1"] .chardinjs-tooltiptext {
     width: 300px !important;
     margin-top: 20px !important;
 }
+
 [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top {
     left: 50px !important;
 }
+
 [data-id="candidatefeedback_table"] .allmeetingnext-btn {
     bottom: 90px !important;
-    right: -810px !important;
+    right: -875px !important;
+}
+[data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+    right: -400% !important;
+    bottom: 138px !important;
 }
 [data-id="selectedcandidate_table"] .allmeetingnext-btn {
-    bottom: 95px !important;
+    bottom: 100px !important;
 }
+
 [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top {
     margin-top: -17px !important;
 }
+
 [data-id="risetubevideo_6"] .chardinjs-tooltip.chardinjs-top {
-    width: 320px!important;
-    top: -80px!important;
-    left: -67px!important;
+    width: 320px !important;
+    top: -80px !important;
+    left: -67px !important;
 }
+
 [data-id="risetubevideo_7"] .chardinjs-tooltip.chardinjs-top {
     width: 320px !important;
     top: -90px !important;
@@ -195,8 +242,13 @@
     width: 400px !important;
     right: -250px !important;
 }
+
 [data-id="candidatefeedback_table"] .chardinjs-tooltiptext {
     width: 400px !important;
+}
+[data-id="staffagency_candidatetimeline"] .chardinjs-tooltip.chardinjs-top {
+    left: 200px !important;
+    margin-top: 30px;
 }
 [data-id="candidatetimeline"] .chardinjs-tooltip.chardinjs-top {
     left: 200px !important;
@@ -208,20 +260,51 @@
 }
 [data-id="candidatetimeline"] .allmeetingnext-btn {
     right: -400% !important;
-    bottom: 135px !important;
+    bottom: 138px !important;
 }
+
 @media only screen and (max-width: 768px) {
     [data-id="allinterview_2"] .chardinjs-tooltip.chardinjs-left {
         margin-left: -18px;
         padding-right: 10px;
         margin-top: 25px;
     }
-    [data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext {
+    [data-id="staffallinterview_table"] .allmeetingnext-btn {
+        bottom: 107px !important;
+        right: -250% !important;
+    }
+
+    [data-id="staffallinterview_table"] .chardinjs-tooltiptext, [data-id="allinterview_table"] .chardinjs-tooltiptext, [data-id="selectedcandidate_table"] .chardinjs-tooltiptext, [data-id="skill_card"] .chardinjs-tooltiptext, [data-id="risetube_video"] .chardinjs-tooltiptext {
         width: 200px;
     }
+
     [data-id="allinterview_table"] .chardinjs-tooltip.chardinjs-top, [data-id="selectedcandidate_table"] .chardinjs-tooltip.chardinjs-top, [data-id="skill_card"] .chardinjs-tooltip.chardinjs-top, [data-id="risetube_video"] .chardinjs-tooltip.chardinjs-top {
         left: 0px !important;
         top: -84px !important;
     }
-}
+    [data-id="staffallinterview_table"] .chardinjs-tooltip.chardinjs-top {
+        left: 0px !important;
+        top: -140px !important;
+    }
+    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+        right: -160% !important;
+        bottom: 145px !important;
+    }
 
+    .staffntschnext-btn {
+        bottom: 125px !important;
+        right: -160% !important;
+    }
+    .staffclose-btn {
+        border-radius: 5px !important;
+        font-size: 12px !important;
+        background-color: #42A5F6 !important;
+        position: absolute !important;
+        bottom: 132px !important;
+        right: -150% !important;
+    }
+    .instanext-btn {
+        right: -45% !important;
+        bottom: 340px !important;
+    }
+}

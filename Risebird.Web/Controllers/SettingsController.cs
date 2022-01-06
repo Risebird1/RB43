@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class SettingsController : Controller
     {
         private IApplicationErrorLogger _applicationErrorLogger;
@@ -22,6 +23,8 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -83,7 +86,7 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.Remove("settings");
                             HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));
-                            TempData["SuccessErrorMessageSettings"] = "Settings updated successfully.";
+                            TempData["SuccessErrorMessageSettings"] = "Settings has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else

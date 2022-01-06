@@ -14,7 +14,6 @@
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="hidden" value="@ViewBag.IRFintId" id="hidirfid" />
 <input type="hidden" value="@ViewBag.IRF" id="hidirfname" />
 <div class="main-panel" id="main-panel">
@@ -111,38 +110,45 @@
                                                     <tbody id="tblbodyInterviewMeeting">
                                                         @foreach (var item in Model)
                                                         {
-                                                            <tr id="@item.imid" data-changes="1">
-                                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                                <td> @item.interviewDate </td>
-                                                                @if (item.candidateName != null && item.candidateName != "")
+                                                        <tr id="@item.imid" data-changes="1">
+                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                            <td> @item.interviewDate </td>
+                                                            @if (item.candidateName != null && item.candidateName != "")
+                                                            {
+                                                                @if (item.IsOnline == 1 && item.candidateName.Length > 18)
                                                                 {
-                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 18)
+                                                                    <td>
+                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 18)...  </a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    @if (item.candidateName.Length > 18)
                                                                     {
-                                                                        <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 18)...  </a>
+
+
+                                                                        <td class="cadName">
+                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 18)... </a>
                                                                         </td>
                                                                     }
+
                                                                     else
                                                                     {
-
-                                                                        @if (item.candidateName.Length > 18)
-                                                                        {
-
-
-                                                                            <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 18)... </a>
-                                                                            </td>
-                                                                        }
-
-                                                                        else
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                            </td>
-                                                                        }
+                                                                        <td class="cadName">
+                                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                        </td>
                                                                     }
-
                                                                 }
+
+                                                            }
+                                                            @if (!item.IsQCRequired)
+                                                            {
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
+
+                                                            }
+                                                            else
+                                                            {
                                                                 @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                                 {
                                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
@@ -151,60 +157,81 @@
                                                                 {
                                                                     <td>No Report</td>
                                                                 }
-                                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                                {
-                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Resume</td>
-                                                                }
+                                                            }
 
-                                                                @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
-                                                                {
-                                                                    <td>
-                                                                        <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span> <span class="cname">    @item.ClientHrContact</span> </a>
-                                                                    </td>
+                                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                                            {
+                                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
+                                                            }
+
+                                                            @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
+                                                            {
+                                                                <td>
+                                                                    <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span> <span class="cname">    @item.ClientHrContact</span> </a>
+                                                                </td>
 
 
-                                                                }
-                                                                else
-                                                                {
+                                                            }
+                                                            else
+                                                            {
 
-                                                                    <td>
-                                                                        <a onclick=""><span class="dot"></span><span class="cname"> @item.ClientHrContact </span></a>
-                                                                    </td>
-                                                                }
-                                                                @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                                {
-                                                                    <td class="text-center">
-                                                                        <a style="color:red"> @item.confirmationStatus</a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td class="text-center"> @item.confirmationStatus</td>
-                                                                }
-                                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                                {
-                                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No Interview Link</td>
-                                                                }
+                                                                <td>
+                                                                    <a onclick=""><span class="dot"></span><span class="cname"> @item.ClientHrContact </span></a>
+                                                                </td>
+                                                            }
+                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:red"> @item.confirmationStatus</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="text-center"> @item.confirmationStatus</td>
+                                                            }
+                                                            @if (item.zoomLink != null && item.zoomLink != "")
+                                                            {
+                                                                <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Interview Link</td>
+                                                            }
 
-                                                                <td> @item.MeetingStatusStatusDesc </td>
+                                                            <td> @item.MeetingStatusStatusDesc </td>
+
+                                                            @if (item.IsQCRequired)
+                                                            {
                                                                 @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                                 {
                                                                     <td> @item.intervieweStatusStatDesc </td>
+                                                                }
+                                                                else if ((item.QCStatus == 2 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                {
+                                                                    <td> QC Failed(@item.intervieweStatusStatDesc)  </td>
+                                                                }
+                                                                else if (((item.QCStatus == null || item.QCStatus == 0) && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                {
+                                                                    <td> QC Pending(@item.intervieweStatusStatDesc)  </td>
                                                                 }
                                                                 else
                                                                 {
                                                                     <td></td>
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.intervieweStatusStatDesc</td>
 
-                                                            </tr>
+                                                            }
+
+
+
+                                                        </tr>
 
                                                             <tr class="collapse @item.imid">
 
@@ -392,7 +419,7 @@
             html += '  <td> ' + new Date(data[i].interviewDate).toLocaleString() + ' </td>';
             if (data[i].candidateName != null && data[i].candidateName != "") {
 
-                if (data[i].isOnline == 1 && data[i].candidateName.Length > 20) {
+                if (data[i].isOnline == 1 && data[i].candidateName.length > 20) {
                     html += '   <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 20) + '...  </a></td>';
                 }
                 else {
@@ -412,24 +439,32 @@
             else {
                 html += '<td></td>';
             }
+            if (!data[i].isQCRequired) {
+                html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
 
-
-            if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
             }
             else {
-                html += '   <td>No Report</td>';
+
+                if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                    html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
+                }
+                else {
+                    html += '<td>No Report</td>';
+                }
             }
+
+
+            
             if (data[i].resumeLink != null && data[i].resumeLink != "") {
-                html += '      <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
+                html += '<td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
             }
             else {
-                html += '    <td>No Resume</td>';
+                html += '<td>No Resume</td>';
             }
 
             if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 20) {
                 if (data[i].clientHrContact != null) {
-                    html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20) + '... </a></td>';
+                    html += '<td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20) + '... </a></td>';
                 }
 
 
@@ -441,14 +476,14 @@
             }
             else {
                 if (data[i].clientHrContact != null) {
-                    html += '   <td>  <a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
+                    html += '<td><a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
                 }
                 else { html += ' <td></td>'; }
 
 
             }
             if (data[i].confirmationStatus.trim() == "Cancelled") {
-                html += '    <td class="text-center"> <a style="color:red">' + data[i].confirmationStatus + '</a></td>';
+                html += '<td class="text-center"> <a style="color:red">' + data[i].confirmationStatus + '</a></td>';
 
 
             }
@@ -462,46 +497,53 @@
                 html += '    <td>No Interview Link</td>';
             }
             if (data[i].meetingStatusStatusDesc != null) {
-                html += '   <td>' + data[i].meetingStatusStatusDesc + ' </td>';
+                html += '<td>' + data[i].meetingStatusStatusDesc + ' </td>';
             }
             else {
-                html += '  <td></td>';
+                html += '<td></td>';
             }
-            if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                if (data[i].intervieweStatusStatDesc != null) {
+            debugger;
+            if (data[i].isQCRequired) {
+                if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                    if (data[i].intervieweStatusStatDesc != null) {
 
-                    html += '    <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
+                        html += '    <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
+                    }
+                    else {
+                        html += '<td></td>';
+                    }
                 }
+
                 else {
                     html += '<td></td>';
                 }
             }
-
             else {
-                html += '    <td></td>';
+                html += '    <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
             }
+            
 
-            html += '  </tr>';
+            html += '</tr>';
 
-            html += '    <tr class="collapse ' + data[i].imid + '">';
+            html += '<tr class="collapse ' + data[i].imid + '">';
 
-            html += '    <td colspan="999" class="child-section">';
-            html += '   <table class="table table-striped ">';
-            html += '     <tr>';
-            html += '     <th>Candidate Contact</th>';
-            html += '    <th>Current Employer</th>';
-            html += '   <th>Expected Salary</th>';
-            html += '   <th>Expected Joining Time</th>';
-            html += '    <th>Preferred Location</th>';
-            html += '    <th>Staffing Agency</th>';
-            html += ' </tr>';
-            html += '    <tr>';
+            html += ' <td colspan="999" class="child-section">';
+            html += '<table class="table table-striped ">';
+            html += '<tr>';
+            html += '<th>Candidate Contact</th>';
+            html += '<th>Current Employer</th>';
+            html += '<th>Expected Salary</th>';
+            html += '<th>Expected Joining Time</th>';
+            html += ' <th>Preferred Location</th>';
+            html += '<th>Staffing Agency</th>';
+            html += '</tr>';
+            html += '<tr>';
             if (data[i].mobileNumber != null) {
-                html += '  <td>' + data[i].mobileNumber + '</td>';
+                html += '<td>' + data[i].mobileNumber + '</td>';
 
             }
             else {
-                html += '  <td>No Contact</td>';
+                html += '<td>No Contact</td>';
             }
 
 
@@ -581,270 +623,3 @@
     };
     //// script for loader ends here
 </script>
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
-
-    <script type="text/javascript">
-
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
-        });
-
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
-            });
-        });
-
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
-
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
-
-            if ($('.helper').length !== 0) {
-
-
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
-
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-
-            } else {
-
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
-
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
-
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
-
-        });
-
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "Interview Meetings",
-                    content: "View the details of Interview Meeting and click on next button to know its features",
-                    target: "intmeet_1",
-                    placement: "bottom",
-                    showPrevButton: true,
-
-                    highlight: true,
-                    zindex: 999999,
-                    yOffset: 10,
-
-                    onCTA: function () {
-                        hopscotch.showStep(2);
-                        $('#intmeet_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-                        $('#intmeet_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-
-                    }
-                },
-                {
-                    title: "Search",
-                    content: "Search the records here based on available details",
-                    target: "intmeet_2",
-                    placement: "left",
-                    showPrevButton: true,
-
-                    zindex: 999999,
-                    xOffset: 10,
-                    onPrev: function () {
-
-                        $('#intmeet_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                    onNext: function () {
-
-                        $('#intmeet_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-
-                },
-
-
-                {
-                    title: "Report Link",
-                    content: "Click here to open the report & generate PDF",
-                    target: "intmeet_3",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: -40,
-                    yOffset: -10,
-                    onPrev: function () {
-
-                        $('#intmeet_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                    onNext: function () {
-
-                        $('#intmeet_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-
-                },
-                {
-                    title: "Resume",
-                    content: "Click here to view the resume of the candidate",
-                    target: "intmeet_4",
-                    showPrevButton: true,
-                    placement: "left",
-                    zindex: 999999,
-                    xOffset: 10,
-                    onPrev: function () {
-
-                        $('#intmeet_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-
-                        $('#intmeet_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-
-                },
-                {
-                    title: "Confirmation Status",
-                    content: "After the interview is confirmed / cancelled the status will be shown here",
-                    target: "intmeet_5",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#intmeet_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#intmeet_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-                {
-                    title: "Interview Link",
-                    content: "Click here to open the zoom link for interview",
-                    target: "intmeet_6",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#intmeet_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#intmeet_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Meeting Status",
-                    content: "Meeting status will be shown here",
-                    target: "intmeet_7",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#intmeet_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#intmeet_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-                {
-                    title: "Invite Status",
-                    content: "Click here to open & generate the candidate report ",
-                    target: "intmeet_8",
-                    placement: "left",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#intmeet_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#intmeet_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-               
-                {
-                    title: "Back to List",
-                    content: "Click here to go back to Skill Channel Page",
-                    target: "intmeet_9",
-                    placement: "bottom",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: -20,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#intmeet_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#intmeet_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
-
-        hopscotch.startTour(tour);
-
-    </script>
-
-}

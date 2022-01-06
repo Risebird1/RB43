@@ -24,8 +24,9 @@ namespace Risebird.Web.Controllers
         private IAccountService _accountService;
         private IConfiguration _configuration;
         private IInterviewerService _interviewerService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService)
+        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration, IInterviewerService interviewerService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -33,9 +34,11 @@ namespace Risebird.Web.Controllers
             _accountService = accountService;
             _configuration = configuration;
             _interviewerService = interviewerService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -167,6 +170,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetAccountFilter()
         {
             try
@@ -219,12 +223,12 @@ namespace Risebird.Web.Controllers
                     //profileName = profileName.Replace("\"", "");
                     if (_accountService.AddAccount(model).Result)
                     {
-                        TempData["SuccessErrorMessageAccount"] = "Account added Successfully";
+                        TempData["SuccessErrorMessageAccount"] = "Account has been added Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageProject"] = "Adding Account has Failed";
+                        TempData["SuccessErrorMessageProject"] = "Failed to add Account!";
                         return RedirectToAction("Index");
                     }
 
@@ -237,7 +241,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageProject"] = "Adding Account has failed";
+                TempData["SuccessErrorMessageProject"] = "Failed to add Account!";
                 return RedirectToAction("Index");
             }
         }
@@ -258,6 +262,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(Account model)
@@ -270,12 +275,12 @@ namespace Risebird.Web.Controllers
                     //profileName = profileName.Replace("\"", "");
                     if (_accountService.UpdateAccount(model))
                     {
-                        TempData["SuccessErrorMessageAccount"] = "Account edited Successfully";
+                        TempData["SuccessErrorMessageAccount"] = "Account has been edited Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageAccount"] = "Editing Account has Failed";
+                        TempData["SuccessErrorMessageAccount"] = "Failed to edit Account!";
                         return RedirectToAction("Index");
                     }
 
@@ -288,12 +293,13 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageAccount"] = "Editing Account has failed";
+                TempData["SuccessErrorMessageAccount"] = "Failed to edit Account!";
                 return RedirectToAction("Index");
             }
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult ArchiveAccount(int id)
         {
             try
@@ -306,7 +312,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (_accountService.ArchiveAccount(id).Result)
                         {
-                            TempData["SuccessErrorMessageAccount"] = "Account archived Successfully.";
+                            TempData["SuccessErrorMessageAccount"] = "Account has been archived Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
@@ -335,6 +341,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult UnArchiveAccount(int id)
         {
             try
@@ -347,12 +354,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_accountService.UnArchiveAccount(id).Result)
                         {
-                            TempData["SuccessErrorMessageAccount"] = "Account restored Successfully";
+                            TempData["SuccessErrorMessageAccount"] = "Account has been restored Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageAccount"] = "Account restore Failed";
+                            TempData["SuccessErrorMessageAccount"] = "Failed to restore Account!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -369,12 +376,14 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageAccount"] = "Account restore Failed";
+                TempData["SuccessErrorMessageAccount"] = "Failed to restore Account!";
                 return RedirectToAction("Index");
             }
 
         }
 
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredProjects(int clientId)
         {
             try
@@ -413,6 +422,8 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetEditFilteredProjects(int clientId, int accountId)
         {
             try
@@ -465,6 +476,8 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> UserProfile()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -499,6 +512,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UserProfile(InterviewerProfileVM userProfile)
         {
@@ -512,21 +527,51 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (userProfile.ImageUpload != null)
                 {
-                    await _azureStorageHelper.InsertBlob(userProfile.ImageUpload.FileName, "profileimages", userProfile.ImageUpload);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
-                    var blob = containerRef.GetBlockBlobReference(userProfile.ImageUpload.FileName);
-                    uploadedFileURL = blob.Uri.ToString();
-                    userProfile.ImageURL = uploadedFileURL;
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(userProfile.ImageUpload);
+                    if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
+                        || fileMimeType == "image/tiff")
+                    {
+                        await _azureStorageHelper.InsertBlob(userProfile.ImageUpload.FileName, "profileimages", userProfile.ImageUpload);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
+                        var blob = containerRef.GetBlockBlobReference(userProfile.ImageUpload.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        userProfile.ImageURL = uploadedFileURL;
+                    }
+                   
                 }
                 if (profileName == "Interviewer")
                 {
+                    
                     if (userProfile.ResumeFile != null)
                     {
-                        await _azureStorageHelper.InsertBlob(userProfile.ResumeFile.FileName, "resumes", userProfile.ResumeFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(userProfile.ResumeFile.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-                        userProfile.ResumeLink = uploadedFileURL;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(userProfile.ResumeFile);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(userProfile.ResumeFile.FileName, "resumes", userProfile.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(userProfile.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            userProfile.ResumeLink = uploadedFileURL;
+                        }
+                        
+                    }
+                    if (userProfile.CodedResumeFile != null)
+                    {
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(userProfile.CodedResumeFile);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(userProfile.CodedResumeFile.FileName.Replace(" ", "_"), "resumes", userProfile.CodedResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(userProfile.CodedResumeFile.FileName.Replace(" ", "_"));
+                            uploadedFileURL = blob.Uri.ToString();
+                            userProfile.CodedResumeLink = uploadedFileURL;
+                        }
+
+                        
 
                     }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
@@ -535,12 +580,12 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
-                        TempData["MyProfileMessage"] = "Profile updated Successfully";
+                        TempData["MyProfileMessage"] = "Profile has been updated Successfully!";
                         return RedirectToAction("UserProfile");
                     }
                     else
                     {
-                        TempData["MyProfileMessage"] = "Profile update failed";
+                        TempData["MyProfileMessage"] = "Failed to update Profile!";
                         return RedirectToAction("UserProfile");
                     }
                 }
@@ -552,12 +597,12 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("currentUserimage", userProfile.ImageURL);
                         }
-                        TempData["MyProfileMessage"] = "Profile updated Successfully";
+                        TempData["MyProfileMessage"] = "Profile has been updated Successfully!";
                         return RedirectToAction("UserProfile");
                     }
                     else
                     {
-                        TempData["MyProfileMessage"] = "Profile update failed";
+                        TempData["MyProfileMessage"] = "Failed to update Profile!";
                         return RedirectToAction("UserProfile");
                     }
                 }
@@ -565,6 +610,8 @@ namespace Risebird.Web.Controllers
             return View();
 
         }
+
+        [HttpGet]
         private void GetAllSelectList(InterviewerProfileVM model)
         {
             var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))

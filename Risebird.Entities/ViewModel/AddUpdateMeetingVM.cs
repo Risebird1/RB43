@@ -75,6 +75,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Interviewer")]
         public string interviewer { get; set; }
+        public string NewActiveInterviewer { get; set; }
 
         [Display(Name = "Preferred Location")]
         public string preferredLocation { get; set; }
@@ -115,6 +116,7 @@ namespace Risebird.Entities.ViewModel
 
 
         public string QCInterviewer { get; set; }
+        public string NewActiveQCInterviewer { get; set; }
 
 
         [Display(Name = "Co-ordinating HR")]

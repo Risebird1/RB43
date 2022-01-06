@@ -167,5 +167,17 @@ namespace Risebird.Business
         }
 
         #endregion
+        public List<Skill> GetAssessmentGroupCategory()
+        {
+            try
+            {
+                return _skillRepository.GetAssessmentGroupCategory().ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

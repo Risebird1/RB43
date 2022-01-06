@@ -1,6 +1,9 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SendGrid.Helpers.Mail;
@@ -8,6 +11,7 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -56,6 +60,7 @@ namespace Risebird.Functions
             string currentEmployerName = string.Empty;
             string textreminder = string.Empty;
             long zoommeetingId = 0;
+            int interviewId = 0;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
@@ -224,7 +229,6 @@ namespace Risebird.Functions
 
                 SqlCommand cmd = new SqlCommand(
                     "InsertMeetings", conn);
-
                 // 2. set the command object so it knows
                 // to execute a stored procedure
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -250,8 +254,13 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));
                 cmd.Parameters.Add(new SqlParameter("@zoomMeetingId", zoommeetingId));
+                SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
+                outPutVal.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outPutVal);
+
 
                 cmd.ExecuteScalar();
+                interviewId = (int)cmd.Parameters["@interviewIdOutput"].Value;
 
                 log.Info("Interview update in database ended.");
             }
@@ -290,7 +299,7 @@ namespace Risebird.Functions
                         masg.PlainTextContent = msgBody.ToString();
                         CommonSendMail _common = new CommonSendMail();
                         _common.SendMail(masg);
-                        log.Info("Interview schedule mail sent to interviewer.");
+                        log.Info("Interview scheduled mail sent to interviewer.");
                     }
                 }
                 catch (Exception)
@@ -330,7 +339,7 @@ namespace Risebird.Functions
                         masg.PlainTextContent = msgBody.ToString();
                         CommonSendMail _common = new CommonSendMail();
                         _common.SendMail(masg);
-                        log.Info("Interview schedule mail sent to HR.");
+                        log.Info("Interview scheduled mail sent to HR.");
                     }
                 }
                 catch (Exception)
@@ -343,34 +352,39 @@ namespace Risebird.Functions
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
-                        SqlCommand cmd = new SqlCommand(
-                            "usp_ListOfIRFClientHRs", conn);
+                        //SqlCommand cmd = new SqlCommand("usp_ListOfIRFClients", conn);
+                        SqlCommand cmd = new SqlCommand("usp_GetCandidateStaffingAgencyAndClientHRByInterviewId", conn);
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                        //cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                        cmd.Parameters.Add(new SqlParameter("@interviewId", interviewId));
                         var reader = cmd.ExecuteReader();
-                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
+                        //masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
                             masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
                         }
-                        masg.Subject = candidateName + " has scheduled their interview on date: " + interviewDate;
 
-                        StringBuilder msgBody = new StringBuilder("Dear Clients,");
-                        msgBody.Append("\n");
-                        msgBody.Append("\n");
-                        msgBody.AppendLine(candidateName + " has scheduled their interview on date: " + interviewDate + " . Details are ");
-                        msgBody.Append("\n");
-                        msgBody.AppendLine("Candidate Email: " + candidateEmail);
-                        msgBody.Append("\n");
-                        msgBody.AppendLine("Interview Details: " + interviewDetails);
-                        msgBody.Append("\n");
-                        msgBody.Append("\n");
-                        msgBody.AppendLine("Thank You, Team Risebird");
+                        string jdTitle = string.Empty;
+                        SqlCommand cmdJD = new SqlCommand("usp_GetIRFJobDescription", conn);
+                        cmdJD.CommandType = CommandType.StoredProcedure;
+                        cmdJD.Parameters.Add(new SqlParameter("@irfId", IRFID));
+                        var readerJD = cmdJD.ExecuteReader();
+                        while (readerJD.Read())
+                        {
+                            jdTitle = readerJD.GetString(0);
+                        }
+                        jdTitle = jdTitle?.Split('|')[0];
+                        masg.Subject = "New Interview Scheduled for the date : " + interviewDate;
 
-                        masg.PlainTextContent = msgBody.ToString();
+                        object[] parameters = new object[] { interviewDate, candidateName, candidateEmail, jdTitle };
+                        string rawEmail = GetBlobData("mailtemplate", "InterviewScheduledNotificationToClientsTemplate.html");
+                        string msgBody = string.Format(rawEmail, parameters);
+
+                        masg.HtmlContent = msgBody;
+
                         CommonSendMail _common = new CommonSendMail();
                         _common.SendMail(masg);
-                        log.Info("Interview schedule mail sent to interviewer.");
+                        log.Info("Interview scheduled mail sent to clients (ClientHR and staffing agency).");
                     }
                 }
                 catch (Exception)
@@ -467,6 +481,51 @@ namespace Risebird.Functions
             }
             //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
             return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
+        }
+        public static string GetBlobData(string containerName, string fileName)
+        {
+            try
+            {
+                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
+                CloudBlob blob = blobContainer.GetBlobReference(fileName);
+                string contents; /* content to append */
+                if (!blob.ExistsAsync().Result)
+                {
+                    contents = "";
+                }
+                else
+                {
+                    using (StreamReader reader = new StreamReader(blob.OpenReadAsync().Result))
+                    {
+                        contents = reader.ReadToEnd();
+                    }
+                }
+                return contents;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public static CloudBlobContainer GetCloudBlobContainer(string containerName)
+        {
+            CloudStorageAccount account = GetStorageAccount();
+            CloudBlobClient blobClient = account.CreateCloudBlobClient();
+            CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
+            if (!blobContainer.ExistsAsync().Result)
+            {
+                blobContainer.CreateIfNotExistsAsync();
+                var permission = new BlobContainerPermissions();
+                permission.PublicAccess = BlobContainerPublicAccessType.Container;
+                blobContainer.SetPermissionsAsync(permission);
+            }
+            return blobContainer;
+        }
+        public static CloudStorageAccount GetStorageAccount()
+        {
+            StorageCredentials creds = new StorageCredentials("risebirdportal", "2AKmR4SJlNvtr0BY5h7gVJANY7vBcCqph7KWywH9cqLcel/cxT0fKLXyGUVrSj3Xj89HUf2Z0QuWmQ8Zd5SqeQ==");
+            CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
+            return account;
         }
     }
 }

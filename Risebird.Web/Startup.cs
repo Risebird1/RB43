@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -59,8 +60,8 @@ namespace Risebird.Web
                 })
                 .AddAzureAdB2C(options => Configuration.Bind("Authentication:AzureAdB2C", options))
                 .AddCookie();
+          
 
-           
 
             services.Configure<BrotliCompressionProviderOptions>(options =>
             {
@@ -82,10 +83,10 @@ namespace Risebird.Web
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(1440);
+            {               
+                options.IdleTimeout = TimeSpan.FromMinutes(180);
                 options.Cookie.Name = "Risebirdportal.Session";
-                options.Cookie.HttpOnly = true;
+                //options.Cookie.HttpOnly = true;
             });
             //Set this values according to your requirements  
             services.Configure<FormOptions>(o =>
@@ -95,6 +96,7 @@ namespace Risebird.Web
                 o.MemoryBufferThreshold = int.MaxValue;
             });
 
+            services.AddApplicationInsightsTelemetry();
             //Dependency injection
             DependencyMapping(services);
         }
@@ -109,7 +111,7 @@ namespace Risebird.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Index");
             }
 
             app.UseSession();
@@ -127,13 +129,13 @@ namespace Risebird.Web
             //app.UseAntiforgeryTokens();
             app.UseHttpsRedirection();
 
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
+            app.UseStatusCodePagesWithReExecute("/Index");
             app.UseStaticFiles();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}");
             });
         }
 
@@ -209,6 +211,18 @@ namespace Risebird.Web
             services.AddScoped<IPasswordHelper, PasswordHelper>();
             services.AddScoped<IWhatsAppHelper, WhatsAppHelper>();
             services.AddScoped<ISASUrlHelper, SASUrlHelper>();
+            services.AddScoped<ITemplateService, TemplateService>();
+            services.AddScoped<ITemplateRepository, TemplateRepository>();
+            services.AddScoped<IInstaInterviewService, InstaInterviewService>();
+            services.AddScoped<IInstaInterviewRepository, InstaInterviewRepository>();
+            services.AddScoped<ICalendlyHelper, CalendlyHelper>();
+            services.AddScoped<IFileMimeTypeHelper, FileMimeTypeHelper>();
+            services.AddScoped<IInterviewRequestService, InterviewRequestService>();
+            services.AddScoped<IInterviewRequestRepository, InterviewRequestRepository>();
+            services.AddScoped<IInterviewSchedulerService, InterviewSchedulerService>();
+            services.AddScoped<IInterviewSchedulerRepository, InterviewSchedulerRepository>();
+            services.AddScoped<IRisebirdMeetingsRepository, RisebirdMeetingsRepository>();
+            services.AddScoped<IZoomHelper, ZoomHelper>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

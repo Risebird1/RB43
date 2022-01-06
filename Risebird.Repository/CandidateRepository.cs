@@ -168,7 +168,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select im.interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle,IRF.IRFId from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid and confirmationStatus=2";
+                var query = "Select im.interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.candidateName as CandidateName from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -289,6 +289,28 @@ namespace Risebird.Repository
             }
         }
 
+
+        //public async Task<IEnumerable<string>> GetIRFOwnerAndRestrictedOwnerClients(int interviewId)
+        //{
+        //    try
+        //    {
+        //        var dynamicParameters = new DynamicParameters();
+        //        dynamicParameters.Add("@IRFId", null);
+        //        dynamicParameters.Add("@interviewId", interviewId);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var results = await SqlMapper.QueryAsync<string>(con, "usp_ListOfIRFClients", dynamicParameters,
+        //               commandType: CommandType.StoredProcedure);
+        //            return results;
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
+
         public async Task<bool> DeleteCandidateResume(int id)
         {
             try
@@ -318,6 +340,184 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<IEnumerable<string>> GetCandidateStaffingAgencyAndClientHRByInterviewId(int interviewId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_GetCandidateStaffingAgencyAndClientHRByInterviewId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<string> GetCandidateStaffingAgency(int candidateId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@candidateId", candidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_GetCandidateStaffingAgency", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                parameters.Add("@datatype", datatype);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimelineByDateStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddEditFitmentReport(FitmentReportModel model)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable joinabilityReportDt = new DataTable();
+                    joinabilityReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    joinabilityReportDt.Columns.Add("Type", typeof(string));
+                    joinabilityReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    joinabilityReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    joinabilityReportDt.Columns.Add("WeightageActual", typeof(int));
+                    joinabilityReportDt.Columns.Add("Value", typeof(string));
+                    joinabilityReportDt.Columns.Add("CandidateId", typeof(int));
+                    joinabilityReportDt.Columns.Add("IRFId", typeof(int));
+
+
+                    foreach (var item in model.JoinabilityReportCollection)
+                    {
+                        joinabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, model.CandidateId, model.IRFId);
+                    }
+
+                    DataTable selectabilityReportDt = new DataTable();
+                    selectabilityReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    selectabilityReportDt.Columns.Add("Type", typeof(string));
+                    selectabilityReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    selectabilityReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    selectabilityReportDt.Columns.Add("WeightageActual", typeof(int));
+                    selectabilityReportDt.Columns.Add("Value", typeof(string));
+                    selectabilityReportDt.Columns.Add("CandidateId", typeof(int));
+                    selectabilityReportDt.Columns.Add("IRFId", typeof(int));
+
+
+                    foreach (var item in model.SelectabilityReportCollection)
+                    {
+                        selectabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, model.CandidateId, model.IRFId);
+                    }
+
+                    SqlCommand cmdAddTemplate = new SqlCommand("usp_AddEditFitmentReport", con);
+                    cmdAddTemplate.CommandType = CommandType.StoredProcedure;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@JoinabilityReportBulkData", SqlDbType.Structured));
+                    cmdAddTemplate.Parameters["@JoinabilityReportBulkData"].Value = joinabilityReportDt;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@SelectabilityReportBulkData", SqlDbType.Structured));
+                    cmdAddTemplate.Parameters["@SelectabilityReportBulkData"].Value = selectabilityReportDt;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@FitmentStatus", SqlDbType.Int));
+                    cmdAddTemplate.Parameters["@FitmentStatus"].Value = model.FitmentStatus;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@PriorityStatus", SqlDbType.Int));
+                    cmdAddTemplate.Parameters["@PriorityStatus"].Value = model.PriorityStatus;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@CompletionStatus", SqlDbType.Int));
+                    cmdAddTemplate.Parameters["@CompletionStatus"].Value = model.CompletionStatus; 
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
+                    cmdAddTemplate.Parameters["@IRFId"].Value = model.IRFId;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@CandidateId", SqlDbType.Int));
+                    cmdAddTemplate.Parameters["@CandidateId"].Value = model.CandidateId;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@JoinabilityScore", SqlDbType.Int));
+                    cmdAddTemplate.Parameters["@JoinabilityScore"].Value = model.JoinabilityScore;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@SelectabilityScore", SqlDbType.Int));
+                    cmdAddTemplate.Parameters["@SelectabilityScore"].Value = model.SelectabilityScore;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@JoinabilityComments", SqlDbType.VarChar));
+                    cmdAddTemplate.Parameters["@JoinabilityComments"].Value = model.JoinabilityComments;
+                    cmdAddTemplate.Parameters.Add(new SqlParameter("@SelectabilityComments", SqlDbType.VarChar));
+                    cmdAddTemplate.Parameters["@SelectabilityComments"].Value = model.SelectabilityComments;
+                    con.Open();
+                    if (await cmdAddTemplate.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+
+        }
+        public async Task<Candidate> GetCandidateForFitmentReport(int candidateMasterId, int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@candidateMasterId", candidateMasterId);
+                    parameters.Add("@irfId", irfId);
+                    var result = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetCandidateForFitmentReport", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
     }
 }

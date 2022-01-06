@@ -28,9 +28,13 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">Open Interviews</h4></div>
                 </div>
-
                 <div class="pull-right ">
-                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space", onchange = "FilterInterviews(this.value);" })
+                    <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
+                        <span onclick="javascript:CopyPublicUrl('@ViewBag.emailid');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                    </button>
+                </div>
+                <div class="pull-right ">
+                    <span style="float:left;line-height:36px;">Sort By:</span>   @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space",@style="margin:0px 5px;width:150px;", onchange = "FilterInterviews(this.value);" })
 
                 </div>
             </div>
@@ -71,8 +75,8 @@
 
                                                 </div>
                                             </div>
-                                            </div>
                                         </div>
+                                    </div>
                                     <div class="clearfix"></div>
                                     <div class="col-sm-12 nopad">
                                         <div class="table-responsive">
@@ -83,9 +87,10 @@
                                                         <th>Slot</th>
                                                         <th>Duration</th>
                                                         <th id="openinterview_2">Candidate Name</th>
+                                                        <th>JD-Skills</th>
                                                         <th id="openinterview_3">Resume</th>
-                                                        <th id="openinterview_4">JD Link</th>
-                                                       
+                                                        @*<th id="openinterview_4">JD Link</th>*@
+
                                                         @if (Model.Count == 0)
                                                         {
                                                             <th id="openinterview_6" class="disabled-sorting text-right">Actions</th>
@@ -102,9 +107,10 @@
                                                         <th>Slot</th>
                                                         <th>Duration</th>
                                                         <th>Candidate Name</th>
+                                                        <th>JD-Skills</th>
                                                         <th>Resume</th>
-                                                        <th>JD Link</th>
-                                                      
+                                                        @*<th>JD Link</th>*@
+
 
                                                         <th class="disabled-sorting text-right">Actions</th>
 
@@ -126,6 +132,12 @@
                                                             <td> @item.interviewSlot </td>
                                                             <td> @item.interviewDuration </td>
                                                             <td> @item.candidateName</td>
+                                                            <td>
+                                                                <button type="button" class="clickhere_btn pull-left">
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
+                                                                </button>
+                                                                <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
+                                                            </td>
                                                             @if (item.resumeLink != null && item.resumeLink != "")
                                                             {
                                                                 <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -134,16 +146,16 @@
                                                             {
                                                                 <td>No Resume</td>
                                                             }
-                                                            @if (item.JDLink != null && item.JDLink != "")
-                                                            {
-                                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No JD</td>
-                                                            }
+                                                            @*@if (item.JDLink != null && item.JDLink != "")
+                                                                {
+                                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No JD</td>
+                                                                }*@
 
-                                                            
+
 
                                                             <td class="text-right">
                                                                 <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate})'" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
@@ -156,15 +168,15 @@
                                         </div>
                                     </div>
 
-                                        <div class="col-sm-12 col-md-5 pull-left">
-                                            Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
-                                        </div>
-
-                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right">
-                                            @Html.PagedListPager(Model, Page => Url.Action("OpenInterview", new { Page = Page }))
-                                        </div>
-
+                                    <div class="col-sm-12 col-md-5 pull-left">
+                                        Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                     </div>
+
+                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right">
+                                        @Html.PagedListPager(Model, Page => Url.Action("OpenInterview", new { Page = Page }))
+                                    </div>
+
+                                </div>
 
 
 
@@ -183,8 +195,75 @@
     </div>
 
 </div>
+<div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
 
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeIRFSkillModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
 
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body">
+                <div style="padding:10px" id="divcandidateskills">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @if (ViewBag.Message != null)
@@ -338,6 +417,70 @@
             }
         });
     }
+    function openSkillpopup(id) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/FetchSkillDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("IRFSkillModel");
+                var skill_id_pop = $("#skill_id_" + id).val();
+                $("#skill_id_pop").text(skill_id_pop);
+                modal.style.display = "block";
+                bindSkillData(data);
+            }
+        });
+    }
+    function closeIRFSkillModel() {
+        var model = document.getElementById("IRFSkillModel");
+        model.style.display = "none";
+    }
+    function bindSkillData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
+        html += '  <th width="70%" class="table_heading">Skill Name<span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].levelName + '</td>';
+            html += '    <td>' + data[i].skillName + '</td>';
+            html += '  <td>' + data[i].weightage + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divcandidateskills").empty().html(html);
+    }
+    function CopyPublicUrl(EmailId) {
+        $.ajax({
+            url: '/Interviewer/CopyPublicURLInterviewer',
+            data: { 'Emailid': EmailId },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtvideoUrls").text(result);
+            }
+        });
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
 {
@@ -408,7 +551,7 @@
             showCloseButton: false,
             steps: [
 
-            
+
                 {
                     title: "Open Interviews",
                     content: "View all Open Interviews detail here and click on next button to know its features",
@@ -430,7 +573,7 @@
 
                     }
                 },
-               
+
 
                 {
                     title: "Candidate Name",
@@ -546,7 +689,7 @@
                         $('.helper').remove();
                     }
                 },
-                       {
+                {
                     title: "My Interviews",
                     content: "Click on My Interviews menu to see its features",
                     target: "myinterview_1",

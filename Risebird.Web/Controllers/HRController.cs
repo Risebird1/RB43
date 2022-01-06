@@ -17,6 +17,7 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class HRController : Controller
     {
         private readonly IMeetingService _meetingService;
@@ -25,14 +26,17 @@ namespace Risebird.Web.Controllers
         //private readonly IConfiguration _configuration;
         private static List<Meeting> _modelDetail;
         private static string Searchvalue;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
 
 
-        public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper)
+
+        public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
@@ -257,6 +261,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> HRAssignYourself(int id, string InterviewDate)
         {
             try
@@ -293,6 +298,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetHROpenInterviewFilter()
         {
             try
@@ -631,6 +637,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> HRUnassignYourself(int id)
@@ -674,6 +681,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetHRInterviewFilter()
         {
             try
@@ -961,17 +969,23 @@ namespace Risebird.Web.Controllers
                 {
                     if (Request.Form.Files.Count() > 0)
                     {
-                        var imageFile = Request.Form.Files[0];
-                        await _azureStorageHelper.InsertBlob(imageFile.FileName, "images", imageFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("images");
-                        var blob = containerRef.GetBlockBlobReference(imageFile.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-                        if (string.IsNullOrEmpty(uploadedFileURL))
-                        {
-                            TempData["SuccessErrorMessageHR"] = "Error uploading the image!";
-                            return false;
-                        }
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
 
+                        if (fileMimeType == "image/ief" || fileMimeType == "image/jpeg"
+                                || fileMimeType == "image/tiff")
+                        {
+                            var imageFile = Request.Form.Files[0];
+                            await _azureStorageHelper.InsertBlob(imageFile.FileName, "images", imageFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("images");
+                            var blob = containerRef.GetBlockBlobReference(imageFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            if (string.IsNullOrEmpty(uploadedFileURL))
+                            {
+                                TempData["SuccessErrorMessageHR"] = "Error uploading the image!";
+                                return false;
+                            }
+                        }
+                        
                     }
                     else
                     {
@@ -983,7 +997,7 @@ namespace Risebird.Web.Controllers
                     var result = await _meetingService.SaveHRComment(id, comment, uploadedFileURL, loggedInUser, candidateDetails);
                     if (result)
                     {
-                        TempData["SuccessErrorMessageHR"] = "HR comments saved Successfully!";
+                        TempData["SuccessErrorMessageHR"] = "HR comments has been saved Successfully!";
 
                     }
                     else
@@ -1006,6 +1020,164 @@ namespace Risebird.Web.Controllers
 
 
 
+        }
+        
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallCatalogue()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+                        if (TempData["SuccessErrorMessageCandidate"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                            TempData.Remove("SuccessErrorMessageCandidate");
+                        }
+                        var meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
+                        if (HttpContext.Session.GetString("CallCataloguefilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
+                            }
+                            else if (filter.StartDate != null && filter.EndDate == null)
+                            {
+                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate).ToList();
+                            }
+                            else if (filter.StartDate == null && filter.EndDate != null)
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                                meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
+                            }
+                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHr).ToArray() : filter.ClientHR = filter.ClientHR;
+                            filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+                            meetings = meetings.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                                                    && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHr) : c.ClientHr == null)
+                                                    && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                                                    && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)).ToList();
+                        }
+                        else
+                        {
+                            DateTime StartDate = DateTime.Now.Date;
+                            DateTime EndDate = DateTime.Now.Date.AddDays(1);
+                            meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
+                        }
+                        ViewBag.Profile = profileName;
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CallCatalogue(InterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("CallCataloguefilters", JsonConvert.SerializeObject(filter));
+                        }
+                        var meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                            meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
+                        }
+                        else if (filter.StartDate != null && filter.EndDate == null)
+                        {
+                            meetings = meetings.Where(t => t.CalledOn >= filter.StartDate).ToList();
+                        }
+                        else if (filter.StartDate == null && filter.EndDate != null)
+                        {
+                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                            meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
+                        }
+
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                        filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHr).ToArray() : filter.ClientHR = filter.ClientHR;
+                        filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+
+                        meetings = meetings.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                                                && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHr) : c.ClientHr == null)
+                                                && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                                                && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)).ToList();
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetCallCatalogueFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("CallCataloguefilters");
+                    return RedirectToAction("CallCatalogue");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
         }
     }
 }

@@ -1,0 +1,370 @@
+﻿@model Risebird.Entities.ViewModel.InterviewRequestVM
+
+@{
+    ViewData["Title"] = "Edit Request";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<a href='/InstaInterview/InstaIRF'>Edit Request</a>&nbsp;/&nbsp;Create Request";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<div class="main-panel" id="main-panel">
+
+    <div class="mt50">
+    </div>
+    <div class="content client">
+        <div class="row bg-white">
+            <div class="col-md-12">
+                <div class="mdc-card card bg-white">
+                    <div class="mdc-card-wrapper__text-section">
+                        @using (Html.BeginForm("EditInterviewRequest", "InterviewRequest", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (checkValidation());" }))
+                        {
+
+                            @*@Html.AntiForgeryToken()*@
+
+                            <div class="row">
+                                @*<div asp-validation-summary="All" class="text-danger"></div>*@
+                            </div>
+                            <div class="row instainterview">
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Interview Request</h4></div>
+                                </div>
+                                <div style="width: 100%;">&nbsp;</div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.TextBoxFor(model => model.PrimarySkill, new { @class = "select-css form-control", @required = "required" })
+                                            @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8  col-md-8 col-sm-8 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(m => m.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required" })
+                                            @Html.ValidationMessageFor(model => model.JobLevel, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="clear-field"></div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JdTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.TextBoxFor(model => model.JdTitle, new { @class = "form-control br-g", @required = "required" })
+                                            @Html.ValidationMessageFor(model => model.JdTitle, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    @if (ViewBag.Profile != "Client")
+                                    {
+                                        <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                            <div class="form-group">
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.RequestedBy, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <span class="red">*</span>
+                                                </div>
+                                                @Html.EditorFor(model => model.RequestedBy, new { htmlAttributes = new { @class = "form-control br-g", @required = "required", @type = "email" } })
+                                                @Html.ValidationMessageFor(model => model.RequestedBy, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pl-1 pull-left" id="uploadDiv">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            <div class="upload-area br-g">
+                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @required = "required" })
+                                                <label class="upload" for="JDFile">Choose File</label>
+
+                                                <!-- name of file chosen -->
+                                                <span id="file-chosen">No file chosen</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.ExpectedInterviews, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.TextBoxFor(model => model.ExpectedInterviews, new { @class = "form-control br-g", @required = "required", @type = "number" })
+                                            @Html.ValidationMessageFor(model => model.ExpectedInterviews, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required" })
+                                            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            <a class="mdc-button mdc-button--outlined" target="_blank" id="JDLink" name="JDLink" href="@Model.JDLink" style=" position: relative; top: -20px; text-decoration: none;">JD File</a>
+                                            @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+                                        </div>
+                                        @Html.HiddenFor(m => m.JDLink)
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                    <div class="multiple_row">
+                                        <h2 class="mb-0"><span>Skills</span></h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="SkillTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Level</th>
+                                                    <th>Skill Name</th>
+                                                    <th>Weightage</th>
+                                                    <th class="text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.TechSkill == null || Model.TechSkill.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DropDownList("TechSkill[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBox("TechSkill[0].SkillId", "", new { @class = "form-control " })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBox("TechSkill[0].Weightage", "", new { @class = "form-control", @type = "number", @max = "100", @min = "1" })
+                                                        </td>
+                                                        <td class="action text-center">
+                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this,'TechSkill', 'LevelId','SkillId','Weightage','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    @for (int i = 0; i < Model.TechSkill.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.TechSkill[i].LevelId, (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.TechSkill[i].SkillId, "", new { @class = "form-control " })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.TechSkill[i].Weightage, "", new { @class = "form-control ", @type = "number", @max = "100", @min = "1" })
+                                                            </td>
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRowSkills(this,'TechSkill', 'LevelId','SkillId','Weightage','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <label class="text-danger" id="SkillCollection_WeightageError"></label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "InterviewRequest", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Add Interview">
+                                            Submit Request
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    function AddRow() {
+        var table = document.getElementById("SkillTable");
+        var rowCount = table.rows.length;
+        if (rowCount < 6) {
+            var $ttc = $("#SkillTable").find("tbody tr:last");
+            var $tr = $ttc.clone();
+            var trIndexReplaced = $("#SkillTable tr").length - 1;
+
+            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+            }).attr("id", function () { // change id also
+                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+            });
+            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+            })
+            // reset fields in the new row
+            $tr.find("select").val("");
+            $tr.find("input[type=text]").val("");
+            $tr.find("input[type=hidden]").val("");
+            $tr.find("a").val("");
+            // add cloned row as last row
+            $("#SkillTable").find("tbody tr:last").after($tr);
+            // Find the affected form
+            var $form = $tr.closest("FORM");
+            // Unbind existing validation
+            $form.unbind();
+            $form.data("validator", null);
+        } else {
+            document.getElementById("SkillCollection_WeightageError").innerHTML = "Add max 5 skills only.";
+        }
+    }
+    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            //document.getElementById("btnUpload").disabled = false;
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                }
+            }
+        }
+    }
+    //function AssessmentGroupChanged() {
+    //    var val = $("#AssessmentGroup").val();
+    //    $.ajax({
+    //        type: "GET",
+    //        url: "/InstaInterview/FetchAssessmentGroupSkills",
+    //        data: { 'id': val },
+    //        success: function (data) {
+    //            $("#txtAssessmentSkills").text(data);
+    //        }
+    //    })
+    //}
+
+    function checkDate() {
+        var requestedDate = new Date(document.getElementById("RequestedDate").value);
+        var todayDate = new Date();
+        if (todayDate.getTime() > requestedDate.getTime()) {
+            document.getElementById("error_requestedDate").innerHTML = "Requested Date time should be greater than current Date time.";
+            return false;
+        }
+        else
+            document.getElementById("error_requestedDate").innerHTML = "";
+        return true;
+    }
+    function CheckResume() {
+        if (document.getElementById("ResumeFile").value == '') {
+            document.getElementById("error_uploadDiv").innerHTML = "Please upload a File.";
+            return false;
+        }
+        else {
+            document.getElementById("error_uploadDiv").innerHTML = "";
+            return true;
+        }
+    }
+    function checkRowcount() {
+        var table = document.getElementById("SkillTable");
+        var rowCount = table.rows.length;
+        if (rowCount < 3) {
+            document.getElementById("SkillCollection_WeightageError").innerHTML = "Atleast add two Skills";
+            return false;
+        }
+        var drpdowns1 = $('[id^=TechSkill][id$="SkillId"]');
+        for (i = 0; i < drpdowns1.length; i++) {
+            var interviewId = $("#" + drpdowns1[i].id).val();
+            if (interviewId == '' || interviewId == null) {
+                document.getElementById("SkillCollection_WeightageError").innerHTML = "Skill field should not be blank.";
+                return false;
+            }
+        }
+        return true;
+    }
+    function checkValidation() {
+        if (checkRowcount() && CheckTotalWeightage()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function CheckTotalWeightage() {
+        var inCorrectCount = 0;
+        var items = $('[id^=TechSkill][id$="Weightage"]');
+        var total = 0;
+        for (j = 0; j < items.length; j++) {
+            var total = total + parseInt($("#" + items[j].id).val());
+        }
+        if (total != 100) {
+            inCorrectCount = inCorrectCount + 1;
+            document.getElementById("SkillCollection_WeightageError").innerHTML = "Weightage total should be equal to 100.";
+            return false;
+        }
+        else {
+            document.getElementById("SkillCollection_WeightageError").innerHTML = "";
+            return true;
+        }
+    }
+
+</script>
+
+<script>
+    const actualBtn = document.getElementById('JDFile');
+
+    const fileChosen = document.getElementById('file-chosen');
+
+    actualBtn.addEventListener('change', function () {
+        fileChosen.textContent = this.files[0].name
+    })
+</script>

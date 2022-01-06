@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
@@ -11,6 +12,7 @@ using System.Linq;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class ChatController : Controller
     {
         private IConfiguration _configuration;
@@ -25,6 +27,7 @@ namespace Risebird.Web.Controllers
             _chatservice = chatservice;
             _applicationErrorLogger = applicationErrorLogger;
         }
+
         [HttpPost]
         public JsonResult ChatBox()
         {
@@ -59,6 +62,8 @@ namespace Risebird.Web.Controllers
                 return Json(new { result = _lstset, Self = user.ToUpper() });
             }
         }
+
+        [HttpGet]
         public List<Conversation> GetConversation(string userid, string contact, string status, string WhoSend)
         {
             try
@@ -89,7 +94,10 @@ namespace Risebird.Web.Controllers
                 return new List<Conversation>();
             }
         }
+        
         //User to add message into database
+
+        [HttpGet]
         public void AddConversation(string userid, string contact, string message)
         {
             try
@@ -107,8 +115,9 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
-        //User to add Group 
 
+        //User to add Group 
+        [HttpGet]
         public void AddGroup(string GroupName)
         {
             try
@@ -125,7 +134,9 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+
         //To fetch Groupnames
+        [HttpGet]
         public JsonResult FetchGroup()
         {
             try
@@ -145,7 +156,9 @@ namespace Risebird.Web.Controllers
                 return Json("");
             }
         }
+
         //to delete Existing gropus
+        [HttpGet]
         public void DeleteGroup(string GroupId)
         {
             try
@@ -162,7 +175,9 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+
         //To fetch the users into a group
+        [HttpGet]
         public JsonResult FetchUser(string GroupId)
         {
             try
@@ -183,7 +198,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         //To add users into a group
+        [HttpGet]
         public JsonResult AddUser(string GroupId, string Emailid)
         {
             try
@@ -196,7 +213,9 @@ namespace Risebird.Web.Controllers
                 return Json("User Not found");
             }
         }
+
         //To delete users from the group
+        [HttpGet]
         public void DeleteUser(string Userid)
         {
             try
@@ -210,6 +229,7 @@ namespace Risebird.Web.Controllers
         }
 
         /* Store user selected theme in database user table     */
+        [HttpGet]
         public JsonResult Savetheme(string theme)
         {
             try

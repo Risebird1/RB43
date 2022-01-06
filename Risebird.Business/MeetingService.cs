@@ -27,8 +27,9 @@ namespace Risebird.Business
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly IInterviewerRepository _interviewerRepository;
+        private readonly ICandidateRepository _candidateRepository;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,6 +43,7 @@ namespace Risebird.Business
             _activityTrackerRepository = activityTrackerRepository;
             _whatsAppHelper = whatsAppHelper;
             _interviewerRepository = interviewerRepository;
+            _candidateRepository = candidateRepository;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -216,12 +218,12 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> MultipleCandidateInvites()
+        public List<MeetingVM> MultipleCandidateInvites(string emailid)
         {
             try
             {
 
-                return _meetingRespository.MultipleCandidateInvites().Result.ToList();
+                return _meetingRespository.MultipleCandidateInvites(emailid).Result.ToList();
             }
             catch (Exception ex)
             {
@@ -484,9 +486,32 @@ namespace Risebird.Business
                 var status = Convert.ToInt16(qcStatus);
                 var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), status, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
 
+                if (result && status == (int)QCStatus.Failed)
+                {
+                    var meetingDetails = _meetingRespository.GetMeetingDetails(Convert.ToInt32(imid)).Result;
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCFailed;
+                    activityTrackerModel.Particulars = "QC Failed for: " + meetingDetails.candidateEmail + " dated " + meetingDetails.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Failed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
                 //var oldStatus = Convert.ToInt16(oldQcStatus);
                 if (result && status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
                 {
+                    var meetingDetails = _meetingRespository.GetMeetingDetails(Convert.ToInt32(imid)).Result;
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCPassed;
+                    activityTrackerModel.Particulars = "QC Passed for: " + meetingDetails.candidateEmail + " dated " + meetingDetails.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Passed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(Convert.ToInt32(imid), performedBy);
                 }
@@ -509,6 +534,14 @@ namespace Risebird.Business
         {
             try
             {
+                if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveInterviewer))
+                {
+                    meetingToUpdate.interviewer = meetingToUpdate.NewActiveInterviewer;
+                }
+                if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveQCInterviewer))
+                {
+                    meetingToUpdate.QCInterviewer = meetingToUpdate.NewActiveQCInterviewer;
+                }
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
                 if (result)
                 {
@@ -555,11 +588,26 @@ namespace Risebird.Business
                     {
                         if (summary.Length > 0)
                         {
-                            summary.Append("; Interviewer changed");
+                            if (!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
+                            {
+                                summary.Append("; Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
+                            }
+                            else
+                            {
+                                summary.Append("; Interviewer assigned (" + meetingToUpdate.interviewer + ")");
+
+                            }
                         }
                         else
                         {
-                            summary.Append("Interviewer changed");
+                            if (!string.IsNullOrEmpty(meetingToUpdate.OldInterviewer))
+                            {
+                                summary.Append("Interviewer changed from " + meetingToUpdate.OldInterviewer + " to " + meetingToUpdate.interviewer);
+                            }
+                            else
+                            {
+                                summary.Append("Interviewer assigned (" + meetingToUpdate.interviewer + ")");
+                            }
                         }
                     }
                     if (meetingToUpdate.OldIRFId != meetingToUpdate.IRFId)
@@ -862,32 +910,43 @@ namespace Risebird.Business
                 {
                     _meetingRespository.UnassignYourself(meetingid);
                     //TimeSpan timeSpan = meeting.Result.interviewDate - DateTime.Now;
-                    var interviwers = new List<string>();
-                    if (isPenalty)
+                    if (meeting.Result.interviewtimedifference >= 0 && meeting.Result.interviewtimedifference <= 60)
                     {
-                        //update flag for Emergency Interview
-                        _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.Result.interviewDate);
-                        interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
+                        if (meeting.Result.interviewtimedifference <= 30)
+                        {
+                            //for 1/2 hr before apply penality on interviewer according to india and outside india
+                            _meetingRespository.ApplyInterviewPenalty(meetingid, meeting.Result.JobCountry, meeting.Result.interviewer);
+                        }
                     }
                     else
                     {
-                        interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
-                    }
+                        var interviwers = new List<string>();
+                        if (isPenalty)
+                        {
+                            //update flag for Emergency Interview
+                            _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.Result.interviewDate);
+                            interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
+                        }
+                        else
+                        {
+                            interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                        }
 
-                    if (interviwers != null)
-                    {
-                        interviwers.Remove(email);
-                        _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
+                        if (interviwers != null)
+                        {
+                            interviwers.Remove(email);
+                            _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
 
-                    }
-                    var hrs = _userService.GetAllHrsEmailld()?.ToList();
-                    if (hrs != null)
-                    {
-                        var candidateEmail = meeting.Result.candidateEmail;
-                        var Skillchannelid = meeting.Result.IRFId;
-                        var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
-                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
+                        }
+                        var hrs = _userService.GetAllHrsEmailld()?.ToList();
+                        if (hrs != null)
+                        {
+                            var candidateEmail = meeting.Result.candidateEmail;
+                            var Skillchannelid = meeting.Result.IRFId;
+                            var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
+                            _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
 
+                        }
                     }
                     return true;
                 }
@@ -921,8 +980,8 @@ namespace Risebird.Business
                 {
                     //send mail to the HRs
                     var interviewers = _meetingRespository.ListInterviewersMail(candidateEmail, interviewDate);
-
-                    _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate);
+                    var irfOwnersAndRestrictedOwners = _candidateRepository.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid).Result;
+                    _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate, irfOwnersAndRestrictedOwners?.ToList());
                     return true;
                 }
                 return false;
@@ -972,8 +1031,34 @@ namespace Risebird.Business
             try
             {
                 var result = _meetingRespository.UpdateComments(comments).Result;
+                if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Failed)
+                {
+                    //add to activity tracker
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCFailed;
+                    activityTrackerModel.Particulars = "QC Failed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Failed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
+                }
+
                 if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
                 {
+                    //add to activity tracker
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCPassed;
+                    activityTrackerModel.Particulars = "QC Passed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
+                    activityTrackerModel.PerformedBy = performedBy;
+
+                    activityTrackerModel.Summary = "QC Passed";
+                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+
+                    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
+
+
                     //add candidate status
                     _irfRepository.AddQCCandidateStatus(comments.InterviewId, performedBy);
 
@@ -1178,7 +1263,7 @@ namespace Risebird.Business
                 reportModel.joiningTime = interviewDetails.joiningTime;
                 reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
                 reportModel.VideoDuration = interviewDetails.VideoDuration;
-
+                reportModel.IsQCRequired = interviewDetails.IsQCRequired;
                 if (reportModel.IsEdited)
                 {
                     reportModel.OldInterviewerComment = reportModel.InterviewerComment;
@@ -1252,6 +1337,18 @@ namespace Risebird.Business
         {
             try
             {
+                if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedSelected)
+                {
+                    reportModel.InterviewStatus = (int)InterviewStatus.Selected;
+                }
+                else if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedRejected)
+                {
+                    reportModel.InterviewStatus = (int)InterviewStatus.Rejected;
+                }
+                else if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedBorderLine)
+                {
+                    reportModel.InterviewStatus = (int)InterviewStatus.BorderLine;
+                }
                 var result = await _meetingRespository.AddInterviewReport(reportModel);
                 if (result)
                 {
@@ -1260,23 +1357,41 @@ namespace Risebird.Business
                     {
                         if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                         {
-                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
-                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed)
+                            string statusDesc = string.Empty;
+                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
+                            {
+                                statusDesc = MeetingStatus.Completed.GetDescription();
+                            }
+                            else
+                            {
+                                statusDesc = ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription();
+                            }
+                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
+                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
 
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
-                                    if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
+                                    if (!reportModel.IsQCRequired)
                                     {
                                         await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
 
                                     }
                                     else
                                     {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
+                                        if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
+                                        {
+                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
 
+                                        }
+                                        else
+                                        {
+                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
+
+                                        }
                                     }
+
                                 }
 
                             }
@@ -1298,28 +1413,45 @@ namespace Risebird.Business
                         {
                             if (reportModel.MeetingStatus.HasValue && reportModel.MeetingStatus.Value != (int)MeetingStatus.Scheduled)
                             {
-                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
+                                string statusDesc = string.Empty;
+                                if (reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
+                                {
+                                    statusDesc = MeetingStatus.Completed.GetDescription();
+                                }
+                                else
+                                {
+                                    statusDesc = ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription();
+                                }
+                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
 
                             }
                         }
                         if (reportModel.OldInterviewStatus != reportModel.InterviewStatus)
                         {
-                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed)
+                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
                             {
                                 //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
 
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
-                                    if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
+                                    if (!reportModel.IsQCRequired)
                                     {
                                         await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
 
                                     }
                                     else
                                     {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
+                                        if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
+                                        {
+                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
 
+                                        }
+                                        else
+                                        {
+                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
+                                        }
                                     }
+
                                 }
 
                             }
@@ -1376,7 +1508,7 @@ namespace Risebird.Business
                         var mailIds = new List<string>();
                         foreach (var item in irfQualityControllers ?? new List<TransQualityController>())
                         {
-                            if (item.EmailId != null)
+                            if (item.EmailId != null && item.IsActive)
                             {
                                 mailIds.Add(item.EmailId);
                             }
@@ -2538,11 +2670,11 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se)
+        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory)
         {
             try
             {
-                var result = _meetingRespository.RBConfirmPayment(interviewerid, index, st, se);
+                var result = _meetingRespository.RBConfirmPayment(interviewerid, index, st, se, paymenthistory);
                 return result.Result;
             }
             catch (Exception e)
@@ -2564,11 +2696,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount)
+        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId)
         {
             try
             {
-                var result = _meetingRespository.InsertAdvancePayment(Interviewer, Comment, Amount);
+                var result = _meetingRespository.InsertAdvancePayment(Interviewer, Comment, Amount, PaymentHistoryId);
                 return result.Result;
             }
             catch (Exception e)
@@ -2646,11 +2778,11 @@ namespace Risebird.Business
                 return "fail";
             }
         }
-        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        public List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email)
         {
             try
             {
-                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetAllSelectedCandidateInterviewList(startDate, endDate, email).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -2892,6 +3024,234 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "Fail";
+            }
+        }
+        public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientNotScheduledMeetingListByIRFId(IRFId, emailId).Result.ToList();
+
+                return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientReScheduledMeetingList(Clientid, Emailid).Result.ToList();
+
+                return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetCallCatalogueList(profile, Emailid).Result.ToList();
+                return meetings ?? new List<CallCatalogueVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<string> FetchClientListByIRFID(int IRFID)
+        {
+            try
+            {
+                var meetings = _meetingRespository.FetchClientListByIRFID(IRFID).Result.ToList();
+                return meetings ?? new List<string>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchAllInterviewidBySeniorHR(emailid);
+                return _survey;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetPaymentHistoryDetailsView(interviewerid);
+                return result.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se)
+        {
+            try
+            {
+                var totalpaidamount = _meetingRespository.FNFetchToalAmountPaid(st, se);
+                return totalpaidamount.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                var result = _meetingRespository.FNFetchToalAmountStatus(st, se);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                var result = _meetingRespository.FNFetchToalQCAmountStatus(st, se);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchSchedulingLinks(emailid);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool PublicCancelInterview(int meetingid)
+        {
+            try
+            {
+                if (_meetingRespository.CancelInterview(meetingid))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<int> GetUniqueInterviewerByEmailId(string emailId, string id)
+        {
+            try
+            {
+                return await _meetingRespository.GetUniqueInterviewerByEmailId(emailId, id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+        public async Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes()
+        {
+            try
+            {
+                return await _meetingRespository.FetchAllUnassignedInterviewes();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool UpdateCancelInterviewDetails(int meetingid)
+        {
+            try
+            {
+                if (_meetingRespository.UpdateCancelInterviewDetails(meetingid))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder()
+        {
+            try
+            {
+                return await _meetingRespository.FetchCandidateMeetingsForReminder();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            try
+            {
+                return _meetingRespository.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.FetchCustomerDetails();
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

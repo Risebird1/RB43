@@ -16,7 +16,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Account>> GetAccounts(string emailID, string profileName);
         IEnumerable<AccountProjectMapping> GetProjectsbyClientId(int clientId);
         IEnumerable<AccountProjectMapping> GetProjectByClientId(int clientId, string projectIdList = null);
-        string Signout(string EmailId);
+        string Signout(string EmailId, string SessionId);
         InterviewerProfileVM FetchUserProfile(string EmailId);
         Task<bool> UpdateUserProfile(InterviewerProfileVM userProfile);
     }

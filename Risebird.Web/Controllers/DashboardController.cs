@@ -27,7 +27,9 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private IConfiguration _configuration;
         private readonly IMeetingService _meetingService;
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -36,8 +38,11 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _configuration = configuration;
             _meetingService = meetingService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -46,43 +51,40 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-
-                    if (profileName == "Admin" || profileName == "HR")
+                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         var model = new DashboardVM();
 
                         //daily interview tracking first chart
                         model = GetDateWiseInterviews(DateTime.Now);
                         //daily interview tracking slots
-                        model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
+                        model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now, Emailid);
                         model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
-                        model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount();
+                        model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
                         var progressDate = TempData.Peek("ProgressDate")?.ToString();
                         if (!string.IsNullOrEmpty(progressDate))
                         {
                             model.ProgressDate = Convert.ToDateTime(progressDate);
-
                             TempData.Keep("ProgressDate");
                         }
                         else
                         {
                             model.ProgressDate = DateTime.Now;
                         }
-
-
-                        model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate));
-
-                        model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount();
-                        model.CandidatesCountObj = await _dashboardService.GetCandidatesCount();
-
+                        model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
+                        model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
+                        model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                         model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
+                        //need to Update
                         var channelrequest = await _dashboardService.FetchChannelRequests();
                         model.ChannelRequest = channelrequest;
-                        var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement();
+                        var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
                         interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
                         {
@@ -95,7 +97,6 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-
                 }
                 else
                 {
@@ -108,7 +109,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
         [Authorize]
+        [HttpGet]
         public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
         {
             // ExpandoObject supports IDictionary so we can extend it like this
@@ -118,13 +121,21 @@ namespace Risebird.Web.Controllers
             else
                 expandoDict.Add(propertyName, propertyValue);
         }
+        
         [Authorize]
+        [HttpGet]
         public DashboardVM GetDateWiseInterviews(DateTime date)
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseMeetings(date).Result;
+                model.Meetings = _dashboardService.GetDateWiseMeetings(date, Emailid).Result;
                 var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
                 //var irfList = model.Meetings.Select(x => x.IRFID).Distinct();
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
@@ -151,13 +162,21 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult GetDateWiseInterviewStatus(DateTime date)
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseMeetings(date).Result;
+                model.Meetings = _dashboardService.GetDateWiseMeetings(date, Emailid).Result;
                 model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                 return PartialView("InterviewStatusPartial", model);
             }
@@ -167,13 +186,23 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult GetDateWiseMeetingsSlots(DateTime date)
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date).Result;
+                model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date, Emailid).Result;
                 return PartialView("InterviewSlotsPartial", model);
             }
             catch (Exception ex)
@@ -182,6 +211,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateIRFProgress(DashboardVM model)
@@ -197,13 +227,21 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetDateWiseIRFProgress(DateTime date)
         {
             try
             {
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
                 var model = new DashboardVM();
-                model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(date));
+                model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(date, Emailid));
                 model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
                 model.ProgressDate = date;
                 TempData["ProgressDate"] = date;
@@ -215,7 +253,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ClientIndex()
         {
             try
@@ -255,7 +295,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public ClientDashboardVM GetDateWiseClientInterviews(DateTime date, string emailId)
         {
             try
@@ -288,7 +330,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
         {
             try
@@ -303,7 +347,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public JsonResult FetchActivityDetails(int id, int idprogess)
         {
             var result = _dashboardService.FetchActivityDetails(id, idprogess);
@@ -312,6 +358,7 @@ namespace Risebird.Web.Controllers
 
 
         #region ChannelManagement
+        [HttpGet]
         public async Task<IActionResult> RequirementManagement()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -340,7 +387,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public ActionResult AddRequirement()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -364,6 +413,7 @@ namespace Risebird.Web.Controllers
             model.isEditable = false;
             return View(model);
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<ActionResult> AddRequirement(ChannelVM model)
@@ -387,10 +437,17 @@ namespace Risebird.Web.Controllers
             }
             if (model.Jdfile != null)
             {
-                await _azureStorageHelper.InsertBlob(model.Jdfile.FileName, "resumes", model.Jdfile);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
-                model.JdLink = blob.Uri.ToString();
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.Jdfile);
+
+                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                || fileMimeType == "application/pdf")
+                {
+                    await _azureStorageHelper.InsertBlob(model.Jdfile.FileName, "resumes", model.Jdfile);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                    var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
+                    model.JdLink = blob.Uri.ToString();
+                }
+                
             }
 
             if (model.isEditable)
@@ -398,11 +455,11 @@ namespace Risebird.Web.Controllers
                 var result = await _dashboardService.AddChannelRequest(model);
                 if (result == "Success")
                 {
-                    TempData["SuccessErrorMessageInterview"] = "Channel Request updated Successfully.";
+                    TempData["SuccessErrorMessageInterview"] = "Channel Request has been updated Successfully!";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterview"] = "Fail to update channel request.";
+                    TempData["SuccessErrorMessageInterview"] = "Failed to update channel request!";
                 }
                 return RedirectToAction("RequirementManagement");
             }
@@ -419,13 +476,13 @@ namespace Risebird.Web.Controllers
                         Subject = $"Risebird: a new Channel request is created for " + model.Client
                     };
                     var resultset = _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Requester);
-                    TempData["SuccessErrorMessageInterview"] = "Channel Request added Successfully.";
-                    ViewBag.Message = "Channel Request updated Successfully.";
+                    TempData["SuccessErrorMessageInterview"] = "Channel Request has been added Successfully!";
+                    ViewBag.Message = "Channel Request has been updated Successfully!";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterview"] = "Fail to add channel request.";
-                    ViewBag.Message = "Fail to add channel request.";
+                    TempData["SuccessErrorMessageInterview"] = "Failed to add channel request!";
+                    ViewBag.Message = "Failed to add channel request.";
                 }
                 if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 {
@@ -440,14 +497,16 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("RequirementManagement");
             }
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> EditRequirement(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                 {
                     ViewBag.type = "back";
                     ViewBag.Client = "false";
@@ -489,13 +548,14 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Interviewer(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
                     var model = await _dashboardService.FetchInterviewerBychannelid(id);
                     ViewBag.channelid = id;
@@ -518,13 +578,14 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public ActionResult AddInterviewer(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
                     var model = new ChannelInterviewerVM();
                     model.Channelid = id;
@@ -544,6 +605,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddInterviewer(ChannelInterviewerVM model)
@@ -555,7 +617,7 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 model.CreatedBy = emailid;
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
                     if (!ModelState.IsValid)
                     {
@@ -571,39 +633,53 @@ namespace Risebird.Web.Controllers
                     }
                     if (model.CV != null)
                     {
-                        await _azureStorageHelper.InsertBlob(model.CV.FileName, "resumes", model.CV);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(model.CV.FileName);
-                        model.CVLink = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CV);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.CV.FileName, "resumes", model.CV);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.CV.FileName);
+                            model.CVLink = blob.Uri.ToString();
+                        }
+                        
                     }
                     if (model.CodedCV != null)
                     {
-                        await _azureStorageHelper.InsertBlob(model.CodedCV.FileName, "resumes", model.CodedCV);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(model.CodedCV.FileName);
-                        model.CodedCVLink = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CodedCV);
+
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.CodedCV.FileName, "resumes", model.CodedCV);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.CodedCV.FileName);
+                            model.CodedCVLink = blob.Uri.ToString();
+                        }
+                        
                     }
                     var result = await _dashboardService.AddChannelInterviewer(model);
                     if (result == "Success")
                     {
                         if (model.isEditable)
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Interviewer Updated Successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Interviewer has been updated Successfully!";
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Interviewer added Successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Interviewer has been added Successfully!";
                         }
                     }
                     else
                     {
                         if (model.isEditable)
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Fail to update interviewer.";
+                            TempData["SuccessErrorMessageInterview"] = "Failed to update interviewer!";
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Fail to add interviewer.";
+                            TempData["SuccessErrorMessageInterview"] = "Failed to add interviewer!";
                         }
                     }
                     return RedirectToAction("Interviewer", "DashBoard", new { id = model.Channelid });
@@ -633,7 +709,9 @@ namespace Risebird.Web.Controllers
                 return Json("fail");
             }
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<ActionResult> EditInterviewer(int id, int channelid)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -653,13 +731,15 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [HttpPost]
+        
         [HttpPost]
         public async Task<JsonResult> FetchHR(string term)
         {
             var model = await _dashboardService.FetchHRList(term);
             return Json(model);
         }
+        
+        [HttpGet]
         public IActionResult AddInterviewerList(int id, string channelname)
         {
             try
@@ -670,7 +750,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         if (profileName == "Client")
                         {
@@ -706,6 +786,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpGet]
         public IActionResult SelectChannelInterviewers(int cmId, string cmTitle)
         {
@@ -714,7 +795,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
                     var model = new AddChannelInterviewersVM();
                     model.ChannelInterviewersCollection = (IList<ChannelApprovedInterviewer>)_dashboardService.GetChannelApprovedInterviewer(cmId);
@@ -732,6 +813,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> SelectChannelInterviewers(AddChannelInterviewersVM model)
         {
@@ -741,11 +823,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (_dashboardService.AddChannelApprovedInterviewer(model.ChannelInterviewersCollection, model.ChannelId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer added Successfully";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer has been added Successfully!";
                             return RedirectToAction("AddInterviewerList", new { id = model.ChannelId, channelname = model.ChannelTitle });
                         }
                         else
@@ -772,6 +854,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AddInterviewerList", new { id = model.ChannelId, channelname = model.ChannelTitle });
             }
         }
+
+        [HttpGet]
         public IActionResult DeleteChannelInterviewer(int id, int iscId, string iscName)
         {
             try
@@ -782,7 +866,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (_dashboardService.DeleteChannelInterviewer(id).Result)
                         {
@@ -814,6 +898,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
+        [HttpGet]
         public IActionResult ChannelInterviewerAction(int id, string channelName, int channelid, string status)
         {
             try
@@ -830,11 +916,11 @@ namespace Risebird.Web.Controllers
                         {
                             if (status == "Approved")
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer approved Successfully.";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer has been approved Successfully!";
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer unapproved Successfully.";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer has been unapproved Successfully!";
                             }
 
                             return RedirectToAction("AddInterviewerList", new { id = channelid, channelname = channelName });
@@ -874,6 +960,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> UnassignedInterviews(string actionstatus, int actiontype)
         {
             try
@@ -884,7 +971,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                             HttpContext.Session.Remove("UnassignedInterviewsFilters");
@@ -922,7 +1009,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype);
+                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
                         }
                         if (modelList == null)
                         {
@@ -946,11 +1033,11 @@ namespace Risebird.Web.Controllers
                         }
                         else if (actionstatus == "UnAssignedCoordianter" && actiontype == 0)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / Unassigned RB Coordinator";
+                            ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
                         }
                         else if (actionstatus == "UnAssignedCoordianter" && actiontype == 1)
                         {
-                            ViewBag.PageHeader = "911 Dashboard / PENDING CANDIDATE FEEDBACK";
+                            ViewBag.PageHeader = "911 Dashboard / Auto Cancelled Interview";
                         }
                         else if (actionstatus == "ZoomLink")
                         {
@@ -986,6 +1073,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> UnassignedInterviews(UnassignedInterviewsFilter filter, string actionstatus, int actiontype)
@@ -998,7 +1086,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (filter != null)
                         {
@@ -1077,7 +1165,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype);
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
                         }
                         if (modelList == null)
                         {
@@ -1135,6 +1223,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetUnassignedInterviewsFilter(string actionstatus)
         {
             try
@@ -1156,6 +1245,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
+        [HttpGet]
         public async Task<JsonResult> FetchRibbonValues(int section)
         {
             if (section == 1)
@@ -1189,21 +1280,30 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount();
+                var Emailid = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
                 return Json(Ribbonmodel);
             }
         }
+        
         [HttpPost]
         public JsonResult SendNotoificationForParticipantWaiting()
         {
             //Send mail only one time no duplicate mail
             return Json("Success");
         }
+        
         [HttpPost]
         public async Task<JsonResult> FetchZoomMeetingHistory(string meetingid)
         {
             var modelList = await _dashboardService.FetchZoomMeetingHistory(meetingid);
             return Json(modelList);
         }
+
     }
 }

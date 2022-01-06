@@ -33,8 +33,9 @@ namespace Risebird.Web.Controllers
         private static string SearchInterviewers;
         private ITwilioHelper _twiliohelper;
         private readonly IConfiguration _configuration;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration)
+                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration, IFileMimeTypeHelper fileMimeTypeHelper)
 
         {
             _userService = userService;
@@ -45,10 +46,11 @@ namespace Risebird.Web.Controllers
             _profileService = profileService;
             _twiliohelper = twiliohelper;
             _configuration = configuration;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         #region User Fucntions
-
+        [HttpGet]
         public IActionResult Index()
         {
             try
@@ -87,7 +89,7 @@ namespace Risebird.Web.Controllers
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
-
+                    GetClientsSelectList(model);
                     return View("UserAdd", model);
                 }
                 else
@@ -114,7 +116,10 @@ namespace Risebird.Web.Controllers
                         user.FirstName = user.FirstName.Trim();
                         user.LastName = user.LastName.Trim();
                         user.EmailId = user.EmailId.Trim();
-                        user.EmailId = user.EmailId.ToLower();
+                        if (!string.IsNullOrEmpty(user.EmailId))
+                        {
+                            user.EmailId = user.EmailId.ToLower();
+                        }
                         if (_userService.AddUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is added Successfully";
@@ -134,7 +139,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
-
+                        GetClientsSelectList(user);
                         return View("UserAdd", user);
                     }
                 }
@@ -168,6 +173,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
+                        GetClientsSelectList(user);
                         return View("UserUpdate", user);
                     }
                     else
@@ -199,7 +205,10 @@ namespace Risebird.Web.Controllers
                         user.FirstName = user.FirstName.Trim();
                         user.LastName = user.LastName.Trim();
                         user.EmailId = user.EmailId.Trim();
-                        user.EmailId = user.EmailId.ToLower();
+                        if (!string.IsNullOrEmpty(user.EmailId))
+                        {
+                            user.EmailId = user.EmailId.ToLower();
+                        }
                         if (_userService.UpdateUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is updated Successfully";
@@ -218,7 +227,7 @@ namespace Risebird.Web.Controllers
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
-
+                        GetClientsSelectList(user);
                         return View("UserUpdate", user);
                     }
                 }
@@ -274,7 +283,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         #region Client User Functions
-
+        [HttpGet]
         public IActionResult ClientUsers()
         {
             try
@@ -287,8 +296,9 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageClientUser");
 
                     }
-
-                    return View(_userService.GetClientUsers());
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    return View(_userService.GetClientUsers(emailid));
                 }
                 else
                 {
@@ -306,12 +316,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                    profilename = profilename.Replace("\"", "");
                     var model = new ClientUserVM();
-                    model.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
-
-
+                    model.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                     model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                     return View("ClientUserAdd", model);
                 }
@@ -360,14 +372,14 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("ClientUsers");
                         }
                     }
-
                     else
                     {
-
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                        profilename = profilename.Replace("\"", "");
                         var model = new ClientUserVM();
-                        model.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
-
-
+                        model.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                         model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserAdd", model);
                     }
@@ -386,6 +398,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteClientUser(int id)
         {
             try
@@ -394,7 +407,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin")
+                    if (profileName == "Admin" || profileName == "SeniorHR")
                     {
                         if (_userService.DeleteClientUser(id))
                         {
@@ -439,7 +452,11 @@ namespace Risebird.Web.Controllers
 
                     if (clientUserVM != null)
                     {
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                        profilename = profilename.Replace("\"", "");
+                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                         clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserUpdate", clientUserVM);
                     }
@@ -498,7 +515,11 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        clientUserVM.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                        profilename = profilename.Replace("\"", "");
+                        clientUserVM.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
                         clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                         return View("ClientUserUpdate", clientUserVM);
                     }
@@ -517,6 +538,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetNavigation(int userId)
         {
             try
@@ -545,11 +567,11 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         #endregion
 
         #region Interviewer Functions
 
+        [HttpGet]
         public IActionResult Interviewers(int? Page, string searchValue)
         {
             try
@@ -668,10 +690,15 @@ namespace Risebird.Web.Controllers
 
                     if (interviewer.File != null)
                     {
-                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewer.File);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                        }
                     }
                     else
                         uploadedFileURL = interviewer.ResumeLink;
@@ -692,7 +719,10 @@ namespace Risebird.Web.Controllers
                         interviewer.ResumeLink = uploadedFileURL;
                         List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
                         interviewer.PrimarySkill = String.Join(",", selectedSkill);
-                        interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(interviewer.EmailId))
+                        {
+                            interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
+                        }
                         if (_userService.AddInterviewer(interviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
@@ -764,12 +794,16 @@ namespace Risebird.Web.Controllers
 
                     if (interviewer.File != null)
                     {
-
-                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewer.File);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                        }
+                        
                         if (uploadedFileURL == null)
                         {
                             ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
@@ -825,7 +859,10 @@ namespace Risebird.Web.Controllers
                         }
                     }
 
-                    interviewer.EmailId = interviewer.EmailId.ToLower();
+                    if (!string.IsNullOrEmpty(interviewer.EmailId))
+                    {
+                        interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
+                    }
 
                     if (_userService.UpdateInterviewer(interviewer))
                     {
@@ -868,6 +905,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteInterviewer(int id)
         {
             try
@@ -1002,6 +1040,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         #region QCInterviewer Functions
+        [HttpGet]
         public IActionResult QCInterviewers()
         {
             try
@@ -1056,10 +1095,16 @@ namespace Risebird.Web.Controllers
 
                     if (qcinterviewer.File != null)
                     {
-                        await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(qcinterviewer.File);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                        {
+                            await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+
+                        }
 
                     }
                     else if (qcinterviewer.ResumeLink != null)
@@ -1082,7 +1127,9 @@ namespace Risebird.Web.Controllers
                         qcinterviewer.ResumeLink = uploadedFileURL;
                         List<String> selectedSkill = skills.Where(x => qcinterviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
                         qcinterviewer.PrimarySkill = String.Join(",", selectedSkill);
+
                         qcinterviewer.EmailId = qcinterviewer.EmailId.ToLower();
+
                         if (_userService.AddQCInterviewer(qcinterviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer is added Successfully";
@@ -1154,12 +1201,16 @@ namespace Risebird.Web.Controllers
                     {
                         if (qcInterviewer.File != null)
                         {
-
-                            await _azureStorageHelper.InsertBlob(qcInterviewer.File.FileName, "resumes", qcInterviewer.File);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(qcInterviewer.File.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(qcInterviewer.File);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(qcInterviewer.File.FileName, "resumes", qcInterviewer.File);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(qcInterviewer.File.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                            }
+                            
                             if (uploadedFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
@@ -1185,7 +1236,10 @@ namespace Risebird.Web.Controllers
                             return View("QCInterviewerUpdate", model);
                         }
 
-                        qcInterviewer.EmailId = qcInterviewer.EmailId.ToLower();
+                        if (!string.IsNullOrEmpty(qcInterviewer.EmailId))
+                        {
+                            qcInterviewer.EmailId = qcInterviewer.EmailId.ToLower();
+                        }
 
                         if (_userService.UpdateQCInterviewer(qcInterviewer))
                         {
@@ -1225,6 +1279,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteQCInterviewer(int id)
         {
             try
@@ -1270,6 +1325,7 @@ namespace Risebird.Web.Controllers
 
         #region Resume Evaluator functions
 
+        [HttpGet]
         public IActionResult ResumeEvaluators(int? Page, string searchValue)
 
         {
@@ -1484,6 +1540,7 @@ namespace Risebird.Web.Controllers
 
         #region Recruiter functions
 
+        [HttpGet]
         public IActionResult Recruiters(int? Page, string searchValue)
         {
             try
@@ -1601,6 +1658,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> EditRecruiter(int id)
         {
             try
@@ -1656,6 +1714,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteRecruiter(int id)
         {
             try
@@ -1812,7 +1871,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [HttpPost]
         public JsonResult ResumeEvaluatorsJson(string searchValue)
         {
@@ -1868,6 +1926,8 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+        
+        [HttpGet]
         public async Task<JsonResult> makecall(string sid, int interviewid, string IRFId, string CandidateEmail)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -1882,23 +1942,100 @@ namespace Risebird.Web.Controllers
             }
             return Json("Fail");
         }
-        //[HttpPost]
-        //public JsonResult CallRecordingback(string RecordingUrl, string CallSid)
-        //{
-        //    var result = _userService.SaveCallRecording(0, "", "", "", CallSid, RecordingUrl);
-        //    return Json(new { CallSid, result });
-        //}
+
         [HttpPost]
         public JsonResult FetchRecordings(string candidateEmailid, string irfid)
         {
-            string accountSid = "ACcad9f6682d4a76df9af7cde78dd0867e";//_configuration["TwilioSettings:ACCOUNT_SID"];
-            var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
-            foreach (var item in resultset)
+            try
             {
-                item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Recordings/" + item.RecordingUrl;
+                //string accountSid = _configuration["TwilioSettings:ACCOUNT_SID"];
+                var resultset = _userService.FetchCallRecording(candidateEmailid, irfid);
+                if (resultset != null)
+                {
+                    resultset = resultset.OrderByDescending(x => x.CalledOn).ToList();
+                }
+                foreach (var item in resultset)
+                {
+                    if (!String.IsNullOrEmpty(item.RecordingUrl))
+                        item.RecordingUrl = "https://api.twilio.com/2010-04-01/Accounts/ACcad9f6682d4a76df9af7cde78dd0867e/Recordings/" + item.RecordingUrl;
+                }
+                return Json(resultset);
             }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(ex);
+            }
+        }
+
+        [HttpGet]
+        private void GetClientsSelectList(UserList model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                profilename = profilename.Replace("\"", "");
+                var Clients = _clientService.GetClients(emailid, profilename);
+                var _ClientList = new List<SelectListItem>();
+                foreach (var item in Clients)
+                {
+                    bool selected = false;
+                    if (model.ClientsArray != null && model.ClientsArray.Contains(item.id.ToString()))
+                    {
+                        selected = true;
+                    }
+                    var selectItem = new SelectListItem(item.Name, item.id.ToString(), selected);
+                    _ClientList.Add(selectItem);
+                }
+                model.ClientList = _ClientList;
+            }
+        }
+
+        #region InstaZoomAccounts
+        [HttpGet]
+        public IActionResult InstaZoomAccounts()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    List<ZoomAccountDetailsVM> model = new List<ZoomAccountDetailsVM>();
+                    var resultset = _userService.FetchInstaZoomAccounts();
+                    if (resultset != null)
+                    {
+                        model = resultset;
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        
+        [HttpPost]
+        public JsonResult DeleteInstaZoomAccount(int Accountid)
+        {
+            var resultset = _userService.DeleteInstaZoomAccount(Accountid);
             return Json(resultset);
         }
+        
+        [HttpPost]
+        public JsonResult AddInstaZoomAccount(string AccountEmail)
+        {
+            var resultset = _userService.AddInstaZoomAccount(AccountEmail);
+            return Json(resultset);
+        }
+        #endregion
     }
 }
 

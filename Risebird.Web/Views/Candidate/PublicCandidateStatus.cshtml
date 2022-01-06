@@ -1,0 +1,1113 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.CandidateTimelineVM>
+@using Risebird.Entities.Enum
+@using Risebird.CommonHelper
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Candidates Status";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string datetype = String.Empty;
+    string[] MeetingStatus = new string[] { };
+    string[] InterviewStatus = new string[] { };
+    string[] ScheduleStatus = new string[] { };
+    string[] HREmail = new string[] { };
+    string[] ProfileSource = new string[] { };
+
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContextAccessor.HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    datetype = filter.DateType != null ? filter.DateType : String.Empty;
+
+    MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
+    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    ScheduleStatus = filter.ScheduleStatus != null ? filter.ScheduleStatus : new string[] { };
+    HREmail = filter.HREmail != null ? filter.HREmail : new string[] { };
+    ProfileSource = filter.ProfileSource != null ? filter.ProfileSource : new string[] { };
+
+}
+<link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+
+<style>
+    .star-rating {
+        border: solid 1px white;
+        display: flex;
+        direction: rtl;
+        font-size: 2.0em;
+        justify-content: space-around;
+        padding: 0 .2em;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 10px;
+        background-color: lightgray;
+    }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            /*color: #ccc;*/
+            color: #e4e4e4;
+            cursor: pointer;
+        }
+
+        .star-rating :checked ~ label {
+            color: #f90;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #fc0;
+        }
+
+    .card-title-space {
+        margin: 20px 0px;
+        float: right
+    }
+
+    .mb10 {
+        margin-bottom: 10px
+    }
+</style>
+
+<style>
+    .hopscotch-arrow.down {
+        transform: rotate( 1deg );
+        top: 7.9rem;
+        right: -.3rem;
+    }
+
+    .sidebar-mini .sidebar:hover {
+        width: 80px !important;
+    }
+
+    .mob_h {
+        display: none !important
+    }
+</style>
+
+<script>
+    var Header = "<a id='status_1'>Candidates Status</a>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
+<input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30 videocon">
+            <div class="col-md-12 nopad">
+                <div class="card-header bg-w clearfix">
+                    <img style="visibility:hidden" src="" data-position="right" />
+                    <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                    <div class="pull-left risetubeheader">
+                        <h4 class="card-title"></h4>
+
+                        <div class="mobile-view"> <h4 class="card-title risetubeid">Journey</h4></div>
+                    </div>
+
+                    <div class="pull-right">
+                        <div>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" title="Create Interview Request" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" title="Scheduling Links" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
+                            </button>
+                            <span>
+                                <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
+
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            </span>
+                            <span id="status_3"><i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="note-filter" style="text-align: right;"> Note: To visualize data older than 30 days, please apply filter</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content video client candidate">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+
+                            <div id="staffagency_candidatetimeline" data-intro="<span style='font-size:16px;'>Overview the summary of Candidate Status</span><hr class='btop' />1. Candidate Name<br/>2. JD Title<br/>3.Schedule Status<br/>4. Meeting Status<br/><a href='/Client/NotScheduledMeetings' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
+                                <div class="dataloading">
+                                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="filheader">
+                                                    <div class="filavatar">
+                                                        <span class="fa fa-filter"></span>
+                                                    </div>
+                                                    <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                                </div>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <form action="@Url.Action("PublicCandidateStatus", "Candidate",new { emailid=ViewBag.emailid,id=ViewBag.id})" method="post" id="form">
+
+                                                    <div class="modal-body publicmeeting">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked", @style = "position:relative;top:4px;" }) Added Date <span style="ont-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2", @style = "position:relative;top:4px;" }) Interview Date <span style="font-size:14px; font-weight:600;color: #0f6121;">(Filter based on Interview date)</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                        Start Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                        End Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label  col-md-12 col-sm-12 desp-label" for="HREmail">
+                                                                        JD Title
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in Model.Select(x => x.PrimarySkill).Distinct().ToList())
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label  col-md-12 col-sm-12 desp-label" for="MeetingStatus">
+                                                                        Current Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in Model.Select(x => x.CurrentStatus).Distinct().ToList())
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-sm-12 col-md-12 pull-right">
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12">
+
+
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
+
+
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-bottom:10px;">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
+
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="candidate-timeline">
+                                        <div id="tableID" class="second">
+                                            <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+
+
+                                                <div class="clearfix"></div>
+
+                                                <div class="col-sm-12 nopad">
+
+                                                    <div class="table-responsive scrollbar style-2" style="overflow-x:scroll" @*id="style-2"*@>
+                                                        <table id="candidateTable" class="table table-striped table-bordered dataTable journey" cellspacing="0" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-left">Candidate Name</th>
+                                                                    <th class="text-left">Interview Date</th>
+                                                                    <th id="status_4" class="text-left">JD Title</th>
+                                                                    <th id="status_8">Current Status</th>
+                                                                    <th>Client Hr</th>
+                                                                    <th>Staffing Agency</th>
+                                                                    <th>Action</th>
+                                                                    <th id="status_9">Report</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tfoot>
+                                                                <tr>
+                                                                    <th class="text-left">Candidate Name</th>
+                                                                    <th class="text-left">Interview Date</th>
+                                                                    <th class="text-left">JD Title</th>
+                                                                    <th>Current Status</th>
+                                                                    <th>Client Hr</th>
+                                                                    <th>Staffing Agency</th>
+                                                                    <th>Action</th>
+                                                                    <th>Report</th>
+
+                                                                </tr>
+                                                            </tfoot>
+                                                            <tbody id="tblbodyTimeline">
+
+                                                                @foreach (var item in Model)
+                                                                {
+                                                                <tr>
+
+                                                                    @if (item.CandidateName != null && item.CandidateName != "")
+                                                                    {
+                                                                        @if (item.CandidateName.Length > 20)
+                                                                        {
+                                                                            <td class="cadName text-left pl15">
+                                                                                <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName</a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="text-left pl15">
+                                                                                <a onclick=""> @item.CandidateName </a>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+                                                                    @if (item.interviewDate != null && item.interviewDate != "")
+                                                                    {
+                                                                        <td class="cadEmail text-left pl15">
+                                                                            @item.interviewDate
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+
+                                                                    @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                    {
+
+                                                                        @if (item.PrimarySkill.Length > 15)
+                                                                        {
+                                                                            <td class="cadEmail text-left pl15">
+                                                                                <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill </a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="text-left pl15">
+                                                                                <a onclick="">@item.PrimarySkill</a>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+                                                                    <td>
+                                                                        @if (item.CurrentStatus == "Selected")
+                                                                        {
+                                                                            <p class="select">@item.CurrentStatus</p>
+                                                                        }
+
+                                                                        else if (item.CurrentStatus == "Rejected")
+                                                                        {
+                                                                            <p class="reject">@item.CurrentStatus</p>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p>@item.CurrentStatus</p>
+                                                                        }
+                                                                    </td>
+                                                                    <td>@item.HREmail</td>
+                                                                    <td>@item.staffingAgency</td>
+                                                                    <td>
+                                                                        @if (item.CurrentStatus != "Scheduled")
+                                                                        {
+                                                                            @*<button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                    <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 2 })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                </button>*@
+                                                                            <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                                                <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                            </a>
+                                                                        }
+                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
+                                                                            <span class="btn-call" style="top: -7px; position: relative;cursor: pointer;" title="Send Invite"><span class="fa fa-send-o"></span></span>
+                                                                        </span>
+                                                                        @if (item.CurrentStatus == "Scheduled")
+                                                                        {
+                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -7px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fa fa-close"></span></span></span>
+                                                                        }
+                                                                        @if (item.Phone != null && item.Phone != string.Empty)
+                                                                        {
+                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative;cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
+                                                                        }
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                            <span onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')" title="Candidate Status" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                        <button aria-label="Rate Interviewer" style="border:0px;background:none">
+                                                                            <span onclick="openpopUpRating('@item.CandidateName','@item.InterviewId')" title="Rate Interviewer">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    </td>
+                                                                    <td>
+                                                                        @if ((item.CurrentMeetingStatus == 4) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || ((item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
+                                                                        {
+                                                                            <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate" })'" title="Feedback Report">Report</a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p></p>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div id="PublicShareVideo" class="modal modal-bg">
+    @if (ViewBag.PageType == "Public")
+    {
+        <div class="blk-bg"></div>
+    }
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="text-areadiv">
+                        <input type="text" id="txtvideoemailid" class="form-control" />
+                    </div>
+                    <div class="mt-10 text-right">
+                        @if (ViewBag.Status == "Admin")
+                        {
+                            <input type="button" onclick="SubmitEmailAdmin()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                        }
+                        else
+                        {
+                            <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Call Candidate!</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+
+            <div class="modal-body">
+                <div>
+                    <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+
+                </div>
+
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<div id="mySchedulingLinkpopup" class="modal modal-wrap modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-link"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Scheduling Links</h5>
+            </div>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemySchedulingLinkpopup()">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="scrollbox">
+                        <div class="table-responsive">
+                            <table width="100%" cellpadding="0" cellspacing="0" class="table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Skill Channel ID</th>
+                                        <th>JD Title</th>
+                                        <th>Scheduling Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divschedulinglink">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemySchedulingLinkpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myStatusListpopup" class="modal modal-wrap modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-link"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Status List &nbsp;<label id="txtIRFID"></label>&nbsp;(<label id="txtcandidatename"></label>) </h5>
+            </div>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemyStatusListpopup()">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="scrollbox">
+                        <div class="table-responsive">
+                            <table width="100%" cellpadding="0" cellspacing="0" class="table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Comments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divStatusListlink">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemyStatusListpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myRaitingPopup" class="modal modal-wrap modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Rate Interviewer</h5>
+                <div class="rating-box"><i class="fa fa-star"></i> Low &nbsp; &nbsp;<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> High</div>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemyRaitingPopup()">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 clearfix">
+                    <div class="pull-left">
+                        <label class="interviewer_name" id="txtratingCandidate"></label>
+                        <input type="hidden" id="txtratinginterviewid" />
+                        <input type="hidden" id="txtratingvalue" />
+                    </div>
+                    <div class="star-rating pull-right">
+                        <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeRating(5)" />
+                        <label for="Q1_5" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeRating(4)" />
+                        <label for="Q1_4" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeRating(3)" />
+                        <label for="Q1_3" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeRating(2)" />
+                        <label for="Q1_2" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeRating(1)" />
+                        <label for="Q1_1" class="star">&#9733;</label>
+                    </div>
+                </div>
+                <div class="col-md-12 clearfix">
+                    <input class="txtratingComment" type="text" id="txtratingComment" placeholder="Please comment here.." />
+                </div>
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemyRaitingPopup()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                    <input type="button" onclick="SaveRating()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Send Feedback">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" />
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1"></script>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($("#txtVideostatus").val() == "Public") {
+            var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
+        }
+        //var emailiud = window.localStorage.getItem('PublicEmailid');
+        //if (emailiud != "" && emailiud != null) {
+        //    $("#txtvideoemailid").val(emailiud);
+        //    SubmitEmail();
+        //}
+    });
+    function SubmitEmail() {
+        if ($("#txtvideoemailid").val().trim() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtvideoemailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/PublicAllMeetings",
+                data: { id: $("#hidtxtid").val(), Emailid: $("#txtvideoemailid").val().trim() },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location = "/Candidate/PublicCandidateStatus?emailid=" + $("#txtvideoemailid").val() + "&id=" + $("#hidtxtid").val();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
+    }
+    function SubmitEmailAdmin() {
+        if ($("#txtvideoemailid").val().trim() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtvideoemailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/PublicAllMeetingsAdmin",
+                data: { Emailid: $("#txtvideoemailid").val().trim() },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location = "/Candidate/PublicCandidateStatus?emailid=" + $("#txtvideoemailid").val();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
+    }
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+
+        $("#HREmail").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+        $("#MeetingStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+        $("#InterviewStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+        $("#ScheduleStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+        $("#ProfileSource").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+    })
+
+
+    function ResetFilter() {
+        window.location.href = "/Candidate/ResetPublicCandidateTimelineFilter?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
+    }
+    function ApplySessionFilter() {
+
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';
+        var datetype = '@datetype';
+        var hrEmail=  @Html.Raw(Json.Serialize(HREmail));
+        var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
+        var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
+        var scheduleStatus =  @Html.Raw(Json.Serialize(ScheduleStatus));
+        var profileSource =  @Html.Raw(Json.Serialize(ProfileSource));
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);
+        document.getElementById("Datetype_" + datetype).checked = true;
+        $("#HREmail").val(hrEmail);
+        $("#MeetingStatus").val(meetingStatus);
+        $("#InterviewStatus").val(interviewStatus);
+        $("#ScheduleStatus").val(scheduleStatus);
+        $("#ProfileSource").val(profileSource);
+        var form = $("#form").serialize();
+
+    }
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#candidateTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#candidateTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#candidateTable").show();
+        }, 2000);
+    };
+
+
+    //// script for loader ends here
+</script>
+<script>
+    function searchResult() {
+        $('#candidateTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#candidateTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+
+        var table = $('#candidateTable').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+
+    };
+
+</script>
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+    function ModalButtonClick(candidateName, mobileNumber) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    function Sendinvite(id, IRFId, CandidateEmail) {
+        $.ajax({
+            url: '/Candidate/PublicSendInvite',
+            type: 'POST',
+            data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail, 'logiduser': $("#hidtxtemailid").val() },
+            success: function (data) {
+                swal.fire(data);
+            }
+        });
+    }
+    function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
+        $.ajax({
+            url: '/Candidate/PublicCancelInterview',
+            type: 'POST',
+            data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
+            success: function (data) {
+                swal.fire(data);
+                window.location.href = "/Candidate/PublicCandidateStatus?emailid=" + $("#hidtxtemailid").val() + "&id=" + $("#hidtxtid").val();
+            }
+        });
+    }
+    function openSchedulingLinks(emailid) {
+        $.ajax({
+            url: '/Candidate/FetchSchedulingLinks',
+            type: 'POST',
+            data: { 'emailid': emailid },
+            success: function (data) {
+                var modal = document.getElementById("mySchedulingLinkpopup");
+                modal.style.display = "block";
+                bindschedulingdata(data);
+            }
+        });
+    }
+    function bindschedulingdata(data) {
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr><td>' + data[i].irfId + '</td>';
+            html += '<td>' + data[i].jdTiltle + '</td>';
+            html += '<td><a class="schedule-linktxt" id="calendlyLink_' + i + '" target="_blank" title="Scheduling Link" href="' + data[i].calendlyLink + '">Scheculing Link</a>';
+            html += '<button class="copy-btn schedule-linkbtn" onclick="copyToClipboard(' + i + ')">';
+            html += ' <p class="special-text">';
+            html += '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>';
+            html += '<span id="special_text_' + i + '" class="special-text__tooltip">';
+            html += 'Copy Link';
+            html += '</span>';
+            html += '</p>';
+            html += '</button></td></tr>';
+        }
+        $("#divschedulinglink").empty().html(html);
+    }
+    function closemySchedulingLinkpopup() {
+        var modal = document.getElementById("mySchedulingLinkpopup");
+        modal.style.display = "none";
+    }
+
+    function copyToClipboard(elementId) {
+        var element = document.getElementById("calendlyLink_" + elementId);
+        var href = element.href;
+        var temp = $("<input>");
+        $("body").append(temp);
+        //temp.val($(element).href).select();
+        temp.val(href).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text_' + elementId).text('Copied');
+    }
+    function closemyStatusListpopup() {
+        var modal = document.getElementById("myStatusListpopup");
+        modal.style.display = "none";
+    }
+    function PublicStatusList(irfId, candidateId, irfName, candidateName) {
+        $("#txtIRFID").text(irfName);
+        $("#txtcandidatename").text(candidateName);
+        $.ajax({
+            url: '/Candidate/PublicStatusList',
+            type: 'POST',
+            data: { 'irfId': irfId, 'candidateId': candidateId },
+            success: function (data) {
+                var modal = document.getElementById("myStatusListpopup");
+                modal.style.display = "block";
+                bindstatusListdata(data.candidateStatusList);
+            }
+        });
+    }
+    function bindstatusListdata(data) {
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr><td>' + data[i].date.replace("T", " ") + '</td>';
+            if (data[i].statusValue == "In Progress") {
+                html += '    <td style="color:green;font-weight:500"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "New") {
+                html += '<td style="color: dodgerblue;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Waiting For Response") {
+                html += '<td style="color: orange;font-weight: 500"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Scheduled") {
+                html += '<td style="color: deepskyblue;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Irrelevant") {
+                html += '<td style="color:orange"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Duplicate") {
+                html += '<td style=" color: hotpink;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Not Interested") {
+                html += '<td style=" color:purple;font-weight: 500">' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Got Another Offer") {
+                html += '<td style=" color: darkgreen;font-weight: 500"> ' + data[i].statusValue + '</td>';
+            }
+            else if (data[i].statusValue == "Hold") {
+                html += '<td style="color: orangered;font-weight: 500"> ' + data[i].statusValue + '</td>';
+            }
+            else {
+                html += '<td>' + data[i].statusValue + '</td>';
+            }
+            html += '<td><div>';
+            if (data[i].comments != null && data[i].comments.Length > 18) {
+
+                html += '  <a href="#" data-tooltip="' + data[i].comments + '"><textarea style=" height: 50px;border: 0px; font-size: 14px;width: 100%;resize: none;">' + data[i].comments + '</textarea></a>';
+            }
+            else {
+                html += ' <textarea style=" height: 50px;width: 100%;font-size: 14px;resize: none;">' + data[i].comments + '</textarea>';
+            }
+            html += '</div></td>';
+            html += '</tr>';
+        }
+        $("#divStatusListlink").empty().html(html);
+    }
+    function closemyRaitingPopup() {
+        var modal = document.getElementById("myRaitingPopup");
+        modal.style.display = "none";
+    }
+    function openpopUpRating(candidate, interviewid) {
+        $("#txtratingCandidate").text(candidate);
+        $("#txtratinginterviewid").val(interviewid);
+        $.ajax({
+            url: '/RiseTube/FetchRaitingDetails',
+            type: "POST",
+            data: { 'imid': interviewid },
+            success: function (data) {
+                $("#txtratingvalue").val(data.starRating);
+                $("#txtratingComment").val(data.comment);
+                var modal = document.getElementById("myRaitingPopup");
+                modal.style.display = "block";
+                setRating(data.starRating);
+            }
+        });
+
+    }
+    function ChangeRating(value) {
+        $("#txtratingvalue").val(value);
+    }
+    function SaveRating() {
+        var interviewid = $("#txtratinginterviewid").val();
+        var ratingvalue = $("#txtratingvalue").val();
+        var comments = $("#txtratingComment").val();
+        if (parseInt(ratingvalue) > 0) {
+            $.ajax({
+                url: '/RiseTube/SaveRaitingDetails',
+                type: "POST",
+                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments },
+                success: function (data) {
+                    swal.fire(data);
+                    var modal = document.getElementById("myRaitingPopup");
+                    modal.style.display = "none";
+                }
+            });
+        } else {
+            swal.fire("Rating is required.");
+        }
+    }
+    function setRating(starRating) {
+        if (starRating != '' && parseInt(starRating) > 0) {
+            document.getElementById("Q1_" + starRating).checked = true;
+        } else {
+            for (i = 1; i <= 5; i++) {
+                document.getElementById("Q1_" + i).checked = false;
+            }
+        }
+    }
+    function openCreateRequest(emailid, id) {
+        window.location.href = "/InterviewRequest/PublicCreateInterviewRequest?emailid=" + emailid + "&id=" + id;
+    }
+</script>
+
+
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox").mCustomScrollbar();
+        });
+    })(jQuery);
+</script>
+

@@ -295,7 +295,7 @@
     border: none;
     font-weight: normal;
     font-size: 13px !important;
-    padding: 0px 0px 0px 15px;
+    padding: 0px 0px 0px 35px;
     height: 35px;
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
@@ -660,16 +660,16 @@
 
     .show [class^="tooltip"]:after {
         opacity: 0;
-        border: 0 !important;
+       /* border: 0 !important;*/
         visibility: hidden;
         position: absolute;
         content: attr(data-tooltip);
-        padding: 6px 10px;
+        /*padding: 6px 10px;*/
         top: 1em;
         left: 10%;
         -webkit-transform: translateX(-110%) translateY(0px);
         transform: translateX(-110%) translateY(0px);
-        background: grey;
+      /*  background: grey;*/
         color: white;
         white-space: nowrap;
         z-index: 2;
@@ -703,35 +703,35 @@
 }
 
 .show .tooltip--right:after {
-    top: -6px;
+    top: 1px;
     left: 10%;
     -webkit-transform: translateX(45%) translateY(0);
     transform: translateX(45%) translateY(0);
 }
 
 .show .tooltip--right:first-child:after {
-    top: 1px;
+    top: -5px;
     left: 0%;
     -webkit-transform: translateX(51%) translateY(0) !important;
     transform: translateX(51%) translateY(0) !important;
 }
 
 .show .tooltip--right:last-child:after {
-    top: 0px;
+    top: -5px;
     left: 0%;
     -webkit-transform: translateX(0%) translateY(0) !important;
     transform: translateX(85%) translateY(0) !important;
 }
 
 .show .tooltip--right:nth-child(3):after {
-    top: -6px;
+    top: -1px;
     left: 10%;
     -webkit-transform: translateX(45%) translateY(0) !important;
     transform: translateX(45%) translateY(0) !important;
 }
 
 .show .tooltip--right:nth-child(4):after {
-    top: 1px;
+    top: -4px;
     left: 10%;
     -webkit-transform: translateX(45%) translateY(0) !important;
     transform: translateX(45%) translateY(0) !important;
@@ -1031,6 +1031,7 @@ textarea::-webkit-scrollbar-thumb {
     text-transform: capitalize;
     font-weight: 500;
     font-size: 11.5px;
+    float:left;
 }
 
 .notice {
@@ -1055,7 +1056,6 @@ textarea::-webkit-scrollbar-thumb {
     width: 100%;
     height: 406px;
     border: 2px #524c4cab solid;
-    margin-bottom: 10px;
 }
 
 .comment-area .talktext {
@@ -1373,7 +1373,7 @@ textarea::-webkit-scrollbar-thumb {
     background: white;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+ /*   border-bottom: 1px rgba(0, 0, 0, 0.29) solid;*/
 }
 
 .modal-content {
@@ -1570,7 +1570,7 @@ table {
     background: whitesmoke;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    /*border-bottom: 1px rgba(0, 0, 0, 0.29) solid;*/
 }
 
 .card-text-label {
@@ -1672,13 +1672,21 @@ table {
 .video-card-list .video-card-body .video-title a {
     text-transform: capitalize;
 }
-
+.video-info .endclient [data-tooltip]:before {
+    width: 100px;
+    margin-left: -160px;
+}
+.endclient span{
+    text-transform:capitalize;
+}
 .fa-calendar-alt {
     color: #606060;
     font-weight: 600;
     font-size: 12px;
 }
-
+.video-info .fa-calendar-alt{
+    float:left;
+}
 .borders {
     border: 2px solid #fff;
 }
@@ -1750,7 +1758,7 @@ table {
 }
 
 .single-video {
-    margin-bottom: 15px;
+    margin-bottom: 0px;
 }
 
     .single-video .fa-check:before {
@@ -1989,7 +1997,7 @@ table {
 }
 
     .relatedvideo .videosidelist:first-child {
-        padding-top: 30px;
+        padding-top:10px;
     }
 
     .relatedvideo .videosidelist {
@@ -2084,7 +2092,7 @@ table {
     display: inline-block;
     line-height: 15px;
     position: relative;
-    top: 4px;
+    top: 1px;
 }
 
 .splitvideo-mobile {
@@ -2548,7 +2556,7 @@ table {
     }
 
     .videocon .mdc-button--outlined.card-title-space, .videocon .mdc-button--raised.card-title-space {
-        margin: 20px 0px 10px 0px;
+        margin: 0px 0px 10px 0px;
     }
 
     .videocon.pt30 .pull-right {
@@ -2608,7 +2616,12 @@ table {
     .shortlist {
         width: 25%;
     }
-
+    .interviewerVideo .shortlist {
+        width: 24%!important;
+    }
+    .interviewerVideo .share-wrap.btnShortlist.shortlist{
+        width:auto!important;
+    }
     .k {
         width: 50%;
         margin: 0;
@@ -2877,111 +2890,113 @@ table {
     }
 }
 
-@media screen and (max-width: 375px) {
-    #link8 .canvasjs-chart-container {
-        text-align: left !important;
-        left: -15px;
+
+    @media screen and (max-width: 375px) {
+        #link8 .canvasjs-chart-container {
+            text-align: left !important;
+            left: -15px;
+        }
+
+        .counts-liks .rating-btn {
+            margin: 15px 0px !important;
+        }
+
+        .yellow-btn {
+            padding: 0px 25px;
+        }
+
+        .newsletter .mdc-button--outlined.card-title-space {
+            margin-top: 0px;
+        }
+
+        .newsletter .input-group.card-title-space {
+            margin: 0px;
+            width: 100%;
+        }
+
+        .comment-area .talk-bubble {
+            width: 75%;
+        }
+
+        .k {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: -3px;
+            right: 0;
+        }
+
+
+        .single-video-info-content {
+            margin-top: 20px;
+        }
+
+        .share-btn {
+            position: relative;
+            left: 0px;
+        }
+
+        .video-card-list .video-card-image {
+            height: 70px !important;
+            width: 90px !important;
+        }
+
+        .video-card-list .video-card-body {
+            width: 200px !important;
+        }
+
+        #myForm .searchbox {
+            margin-bottom: 10px !important;
+            margin-right: 0px !important;
+        }
+
+        .designation {
+            font-size: 14px;
+        }
+
+        .video-title .candidate {
+            font-size: 14px;
+        }
+
+        .video-view span {
+            font-size: 13px;
+        }
+
+        .video-info span {
+            font-size: 13px;
+        }
+
+        .views {
+            padding: 0px 10px 0px 10px;
+            right: -15px;
+            top: 35px !important;
+        }
+
+        .share {
+            width: 50% !important;
+        }
+
+        .shortlist {
+            width: 50% !important;
+        }
+
+        .limebtn {
+            left: 20px !important;
+            top: -13px;
+        }
+
+        #myForm .searchbox input[type=email] {
+            width: 256px !important;
+            padding-left: 4px;
+            /* height: auto;*/
+        }
     }
-    .counts-liks .rating-btn {
-        margin: 15px 0px !important;
-     
+
+
+
+
+    @media screen and (max-width: 360px) {
+        .date-calendar {
+            font-size: 11px;
+        }
     }
-    .yellow-btn {
-        padding: 0px 25px;
-    }
-
-    .newsletter .mdc-button--outlined.card-title-space {
-        margin-top: 0px;
-    }
-
-    .newsletter .input-group.card-title-space {
-        margin: 0px;
-        width:100%;
-    }
-
-    .comment-area .talk-bubble {
-        width: 75%;
-    }
-
-    .k {
-        width: 50%;
-        margin: 0;
-        position: absolute;
-        top: -3px;
-        right: 0;
-    }
-
-
-    .single-video-info-content {
-        margin-top: 20px;
-    }
-
-    .share-btn {
-        position: relative;
-        left: 0px;
-    }
-
-    .video-card-list .video-card-image {
-        height: 70px !important;
-        width: 90px !important;
-    }
-
-    .video-card-list .video-card-body {
-        width: 200px !important;
-    }
-
-    #myForm .searchbox {
-        margin-bottom: 10px !important;
-        margin-right: 0px !important;
-    }
-
-    .designation {
-        font-size: 14px;
-    }
-
-    .video-title .candidate {
-        font-size: 14px;
-    }
-
-    .video-view span {
-        font-size: 13px;
-    }
-
-    .video-info span {
-        font-size: 13px;
-    }
-
-    .views {
-        padding: 0px 10px 0px 10px;
-        right: -15px;
-        top: 35px !important;
-    }
-
-    .share {
-        width: 50% !important;
-    }
-
-    .shortlist {
-        width: 50% !important;
-    }
-
-    .limebtn {
-        left: 20px !important;
-        top: -13px;
-    }
-
-    #myForm .searchbox input[type=email] {
-        width: 260px !important;
-        padding-left: 4px;
-        /* height: auto;*/
-    }
-}
-
-
-
-
-@media screen and (max-width: 360px) {
-    .date-calendar {
-        font-size: 11px;
-    }
-}

@@ -46,6 +46,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -129,8 +130,8 @@ namespace Risebird.Web.Controllers
                     model.Name = name;
                     model.ResourceGroupName = rgName;
                     model.ActionCommand = action;
-                    var path = $"https://risebirdmicroservices.azurewebsites.net/api/StartStopVM";
-                    var functionKey = "AqqGT4gu4OCE4Lt6VAFH8noLeSqIGVEisaOJvlnzvZFNTAUmrab11Q==";
+                    var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/StartStopVM";
+                    var functionKey = "dzI10CMPKBEqBJchDE1jQ/klyimLhWISbH7q0aDZZHtI8K8sBu8THg==";
 
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     if (response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
@@ -159,6 +160,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetNonExistingVMs()
         {
             try
@@ -173,6 +175,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         public async Task<IActionResult> AddNonExistingVMs(NonExistingVMViewModel model)
         {
@@ -198,8 +201,8 @@ namespace Risebird.Web.Controllers
                 if (vmId != 0)
                 {
 
-                    var path = $"https://risebirdmicroservices.azurewebsites.net/api/GetRDPFile";
-                    var functionKey = "dz9hbdS1f0KJO19KRdRBVEpUxhaaskltduhPq90ImYcvfzWsMiLmAg==";
+                    var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/GetRDPFile";
+                    var functionKey = "lkxa2k0TT1WseCpCIAONXwvh3q5GIx9cvO3h68x1N3jSePNdcwH50A==";
 
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
                     if (response != null)
@@ -373,7 +376,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult GetUserList(int profileId, int vmId)
         {
             if (HttpContext.Session.GetString("email") != null)
@@ -450,7 +453,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> ProctorVMQuestions(ProctorQuestionsViewModel model)
@@ -461,7 +463,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (await _proctorInterviewsService.UpdateVMQuestions(model))
                     {
-                        TempData["SuccessErrorMessageProctor"] = "Questions updated successfully!";
+                        TempData["SuccessErrorMessageProctor"] = "Questions has been updated Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
@@ -483,7 +485,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
 
         [Authorize]
         [HttpGet]
@@ -532,7 +533,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> SetCurrentQuestion(string newIndex)
         {
             try
@@ -564,6 +565,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> RemoveVM(int vmId)
         {
             try

@@ -20,9 +20,9 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetIRFInterviewMeetings(int id, string profileName, string email);
         string GetQCSkills(int id);
         SelectList GetQualityController();
-        Task<IRFVm> GetEditIRF(int id);
+        Task<IRFVm> GetEditIRF(int id, bool isClone = false);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
-        IList<SkillComment> GetTechSkillComments(int id);
+        IList<SkillComment> GetTechSkillComments(int id, string emailId=null);
         bool CheckUniqueness(string value);
 
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
@@ -32,7 +32,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Users> GetClientUser(int id);
         string GetClientUserRole(int id);
         IEnumerable<Interviewer> GetInterviewers(string assessmentgroupid);
-        Task<IEnumerable<Candidate>> GetIRFCandidates(int id);
+        Task<IEnumerable<Candidate>> GetIRFCandidates(int id, string emailId = null);
         Task<string> AddCandidate(Candidate obj, string emailId, string profile);
         Task<string> AddMultipleCandidates(List<Candidate> candidateList, string emailId, string profile);
         Task<bool> DeleteCandidate(int id);
@@ -82,7 +82,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Level> GetLevels();
         IEnumerable<LevelTech> GetLevelTech();
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewersByTag(string tag);
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0);
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null);
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
         Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null);
         Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
@@ -90,5 +90,13 @@ namespace Risebird.Business.Interface
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
         bool CheckChannelOwnerByIrfid(string IRFId, string emailid);
+        Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId);
+        Task<string> GetInterviewerSkillsByUserId(int userId);
+        IEnumerable<Skill> GetSkills();
+        Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate);
+        IEnumerable<SkillCahnnelDetailsVM> GetAllSkillChannelDetails();
+        Task<List<MeetingVM>> GetIRFInterviewMeetingsForClient(int id, string profileName, string email);
+        Task<int> GetInterviewerQCRate(int userId);
+        Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null);
     }
 }

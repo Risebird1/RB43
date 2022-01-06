@@ -15,13 +15,32 @@ else
 
 }*@
 
+<script>
+        $(document).ready(function () {
 
+        $('.sidebar-mini .sidebar').hover(function () {
+            $('.logo-mini img').attr("src", "https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+        }, function(){
+                if ($('#logo-img').val() == "") {
+           $('.logo-mini img').attr("src", "https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+           }
+                else {
+                    $('.logo-mini img').attr("src", "@HttpContextAccessor.HttpContext.Session.GetString("Logo")");
+
+                }
+    });
+
+    });
+
+</script>
 <div class="sidebar" data-color="blue">
     <!--
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
     -->
+    <input id="logo-img" type="hidden" value="@HttpContextAccessor.HttpContext.Session.GetString("Logo")"/>
     <div class="logo">
         <a href="#" class="simple-text logo-mini">
+
             @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
             {
                 <img style="position:relative;top:0px;" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />}
@@ -90,7 +109,7 @@ else
 
 
         <ul class="nav multilevel-accordion-menu vertical menu" data-accordion-menu" id="content">
-            @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
+            @if (@HttpContextAccessor.HttpContext.Session.GetString("userMenus") != null && JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
             {
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
                 var adminMenuList = menuList.Where(a => a.idParentFunction == 3).ToList();
@@ -241,7 +260,7 @@ else
 
                         else if (m.sUrl == "/Client/RejectedMeetings")
                         {
-                            <li  class="candidatetimeline">
+                            <li class="candidatetimeline">
                                 <a href="@m.sUrl">
                                     <span class="sidemenu-icon">
                                         <i class="fa fa-user-times"></i>
@@ -279,6 +298,7 @@ else
                         else if (m.sUrl == "/Support/Index")
                         {
                             <li id="support_menu" class="supportmenu">
+
                                 <a href="@m.sUrl">
                                     <span class="sidemenu-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
@@ -505,6 +525,23 @@ else
                             </li>
                         }
 
+
+                        else if (m.sUrl == "/Finance/CustomerDetails")
+                        {
+                            <li id="cus">
+                                <a href="@m.sUrl">
+                                    <span class="sidemenu-icon">
+
+                                        <i style="font-size: 27px;" class="fas fa-user-o"></i> <i class="fas fa-info-circle info-detail"></i>
+                                    </span>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+
+
+
+
                         else if (m.sUrl == "/Interviewer/MyScheduledDiscussions")
                         {
                             <li id="opendiscinterview_5">
@@ -610,7 +647,7 @@ else
                                             <a class="admin-submenu" href="@item.sUrl">
                                                 @*<span class="@item.sIcon"></span>*@
                                                 <span class="sidebar-normal">
-                                                    <i class="fas fa-angle-down" style="float:left"></i>
+                                                    <i class="fas fa-angle-right" style="float:left"></i>
                                                     <span style="float:left;"> @item.functionName</span>
                                                 </span>
                                             </a>
@@ -642,7 +679,7 @@ else
                                         <li>
                                             <a class="interviewer-submenu" href="@item.sUrl">
                                                 @*<span class="@item.sIcon"> </span>*@
-                                                <span class="sidebar-normal">  <i class="fas fa-angle-down" style="float:left"></i>   <span>@item.functionName</span>  </span>
+                                                <span class="sidebar-normal">  <i class="fas fa-angle-right" style="float:left"></i>   <span>@item.functionName</span>  </span>
                                             </a>
                                         </li>
                                     }

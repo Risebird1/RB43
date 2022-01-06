@@ -14,128 +14,132 @@
 <div class="main-panel" id="main-panel">
 
     <!-- Navbar -->
-  
-            <!-- End Navbar -->
-            <div class="panel-header panel-header-sm">
-            </div>
-            <div class="content">
-                <div class="row">
-                    <div class="col-md-12">
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div id="reportForm" class="content dataloading client">
+        <div class="row bl-bg">
+         
+                <div class="col-md-12">
 
-                        <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
-                    </div>
+                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="mdc-card card">
-                            <div class="mdc-card-wrapper__text-section">
+            
+           
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
 
-                                <form action="/Candidate/Report" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="candidateForm">
-                                    @Html.AntiForgeryToken()
-                                    <div class="canvas_div_pdf">
-                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <form action="/Candidate/Report" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="candidateForm">
+                                @Html.AntiForgeryToken()
+                                <div class="canvas_div_pdf">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    <div class="report-full-wrap">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
-                                                 <h2>Candidate Details</h2>
+                                                    <h3 class="mb-0"><span>Candidate Details</span></h3>
                                                 </div><!--end of multiple location-->
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        <div class="card-wrap">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CandidateEmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CandidateEmailId, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.CandidateEmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.CandidateEmailId, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
                                                 </div>
+
                                             </div>
 
-                                        </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                    @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                    @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.SelectabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.SelectabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.HRReport.JoinabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.HRReport.JoinabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.TechSkillScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.TechSkillScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.SelectabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.SelectabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.SkillGeneralScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.SkillGeneralScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.HRReport.JoinabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.HRReport.JoinabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
                                                 </div>
+
                                             </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.TechSkillScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.TechSkillScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                        </div>
-                                        <div class="row">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.SkillGeneralScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.SkillGeneralScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
 
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                            </div>
+                                            <div class="row">
 
-                                                    @{
-                                                        if (Model.ResumeLink != null && Model.ResumeLink != "")
-                                                        {
-                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.ResumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                        @{
+                                                            if (Model.ResumeLink != null && Model.ResumeLink != "")
+                                                            {
+                                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.ResumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                            }
                                                         }
-                                                    }
 
+                                                    </div>
                                                 </div>
+
+
                                             </div>
-
-
+                                        </div>
+                                    </div>
+                                    <div class="row mb-40">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Report Details</span></h3>
+                                            </div><!--end of multiple location-->
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="multiple_row">
-                                                    <h2>Report Details</h2>
-                                                </div><!--end of multiple location-->
-                                            </div>
-
+                                        <div class="report-wrap">
                                             <div class="col-md-6 col-sm-6">
 
-                                                <div class="card">
+                                                <div class="chart-box">
                                                     <div class="card-body">
                                                         <div id="scoreChart" style="height: 200px; width: 100%;"></div>
 
@@ -144,11 +148,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
-                                                    <h2>Selectability Report</h2>
+                                                    <h3 class="mb-0"><span>Selectability Report</span></h3>
                                                 </div><!--end of multiple location-->
                                             </div><!--end of col-md-12-->
 
@@ -208,7 +213,7 @@
                                                         </tbody>
                                                     </table>
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                        @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
                                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                             <div class="talktext">
@@ -223,10 +228,10 @@
 
                                         </div>
 
-                                        <div class="row">
+                                        <div class="row mb-40">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
-                                                    <h2>Joinability Report</h2>
+                                                    <h3 class="mb-0"><span>Joinability Report</span></h3>
                                                 </div><!--end of multiple location-->
                                             </div><!--end of col-md-12-->
 
@@ -286,7 +291,7 @@
                                                         </tbody>
                                                     </table>
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.HRReport.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                        @Html.LabelFor(model => model.HRReport.JoinabilityComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
 
                                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
@@ -306,7 +311,7 @@
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
-                                                    <h2>Tech Skill Report</h2>
+                                                    <h3 class="mb-0"><span>Tech Skill Report</span></h3>
                                                 </div><!--end of multiple location-->
                                             </div><!--end of col-md-12-->
 
@@ -365,7 +370,7 @@
                                                     </table>
                                                 </div>
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                    @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
 
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
@@ -385,7 +390,7 @@
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
-                                                    <h2>General Skill Report</h2>
+                                                    <h3 class="mb-0"><span>General Skill Report</span></h3>
                                                 </div><!--end of multiple location-->
                                             </div><!--end of col-md-12-->
 
@@ -444,7 +449,7 @@
                                                     </table>
 
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                        @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class ="textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
                                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                             <div class="talktext">
@@ -465,7 +470,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                     <div class="multiple_row">
-                                                        <h2>Uploaded Audios</h2>
+                                                        <h3 class="mb-0"><span>Uploaded Audios</span></h3>
                                                     </div><!--end of multiple location-->
                                                 </div><!--end of col-md-12-->
 
@@ -550,313 +555,314 @@
 
 
                                     </div>
-                                </form>
-                            </div>
-
-                            <!-- end content-->
+</form>
                         </div>
-                        <!--  end card  -->
-                    </div>
-                    <!-- end col-md-12 -->
-                </div>
-                <!-- end row -->
 
-            </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+           
+            <!-- end row -->
 
         </div>
-        <script>
-    function dropDwnToolTips(id) {
 
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value
-        }
-    }
+    </div>
+</div>
+    <script>
+        function dropDwnToolTips(id) {
 
-
-        </script>
-
-
-        <script src="https://www.amcharts.com/lib/4/core.js"></script>
-        <script src="https://www.amcharts.com/lib/4/charts.js"></script>
-        <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
-        <script>
-    function getPDF() {
-
-        var HTML_Width = $(".canvas_div_pdf").width();
-        var HTML_Height = $(".canvas_div_pdf").height();
-        var top_left_margin = 15;
-        var PDF_Width = HTML_Width + (top_left_margin * 2);
-        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
-        var canvas_image_width = HTML_Width;
-        var canvas_image_height = HTML_Height;
-
-        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
-
-
-        html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
-            canvas.getContext('2d');
-
-
-            var imgData = canvas.toDataURL("image/jpeg", 1.0);
-            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
-            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
-
-
-            for (var i = 1; i <= totalPDFPages; i++) {
-                pdf.addPage(PDF_Width, PDF_Height);
-                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
-            }
-
-            var d = new Date();
-
-            var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
-            pdf.save(filename + ".pdf")
-        });
-    };
-        </script>
-        <script>
-    function submit() {
-        document.getElementById("candidateForm").submit();
-
-    }
-        </script>
-        <script>
-
-    function CalculateOverAll(id, value, skillName) {
-        var num = id.match(/(\d+)/);
-        var index = num[0];
-        value = parseInt(value);
-
-        var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
-        var required = $("#" + reqLevelId).val();
-        if (required <= value) {
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
-            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
-
-        }
-        else {
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
-            $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
-            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
-        }
-
-        RenderChart();
-    }
-
-    $(document).ready(function () {
-
-        //shorter/better attempt
-        var weightageItems = $('[id$="WeightageActual"]');
-        for (i = 0; i < weightageItems.length; i++) {
-            var id = weightageItems[i].id;
-            var match = id.match(/\d+/g);
-            var digit = match[0];
-
-            var index = weightageItems[i].id.indexOf(digit);
-            var skillName = weightageItems[i].id.substring(0, index);
-            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
-            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
-            if (reqLevel <= actLevel) {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            if (id.value == 0) {
+                id.title = "";
             }
             else {
+                id.title = id.value
+            }
+        }
 
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
-                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
 
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+    </script>
+
+
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+    <script>
+        function getPDF() {
+
+            var HTML_Width = $(".canvas_div_pdf").width();
+            var HTML_Height = $(".canvas_div_pdf").height();
+            var top_left_margin = 15;
+            var PDF_Width = HTML_Width + (top_left_margin * 2);
+            var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+            var canvas_image_width = HTML_Width;
+            var canvas_image_height = HTML_Height;
+
+            var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+            html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
+                canvas.getContext('2d');
+
+
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+                for (var i = 1; i <= totalPDFPages; i++) {
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                }
+
+                var d = new Date();
+
+                var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
+                pdf.save(filename + ".pdf")
+            });
+        };
+    </script>
+    <script>
+        function submit() {
+            document.getElementById("candidateForm").submit();
+
+        }
+    </script>
+    <script>
+
+        function CalculateOverAll(id, value, skillName) {
+            var num = id.match(/(\d+)/);
+            var index = num[0];
+            value = parseInt(value);
+
+            var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
+            var required = $("#" + reqLevelId).val();
+            if (required <= value) {
+                var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+                $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
 
             }
+            else {
+                var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+                var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
+                $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
+                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+            }
 
+            RenderChart();
         }
 
+        $(document).ready(function () {
 
-    });
+            //shorter/better attempt
+            var weightageItems = $('[id$="WeightageActual"]');
+            for (i = 0; i < weightageItems.length; i++) {
+                var id = weightageItems[i].id;
+                var match = id.match(/\d+/g);
+                var digit = match[0];
 
-
-        </script>
-        <script>
-
-    window.onload = function () {
-        RenderChart();
-    }
-
-
-    function RenderChart() {
-        var arr = [];
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="HRReport_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; i++) {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#HRReport_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objJoin.y = parseInt(joinabilityTotal);
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin.y);
-        document.getElementById("HRReport_JoinabilityScore").value = joinabilityTotal;
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objSelect.y = parseInt(selectabilityTotal);
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect.y);
-        document.getElementById("SelectabilityScore").value = selectabilityTotal;
-
-
-        var objTech = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillEvaluatorReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
-
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objTech.y = parseInt(techTotal);
-        objTech.label = "Tech Skills Score";
-        objTech.legendText = "Tech Skills Score";
-        arr.push(objTech.y);
-        document.getElementById("TechSkillScore").value = techTotal;
-
-        var objGenSkill = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var genSkillItems = $('[id^="SkillGeneralEvaluatorReportCollection"][id$="WeightageActual"]');
-        var genSkillTotal = 0;
-        for (i = 0; i < genSkillItems.length; i++) {
-
-            genSkillTotal = parseInt(genSkillTotal) + parseInt($("#SkillGeneralEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objGenSkill.y = parseInt(genSkillTotal);
-        objGenSkill.label = "General Skills Score";
-        objGenSkill.legendText = "General Skills Score";
-        arr.push(objGenSkill.y);
-        document.getElementById("SkillGeneralScore").value = genSkillTotal;
-        am4core.ready(function () {
-
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create chart instance
-            var chart = am4core.create("scoreChart", am4charts.XYChart);//Tech General Joinability Selectability
-
-            // Add data
-            chart.data = [{
-                "country": "Joinability",
-                "visits": arr[0]
-
-            }, {
-                "country": "Selectability",
-                "visits": arr[1]
-            }, {
-                "country": "Tech",
-                "visits": arr[2]
-            }, {
-                "country": "General",
-                "visits": arr[3]
-            }];
-
-            // Create axes
-            chart.logo.disabled = true;
-            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-            categoryAxis.dataFields.category = "country";
-            categoryAxis.renderer.inside = true;
-            categoryAxis.renderer.labels.template.valign = 0;
-
-            categoryAxis.renderer.grid.template.location = 0;
-            categoryAxis.renderer.minGridDistance = 30;
-            chart.fontSize = 13;
-            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
-                if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy;
-                }
-                return dy;
-            });
-
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-            categoryAxis.renderer.labels.template.paddingBottom = -17;
-            categoryAxis.renderer.grid.template.disabled = true;
-            valueAxis.renderer.grid.template.disabled = true;
-            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            // Create series
-            var series = chart.series.push(new am4charts.ColumnSeries());
-            series.dataFields.valueY = "visits";
-            series.dataFields.categoryX = "country";
-            series.name = "Visits";
-            series.colorField = "color";
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY}%)";
-
-            series.tooltip.label.adapter.add("text", function (text, target) {
-                if (target.dataItem && target.dataItem.valueY == 0) {
-
-                    return "";
+                var index = weightageItems[i].id.indexOf(digit);
+                var skillName = weightageItems[i].id.substring(0, index);
+                var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+                var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+                if (reqLevel <= actLevel) {
+                    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                    $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
                 }
                 else {
 
-                    return text;
+                    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                    var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+                    $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+
+                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+
                 }
-            });
 
-            series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 0;
-            series.tooltip.background.strokeOpacity = 0
-            series.tooltip.pointerOrientation = "vertical";
-            series.columns.template.showTooltipOn = "always";
-            series.tooltip.background.filters.clear();
-            series.tooltip.getFillFromObject = false;
+            }
 
-            series.tooltip.label.fill = am4core.color("#9a9a9a");
-            series.tooltip.background.cornerRadius = 0;
-            series.tooltip.label.textAlign = "middle";
-            series.tooltip.background.fill = 0;
-
-
-            var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 0;
-            columnTemplate.strokeOpacity = 1;
-            chart.colors.list = [
-                am4core.color("#07BEF3"),
-                am4core.color("#00F96B"),
-                am4core.color("#F64042"),
-                am4core.color("#ffbc50")
-
-            ];
-            series.columns.template.events.once("inited", function (event) {
-                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
-            });
 
         });
 
 
-    }
+    </script>
+    <script>
 
-        </script>
+        window.onload = function () {
+            RenderChart();
+        }
 
 
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/data.js"></script>
-        <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        function RenderChart() {
+            var arr = [];
+
+            //Joinability actual weightage total
+            var objJoin = { y: "", legendText: "", label: "" }
+            var joinabilityItems = $('[id^="HRReport_JoinabilityHRReportCollection"][id$="WeightageActual"]');
+            var joinabilityTotal = 0;
+            for (i = 0; i < joinabilityItems.length; i++) {
+
+                joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#HRReport_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objJoin.y = parseInt(joinabilityTotal);
+            objJoin.label = "Joinability Score";
+            objJoin.legendText = "Joinability Score";
+            arr.push(objJoin.y);
+            document.getElementById("HRReport_JoinabilityScore").value = joinabilityTotal;
+
+            //Selectability actual weightage total
+            var objSelect = { y: "", legendText: "", label: "" }
+            var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+            var selectabilityTotal = 0;
+            for (i = 0; i < selectabilityItems.length; i++) {
+
+                selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objSelect.y = parseInt(selectabilityTotal);
+            objSelect.label = "Selectability Score";
+            objSelect.legendText = "Selectability Score";
+            arr.push(objSelect.y);
+            document.getElementById("SelectabilityScore").value = selectabilityTotal;
+
+
+            var objTech = { y: "", legendText: "", label: "" }
+            //TechSkills actual weightage total
+            var techItems = $('[id^="TechSkillEvaluatorReportCollection"][id$="WeightageActual"]');
+            var techTotal = 0;
+            for (i = 0; i < techItems.length; i++) {
+
+                techTotal = parseInt(techTotal) + parseInt($("#TechSkillEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objTech.y = parseInt(techTotal);
+            objTech.label = "Tech Skills Score";
+            objTech.legendText = "Tech Skills Score";
+            arr.push(objTech.y);
+            document.getElementById("TechSkillScore").value = techTotal;
+
+            var objGenSkill = { y: "", legendText: "", label: "" }
+            //TechSkills actual weightage total
+            var genSkillItems = $('[id^="SkillGeneralEvaluatorReportCollection"][id$="WeightageActual"]');
+            var genSkillTotal = 0;
+            for (i = 0; i < genSkillItems.length; i++) {
+
+                genSkillTotal = parseInt(genSkillTotal) + parseInt($("#SkillGeneralEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objGenSkill.y = parseInt(genSkillTotal);
+            objGenSkill.label = "General Skills Score";
+            objGenSkill.legendText = "General Skills Score";
+            arr.push(objGenSkill.y);
+            document.getElementById("SkillGeneralScore").value = genSkillTotal;
+            am4core.ready(function () {
+
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                // Create chart instance
+                var chart = am4core.create("scoreChart", am4charts.XYChart);//Tech General Joinability Selectability
+
+                // Add data
+                chart.data = [{
+                    "country": "Joinability",
+                    "visits": arr[0]
+
+                }, {
+                    "country": "Selectability",
+                    "visits": arr[1]
+                }, {
+                    "country": "Tech",
+                    "visits": arr[2]
+                }, {
+                    "country": "General",
+                    "visits": arr[3]
+                }];
+
+                // Create axes
+                chart.logo.disabled = true;
+                var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+                categoryAxis.dataFields.category = "country";
+                categoryAxis.renderer.inside = true;
+                categoryAxis.renderer.labels.template.valign = 0;
+
+                categoryAxis.renderer.grid.template.location = 0;
+                categoryAxis.renderer.minGridDistance = 30;
+                chart.fontSize = 13;
+                categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                    if (target.dataItem && target.dataItem.index & 2 == 2) {
+                        return dy;
+                    }
+                    return dy;
+                });
+
+                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                categoryAxis.renderer.labels.template.paddingBottom = -17;
+                categoryAxis.renderer.grid.template.disabled = true;
+                valueAxis.renderer.grid.template.disabled = true;
+                categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+                // Create series
+                var series = chart.series.push(new am4charts.ColumnSeries());
+                series.dataFields.valueY = "visits";
+                series.dataFields.categoryX = "country";
+                series.name = "Visits";
+                series.colorField = "color";
+                series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY}%)";
+
+                series.tooltip.label.adapter.add("text", function (text, target) {
+                    if (target.dataItem && target.dataItem.valueY == 0) {
+
+                        return "";
+                    }
+                    else {
+
+                        return text;
+                    }
+                });
+
+                series.columns.template.fillOpacity = .8;
+                series.columns.template.tooltipY = 0;
+                series.tooltip.background.strokeOpacity = 0
+                series.tooltip.pointerOrientation = "vertical";
+                series.columns.template.showTooltipOn = "always";
+                series.tooltip.background.filters.clear();
+                series.tooltip.getFillFromObject = false;
+
+                series.tooltip.label.fill = am4core.color("#9a9a9a");
+                series.tooltip.background.cornerRadius = 0;
+                series.tooltip.label.textAlign = "middle";
+                series.tooltip.background.fill = 0;
+
+
+                var columnTemplate = series.columns.template;
+                columnTemplate.strokeWidth = 0;
+                columnTemplate.strokeOpacity = 1;
+                chart.colors.list = [
+                    am4core.color("#07BEF3"),
+                    am4core.color("#00F96B"),
+                    am4core.color("#F64042"),
+                    am4core.color("#ffbc50")
+
+                ];
+                series.columns.template.events.once("inited", function (event) {
+                    event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+                });
+
+            });
+
+
+        }
+
+    </script>
+
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

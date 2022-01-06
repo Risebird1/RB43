@@ -28,14 +28,24 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public IEnumerable<Client> GetClients()
+        public IEnumerable<Client> GetClients(string emailid, string profilename)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Client>(
-                        con, "select * from Client", null, commandType: Text);
+                    if (profilename == "SeniorHR")
+                    {
+                        DynamicParameters dp = new DynamicParameters();
+                        dp.Add("@Emailid", emailid);
+                        return SqlMapper.Query<Client>(
+                            con, "Select cl.* From SeniorHR sh join Client cl on cl.id=sh.Clientid join Userlist ul on ul.id=sh.userid where ul.Emailid=@Emailid", dp, commandType: Text);
+                    }
+                    else
+                    {
+                        return SqlMapper.Query<Client>(
+                            con, "select * from Client", null, commandType: Text);
+                    }
                 }
             }
             catch (SqlException ex)
@@ -463,6 +473,110 @@ namespace Risebird.Repository
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+
+        public async Task<int> GetClientRoleByEmailId(string emailId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_GetClientRoleByEmailId]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<int> GetUniqueClientRoleByEmailId(string emailId, string id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                parameters.Add("@uniqueid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_GetuniqueClientRoleByEmailId]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<string> PublicClientUrlSave(string emailId, string uniqueid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                parameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "[usp_SaveClientPublicURL]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                parameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "[usp_SaveInterviewerPublicURL]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "";
             }
         }

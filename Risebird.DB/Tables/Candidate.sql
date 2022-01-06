@@ -39,6 +39,10 @@ CREATE TABLE [dbo].[Candidate](
 	[AvailableFreeLancing] [bit] NULL,
     [ClientHRAttemptContact] [varchar](100) NULL,
     [ProfileSource] [varchar](200) NULL,
+    [FitmentStatus] [int] NULL,
+	[PriorityStatus] [int] NULL,
+	[CompletionStatus] [int] NULL,
+
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -354,6 +358,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add [ProfileSource] VARCHAR(200)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'FitmentStatus')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add FitmentStatus INT
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PriorityStatus')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add PriorityStatus INT
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CompletionStatus')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add CompletionStatus INT
 END
 
 End

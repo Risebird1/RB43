@@ -35,7 +35,9 @@ textarea::-webkit-scrollbar-thumb {
 .card-blue .card-header .overlay-relative h6 {
     color: #fff;
 }
-
+.card-blue .card-footer.scheduling {
+    padding: 8px 0px 0px 0px;
+}
 
 #interviewerMemberModal .modal-lg {
     max-width: 870px !important;
@@ -740,8 +742,23 @@ input[type=number] {
         font-weight: bold;
         padding-right: 7px;
     }
-
-.pskill {
+#skill_card .pskill {
+    display: block !important;
+    width: auto !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #0c2642;
+    padding: 0;
+    margin: 0;
+}
+.w60 a {
+    text-decoration: none;
+}
+.w60 [data-tooltip]:before {
+    margin-left: -20px!important;
+}
+    .pskill {
     display: inline-block;
     width: 120px;
     white-space: nowrap;

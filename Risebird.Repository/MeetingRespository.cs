@@ -58,12 +58,13 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
                     parameters.Add("EmailId", emailId);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseInterviewMeetings", parameters,
-                        commandType: CommandType.StoredProcedure);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseInterviewMeetings", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
             }
@@ -434,13 +435,15 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<IEnumerable<MeetingVM>> MultipleCandidateInvites()
+        public async Task<IEnumerable<MeetingVM>> MultipleCandidateInvites(string emailid)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_MultipleCandidateInvites", null,
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_MultipleCandidateInvites", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }
@@ -463,6 +466,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("emailID", emailID);
+                    parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
@@ -1013,6 +1017,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@candidateEmail", candidateEmail);
                 parameters.Add("@interviewDate", interviewDate);
+                parameters.Add("@IRFID", "");
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1393,26 +1398,23 @@ namespace Risebird.Repository
 
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)
                     {
-                        if (reportDetails.VideoDuration == 0)
-                        {
-                            parametersPoints.Add("@Points", 0);
-                        }
-                        else
-                        {
-                            parametersPoints.Add("@Points", 25);
-                        }
+                        var duration = reportDetails.VideoDuration;
+                        int baseValue = 6;
+                        float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
+                        parametersPoints.Add("@Points", pointPercent);
                     }
                     else if (reportDetails.MeetingStatus == 5)
                     {
                         parametersPoints.Add("@Points", 0);
-
+                        //parametersPoints.Add("@Points", -200);
+                        //parametersPoints.Add("@Points", -350);
                     }
-                    else if (reportDetails.MeetingStatus == 4)
+                    else if (reportDetails.MeetingStatus == 4 || reportDetails.MeetingStatus == 6 || reportDetails.MeetingStatus == 7 || reportDetails.MeetingStatus == 8)
                     {
-                        float duration = (float)reportDetails.VideoDuration;
+                        int duration = reportDetails.VideoDuration;
                         if (reportDetails.InterviewStatus == (int)InterviewStatus.Rejected || reportDetails.InterviewStatus == (int)InterviewStatus.Proxy)
                         {
-                            float baseValue = 35;
+                            int baseValue = 30;
 
                             float pointPercent = duration >= baseValue ? ((baseValue * 100) / 60) : ((duration * 100) / 60);
                             parametersPoints.Add("@Points", pointPercent);
@@ -1425,48 +1427,9 @@ namespace Risebird.Repository
 
                     }
 
-
-
-
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
                     //parametersPoints.Add("@UserEmail", reportDetails.UserDetails);
                     parametersPoints.Add("@Type", "Interview");
-                    //if (reportDetails.IsQC == true)
-                    //{
-                    //    parametersPoints.Add("@Type", "Quality Controller");
-                    //}
-                    //else
-                    //{
-                    //    parametersPoints.Add("@Type", "Interview");
-                    //}
-                    //if (reportDetails.IsEdited)
-                    //{
-                    //    var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
-                    //                        commandType: CommandType.StoredProcedure);
-
-                    //}
-                    //else
-                    //{
-                    //    //add to interviewReport table
-                    //    string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
-                    //    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
-                    //    {
-                    //        reportDetails.IRFId,
-                    //        reportDetails.InterviewId,
-                    //        reportDetails.CandidateName,
-                    //        reportDetails.confirmationStatus,
-                    //        reportDetails.OverallScore,
-                    //        reportDetails.Rating,
-                    //        reportDetails.TechSkillComments,
-                    //        reportDetails.SkillGeneralComments,
-                    //        reportDetails.SelectabilityComments,
-                    //        reportDetails.JoinabilityComments,
-                    //        reportDetails.ProctoringCount
-
-                    //    }).Result;
-
-                    //}
-
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
 
@@ -1584,7 +1547,7 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
 
-                    if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3 || reportDetails.MeetingStatus == 5 || reportDetails.MeetingStatus == 4)
+                    if (reportDetails.MeetingStatus != 2)
                     {
                         try
                         {
@@ -3847,7 +3810,7 @@ namespace Risebird.Repository
                                          Points = p == null ? c.Points : c.Points - p.Points,
                                          Comment = c.Comment
                                      }).ToList();
-                    return resultset.Where(x => x.Points > 0).ToList();
+                    return resultset.Where(x => x.Points > 0).OrderBy(x => x.Comment).ToList();
                 }
             }
             catch (SqlException ex)
@@ -3909,28 +3872,29 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se)
+        public async Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory)
         {
             try
             {
                 var query = "";
                 if (index == 2)
                 {
-                    query = "Update ip Set ip.Status='Paid' from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@st", st);
                     dynamicParameters.Add("@se", se);
                     dynamicParameters.Add("@Userid", interviewerid);
+                    dynamicParameters.Add("@PaymentHistoryId", paymenthistory);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid' from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid' from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (ip.Date>=@st and ip.Date<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (ip.Date>=@st and ip.Date<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
@@ -3946,9 +3910,10 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    query = "Update InterviewPoints set Status='Paid' where userid=@Userid and (status='Submitted' or status='Advance')";
+                    query = "Update InterviewPoints set Status='Paid',PaymentHistoryId=@PaymentHistoryId where userid=@Userid and (status='Submitted' or status='Advance')";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@Userid", interviewerid);
+                    dynamicParameters.Add("@PaymentHistoryId", paymenthistory);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
@@ -3982,7 +3947,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount)
+        public async Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId)
         {
             try
             {
@@ -4015,7 +3980,7 @@ namespace Risebird.Repository
                 var date = DateTime.Now;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ,Interviewerid) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date,@interviewerid);";
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ,Interviewerid,PaymentHistoryId) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date,@interviewerid,@PaymentHistoryId);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         interviewid,
@@ -4025,7 +3990,8 @@ namespace Risebird.Repository
                         Comment,
                         status,
                         date,
-                        interviewerid
+                        interviewerid,
+                        PaymentHistoryId
                     });
                     return "Success";
                 }
@@ -4053,7 +4019,7 @@ namespace Risebird.Repository
                 }
                 if (_list.Count > 0)
                 {
-                    var queryad = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Advance' and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Advance' and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se))Select Comment,id,Sum(Points) as Points from CTE group by Comment,id";
+                    var queryad = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Advance' and interviewid!=0 Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Advance' and interviewerid!=0  Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Advance' and interviewerid=0 and Interviewid=0)Select Comment,id,Sum(Points) as Points from CTE group by Comment,id";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync<RBInterviewDetails>(queryad, dynamicParameters);
@@ -4066,12 +4032,12 @@ namespace Risebird.Repository
                                              Points = p == null ? c.Points : c.Points - p.Points,
                                              Comment = c.Comment
                                          }).ToList();
-                        return resultset.ToList();
+                        return resultset.OrderBy(x => x.Comment).ToList();
                     }
                 }
                 else
                 {
-                    return _list.ToList();
+                    return _list.OrderBy(x => x.Comment).ToList();
                 }
             }
             catch (SqlException ex)
@@ -4176,7 +4142,7 @@ namespace Risebird.Repository
             }
             return "fail";
         }
-        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<MeetingVM>> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email)
         {
             try
             {
@@ -4185,6 +4151,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("startDate", startDate);
                     parameters.Add("endDate", endDate);
+                    parameters.Add("@email", email);
                     var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllSelectedCandidateInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -4346,17 +4313,27 @@ namespace Risebird.Repository
                 var PaymentDate = DateTime.Now;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values (@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount);";
-                    var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
-                    {
-                        userid,
-                        PaymentDate,
-                        Amount,
-                        status,
-                        Comment,
-                        TotalAmount
-                    });
-                    return "Success";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userid", userid);
+                    parameters.Add("@PaymentDate", PaymentDate);
+                    parameters.Add("@Amount", Amount);
+                    parameters.Add("@status", status);
+                    parameters.Add("@Comment", Comment);
+                    parameters.Add("@TotalAmount", TotalAmount);
+                    var result = SqlMapper.Query<string>(con, "usp_InsertPaymentHistory", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                    //string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values (@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount);";
+                    //var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
+                    //{
+                    //    userid,
+                    //    PaymentDate,
+                    //    Amount,
+                    //    status,
+                    //    Comment,
+                    //    TotalAmount
+                    //});
+                    //return "Success";
                 }
             }
             catch (SqlException ex)
@@ -4515,7 +4492,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@timeEnd", DateTime.Now.AddHours(-2));
+                    parameters.Add("@timeEnd", DateTime.Now);
                     parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
                     var result = SqlMapper.Query<PendingVideoMeetingsData>(con, "usp_GetPendingVideoMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
@@ -4800,5 +4777,482 @@ namespace Risebird.Repository
                 return "Fail";
             }
         }
+        public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", IRFId);
+                    parameters.Add("@emailId", emailId);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientNotScheduledMeetingsByIRFId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("Clientid", Clientid);
+                    parameters.Add("Emailid", Emailid);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientReScheduledMeetings", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CallCatalogueVM>> GetCallCatalogueList(string profile, string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserRole", profile);
+                    parameters.Add("@Emailid", Emailid);
+                    return await SqlMapper.QueryAsync<CallCatalogueVM>(con, "usp_FetchCallCatalogue", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<string>> FetchClientListByIRFID(int IRFID)
+        {
+            try
+            {
+                var queryfinal = "Select cu.Emailid from TransClientUser tc join UserList cu on cu.id=tc.ClientUserid where ClientRoleId in(1,2) and IRFID=@IRFID";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dpfinal = new DynamicParameters();
+                    dpfinal.Add("@IRFID", IRFID);
+                    var result = await con.QueryAsync<string>(queryfinal, dpfinal);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoInstantMeetings()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeEnd", DateTime.Now);
+                    parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
+                    var result = SqlMapper.Query<PendingVideoMeetingsData>(con, "usp_GetPendingVideoInstantMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateUploadedVideoLinkForInstaInterview(int interviewId, string videoLink)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@videoLink", videoLink);
+                    //parameters.Add("@videoDuration", videoDuration);
+                    var result = SqlMapper.Query(con, "usp_UpdateUploadedVideoLinkForInstaInterview", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid)
+        {
+            try
+            {
+                var query = "Select distinct im.id from IRF join InterviewMeetings im on im.IRFId=IRF.IRFId join SeniorHR sh on IRF.ClientId=sh.Clientid join Userlist ul on ul.id=Sh.Userid Where ul.Emailid=@Emailid and im.confirmationStatus=1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@PaymentHistoryId", interviewerid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "Usp_FetchPaymentHistoryDetailsbyId", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return (List<RBInterviewDetails>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                //var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                var query = ";with CTE(paymentid,Comment,id, Points) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where ip.Status='Paid' and interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points from InterviewPoints ip join UserList ul on ul.id=ip.userid where ip.Status='Paid' and (Type='Interview' or Type='Quality Controller') and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se)) Select *  from CTE";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    //return Convert.ToInt32(results.FirstOrDefault());
+                    return (List<RBInterviewDetails>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                //var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                var query = ";with CTE(paymentid,Comment,id, Points,MeetingStatus) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.Interviewid=im.id  where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Interview' and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.Interviewid=im.id where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Interview' and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)) Select Comment,id,MeetingStatus,Sum(Points) as Points from CTE where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=4 group by Comment,id,MeetingStatus";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    _list = (List<RBInterviewDetails>)results;
+                    return _list.OrderBy(x => x.Comment).ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se)
+        {
+            try
+            {
+                List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                //var query = "Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id Union Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId where (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) group by ul.EmailId,ul.id";
+                var query = ";with CTE(paymentid,Comment,id, Points,MeetingStatus) as (Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.Interviewid=im.id  where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Quality Controller' and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union Select ip.id as paymentid,ul.EmailId as Comment,ul.id,ip.Points,ic.MeetingStatus from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.Interviewid=im.id where (ip.Status='Submitted' or ip.Status='Pending' or ip.Status='Paid') and ip.Type='Quality Controller' and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)) Select Comment,id,MeetingStatus,Sum(Points) as Points from CTE group by Comment,id,MeetingStatus";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
+                    _list = (List<RBInterviewDetails>)results;
+                    return _list.OrderBy(x => x.Comment).ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<Meeting> GetMeetingDetails(int meetingId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingId", meetingId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_GetMeetingDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
+                    return (List<SchedulingLinkVM>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+
+        /// <summary>
+        /// Gets all the interviews which are yet unassigned with 3 hours to go
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetUnassignedOpenInterviews", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<string>> GetIRFActiveInterviewers(string irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.QueryAsync<string>(con, "usp_GetIRFActiveInterviewers", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.Result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+        public async Task<int> GetUniqueInterviewerByEmailId(string emailId, string id)
+        {
+            try
+            {
+                var query = "Select id From InterviewerPublicURLs where EmailId = @emailId and uniqueid=@uniqueid ";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailId", emailId);
+                dynamicParameters.Add("@uniqueid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+
+        }
+        public async Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchAllUnassignedInterviewAutoCancel", null,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<UnassignedInterviewVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool UpdateCancelInterviewDetails(int meetingid)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set isAutoCancelled=1 where id=@meetingid and confirmationStatus=2";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchCandidateMeetingsForReminders", null,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<UnassignedInterviewVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (status == 1)
+                {
+                    query = "Update im set IsCandidateResponsed=1,CandidateResponse=1 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                }
+                else
+                {
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=1,interviewer=null from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
+        {
+            try
+            {
+                var query = "SELECT IRFid as IRFName,Name,JobCountry,CompanyType FROM IRF INNER JOIN Client ON Client.id = IRF.ClientId";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CustomerDetailsVM>(query, null);
+                    return (List<CustomerDetailsVM>)results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> ApplyInterviewPenalty(int meetingid, string JobCountry, string interviewer)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
+                if (JobCountry.ToUpper() == "INDIA" || JobCountry.ToUpper() == "1")
+                {
+                    parameters.Add("@points", -200);
+                }
+                else
+                {
+                    parameters.Add("@points", -350);
+                }
+                parameters.Add("@interviewer", interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "usp_applyInterviewerpenalty", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

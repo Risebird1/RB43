@@ -32,7 +32,11 @@ namespace Risebird.Entities.ViewModel
         public bool IsIRFArchived { get; set; }
         public string IRFName { get; set; }
         public string Phone { get; set; }
-
+        public string interviewDate { get; set; }
+        public string IRFname { get; set; }
+        public int imid { get; set; }
+        public string CalendlyLink { get; set; }
+        public string staffingAgency { get; set; }
     }
 
     public class TimelineStatus
@@ -47,7 +51,13 @@ namespace Risebird.Entities.ViewModel
     }
 
 
+    public class CustomerDetailsVM
+    {
+        public string IRFName { get; set; }
+        public string Name { get; set; }
+        public string JobCountry { get; set; }
+        public string CompanyType { get; set; }
+    }
 
 
-
-}
+    }

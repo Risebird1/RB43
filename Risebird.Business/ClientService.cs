@@ -7,6 +7,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -21,11 +22,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public List<Client> GetClients()
+        public List<Client> GetClients(string emailid, string profilename)
         {
             try
             {
-                return _clientRepository.GetClients().ToList();
+                return _clientRepository.GetClients(emailid, profilename).ToList();
             }
             catch (Exception)
             {
@@ -216,6 +217,58 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "failed";
+            }
+        }
+        public async Task<int> GetClientRoleByEmailId(string emailId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientRoleByEmailId(emailId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<int> GetUniqueClientRoleByEmailId(string emailId, string id)
+        {
+            try
+            {
+                return await _clientRepository.GetUniqueClientRoleByEmailId(emailId, id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<string> PublicClientUrlSave(string emailId, string uniqueid)
+        {
+            try
+            {
+                return await _clientRepository.PublicClientUrlSave(emailId, uniqueid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid)
+        {
+            try
+            {
+                return await _clientRepository.PublicInterviewerUrlSave(emailId, uniqueid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }

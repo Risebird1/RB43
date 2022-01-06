@@ -21,6 +21,7 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -60,12 +61,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_selectabilityService.AddSelectabilityMatrix(model))
                         {
-                            TempData["SuccessErrorMessage"] = "Selectability Matrix is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Selectability Matrix has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Selectability Matrix  is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Selectability Matrix!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -85,6 +86,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> AddSelectability()
         {
@@ -106,6 +108,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> EditSelectability(int id)
         {
@@ -143,12 +146,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_selectabilityService.UpdateSelectabilityMatrix(skillUpdated))
                         {
-                            TempData["SuccessErrorMessage"] = "Selectability is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Selectability has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Updating Selectability is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to update Selectability!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -170,6 +173,8 @@ namespace Risebird.Web.Controllers
                 return View("Index");
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> DeleteSelectabilityMatrix(int id)
         {
             try
@@ -178,12 +183,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_selectabilityService.DeleteSelectabilityMatrix(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Selectability is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Selectability has been deleted Successfully!";
                         return Json(new { url = Url.Action("Index", "Selectability") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deletion of Selectability Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Selectability!";
                         return Json(new { url = Url.Action("Index", "Selectability") });
                     }
                 }

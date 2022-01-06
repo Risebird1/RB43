@@ -18,6 +18,7 @@
     string[] ClientRole = new string[] { };
     string[] PrimarySkill = new string[] { };
     string[] EndClientName = new string[] { };
+    string searchValue = string.Empty;
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
@@ -35,6 +36,11 @@
     PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     EndClientName = filter.EndClientName != null ? filter.EndClientName : new string[] { };
 }
+@if (HttpContextAccessor.HttpContext.Session.GetString("IRFSearchValue") != null)
+{
+    searchValue = HttpContextAccessor.HttpContext.Session.GetString("IRFSearchValue");
+}
+
 <script>
     var Header = "<div id='skill_1'>Skills Channel</div>";
     $('#txtpageHeader').empty().html(Header);
@@ -46,6 +52,8 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
 
 
+
+@*<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/v6.0/css/font-awesome.min.css">*@
 <div class="main-panel" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"></div>-->
@@ -62,8 +70,9 @@
 
                     <div class="pull-right">
                         <div class="mc-button-area text-left">
-
-                            <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier' data-position='left' class="pull-left" style="margin-right: 5px;">
+                            
+                            
+                            <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier<br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>' data-position='left' class="pull-left" style="margin-right: 5px;">
                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -80,7 +89,7 @@
                                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
                                         </button>
 
-                                        @if (Model.Profile == "Admin")
+                                        @if (Model.Profile == "Admin" || Model.Profile == "SeniorHR")
                                         {
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                                                 <span data-toggle="tooltip" data-placement="top" title="Client Job Description" onclick="location.href='@Url.Action("CreateJd", "Client")'" data-original-title="Tooltip on top"><font style="font-family:arial;">RB Matches</font></span>
@@ -88,10 +97,13 @@
 
                                         }
 
-                                        @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
                                         {
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                                                 <span data-toggle="tooltip" data-placement="top" title="Assessment Market Place" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Market Place</font></span>
+                                            </button>
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span data-toggle="tooltip" data-placement="top" title="Lead Interviewers" onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
                                             </button>
                                         }
                                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -101,6 +113,14 @@
                                     }
 
                                 }
+                                <div class="searchbox">
+                                    <div class="irf-search">
+                                        <input type="text" id="idtxtSearch" name="searchValue" value="@searchValue" class="form-control txtsearch1" placeholder="Please enter Skill Channel Name" @*AutoCompleteType="Disabled"*@>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn3" id="btnSearch" type="button" onclick="SearchSkillChannels()"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -131,10 +151,12 @@
 
 
 
-                                        <form action="@Url.Action("Index","IRF")" method="post" id="form">
+                                        <form action="@Url.Action("Index","IRF")" method="post" id="formFilter">
 
                                             <div class="modal-body">
                                                 <div class="row">
+
+
                                                     <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
@@ -156,29 +178,29 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 border-rv">
-
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFFilterList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                         @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
                                                         {
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="EndClientName" name="EndClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.ClientName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -196,7 +218,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.SubscriptionStatus).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -211,11 +233,34 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
 
+
+
+
+                                                        @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
+                                                        {
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.IRFFilterList.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFFilterList.Select(x => x.IRFId).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -225,19 +270,22 @@
                                                                 </select>
                                                             </div>
                                                         </div>
+
+
+
                                                         <div class="form-group">
 
                                                             <div>
                                                                 <div class="col-md-12 col-sm-12">
 
 
-                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 20px 0px 10px 0px;float:right;margin-left:5px;">
                                                                         <font style="font-size:12px;"> Reset Filter</font>
                                                                     </button>
 
 
 
-                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin:20px 0px 10px 0px;float:right">
                                                                         <font style="font-size:12px;"> Apply Filter</font>
                                                                     </button>
 
@@ -269,33 +317,67 @@
                             <!-- end col-md-12 -->
                             <!-- Start Card -->
 
+
                             <div id="skill_card">
-                                <div class="row">
+                                <input id="skill_irf_count" type="hidden" value="@Model.IRFList.Count()" />
+                                <div class="row" id="irfTilesBody">
                                     @foreach (var item in Model.IRFList)
                                     {
                                         <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
                                             <div class="card-content-holder border card-blue">
                                                 <div class="card-header">
-                                                    <div class="row">
-                                                        <div class=" col-md-4 col-sm-4">
-                                                            <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
+                                                    <div class="w-full">
+                                                        <div class="w60">
+                                                            @if (item.IRFId != null && item.IRFId != "")
+                                                            {
+                                                                @if (item.IRFId.Length > 40)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.IRFId">
+                                                                        <h6 class="pskill" title="@item.IRFId">@item.IRFId.Substring(0, 40)</h6>
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <h6 class="pskill" title="@item.IRFId">@item.IRFId</h6>
+                                                                }
+                                                            }
+                                                            else
+                                                            {<h6></h6>}
+
+
+                                                            @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                            {
+                                                                @if (item.JDTiltle.Length > 40)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.JDTiltle">
+                                                                        <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0].Substring(0, 40))</span>
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span>
+                                                                }
+                                                            }
+                                                            else
+                                                            {<span></span>}
+
                                                         </div>
 
-                                                        <div class="col-md-8 col-sm-8 card-header-buttons action">
+                                                        <div class="w40 card-header-buttons action">
                                                             @if (!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
                                                             {
                                                                 <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                     <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                 </button>
-                                                                <button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
-                                                                    <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
-                                                                </button>
-                                                                <button id="skill_19" class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
-                                                                    <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
-                                                                </button>
-                                                                <button id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
-                                                                    <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
-                                                                </button>
+                                                                @*<button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
+                                                                        <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
+                                                                    </button>
+                                                                    <button id="skill_19" class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
+                                                                        <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
+                                                                    </button>
+                                                                    <button id="skill_20" class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
+                                                                        <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
+                                                                    </button>*@
                                                                 //getIRFMembers
                                                                 <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                                     <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
@@ -317,9 +399,9 @@
                                                                     </button>
                                                                 }
                                                             }
-                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style="top:-2px;">
                                                                     <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
                                                                         <i style="font-size:14px;" class="fa fa-clone"></i>
 
@@ -374,9 +456,6 @@
                                                                             <span>Selected Candidates:</span><span style="font-weight:normal">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</span>
                                                                         </div>
                                                                     </div>
-
-
-
                                                                 }
                                                                 @if (!string.IsNullOrEmpty(item.RisebirdHREmail))
                                                                 {
@@ -417,13 +496,53 @@
                                                             else
                                                             {
                                                                 <h6 style="color: black;"> @item.IRFStatus</h6>
-
                                                             }
                                                         </div>
 
                                                         <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR")
+
+                                                            <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
+                                                                <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                            </button>
+
+                                                            <button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
+                                                                <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidates Status" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                            </button>
+
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
                                                             {
+                                                                <button id="not_schedule" class="mdc-fab app-fab--absolute item1" aria-label="Not Scheduled Candidate">
+                                                                    <span onclick="javascript:NotScheduledCandidate('@item.IRFId');" title="Not Scheduled Candidate" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-calendar-x" viewBox="0 0 18 18">
+                                                                            <path d="M6.146 7.146a.5.5 0 0 1 .708 0L8 8.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 9l1.147 1.146a.5.5 0 0 1-.708.708L8 9.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 9 6.146 7.854a.5.5 0 0 1 0-.708z" />
+                                                                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            }
+
+
+
+                                                            @if (Model.Profile != "Recruiter")
+                                                            {
+                                                                <button id="skill_11" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
+                                                                    <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
+                                                                </button>
+                                                                <button id="skill_12" class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
+                                                                    <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
+                                                                </button>
+                                                            }
+
+
+
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
+                                                            {
+                                                                <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -2px;">
+                                                                    <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" class="mdc-fab__icon material-icons">
+                                                                        <i style="font-size: 16px;position: relative;top: -1px" class="fa fa-commenting-o"></i>
+                                                                    </span>
+                                                                </button>
+
                                                                 <button id="skill_6" class="mdc-fab app-fab--absolute item1" aria-label="Send Candidate Feedback remainder">
                                                                     <span onclick="javascript:Candidatesfeedbackremainder('@item.IRFId');" title="Send Candidate Feedback remainder" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 20 20">
@@ -431,59 +550,31 @@
                                                                         </svg>
                                                                     </span>
                                                                 </button>
+
                                                             }
-                                                            <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -2px;">
-                                                                <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" class="mdc-fab__icon material-icons">
-                                                                    <i style="        font-size: 16px;position: relative;top: -1px" class="fa fa-commenting-o"></i>
-                                                                </span>
-                                                            </button>
-                                                            <button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
-                                                                <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidates Status" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
-                                                            </button>
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "SeniorHR")
+                                                            {<span class="laptop-view"> <br /></span>}
                                                             @if (Model.Profile != "CuratedUser")
                                                             {
                                                                 @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                                                 {
-
-
                                                                     <button id="skill_9" class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
-                                                                        <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                                        <span onclick="javascript:AddComments('@item.id', '@item.IRFId');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
                                                                     </button>
-
-
                                                                 }
-
-
-
-                                                                <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
-                                                                    <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
-                                                                </button>
-
 
 
                                                                 @if (Model.Profile != "Recruiter")
                                                                 {
 
-                                                                    <button id="skill_11" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
-                                                                        <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
-                                                                    </button>
-
-
-
-                                                                    <button id="skill_12" class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
-                                                                        <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
-                                                                    </button>
 
                                                                     <button id="skill_13" class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
                                                                         <span onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg></span>
                                                                     </button>
 
                                                                     <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
-                                                 {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                     </button>
-
-
 
                                                                     <button id="skill_15" class="mdc-fab app-fab--absolute item5" aria-label="Stats">
                                                                         <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
@@ -491,34 +582,23 @@
 
                                                                     if (item.IsPaused)
                                                                     {
-
-
-
-
-                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Play">
+                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute  " aria-label="Play">
                                                                             <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
                                                                         </button>
-
-
-
-
-
-
                                                                     }
                                                                     else
                                                                     {
-
-
-
-                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute " aria-label="Pause">
+                                                                        <button id="skill_16" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
                                                                             <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                                         </button>
-
-
                                                                     }
                                                                 }
-
-
+                                                            }
+                                                            @if (item.CalendlyLink != null && item.CalendlyLink.Contains("InterviewScheduler"))
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute subc" aria-label="Edit Scheduler Event">
+                                                                    <span onclick="javascript:EditSchedulerEvent('@item.CalendlyLink')" title="Edit Scheduler Event" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-calendar-check-o"></i></span>
+                                                                </button>
                                                             }
                                                             @if (Model.Profile == "CuratedUser")
                                                             {
@@ -532,9 +612,6 @@
                                                                     <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
                                                                         <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
-
-
-
                                                                         </span>
                                                                     </button>
                                                                     <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
@@ -570,8 +647,36 @@
                                         </div>
                                     }
                                 </div>
-                            </div>
+                                <div class="row">
+                                    <span id="loader" style="display:none">
+                                        <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                             width="80px" height="80px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+                                        <path opacity="0.2" fill="#545151" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+    s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+    c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" /><path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+    C22.32,8.481,24.301,9.057,26.013,10.047z"><animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="0.5s" repeatCount="indefinite" />
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ </path>
+  </svg>
+                                        @*<i class="fa fa-spinner fa-4x fa-spin"></i>*@
+                                    </span>
+                                </div>
+
+                            </div>
                             <!-- End Card-->
                             <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
                                 <!-- Modal content -->
@@ -882,6 +987,129 @@
     </div>
 </div>
 
+<script>
+
+    var currentPageNumber = 1;
+    var maxPageCount = parseInt('@Model.MaxPageCount');
+    $(document).ready(function () {
+
+        $(window).scroll(function () {
+            if (maxPageCount > currentPageNumber) {
+                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                    currentPageNumber += 1;
+                    loadPageData(currentPageNumber);
+                    //document.getElementById("loader").style.display = 'none';
+
+                }
+            }
+
+        });
+
+    });
+    function loadPageData(currentPageNumber) {
+        var loader = document.getElementById("loader");
+        loader.style.display = 'block';
+        var searchValue = document.getElementById("idtxtSearch").value;
+
+        $.ajax({
+            url: '/IRF/IndexPartial',
+            data: { 'pageNumber': (currentPageNumber), 'searchValue': searchValue},
+            method: 'GET',
+            success: function (response) {
+                if (response != null && response != '' && response!=false) {
+                    var irfTable = $('#irfTilesBody');
+                    loader.style.display = 'none';
+                    irfTable.append(response);
+                }
+                else {
+                    loader.style.display = 'none';
+
+                }
+
+            }
+        });
+
+    }
+
+    function SearchSkillChannels() {
+        var searchValue = document.getElementById("idtxtSearch").value;
+        window.location = "/IRF/Index?searchValue=" + searchValue;
+    }
+
+</script>
+<script>
+
+    var input = document.getElementById("idtxtSearch");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            SearchSkillChannels();
+        }
+    });
+</script>
+
+<script>
+    //function searchResult() {
+    //    $('#candidateTable').DataTable();
+    //}
+    //function RefreshSearch() {
+    //    $('#meeting').DataTable().destroy();
+    //    setTimeout(function () {
+    //        applyDataTable();
+    //    }, 100);
+    //}
+
+    //$(document).ready(function () {
+    //    applyDataTable();
+    //});
+    //function applyDataTable() {
+
+    //    var table = $('#meeting').DataTable({
+    //        language: {
+    //            search: "_INPUT_",
+    //            searchPlaceholder: "Search records",
+    //        }
+    //    });
+    //    $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+    //    $(".dataTables_filter").keyup(function (e) {
+    //        if ($('#txtmeeting_filter').val() == "") {
+    //            $("#x").hide();
+    //        }
+    //        else {
+    //            $("#x").show();
+    //        }
+    //    });
+    //    $("#x").click(function (e) {
+    //        $(".dataTables_filter input").val('');
+    //        $(this).hide();
+    //        //searchResult();
+    //    });
+
+    //};
+
+
+
+    //function ExportToExcel(obj) {
+
+    //    var data = JSON.parse(obj.replace(/&quot;/g, '"'));
+
+    //    $.ajax({
+    //        url: '/Candidate/CandidateStatusExporttoExcel',
+    //        data: { 'modelData': JSON.stringify(data) },
+    //        method:'POST',
+    //        success: function (response) {
+    //            debugger;
+    //            return response;
+
+
+
+    //        }
+    //    });
+    //}
+
+</script>
+
+
 
 @if (Model.Message != null)
 {
@@ -979,12 +1207,12 @@
                 modal.style.display = "block";
                 $('#memberTableBody').html('');
                 $('#memberTableBody').html(data);
-
-
             }
         });
     }
-
+    function NotScheduledCandidate(IRFId) {
+        window.location.href = "/IRF/NotScheduledCandidate?IRFId=" + IRFId;
+    }
 </script>
 
 <script type="text/javascript">
@@ -1223,9 +1451,9 @@
     }
 
 
-    function AddComments(id) {
+    function AddComments(id, irfName) {
 
-        var url = '/IRF/SampleQuestions?id=' + id;
+        var url = '/IRF/SampleQuestions?id=' + id + '&irf=' + irfName;
         window.location.href = url;
     };
     function SelectedInterviewMeetings(id, IRFid) {
@@ -1502,25 +1730,27 @@
             $("#PrimarySkill").val(primarySkill);
             $("#EndClientName").val(endClientName);
 
-            var form = $("#form").serialize();
+            var form = $("#formFilter").serialize();
 
         }
 
 </script>
 <script>
     $(document).ready(function () {
-        $('#skill_card .row .col-lg-4')[0].setAttribute('data-intro', '<span style="font-size:16px;">Skill Channel</span><hr class="btop"/> 1. Total no of Candidates<br/>2. Total counts of Completed Interviews<br/>3. Total counts of Selected Candidates <br/><br/> Click on below button to know its features<br/> a. Candidate Feedback <br/>b. Candidate Status<br/> c. Candidate List<br/> d. Meeting<br/> e. Selected Candidates<br/> f. Multiple Candidate Meeting <br/> g. Schedule Meeting<br/> h. Stats <br/> i. Pause (If you click on pause button it will cancel all the upcoming interviews) <br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>');
-        $('#skill_card .row .col-lg-4')[0].setAttribute('data-position', 'right');
-        $('#skill_7 span')[0].setAttribute('data-intro', 'a.');
-        $('#skill_8 span')[0].setAttribute('data-intro', 'b.');
-        $('#skill_10 span')[0].setAttribute('data-intro', 'c.');
-        $('#skill_11 span')[0].setAttribute('data-intro', 'd.');
-        $('#skill_12 span')[0].setAttribute('data-intro', 'e.');
-        $('#skill_13 span')[0].setAttribute('data-intro', 'f.');
-        $('#skill_14 span')[0].setAttribute('data-intro', 'g.');
-        $('#skill_15 span')[0].setAttribute('data-intro', 'h.');
-        $('#skill_16 span')[0].setAttribute('data-intro', 'i.');
+        if (parseInt($('#skill_irf_count').val()) > 0) {
+            $('#skill_card .row .col-lg-4')[0].setAttribute('data-intro', '<span style="font-size:16px;">Skill Channel</span><hr class="btop"/> 1. Total no of Candidates<br/>2. Total counts of Completed Interviews<br/>3. Total counts of Selected Candidates <br/><br/> Click on below button to know its features<br/> a. Not Scheduled Candidate<br/> b. Candidate Status<br/> c. Candidate List<br/> d. Meeting<br/> e. Selected Candidates<br/> f. Multiple Candidate Meeting <br/> g. Schedule Meeting<br/> h. Stats <br/> i. Pause (If you click on pause button it will cancel all the upcoming interviews)');
+            $('#skill_card .row .col-lg-4')[0].setAttribute('data-position', 'right');
+            $('#not_schedule span')[0].setAttribute('data-intro', 'a.');
 
+            $('#skill_8 span')[0].setAttribute('data-intro', 'b.');
+            $('#skill_10 span')[0].setAttribute('data-intro', 'c.');
+            $('#skill_11 span')[0].setAttribute('data-intro', 'd.');
+            $('#skill_12 span')[0].setAttribute('data-intro', 'e.');
+            $('#skill_13 span')[0].setAttribute('data-intro', 'f.');
+            $('#skill_14 span')[0].setAttribute('data-intro', 'g.');
+            $('#skill_15 span')[0].setAttribute('data-intro', 'h.');
+            $('#skill_16 span')[0].setAttribute('data-intro', 'i.');
+        }
     });
 </script>
 <script>
@@ -1536,22 +1766,13 @@
 </script>
 <script>
     function InvoicePopUp(id, irfName) {
-
         irfId = id;
         irfName = irfName;
-
-
         // Get the modal
         var modal = document.getElementById("myModal");
-
-
         // When the user clicks the button, open the modal
         modal.style.display = "block";
-
-
-
     }
-
 
     function SavePopUp() {
         var sDate = $("#stDateInvoice").val();
@@ -1571,10 +1792,7 @@
         }
         else {
             document.getElementById("popUp_Error").innerHTML = "";
-
         }
-
-
         var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
         window.location.href = url;
     }
@@ -1584,20 +1802,22 @@
         localStorage.setItem('localStorageforColorName', 'localStorageforColor');
         let value = localStorage.getItem('localStorageforColorName');
         if (value) {
-
             $(document).ready(function () {
                 $("#divTile").css({ "backgroundColor": tileColor });
-
             });
         }
-
-
+    }
+    function EditSchedulerEvent(schedulerlink) {
+        if (schedulerlink != '') {
+            var _uniqueid = schedulerlink.split('?')[schedulerlink.split('?').length - 1].split('=')[1];
+            window.location.href = "/InterviewScheduler/IRFSchedulerEventEdit?id=" + _uniqueid;
+        }
     }
 </script>
 
-<script type="text/javascript">
+@*<script type="text/javascript">
     $(".sb-container").scrollBox();
-</script>
+</script>*@
 
 <script>
     $("#minimizeSidebar").click(function () {
@@ -1703,472 +1923,7 @@
     }
 }
 
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-    {
-        var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-        pfName = pfName.Replace("\"", "");
-        @if (pfName == "Client")
-        {
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
-
-            <script type="text/javascript">
-                hopscotch.registerHelper('addOverlay', function () {
-                    $('body').append('<div class="overlay"></div>');
-                });
-
-                hopscotch.registerHelper('removeOverlay', function () {
-                    $('.overlay').fadeOut(function () {
-                        $(this).remove();
-                        $('.helper').remove();
-                    });
-                });
-
-                hopscotch.listen('show', function () {
-                    var elementObject = $(hopscotch.getCurrTarget(tour));
-                    var element = $('#' + elementObject[0].id);
-
-                    element.prev().removeClass('overlay-relative');
-                    element.addClass('overlay-relative');
-
-                    if ($('.helper').length !== 0) {
-
-                        // Use Helper Layer for hilight target element.
-                        var helper = $('.helper');
-                        var padding = 5;
-                        var helperPosX = element.position().left - padding;
-                        var helperPosY = element.position().top - padding;
-                        var targetWidth = element.outerWidth();
-                        var targetHeight = element.outerHeight();
-
-                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                        helper.css('width', targetWidth);
-                        helper.css('height', targetHeight);
-                        helper.offset({ left: helperPosX, top: helperPosY });
-
-                    } else {
-
-                        // Add Helper Layer for highlight target element.
-                        var newHelper = '<div class="helper"></div>';
-                        $('body').append(newHelper);
-
-                        var helper = $('.helper');
-                        var padding = 5;
-                        var helperPosX = element.position().left - padding;
-                        var helperPosY = element.position().top - padding;
-                        var targetWidth = element.outerWidth();
-                        var targetHeight = element.outerHeight();
-
-                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                        helper.css('width', targetWidth);
-                        helper.css('height', targetHeight);
-                        helper.offset({ left: helperPosX, top: helperPosY });
-                    }
-
-                });
-
-                var tour = {
-                    id: "hello-hopscotch",
-                    showCloseButton: false,
-
-                    steps: [
-                        {
-                            title: "Skill Channel",
-                            content: "View the list of Skill Based Channel",
-                            target: "skill_1",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            showCTAButton: true,
-                            ctaLabel: 'Skip',
-                            highlight: true,
-                            zindex: 999999,
-                            yOffset: 10,
-                            onCTA: function () {
-                                hopscotch.showStep(2);
-                                $('#skill_1').removeClass('overlay-relative');
-                                $('.helper').remove();
-                                $('.hopscotch-bubble').remove();
-                                $('.overlay-relative').remove();
-                                $('.overlay').remove();
-                            },
-                            onNext: function () {
-                                $('#skill_1').removeClass('overlay-relative');
-                                $('.helper').remove();
-
-                            }
-                        },
-                        {
-                            title: "Filter",
-                            content: "Filter based on available attributes or reset filter if applied earlier",
-                            target: "skill_2",
-                            placement: "left",
-                            showPrevButton: true,
-
-                            zindex: 999999,
-                            xOffset: 0,
-                            yOffset: -10,
-                            onPrev: function () {
-
-                                $('#skill_2').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-
-                            onNext: function () {
-
-                                $('#skill_2').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-
-
-                        },
-
-
-
-
-
-                        {
-                            title: "Total Candidates",
-                            content: "Total no of candidate for particular skill channel",
-                            target: "skill_3",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: 10,
-                            onNext: function () {
-                                $('#skill_3').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_3').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Completed Interviews",
-                            content: "Total counts of completed interviews",
-                            target: "skill_4",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: 10,
-                            onNext: function () {
-                                $('#skill_4').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_4').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-
-                        {
-                            title: "Selected Candidates",
-                            content: "Total counts of Selected Candidates",
-                            target: "skill_5",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: 10,
-                            onNext: function () {
-                                $('#skill_5').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_5').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-                        {
-                            title: "Candidate Feedback Reminder",
-                            content: "Click here to see its features",
-                            target: "skill_6",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_6').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_6').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Candidate Feedback",
-                            content: "Click here to see its features",
-                            target: "skill_7",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_7').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_7').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Candidates Status",
-                            content: "Click here to see its features",
-                            target: "skill_8",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_8').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_8').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-                        {
-                            title: "Question",
-                            content: "Click here to see its features",
-                            target: "skill_9",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_9').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_9').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Candidates List",
-                            content: "Click here to see its features",
-                            target: "skill_10",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_10').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_10').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-
-                        {
-                            title: "Meeting",
-                            content: "Grid View of All Interview Meetings",
-                            target: "skill_11",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_11').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_11').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Selected Candidates",
-                            content: "Grid View of Selected Candidate Interviews",
-                            target: "skill_12",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_12').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_12').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-                        {
-                            title: "Multiple Candidate Meetings",
-                            content: "Grid View of Multiple Candidate Invites",
-                            target: "skill_13",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_13').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_13').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-
-                        {
-                            title: "Schedule Meeting",
-                            content: "Click here to Schedule meeting over this Skill Channel",
-                            target: "skill_14",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_14').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_14').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Stats",
-                            content: "Click here to see Interview Stats",
-                            target: "skill_15",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_15').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_15').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                        {
-                            title: "Pause",
-                            content: "Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews",
-                            target: "skill_16",
-                            placement: "bottom",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 0,
-                            xOffset: -15,
-                            onNext: function () {
-                                $('#skill_16').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#skill_16  ').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-
-                        {
-                            title: "Common Pool Menu",
-                            content: "Click on Common Pool menu to see its features",
-                            target: "commonpool_menu",
-                            placement: "top",
-                            showPrevButton: true,
-                            zindex: 999999,
-                            yOffset: 20,
-                            xOffset: 10,
-                            onNext: function () {
-                                $('#commonpool_menu').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            },
-                            onPrev: function () {
-                                $('#commonpool_menu').removeClass('overlay-relative');
-                                $('.helper').remove();
-                            }
-                        },
-
-
-                    ],
-                    onStart: ["addOverlay"],
-                    onEnd: ["removeOverlay"],
-                };
-                //if (hopscotch.getState() === "hello-hopscotch:1") {
-                //    hopscotch.startTour(tour);
-                //}
-                hopscotch.startTour(tour);
-                function setCookie(key, value) {
-                    var expires = new Date();
-                    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-                    document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
-                };
-
-                function getCookie(key) {
-                    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-                    return keyValue ? keyValue[2] : null;
-                };
-
-                var tour = {
-                    onEnd: function () {
-                        setCookie("toured", "toured");
-                    },
-                    onClose: function () {
-                        setCookie("toured", "toured");
-                    }
-                };
-
-                // Initialize tour if it's the user's first time
-                if (!getCookie("toured")) {
-                    hopscotch.startTour(tour);
-                }
-            </script>
-
-
-        }
-    }
-*@
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");

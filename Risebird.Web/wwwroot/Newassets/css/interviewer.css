@@ -492,7 +492,9 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
 }
 
 
-
+.border-lv {
+    border-left: 1px dotted #ccc;
+}
 
 .mdc-card-wrapper__text-section {
     padding: 16px;
@@ -953,7 +955,7 @@ table.table-bordered.journey.dataTable td {
     text-transform: uppercase;
     flex: 1;
     display: flex;
-    margin-left: 13px;
+    margin-left: 19px;
     text-align: center;
     margin-top: -2px;
 }

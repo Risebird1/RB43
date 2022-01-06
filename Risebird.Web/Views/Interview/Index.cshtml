@@ -22,6 +22,7 @@
     string[] Interviewer = new string[] { };
     string[] ClientName = new string[] { };
     string[] Client = new string[] { };
+    bool[] IsCandidateResponsed = new bool[] { };
 }
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
@@ -38,6 +39,7 @@
     Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
     Client = filter.Client != null ? filter.Client : new string[] { };
+    IsCandidateResponsed = filter.IsCandidateResponsed != null ? filter.IsCandidateResponsed : new bool[] { };
 }
 <script>
     var Header = "Interviews";
@@ -46,7 +48,7 @@
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
-
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 
 <div class="main-panel" id="main-panel">
 
@@ -60,7 +62,7 @@
 
                 <div class="pull-right">
                     <div>
-                        @if (ViewBag.profile == "Admin")
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="Selected Candidates" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
@@ -75,24 +77,24 @@
                                 <div class="mdc-button__ripple"></div>
                             </button>
                         </span>
-                       
-                            @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+
+                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
                             </button>*@
-                        
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
-                            </button>
 
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="Multiple Candidate Invite" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview")'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
-                            </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
+                        </button>
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="Multiple Candidate Invite" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview")'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
+                        </button>
 
 
 
-                            <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i></span>
+                        <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i></span>
 
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -181,7 +183,7 @@
                                                         <div class="col-md-6 col-sm-6 border-rv">
 
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Jd Title</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
 
@@ -331,6 +333,17 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsCandidateResponsed">
+                                                                    Candidate Responsed
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="IsCandidateResponsed" name="IsCandidateResponsed" class="form-control multiselect" multiple="multiple">
+                                                                        <option value="true">Responsed</option>
+                                                                        <option value="false">No Response</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
                                                             <div class="form-group">
                                                                 <div>
@@ -378,6 +391,7 @@
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
+                                                    <th>C.R. Response</th>
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
                                                     <th>Zoom ID</th>
@@ -391,7 +405,7 @@
                                                     <th>QC Status</th>
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
-                                                    <th>Staffing Agenecy</th>
+                                                    <th>Staffing Agency</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
                                                     <th>Preferred Location</th>
@@ -401,12 +415,8 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-
-
-
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
                                             </thead>
@@ -417,16 +427,15 @@
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
-
                                                     <th>JD Title</th>
                                                     <th>Zoom Link</th>
                                                     <th>Interviewer</th>
                                                     <th>Confirmation Status</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
+                                                    <th>C.R. Response</th>
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
-
                                                     <th>Zoom ID</th>
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
@@ -438,7 +447,7 @@
                                                     <th>QC Status</th>
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
-                                                    <th>Staffing Agenecy</th>
+                                                    <th>Staffing Agency</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
                                                     <th>Preferred Location</th>
@@ -448,12 +457,8 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-
-
-
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
                                             </tfoot>
@@ -503,7 +508,10 @@
                                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                 </button>
                                                             </span>
-
+                                                            @if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                            {
+                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -10px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fa fa-close"></span></span></span>
+                                                            }
                                                             @if (item.IsBiometricEnabled == true)
                                                             {
 
@@ -616,63 +624,91 @@
                                                             <td>@item.MeetingStatusStatusDesc</td>
 
                                                         }
+                                                        @if (item.IsQCRequired)
+                                                        {
+                                                            @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
+                                                            {
+                                                                <td class="text-center"> @item.intervieweStatusStatDesc</td>
+                                                            }
+                                                            else if (item.QCStatus == 1 && item.InterviewStatus == 4)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else if (item.QCStatus == 1 && item.InterviewStatus == 2)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else if (item.InterviewStatus == 4 && item.QCStatus == null)
+                                                            {
+                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                                @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
+                                                                <td class="text-center">@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
 
+                                                            }
+                                                            else if (item.InterviewStatus == 2 && item.QCStatus == null)
+                                                            {
+                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                                @*<td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
+                                                                <td class="text-center">@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
 
-                                                        @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
-                                                        {
-                                                            <td class="text-center"> @item.intervieweStatusStatDesc</td>
-                                                        }
-                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 4)
-                                                        {
-                                                            <td class="text-center">
-                                                                <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 2)
-                                                        {
-                                                            <td class="text-center">
-                                                                <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.InterviewStatus == 4 && item.QCStatus == null)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
-
-                                                        }
-                                                        else if (item.InterviewStatus == 2 && item.QCStatus == null)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            @*<td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
-
-                                                        }
-                                                        else if (item.QCStatus == 2 && item.InterviewStatus == 4)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            <td class="text-center">
-                                                                @*QC Failed(<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
-                                                                @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.QCStatus == 2 && item.InterviewStatus == 2)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            <td class="text-center">
-                                                                @*QC Failed(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
-                                                                @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
-                                                            </td>
+                                                            }
+                                                            else if (item.QCStatus == 2 && item.InterviewStatus == 4)
+                                                            {
+                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                                <td class="text-center">
+                                                                    @*QC Failed(<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
+                                                                    @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
+                                                                </td>
+                                                            }
+                                                            else if (item.QCStatus == 2 && item.InterviewStatus == 2)
+                                                            {
+                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
+                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
+                                                                <td class="text-center">
+                                                                    @*QC Failed(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
+                                                                    @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            <td></td>
+                                                            if (item.InterviewStatus == 2)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else if (item.InterviewStatus == 4)
+                                                            {
+                                                                <td class="text-center">
+                                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="text-center">@item.intervieweStatusStatDesc</td>
+                                                            }
                                                         }
 
+                                                        @if (item.IsCandidateResponsed)
+                                                        {
+                                                            <td>Responsed (@item.CandidateResponse)</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Response</td>
+                                                        }
 
                                                         @if (item.resumeLink != null && item.resumeLink != "")
                                                         {
@@ -1119,10 +1155,10 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon">
+                    <span>
 
 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
                     </span>
                 </div>
                 <h5 class="modal-title pull-left">Candidate Feedback </h5>
@@ -1269,7 +1305,12 @@
                 buttonWidth: '100%',
                 maxHeight: 200
             });
-
+        $("#IsCandidateResponsed").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
 
 
     });
@@ -1291,6 +1332,7 @@
         var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
         var clientName =  @Html.Raw(Json.Serialize(ClientName));
         var client =  @Html.Raw(Json.Serialize(Client));
+        var isCandidateResponsed =  @Html.Raw(Json.Serialize(IsCandidateResponsed));
 
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
@@ -1303,6 +1345,7 @@
         $("#Interviewer").val(interviewer);
         $("#ClientName").val(clientName);
         $("#Client").val(client);
+        $("#IsCandidateResponsed").val(isCandidateResponsed);
         var form = $("#form").serialize();
 
     }
@@ -1336,6 +1379,9 @@
 
 
 <script>
+    function searchResult() {
+        $('#meeting').DataTable();
+    }
     function RefreshSearch() {
         $('#meeting').DataTable().destroy();
 
@@ -1366,7 +1412,7 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
                 $(".dataTables_filter").keyup(function (e) {
                     if ($(this).val() != "") {
                         $("#x").show();
@@ -1509,7 +1555,17 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-
+    function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
+        $.ajax({
+            url: '/Candidate/PublicCancelInterview',
+            type: 'POST',
+            data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
+            success: function (data) {
+                swal.fire(data);
+                window.location.href = "/Interview/Index";
+            }
+        });
+    }
 
 </script>
 

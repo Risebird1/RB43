@@ -31,7 +31,8 @@ namespace Risebird.Web.Controllers
         private static List<int> Shortlistvideoids = new List<int>();
         private IInterviewerService _interviewerService;
         private readonly IUserService _userService;
-        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService, IUserService userService)
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        public InterviewerSkillsController(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, IInterviewerSkillsService InterviewerSkillsService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IInterviewerService interviewerService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
             _iInterviewerSkillsService = InterviewerSkillsService;
@@ -43,6 +44,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _interviewerService = interviewerService;
             _userService = userService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         [Authorize]
@@ -55,7 +57,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                 {
                     var model = new InterviewerSkillsViewModel();
                     var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
@@ -147,7 +149,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" /*|| profileName == "Client" || profileName == "Recruiter"*/)
+                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                 {
                     var model = new InterviewerSkillsViewModel();
                     var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
@@ -230,6 +232,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -241,27 +244,34 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         string uploadedFileURL = string.Empty;
                         if (InterviewerSkillsDetails.JDFile != null)
                         {
-                            var fileName = InterviewerSkillsDetails.JDFile.FileName.Replace(" ", "_");
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(InterviewerSkillsDetails.JDFile);
 
-                            await _azureStorageHelper.InsertBlob(fileName, "resumes", InterviewerSkillsDetails.JDFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            InterviewerSkillsDetails.JDLink = uploadedFileURL;
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                var fileName = InterviewerSkillsDetails.JDFile.FileName.Replace(" ", "_");
+
+                                await _azureStorageHelper.InsertBlob(fileName, "resumes", InterviewerSkillsDetails.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                InterviewerSkillsDetails.JDLink = uploadedFileURL;
+                            }
+                            
                         }
                         if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel is added successfully!";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Adding Interviewer Skills Channel has failed!";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Failed to add Interviewer Skills Channel!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -352,24 +362,31 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
                         if ((model.JDFile != null))
                         {
-                            var fileName = model.JDFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(fileName, "resumes", model.JDFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            string uploadedFileURL = blob.Uri.ToString();
-                            if (uploadedFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Could not upload JD file.";
-                                return RedirectToAction("Index");
+                                var fileName = model.JDFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(fileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                string uploadedFileURL = blob.Uri.ToString();
+                                if (uploadedFileURL == null)
+                                {
+                                    TempData["SuccessErrorMessageISCInterviewer"] = "Could not upload JD file.";
+                                    return RedirectToAction("Index");
 
+                                }
+
+                                model.JDLink = uploadedFileURL;
                             }
-
-                            model.JDLink = uploadedFileURL;
+                            
                         }
                         else if (model.JDLink == null || model.JDLink == "")
                         {
@@ -384,12 +401,12 @@ namespace Risebird.Web.Controllers
                             }
                             if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(model).Result)
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel saved Successfully";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel dits were not saved!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel Edits were not saved!";
                                 return RedirectToAction("Index");
                             }
 
@@ -398,12 +415,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (_iInterviewerSkillsService.UpdateInterviewerSkills(model))
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel saved successfully!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel edits were not saved!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel Edits were not saved!";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -422,19 +439,22 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel edits were not saved";
+                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel Edits were not saved";
                 return RedirectToAction("Index");
             }
         }
 
 
         [Authorize]
+        [HttpGet]
         public string GetInterviewerSkills(int id)
         {
             var name = _iInterviewerSkillsService.GetInterviewerSkills(id);
             return name;
         }
+        
         [Authorize]
+        [HttpGet]
         public SelectList GetInterviewers(string skills)
         {
 
@@ -452,13 +472,14 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public bool CheckUniqueness(string value)
         {
             return _iInterviewerSkillsService.CheckUniqueness(value);
         }
 
-
         [Authorize]
+        [HttpGet]
         public IActionResult DeleteInterviewerSkills(int id)
         {
             try
@@ -467,7 +488,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (_iInterviewerSkillsService.DeleteInterviewerSkillsChannel(id).Result)
                         {
@@ -495,7 +516,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult UnArchiveISC(int id)
         {
             try
@@ -504,16 +527,16 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (_iInterviewerSkillsService.UnArchiveISC(id).Result)
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restored Successfully.";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been restored Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restore Failed.";
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Failed to restore Interviewer Skills Channel!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -530,11 +553,12 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restore Failed.";
+                TempData["SuccessErrorMessageISCInterviewer"] = "Failed to restore Interviewer Skills Channel!";
                 return RedirectToAction("Index");
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public IActionResult GetISCInterviewers(int id, string InterviewerSkillidName)
@@ -547,7 +571,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" /*|| profileName == "Client" || profileName == "Recruiter"*/)
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         ViewBag.ISCName = InterviewerSkillidName;
                         ViewBag.ISCId = id;
@@ -581,6 +605,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         public IActionResult DeleteISCInterviewer(int id, int iscId, string iscName)
         {
@@ -592,7 +617,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (_iInterviewerSkillsService.DeleteISCInterviewer(id).Result)
                         {
@@ -625,6 +650,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetInterviewerSkillsFilter()
         {
             try
@@ -655,7 +681,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                 {
                     var model = new UnapprovedInterviewersCollectionVM();
                     model.UnApprovedInterviewersCollection = (IList<UnApprovedInterviewer>)_iInterviewerSkillsService.GetUnApprovedInterviewerList(iscId);
@@ -684,17 +710,17 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
                         if (_iInterviewerSkillsService.AddUnApprovedInterviewer(model.UnApprovedInterviewersCollection, model.ISCId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer added Successfully";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer has been added Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = model.ISCId, InterviewerSkillidName = model.ISCName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer could not be added.";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Failed to add Interviewer!";
                             return RedirectToAction("GetISCInterviewers", new { id = model.ISCId, InterviewerSkillidName = model.ISCName });
                         }
                     }
@@ -717,14 +743,16 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult ShowCalendly(string InterviewerSkillName, string calendlyLink)
         {
             ViewBag.IRFName = InterviewerSkillName;
             ViewBag.CalendlyLink = calendlyLink;
             return View();
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult PauseInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName)
         {
             try
@@ -733,7 +761,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (_iInterviewerSkillsService.PauseInterviewerSkills(InterviewerSkillId, InterviewerSkillName))
                         {
@@ -761,7 +789,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
+        [HttpGet]
         public IActionResult PlayInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName)
         {
             try
@@ -770,7 +800,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (_iInterviewerSkillsService.PlayInterviewerSkills(InterviewerSkillId, InterviewerSkillName))
                         {
@@ -810,7 +840,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (endDate < DateTime.Now)
                         {
@@ -819,7 +849,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (_iInterviewerSkillsService.SendInvite(iscId, emailId, interviewerProfileId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation sent successfully!";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
                         else
@@ -847,6 +877,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public IActionResult CancelInvite(int iscId, string iscName, string emailId)
@@ -859,12 +890,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
                         if (_iInterviewerSkillsService.CancelInvite(iscId, emailId))
                         {
-                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invite cancelled successfully!";
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invite has been cancelled Successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
                         else
@@ -892,6 +923,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
+        [HttpGet]
         public IActionResult InterviewerSearch(int? Page, string searchvalue)
         {
             try
@@ -900,7 +933,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -1015,6 +1048,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         public IActionResult InterviewerSearch(int? Page, InterviewFilter filter, string searchvalue)
         {
@@ -1024,7 +1058,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -1135,6 +1169,8 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
+        [HttpGet]
         public async Task<IActionResult> ResetInterviewerRisetubeFilter()
         {
             try
@@ -1156,7 +1192,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> InterviewerVideoPage(int id, string irfid, string actionstatus)
         {
             try
@@ -1167,7 +1205,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
@@ -1497,6 +1535,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        
         [HttpPost]
         public JsonResult CandidateShortList(int videoid, string status)
         {
@@ -1511,12 +1550,14 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
+        
         [HttpPost]
         public JsonResult FetchCandidateShortList()
         {
             string currenturl = Request.Host.ToString() + "/InterviewerSkills/InterviewerVideoPage";
             return Json(new { result = Shortlistvideoids, currenturl = currenturl });
         }
+        
         [HttpPost]
         public async Task<JsonResult> CandidateShortListNotification(string videoids, string email, string comment)
         {
@@ -1539,6 +1580,8 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to Shortlist");
             }
         }
+        
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -1558,6 +1601,8 @@ namespace Risebird.Web.Controllers
 
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
+        
+        [HttpGet]
         public async Task<IActionResult> ISCInterviewMeetings(string id, string irfId, int? Page, string searchValue)
         {
             try
@@ -1568,7 +1613,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var meetings = await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt16(id));
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -1681,6 +1726,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ISCSelectedInterviewMeetings(string id, string irfId, int? Page, string searchValue)
@@ -1693,7 +1739,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = (await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt16(id)));
@@ -1818,7 +1864,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
+        [HttpGet]
         public SelectList GetInterviewersByAssessmentGroup(string assessmentgroupid)
         {
 

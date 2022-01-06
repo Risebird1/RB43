@@ -1,12 +1,13 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
 {
     public interface IClientService
     {
-        List<Client> GetClients();
+        List<Client> GetClients(string emailid, string profilename);
         bool AddClient(Client client);
         bool UpdateClient(Client client);
         Client GetClient(int id);
@@ -20,5 +21,9 @@ namespace Risebird.Business.Interface
         string AddWalletPoints(int ClientId, string emailid, int points, string comment);
         string ResetCandidate(int Clientjdid, string candidateEmail, string emailid);
         string DeleteClientJd(int assessmentid);
+        Task<int> GetClientRoleByEmailId(string emailId);
+        Task<int> GetUniqueClientRoleByEmailId(string emailId, string id);
+        Task<string> PublicClientUrlSave(string emailId, string uniqueid);
+        Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid);
     }
 }

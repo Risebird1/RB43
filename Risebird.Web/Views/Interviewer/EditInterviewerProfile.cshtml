@@ -1,5 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
-
+@using Risebird.Entities.Enum 
 @{
     ViewData["Title"] = "Edit Interviewer Profile";
     ViewBag.PageHeader = "";
@@ -115,6 +115,15 @@
 
                                         @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @id = "err_assessmentgroup", @class = "text-danger" })
                                     </div>
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.IndiaServiceRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="required">*</span>
+                                        </div>
+                                        <select class="select-css form-control webkitEnabled" asp-for="IndiaServiceRate" asp-items="Model.IndiaServiceRateList"></select>@*style="margin-top: 10px; height: 45px;"*@
+                                        @Html.ValidationMessageFor(model => model.IndiaServiceRate, "", new { @class = "text-danger" })
+                                    </div>
+                                    
+
                                 </div>
 
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1">
@@ -163,8 +172,17 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999" })
+                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999",@style="margin-top: 10px!important;" })
                                     </div>
+
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.OutsideIndiaServiceRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="required">*</span>
+                                        </div>
+                                        <select class="select-css form-control webkitEnabled" asp-for="OutsideIndiaServiceRate" asp-items="Model.OutsideIndiaServiceRateList"></select>@*style="margin-top: 10px; height: 45px;"*@
+                                        @Html.ValidationMessageFor(model => model.OutsideIndiaServiceRate, "", new { @class = "text-danger" })
+                                    </div>
+
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
@@ -204,14 +222,10 @@
                                         @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group" style="margin-top: -10px;">
-
                                         <span class="desp-label control-label">
                                             Upload Resume
                                         </span>
-
-
-                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
-    position: relative;">
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
                                                 <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" checked="checked" onclick="RadioChanged(this.value)">
                                                 <div class="mdc-radio__background">
@@ -221,15 +235,11 @@
                                                 <div class="mdc-radio__ripple"></div>
                                             </div>
                                         </div>
-
                                         <!-- <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
                                         | <span class="desp-label control-label">
                                             Coded Resume
                                         </span>
-
-                                        <div class="mdc-touch-target-wrapper" style="        top: 4px;
-
-        position: relative;">
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
                                                 <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
                                                 <div class="mdc-radio__background">
@@ -239,9 +249,6 @@
                                                 <div class="mdc-radio__ripple"></div>
                                             </div>
                                         </div>
-
-
-
                                         <!-- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
                                     </div>
                                     <div style="display:none" id="linkDiv">
@@ -267,10 +274,19 @@
                                             </div>
                                         }
                                     </div>
+                                    <div>
+                                        @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.Isinstaavailable, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.Isinstaavailable, "", new { @class = "text-danger" })
+                                    </div>
+
                                     @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
                                     @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
                                     @*@Html.HiddenFor(m => m.ResumeLink, Model.ResumeLink)
-                                        @Html.HiddenFor(m => m.CodedResumeLink, Model.CodedResumeLink)*@
+        @Html.HiddenFor(m => m.CodedResumeLink, Model.CodedResumeLink)*@
                                 </div>
 
                             </div>

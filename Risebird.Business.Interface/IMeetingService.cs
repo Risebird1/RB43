@@ -13,7 +13,7 @@ namespace Risebird.Business.Interface
         bool AddMeeting(AddUpdateMeetingVM meeting);
         List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate, string emailId = null);
         Task<bool> UpdateMeeting(AddUpdateMeetingVM meetingToUpdate);
-        List<MeetingVM> MultipleCandidateInvites();
+        List<MeetingVM> MultipleCandidateInvites(string emailid);
         Task<AddUpdateMeetingVM> GetMeeting(int id);
         List<Meeting> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
@@ -121,15 +121,15 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> FetchFNDetails(string EmailId);
         Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag);
         Task<string> RBAddPoints(int interviewerid, int Points, string Comment, DateTime PointDate);
-        Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se);
+        Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory);
         Task<List<string>> FetchInterviewerList(string searchterm);
-        Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount);
+        Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId);
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
         string LockorUnlockVideo(string imid, int islock, string emailid);
         List<string> FetchClientUsers(string ClientName);
         string SetCandidateAvailability(string imid, int isavailable);
         string MoveToCP(string imid, int movetocp);
-        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate);
+        List<MeetingVM> GetAllSelectedCandidateInterviewList(DateTime startDate, DateTime endDate, string email);
         Task<List<RBInterviewDetails>> FetchAllFNDetail();
         Task<List<RBInterviewDetails>> FNAllGeneratedInvoiceDetails(DateTime st, DateTime se);
         IEnumerable<int> FetchAllInterviewidfromIrf(string IRFid);
@@ -152,5 +152,22 @@ namespace Risebird.Business.Interface
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
+        List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
+        List<MeetingVM> GetClientReScheduledMeetingList(int Clientid, string Emailid);
+        List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
+        List<string> FetchClientListByIRFID(int IRFID);
+        IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
+        Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
+        Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se);
+        Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
+        Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
+        Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid);
+        bool PublicCancelInterview(int meetingid);
+        Task<int> GetUniqueInterviewerByEmailId(string emailId, string id);
+        Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
+        bool UpdateCancelInterviewDetails(int meetingid);
+        Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
+        bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId);
+        Task<List<CustomerDetailsVM>> FetchCustomerDetails();
     }
 }

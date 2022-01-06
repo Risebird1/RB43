@@ -1,5 +1,7 @@
+/* CSS Document */
+
 body {
-    background: #f8faff!important;
+    background: #f8faff !important;
 }
 
 .main-panel {
@@ -11,6 +13,42 @@ body {
     background-size: 7% !important;
 }
 
+#videoId {
+  /*  background: #cbe0f5;*/
+    color: #5097de;
+}
+.client #reportId, .client #reportId:hover {
+    background: #fff;
+    border: 1px #8eb7e0 solid;
+    text-decoration: none;
+    color: #007bff!important;
+}
+.clickhere_btn {
+    color: #2970bbb8 !important;
+    background: #54a5f500;
+    border: 1px #03a9f469 solid;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 3px 15px;
+    margin:0px 10px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+}
+
+    .clickhere_btn:hover {
+        background: #54a5f5e0;
+        color: #fff !important;
+        border: 0px;
+        border-radius: 5px;
+        font-weight: bold;
+        padding: 4px 15px;
+        margin: 0px 10px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+    }
+.client .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+}
 .can-details a, .callatag {
     background: #e2f0ff;
     color: #007bff !important;
@@ -20,7 +58,12 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
-
+.report-full-wrap #videoId {
+    background: #fff;
+    font-size: 12px;
+    padding: 1px 7px;
+    margin: 0px 10px;
+}
 .Fnactive-header-button {
     background-color: #204065 !important;
     color: #fff !important;
@@ -257,7 +300,53 @@ input [type='radio']:checked:after {
 .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
     background: #2CA8FF;
 }
+#calender h4 {
+    color: #173457;
+}
+#calender #current-day {
+    background: #218eff !important;
+}
+#calender .weekday {
+    color: #4a8eff;
+}
+.txttimezone-con {
+    color: #13344c;
+    background: #cadbf9;
+}
 
+.resume {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 4px 13px 0px 13px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 20px;
+    vertical-align: middle;
+    border: 2px solid #56a9ff;
+    border-radius: 40px;
+    cursor: pointer !important;
+}
+
+    .resume label {
+        cursor: pointer !important;
+    }
+
+.form-field-calender .resume .form-label {
+    color: #56a9ff !important;
+    cursor: pointer !important;
+}
+.time-btn {
+    border: 1px solid #56a9ff !important;
+    color: #218eff;
+    left: 30px;
+    background: none !important;
+}
+    .time-btn:hover {
+        border: 2px solid #56a9ff !important;
+    }
 .filavatar {
     background: #42a5f5 !important;
 }
@@ -273,7 +362,17 @@ input [type='radio']:checked:after {
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }
+#myStatusListpopup .table-bordered td {
+    border: 1px solid #dee2e6;
+    BACKGROUND: #FFF;
+    PADDING: 0PX 10PX;
+}
 
+    #myStatusListpopup .table-bordered td textarea {
+        margin: 5PX;
+        background: #fff;
+        border: 1px solid #dee2e6;
+    }
 .assessment h1 {
     color: #1d3b5f !important
 }
@@ -409,7 +508,16 @@ textarea::-webkit-scrollbar-thumb {
 #interviewer.table.dataTable > thead > tr > th.overlay-relative {
     color: #000 !important
 }
+.table-striped.table-bordered th {
+    background: rgba(179, 172, 172, 0.3) !important
+}
 
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+}
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    background-color: rgba(255,255,255,.05);
+}
 .ref-btn {
     background: #fff;
 }
@@ -435,14 +543,22 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .interviewer .multiselect {
-    background: #ececee !important;
+    background: #f7f7f7 !important;
 }
-
+.interviewer .radiobox {
+    background: #f7f7f7;
+}
 [type="datetime-local"] {
     background: #ececee url(../img/blue-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
-
+.form-field-calender input.form-control[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    display:none;
+}
+.form-field-calender input.form-control[type="datetime-local"] {
+    background: #fff url(../img/blue-timdate.png) 96% 45% no-repeat !important;
+    background-size: 3.5% !important;
+}
 .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
     background: #fff url(../img/blue-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
@@ -452,16 +568,22 @@ textarea::-webkit-scrollbar-thumb {
     background: #53a5f5;
     border: 2px #53a5f54d double;
 }
-
-.mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
+.irf-search #btnSearch {
+    background: #54a5f5 !important
+}
+.irf-search input {
+    background: #fff !important;
+    border: 1px solid #ddd!important;
+}
+    .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
     padding: 10px !important;
 }
 
 [type="date"] {
     background: #f5f5f5 url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
     padding: 10px !important;
 }
 
@@ -513,15 +635,71 @@ textarea::-webkit-scrollbar-thumb {
     border-bottom: 0px !important;
 }
 
+.instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
+    background-color: rgb(84 165 245);
+    border-right: 30px solid rgb(84 165 245);
+}
+
+.instainterview .table-bordered {
+    border: 2px solid #54a5f5 !important;
+}
+#reportForm .report-wrap, #reportForm .card-wrap {
+    background: #fff;
+}
+.mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+    background: #f7f7f7;
+}
+    .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+        color: #544d4dc4 !important;
+        font-weight: 400;
+    }
+
+#reportForm .videoConplayer {
+    background: #fff;
+}
+#reportForm table {
+    background: #fff;
+}
+#reportForm .talk-bubble textarea {
+    background: #fff !important;
+}
+#reportForm .textarealabel {
+    color: #544d4d !important;
+}
+#QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+}
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #e6e6e6ad;
+    background: #f1f1f1;
     color: #888 !important;
 }
 
-    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
-        border: 0px !important;
-        border-bottom: 2px rgb(75 146 249) solid !important;
-    }
+
+.instainterview .form-group label.upload {
+    color: #959596;
+}
+
+.instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
+    background: #f7f7f7 !important;
+}
+
+.instainterview .upload-area {
+    background: #f7f7f7;
+}
+
+.instainterview label.upload {
+    border: 1px #54a5f58f solid;
+    color: #54a5f5 !important;
+    border-radius: 0rem !important;
+}
+
+.mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
+    border: 0px !important;
+    border-bottom: 2px rgb(75 146 249) solid !important;
+}
 
 
 .mdc-button--outlined:not(:disabled) {
@@ -551,9 +729,11 @@ textarea::-webkit-scrollbar-thumb {
         background: #e4e2e2;
     }
 
-.multiple_row > h2 {
+.multiple_row > h2, #reportForm .multiple_row > h3 {
     background-color: #54a5f5 !important;
 }
+
+
 
 .talk-bubble {
     background-color: #fcfcfc;
@@ -606,13 +786,22 @@ textarea::-webkit-scrollbar-thumb {
 .user-menu .fa-user-circle-o:before, .user-menu .fa-sign-out:before, .user-menu .fa-cog:before {
     color: #417abb;
 }
-
-.user-menu__item span {
-    color: #1f3e63 !important;
-    text-transform: uppercase;
-    font-size: 13px;
-    font-weight: 600;
+.user-menu a:hover span, .user-menu span.color-themetxt:hover {
+    color: #54a5f5 !important;
 }
+.welcome {
+    background: #54a5f5;
+    padding: 6px 5px;
+    text-align: center;
+}
+.welcome-txt {
+    font-size: 13px;
+    text-transform: capitalize;
+}
+.user-menu:before {
+    background: #54a5f5;
+}
+
 
 .menu-container ul {
     border-bottom: 2px #86c3ff solid;
@@ -650,10 +839,14 @@ textarea::-webkit-scrollbar-thumb {
 .theme-settings .ts-body {
     background: #1091f9 !important;
 }
+
 .mdc-fab {
-    background: #54a5f6!important;
+    background: #54a5f6 !important;
 }
-.image-upload label {
+.trash-btn {
+    background: #d20505 !important;
+}
+    .image-upload label {
     background-color: #fff;
     color: #54a5f5;
     padding: 0 0.3rem !important;
@@ -701,8 +894,8 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
 
 [data-tooltip]:after {
     border-top: 8px solid hsl(0deg, 0%, 50%) !important;
-    border-right: 7px solid white !important;
-    border-left: 7px solid white !important;
+    border-right: 7px solid transparent !important;
+    border-left: 7px solid transparent !important;
 }
 
 .jd-title [data-tooltip]:after {
@@ -730,26 +923,32 @@ table {
     background: #295994;
 }
 
-.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
-    background: #295994;
-    position: absolute;
-    z-index: 1000;
-    top: 8px;
-    left: 0px;
-}
-
-.sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after {
-    border-right: 20px solid #42a5f5;
-}
-
-.sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:after {
-    border-right: 20px solid #2ca8ff;
-}
-
-.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+.sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    background-color: #fff;
     color: #173457;
-    font-weight: bolder;
+    font-weight: bolder
 }
+
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
+        background: #295994;
+        position: absolute;
+        z-index: 1000;
+        top: 8px;
+        left: 0px;
+    }
+
+    .sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after {
+        border-right: 20px solid #42a5f5;
+    }
+
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:after {
+        border-right: 20px solid #2ca8ff;
+    }
+
+    .sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+        color: #173457;
+        font-weight: bolder;
+    }
 
 .nav > li > a.active-menu:hover {
     background-color: #fff !important;
@@ -792,6 +991,7 @@ table {
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
+
 .send-btn {
     background: #fff;
     color: #53a4f4;
@@ -800,20 +1000,26 @@ table {
     border: 1px #53a4f4 solid;
     font-weight: bold;
 }
+
 .custom-file-label::after {
     color: #fff !important;
     background-color: #bbbec0 !important;
 }
+
 .custom-file {
     height: calc(1.5em + .75rem + 1px) !important;
     margin-bottom: 0;
     z-index: 0;
     background: #ececee !important;
 }
+
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;
         float: left;
+    }
+    .align-r {
+        text-align: left!important;
     }
 }
 

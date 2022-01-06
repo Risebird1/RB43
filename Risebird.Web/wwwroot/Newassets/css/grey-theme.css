@@ -1,19 +1,26 @@
+/* CSS Document */
+
 body {
-    background: #ebecf1!important;
+    background: #ebecf1 !important;
 }
+
 .availbg {
     background: #fff;
 }
+
 .main-panel {
     background: #ebecf1;
 }
+
 .expiry [type="date"] {
     background: #dddddf url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
 }
+
 .mdc-fab-secondary .mdc-fab__icon {
     fill: rgb(121, 115, 115) !important;
 }
+
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
@@ -23,12 +30,15 @@ body {
     border: 0px !important;
     border-radius: 0px;
 }
+
 #interviewer.table.dataTable > thead > tr > th.overlay-relative {
     color: #000 !important
 }
+
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }
+
 .sharetr {
     background: #e2e2e2;
     padding: 5px;
@@ -40,13 +50,16 @@ textarea::-webkit-scrollbar {
     padding: 5px 5px;
     font-size: 16px;
 }
+
 .employee .mdc-card .form-control[disabled] {
     color: #504e4e !important;
 }
+
 textarea::-webkit-scrollbar-thumb {
     background-color: #acacad !important;
     border: 1px solid #acacad !important;
 }
+
 .un-left {
     background: #dedede;
 }
@@ -54,6 +67,7 @@ textarea::-webkit-scrollbar-thumb {
 .un-right {
     background: #f3f3f3;
 }
+
 .ref-btn {
     background: #fff;
 }
@@ -62,18 +76,21 @@ textarea::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background: #fff url(../../Newassets/img/refresh.png) 1px no-repeat;
 }
+
 .text-areadiv textarea {
     background: #eeeeee !important;
 }
+
 .talk-bubble {
     background-color: #fcfcfc;
     border: 0px;
 }
 
     .talk-bubble textarea, talk-bubble textarea:focus {
-        background-color: #fcfcfc!important;
-        border: 0px!important;
+        background-color: #fcfcfc !important;
+        border: 0px !important;
     }
+
 .file-upload .file-select {
     display: block;
     border: 2px solid #dce4ec;
@@ -91,10 +108,11 @@ textarea::-webkit-scrollbar-thumb {
     background: #b1aeae;
     color: #fff !important;
 }
+
 .table-bordered {
     border: 1px solid #dee2e6 !important;
-
 }
+
 .assessment h1 {
     color: #47484a !important
 }
@@ -102,18 +120,23 @@ textarea::-webkit-scrollbar-thumb {
 .assesment .card .card-body p {
     color: #484848;
 }
+
 .assessment-blk {
     border: 1px #e2e2e2 solid;
 }
+
 .assessment-blk-h {
     border: 1px #e2e2e2 solid;
 }
+
 .table-h a {
     color: #9A9A9A !important
 }
+
 .table-grey thead {
     background: #5f5f5f;
 }
+
 .call-txt {
     border: 1px #dee2e6 solid;
     color: #dee2e6;
@@ -152,6 +175,7 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
         color: #676767;
         font-weight: normal;
     }
+
 .mdc-card .form-control.active-razorbtn {
     background: #929292 !important;
     color: #fff !important;
@@ -167,9 +191,11 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
     font-weight: normal;
     font-size: 15px;
 }
+
 .icon-svg svg {
     fill: rgb(146, 146, 146);
 }
+
 .razorpay_btn button.form-control {
     border-bottom: 2px #e96e28 solid;
     margin-bottom: 5px;
@@ -177,10 +203,12 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
     text-transform: uppercase;
     background: #fff !important;
 }
+
 .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
     color: #FFFFFF;
     BACKGROUND: #42a5f5;
 }
+
 .razorpay_details table td {
     color: #504e4e;
     padding: 8px;
@@ -207,9 +235,9 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
     background: #8a8a8a !important;
 }
 
-    .pagination-container > ul > li.active a {
-        color: #fff !important;
-    }
+.pagination-container > ul > li.active a {
+    color: #fff !important;
+}
 
 .pagination-container > ul > li {
     background: #d4d3d3 !important;
@@ -224,7 +252,7 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 
 
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
-    border: 0px!important;
+    border: 0px !important;
     border-bottom: 2px #929292 solid !important;
 }
 
@@ -232,32 +260,41 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 .border-db {
     border-right: 1px #ddd solid !important
 }
+
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
     background-color: #ececee !important;
 }
+
 .radiobox {
     background: #efefef;
 }
+
 table.dataTable thead .sorting:after {
     color: transparent
 }
+
 .upload-label {
     background: #e2e2e2;
 }
-    input [type='radio']:checked:after {
+
+input [type='radio']:checked:after {
     background-color: #929292 !important;
     top: 1px !important;
 }
+
 .qc-feedback .card-footer {
     background: #fff
 }
+
 .qc-feedback .mdc-form-field > label, .qc-feedback label {
     color: #000;
 }
+
 #broadcastModal input[type='radio']:checked:after {
     background-color: #929292 !important;
-    top:-1px !important;
+    top: -1px !important;
 }
+
 .can-details a, .callatag {
     color: #929292 !important;
     background: #9c9c9c !important;
@@ -267,6 +304,7 @@ table.dataTable thead .sorting:after {
     .can-details a:focus {
         color: #929292 !important;
     }
+
 #codedresumeId {
     border: 1px #d5d8d9 solid;
     color: #1d3b5e;
@@ -274,38 +312,48 @@ table.dataTable thead .sorting:after {
     border-radius: 16px;
     background: #d5d8d9;
 }
- .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
-        background: #9c9c9c!important;
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
+    background: #9c9c9c !important;
 }
+
 .mdc-card .modal .form-control, .modal .form-control {
     background: #fff;
 }
 
- .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
-        background: #47484a!important;
+.sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
+    background: #47484a !important;
 }
+
 .toscore {
     color: #000 !important;
 }
+
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
     border-color: #929292 !important;
     background-color: #929292 !important;
 }
-.multiple_row > h2 {
+
+.multiple_row > h2, #reportForm .multiple_row > h3 {
     background-color: #929292 !important;
 }
+
 .card .card-header .card-title b, .card .card-header .card-title strong {
-   color: #47484a!important;
+    color: #47484a !important;
 }
+
 #MyChatModel .modal-content .modal-header {
     background-color: #929292 !important;
 }
+
 .now-ui-icons.design_bullet-list-67:before {
     color: #47484a !important;
 }
+
 .filavatar {
     background: #929292 !important;
 }
+
 table.journey {
     color: #504e4e;
 }
@@ -316,33 +364,50 @@ table.journey {
 
 .mcq-dnbutton {
     color: #fff !important;
-
     border-radius: 3px;
     padding: 5px;
-    background: #929292!important;
+    background: #929292 !important;
 }
 
 #IRFList a, #ProjectList a {
     color: #47484a !important;
 }
+
 #myForm .searchbox .input-group-btn .btn {
     background: #929292 !important;
     border-color: #929292 !important;
 }
-    .mdc-button--outlined:not(:disabled) {
+
+.mdc-button--outlined:not(:disabled) {
     border-color: #929292 !important;
     color: #929292 !important;
 }
+
 .interviewer .multiselect {
-    background: #dddddf !important;
+    background: #f7f7f7 !important;
 }
 
-.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa,  .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
+.interviewer .radiobox {
+    background: #f7f7f7;
+}
+.sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
+
 [type="datetime-local"] {
     background: #dddddf url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
+}
+.table-striped.table-bordered th {
+    background: rgba(179, 172, 172, 0.3) !important
+}
+
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    width: 4px;
+}
+
+#mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
+    background-color: rgba(255,255,255,.05);
 }
 #candidateStatusModal .file-upload-wrapper:before {
     background: #929292;
@@ -353,21 +418,26 @@ table.journey {
     color: #ada2a2f2;
     border: 1px #181818 solid;
 }
+
 #candidateStatusModal .file-upload-wrapper:hover:before {
     background: #777474;
 }
-.btnmeeting, .btnmeeting:hover{
+
+.btnmeeting, .btnmeeting:hover {
     background: #929292;
     border: 2px #929292a8 double;
 }
-    .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
+
+.mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
     background: #fff url(../img/grey-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
+
 .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
     background-color: #929292 !important;
     border-color: #929292;
 }
+
 .date-time {
     background: #f5f5f5;
 }
@@ -375,6 +445,7 @@ table.journey {
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #929292 !important;
 }
+
 .mdc-fab {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
@@ -382,12 +453,15 @@ table.journey {
 .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
     background: #929292 !important;
 }
+
 .multiselect-container.dropdown-menu {
     background-color: #fff !important;
 }
+
 .bg-w {
-    background: #fff!important;
+    background: #fff !important;
 }
+
 .bl-bg {
     background: #ebecf1;
 }
@@ -414,36 +488,45 @@ table.journey {
 .moreless-button {
     font-weight: 500;
     color: #606060;
-    text-decoration:underline;
+    text-decoration: underline;
 }
+
 .single-video-right .video-card-image {
     border: 2px #ccc solid;
 }
+
 .video-info span {
     color: #606060;
 }
+
 .video-card {
     background-color: #fff !important;
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
 }
+
 .relatedvideo .video-card {
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
     background-color: #ececec !important;
 }
+
 .video-title .video-title .video-title a, .video-title .candidate {
     color: #000;
 }
+
 #myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
     background: #fff !important;
     box-shadow: none !important;
     border-color: #dcdfdf !important;
 }
+
 .client .row.bg-white {
     background-color: #fff !important;
 }
+
 .nav svg {
     fill: #fff;
 }
+
 .control-label, .control-labeled {
     color: #5f5c5c !important;
 }
@@ -457,37 +540,48 @@ table.journey {
     border-color: #9a9a9a !important;
 }
 
- .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
-        background: #ecececb5 !important;
- }
-.skill [type="datetime-local"]{
+.mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
+    background: #ecececb5 !important;
+}
+
+.skill [type="datetime-local"] {
     background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 6% !important;
 }
+
 .interview-date [type="date"] {
     background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 9% !important;
     box-shadow: none;
     line-height: 11px !important;
 }
-
+.irf-search input {
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+}
+.irf-search #btnSearch {
+    background: #929292!important;
+}
 [type="date"] {
     background: #f5f5f5 url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
 }
+
 .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size:5% !important;
     padding: 10px !important;
 }
 
 .edit-share {
     background: url('../../img/editicon-grey.png') #fff no-repeat !important;
 }
+
 .related-title {
     margin: 0px 0px 3px 0px !important;
     color: #000;
 }
+
 .active-video {
     border: 5px #9a9a9abd solid !important;
 }
@@ -497,13 +591,70 @@ table.journey {
     position: relative;
     top: -4px;
 }
+
 .dob [type="date"] {
     background: #ebecee url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 4.2% !important;
 }
+
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #d6d6d6ad;
+    background: #f7f7f7;
     color: #888 !important;
+}
+.instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
+    background: #f7f7f7 !important;
+}
+.instainterview .upload-area {
+    background: #f7f7f7;
+}
+.instainterview .table-bordered {
+    border: 2px solid rgb(148 148 149)!important;
+}
+.instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
+    background-color: rgb(149 149 150);
+    border-right: 30px solid rgb(148 148 149);
+}
+.instainterview .form-group label.upload {
+    color: #959596;
+}
+.instainterview .multiple_row > h2 span {
+    color: #ffffff;
+    position: absolute;
+    text-transform: uppercase;
+}
+.instainterview label.upload {
+    border: 1px #b8b9b98f solid;
+    color: #908c8c;
+    border-radius: 0rem;
+}
+#reportForm .report-wrap, #reportForm .card-wrap {
+    background: #fff;
+}
+.mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+    background: #f7f7f7;
+}
+    .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
+        color: #544d4dc4 !important;
+        font-weight: 400;
+    }
+
+#reportForm .videoConplayer {
+    background: #fff;
+}
+#reportForm table {
+    background: #fff;
+}
+#reportForm .talk-bubble textarea {
+    background: #fff !important;
+}
+#reportForm .textarealabel {
+    color: #544d4d !important;
+}
+#QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+    border-left: 0px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
 }
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
     background: url("../../img/audio-button-set-4-transparent.png") #f5f5f5;
@@ -512,51 +663,140 @@ table.journey {
     background-position: 45%;
     z-index: 1000;
 }
+.clickhere_btn {
+    color: #8a8a8a !important;
+    background: #54a5f500;
+    border: 1px #8a8a8a9e solid;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 3px 15px;
+    margin: 0px 10px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
 }
+
+    .clickhere_btn:hover {
+        background: #8a8a8a;
+        color: #fff !important;
+        border: 0px;
+        border-radius: 5px;
+        font-weight: bold;
+        padding: 4px 15px;
+        margin: 0px 10px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
+    }
+.client .table-bordered td {
+    border-right: 1px solid #dee2e6 !important;
+}
+.resume {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 4px 13px 0px 13px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 20px;
+    vertical-align: middle;
+    border: 2px solid #929292;
+    border-radius: 40px;
+}
+
+.form-field-calender .resume .form-label {
+    color: #929292 !important;
+}
+.user-menu a:hover span, .user-menu span.color-themetxt:hover {
+    color: #47484a!important;
+}
+#myStatusListpopup .table-bordered td {
+    border: 1px solid #dee2e6;
+    BACKGROUND: #FFF;
+    PADDING: 0PX 10PX;
+}
+
+    #myStatusListpopup .table-bordered td textarea {
+        margin: 5PX;
+        background: #fff;
+        border: 1px solid #dee2e6;
+    }
+.report-full-wrap #videoId {
+    background: #fff;
+    font-size: 12px;
+    padding: 1px 7px;
+    margin: 0px 10px;
+}
+.welcome {
+    background: #8a8a8a;
+    padding: 6px 5px;
+    text-align: center;
+}
+.welcome-txt {
+    font-size: 13px;
+    text-transform: capitalize;
+}
+.user-menu:before {
+    background: #8a8a8a;
+}
+
+
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #929292 solid !important;
 }
+
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
-    border-color:#ccc!important;
+    border-color: #ccc !important;
 }
-    .btn-call {
+
+.btn-call {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
+
 .interviewDate [type="datetime-local"] {
     background-size: 3% !important;
 }
+
 .call-txt {
     border: 1px #929293 solid;
     color: #47484a;
 }
+
 .card-blue .card-header h6 {
     color: #47484a !important;
 }
+
 .click {
     color: #47484a !important;
     text-decoration: underline !important;
 }
+
 #ProctoringTable .label-type {
     background: #ecececb5 !important;
 }
 
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-    border-color: #929292!important;
+    border-color: #929292 !important;
 }
+
 #resumeId, #zoomlinkId, .callatag {
     background: #ecececb5;
     color: #47484a;
 }
+
 #reportId, #videoId {
     background: #92929266;
     color: #47484a;
 }
+
 .theme-settings .ts-button {
     background: #9a9a9a
 }
+
 .theme-settings .ts-body {
     background: #9a9a9a
 }
+
 .image-upload label {
     background-color: #fff;
     color: #54a5f5;
@@ -567,13 +807,14 @@ table.journey {
     margin: 5px 5px;
     border: 1px #7f7f7f solid;
 }
+
 #jdlinkId {
     background: #fff;
     color: #929292;
     border: 1px #929292 solid;
 }
 
-    .mdc-fab__icon {
+.mdc-fab__icon {
     fill: rgb(255, 255, 255) !important;
 }
 
@@ -586,19 +827,24 @@ table.journey {
 .special-text svg {
     fill: rgb(119, 115, 115) !important;
 }
+
 .tabs.nav-pills li.nav-link.active {
     color: #fff;
     background-color: #929292 !important;
 }
+
 .private-share {
     background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
 }
+
 .publicurl-share {
     background: url('../../img/grey-link.png') #fff no-repeat !important;
 }
+
 .public-share {
     background: url('../../img/share-3g.png') #fff no-repeat !important;
 }
+
 .email-share {
     background: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') #fff no-repeat !important;
 }
@@ -608,10 +854,12 @@ table.journey {
     border: 1px #9a9a9a solid !important;
     color: rgb(255, 255, 255);
 }
+
 .pagination-container > ul > li:hover {
     background: #d4d3d3 !important;
     border: 0px !important;
 }
+
 .msger-send-btn {
     background-image: url(../../img/grey-send.png) !important;
 }
@@ -627,6 +875,7 @@ table.journey {
 .dropdown-menu {
     border: none !important
 }
+
 .card-blue .card-body .client-field {
     color: #9a9a9a !important;
 }
@@ -642,10 +891,12 @@ input[type="radio"]:checked {
 .text-areadiv1 textarea {
     background: #f5f5f5 !important;
 }
+
 .modal .select2-container--default.select2-container--focus .select2-selection--multiple, .modal .select2-container--default .select2-selection--multiple {
     background-color: white !important;
     border-bottom: 1px solid #aaa !important;
 }
+
 [data-tooltip]:before {
     background: #908f8f !important;
     color: #fff !important;
@@ -657,26 +908,28 @@ input[type="radio"]:checked {
     border-right: 7px solid white !important;
     border-left: 7px solid white !important;
 }
+
 .jd-title [data-tooltip]:after {
     border-right: 5px solid white !important;
     border-left: 5px solid white !important;
 }
-.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-wrapper > .nav li > a.active-menu .shape2 {
+
+.sidebar-wrapper > .nav li > a.active-menu .shape1, .sidebar-wrapper > .nav li > a.active-menu .shape2, .sidebar-wrapper > .nav li > label.active-menu .shape1, .sidebar-wrapper > .nav li > label.active-menu .shape2 {
     background: #fff;
 }
 
-.sidebar-wrapper > .nav li > a.active-menu:before, .sidebar-wrapper > .nav li > a.active-menu:after {
-    border-right: 20px solid #47484a;
-}
-.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+
+.sidebar-wrapper > .nav li > a.active-menu p, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
     color: #919192;
     font-weight: bolder;
 }
-.sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon {
+
+.sidebar-wrapper > .nav li > a.active-menu .sidemenu-icon, .sidebar-wrapper > .nav li > label.active-menu .sidemenu-icon {
     background: #919192;
 }
-.sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
-    background-color: #fff!important;
+
+.sidebar-wrapper > .nav li > a.active-menu, .sidebar-wrapper > .nav li > label.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    background-color: #fff !important;
 }
 
     .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu .sidemenu-icon {
@@ -686,9 +939,11 @@ input[type="radio"]:checked {
         top: 8px;
         left: 0px;
     }
+
 .alert.alert-info {
     background-color: #797979;
 }
+
 .tab-main-box {
     background: #fff;
 }
@@ -699,28 +954,35 @@ input[type="radio"]:checked {
     background: none;
     color: #000;
 }
+
 .tab-menu ul li .skillcount {
     background: #cfd0d2cc;
 }
-    .tab-menu ul li a.active {
-        background: #c2c2c58a;
-        color: #656262;
-        text-decoration: none;
+
+.tab-menu ul li a.active {
+    background: #c2c2c58a;
+    color: #656262;
+    text-decoration: none;
+}
+
+    .tab-menu ul li a.active ~ .skillcount {
+        right: -9px !important;
+        background: #868483;
+        color: #fff;
     }
-        .tab-menu ul li a.active ~ .skillcount {
-            right: -9px !important;
-            background: #868483;
-            color: #fff;
-        }
+
 table {
     border: 1px #ccc solid !important;
 }
+
 .avatar-upload .avatar-preview {
     border: 6px solid #e3e3e3;
 }
+
 .tab-box label.choose-file-profile {
     color: rgb(51, 51, 51) !important;
 }
+
 .d_active {
     background-color: #9c9c9c !important;
     color: #fff !important;
@@ -749,16 +1011,19 @@ table {
 .user-menu {
     border: 2px #e0e0ea solid;
 }
+
 .custom-file-label::after {
     color: #fff !important;
     background-color: #bbbec0 !important;
 }
-.custom-file  {
+
+.custom-file {
     height: calc(1.5em + .75rem + 1px) !important;
     margin-bottom: 0;
     z-index: 0;
     background: #dddddf !important;
 }
+
 .send-btn {
     background: #fff;
     color: #959596;
@@ -767,10 +1032,22 @@ table {
     border: 1px #959596 solid;
     font-weight: bold;
 }
+
+.sidebar-wrapper > .nav li > a.active-menu, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu, .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu {
+    background-color: #fff;
+    color: #919192;
+    font-weight: bolder
+}
+
+    .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:before, .sidebar-mini .sidebar .sidebar-wrapper .nav li.dropmenu .toggle-box1 + label.active-menu:after {
+        border-right: 20px solid #47484a;
+    }
+
 .invoice-details .card-header.bg-w {
     background: #ebecf1 !important;
     border: none;
 }
+
 @media only screen and (max-width: 767px) {
 
     .razorpay_btn button.form-control {

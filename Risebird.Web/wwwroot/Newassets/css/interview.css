@@ -173,58 +173,6 @@
         /* pop-up text arrow */
 
 
-        .interviewer a.info span:before {
-            content: '';
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid #9e9999;
-            position: absolute;
-            bottom: -5px;
-            left: 95px;
-        }
-
-.interviewer .star-rating {
-    /*border: solid 1px #ccc;*/
-    display: flex;
-    flex-direction: row-reverse;
-    font-size: 2.0em;
-    justify-content: space-around;
-    padding: 0 .2em;
-    text-align: center;
-    width: 220px;
-    margin-bottom: 10px;
-}
-
-    .interviewer .star-rating input {
-        display: none;
-    }
-
-    .interviewer .star-rating label {
-        color: #b7b7b7;
-        cursor: pointer;
-        padding: 0px !important;
-        font-size: 25px !important;
-    }
-
-    .interviewer .star-rating :checked ~ label {
-        color: #f90;
-    }
-
-    .interviewer .star-rating label:hover,
-    .interviewer .star-rating label:hover ~ label {
-        color: #fc0;
-    }
-    /* text pops up when icon is in hover state */
-
-    .interviewer a.info:hover span {
-        bottom: 24px;
-        visibility: visible;
-        opacity: 1;
-        z-index: 1000;
-    }
-
 
 
 
@@ -305,7 +253,6 @@
 }
 
 .client .table-bordered td {
-    border-right: 1px solid #dee2e6 !important;
     border-left: 0px !important;
     border-bottom: 0px !important;
 }
@@ -1094,9 +1041,9 @@ ul.panel-controls > li > button {
 }
 
 .daily-interview {
-    -ms-flex: 0 0 63.333333%;
-    flex: 0 0 63.333333%;
-    max-width: 63.333333%;
+    -ms-flex: 0 0 66.666666%;
+    flex: 0 0 66.666666%;
+    max-width: 66.666666%;
     padding-right: 15px;
 }
 
@@ -1496,7 +1443,9 @@ ul.panel-controls > li > button {
 .interview .table > tbody > tr > td {
     padding: 0px 5px !important;
 }
-
+.instainterview .table > tbody > tr > td {
+    padding: 10px 8px !important;
+}
 .fa-spinner {
     font-size: 18px;
     position: relative;
@@ -1521,7 +1470,7 @@ ul.panel-controls > li > button {
     border-radius: 4px 4px 0 0;
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+   /* border-bottom: 1px rgba(0, 0, 0, 0.29) solid;*/
 }
 
     .dropdown-toggle::after {

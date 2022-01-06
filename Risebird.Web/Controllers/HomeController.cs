@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
+using Risebird.Entities.Enum;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -14,32 +16,47 @@ namespace Risebird.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly ISettingsService _settingsService;
-        public HomeController(IUserService userService, ISettingsService settingsService)
+        private readonly IClientService _clientService;
+        public HomeController(IUserService userService, ISettingsService settingsService, IClientService clientService)
         {
             _userService = userService;
 
             _settingsService = settingsService;
+            _clientService = clientService;
         }
 
         public IActionResult Index(string url = null)
-        {
-            if (User.Identity.IsAuthenticated)
+        { if (User.Identity.IsAuthenticated)
             {
                 var userClaims = User.Identity as ClaimsIdentity;
-                //You get the user’s first and last name below:
+                //You get the userâ€™s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-
-                var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (_userService.CheckMultiSession(emailId).Result)
+                {
+                    return RedirectToAction("Index", "MultiSession");
+                }
+                var sessionId = HttpContext.Session.Id;
+                var menus = _userService.GetMenuBasedOnUserEmailld(emailId, sessionId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
+                var username = _userService.GetCurrentUsername(emailId);
                 if (String.IsNullOrEmpty(currenttheme))
                 {
                     HttpContext.Session.SetString("Currenttheme", "");
                 }
                 else
                     HttpContext.Session.SetString("Currenttheme", currenttheme);
+
+
+                if (String.IsNullOrEmpty(username))
+                {
+                    HttpContext.Session.SetString("CurrentUsername", "");
+                }
+                else
+                    HttpContext.Session.SetString("CurrentUsername", username);
+
 
                 if (menus.Count > 0)
                 {
@@ -65,8 +82,15 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));
+                    int role = 0;
+                    if (menus.FirstOrDefault()?.profileName == "Client")
+                    {
+                        role = _clientService.GetClientRoleByEmailId(emailId).Result;
+                    }
+
+                    HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty);
                     HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
-                    // HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));
+                    //HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));
                     HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
                     HttpContext.Session.SetString("UserLogedIn", "Yes");
                     HttpContext.Session.SetString("UserLogedInVedioId", "");

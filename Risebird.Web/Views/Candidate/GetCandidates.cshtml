@@ -15,7 +15,6 @@
 </script>
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="hidden" value="@ViewBag.Profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
@@ -53,11 +52,14 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
                         </button>
-                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client")
+                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR")
                         {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" title="Click here to view uploaded Candidates Resume" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidates Resume</font></span>
-                            </button>
+                            @if (ViewBag.ClientRole != "HRs")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" title="Click here to view uploaded Candidates Resume" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidates Resume</font></span>
+                                </button>
+                            }
                         }
 
                         <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -125,6 +127,7 @@
 
                                                             <th id="getstatus_4">Invite Sent</th>
                                                             <th id="getstatus_5">Confirmation</th>
+                                                            <th>Fitment Score</th>
                                                             @if (ViewBag.Profile != "Client")
                                                             {
                                                                 <th id="getstatus_6">Joinability</th>
@@ -149,6 +152,7 @@
 
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
+                                                            <th>Fitment Score</th>
                                                             @if (ViewBag.Profile != "Client")
                                                             {
                                                                 <th>Joinability</th>
@@ -204,9 +208,10 @@
                                                                     {
 
 
-                                                                        <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
-                                                                        </td>
+                                                            <td class="cadEmail">
+                                                                <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
+                                                               
+</td>
                                                                     }
 
 
@@ -248,7 +253,7 @@
 
                                                                 <td class="text-center">@item.TotalInvites</td>
                                                                 <td class="text-center">@item.InviteConfirmation</td>
-
+                                                                <td class="text-center">@((@item.JoinabilityScore+@item.SelectabilityScore)/2)</td>
                                                                 @if (ViewBag.Profile != "Client")
                                                                 {
                                                                     <td class="text-center" style="color:@joinabilityColor;">
@@ -269,109 +274,112 @@
 
 
 
-                                                                <td class="text-left action">
+                                                            <td class="text-left action">
 
-                                                                    @if (ViewBag.Profile != "Recruiter")
+                                                                @if (ViewBag.Profile != "Recruiter")
 
+                                                                {
+
+                                                                    if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
                                                                     {
-
-                                                                        if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
-                                                                        {
-                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Send Invite">
-                                                                                <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                                </span>
-                                                                            </button>
-                                                                        }
-
-                                                                        else
-                                                                        {
-                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HR's EmailId to send invite!">
-                                                                                <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                                </span>
-                                                                            </button>
-
-                                                                        }
-
-
-
-
-                                                                        <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
-                                                                        </span>
-
-
-                                                                        @if (ViewBag.profile != "Client")
-                                                                        {
-                                                                            <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">
-                                                                                <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
-
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
-                                                                                </span>
-                                                                            </button>
-
-                                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Add Candidate Status">
-                                                                                <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
-                                                                            </button>
-
-                                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-                                                                                    <span onclick="javascript:GetCandidateStatusList('@item.IRFId', '@item.CandidateMasterId', '@ViewBag.IRFName', '@item.Name');" title="Candidate Status List" class="mdc-fab__icon material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg>
-                                                                                    </span>
-                                                                                </button>*@
-
-                                                                        }
-
-
-                                                                    }
-
-
-
-                                                                    <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                        <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                                                        </span>
-                                                                    </button>
-
-                                                                    @if (ViewBag.profile == "Admin")
-                                                                    {
-                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                            <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                        <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                                                            <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                             </span>
                                                                         </button>
                                                                     }
 
-                                                                    @if (ViewBag.profile != "Client")
+                                                                    else
                                                                     {
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                            <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                                                                        <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!">
+                                                                            <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                             </span>
                                                                         </button>
+
                                                                     }
 
 
+
+
+                                                                    <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                                                                    </span>
 
 
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
+                                                                        <button class="mdc-fab app-fab--absolute mdc-fab-secondary mb-40" aria-label="Audio files">
+                                                                            <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
 
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-                                                                            <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
                                                                             </span>
                                                                         </button>
+
+                                                                        <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
+                                                                            <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
+                                                                        </button>
+
                                                                     }
 
-                                                                    <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
-                                                                        <span onclick="FetchRecording('@item.EmailId')" title="Call Record" class="mdc-fab__icon material-icons">
-                                                                            <i class="fa fa-dot-circle"></i>
 
+                                                                }
+                                                                <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
+                                                                    <span onclick="FetchRecording('@item.EmailId')" title="Call Record" class="mdc-fab__icon material-icons">
+                                                                        <i class="fa fa-dot-circle"></i>
+
+                                                                    </span>
+                                                                </button>
+                                                               
+
+                                                                <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                    <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                    </span>
+                                                                </button>
+
+
+                                                                @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                        <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
                                                                         </span>
                                                                     </button>
-                                                                </td>
+                                                                }
+
+                                                                @if (ViewBag.profile != "Client")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                        <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+
+                                                                @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Fitment Report">
+                                                                        <span onclick="location.href = '@Url.Action("FitmentReport", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Fitment Report" class="mdc-fab__icon material-icons">
+                                                                            <img style="width:75%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA8ElEQVRIid2VTQ6CMBBGp8ZDqPFAJngEj0F0a4ILL4UX0FPIDcQFrp4LpoZAW6DExPglBFK+mTf9mVTk7wRsgIJ+HWMB9wHJ4yE2cohHdf42YBwkEjAcMgHghBhXsIiIMabzr+1xqR03D1U6NEkIOosBjNHXAVFL5JJvz35/iYAtkANPoNTvJBTQ2wcN7ynQE9kkgFYOUAEpsHRAujMZAbioNW3HNpRPAZRqXQQAjymbbIv4HE+jEpG19bgAhaea9syu+t45ctixW7es+sr03moNX6JDFbAHVvocgJd3k8cIyHyF4DumEZCEurlKHI32BprPJ5GLOEwZAAAAAElFTkSuQmCC" />
+                                                                        </span>
+                                                                    </button>
+                                                                }
+
+
+
+                                                                @if (ViewBag.profile != "Client")
+                                                                {
+
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                        <span onclick="location.href = '@Url.Action("StatusList", "Candidate", new { irfId= item.IRFId, candidateId = item.CandidateMasterId,  irfName=ViewBag.IRFName, candidateName=item.Name})'" title="Candidate Status" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+
+
+                                                            </td>
 
                                                                 <td class="text-center">
                                                                     @if (item.Phone != null && item.Phone != string.Empty)
@@ -402,6 +410,7 @@
                                                                         <tr>
                                                                             <th style="border-left: 0px !important;">Candidate Name</th>
                                                                             <th>Client HR</th>
+                                                                            <th>Staffing Agency EmailId</th>
                                                                             <th>Coded Resume</th>
                                                                             <th>Type</th>
                                                                             <th>Location(Applied for)</th>
@@ -450,6 +459,18 @@
                                                                             @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
                                                                             {
                                                                                 <td data-tooltip="@item.ClientHRAttemptContact" class="text-center"><span class="cname">@item.ClientHRAttemptContact</span> </td>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                            }
+
+
+
+                                                                            @if (item.ProfileSource != null && item.ProfileSource.Length > 13)
+                                                                            {
+                                                                                <td data-tooltip="@item.ProfileSource" class="text-center"><span class="cname">@item.ProfileSource</span> </td>
 
                                                                             }
                                                                             else
@@ -606,7 +627,7 @@
 
                             <div class="filheader">
                                 <div class="filavatar">
-                                    <span class="publicsharing-icon">
+                                    <span>
 
 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
@@ -686,7 +707,7 @@
 
                         <div class="filheader">
                             <div class="filavatar">
-                                <span class="publicsharing-icon">
+                                <span>
 
 
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
@@ -771,7 +792,7 @@
 
                         <div class="filheader">
                             <div class="filavatar">
-                                <span class="publicsharing-icon fas fa-user-friends fa-2x"></span>
+                                <span class="publicsharing-icon fas fa-user-friends" style="font-size:20px;"></span>
                             </div>
                             <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
                         </div>
@@ -907,22 +928,24 @@
                         </button>
                         <div class="modal-body" style="padding: 2px 16px;">
                             <div class="row">
-                                <table class="table table-striped table-bordered" style="width:100%;" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Who called</th>
-                                            <th>Call date</th>
-                                            <th>Recording</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tblcallrecdetails">
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive style-2" style="height:300px;">
+                                    <table class="table table-striped table-bordered" style="width:100%;" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Who called</th>
+                                                <th>Call date</th>
+                                                <th>Recording</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblcallrecdetails">
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12 text-right">
@@ -1339,7 +1362,7 @@
                 if (data[i].emailId.length > 18) {
 
                     html += '  <td class="cadEmail">';
-                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
+                    html += ' <a onclick="" data-tooltip="'+ data[i].emailId +'"><span class="cname"> ' + data[i].emailId +'</span></a>';
                     html += '   </td>';
                 }
 
@@ -1366,6 +1389,7 @@
             html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
 
             html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
+            html += ' <td class="text-center">' + (data[i].joinabilityScore + data[i].selectabilityScore) / 2 + '</td>';
             if (profile != "Client") {
                 html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
                 html += '  <b>' + data[i].joinabilityScore + '</b>';
@@ -1377,7 +1401,7 @@
             html += '    <td class="text-left action">';
             if (profile != "Recruiter") {
                 if (data[i].clientHRAttemptContact != null && data[i].clientHRAttemptContact != "") {
-                    html += '    <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">';
+                    html += '    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">';
                     html += '   <a href = "/Candidate/SendInvite?IRFName=' + irfname + '&irfId=' + irfid + '&emailId=' + data[i].emailId + '&endDate=' + data[i].endDate + '" title="Send Invite" class="mdc-fab__icon material-icons">';
                     html += '        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
                     html += '  </a></button>';
@@ -1385,7 +1409,7 @@
                 }
 
                 else {
-                    html += '   <button class="mdc-fab app-fab--absolute" aria-label="Kindly enter Client HRs EmailId to send invite!">';
+                    html += '   <button class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HRs EmailId to send invite!">';
                     html += '  <span title="Kindly enter Client HRs EmailId to send invite!" class="mdc-fab__icon material-icons">';
                     html += '   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>';
                     html += '</span></button>';
@@ -1398,7 +1422,7 @@
 
                 if (profile != "Client") {
 
-                    html += ' <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">';
+                    html += ' <button class="mdc-fab app-fab--absolute mdc-fab-secondary mb-40" aria-label="Audio files">';
                     html += '   <a href = "/Candidate/UploadAudio?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&irfName=' + irfname + '" title="Audio files" class="mdc-fab__icon material-icons">';
                     html += '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>';
                     html += '  </a> </button>';
@@ -1411,7 +1435,12 @@
 
 
             }
-            html += '  <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
+            html += '<button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">';
+            html += '<span onclick="FetchRecording(' + "'" + data[i].emailId + "'" + ')" title="Call Record" class="mdc-fab__icon material-icons">';
+            html += '<i class="fa fa-dot-circle"></i>';
+            html += '</span>';
+            html += '</button>';
+            html += '<button class="mdc-fab app-fab--absolute" aria-label="Edit">';
             html += '<a style="color:#fff;" href = "/Candidate/Edit?id=' + data[i].id + '&irfName=' + irfname + '&irfId=' + irfid + '" title="Edit" class="mdc-fab__icon material-icons">';
             html += '  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>';
             html += '   </a></button>';
@@ -1427,6 +1456,13 @@
                 html += ' <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>';
                 html += ' </a ></button>';
             }
+             if (profile == "Admin" || profile == "SeniorHR" || profile == "Client" || profile == "HR") {
+                 html += '  <button class="mdc-fab app-fab--absolute" aria-label="Fitment Report">';
+                 html += '  <a href = "/Candidate/FitmentReport?candidateId=' + data[i].candidateMasterId + '&irfId=' + data[i].irfId + '&rfName=' + data[i].irfName + '" title="Fitment Report" class="mdc-fab__icon material-icons">';
+                 html += ' <img style="width:75%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA8ElEQVRIid2VTQ6CMBBGp8ZDqPFAJngEj0F0a4ILL4UX0FPIDcQFrp4LpoZAW6DExPglBFK+mTf9mVTk7wRsgIJ+HWMB9wHJ4yE2cohHdf42YBwkEjAcMgHghBhXsIiIMabzr+1xqR03D1U6NEkIOosBjNHXAVFL5JJvz35/iYAtkANPoNTvJBTQ2wcN7ynQE9kkgFYOUAEpsHRAujMZAbioNW3HNpRPAZRqXQQAjymbbIv4HE+jEpG19bgAhaea9syu+t45ctixW7es+sr03moNX6JDFbAHVvocgJd3k8cIyHyF4DumEZCEurlKHI32BprPJ5GLOEwZAAAAAElFTkSuQmCC" />';
+                 html += ' </a>';
+                 html += ' </button>';
+                 }
 
             if (profile != "Client") {
                 html += ' <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">';
@@ -1434,14 +1470,6 @@
                 html += '  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>';
                 html += '  </a>  </button>';
             }
-            html += '<button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">';
-
-            html += '<span onclick="FetchRecording(' + "'" + data[i].emailId + "'" + ')" title="Call Record" class="mdc-fab__icon material-icons">';
-
-            html += '<i class="fa fa-dot-circle"></i>';
-
-            html += '</span>';
-            html += '</button>';
             html += '</td>';
 
             html += ' <td class="text-center">';
@@ -1474,6 +1502,7 @@
             html += '  <tr>';
             html += '   <th>Candidate Name</th>';
             html += '   <th>Client HR</th>';
+            html += '    <th>Staffing Agency Email Id</th>';
             html += '   <th>Coded Resume</th>';
             html += '     <th>Type</th>';
             html += '     <th>Location(Applied for)</th>';
@@ -1512,7 +1541,6 @@
             }
 
 
-
             if (data[i].clientHRAttemptContact != null) {
                 html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
 
@@ -1520,7 +1548,14 @@
             else {
                 html += '    <td></td>';
             }
+            if (data[i].profileSource != null && data[i].profileSource.length > 13) {
 
+                html += '    <td data-tooltip="' + data[i].profileSource + '" class="text-center"><span class="cname">' + data[i].profileSource + '</span> </td>';
+
+            }
+            else {
+                html += '<td></td>';
+            }
             if (data[i].encodedResumeLink != null && data[i].encodedResumeLink != "") {
                 html += '    <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=' + data[i].encodedResumeLink + '>Coded Resume</a> </td>';
             }
@@ -1545,6 +1580,7 @@
             else { html += ' <td>' + data[i].workAuth + '</td>'; }
 
             if (data[i].currentLocation == null) {
+
                 html += ' <td></td>';
             }
             else { html += ' <td>' + data[i].currentLocation + '</td>'; }
@@ -1668,13 +1704,13 @@
                 var modal = document.getElementById("myCallRecords");
                 modal.style.display = "block";
                 $("#candidate_email_pop").text(candidateEmailid);
-                
+
             }
         });
     }
     function bindCallData(data) {
         var html = '';
-        debugger;
+
         for (var i = 0; i < data.length; i++) {
             html += '<tr>';
             html += '<td>' + data[i].whoCalled + '</td>';
@@ -1714,6 +1750,7 @@
     });
 
     function callCandidate(phoneNumber) {
+        debugger;
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
     }
@@ -1948,369 +1985,6 @@
     $("form").on("change", ".file-upload-field", function () {
         $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
     });</script>
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        hopscotch.registerHelper('addOverlay', function () {
-            $('body').append('<div class="overlay"></div>');
-        });
-
-        hopscotch.registerHelper('removeOverlay', function () {
-            $('.overlay').fadeOut(function () {
-                $(this).remove();
-                $('.helper').remove();
-            });
-        });
-
-        hopscotch.listen('show', function () {
-            var elementObject = $(hopscotch.getCurrTarget(tour));
-            var element = $('#' + elementObject[0].id);
-
-            element.prev().removeClass('overlay-relative');
-            element.addClass('overlay-relative');
-
-            if ($('.helper').length !== 0) {
-
-                // Use Helper Layer for hilight target element.
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
-
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-
-            } else {
-
-                // Add Helper Layer for highlight target element.
-                var newHelper = '<div class="helper"></div>';
-                $('body').append(newHelper);
-
-                var helper = $('.helper');
-                var padding = 5;
-                var helperPosX = element.position().left - padding;
-                var helperPosY = element.position().top - padding;
-                var targetWidth = element.outerWidth();
-                var targetHeight = element.outerHeight();
-
-                console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
-
-                helper.css('width', targetWidth);
-                helper.css('height', targetHeight);
-                helper.offset({ left: helperPosX, top: helperPosY });
-            }
-
-        });
-
-        var tour = {
-            id: "hello-hopscotch",
-            showCloseButton: false,
-            steps: [
-                {
-                    title: "Candidate",
-                    content: "Detailed view of candidates of a particular irf and click on next button to know its features",
-                    target: "getstatus_1",
-                    placement: "bottom",
-                    showPrevButton: true,
-
-                    highlight: true,
-                    zindex: 999999,
-                    yOffset: 10,
-
-                    onCTA: function () {
-                        hopscotch.showStep(2);
-                        $('#getstatus_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onNext: function () {
-                        $('#getstatus_1').removeClass('overlay-relative');
-                        $('.helper').remove();
-
-                    }
-                },
-
-
-
-
-
-                {
-                    title: "RB Attempt",
-                    content: "Attempt made by the client to react out to the candidate",
-                    target: "getstatus_2",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_2').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Resume",
-                    content: "Click here to view the resume of the candidate",
-                    target: "getstatus_3",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_3').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-                {
-                    title: "Invite Sent",
-                    content: "Showing the count of invite sent here",
-                    target: "getstatus_4",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_4').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-                {
-                    title: "Confirmation",
-                    content: "Showing the count of confirmation here",
-                    target: "getstatus_5",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_5').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Joinability	",
-                    content: "Showing the count of joinability here",
-                    target: "getstatus_6",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_6').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Selectability",
-                    content: "Showing the count of selectability here",
-                    target: "getstatus_7",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_7').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-                {
-                    title: "Invite Sent",
-                    content: "Click here to send the invite ",
-                    target: "getstatus_8",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_8').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-
-                {
-                    title: "Cancel Invite",
-                    content: "Click here to cancel the invite ",
-                    target: "getstatus_9",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_9').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Edit",
-                    content: "Click here to edit the candidate detail ",
-                    target: "getstatus_10",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "bottom",
-                    xOffset: 'center',
-                    arrowOffset: 'center',
-                    onNext: function () {
-                        $('#getstatus_10').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_10').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-                {
-                    title: "Schedule Call",
-                    content: "Click here to schedule a call for the candidate ",
-                    target: "getstatus_11",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    xOffset: '0',
-
-                    onNext: function () {
-                        $('#getstatus_11').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_11').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Call",
-                    content: "Click here to call the candidate ",
-                    target: "getstatus_12",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    xOffset: '0',
-
-                    onNext: function () {
-                        $('#getstatus_12').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_12').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-                {
-                    title: "Back to List",
-                    content: "Click here to go back to Skill Channel Page",
-                    target: "getstatus_13",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    placement: "left",
-                    yOffset: -10,
-                    xOffset: 0,
-                    arrowOffset: 'left',
-
-                    onNext: function () {
-                        $('#getstatus_13').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#getstatus_13').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-                {
-                    title: "Common Pool Menu",
-                    content: "Click on Common Pool menu to see its features",
-                    target: "commonpool_menu",
-                    placement: "top",
-                    showPrevButton: true,
-                    zindex: 999999,
-                    yOffset: 20,
-                    xOffset: 10,
-                    onNext: function () {
-                        $('#commonpool_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    },
-                    onPrev: function () {
-                        $('#commonpool_menu').removeClass('overlay-relative');
-                        $('.helper').remove();
-                    }
-                },
-
-
-
-            ],
-            onStart: ["addOverlay"],
-            onEnd: ["removeOverlay"],
-        };
-
-        hopscotch.startTour(tour);
-
-    </script>
-}
 
 
 

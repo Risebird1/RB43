@@ -109,7 +109,9 @@ namespace Risebird.Entities.Enum
         [Description("1200")]
         Twelvehundred = 1200,
         [Description("1500")]
-        Fifteenhundred = 1500
+        Fifteenhundred = 1500,
+        [Description("2000")]
+        Twothousand = 2000
     }
     public enum OutSideIndiaPrice
     {
@@ -122,7 +124,9 @@ namespace Risebird.Entities.Enum
         [Description("1800")]
         Eighteenhundred = 1800,
         [Description("2500")]
-        TwentyTwohundredFifty = 2500
+        Twentyfivehundred = 2500,
+        [Description("3000")]
+        Threethousand = 3000
     }
     public enum Country
     {
@@ -1236,6 +1240,20 @@ namespace Risebird.Entities.Enum
         Assigned,
         [Description("Resolved")]
         Resolved
+    }
+    public enum InterviewRequestCountry
+    {
+        [Description("India")]
+        India = 1,
+        [Description("Outside India")]
+        OutsideIndia = 2
+    }
+    public enum LeadInterviewerenum
+    {
+        [Description("True")]
+        True = 1,
+        [Description("False")]
+        False = 0
     }
 }
 

@@ -9,10 +9,18 @@ namespace Risebird.Entities.ViewModel
 {
     public class IRFVm
     {
+        public IRFVm()
+        {
+            InterviewerCollection = new List<TransInterviewer>();
+            EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
+            QualityController = new List<TransQualityController>();
+            SkillCollection = new List<TransSkill>();
+        }
         public int id { get; set; }
 
         [DisplayName("Skill Channel ID")]
         [Required]
+        //[RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string IRFId { get; set; }
 
         [DisplayName("End Client Name")]
@@ -39,7 +47,7 @@ namespace Risebird.Entities.ViewModel
         public int ClientId { get; set; }
         [DisplayName("Job Country")]
         [Required]
-        [RegularExpression("^[a-zA-Z]{1,20}$", ErrorMessage = "Kindly Enter only letters.")]
+        //[RegularExpression("^[a-zA-Z]{1,20}$", ErrorMessage = "Kindly Enter only letters.")]
         public string JobCountry { get; set; }
 
         [DisplayName("Start Date")]
@@ -138,7 +146,12 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerId { get; set; }
         public bool isDuplicateEntries { get; set; }
         public string OldCompanyDetails { get; set; }
+        public int TemplateId { get; set; }
+        public int clonevalue { get; set; }
+        public string SchedulingLink { get; set; }
 
+        [DisplayName("QC Required")]
+        public bool IsQCRequired { get; set; }
     }
     public class InterviewerIds
     {
@@ -221,6 +234,21 @@ namespace Risebird.Entities.ViewModel
         public string AssignStatus { get; set; }
         public string AssessmentGroupId { get; set; }
         public int BillingOwner { get; set; }
+        public string BillingOwnerEmailId { get; set; }
         public string RisebirdHREmail { get; set; }
+        public int CandidateCount { get; set; }
+        public int CompletedInterviews { get; set; }
+        public int RejectedMeetings { get; set; }
+        public int NotScheduledCount { get; set; }
+        public int ReScheduledCount { get; set; }
+        public int FutureScheduledMeetings { get; set; }
+        public bool IsQCRequired { get; set; }
+
+    }
+    public class SkillCahnnelDetailsVM
+    {
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public string AssessmentGroup { get; set; }
     }
 }

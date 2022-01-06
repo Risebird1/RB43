@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
+    <PackageReference Include="FileTypeInterrogator" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Management.Media" Version="2.0.4" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech.Remoteconversation" Version="1.14.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
@@ -23,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Risebird.Business.Interface\Risebird.Business.Interface.csproj" />
     <ProjectReference Include="..\Risebird.CommonHelper.Interface\Risebird.CommonHelper.Interface.csproj" />
+    <ProjectReference Include="..\Risebird.Repository.Interface\Risebird.Repository.Interface.csproj" />
   </ItemGroup>
 
 </Project>

@@ -20,6 +20,7 @@
     string[] CompanyType = new string[] { };
     string[] Domain = new string[] { };
     string[] AssessmentGroup = new string[] { };
+    string[] IsLeadInterviewer = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerIndexfilters") != null)
 {
@@ -33,6 +34,7 @@
     CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
     Domain = filter.Domain != null ? filter.Domain : new string[] { };
     AssessmentGroup = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+    IsLeadInterviewer = filter.IsLeadInterviewer != null ? filter.IsLeadInterviewer : new string[] { };
 
 }
 
@@ -59,7 +61,7 @@
 
 
                         <div class="interviewer_2">
-                            <div class="searchCon" style="margin-right:10px;">
+                            <div class="searchCon mb-10" style="margin-right:10px;">
 
                                 <button onclick="searchResult()" type="button" id="search">&nbsp</button>
                                 <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
@@ -108,7 +110,7 @@
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
-                        <div class="dataloading">
+                        <div class="dataloading interviewer">
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
@@ -168,22 +170,22 @@
                                                     </div>
                                                     @*<div class="col-md-6 col-sm-6 border-rv">
 
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
 
-                                                                    @foreach (var item in ViewBag.CompentencyLevel)
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                                        @foreach (var item in ViewBag.CompentencyLevel)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </div>*@
+                                                        </div>*@
                                                     <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
@@ -274,7 +276,25 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-12 col-sm-12">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsLeadInterviewer">Is Lead Interviewer</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="IsLeadInterviewer" name="IsLeadInterviewer" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.IsLeadInterviewer)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-sm-12" style="position: relative;">
 
 
                                                         <div>
@@ -314,7 +334,7 @@
                                                     <th>Last Name</th>
                                                     <th class="interviewer_4">Email Id</th>
                                                     <th>Mobile No.</th>
-                                                    <th class="interviewer_5">Primary Skills</th>
+                                                    <th class="interviewer_5">Insta Interviewer</th>
                                                     <th class="interviewer_6">Assessment Group</th>
                                                     <th class="interviewer_7">Resume Link</th>
                                                     <th class="interviewer_8">Coded Name</th>
@@ -328,7 +348,7 @@
                                                     <th>Last Name</th>
                                                     <th>Email Id</th>
                                                     <th>Mobile No.</th>
-                                                    <th>Primary Skills</th>
+                                                    <th>Insta Interviewer</th>
                                                     <th>Assessment Group</th>
                                                     <th>Resume Link</th>
                                                     <th>Coded Name</th>
@@ -345,25 +365,6 @@
                                                             <td class="cadName intwname">
                                                                 <a onclick="" data-tooltip="@item.FirstName"><span class="intName"> @item.FirstName</span></a>
                                                             </td>
-
-
-                                                            @*@if (item.FirstName.Length > 20)
-                                                                {
-
-
-                                                                    <td class="cadName">
-                                                                        <a onclick="" data-tooltip="@item.FirstName"> @item.FirstName.Substring(0, 20)... </a>
-                                                                    </td>
-                                                                }
-
-
-                                                                else
-                                                                {
-                                                                    <td class="cadName">
-                                                                        <a onclick=""> @item.FirstName </a>
-                                                                    </td>
-                                                                }*@
-
                                                         }
                                                         else
                                                         {
@@ -372,25 +373,18 @@
 
                                                         @if (item.LastName != null && item.LastName != "")
                                                         {
-
-
                                                             @if (item.LastName.Length > 10)
                                                             {
-
-
                                                                 <td class="cadLast">
                                                                     <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 10)... </a>
                                                                 </td>
                                                             }
-
-
                                                             else
                                                             {
                                                                 <td class="cadLast">
                                                                     <a onclick=""> @item.LastName </a>
                                                                 </td>
                                                             }
-
                                                         }
                                                         else
                                                         {
@@ -399,67 +393,24 @@
 
                                                         @if (item.EmailId != null && item.EmailId != "")
                                                         {
-
-
                                                             <td class="cadEmail">
                                                                 <a onclick="" data-tooltip="@item.EmailId"><span class="intEmail"> @item.EmailId</span> </a>
                                                             </td>
-
-
-
-
                                                         }
                                                         else
                                                         {
                                                             <td></td>
                                                         }
-
-
                                                         <td>@item.MobileNumber</td>
-
+                                                        @if (item.Isinstaavailable)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
                                                         <td class="interview-com">
-
-
-                                                            <div id="section">
-                                                                @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                                {
-                                                                    @if (item.PrimarySkill.Length > 20)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.PrimarySkill.Substring(0, 20)
-                                                                            </p>
-                                                                            <p class="moretext_@item.id moretext">
-                                                                                @item.PrimarySkill.Substring(20, @item.PrimarySkill.Length - 20)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
-
-                                                                            <p>
-                                                                                @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length)
-                                                                            </p>
-                                                                        </div>}
-                                                                }
-                                                                else
-                                                                { <div></div>}
-
-
-                                                            </div>
-
-
-
-
-                                                        </td>
-
-
-
-                                                        <td class="interview-com">
-
-
                                                             <div id="section">
                                                                 @if (item.AssessmentGroupId != null && item.AssessmentGroupId != "")
                                                                 {
@@ -512,9 +463,9 @@
 
                                                         <td><b>@item.NickName</b></td>
 
-                                                        <td class="text-right action">
+                                                        <td class="text-left action">
                                                             <span class="interviewer_9">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">
+                                                                <button class="mdc-fab app-fab--absolute mb-40" aria-label="Recommendation">
                                                                     <span onclick="location.href = '@Url.Action("InterviewerRecommendation", "Interviewer", new {  id = item.UserId })'" title="Recommendation" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;">
                                                                             <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>
@@ -525,22 +476,23 @@
 
 
                                                             <span class="interviewer_10">
-                                                                <button title="Availability Details" class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openAvailDetailsModel(@item.id)">
+                                                                <button title="Availability Details" class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openAvailDetailsModel(@item.id)">
 
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
                                                                 </button>
                                                             </span>
 
                                                             <span class="interviewer_11">
-                                                                <button title="Bank Details" class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openBankDetailsModel(@item.id)">
+                                                                <button title="Bank Details" class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openBankDetailsModel(@item.id)">
 
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" /></svg>
                                                                 </button>
                                                             </span>
+
                                                             @if (ViewBag.Profile != "Finance")
                                                             {
                                                                 <span class="interviewer_12">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">
+                                                                    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">
                                                                         <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                     </button>
                                                                 </span>
@@ -548,7 +500,7 @@
                                                             else
                                                             {
                                                                 <span class="interviewer_12">
-                                                                    <button disabled class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">
+                                                                    <button disabled class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">
                                                                         <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })'" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                     </button>
                                                                 </span>
@@ -559,7 +511,7 @@
                                                                     <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to add Interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
                                                                 </button>
                                                             </span>
-
+                                                            <br />
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
                                                                 <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone"></span></span></span></span>
@@ -581,12 +533,18 @@
                                                                     </button>
                                                                 </span>
                                                             }
+
                                                             <span class="interviewer_16">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Assessments">
                                                                     <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
                                                                 </button>
                                                             </span>
-
+                                                            <button class="mdc-fab app-fab--absolute" style="margin:0px 3px;" aria-label="Share Public URL">
+                                                                <span onclick="javascript:SendPublicURL('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
+                                                                <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                            </button>
                                                         </td>
                                                     </tr>
 
@@ -895,7 +853,41 @@
         </div>
     </div>
 </div>
-
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @if (ViewBag.Message != null)
 {
@@ -1229,26 +1221,15 @@
                 html += '<td></td>';
             }
 
-            html += '  <td>' + data[i].mobileNumber + '</td>';
-            html += '<td class="interview-com">';
-            html += ' <div id="section">';
-            if (data[i].primarySkill != null && data[i].primarySkill != "") {
-                if (data[i].primarySkill.length > 20) {
-                    html += '  <div class="article">';
-                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 20) + '</p>';
-                    html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(20, data[i].primarySkill.length - 20) + '</p>';
-                    html += '</div>';
-                }
-                else {
-                    html += '<div class="article"><p>' + data[i].primarySkill.substring(0, data[i].primarySkill.length) + '</p></div>';
-                }
-            }
-            else {
-                html += '<div></div>';
-            }
-            html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
-            html += '</div>';
-            html += ' </td>';
+            html += '<td>' + data[i].mobileNumber + '</td>';
+            if (data[i].isinstaavailable)
+                                                        {
+                html += '    <td>Yes</td>';
+                                                        }
+                                                        else
+                                                        {
+                html += '   <td>No</td>';
+                                                        }
 
             html += '<td class="interview-com">';
             html += ' <div id="section">';
@@ -1256,8 +1237,9 @@
                 if (data[i].assessmentGroupId.length > 20) {
                     html += '  <div class="article">';
                     html += '  <p style="margin-bottom:0px;">' + data[i].assessmentGroupId.substring(0, 20) + '</p>';
-                    html += '   <p class="moretext1_' + data[i].id + ' moretext">' + data[i].assessmentGroupId.substring(20, data[i].assessmentGroupId.length - 20) + '</p>';
+                    html += '   <p class="moretext1_'+ data[i].id +' moretext">' + data[i].assessmentGroupId.substring(20, data[i].assessmentGroupId.length) + '</p>';
                     html += '</div>';
+                    html += ' <a onclick="moreless1(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read1_' + data[i].id + '" href="#">Read more</a>';
                 }
                 else {
                     html += '<div class="article"><p>' + data[i].assessmentGroupId.substring(0, data[i].assessmentGroupId.length) + '</p></div>';
@@ -1266,31 +1248,31 @@
             else {
                 html += '<div></div>';
             }
-            html += ' <a onclick="moreless1(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read1_' + data[i].id + '" href="#">Read more</a>';
+
             html += '</div>';
             html += ' </td>';
             html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink.replace(" ", "%20") + '>Resume</a></td>';
             html += '<td><b>' + data[i].nickName + '</b></td>';
             html += '   <td class="text-center action">';
-            html += '  <button class="mdc-fab app-fab--absolute" aria-label="Recommendation">';
-            html += '   <a href="/Interviewer/InterviewerRecommendation/'+data[i].userId +'" title="Recommendation" class="mdc-fab__icon material-icons">';
+            html += '  <button class="mdc-fab app-fab--absolute mb-40" aria-label="Recommendation">';
+            html += '   <a href="/Interviewer/InterviewerRecommendation?id='+data[i].userId +'" title="Recommendation" class="mdc-fab__icon material-icons">';
             html += '  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" style="top: -1px;position: relative;"><path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"></path>';
             html += '  </svg>';
             html += '  </a>';
             html += '  </button>';
-            html += '  <button class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openAvailDetailsModel('+data[i].id+')">';
+            html += '  <button class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openAvailDetailsModel('+data[i].id+')">';
             html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>';
             html += '  </button>';
-            html += ' <button class="mdc-fab app-fab--absolute" data-toggle="modal" onclick="openBankDetailsModel(' + data[i].id +')">';
+            html += ' <button class="mdc-fab app-fab--absolute mb-40" data-toggle="modal" onclick="openBankDetailsModel(' + data[i].id +')">';
 
             html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" /></svg>';
             html += '</button>';
-            html += ' <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile">';
+            html += ' <button class="mdc-fab app-fab--absolute mb-40" aria-label="Click here to edit Interviewer Profile">';
             html += ' <a href = "/Interviewer/EditInterviewerProfile/?userId=' + data[i].userId + '" title="Click here to edit Interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>';
             html += '  </button>';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Click here to add Interviewer Employer Details">';
             html += ' <a href = "/Interviewer/IndexEmployer?id= ' + data[i].id + '" title="Click here to add Interviewer Employer Details"  class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></a>';
-            html += '  </button>';
+            html += '  </button> <br/>';
                 @*if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
   {
                         html += '  <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="mdc-fab app-fab--absolute" style="top: -3px;"><span class="fa fa-phone"></span></span></span>';
@@ -1311,6 +1293,12 @@
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Assessments">';
             html += '<a href = "/Interviewer/AssessmentForApproval/' + data[i].id + '?EmailAddress=' + data[i].emailId+'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></a>';
             html += ' </button>';
+            html += '<button class="mdc-fab app-fab--absolute" style="margin:0px 3px;" aria-label="Share Public URL"><input type="hidden" id="hidpublicemail_' + i + '" value="' + data[i].emailId+'" />';
+            html += '<span onclick="javascript:SendPublicURLJson(' + i+');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" /></svg></span>';
+            html += '</button>';
+            html += '<button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">';
+            html += '<span onclick="javascript:CopyPublicUrlJson('+i+');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>';
+            html += '</button>';
             html += '</td>';
             html += '  </tr>';
             html += '   <tr class="collapse ' + data[i].id + '">';
@@ -1559,8 +1547,84 @@
         var modal = document.getElementById("myCallModal");
         modal.style.display = "none";
     }
-
-
+    function SendPublicURLJson(index) {
+        var EmailId = $("#hidpublicemail_" + index).val();
+        SendPublicURL(EmailId);
+    }
+    function CopyPublicUrlJson(index) {
+        var EmailId = $("#hidpublicemail_" + index).val();
+        CopyPublicUrl(EmailId);
+    }
+    function SendPublicURL(EmailId) {
+        swal.fire({
+            title: 'Are you sure you want to send Public Url for client user ' + EmailId + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Send it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interviewer/SendPublicURLInterviewer',
+                        data: { 'Emailid': EmailId },
+                        type: 'POST',
+                        success: function (result) {
+                            if (result == "Success") {
+                                swal.fire({
+                                    title: 'Sent!',
+                                    type: 'success',
+                                    html: '<p>Public URL send successfully.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            } else {
+                                swal.fire({
+                                    title: 'Fail to sent!',
+                                    type: 'error',
+                                    html: '<p>Fail to send the public URL, Please try again.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error Sending!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        })
+    }
+    function CopyPublicUrl(EmailId) {
+        $.ajax({
+            url: '/Interviewer/CopyPublicURLInterviewer',
+            data: { 'Emailid': EmailId },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtvideoUrls").text(result);
+            }
+        });
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
 </script>
 <script type="text/javascript">
 
@@ -1666,6 +1730,12 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
+        $("#IsLeadInterviewer").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
         $("#IsIntrested").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
@@ -1697,6 +1767,7 @@
         var companyType =  @Html.Raw(Json.Serialize(CompanyType));
         var domain =  @Html.Raw(Json.Serialize(Domain));
         var assessmentGroup =  @Html.Raw(Json.Serialize(AssessmentGroup));
+        var isLeadInterviewer =  @Html.Raw(Json.Serialize(IsLeadInterviewer));
 
 
         $("#AssessmentGroup").val(AssessmentGrouparr);
@@ -1708,6 +1779,7 @@
         $("#CompanyType").val(companyType);
         $("#Domain").val(domain);
         $("#AssessmentGroup").val(assessmentGroup);
+        $("#IsLeadInterviewer").val(isLeadInterviewer);
     }
 
 

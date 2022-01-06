@@ -19,10 +19,10 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class FinanceController : Controller
     {
         private readonly IMeetingService _meetingService;
-        private static List<RBInterviewDetails> _modelDetails;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private static string SearchValue;
@@ -31,8 +31,10 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IProjectService _projectService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService)
+
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,11 +44,14 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
             _projectService = projectService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
         /// </summary>
         /// <returns></returns>
+
+        [HttpGet]
         public async Task<IActionResult> RBPayment()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -68,6 +73,14 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.submit = "false";
                     }
+                    foreach (var item in model)
+                    {
+                        var _onemoth = item.Date.AddMonths(1).DayOfWeek;
+                        int diff = (7 + (_onemoth - DayOfWeek.Monday)) % 7;
+                        var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
+                        var _lastdate = _firstdate.AddDays(6);
+                        item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                    }
                     return View(model);
                 }
                 else
@@ -84,6 +97,7 @@ namespace Risebird.Web.Controllers
         /// Interviewer or QC can export the details in excel sheet for future process
         /// </summary>
         /// <returns></returns>
+
         [Authorize]
         [HttpGet]
         public FileContentResult ExportRBDetails()
@@ -132,6 +146,7 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var item in model.Result)
                             {
+                                int _location = 0;
                                 Sheet.Cells[i, 1].Value = item.Comment;
                                 Sheet.Cells[i, 2].Value = item.InterviewId;
                                 Sheet.Cells[i, 3].Value = item.Type;
@@ -139,7 +154,25 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 5].Value = item.Points;
                                 Sheet.Cells[i, 8].Value = item.Date;
                                 Sheet.Cells[i, 9].Value = item.Status;
-                                Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                if (String.IsNullOrEmpty(item.PreferredLocation))
+                                {
+                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                }
+                                else if (int.TryParse(item.PreferredLocation, out _location))
+                                {
+                                    if (_location == 1)
+                                    {
+                                        Sheet.Cells[i, 10].Value = "India";
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = "OutSide India";
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                }
                                 Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                 if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
@@ -201,6 +234,7 @@ namespace Risebird.Web.Controllers
         /// Interviewer or QC share payment details with Finance team for releasing payment
         /// </summary>
         /// <returns></returns>
+
         [HttpGet]
         public async Task<IActionResult> ShareWithFN()
         {
@@ -237,6 +271,8 @@ namespace Risebird.Web.Controllers
         /// Finance Team or Admin can see all coming request for payment
         /// </summary>
         /// <returns></returns>
+
+        [HttpGet]
         public async Task<IActionResult> FNPayment(int? Page, string searchValue)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -259,19 +295,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.payableAmount = payableAmount;
                     ViewBag.Tds = Tds;
                     ViewBag.setvalueforfunction = 1;
-                    if (String.IsNullOrEmpty(searchValue))
-                    {
-                        if (!String.IsNullOrEmpty(SearchValue))
-                        {
-                            searchValue = SearchValue;
-                        }
-                    }
-                    if (!String.IsNullOrEmpty(searchValue))
-                    {
-                        searchValue = searchValue.ToUpper().Trim();
-                        model = model.Where(x => (!String.IsNullOrEmpty(x.Comment) ? x.Comment.ToUpper().Contains(searchValue) : x.Comment == "")).ToList();
-                    }
-                    ViewBag.Searchvalue = searchValue;
+                    ViewBag.Searchvalue = "";
                     ViewBag.TotalCount = model.Count;
 
                     ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -299,7 +323,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.PageStartCount = 0;
                         ViewBag.PageEndCount = 0;
                     }
-                    _modelDetails = model;
+                    HttpContext.Session.SetString("financemodel", JsonConvert.SerializeObject(model));
                     if (TempData["PaymentMessage"] != null)
                     {
                         ViewBag.Message = TempData["PaymentMessage"].ToString();
@@ -325,6 +349,7 @@ namespace Risebird.Web.Controllers
         /// <param name="id"></param>
         /// <param name="flag"></param>
         /// <returns></returns>
+
         [HttpPost]
         public async Task<JsonResult> GetInterviewerPaymentDetails(int id, int flag, DateTime st, DateTime se)
         {
@@ -358,6 +383,7 @@ namespace Risebird.Web.Controllers
         /// <param name="Points"></param>
         /// <param name="Comment"></param>
         /// <returns></returns>
+
         [HttpPost]
         public async Task<JsonResult> AddPointsforInterviewer(int id, int Points, string Comment, DateTime PointDate)
         {
@@ -370,6 +396,7 @@ namespace Risebird.Web.Controllers
         /// <param name="emailid"></param>
         /// <param name="query"></param>
         /// <returns></returns>
+
         [HttpPost]
         public JsonResult SendQuerybyFN(string emailid, string query)
         {
@@ -395,7 +422,9 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> ConfirmPayment(int id, int index, string email, string amount, DateTime st, DateTime se)
+
+        [HttpPost]
+        public async Task<JsonResult> ConfirmPayment(int id, int index, string email, string amount, DateTime st, DateTime se)
         {
 
             var resultset = await _meetingService.RBInterviewerDetails(id, index);
@@ -433,10 +462,15 @@ namespace Risebird.Web.Controllers
                 sb.Append("</tr>");
             }
             sb.Append("<tbody></table>");
-            var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1));
+
             var commentvalue = st.ToString() + " to " + se.ToString();
+            var _Amount = Convert.ToInt32(resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * .9) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points));
+            amount = _Amount.ToString();
             var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
             var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
+            if (String.IsNullOrEmpty(paymenthistory))
+                paymenthistory = "0";
+            var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1), Convert.ToInt32(paymenthistory));
             //Start:Send email to Interviewer
             Mail _mail = new Mail
             {
@@ -457,26 +491,30 @@ namespace Risebird.Web.Controllers
             }
             if (model == "Success")
             {
-                TempData["PaymentMessage"] = "Payment paid Successfully";
+                return Json("Payment has been done  Successfully!");
+                // TempData["PaymentMessage"] = "Payment paid Successfully";
             }
             else
             {
-                TempData["PaymentMessage"] = "Fail To pay the payment";
+                return Json("Failed to pay the payment");
+                //TempData["PaymentMessage"] = "Fail To pay the payment";
             }
-            return RedirectToAction("FNPayment");
+
+            //return RedirectToAction("FNPayment");
         }
         /// <summary>
         /// Search functionlity implement
         /// </summary>
         /// <param name="searchValue"></param>
         /// <returns></returns>
+
         [HttpPost]
         public JsonResult FNPaymentJson(string searchValue)
         {
             try
             {
                 int Page = 1;
-                var model = _modelDetails;
+                var model = JsonConvert.DeserializeObject<List<RBInterviewDetails>>(HttpContext.Session.GetString("financemodel"));
                 SearchValue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
@@ -524,6 +562,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="term"></param>
         /// <returns></returns>
+
         [HttpPost]
         public async Task<JsonResult> FetchInterviewer(string term)
         {
@@ -537,16 +576,21 @@ namespace Risebird.Web.Controllers
         /// <param name="Comment"></param>
         /// <param name="Amount"></param>
         /// <returns></returns>
+
         [HttpPost]
         public async Task<JsonResult> AdvancePayment(string Interviewer, string Comment, int Amount)
         {
-            var model = await _meetingService.InsertAdvancePayment(Interviewer, Comment, Amount);
             var paymenthistory = await _meetingService.InsertPaymentHistory(Interviewer, Amount, Amount, "Advance", "");
+            if (String.IsNullOrEmpty(paymenthistory))
+            {
+                paymenthistory = "0";
+            }
+            var model = await _meetingService.InsertAdvancePayment(Interviewer, Comment, Amount, Convert.ToInt32(paymenthistory));
             StringBuilder sb = new StringBuilder();
             var result = "";
             if (model == "Success")
             {
-                result = "Advance Payment is done successfully.";
+                result = "Advance Payment has been done Successfully!";
                 Mail _mail = new Mail
                 {
                     TO = Interviewer,
@@ -566,7 +610,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                result = "Fail to done the advance payment.";
+                result = "Failed to done the advance payment.";
             }
             return Json(result);
         }
@@ -577,6 +621,7 @@ namespace Risebird.Web.Controllers
         /// <param name="st"></param>
         /// <param name="se"></param>
         /// <returns></returns>
+
         [HttpPost]
         public async Task<JsonResult> FNGenerateInvoiceJson(int? PageSet, DateTime st, DateTime se)
         {
@@ -588,13 +633,41 @@ namespace Risebird.Web.Controllers
                 else
                     Page = Convert.ToInt32(PageSet);
                 var model = await _meetingService.FNGenerateInvoiceDetails(st, se.AddDays(1));
-                var totalAmount = model.Sum(x => x.Points);
+                var _totalpaidamount = await _meetingService.FNFetchToalAmountPaid(st, se.AddDays(1));
+                var totalpaidamount1 = Convert.ToInt32((from ad in _totalpaidamount
+                                                        select ad.Points).ToList().Sum());
+                var totalpaidamount = Convert.ToInt32((from ad in _totalpaidamount
+                                                       select Math.Round(ad.Points * .9)).ToList().Sum());
+                var totalamountforstatus = await _meetingService.FNFetchToalAmountStatus(st, se.AddDays(1));
+                var totalqcamount = await _meetingService.FNFetchToalQCAmountStatus(st, se.AddDays(1));
+                //int totalinterviewamount = totalamountforstatus.Where(x => x.MeetingStatus == 4).Sum(x => x.Points * 90 / 100);
+                var totalinterviewamount = Convert.ToInt32((from ad in totalamountforstatus
+                                                            where ad.MeetingStatus == 4
+                                                            select Math.Round(ad.Points * .9)).ToList().Sum());
+                var totalNoShowamount = Convert.ToInt32((from ad in totalamountforstatus
+                                                         where ad.MeetingStatus == 1
+                                                         select Math.Round(ad.Points * .9)).ToList().Sum());
+                var totaldroppedamount = Convert.ToInt32((from ad in totalamountforstatus
+                                                          where ad.MeetingStatus == 3
+                                                          select Math.Round(ad.Points * .9)).ToList().Sum());
+                //int totalNoShowamount = totalamountforstatus.Where(x => x.MeetingStatus == 1).Sum(x => x.Points * 90 / 100);
+                //int totaldroppedamount = totalamountforstatus.Where(x => x.MeetingStatus == 3).Sum(x => x.Points * 90 / 100);
+                //var pendingAmount = model.Sum(x => x.Points);
+                var pendingAmount = Convert.ToInt32((from ad in model
+                                                     select Math.Round(ad.Points * .9)).ToList().Sum());
+                var totalAmount = totalpaidamount1 + model.Sum(x => x.Points);
+                //totalpaidamount = Convert.ToInt32(Math.Round(totalpaidamount * .9));
+                //pendingAmount = Convert.ToInt32(Math.Round(pendingAmount * .9));
                 foreach (var item in model)
                 {
-                    item.Points = (item.Points - Convert.ToInt32(Math.Round(item.Points * .1)));
+                    item.Points = Convert.ToInt32(Math.Round(item.Points * .9));
                 }
-                var payableAmount = model.Sum(x => x.Points);
+                //var payableAmount = model.Sum(x => x.Points);
+                var payableAmount = totalpaidamount + pendingAmount;
                 var Tds = totalAmount - payableAmount;
+                //int qcamount = totalqcamount.Sum(x => x.Points * 90 / 100);
+                int qcamount = Convert.ToInt32((from ad in totalqcamount
+                                                select Math.Round(ad.Points * .9)).ToList().Sum());
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
@@ -623,8 +696,8 @@ namespace Risebird.Web.Controllers
                     Pagestart = 0;
                     Pageend = 0;
                 }
-                _modelDetails = model;
-                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds });
+                HttpContext.Session.SetString("financemodel", JsonConvert.SerializeObject(model));
+                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds, totalpaidamount = totalpaidamount, totalinterviewamount = totalinterviewamount, totaldroppedamount = totaldroppedamount, totalNoShowamount = totalNoShowamount, pendingAmount = pendingAmount, qcamount = qcamount });
             }
             catch (Exception ex)
             {
@@ -638,6 +711,7 @@ namespace Risebird.Web.Controllers
         /// <param name="st"></param>
         /// <param name="se"></param>
         /// <returns></returns>
+
         [Authorize]
         [HttpGet]
         public FileContentResult ExportGenerateFNPayment(DateTime st, DateTime se)
@@ -657,7 +731,7 @@ namespace Risebird.Web.Controllers
                     {
                         //var model = _meetingService.FetchAllFNDetail();
                         var model = _meetingService.FNAllGeneratedInvoiceDetails(st, se.AddDays(1));
-                        var Interviewers = model.Result.Select(x => x.InterviewerEmailid).Distinct().ToList();
+                        var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -698,6 +772,7 @@ namespace Risebird.Web.Controllers
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.InterviewerEmailid == interviewer).ToList())
                                 {
+                                    int _location = 0;
                                     Sheet.Cells[i, 1].Value = item.IRFId;
                                     Sheet.Cells[i, 2].Value = item.Date.ToString();
                                     Sheet.Cells[i, 3].Value = item.candidateEmail;
@@ -707,7 +782,26 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 7].Value = item.Comment;
                                     Sheet.Cells[i, 8].Value = item.InterviewerEmailid;
                                     Sheet.Cells[i, 9].Value = item.Type;
-                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    if (String.IsNullOrEmpty(item.PreferredLocation))
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
+                                    else if (int.TryParse(item.PreferredLocation, out _location))
+                                    {
+                                        if (_location == 1)
+                                        {
+                                            Sheet.Cells[i, 10].Value = "India";
+                                        }
+                                        else
+                                        {
+                                            Sheet.Cells[i, 10].Value = "OutSide India";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
+
                                     Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                     Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
@@ -789,6 +883,7 @@ namespace Risebird.Web.Controllers
         /// Finance Team may Export data in Excel sheet
         /// </summary>
         /// <returns></returns>
+
         [Authorize]
         [HttpGet]
         public FileContentResult ExportFNPayment()
@@ -807,7 +902,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var model = _meetingService.FetchAllFNDetail();
-                        var Interviewers = model.Result.Select(x => x.InterviewerEmailid).Distinct().ToList();
+                        var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
                         string userEmailId = string.Empty;
 
                         Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -849,6 +944,7 @@ namespace Risebird.Web.Controllers
                                 i++;
                                 foreach (var item in model.Result.Where(x => x.InterviewerEmailid == interviewer).ToList())
                                 {
+                                    int _location = 0;
                                     Sheet.Cells[i, 1].Value = item.IRFId;
                                     Sheet.Cells[i, 2].Value = item.Date.ToString();
                                     Sheet.Cells[i, 3].Value = item.candidateEmail;
@@ -858,7 +954,25 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 7].Value = item.Comment;
                                     Sheet.Cells[i, 8].Value = item.InterviewerEmailid;
                                     Sheet.Cells[i, 9].Value = item.Type;
-                                    Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    if (String.IsNullOrEmpty(item.PreferredLocation))
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
+                                    else if (int.TryParse(item.PreferredLocation, out _location))
+                                    {
+                                        if (_location == 1)
+                                        {
+                                            Sheet.Cells[i, 10].Value = "India";
+                                        }
+                                        else
+                                        {
+                                            Sheet.Cells[i, 10].Value = "OutSide India";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 10].Value = item.PreferredLocation;
+                                    }
                                     Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                                     Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
                                     if (!string.IsNullOrEmpty(item.VideoLink))
@@ -940,7 +1054,9 @@ namespace Risebird.Web.Controllers
         /// Finance Team may be find History of payment that is done by finance team to interviewer
         /// </summary>
         /// <returns></returns>
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> PaymentHistory()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -952,6 +1068,8 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "Finance")
                 {
                     var model = await _meetingService.FetchFNPaymentHistory();
+                    if (model != null)
+                        model = model.OrderByDescending(x => x.Date).ToList();
                     var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     foreach (var item in model)
                     {
@@ -996,6 +1114,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PaymentHistory(CandidateTimelineFilter filter)
@@ -1053,6 +1172,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpGet]
         public IActionResult ResetFinaceHistoryFilter()
         {
             try
@@ -1074,11 +1195,13 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult PaymentDescription()
         {
             return View();
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> ExportPaymentHistory()
@@ -1194,6 +1317,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> InvoiceDetails()
@@ -1261,6 +1385,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> InvoiceDetails(InvoiceFilter filter)
@@ -1321,6 +1446,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> ResetInvoiceDetails()
         {
             try
@@ -1341,6 +1467,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> GetInvoiceDetails(int id, string startdate, string enddate, string Clientname, string jobcountry)
         {
@@ -1358,22 +1485,81 @@ namespace Risebird.Web.Controllers
             model.PaymentStatusList = new SelectList(meetingStatuses, "ID", "Name");
             return PartialView(model);
         }
+
         [HttpPost]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> GetInvoiceDetails(InvoiceDetailsVM model)
         {
             if (model.fileupload != null)
             {
-                var uploadedFileURL = String.Empty;
-                await _azureStorageHelper.InsertBlob(model.fileupload.FileName.Replace(" ", ""), "invoicefiles", model.fileupload);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
-                var blob = containerRef.GetBlockBlobReference(model.fileupload.FileName.Replace(" ", ""));
-                uploadedFileURL = blob.Uri.ToString();
-                model.filelink = uploadedFileURL;
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.fileupload);
+
+                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        || fileMimeType == "application/pdf")
+                {
+                    var uploadedFileURL = string.Empty;
+                    await _azureStorageHelper.InsertBlob(model.fileupload.FileName.Replace(" ", ""), "invoicefiles", model.fileupload);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+                    var blob = containerRef.GetBlockBlobReference(model.fileupload.FileName.Replace(" ", ""));
+                    uploadedFileURL = blob.Uri.ToString();
+                    model.filelink = uploadedFileURL;
+                }
+
             }
             var result = await _meetingService.SaveInvoiceDetails(model);
             TempData["SuccessErrorMessageCandidate"] = result;
             return RedirectToAction("InvoiceDetails");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetPaymentHistoryDetailsView(int id)
+        {
+            var model = await _meetingService.GetPaymentHistoryDetailsView(id);
+            //int totalAmount = model.Sum(x => x.Points);
+            //int payableAmount = 0;
+            //int Tds = 0;
+            //if (totalAmount > 0)
+            //{
+            //    payableAmount = (totalAmount - Convert.ToInt32(Math.Round(totalAmount * .1)));
+            //    Tds = totalAmount - payableAmount;
+            //}
+            foreach (var item in model)
+            {
+                item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+            }
+            return Json(new { result = model/*, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds */});
+        }
+        [HttpGet]
+        public async Task<IActionResult> CustomerDetails()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var model = await _meetingService.FetchCustomerDetails();
+                    foreach (var item in model)
+                    {  if (item.JobCountry.ToUpper() == "INDIA" || item.JobCountry == "1") 
+                            {
+                                item.JobCountry = "INDIA";
+                            }
+                            else { item.JobCountry = "OUTSIDE INDIA"; }
+                      
+                        item.CompanyType=!String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }

@@ -37,7 +37,10 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [IsNotificationSentToEI][bit] NULL,
     [IsRescheduleNotificationSent][bit] NULL,
     [EIAssigned][bit] NULL,
-    [IsNotificationSentToCandidate][bit] NULL
+    [IsNotificationSentToCandidate][bit] NULL,
+    [isAutoCancelled][bit] NULL,
+    [IsCandidateResponsed][bit] NULL,
+    [CandidateResponse][bit] NULL
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -216,6 +219,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add IsNotificationSentToCandidate  bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'isAutoCancelled')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add isAutoCancelled  bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsCandidateResponsed')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add IsCandidateResponsed  bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CandidateResponse')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add CandidateResponse  bit
 END
 END
 GO

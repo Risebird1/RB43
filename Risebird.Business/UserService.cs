@@ -23,11 +23,11 @@ namespace Risebird.Business
             _passwordHelper = passwordHelper;
         }
 
-        public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
+        public List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
         {
             try
             {
-                return _userRepository.GetMenuBasedOnUserEmailld(emailId).ToList();
+                return _userRepository.GetMenuBasedOnUserEmailld(emailId, sessionId).ToList();
             }
             catch (Exception e)
             {
@@ -35,6 +35,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> CheckMultiSession(string emailId)
+        {
+            try
+            {
+                return _userRepository.CheckMultiSession(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return true;
+            }
+        }
+
+        public async Task<bool> ClearSessionForOthersUsers(string emailId)
+        {
+            try
+            {
+                return _userRepository.ClearSessionForOthersUsers(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }       
 
         #region User Service Functions
 
@@ -56,13 +81,17 @@ namespace Risebird.Business
             try
             {
                 var user = _userRepository.GetUser(id);
-
+                var userClients = _userRepository.GetUserClients(id);
                 if (user == null)
+                {
                     return null;
+                }
                 else
+                {
+                    user.Result.ClientsArray = userClients.ToArray();
                     return user.Result;
+                }
             }
-
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -116,11 +145,11 @@ namespace Risebird.Business
 
         #region Client User Service Functions
 
-        public List<ClientUserVM> GetClientUsers()
+        public List<ClientUserVM> GetClientUsers(string EmailId)
         {
             try
             {
-                return _userRepository.GetClientUsers().ToList();
+                return _userRepository.GetClientUsers(EmailId).ToList();
             }
             catch (Exception e)
             {
@@ -159,7 +188,8 @@ namespace Risebird.Business
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
-                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
+                // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
+                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, clientUser.IsPasswordReset).Result;
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
@@ -715,6 +745,57 @@ namespace Risebird.Business
                 return _userRepository.FetchCallRecording(candidateEmailid, irfid);
             }
 
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+        {
+            try
+            {
+                return _userRepository.FetchInstaZoomAccounts();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool DeleteInstaZoomAccount(int Accountid)
+        {
+            try
+            {
+                return _userRepository.DeleteInstaZoomAccount(Accountid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public bool AddInstaZoomAccount(string AccountEmail)
+        {
+            try
+            {
+                return _userRepository.AddInstaZoomAccount(AccountEmail);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public string GetCurrentUsername(string emailId)
+        {
+            try
+            {
+                return _userRepository.GetCurrentUsername(emailId);
+            }
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

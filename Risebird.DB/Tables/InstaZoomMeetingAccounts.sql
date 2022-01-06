@@ -1,0 +1,16 @@
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'InstaZoomMeetingAccounts')
+BEGIN
+CREATE TABLE [dbo].[InstaZoomMeetingAccounts](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[AccountEmailid] [varchar](150) NULL,
+	[Active] [bit] NULL,
+ CONSTRAINT [PK_InstaZoomMeetingAccounts] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+

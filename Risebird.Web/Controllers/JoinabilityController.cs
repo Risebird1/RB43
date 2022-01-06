@@ -20,6 +20,8 @@ namespace Risebird.Web.Controllers
             _joinabilityService = joinabilityService;
             _applicationErrorLogger = applicationErrorLogger;
         }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -45,6 +47,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddJoinability(JoinabilityMatrix model)
@@ -58,12 +61,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_joinabilityService.AddJoinabilityMatrix(model))
                         {
-                            TempData["SuccessErrorMessage"] = "Joinability Matrix is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Joinability Matrix has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Joinability Matrix  is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add Joinability Matrix!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -85,6 +88,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> AddJoinability()
         {
@@ -106,6 +110,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> EditJoinability(int id)
         {
@@ -143,12 +148,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_joinabilityService.UpdateJoinabilityMatrix(skillUpdated))
                         {
-                            TempData["SuccessErrorMessage"] = "Joinability is updated Successfully";
+                            TempData["SuccessErrorMessage"] = "Joinability has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Updating Joinability is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to update Joinability!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -170,6 +175,8 @@ namespace Risebird.Web.Controllers
                 return View("Index");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> DeleteJoinabilityMatrix(int id)
         {
             try
@@ -178,12 +185,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_joinabilityService.DeleteJoinabilityMatrix(id))
                     {
-                        TempData["SuccessErrorMessage"] = "Joinability is deleted Successfully";
+                        TempData["SuccessErrorMessage"] = "Joinability has been deleted Successfully!";
                         return Json(new { url = Url.Action("Index", "Joinability") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Deletion of Joinability Failed";
+                        TempData["SuccessErrorMessage"] = "Failed to delete Joinability!";
                         return Json(new { url = Url.Action("Index", "Joinability") });
                     }
                 }

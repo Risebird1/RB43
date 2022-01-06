@@ -31,6 +31,7 @@ namespace Risebird.Web
             _meetingInviteService = meetingInviteService;
             _applicationErrorLogger = applicationErrorLogger;
         }
+        
         [HttpPost]
         public JsonResult FetchTimeZones()
         {
@@ -39,6 +40,7 @@ namespace Risebird.Web
             var currenttimezone = TimeZone.CurrentTimeZone;
             return Json(new { result = alltimezones, current = currenttimezone });
         }
+        
         [HttpPost]
         public async Task<JsonResult> SendMeetingInvite(string Subject, string candidateEmailId, DateTime startdate, DateTime enddate, string Message, string TimeZoneDetails, string AdditionalUser, string irfId = null)
         {
@@ -81,7 +83,7 @@ namespace Risebird.Web
                 _meeting.onlineMeetingProvider = "teamsForBusiness";
                 var accountEmail = await _meetingInviteService.CheckMeetingAccount(startdate, enddate);
 
-                var functionKey = "OxmckBm4R9ufD0shBeHPxvw5epdZy7IIRjyAutYOS9rpvkaSFPdMJQ==";
+                var functionKey = "IWHZK4NxjiJp1PXjPAP3S4vQ1imt3QCbG88Nepk0ZNpWaXxIyMxO6w==";
                 var path = $"MSTeamMeeting";
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, _meeting, functionKey, accountEmail, _cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;

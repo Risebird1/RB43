@@ -45,7 +45,7 @@ namespace Risebird.CommonHelper
 
         public async Task<bool> CreateUser(UserList externalUser, bool forcePasswordChangeNextLogin = false)
         {
-            var graphUser = UserViewModelToGraphUser(externalUser, false);
+            var graphUser = UserViewModelToGraphUser(externalUser, forcePasswordChangeNextLogin);
             var userJson = JsonConvert.SerializeObject(graphUser);
             var response = await SendGraphPostRequest("/users", userJson);
             var odataResponse = ODataResponseDto<GraphUserVM>.Parse(response);

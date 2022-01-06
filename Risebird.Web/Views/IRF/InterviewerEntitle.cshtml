@@ -15,7 +15,6 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
-   
     <!-- End Navbar -->
 
 
@@ -70,12 +69,14 @@
 
 
                             <div style="clear:both;padding:10px"></div>
-                            <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                            <table id="entitleTable" class="table table-striped table-bordered dt-responsive dataTable" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th >Assessment Group</th>
+                                        <th>Assessment Group</th>
+                                        <th width="30%">Category</th>
                                         <th>Primary Skills</th>
-                                        <th>Number Of Assessments</th>
+                                        <th width="4%">Number Of Assessments</th>
+                                        <th>Insta Available</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -84,12 +85,34 @@
                                     @foreach (var item in Model._assessment)
                                     {
                                         <tr>
-                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></td>
+                                            <td class="table-h">
+
+                                                @if (item.AssessmentGroup.Length > 45)
+                                                {
+
+
+                                                    <a data-tooltip="@item.AssessmentGroup" href="@Url.Action("InterviewerEntitleDetails", "IRF", new { id = item.id })">@item.AssessmentGroup.Substring(0, 45)</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("InterviewerEntitleDetails", "IRF", new { id = item.id })">@item.AssessmentGroup</a>
+                                                }
+                                            </td>
+                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.CategoryName</a></td>
                                             <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
-                                            <td class="text-right four">
+                                            @if (item.Isinstaavailable)
+                                            {
+                                                <td>Yes</td>
+                                            }
+                                            else
+                                            {
+                                                <td>No</td>
+                                            }
+                                            <td class="text-left four">
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                    <span onclick="EditAssessment(@item.id)" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
+                                                    <span onclick="EditAssessment(@item.id)" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span>
+                                                </button>
                                             </td>
 
                                         </tr>
@@ -130,42 +153,42 @@
             </button>
             <div class="modal-body" style="padding-bottom:0px" id="assessmentgrouplist">
                 @*@using (Html.BeginForm("InterviewerEntitle", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                {
+                    {
 
-                    @Html.AntiForgeryToken()
+                        @Html.AntiForgeryToken()
 
 
-                    <div class="form-horizontal w-full">
-                        <div class="clearfix">
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-horizontal w-full">
+                            <div class="clearfix">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                        </div>
-                        @Html.HiddenFor(model => model._skilldetails.id)
-                        <div class="clearfix">
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.DropDownListFor(m => m._skilldetails.SelectedSkillIds, new SelectList(Model._skilldetails.PrimarySkills, "Value", "Text", Model._skilldetails.SelectedSkillIds), new { @id = "select", @class = "form-control", @style="width:100%" })
-                                @Html.ValidationMessageFor(model => model._skilldetails.SelectedSkillIds, "", new { @class = "text-danger" })
                             </div>
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6 pl-1 pull-left">
-                                @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                                @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(model => model._skilldetails.id)
+                            <div class="clearfix">
+                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                    @Html.LabelFor(model => model._skilldetails.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.DropDownListFor(m => m._skilldetails.SelectedSkillIds, new SelectList(Model._skilldetails.PrimarySkills, "Value", "Text", Model._skilldetails.SelectedSkillIds), new { @id = "select", @class = "form-control", @style="width:100%" })
+                                    @Html.ValidationMessageFor(model => model._skilldetails.SelectedSkillIds, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-lg-6  col-md-6 col-sm-6 pl-1 pull-left">
+                                    @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                    @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <div class="card-footer" style="margin-top: 15px;">
-                                <div class="row">
-                                    <div class="col-md-12 mc-button-area">
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
-                                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closeAssessmentgroupModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            <div>
+                                <div class="card-footer" style="margin-top: 15px;">
+                                    <div class="row">
+                                        <div class="col-md-12 mc-button-area">
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                            <input style="color: #fff; line-height: 13px;" type="button" onclick="closeAssessmentgroupModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                }*@
+                    }*@
             </div>
         </div>
     </div>
@@ -175,8 +198,25 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
 <script type="text/javascript">
-    
+
     $(document).ready(function () {
         $("#btnSearch").on('click', function () {
             var value = $("#searchinput").val();
@@ -231,4 +271,46 @@
             }
         });
     }
+</script>
+<script>
+    function searchResult() {
+        $('#entitleTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#entitleTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        var table = $('#entitleTable').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+
+    };
+
+
+
 </script>

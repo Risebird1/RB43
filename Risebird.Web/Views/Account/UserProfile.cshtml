@@ -24,380 +24,400 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
-                        @using (Html.BeginForm("UserProfile", "Account", FormMethod.Post, new {id="userProfileForm", enctype = "multipart/form-data", onsubmit = "return CheckMobileCountryCode()"}))
+                        @using (Html.BeginForm("UserProfile", "Account", FormMethod.Post, new { id = "userProfileForm", enctype = "multipart/form-data", onsubmit = "return CheckMobileCountryCode()" }))
                         {
-                        @Html.HiddenFor(m => m.id)
-                        @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(m => m.id)
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
 
-                        <div class="wizard-card">
-                            <div class="tab-menu">
-                                <ul>
-                                    <li><a href="#" class="active" data-rel="tab-1">ABOUT</a></li>
-                                    @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-                                    {
-                                        var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                                        profileName = profileName.Trim('"');
-                                        @if (profileName == "Interviewer")
+                            <div class="wizard-card">
+                                <div class="tab-menu">
+                                    <ul>
+                                        <li><a href="#" class="active" data-rel="tab-1">ABOUT</a></li>
+                                        @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
                                         {
-                                            <li><a href="#" data-rel="tab-2" class="">AVAILIBILTY DETAILS</a></li>
-                                            <li><a href="#" data-rel="tab-3" class="">ACCOUNT DETAILS</a></li>
+                                            var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+                                            profileName = profileName.Trim('"');
+                                            @if (profileName == "Interviewer")
+                                            {
+                                                <li><a href="#" data-rel="tab-2" class="">AVAILIBILTY DETAILS</a></li>
+                                                <li><a href="#" data-rel="tab-3" class="">ACCOUNT DETAILS</a></li>
+                                            }
+
                                         }
+                                    </ul>
+                                </div>
 
-                                    }
-                                </ul>
-                            </div>
+                                <div class="tab-main-box">
+                                    <div class="tab-teaser">
+                                        <div class="tab-box" id="tab-1" style="display:block;">
+                                            <div class="clearfix">
+                                                <div class="col-sm-3 pull-left">
 
-                            <div class="tab-main-box">
-                                <div class="tab-teaser">
-                                    <div class="tab-box" id="tab-1" style="display:block;">
-                                        <div class="clearfix">
-                                            <div class="col-sm-3 pull-left">
+                                                    <div class="avatar-upload">
+                                                        <div class="avatar-edit">
+                                                            @Html.TextBoxFor(model => model.ImageUpload, new { type = "file", @id = "actual-btn", @hidden = "hidden", @class = "form-control", @accept = ".jpeg,.jpg,.png" })
+                                                            <label for="actual-btn"></label>
+                                                        </div>
+                                                        <div class="avatar-preview">
 
-                                                <div class="avatar-upload">
-                                                    <div class="avatar-edit">
-                                                        @Html.TextBoxFor(model => model.ImageUpload, new { type = "file", @id = "actual-btn", @hidden = "hidden", @class = "form-control", @accept = ".jpeg,.jpg,.png" })
-                                                        <label for="actual-btn"></label>
+                                                            @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
+                                                            {
+                                                                <div id="imagePreview" style="background-image: url(../../Newassets/img/default-avatar.png);">
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <div id="imagePreview" style="background-image: url(@HttpContextAccessor.HttpContext.Session.GetString("currentUserimage"));">
+                                                                </div>
+
+                                                            }
+
+                                                            <label class="choose-file-profile" for="actual-btn">Choose Picture</label>
+
+                                                        </div>
+                                                        <h6 class="upload-text">(Upload Size:600X600px)</h6>
+
                                                     </div>
-                                                    <div class="avatar-preview">
 
-                                                        @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currentUserimage")))
+                                                </div>
+                                                <div class="col-sm-9 pull-left">
+                                                    @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+                                                    {
+                                                        var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+                                                        profileName = profileName.Trim('"');
+                                                        @if (profileName == "Interviewer")
                                                         {
-                                                            <div id="imagePreview" style="background-image: url(../../Newassets/img/default-avatar.png);">
+                                                            <div class="form-group col-md-6 pull-left">
+                                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
+                                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="form-group col-md-6 pull-left">
+                                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
+                                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="form-group col-md-6 pull-left">
+                                                                @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "" })
+                                                                <span class="intrqtext">( Please enter Mobile no. with country code.Ex: +91999999999 )</span>
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlength = "13", @minlength = "13", @placeholder = "+91XXXXXXXXXX" } })
+                                                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger", @style = "position:absolute" })
+                                                                <label class="text-danger" id="mobileStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+
+                                                            </div>
+
+                                                            <div class="form-group whatsapp col-md-6 pull-left">
+                                                                @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "" })
+                                                                <span class="intrqtext">( Please enter Whatsapp no. without country code.Ex: 999999999  )</span>
+                                                                @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control  text-box single-line", @maxlength = "10", @minlength = "10" })
+                                                                @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                                             </div>
                                                         }
+
                                                         else
                                                         {
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
+                                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
+                                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @style = "padding-right:0px;" })
+                                                                <span class="rqtext">( Please enter Mobile no. with country code. Ex: +91999999999 )</span>
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line", @maxlength = "13", @minlength = "13", @placeholder = "+91XXXXXXXXXX" } })
+                                                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger", @style = "position:absolute" })
+                                                                <label class="text-danger" id="mobileStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                            </div>
 
-                                                            <div id="imagePreview" style="background-image: url(@HttpContextAccessor.HttpContext.Session.GetString("currentUserimage"));">
+                                                            <div class="form-group whatsapp">
+                                                                @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @style = "padding-right:0px;" })
+                                                                <span class="rqtext">( Please enter Whatsapp no. without country code. Ex: 999999999 )</span>
+                                                                @*@Html.TextBoxFor(model => model.WhatsappNumber, new { htmlAttributes = new { @class ="form-control col-md-10 text-box single-line",@type="number" } })*@
+                                                                @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control col-md-10 text-box single-line", @maxlength = "10", @minlength = "10" })
+                                                                @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
+
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
+
+                                                                @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line", @readonly = "readonly" } })
+                                                                @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
                                                             </div>
 
                                                         }
+                                                    }
 
-                                                        <label class="choose-file-profile" for="actual-btn">Choose Picture</label>
 
-                                                    </div>
-                                                    <h6 class="upload-text">(Upload Size:600X600px)</h6>
+
+                                                    @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+                                                    {
+                                                        var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+                                                        profileName = profileName.Trim('"');
+                                                        @if (profileName == "Interviewer")
+                                                        {
+                                                            @*<div class="form-group">
+                                                                    @Html.LabelFor(model => model.AltMobileNumber, htmlAttributes: new { @class = "control-label col-md-8 col-sm-8 col-lg-8 desp-label" })
+                                                                    @Html.EditorFor(model => model.AltMobileNumber, new { htmlAttributes = new { id = "txt_AltMobileNumber", @class = "form-control text-box single-line", @type = "text" } })
+                                                                    @Html.ValidationMessageFor(model => model.AltMobileNumber, "", new { @class = "text-danger" })
+                                                                </div>*@
+
+                                                            <div class="form-group" style="display:none">
+                                                                @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId" })
+                                                                @Html.Hidden("EmailId", Model.EmailId, htmlAttributes: new { id = "hdn_UserId" })
+                                                            </div>
+                                                            <div class="form-group col-md-6 pull-left">
+                                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "col-md-12 col-sm-12 desp-label " })
+                                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", disabled = "disabled", @readonly = "readonly" } })
+                                                                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                            <div class="form-group col-md-6 pull-left">
+                                                                @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "col-md-12 col-sm-12" })
+                                                                @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { id = "txt_AltEmailId", @class = "form-control text-box single-line", @type = "text" } })
+                                                                @Html.ValidationMessageFor(model => model.AltEmailId, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-12" style="clear:both;">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
+                                                                    @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                    @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12" style="margin-bottom:30px;">
+                                                                @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "" })
+                                                                @Html.CheckBoxFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "availcheck" })
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
+                                                                @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                            </div>
+                                                            <div class="col-md-12" style="margin:10px 0px;">
+                                                                @if (Model.ResumeLink != null)
+                                                                {
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink.Replace(" ","%20")>Resume  </a>
+                                                                }
+                                                            </div>
+                                                            @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
+                                                            <div class="col-md-12">
+                                                                @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
+                                                                @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                            </div>
+                                                            <div class="col-md-12" style="margin:10px 0px;">
+                                                                @if (Model.CodedResumeLink != null)
+                                                                {
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume  </a>
+                                                                }
+                                                            </div>
+                                                            @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
+
+                                                        }
+                                                    }
+
+
 
                                                 </div>
 
-                                            </div>
-                                            <div class="col-sm-9 pull-left">
-                                                @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-                                                {
-                                                    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                                                    profileName = profileName.Trim('"');
-                                                    @if (profileName == "Interviewer")
-                                                    {
-                                                        <div class="form-group col-md-6 pull-left">
-                                                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group col-md-6 pull-left">
-                                                            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group col-md-6 pull-left">
-                                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "" })
-                                                            <span class="intrqtext">( Please enter Mobile no. with country code.Ex: +91999999999 )</span>
-                                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlength = "13", @minlength = "13", @placeholder = "+91XXXXXXXXXX" } })
-                                                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger", @style = "position:absolute" })
-                                                            <label class="text-danger" id="mobileStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                                <div class="col-sm-12 pull-left">
 
-                                                        </div>
-
-                                                        <div class="form-group whatsapp col-md-6 pull-left">
-                                                            @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "" })
-                                                            <span class="intrqtext">( Please enter Whatsapp no. without country code.Ex: 999999999  )</span>
-                                                            @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control  text-box single-line", @maxlength = "10", @minlength = "10" })
-                                                           @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
-                                                        </div>
-                                                    }
-
-                                                    else
-                                                    {
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
-                                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @style = "padding-right:0px;" })
-                                                            <span class="rqtext">( Please enter Mobile no. with country code. Ex: +91999999999 )</span>
-                                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line", @maxlength = "13", @minlength = "13", @placeholder = "+91XXXXXXXXXX" } })
-                                                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger", @style = "position:absolute" })
-                                                            <label class="text-danger" id="mobileStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
-                                                        </div>
-
-                                                        <div class="form-group whatsapp">
-                                                            @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @style = "padding-right:0px;" })
-                                                            <span class="rqtext">( Please enter Whatsapp no. without country code. Ex: 999999999 )</span>
-                                                            @*@Html.TextBoxFor(model => model.WhatsappNumber, new { htmlAttributes = new { @class ="form-control col-md-10 text-box single-line",@type="number" } })*@
-                                                            @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control col-md-10 text-box single-line", @maxlength = "10", @minlength = "10" })
-                                                            @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
-
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
-
-                                                            @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control col-md-10 text-box single-line", @readonly = "readonly" } })
-                                                            @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
-                                                        </div>
-
-                                                    }
-                                                }
-
-
-
-                                                @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-                                                {
-                                                    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                                                    profileName = profileName.Trim('"');
-                                                    @if (profileName == "Interviewer")
-                                                    {
-                                                        @*<div class="form-group">
-                                @Html.LabelFor(model => model.AltMobileNumber, htmlAttributes: new { @class = "control-label col-md-8 col-sm-8 col-lg-8 desp-label" })
-                                @Html.EditorFor(model => model.AltMobileNumber, new { htmlAttributes = new { id = "txt_AltMobileNumber", @class = "form-control text-box single-line", @type = "text" } })
-                                @Html.ValidationMessageFor(model => model.AltMobileNumber, "", new { @class = "text-danger" })
-                            </div>*@
-
-                                                        <div class="form-group" style="display:none">
-                                                            @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId" })
-                                                            @Html.Hidden("EmailId", Model.EmailId, htmlAttributes: new { id = "hdn_UserId" })
-                                                        </div>
-                                                        <div class="form-group col-md-6 pull-left">
-                                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "col-md-12 col-sm-12 desp-label " })
-                                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", disabled = "disabled", @readonly = "readonly" } })
-                                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-                                                        </div>
-
-                                                        <div class="form-group col-md-6 pull-left">
-                                                            @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "col-md-12 col-sm-12" })
-                                                            @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { id = "txt_AltEmailId", @class = "form-control text-box single-line", @type = "text" } })
-                                                            @Html.ValidationMessageFor(model => model.AltEmailId, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="col-md-12" style="clear:both;">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
-                                                                @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                                @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
-                                                            @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                                        </div>
-                                                        <div class="col-md-12" style="margin:10px 0px;">
-                                                            @if (Model.ResumeLink != null)
-                                                            {
-                                                                <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume  </a>
-                                                            }
-                                                        </div>
-                                                      @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
-
-
-                                                    }
-                                                }
-
+                                                </div>
 
 
                                             </div>
-
-                                            <div class="col-sm-12 pull-left">
-
-                                            </div>
-
-
                                         </div>
-                                    </div>
-                                    @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-                                    {
-                                        var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                                        profileName = profileName.Trim('"');
-                                        @if (profileName == "Interviewer")
+                                        @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
                                         {
-                                            <div class="tab-box" id="tab-2">
+                                            var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+                                            profileName = profileName.Trim('"');
+                                            @if (profileName == "Interviewer")
+                                            {
+                                                <div class="tab-box" id="tab-2">
 
-                                                <div class="row">
+                                                    <div class="row">
 
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <div class="table-responsive-sm">
-                                                            <table class="table table-bordered mbn" id="availabilityDetailsTable">
-                                                                <thead class="tableHeaderClass">
-                                                                    <tr>
-                                                                        <th width="20%" class="table_heading">Week Day</th>
-                                                                        <th width="20%" class="table_heading">Week End</th>
-                                                                        <th width="5%" class="table_heading"> Available On Public Holidays</th>
-                                                                        <th width="10%" class="table_heading text-center">Action</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @if (Model.InterviewerAvailabilityDetails == null || Model.InterviewerAvailabilityDetails.Count() == 0)
-                                                                    {
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="table-responsive-sm">
+                                                                <table class="table table-bordered mbn" id="availabilityDetailsTable">
+                                                                    <thead class="tableHeaderClass">
                                                                         <tr>
-                                                                            <td>
-                                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
-                                                                            </td>
-                                                                            <td>
-                                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
-                                                                            </td>
-                                                                            <td>
-                                                                                <!--      <div class="checkbox checkbox-danger">
-                                                    @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")
-                                                    @*<label for="@Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")">Is Available On Public Holidays</label>*@
-                                                </div>-->
-
-
-
-                                                                                <div class="mdc-checkbox">
-
-                                                                                    @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
-                                                                                    <div class="mdc-checkbox__background">
-                                                                                        <svg class="mdc-checkbox__checkmark"
-                                                                                             viewBox="0 0 24 24">
-                                                                                            <path class="mdc-checkbox__checkmark-path"
-                                                                                                  fill="none"
-                                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                                        </svg>
-                                                                                        <div class="mdc-checkbox__mixedmark"></div>
-                                                                                    </div>
-                                                                                    <div class="mdc-checkbox__ripple"></div>
-
-                                                                                </div>
-
-                                                                            </td>
-                                                                            <td class="action text-center">
-                                                                                <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday','Weekend','IsAvailableOnPublicHolidays')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                            </td>
+                                                                            <th width="20%" class="table_heading">Week Day</th>
+                                                                            <th width="20%" class="table_heading">Week End</th>
+                                                                            <th width="5%" class="table_heading"> Available On Public Holidays</th>
+                                                                            <th width="10%" class="table_heading text-center">Action</th>
                                                                         </tr>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (Model.InterviewerAvailabilityDetails == null || Model.InterviewerAvailabilityDetails.Count() == 0)
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
+                                                                                    @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
+                                                                                    @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
                                                                                 </td>
                                                                                 <td>
+                                                                                    <!--      <div class="checkbox checkbox-danger">
+                                                                                        @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")
+                                                                                        @*<label for="@Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")">Is Available On Public Holidays</label>*@
+                                                                                    </div>-->
+
+
+
+
 
                                                                                     <div class="mdc-checkbox">
 
 
-                                                                                        @Html.CheckBoxFor((x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays), new { @class = "mdc-checkbox__native-control" })
-                                                                                        <div class="mdc-checkbox__background">
-                                                                                            <svg class="mdc-checkbox__checkmark"
-                                                                                                 viewBox="0 0 24 24">
-                                                                                                <path class="mdc-checkbox__checkmark-path"
-                                                                                                      fill="none"
-                                                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                                            </svg>
-                                                                                            <div class="mdc-checkbox__mixedmark"></div>
+
+                                                                                        <div class="mdc-checkbox">
+
+                                                                                            @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
+                                                                                            <div class="mdc-checkbox__background">
+                                                                                                <svg class="mdc-checkbox__checkmark"
+                                                                                                     viewBox="0 0 24 24">
+                                                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                                                          fill="none"
+                                                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                                </svg>
+                                                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                                                            </div>
+                                                                                            <div class="mdc-checkbox__ripple"></div>
+
                                                                                         </div>
-                                                                                        <div class="mdc-checkbox__ripple"></div>
 
-                                                                                    </div>
-
-
-
-
-                                                                                    <!--   <div class="checkbox checkbox-danger">
-                                                        @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)
-                                                        @*<label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>*@
-                                                    </div>-->
                                                                                 </td>
-
                                                                                 <td class="action text-center">
                                                                                     <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
                                                                                     <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday','Weekend','IsAvailableOnPublicHolidays')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                 </td>
                                                                             </tr>
                                                                         }
-                                                                    }
+                                                                        else
+                                                                        {
+                                                                            for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
+                                                                                    </td>
+                                                                                    <td>
+
+                                                                                        <div class="mdc-checkbox">
 
 
-                                                                </tbody>
-                                                            </table>
+                                                                                            @Html.CheckBoxFor((x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays), new { @class = "mdc-checkbox__native-control" })
+                                                                                            <div class="mdc-checkbox__background">
+                                                                                                <svg class="mdc-checkbox__checkmark"
+                                                                                                     viewBox="0 0 24 24">
+                                                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                                                          fill="none"
+                                                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                                </svg>
+                                                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                                                            </div>
+                                                                                            <div class="mdc-checkbox__ripple"></div>
+
+                                                                                        </div>
 
 
+
+
+                                                                                        <!--   <div class="checkbox checkbox-danger">
+                                                                                            @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)
+                                                                                            @*<label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>*@
+                                                                                        </div>-->
+                                                                                    </td>
+
+                                                                                    <td class="action text-center">
+                                                                                        <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday','Weekend','IsAvailableOnPublicHolidays')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        }
+
+
+                                                                    </tbody>
+                                                                </table>
+
+
+                                                            </div>
                                                         </div>
-                                                    </div>
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="tab-box" id="tab-3">
-                                                <div class="row">
-                                                    <div class="col-md-4 col-sm-4 pr-1">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line" })
+                                                <div class="tab-box" id="tab-3">
+                                                    <div class="row">
+                                                        <div class="col-md-4 col-sm-4 pr-1">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                                                @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line" })
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-4 col-sm-4 px-1">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { @class = "form-control text-box single-line" })
+                                                        <div class="col-md-4 col-sm-4 px-1">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                                                @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { @class = "form-control text-box single-line" })
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-4 col-sm-4 pl-1">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line" })
+                                                        <div class="col-md-4 col-sm-4 pl-1">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+                                                                @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line" })
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-4 col-sm-4 pr-1">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.UPIId, null, new { @class = "form-control text-box single-line" })
+                                                        <div class="col-md-4 col-sm-4 pr-1">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
+                                                                @Html.TextBoxFor(m => m.InterviewerAccDetails.UPIId, null, new { @class = "form-control text-box single-line" })
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-4 col-sm-4 px-1">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                                            @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line" })
+                                                        <div class="col-md-4 col-sm-4 px-1">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
+                                                                @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line" })
+                                                            </div>
                                                         </div>
-                                                    </div>
 
 
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
                                         }
-                                    }
-                              </div>
-
-                            </div>
-                        </div>
-
-                        <div class="wizard-card">
-                            <div class="card-footer-button">
-                                <div class="row">
-
-                                    <div class="col-md-12 mc-button-area mt-20">
-                                       <input type="submit" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
-                                        @*<input type="button" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SubmitForm()" />*@
-
                                     </div>
 
                                 </div>
                             </div>
-                        </div>
+
+                            <div class="wizard-card">
+                                <div class="card-footer-button">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area mt-20">
+                                            <input type="submit" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+                                            @*<input type="button" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SubmitForm()" />*@
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
                         }
 
                     </div>
-                        </div>
+                </div>
             </div>
 
 
@@ -415,9 +435,9 @@
     });
 </script>
 <script>
-  
+
     function CheckMobileCountryCode() {
-   
+
         var mobilenumberElem = document.getElementById("MobileNumber");
         if (mobilenumberElem.value != null) {
             if (mobilenumberElem.value.slice(0, 3) != "+91") {
@@ -430,7 +450,7 @@
                 document.getElementById("mobileStatus_Error").innerHTML = '';
                 return true;
             }
-           
+
         }
         return false;
     }
@@ -462,7 +482,7 @@
     //    if ($(this).valid()) {
     //        debugger;
     //        $(':submit', this).attr('disabled', 'disabled');
-         
+
     //    }
 
     //});
@@ -515,7 +535,7 @@
         }
 
         else {
-           
+
 
             //var currentvalue = $(this).attr('value');
             var closestRow = $(element).closest('tr');
@@ -573,10 +593,10 @@
 </script>
 @*<script>
 
-    $(document).ready(function($){ 
-        $("input[name=MobileNumber]").attr("type", "number");
-    });
-</script>*@
+        $(document).ready(function($){
+            $("input[name=MobileNumber]").attr("type", "number");
+        });
+    </script>*@
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Interviewer\"")
 {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>

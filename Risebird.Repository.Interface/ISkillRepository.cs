@@ -17,5 +17,6 @@ namespace Risebird.Repository.Interface
         Task<Skill> GetSkill(int id);
         Task<bool> UpdateSkill(Skill entity);
         Task<bool> DeleteSkill(int id);
+        IEnumerable<Skill> GetAssessmentGroupCategory();
     }
 }

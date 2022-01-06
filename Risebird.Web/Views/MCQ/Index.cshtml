@@ -30,7 +30,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
 <div class="main-panel" id="main-panel">
-   
+
     <!--  <div class="panel-header panel-header-sm"></div>-->
 
 
@@ -54,7 +54,7 @@
                         {
                             var profileName = @HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim();
                             profileName = profileName.Replace("\"", "");
-                            if (profileName == "Admin")
+                            if (profileName == "Admin" || profileName == "HR")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Add MCQ Set" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add MCQ</font></span>
@@ -278,7 +278,7 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon">
+                    <span>
                         <i class="fa fa-file" aria-hidden="true" style="font-size:21px"></i>
                     </span>
                 </div>
@@ -356,7 +356,7 @@
                     <div class="col-md-12">
                         <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     </div>
-                   <div class="col-md-12">   <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
+                    <div class="col-md-12">   <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
@@ -598,7 +598,7 @@
         }
     }
     function ViewDetails(id) {
-        window.location.href = "Questionpage/" + id;
+        window.location.href = "Questionpage?Id=" + id;
     }
     function ResetFilter() {
            window.location.href = "/MCQ/ResetMCQFilter";

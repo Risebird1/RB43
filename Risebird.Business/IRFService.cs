@@ -26,9 +26,12 @@ namespace Risebird.Business
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ITwilioHelper _twilioHelper;
+        private readonly ICalendlyHelper _calendlyHelper;
+        private readonly ICandidateRepository _candidateRepository;
+        private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -38,6 +41,9 @@ namespace Risebird.Business
             _activityTrackerRepository = activityTrackerRepository;
             _whatsAppHelper = whatsAppHelper;
             _twilioHelper = twilioHelper;
+            _calendlyHelper = calendlyHelper;
+            _candidateRepository = candidateRepository;
+            _interviewSchedulerRepository = interviewSchedulerRepository;
         }
 
         #region IRF Functions
@@ -45,6 +51,7 @@ namespace Risebird.Business
         {
             try
             {
+                irfDetails.IRFId = irfDetails.IRFId.Trim();
                 irfDetails.CreatedOn = DateTime.UtcNow;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
@@ -323,7 +330,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.AddSkillComments(skillComments);
+                return _irfRepository.AddSkillComments(skillComments).Result;
             }
 
             catch (Exception e)
@@ -393,7 +400,7 @@ namespace Risebird.Business
             try
             {
                 int role = 0;
-                var result = (await _irfRepository.GetIRFInterviewMeetings(id)).OrderByDescending(x => x.interviewDate).ToList();
+                var result = (await _irfRepository.GetIRFInterviewMeetings(id, email)).OrderByDescending(x => x.interviewDate).ToList();
 
                 if (email != string.Empty && profileName == "Client")
                 {
@@ -437,7 +444,23 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IRFVm> GetEditIRF(int id)
+
+        public async Task<List<MeetingVM>> GetIRFInterviewMeetingsForClient(int id, string profileName, string email)
+        {
+            try
+            {
+                var result = (await _irfRepository.GetIRFInterviewMeetings(id, email)).OrderByDescending(x => x.interviewDate).ToList();
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IRFVm> GetEditIRF(int id, bool isClone = false)
         {
             try
             {
@@ -448,7 +471,7 @@ namespace Risebird.Business
                 var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
                 var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
                 var transJoinability = _irfRepository.GetTransJoinability(id);
-                var transClientUser = _irfRepository.GetTransClientUser(id);
+                //var transClientUser = _irfRepository.GetTransClientUser(id);
                 var transInterviewer = _irfRepository.GetTransInterviewer(id);
                 var transQualityController = _irfRepository.GetTransQualityController(id);
                 var transSelectability = _irfRepository.GetTransSelectability(id);
@@ -472,11 +495,16 @@ namespace Risebird.Business
                 model.PerMintuteRate = IRF.PerMintuteRate;
                 model.QualityController = (IList<TransQualityController>)(transQualityController);
                 model.RisebirdHr = IRF.RisebirdHr;
+                model.CompanyDetails = IRF.CompanyDetails;
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
                 model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
                 model.Selectability = (IList<TransSelectability>)(transSelectability);
                 model.StartDate = IRF.StartDate;
-                model.ClientCollection = (IList<TransClientUser>)(transClientUser);
+                if (!isClone)
+                {
+                    var transClientUser = _irfRepository.GetTransClientUser(id);
+                    model.ClientCollection = (IList<TransClientUser>)(transClientUser);
+                }
                 model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
                 model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
                 model.HRCollection = (IList<TransHR>)(transHR);
@@ -691,11 +719,11 @@ namespace Risebird.Business
             }
         }
         #endregion
-        public IList<SkillComment> GetTechSkillComments(int id)
+        public IList<SkillComment> GetTechSkillComments(int id, string emailId=null)
         {
             try
             {
-                var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id);
+                var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id, emailId);
                 return result;
             }
 
@@ -899,11 +927,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int id)
+        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int id, string emailId = null)
         {
             try
             {
-                return await _irfRepository.GetIRFCandidates(id);
+                return await _irfRepository.GetIRFCandidates(id, emailId);
             }
             catch (Exception e)
             {
@@ -1033,26 +1061,57 @@ namespace Risebird.Business
                     var jdLink = irf.JDLink;
                     var client = _clientService.GetClient(irf.ClientId);
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                    //var staffingAgency = await _candidateRepository.GetCandidateStaffingAgency(candidate.id);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-
+                    string oneTimeSchedulingLink = String.Empty;
+                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    {
+                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
+                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                        {
+                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                        }
+                    }
+                    else
+                    {
+                        oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                    }
                     if (irf.BussinessType == "B2B")
                     {
-                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
+                        //_notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
+                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
 
                     }
                     else
                     {
-                        _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
+                        //_notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
+                        _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
 
                     }
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
                     _whatsapp.Header = client.Name;
-                    _whatsapp.Event = "Interview Schedule";
+                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    {
+                        _whatsapp.Event = "Interview Schedule Risebird";
+                    }
+                    else
+                    {
+                        _whatsapp.Event = "Interview Schedule";
+                    }
                     _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
-                    _whatsapp.buttonlink = !String.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
+                    if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                    {
+                        _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
+                    }
+                    else
+                    {
+                        _whatsapp.buttonlink = !string.IsNullOrEmpty(calendlyLink) ? calendlyLink.Replace("https://calendly.com/", "") : "";
+                    }
                     _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     if (candidate.TotalInvites == 0)
                     {
@@ -1720,11 +1779,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null, int id = 0)
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(int id, string emailId = null)
         {
             try
             {
-                return await _irfRepository.GetCandidateTimeline(emailId, id);
+                return await _irfRepository.GetCandidateTimeline(id, emailId);
             }
 
             catch (Exception e)
@@ -1854,15 +1913,29 @@ namespace Risebird.Business
                                {
                                    var candidate = _irfRepository.GetCandidateByIRF(irfId, candidateEmail).Result;
                                    string mailResult = string.Empty;
-                                   if (irf.BussinessType == "B2B")
+                                   string oneTimeSchedulingLink = String.Empty;
+                                   if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                                    {
-                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
-
+                                       string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length];
+                                       var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                                       oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                       if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                                       {
+                                           oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                                       }
                                    }
                                    else
                                    {
-                                       mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact);
+                                       oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
+                                   }
 
+                                   if (irf.BussinessType == "B2B")
+                                   {
+                                       mailResult = _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource);
+                                   }
+                                   else
+                                   {
+                                       mailResult = _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, candidateEmail, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource);
                                    }
                                    var index = data.Rows.IndexOf(row);
                                    if (mailResult.ToLower().Contains("success"))
@@ -1977,6 +2050,107 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewersByAssessmentGroup(assessmentGroupId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<string> GetInterviewerSkillsByUserId(int userId)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewerSkillsByUserId(userId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<Skill> GetSkills()
+        {
+            try
+            {
+                return _irfRepository.GetSkills();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<IRF>> GetAllIRFDetails(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return await _irfRepository.GetAllIRFDetails(startDate, endDate);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<SkillCahnnelDetailsVM> GetAllSkillChannelDetails()
+        {
+            try
+            {
+                var irfList = _irfRepository.GetAllSkillChannelDetails().Result.ToList();
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<int> GetInterviewerQCRate(int userId)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewerQCRate(userId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
+        {
+            try
+            {
+                string companyTypeDesc = null;
+                if (companyType != null && companyType.HasValue)
+                {
+                    companyTypeDesc = ((CompanyType)companyType).GetDescription();
+                }
+                var rate = await _irfRepository.GetInterviewerRate(userId, companyTypeDesc, countryType);
+                return rate;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
             }
         }
 

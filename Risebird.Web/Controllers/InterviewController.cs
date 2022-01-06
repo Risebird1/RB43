@@ -41,6 +41,9 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ICandidateService _candidateService;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -49,7 +52,7 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService, IFileMimeTypeHelper fileMimeTypeHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -65,10 +68,13 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _httpClient = factory.GetHttpClient();
             _whatsAppHelper = whatsAppHelper;
+            _candidateService = candidateService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -80,7 +86,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -99,15 +106,19 @@ namespace Risebird.Web.Controllers
                             modelList = modelList.Select(x =>
                             {
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                                //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                                 x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                                 x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
-                                x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
+                                //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
                                 return x;
                             }).ToList();
 
                             foreach (var item in modelList)
                             {
+                                if (item.IsQCRequired)
+                                {
+                                    item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
+                                }
                                 item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                                 if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -117,6 +128,10 @@ namespace Risebird.Web.Controllers
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
                                     }
+                                    //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                    //{
+                                    //    item.MeetingStatusStatusDesc = "Completed";
+                                    //}
                                 }
                                 else
                                 {
@@ -125,15 +140,30 @@ namespace Risebird.Web.Controllers
                                 }
 
                                 //interview status
+                                if (item.IsQCRequired)
+                                {
+                                    if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                                    {
+                                        item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                    }
+                                    else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                                    {
+                                        item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                    }
+                                    else if (item.InterviewStatus.HasValue)
+                                    {
+                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
 
-                                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                                {
-                                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                    }
                                 }
-                                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                                else
                                 {
-                                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                    if (item.InterviewStatus.HasValue)
+                                    {
+                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                    }
                                 }
+
                             }
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
 
@@ -146,6 +176,7 @@ namespace Risebird.Web.Controllers
                             filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
                             filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                             filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
+                            filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
 
                             modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && filter.RFID.Contains(c.IRFId)
@@ -155,16 +186,28 @@ namespace Risebird.Web.Controllers
                             && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
                             && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
                             && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                            && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)).ToList();
+                            && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
+                            && ((filter.IsCandidateResponsed != null && filter.IsCandidateResponsed.Count() > 0) ? filter.IsCandidateResponsed.Contains(c.IsCandidateResponsed) : c.IsCandidateResponsed == false)).ToList();
 
                         }
                         else
                         {
 
                             modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1), emailId);
-                            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                            modelList = modelList.Select(x =>
+                            {
+                                x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                                //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; 
+                                x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
+                                //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; 
+                                return x;
+                            }).ToList();
                             foreach (var item in modelList)
                             {
+                                if (item.IsQCRequired)
+                                {
+                                    item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
+                                }
                                 item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                                 if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -174,6 +217,10 @@ namespace Risebird.Web.Controllers
                                         item.MeetingStatusStatusDesc = "Status Pending";
 
                                     }
+                                    //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                    //{
+                                    //    item.MeetingStatusStatusDesc = "Completed";
+                                    //}
                                 }
                                 else
                                 {
@@ -181,13 +228,28 @@ namespace Risebird.Web.Controllers
 
                                 }
 
-                                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                                if (item.IsQCRequired)
                                 {
-                                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                    if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                                    {
+                                        item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                    }
+                                    else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                                    {
+                                        item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                    }
+                                    else if (item.InterviewStatus.HasValue)
+                                    {
+                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+
+                                    }
                                 }
-                                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                                else
                                 {
-                                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                    if (item.InterviewStatus.HasValue)
+                                    {
+                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                    }
                                 }
                             }
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
@@ -211,6 +273,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public FileContentResult InterviewsExporttoExcel()
@@ -235,16 +298,20 @@ namespace Risebird.Web.Controllers
                     modelList = modelList.Select(x =>
                     {
                         x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                        x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                        //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                         x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                         x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
-                        x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
+                        //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
                         return x;
                     }).ToList();
                     //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
 
                     foreach (var item in modelList)
                     {
+                        if (item.IsQCRequired)
+                        {
+                            item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
+                        }
                         item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                         if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -254,6 +321,10 @@ namespace Risebird.Web.Controllers
                                 item.MeetingStatusStatusDesc = "Status Pending";
 
                             }
+                            //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                            //{
+                            //    item.MeetingStatusStatusDesc = "Completed";
+                            //}
                         }
                         else
                         {
@@ -263,13 +334,28 @@ namespace Risebird.Web.Controllers
 
                         //interview status
 
-                        if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                        if (item.IsQCRequired)
                         {
-                            item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                            if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                            {
+                                item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                            }
+                            else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                            {
+                                item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                            }
+                            else if (item.InterviewStatus.HasValue)
+                            {
+                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+
+                            }
                         }
-                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                        else
                         {
-                            item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                            if (item.InterviewStatus.HasValue)
+                            {
+                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
                         }
                     }
 
@@ -522,6 +608,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> MultipleCandidateInvites()
         {
             try
@@ -531,11 +618,13 @@ namespace Risebird.Web.Controllers
 
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin")
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR")
                     {
 
-                        var modelList = _meetingService.MultipleCandidateInvites();
-                        if (profileName == "Admin")
+                        var modelList = _meetingService.MultipleCandidateInvites(emailid);
+                        if (profileName == "Admin" || profileName == "SeniorHR")
                         {
                             modelList.ForEach(x => x.IsAdmin = true);
                         }
@@ -579,7 +668,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 var selectedMeeting = new List<MeetingVM>();
-                var modelList = _meetingService.MultipleCandidateInvites();
+                var modelList = _meetingService.MultipleCandidateInvites(emailid);
 
                 modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -784,7 +873,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -807,16 +897,20 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Select(x =>
                         {
                             x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                             x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();
-                            x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
+                            //x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
                             return x;
 
                         }).ToList();
 
                         foreach (var item in modelList)
                         {
+                            if (item.IsQCRequired)
+                            {
+                                item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
+                            }
                             item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                             if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -826,6 +920,10 @@ namespace Risebird.Web.Controllers
                                     item.MeetingStatusStatusDesc = "Status Pending";
 
                                 }
+                                //else if (item.MeetingStatus.HasValue && (item.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || item.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine))
+                                //{
+                                //    item.MeetingStatusStatusDesc = "Completed";
+                                //}
                             }
                             else
                             {
@@ -835,13 +933,28 @@ namespace Risebird.Web.Controllers
 
                             //interview status
 
-                            if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                            if (item.IsQCRequired)
                             {
-                                item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
+                                {
+                                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
+                                }
+                                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                                {
+                                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                }
+                                else if (item.InterviewStatus.HasValue)
+                                {
+                                    item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+
+                                }
                             }
-                            else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
+                            else
                             {
-                                item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
+                                if (item.InterviewStatus.HasValue)
+                                {
+                                    item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                }
                             }
                         }
 
@@ -854,6 +967,7 @@ namespace Risebird.Web.Controllers
                         filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                         filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
+                        filter.IsCandidateResponsed = filter.IsCandidateResponsed == null ? filter.IsCandidateResponsed = modelList.Select(x => x.IsCandidateResponsed).ToArray() : filter.IsCandidateResponsed = filter.IsCandidateResponsed;
 
                         modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && filter.RFID.Contains(c.IRFId)
@@ -863,7 +977,8 @@ namespace Risebird.Web.Controllers
                         && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
                         && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
                         && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                        && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)).ToList();
+                        && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)
+                        && ((filter.IsCandidateResponsed != null && filter.IsCandidateResponsed.Count() > 0) ? filter.IsCandidateResponsed.Contains(c.IsCandidateResponsed) : c.IsCandidateResponsed == false)).ToList();
 
 
                         return View(modelList);
@@ -887,6 +1002,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetInterviewFilter()
         {
             try
@@ -910,6 +1026,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetMyInterviewFilter()
         {
             try
@@ -935,6 +1052,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetClientSelectedMeetingsfilters()
         {
             try
@@ -958,6 +1076,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetClientMeetingsFilter()
         {
             try
@@ -979,7 +1098,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetAllPriorityClientMeetingsFilter()
         {
             try
@@ -1125,6 +1246,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredInterviews(string filterValue)
         {
             try
@@ -1133,7 +1255,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var modelList = _meetingService.GetMeetingList();
 
@@ -1217,7 +1339,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         if (ModelState.IsValid)
                         {
@@ -1248,19 +1370,27 @@ namespace Risebird.Web.Controllers
                                 SetAddUpdateMeetingParameters(meeting);
                                 return View("Add", meeting);
                             }
+
                             if (meeting.File != null)
                             {
-                                await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meeting.File.FileName);
-                                uploadedFileURL = blob.Uri.ToString();
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.File);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(meeting.File.FileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                }
+                                else
+                                    uploadedFileURL = meeting.resumeLink;
 
                             }
                             else
                                 uploadedFileURL = meeting.resumeLink;
                             if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                             {
-                                ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
+                                ModelState.AddModelError(String.Empty, "Resume Upload has been failed.");
                                 SetAddUpdateMeetingParameters(meeting);
                                 return View("Add", meeting);
                             }
@@ -1270,12 +1400,12 @@ namespace Risebird.Web.Controllers
                                 meeting.candidateEmail = meeting.candidateEmail.ToLower();
                                 if (_meetingService.AddMeeting(meeting))
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
+                                    TempData["SuccessErrorMessageInterview"] = "Meeting has been added Successfully!";
                                     return RedirectToAction("Index");
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed";
+                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting!";
                                     return RedirectToAction("Index");
                                 }
                             }
@@ -1300,7 +1430,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Meeting addition has Failed!";
+                TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting.";
                 return RedirectToAction("Index");
             }
         }
@@ -1315,7 +1445,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         var model = new AddUpdateMeetingVM();
                         SetAddUpdateMeetingParameters(model);
@@ -1348,7 +1478,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         AddUpdateMeetingVM meetingToUpdate = await _meetingService.GetMeeting(id);
                         if (meetingToUpdate == null)
@@ -1402,7 +1532,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                     {
                         if (!string.IsNullOrEmpty(meetingUpdated.interviewer))
                         {
@@ -1440,21 +1570,27 @@ namespace Risebird.Web.Controllers
                             //String uploadedFileURL = String.Empty;
                             if ((meetingUpdated.File != null))
                             {
-
-                                await _azureStorageHelper.InsertBlob(meetingUpdated.File.FileName, "resumes", meetingUpdated.File);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(meetingUpdated.File.FileName);
-                                string uploadedFileURL = blob.Uri.ToString();
-                                if (uploadedFileURL == null)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meetingUpdated.File);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                 {
-                                    var model = new AddUpdateMeetingVM();
-                                    ModelState.AddModelError(String.Empty, "Resume Upload has failed.");
-                                    SetAddUpdateMeetingParameters(model);
-                                    return View("Edit", model);
+                                    await _azureStorageHelper.InsertBlob(meetingUpdated.File.FileName, "resumes", meetingUpdated.File);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(meetingUpdated.File.FileName);
+                                    string uploadedFileURL = blob.Uri.ToString();
+                                    if (uploadedFileURL == null)
+                                    {
+                                        var model = new AddUpdateMeetingVM();
+                                        ModelState.AddModelError(String.Empty, "Resume Upload has been Failed.");
+                                        SetAddUpdateMeetingParameters(model);
+                                        return View("Edit", model);
 
+                                    }
+
+                                    meetingUpdated.resumeLink = uploadedFileURL;
                                 }
 
-                                meetingUpdated.resumeLink = uploadedFileURL;
+
                             }
                             else if (meetingUpdated.resumeLink == null || meetingUpdated.resumeLink == "")
                             {
@@ -1468,12 +1604,12 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated successfully";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated Successfully!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has Failed";
+                                TempData["SuccessErrorMessageUpdatedInterview"] = "Failed to update Meeting!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
 
                             }
@@ -1497,12 +1633,13 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has Failed";
+                TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting update has been Failed";
                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
             }
         }
 
 
+        [HttpGet]
         private void SetAddUpdateMeetingParameters(AddUpdateMeetingVM meetingToUpdate)
         {
             var list = new List<SelectListItem>
@@ -1539,6 +1676,8 @@ namespace Risebird.Web.Controllers
             }
             return;
         }
+
+        [HttpGet]
         public async Task<List<ChannelMembersForInterviewData>> GetIRFMembersEmailsForInterviewDetails(string IRFId)
         {
             try
@@ -1584,7 +1723,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetAllOpenInterviews(emailid);
                         //meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
+                        ViewBag.emailid = emailid;
                         var list = new SelectList(new[]
 {
     new { ID = "Today", Name = "Today"},
@@ -1702,6 +1841,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredOpenInterviews(string filterValue)
         {
             try
@@ -1902,6 +2042,23 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageStartCount = 0;
                             ViewBag.PageEndCount = 0;
+                        }
+
+                        foreach (var item in myInterview)
+                        {
+                            var time = item.interviewDate.AddHours(2);
+                            var currentTime = DateTime.UtcNow;
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
+                            var timediff = time - indianTime;
+                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
+                            {
+                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+
+                            }
+                            // item.Timer = 60;
+
+
                         }
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
 
@@ -2145,6 +2302,21 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageEndCount = 0;
                         }
 
+                        foreach (var item in myInterview)
+                        {
+                            var time = item.interviewDate.AddHours(2);
+                            var currentTime = DateTime.UtcNow;
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
+                            var timediff = time - indianTime;
+                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
+                            {
+                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+
+                            }
+
+                        }
+
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
 
                     }
@@ -2166,6 +2338,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetFilteredMyInterviews(string filterValue)
         {
             try
@@ -2235,6 +2408,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> QCInterview()
@@ -2764,10 +2938,8 @@ namespace Risebird.Web.Controllers
 
         }
 
-
         [Authorize]
         [HttpGet]
-
         public IActionResult GetAllPriorityClientFilteredMeetings(string filterValue)
         {
             try
@@ -2876,7 +3048,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
 
         [Authorize]
         [HttpGet]
@@ -3011,6 +3182,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddComments(int interviewId)
@@ -3059,72 +3231,87 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller")
+                        profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                         {
 
                             if (interviewComments.AadharFile != null)
                             {
-                                await _azureStorageHelper.InsertBlob(interviewComments.AadharFile.FileName, "documents", interviewComments.AadharFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("documents");
-                                var blob = containerRef.GetBlockBlobReference(interviewComments.AadharFile.FileName);
-                                string uploadedAadharFileURL = blob.Uri.ToString();
-                                if (uploadedAadharFileURL == null)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewComments.AadharFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                 {
-                                    ModelState.AddModelError(String.Empty, "Aadhar Upload has failed.");
-                                    GetStatusList(interviewComments);
-                                    return View("InterviewComments", interviewComments);
+                                    await _azureStorageHelper.InsertBlob(interviewComments.AadharFile.FileName, "documents", interviewComments.AadharFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("documents");
+                                    var blob = containerRef.GetBlockBlobReference(interviewComments.AadharFile.FileName);
+                                    string uploadedAadharFileURL = blob.Uri.ToString();
+                                    if (uploadedAadharFileURL == null)
+                                    {
+                                        ModelState.AddModelError(String.Empty, "Aadhar Upload has failed.");
+                                        GetStatusList(interviewComments);
+                                        return View("InterviewComments", interviewComments);
+                                    }
+                                    else
+                                    {
+                                        interviewComments.AadharFileLink = uploadedAadharFileURL;
+                                    }
                                 }
-                                else
-                                {
-                                    interviewComments.AadharFileLink = uploadedAadharFileURL;
-                                }
+
                             }
                             if (interviewComments.AudioFile != null)
                             {
-
-                                await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                                var blob = containerRef.GetBlockBlobReference(interviewComments.AudioFile.FileName);
-                                string uploadedaudioFileURL = blob.Uri.ToString();
-
-                                if (uploadedaudioFileURL == null)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewComments.AudioFile);
+                                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                                 {
-                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                    GetStatusList(interviewComments);
-                                    return View("InterviewComments", interviewComments);
+                                    await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                    var blob = containerRef.GetBlockBlobReference(interviewComments.AudioFile.FileName);
+                                    string uploadedaudioFileURL = blob.Uri.ToString();
+                                    if (uploadedaudioFileURL == null)
+                                    {
+                                        ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                        GetStatusList(interviewComments);
+                                        return View("InterviewComments", interviewComments);
+                                    }
+                                    else
+                                    {
+                                        interviewComments.AudioLink = uploadedaudioFileURL;
+                                    }
                                 }
-                                else
-                                {
-                                    interviewComments.AudioLink = uploadedaudioFileURL;
-                                }
+
+
                             }
                             if (interviewComments.VideoFile != null)
                             {
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewComments.VideoFile);
+                                if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                                    || fileMimeType == "video/quicktime")
+                                {
+                                    await _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", interviewComments.VideoFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                                    var blob = containerRef.GetBlockBlobReference(interviewComments.VideoFile.FileName);
+                                    string uploadedvideoFileURL = blob.Uri.ToString();
+                                    if (uploadedvideoFileURL == null)
+                                    {
+                                        ModelState.AddModelError(String.Empty, "Video Upload has been Failed.");
+                                        GetStatusList(interviewComments);
+                                        //return View("InterviewComments", interviewComments);
+                                    }
+                                    else
+                                    {
+                                        interviewComments.VideoLink = uploadedvideoFileURL;
+                                    }
+                                }
 
-                                await _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", interviewComments.VideoFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                                var blob = containerRef.GetBlockBlobReference(interviewComments.VideoFile.FileName);
-                                string uploadedvideoFileURL = blob.Uri.ToString();
-                                if (uploadedvideoFileURL == null)
-                                {
-                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                                    GetStatusList(interviewComments);
-                                    //return View("InterviewComments", interviewComments);
-                                }
-                                else
-                                {
-                                    interviewComments.VideoLink = uploadedvideoFileURL;
-                                }
                             }
 
                             if (_meetingService.UpdateComments(interviewComments, emailid))
                             {
-                                TempData["SuccessErrorMessageInterviewComment"] = "Comments added Successfully";
+                                TempData["SuccessErrorMessageInterviewComment"] = "Comments has been added Successfully!";
                                 return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Comments add failed";
+                                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments!";
                                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
                             }
                         }
@@ -3149,14 +3336,13 @@ namespace Risebird.Web.Controllers
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                TempData["SuccessErrorMessageInterview"] = "Comments add failed";
+                TempData["SuccessErrorMessageInterview"] = "Failed to add Comments.";
                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
             }
         }
 
-
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate)
         {
             try
@@ -3168,7 +3354,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller")
+                        profileName == "Quality Controller" || profileName == "InterviewerManagement")
                     {
                         var result = _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                         TempData["SuccessErrorMessage"] = result;
@@ -3194,7 +3380,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public async Task<IActionResult> QCAssignYourself(int id)
         {
             try
@@ -3243,16 +3429,16 @@ namespace Risebird.Web.Controllers
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller")
+                        profileName == "Quality Controller" || profileName == "InterviewerManagement")
                     {
                         if (_meetingService.UnassignYourself(id, email.ToLower(), isPenalty))
                         {
-                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
+                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment has been done Successfully!";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                            TempData["SuccessErrorMessageMyInterview"] = "Sorry! Could not unassign!";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
                         }
                     }
@@ -3270,10 +3456,11 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                TempData["SuccessErrorMessageMyInterview"] = "Sorry! Could not unassign!";
                 return RedirectToAction("MyInterview");
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnAssignQC(int id)
@@ -3319,11 +3506,11 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
             try
             {
+                ViewBag.PageStatus = "Mainurl";
                 string userMenus = HttpContext.Session.GetString("userMenus");
 
                 if (userMenus == null)
@@ -3341,7 +3528,7 @@ namespace Risebird.Web.Controllers
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         isAdminHR = true;
                     }
@@ -3431,6 +3618,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.PageStatus = "Mainurl";
                 if (HttpContext.Session.GetString("email") != null &&
                     HttpContext.Session.GetString("profileName") != null)
                 {
@@ -3440,46 +3628,57 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller")
+                        profileName == "Quality Controller" || profileName == "SeniorHR")
                     {
 
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.ThumbnailImage = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.ThumbnailImage = uploadedaudioFileURL;
-                            }
+
                         }
                         string uploadedvideoFileURL = string.Empty;
 
                         if (model.VideoFile != null)
                         {
-                            AzureCall _call = new AzureCall(_configuration);
-                            //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
-                            var resulttype = _call.CallApiUpload(model.VideoFile);
-                            resulttype = resulttype.Replace("\"", "");
-                            uploadedvideoFileURL = resulttype;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
+                            if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                                || fileMimeType == "video/quicktime")
+                            {
+                                AzureCall _call = new AzureCall(_configuration);
+                                //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                                var resulttype = _call.CallApiUpload(model.VideoFile);
+                                resulttype = resulttype.Replace("\"", "");
+                                uploadedvideoFileURL = resulttype;
 
-                            if (uploadedvideoFileURL == null)
-                            {
-                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
+                                if (uploadedvideoFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.VideoLink = uploadedvideoFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.VideoLink = uploadedvideoFileURL;
-                            }
+
                         }
                         else if (model.PageVideoLink != null)
                         {
@@ -3548,6 +3747,17 @@ namespace Risebird.Web.Controllers
                         {
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
+                                //Send mail to client for report
+                                //find all IRFowner and Users
+                                var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+                                var maillist = String.Join(";", clientlist);
+                                string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
+                                Mail _mail1 = new Mail
+                                {
+                                    TO = maillist,
+                                    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
+                                };
+                                var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
                                 string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
                                 Mail _mail = new Mail
@@ -3562,27 +3772,25 @@ namespace Risebird.Web.Controllers
                                 _whatsAppVM.Event = "Feedback Remainder";
                                 _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
-                            TempData["SuccessErrorMessageInterview"] = "Report saved successfully";
-                            if (profileName == "Admin" || profileName == "HR")
+                            TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
                             }
                             else if (model.IsQC)
                             {
                                 return RedirectToAction("MyQualityControlledInterviews");
-
                             }
                             else
                             {
                                 return RedirectToAction("MyInterview");
-
                             }
 
                         }
                         else
                         {
                             TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
-                            if (profileName == "Admin" || profileName == "HR")
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
                             }
@@ -3621,6 +3829,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewComments model)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -3669,6 +3878,7 @@ namespace Risebird.Web.Controllers
             model.PreparationStatusList = new SelectList(preparationStatuses, "ID", "Name");
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0, int userId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -3785,6 +3995,7 @@ namespace Risebird.Web.Controllers
         //}
 
         //GetClientsByRoles
+        [HttpGet]
         public SelectList GetClientsByRoles(string val)
         {
             var list = new List<SelectListItem>();
@@ -3802,12 +4013,13 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public bool ChangeApproval(string imid, string value, string comment)
         {
             var result = _meetingService.PostApproval(imid, value, comment);
             if (result)
             {
-                TempData["SuccessErrorMessage"] = "Saved Successfully";
+                TempData["SuccessErrorMessage"] = "Saved Successfully!";
 
             }
             else
@@ -3817,6 +4029,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
             try
@@ -3826,7 +4039,7 @@ namespace Risebird.Web.Controllers
                 var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP, emailid);
                 if (result)
                 {
-                    TempData["SuccessErrorMessage"] = "Saved Successfully";
+                    TempData["SuccessErrorMessage"] = "Saved Successfully!";
 
                 }
                 else
@@ -3841,7 +4054,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
+        [HttpGet]
         public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled, string oldQcStatus)
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -3849,7 +4064,7 @@ namespace Risebird.Web.Controllers
             var result = _meetingService.SaveQCFeedback(imid, qcStatus, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled, oldQcStatus, emailid);
             if (result)
             {
-                TempData["SuccessErrorMessage"] = "Saved Successfully";
+                TempData["SuccessErrorMessage"] = "Saved Successfully!";
 
             }
             else
@@ -3858,7 +4073,6 @@ namespace Risebird.Web.Controllers
             return result;
 
         }
-
 
         [HttpGet]
         public ActionResult getApprovalStatusList()
@@ -3872,6 +4086,7 @@ namespace Risebird.Web.Controllers
                 Description = x.Name
             }).ToList()));
         }
+
         [HttpGet]
         public ActionResult getQCStatusList()
         {
@@ -3923,12 +4138,13 @@ namespace Risebird.Web.Controllers
             }).ToList()));
         }
 
+        [HttpGet]
         public bool ChangeSelection(string imid, string value, string comment)
         {
             var result = _meetingService.PostSelectionStatus(imid, value, comment);
             if (result)
             {
-                TempData["SuccessErrorMessageInterview"] = "Saved Successfully";
+                TempData["SuccessErrorMessageInterview"] = "Saved Successfully!";
 
             }
             else
@@ -3937,8 +4153,6 @@ namespace Risebird.Web.Controllers
             return result;
 
         }
-
-
 
         /// <summary>
         /// Export selected candidates data to excel
@@ -4136,8 +4350,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
-
 
         [Authorize]
         [HttpGet]
@@ -4643,6 +4855,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CancelInterview(int id, DateTime interviewDate, string candidateEmail)
@@ -4657,8 +4870,21 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                     if (profileName == "Candidate")
                     {
-                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        //if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        if (_meetingService.PublicCancelInterview(id))
                         {
+                            var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                            var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
+                            List<string> interviewers = new List<string>();
+                            if (!String.IsNullOrEmpty(result.interviewer))
+                            {
+                                interviewers.Add(result.interviewer);
+                            }
+                            if (!String.IsNullOrEmpty(result.EmailId))
+                            {
+                                interviewers.Add(result.EmailId);
+                            }
+                            _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                             //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
                             return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
                         }
@@ -4695,7 +4921,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
                     var model = await _meetingService.GetCandidateAudios(candidateId, irfId);
                     model.MeetingId = meetingId;
@@ -4731,23 +4957,29 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload failed.");
-                                return View("VerifyAudio", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    return View("VerifyAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
+
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "interview");
                         TempData["SuccessErrorMessageInterview"] = result;
@@ -4767,12 +4999,10 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Audio verification failed.";
+                TempData["SuccessErrorMessageInterview"] = "Audio verification has been Failed.";
                 return RedirectToAction("Index");
             }
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> VerifyMyInterviewAudio(int candidateId, int irfId, int meetingId)
@@ -4820,19 +5050,25 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload failed.");
-                                return View("VerifyMyInterviewAudio", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                    return View("VerifyMyInterviewAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
+
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+
                         }
                         var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId, "interview");
                         TempData["SuccessErrorMessage"] = result;
@@ -4852,11 +5088,12 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Audio verification failed.";
+                TempData["SuccessErrorMessage"] = "Audio verification has been Failed.";
                 return RedirectToAction("MyInterview");
             }
         }
 
+        [HttpGet]
         public bool GetTimeDifference(string interviewDate, int interviewUnassignedMinutes)
         {
             //var date2 = DateTime.Now.AddMinutes(interviewUnassignedMinutes);
@@ -4871,10 +5108,12 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public int GetInterviewUnassignedMinutes()
         {
             return _settingsService.GetInterviewUnassignedMinutes();
         }
+
         [HttpPost]
         public JsonResult Intrestreaction(string vedioid, string Status)
         {
@@ -4914,12 +5153,14 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
+
         [HttpPost]
         public JsonResult ShortListreaction(string vedioid, string Status)
         {
             _meetingService.ShortListreaction(vedioid, Status);
             return Json("Success");
         }
+
         [HttpPost]
         public JsonResult ShortListList(string IRFID)
         {
@@ -4933,6 +5174,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+
         [HttpPost]
         public JsonResult InterestList(string IRFID)
         {
@@ -4947,6 +5189,7 @@ namespace Risebird.Web.Controllers
             return Json(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteInterview(int id, string controllerName, string irfId)
         {
             try
@@ -4957,7 +5200,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (await _meetingService.DeleteInterview(id))
                     {
-                        TempData["SuccessErrorMessageUser"] = "Interview is deleted Successfully";
+                        TempData["SuccessErrorMessageUser"] = "Interview has been deleted Successfully!";
                         if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
@@ -4965,7 +5208,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageUser"] = "Delete Interview Failed";
+                        TempData["SuccessErrorMessageUser"] = "Failed to delete Interview!";
                         if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
@@ -4984,7 +5227,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUser"] = "Delete Interview Failed";
+                TempData["SuccessErrorMessageUser"] = "Failed to delete Interview";
                 if (controllerName == "IRF")
                     return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                 else
@@ -5009,17 +5252,26 @@ namespace Risebird.Web.Controllers
             string uploadedfbaudioFileURL = string.Empty;
             if (file != null)
             {
-                await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                var blob = containerRef.GetBlockBlobReference(fileName);
-                uploadedfbaudioFileURL = blob.Uri.ToString();
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                {
+                    await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedfbaudioFileURL = blob.Uri.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+
             }
             _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL, candidateType);
             return uploadedfbaudioFileURL;
         }
 
         [Authorize]
-        //[HttpPost]
+        [HttpGet]
         public IActionResult Broadcast(string message, string subject, string receiver, int irfid)
         {
 
@@ -5069,12 +5321,13 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Broadcast failed.";
+                TempData["SuccessErrorMessageInterview"] = "Broadcast has been Failed.";
                 return RedirectToAction("Index");
             }
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> CandidateVideoPage(int id)
         {
             try
@@ -5306,6 +5559,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpPost]
         public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
@@ -5323,7 +5577,7 @@ namespace Risebird.Web.Controllers
                 Subject = $"Risebird: {email} Interview video is shared with you"
             };
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, name, currenturl);
-            if (result.Contains("Mail sent successfully"))
+            if (result.Contains("Mail has been sent Successfully!"))
             {
                 return Json("Success");
             }
@@ -5358,7 +5612,9 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+
         [Authorize]
+        [HttpGet]
         public JsonResult VideoDetailsJsonView(int interviewid)
         {
             try
@@ -5421,7 +5677,6 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-
         [HttpGet]
         public async Task<IActionResult> AnalyseSentiment(int imid)
         {
@@ -5461,13 +5716,23 @@ namespace Risebird.Web.Controllers
                     var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
 
                     model.VideoFileName = model.imid + "_" + file.FileName;
-                    await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", file);
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                        || fileMimeType == "video/quicktime")
+                    {
+                        await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", file);
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Failed!";
+
+                    }
                     HttpClient httpClient = new HttpClient();
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
                     await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
-                    TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
+                    TempData["SuccessErrorMessageInterview"] = "Sentiment analysis has been started Successfully!";
                 }
                 else
                 {
@@ -5486,13 +5751,15 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
         public IActionResult UploadInterviewVideoes(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                 {
                     //fetch question details
                     var model1 = _meetingService.FetchQuestionDetails(id);
@@ -5521,7 +5788,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                 {
                     List<QuestionDetails> _question = new List<QuestionDetails>();
                     var norows = model.Keys.Count - 1 + model.Files.Count;
@@ -5535,10 +5802,17 @@ namespace Risebird.Web.Controllers
                     IFormFileCollection files1 = model.Files;
                     foreach (IFormFile item in files1)
                     {
-                        await _azureStorageHelper.InsertBlob(item.FileName, "videos", item);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                        var blob = containerRef.GetBlockBlobReference(item.FileName);
-                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        string uploadedvideoFileURL = null;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(item);
+                        if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                            || fileMimeType == "video/quicktime")
+                        {
+                            await _azureStorageHelper.InsertBlob(item.FileName, "videos", item);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            var blob = containerRef.GetBlockBlobReference(item.FileName);
+                            uploadedvideoFileURL = blob.Uri.ToString();
+                        }
+
                         var rowvalue = Convert.ToInt32(item.Name.Split("[")[1].Split("]")[0]);
                         if (uploadedvideoFileURL == null)
                         {
@@ -5578,8 +5852,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
-
         [HttpPost]
         public JsonResult FetchCandidateFeedback(int interviewid)
         {
@@ -5588,6 +5860,7 @@ namespace Risebird.Web.Controllers
             var resultset = result.Where(x => x.interviewid == interviewid).FirstOrDefault();
             return Json(resultset);
         }
+
         [HttpPost]
         public JsonResult ResendFeedbackform(int interviewid, string CandidateEmail)
         {
@@ -5603,13 +5876,13 @@ namespace Risebird.Web.Controllers
             _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
             _whatsAppVM.Event = "Feedback Remainder";
             _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
-            if (emailsend == "Mail sent Successfully.")
+            if (emailsend == "Mail has been sent Successfully!")
             {
-                return Json("Feedback Form Send Successfully");
+                return Json("Feedback Form has been sent Successfully!");
             }
             else
             {
-                return Json("Fail to send feedback form, please try again.");
+                return Json("Failed to send feedback form, please try again.");
             }
         }
 
@@ -5737,6 +6010,21 @@ namespace Risebird.Web.Controllers
                             Pagestart = 0;
                             Pageend = 0;
                         }
+
+                        foreach (var item in myInterview)
+                        {
+                            var time = item.interviewDate.AddHours(2);
+                            var currentTime = DateTime.UtcNow;
+                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
+                            var timediff = time - indianTime;
+                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
+                            {
+                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
+
+                            }
+
+                        }
                         return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
 
                     }
@@ -5759,7 +6047,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         [HttpGet]
         public IActionResult UploadInterviewAudio(int interviewId, string candidateEmail, string irfName, DateTime interviewDate, string candidateName)
         {
@@ -5768,7 +6055,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
                     var model = new SpeechToTextDTO();
                     model.InterviewId = interviewId;
@@ -5820,35 +6107,38 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (model.AudioFile != null)
                         {
-                            //string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+
                             {
-                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
-                                return View("UploadInterviewAudio", model);
-                            }
-                            else
-                            {
-                                model.AudioFileUrl = uploadedaudioFileURL;
+                                //string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                    return View("UploadInterviewAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileUrl = uploadedaudioFileURL;
+                                }
                             }
 
                             //var path = $"http://localhost:7071/api/SpeechToTextService";
-                            var path = $"https://risebirdmicroservices.azurewebsites.net/api/SpeechToTextService";
-                            var functionKey = "zcj7Mwl2xZ7j3rBjOFaCyQAIiFdeZo76bvaVIUXCAFF57Y3dvu/3nQ==";
+                            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SpeechToTextService";
+                            var functionKey = "VFkRiakLwh93q4fzZ9xx69AvKnTSbNVKQSzIaHswCMO/CgCiiOsNNQ==";
 
                             HttpClient httpClient = new HttpClient();
                             await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
-
-                            TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction("Index");
-
                         }
                         else
                         {
@@ -5861,7 +6151,7 @@ namespace Risebird.Web.Controllers
                             modelData.KeyWords = model.KeyWords;
 
                             await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
-                            TempData["SuccessErrorMessageInterview"] = "Keywords updated successfully.";
+                            TempData["SuccessErrorMessageInterview"] = "Keywords updated successfully!";
 
                             return RedirectToAction("Index");
                         }
@@ -5883,12 +6173,13 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
+                TempData["SuccessErrorMessageInterview"] = "Failed to upload Audio.";
                 return RedirectToAction("Index");
             }
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult ReassignMeetingByEI(string id)
         {
             var meetings = _meetingService.FetchOpenMeetingById(id);
@@ -5900,12 +6191,368 @@ namespace Risebird.Web.Controllers
             }
             return View(meetings);
         }
+
         [AllowAnonymous]
+        [HttpGet]
         public JsonResult ReassignMeeting(string id, string meetingid, string Emailid)
         {
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
             var codedname = _meetingService.FetchInterviewerCodedName(Emailid);
             return Json(new { meetings = meetings, codedname = codedname });
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult InstaAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        {
+            try
+            {
+                bool isInterviewer = false;
+                ViewBag.actiontype = actiontype;
+                ViewBag.IRFID = irfId;
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                GetStatusList(model, irfId, 0);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageStatus = "PublicExternal";
+                ViewBag.PageReport = "Insta";
+                if (isClient || isClientSelected)
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
+                else
+                {
+                    return View("AddReport", model);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                if (isQC)
+                {
+                    return RedirectToAction("MyQualityControlledInterviews");
+
+                }
+                else
+                {
+                    return RedirectToAction("MyInterview");
+                }
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        {
+            try
+            {
+                bool isInterviewer = false;
+                ViewBag.IRFID = irfId;
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                GetStatusList(model, irfId, 0);
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageStatus = "PublicExternal";
+                ViewBag.PageReport = "";
+                return View("AddReport", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AllMeetings");
+            }
+
+        }
+
+        [HttpGet]
+        public IActionResult PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        {
+            try
+            {
+                ViewBag.PageStatus = "PublicExternal";
+                bool isAdminHR = false;
+                bool isInterviewer = false;
+                ViewBag.actiontype = actiontype;
+                ViewBag.IRFID = irfId;
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (model == null)
+                {
+                    if (isAdminHR)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else if (isInterviewer)
+                    {
+                        if (isQC)
+                        {
+                            return RedirectToAction("MyQualityControlledInterviews");
+
+                        }
+                        else
+                        {
+                            return RedirectToAction("MyInterview");
+                        }
+                    }
+                }
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
+                ViewBag.IsClient = isClient;
+                ViewBag.IsClientSelected = isClientSelected;
+                model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
+                GetStatusList(model, irfId, 0);
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                if (menus != null)
+                {
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                }
+                ViewBag.PageReport = "External";
+                if (isClient || isClientSelected)
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
+                else
+                {
+                    return View("AddReport", model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                if (isQC)
+                {
+                    return RedirectToAction("MyQualityControlledInterviews");
+
+                }
+                else
+                {
+                    return RedirectToAction("MyInterview");
+                }
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> PublicOpenInterview(string emailid, string id)
+        {
+            try
+            {
+                ViewBag.emailid = emailid;
+                ViewBag.id = id;
+                var Emailid = String.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var meetings = _meetingService.GetAllOpenInterviews(emailid);
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                var list = new SelectList(new[]{ new { ID = "Today", Name = "Today"},
+                                                         new { ID = "Tomorrow", Name = "Tomorrow"  },
+                                                         new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                                                         new { ID = "All", Name = "All"},
+                        }, "ID", "Name", "All");
+
+                ViewData["list"] = list;
+                if (TempData["SuccessErrorMessage"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                    TempData.Remove("SuccessErrorMessage");
+                }
+                if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                return View(meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PublicOpenInterviewInvite(string id)
+        {
+            var model = new List<Meeting>();
+            ViewBag.Id = id;
+            ViewBag.PageType = "Public";
+            var list = new SelectList(new[]{ new { ID = "Today", Name = "Today"},
+                                                         new { ID = "Tomorrow", Name = "Tomorrow"  },
+                                                         new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                                                         new { ID = "All", Name = "All"},
+                        }, "ID", "Name", "All");
+
+            ViewData["list"] = list;
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View("PublicOpenInterview", model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            var role = await _meetingService.GetUniqueInterviewerByEmailId(Emailid, id);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have access.");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PublicGetFilteredOpenInterviews(string filterValue, string emailid)
+        {
+            try
+            {
+                var meetings = _meetingService.GetAllOpenInterviews(emailid);
+
+                if (filterValue == "Today")
+                {
+                    meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
+                    if (meetings.Count() == 0)
+                    {
+                        return new EmptyResult();
+                    }
+
+                }
+                else if (filterValue == "Tomorrow")
+                {
+                    meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
+                    if (meetings.Count() == 0)
+                    {
+                        return new EmptyResult();
+                    }
+                }
+                else if (filterValue == "Next Seven Days")
+                {
+                    meetings = meetings.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
+                    if (meetings.Count() == 0)
+                    {
+                        return new EmptyResult();
+                    }
+                }
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                return PartialView("GetFilteredOpenInterviews", meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> PublicAssignYourself(int id, string InterviewDate, string emailid, string uniqueid)
+        {
+            try
+            {
+                var Emailid = String.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                var result = _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
+                TempData["SuccessErrorMessage"] = result;
+                ViewBag.Message = result;
+                return RedirectToAction("PublicOpenInterview", new { emailid = emailid, id = uniqueid });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicOpenInterview", new { emailid = emailid, id = uniqueid });
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        {
+            if (_meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId))
+            {
+                if (status == 2)
+                {
+                    //send mail scheduling link
+                    var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
+                    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
+                    List<string> interviewers = new List<string>();
+                    if (!String.IsNullOrEmpty(result.interviewer))
+                    {
+                        interviewers.Add(result.interviewer);
+                    }
+                    if (!String.IsNullOrEmpty(result.EmailId))
+                    {
+                        interviewers.Add(result.EmailId);
+                    }
+                    var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                }
+                return Json("Successfully status updated");
+            }
+            else
+            {
+                return Json("Fail to Update Status, Please try again");
+            }
         }
     }
 }

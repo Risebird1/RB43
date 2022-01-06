@@ -8,7 +8,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IClientRepository
     {
-        IEnumerable<Client> GetClients();
+        IEnumerable<Client> GetClients(string emailid, string profilename);
         Task<bool> AddClient(Client client);
         Task<bool> UpdateClient(Client entity);
         Task<Client> GetClient(int id);
@@ -22,5 +22,9 @@ namespace Risebird.Repository.Interface
         Task<string> AddWalletPoints(int ClientId, string emailid, int points, string comment);
         string ResetCandidate(int Clientjdid, string candidateEmail, string emailid);
         string DeleteClientJd(int assessmentid);
+        Task<int> GetClientRoleByEmailId(string emailId);
+        Task<int> GetUniqueClientRoleByEmailId(string emailId, string id);
+        Task<string> PublicClientUrlSave(string emailId, string uniqueid);
+        Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid);
     }
 }

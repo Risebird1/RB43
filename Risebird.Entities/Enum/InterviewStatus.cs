@@ -48,6 +48,18 @@ namespace Risebird.Entities.Enum
         [Description("No Show(Interviewer)")]
         NoShowInterviewer = 5,
 
+        [Display(Name = "Dropped (Selected)")]
+        [Description("Dropped (Selected)")]
+        DroppedSelected = 6,
+
+        [Display(Name = "Dropped (Rejected)")]
+        [Description("Dropped (Rejected)")]
+        DroppedRejected = 7,
+
+        [Display(Name = "Dropped (Border Line)")]
+        [Description("Dropped (Border Line)")]
+        DroppedBorderLine = 8
+
     }
 
     public enum OfferStatus
@@ -193,9 +205,7 @@ namespace Risebird.Entities.Enum
         [Description("Manager")]
         Manager = 4,
         [Description("Architect")]
-        Architect = 5,
-        [Description("Admin")]
-        Admin = 6
+        Architect = 5       
     }
 
     public enum QuestionsLevel
@@ -281,4 +291,11 @@ namespace Risebird.Entities.Enum
     //    [Description("Communication")]
     //    Communication = 3
     //}
+    public enum InstaReceiveMeetingStatus
+    {
+        [Description("Processing")]
+        Processing = 0,
+        [Description("Confirmed")]
+        Confirmed = 1
+    }
 }

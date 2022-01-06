@@ -10,9 +10,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
   
- 
-    
-   
 Create PROCEDURE [dbo].[usp_UpdateIRFDetails]        
         
 @IRFId nvarchar(200),        
@@ -40,54 +37,85 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @PrimarySkillInvite varchar(100),  
 @BillingOwner int,  
 @AssessmentGroupId varchar(100),
+@IsQCRequired bit,
 @idIrf int output        
         
 AS        
-Begin        
+Begin 
+begin try
+
+begin tran
+
+	declare @oldCalendlyLink varchar(500), @isCalendlyChanged bit 
+	set @isCalendlyChanged=0
+	select @oldCalendlyLink = CalendlyLink from IRF where id =@id
+
+	if(@oldCalendlyLink ! = @CalendlyLink)
+	begin
+		set @isCalendlyChanged = 1
+	end
+
+	update IRF         
+	set        
+	[ClientName]=@ClientName        
+	   ,[JDTiltle]=@JDTiltle        
+	   ,[CompanyType]=@CompanyType             
+	   ,[JobCountry]=@JobCountry        
+	   ,[StartDate]=@StartDate        
+	   ,[EndDate]=@EndDate                   
+	   ,[JDLink]=@JDLink        
+	   ,[NoOfPosition]=@NoOfPosition        
+	   ,[NoOfIntterview]=@NoOfIntterview        
+	   ,[RisebirdHr]=@RisebirdHr        
+	   ,[JobLevel]=@JobLevel        
+	   ,[PerMintuteRate]=@PerMintuteRate        
+	   ,[CalendlyLink] =@CalendlyLink        
+	   ,[TotalBudget]=@TotalBudget        
+	   ,[IsBiometricEnabled]=@IsBiometricEnabled        
+	   ,[PriorityLevel]=@PriorityLevel        
+	   ,[CompanyDetails]=@CompanyDetails    
+	   ,[BussinessType]=@Type     
+	   ,[Heuristicsscore]=@Heuristicsscore    
+	   ,[PrimarySkillInvite]=@PrimarySkillInvite    
+	   ,[BillingOwner]=@BillingOwner
+	   ,[AssessmentGroupId]=@AssessmentGroupId
+	   ,[IsQCRequired] = @IsQCRequired
+	Where id =@id        
+    
+	
+	if(@isCalendlyChanged =1)
+	begin
+		if not exists(select id from TransCalendlyLinkAddedUpdated where IRFId =@id)
+		begin
+			insert into TransCalendlyLinkAddedUpdated values (@id, GETDATE())
+		end
+	end
+
+	delete from TransClientUser where IRFId=@id        
+	delete from TransInterviewer where IRFId=@id        
+	delete from TransJoinability where IRFId=@id        
         
-update IRF         
-set        
-[ClientName]=@ClientName        
-   ,[JDTiltle]=@JDTiltle        
-   ,[CompanyType]=@CompanyType             
-   ,[JobCountry]=@JobCountry        
-   ,[StartDate]=@StartDate        
-   ,[EndDate]=@EndDate                   
-   ,[JDLink]=@JDLink        
-   ,[NoOfPosition]=@NoOfPosition        
-   ,[NoOfIntterview]=@NoOfIntterview        
-   ,[RisebirdHr]=@RisebirdHr        
-   ,[JobLevel]=@JobLevel        
-   ,[PerMintuteRate]=@PerMintuteRate        
-   ,[CalendlyLink] =@CalendlyLink        
-   ,[TotalBudget]=@TotalBudget        
-   ,[IsBiometricEnabled]=@IsBiometricEnabled        
-   ,[PriorityLevel]=@PriorityLevel        
-   ,[CompanyDetails]=@CompanyDetails    
-   ,[BussinessType]=@Type     
-   ,[Heuristicsscore]=@Heuristicsscore    
-   ,[PrimarySkillInvite]=@PrimarySkillInvite    
-   ,[BillingOwner]=@BillingOwner
-   ,[AssessmentGroupId]=@AssessmentGroupId
-Where id =@id        
+	delete from TransQualityController where IRFId=@id        
         
-delete from TransClientUser where IRFId=@id        
-delete from TransInterviewer where IRFId=@id        
-delete from TransJoinability where IRFId=@id        
+	delete from TransSkillGeneral where IRFId=@id        
         
-delete from TransQualityController where IRFId=@id        
+	delete from TransTechSkill where IRFId=@id        
         
-delete from TransSkillGeneral where IRFId=@id        
-        
-delete from TransTechSkill where IRFId=@id        
-        
-delete from TransSelectability where IRFId=@id        
-delete from TransEmergencyInterviewer where IRFId=@id        
-delete from TransResumeEvaluator where IRFId=@id        
-delete from TransHR where IRFId=@id        
-delete from TransRecruiter where IRFId=@id        
-        
+	delete from TransSelectability where IRFId=@id        
+	delete from TransEmergencyInterviewer where IRFId=@id        
+	delete from TransResumeEvaluator where IRFId=@id        
+	delete from TransHR where IRFId=@id        
+	delete from TransRecruiter where IRFId=@id        
+     
+	commit tran
+
+end try
+begin catch
+	rollback transaction
+end catch
+
 End        
+           
      
     
     

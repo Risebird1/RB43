@@ -5,6 +5,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
 
 namespace Risebird.MicroService
@@ -16,13 +17,18 @@ namespace Risebird.MicroService
         private readonly INotificationHelper _notificationHelper;
         private readonly IDashboardService _dashboardService;
         private readonly IWhatsAppHelper _whatsAppHelper;
-        public SendMeetingNotification(IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
+        private readonly ICalendlyHelper _calendlyHelper;
+        private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
+
+        public SendMeetingNotification(IConfiguration configuration, IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ICalendlyHelper calendlyHelper, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _dashboardService = dashboardService;
             _whatsAppHelper = whatsAppHelper;
+            _calendlyHelper = calendlyHelper;
+            _interviewSchedulerRepository = interviewSchedulerRepository;
         }
         [FunctionName("SendMeetingNotification")]
         public async void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
@@ -118,7 +124,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Apology for the delay in the interview"
+                            Subject = $"Risebird: We apologise for the delay in the interview"
                         };
                         var resultset1 = _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
 
@@ -134,23 +140,53 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Apology for ongoing delay in the interview- Please wait for 5 more mins"
+                            Subject = $"Risebird: We apologise for the delay - Please wait for 5 more mins"
                         };
                         var resultset1 = _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName);
                     }
                     else if (item.EmailType == "Reschedule")
                     {
+                        string oneTimeSchedulingLink = String.Empty;
+                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        {
+                            string stepfirst = item.CalendlyLink.Split("?")[item.CalendlyLink.Split("?").Length];
+                            var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                            oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                            {
+                                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                            }
+                        }
+                        else
+                        {
+                            oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(item.irfId).Result;
+                        }
                         Mail _mail = new Mail
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Due to some emergency, the interviewer is unable to join the interview. Apology for inconvenience, please reschedule."
+                            Subject = $"Risebird: Due to some emergency, the interviewer is unable to join the interview. We apologise for the inconvenience, please reschedule."
                         };
                         var resultset = _notificationHelper.ReScheduleNotificationToCandidate(_mail, item.CalendlyLink, item.candidateName);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
-                        _whatsapp.Event = "Interview Reschedule";
-                        _whatsapp.buttonlink = !String.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
+                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        {
+                            _whatsapp.Event = "Interview Reschedule Risebird";
+                        }
+                        else
+                        {
+                            _whatsapp.Event = "Interview Reschedule";
+                        }
+                        if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                        {
+                            _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
+                        }
+                        else
+                        {
+                            _whatsapp.buttonlink = !string.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
+
+                        }
                         _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }
                 }

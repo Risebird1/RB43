@@ -10,15 +10,34 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[sp_GetMenuBasedOnEmailId]   
-  @EmailId nvarchar(300)     
+  @EmailId nvarchar(300),
+  @SessionId varchar(300)
 AS  
 BEGIN  
 
-	DECLARE @lastLogin AS varchar(200), @profile varchar(50);    
-	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId LIKE @EmailId   
+IF NOT EXISTS (SELECT 1  FROM  UserSessions usn inner join UserList us on us.id = usn.UserId  WHERE  usn.SessionId = @SessionId and usn.IsActive=1 and us.IsActive=1)      
+ BEGIN      
+ insert into UserSessions
+	 ([UserId],
+	[SessionId],
+	[IsActive])	
+	select id,@SessionId,1 from [dbo].[UserList] us WHERE EmailId like @EmailId 
+END
+
+
+	DECLARE @lastLogin AS varchar(200), @profile varchar(50), @roleId int;    
+	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId LIKE @EmailId  
+	set @roleId =0
 	
+
 	set @profile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id=ul.idProfile where EmailId like @EmailId and ul.IsActive=1)
 	
+
+	if(@profile = 'Client')
+	begin
+		select @roleId=cu.RoleId from UserList ul join ClientUser cu on cu.UserId =ul.id where ul.EmailId=@EmailId
+	end
+
 	update [dbo].[UserList] set LastLogin= getdate(),isonline=1 where EmailId LIKE @EmailId    
 	
 		
@@ -65,7 +84,17 @@ BEGIN
 						where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and (fn.IsUnapproved is null or fn.IsUnapproved=0) and (fn.IsLead is null or fn.IsLead=0) order by idisplayorder
 					End
 			End
-				
+			else if (@profile = 'Client' and @roleId = 4)--staffing agency
+			begin
+				select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
+					pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
+					join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
+					join [dbo].[Profile] pl on pl.id = pf.idprofile      
+					join [dbo].[UserList] ul on pl.id = ul.idprofile 
+					left join ClientUser cu on cu.UserId=ul.id
+					left join Client c on c.id=cu.ClientId
+					where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 order by idisplayorder
+			end
 			else
 				begin
 					select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    

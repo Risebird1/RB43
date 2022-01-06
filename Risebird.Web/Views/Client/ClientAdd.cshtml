@@ -20,128 +20,132 @@
                 <div class="mdc-card card bg-white">
 
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("AddClient", "Client", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("AddClient", "Client", FormMethod.Post, new { enctype = "multipart/form-data" @*, @onsubmit = "return CheckConditions()"*@ }))
                         {
 
                             @Html.AntiForgeryToken()
-                            <div class="row">
-
-                                <div class="card-header">
-                                    <h4 class="card-title">Add Client</h4>
-                                </div>
-
-                                <div style="width: 100%;">&nbsp;</div>
-                                <div class="form-horizontal w-full">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                        <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span></div>
-
-                                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-
-                                            </div>
-
-                                        </div>
-
-                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
-                                        <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
-                                            </div>
-
-                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                        <div class="form-group">
-                                            <div class="pull-left">
-                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Upload Company Logo" style="padding:0px 20px;">Upload Company Logo</label>
-                                                <input name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
-                                            </div>
-                                            <div class="pull-left">
-                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" Provide Logo URL" style="padding:0px 20px;">
-                                                    Provide Logo URL
-                                                </label>
-                                                <input name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
-                                            </div>
-                                        </div>
-                                            <div class="form-group" style="display:none" id="linkDiv">
-                                                @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.LogoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                @Html.ValidationMessageFor(model => model.LogoLink, "", new { @class = "text-danger" })
-
-                                            </div>
-                                            <div class="" style="display:none" id="uploadDiv">
-                                                @Html.LabelFor(model => model.LogoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.TextBoxFor(model => model.LogoFile, new { type = "file", @class = "form-control", @accept = ".png, .jpg, .jpeg" })
-
-                                            </div>
-                                        </div>
-
-
-
-                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                        <div class="form-group">
-                                            Upload Company Video(GIF)
-                                            <input style="position:relative;top:5px;" name="companyVideoDetails" value="Upload" type="radio" onclick="RadioVideo(this.value)">
-                                            Provide Video URL(GIF)
-                                            <input style="position:relative;top:5px;" name="companyVideoDetails" value="Link" type="radio" onclick="RadioVideo(this.value)">
-                                        </div>
-                                        <div class="form-group" style="display:none" id="linkVideoDiv">
-                                            @Html.LabelFor(model => model.CompanyVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.CompanyVideoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                            @Html.ValidationMessageFor(model => model.CompanyVideoLink, "", new { @class = "text-danger" })
-
-                                        </div>
-                                        <div class="" style="display:none" id="uploadVideoDiv">
-                                            @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control" , @accept = ".gif" })
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.CompanyLink, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-                                </div>
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Client</h4></div>
                             </div>
+
+                            <div style="width: 100%;">&nbsp;</div>
+                            <div class="form-horizontal w-full">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                        </div>
+
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                    <div class="form-group">
+                                        <div class="mandate">
+                                            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                        </div>
+
+                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    <div class="form-group">
+                                        <div class="pull-left">
+                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Upload Company Logo" style="padding:0px 20px;">Upload Company Logo</label>
+                                            <input name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
+                                        </div>
+                                        <div class="pull-left">
+                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" Provide Logo URL" style="padding:0px 20px;">
+                                                Provide Logo URL
+                                            </label>
+                                            <input name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display:none" id="linkDiv">
+                                        @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.LogoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.LogoLink, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="" style="display:none" id="uploadDiv">
+                                        @Html.LabelFor(model => model.LogoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.TextBoxFor(model => model.LogoFile, new { type = "file", @class = "form-control", @accept = ".png, .jpg, .jpeg, .gif"@*, @onchange = "Filevalidation()"*@ })
+
+                                    </div>
+                                    <p id="size_0" class="text-danger"></p>
+
+                                </div>
+
+
+
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    <div class="form-group">
+                                        Upload Company Video(GIF)
+                                        <input style="position:relative;top:5px;" name="companyVideoDetails" value="Upload" type="radio" onclick="RadioVideo(this.value)">
+                                        Provide Video URL(GIF)
+                                        <input style="position:relative;top:5px;" name="companyVideoDetails" value="Link" type="radio" onclick="RadioVideo(this.value)">
+                                    </div>
+                                    <div class="form-group" style="display:none" id="linkVideoDiv">
+                                        @Html.LabelFor(model => model.CompanyVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.CompanyVideoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.CompanyVideoLink, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="" style="display:none" id="uploadVideoDiv">
+                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control", @accept = ".gif"@*, @onchange = "Filevalidation()"*@ })
+
+                                    </div>
+                                    <p id="size_1" class="text-danger"></p>
+
+                                </div>
+
+                                <div class="col-md-12 col-sm-12 pull-left">
+                                    <div class="form-group col-md-6 nopad">
+                                        @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.CompanyLink, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
 
 
                             <div class="card-footer ">
@@ -198,3 +202,126 @@
 
     }
 </script>
+
+@*<script>
+    Filevalidation = () => {
+        debugger;
+        var result = true;
+        //const fi = document.getElementById('LogoFile');
+
+        var fi = [document.getElementById('LogoFile'), document.getElementById('VideoFile')];
+        var fiSizeLimits = [1024, 2048];
+
+        for (i = 0; i < fi.length; i++) {
+            if (fi[i].files.length > 0) {
+                //const length = fi.files.length;
+                const fsize = fi[i].files.item(0).size;
+                const file = Math.round((fsize / 1024));
+                // The size of the file.
+                if (file >= fiSizeLimits[i]) {
+                    //alert(
+                    //    "File too Big, please select a file less than 1mb");
+                    document.getElementById('size_' + i).innerHTML = 'File too big, please select a file less than' + Math.round((fiSizeLimits[i]/ 1024)) +'mb';
+                    //document.getElementById('LogoFile').focus();
+                    document.getElementById(fi[i].id).focus()
+                    //fi[i].id.focus();
+                    result = false;
+                    //} else if (file < 2048) {
+                    //    alert(
+                    //        "File too small, please select a file greater than 2mb");
+                }
+                else {
+                    document.getElementById('size_' + i).innerHTML = '';
+
+                }
+                
+            }
+            else {
+                document.getElementById('size_' + i).innerHTML = '';
+
+            }
+
+        }
+        // Check if any file is selected.
+        //if (fi.files.length > 0) {
+        //    //const length = fi.files.length;
+        //    const fsize = fi.files.item(0).size;
+        //    const file = Math.round((fsize / 1024));
+        //    // The size of the file.
+        //    if (file >= 1024) {
+        //        //alert(
+        //        //    "File too Big, please select a file less than 1mb");
+        //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
+        //        document.getElementById('LogoFile').focus();
+        //        result = false;
+        //        //} else if (file < 2048) {
+        //        //    alert(
+        //        //        "File too small, please select a file greater than 2mb");
+        //    }
+        //    else {
+        //        document.getElementById('size').innerHTML = '';
+
+        //    }
+        //    //for (const i = 0; i <= fi.files.length - 1; i++) {
+        //    //    const length = fi.files.length;
+        //    //    const fsize = fi.files.item(i).size;
+        //    //    const file = Math.round((fsize / 1024));
+        //    //    // The size of the file.
+        //    //    if (file >= 1024) {
+        //    //        alert(
+        //    //            "File too Big, please select a file less than 1mb");
+        //    //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
+        //    //        document.getElementById('LogoFile').focus();
+        //    //        result = false;
+        //    //        return;
+        //    //        //} else if (file < 2048) {
+        //    //        //    alert(
+        //    //        //        "File too small, please select a file greater than 2mb");
+        //    //    }
+        //    //    else {
+        //    //        document.getElementById('size').innerHTML = '';
+        //    //        result = false;
+
+        //    //        return;
+        //    //    }
+        //    //}
+        //}
+        //else {
+        //    document.getElementById('size').innerHTML = '';
+
+        //}
+
+        return result;
+    }
+
+    
+</script>
+<script>
+    CheckConditions = () => {
+        return (Filevalidation())
+
+    }
+    //for (const i = 0; i <= fi.files.length - 1; i++) {
+                //    const length = fi.files.length;
+                //    const fsize = fi.files.item(i).size;
+                //    const file = Math.round((fsize / 1024));
+                //    // The size of the file.
+                //    if (file >= 1024) {
+                //        alert(
+                //            "File too Big, please select a file less than 1mb");
+                //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
+                //        document.getElementById('LogoFile').focus();
+                //        result = false;
+                //        return;
+                //        //} else if (file < 2048) {
+                //        //    alert(
+                //        //        "File too small, please select a file greater than 2mb");
+                //    }
+                //    else {
+                //        document.getElementById('size').innerHTML = '';
+                //        result = false;
+
+                //        return;
+                //    }
+                //}
+</script>*@

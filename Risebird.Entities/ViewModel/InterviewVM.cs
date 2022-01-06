@@ -14,4 +14,11 @@ namespace Risebird.Entities.ViewModel
         public int QCInterview { get; set; }
 
     }
+    public class CommonInterviewDetailsVM
+    {
+        public string EmailId { get; set; }
+        public int Total { get; set; }
+        public string uniqueid { get; set; }
+
+    }
 }

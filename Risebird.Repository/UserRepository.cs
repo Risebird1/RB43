@@ -64,8 +64,29 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,
                         commandType: CommandType.StoredProcedure);
+                    user.Id = result.FirstOrDefault();
+                    DataTable UserclientDt = new DataTable();
+                    UserclientDt.Columns.Add("IRFId", typeof(int));
+                    UserclientDt.Columns.Add("ClientUserId", typeof(int));
+                    if (user.ClientsArray != null)
+                    {
+                        foreach (var item in user.ClientsArray)
+                        {
+                            UserclientDt.Rows.Add(user.Id, item);
+                        }
+
+                        SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
                     return true;
                 }
             }
@@ -118,6 +139,25 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateUser", parameters,
                         commandType: CommandType.StoredProcedure);
+                    DataTable UserclientDt = new DataTable();
+                    UserclientDt.Columns.Add("IRFId", typeof(int));
+                    UserclientDt.Columns.Add("ClientUserId", typeof(int));
+                    if (user.ClientsArray != null)
+                    {
+                        foreach (var item in user.ClientsArray)
+                        {
+                            UserclientDt.Rows.Add(user.Id, item);
+                        }
+                        SqlCommand cmdClientUser = new SqlCommand("usp_HRUserClientBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@HRUserClientBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@HRUserClientBulkData"].Value = UserclientDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
                     return true;
                 }
             }
@@ -167,7 +207,10 @@ namespace Risebird.Repository
             var parameters = new DynamicParameters();
 
             if (entity.Id > 0)
+            {
                 parameters.Add("@id", entity.Id);
+                parameters.Add("@IsActive", entity.IsActive);
+            }
             //if (entity.IdProfile.HasValue)
 
             parameters.Add("@selectedProfileId", entity.IdProfile);
@@ -176,7 +219,6 @@ namespace Risebird.Repository
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
-
             return parameters;
         }
 
@@ -188,13 +230,15 @@ namespace Risebird.Repository
         /// Get all the Client Users
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ClientUserVM> GetClientUsers()
+        public IEnumerable<ClientUserVM> GetClientUsers(string EmailId)
         {
             try
             {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", null,
+                    return SqlMapper.Query<ClientUserVM>(con, "[dbo].[sp_RisebirdClientUser]", dp,
                         commandType: StoredProcedure);
                 }
             }
@@ -358,8 +402,11 @@ namespace Risebird.Repository
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
+
+
             if (isAdd)
             {
+                parameters.Add("@IsPasswordReset", entity.IsPasswordReset);
                 if (entity.SelectedClient.HasValue)
                     parameters.Add("@selectedClientId", entity.SelectedClient);
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
@@ -781,13 +828,13 @@ namespace Risebird.Repository
         /// </summary>
         /// <param name="emailId"></param>
         /// <returns></returns>
-        public IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId)
+        public IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@EmailId", emailId); // Normal parametersmeters 
-
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@SessionId", sessionId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
@@ -803,6 +850,49 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public bool CheckMultiSession(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var isOldSessionLoggedOut = SqlMapper.Query<bool>(
+                    con, "select top 1 uss.IsActive from [dbo].[UserSessions] uss join UserList us on uss.UserId= us.id where us.EmailId = @EmailId order by uss.Id desc", new { EmailId = emailId }, commandType: Text).FirstOrDefault();
+                    return isOldSessionLoggedOut;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public bool ClearSessionForOthersUsers(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<bool>(
+                       con, "update uss  set IsActive =0,Logout=GETUTCDATE()  from [dbo].[UserSessions] uss  join UserList us on uss.UserId= us.id  where us.EmailId = @emailId", new { value = true, emailId = emailId }, commandType: Text).FirstOrDefault();
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
 
         public IEnumerable<string> GetAllHrsEmailld()
@@ -1131,7 +1221,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     // var query = "select sk.id as id,LTRIM(RTRIM(sk.Name)) as PrimarySkill,Count(*) as NoOfInterview from Skill sk join TransInterviewerSkill tis on sk.id=tis.SkillId group by sk.Name,sk.id order by LTRIM(RTRIM(sk.Name))";
-                    var query = "Select ag.id,AssessmentGroup,PrimarySkills,(Select count(*) from InterviewerAssessments where Assessmentgroupid=ag.id and isApproved=1) as Assessmentcount from AssessmentGroup ag ";
+                    var query = "Select ag.id,AssessmentGroup,PrimarySkills,(Select count(*) from InterviewerAssessments where Assessmentgroupid=ag.id and isApproved=1) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid";
                     var parameters = new DynamicParameters();
                     var results = con.Query<AssignmentVM>(query, parameters);
                     return results;
@@ -1315,6 +1405,102 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public List<string> GetUserClients(int id)
+        {
+            try
+            {
+                var query = "Select Clientid From SeniorHR where Userid=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, dynamicParameters);
+                    return (List<string>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<string>();
+        }
+        public List<ZoomAccountDetailsVM> FetchInstaZoomAccounts()
+        {
+            try
+            {
+                var query = "Select * From InstaZoomMeetingAccounts";
+                var dynamicParameters = new DynamicParameters();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<ZoomAccountDetailsVM>(query, dynamicParameters);
+                    return (List<ZoomAccountDetailsVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public bool DeleteInstaZoomAccount(int Accountid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", Accountid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<int>(con, "usp_DeleteInstaZoomAccount", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public bool AddInstaZoomAccount(string AccountEmail)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@AccountEmail", AccountEmail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_InsertInstaZoomAccount", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+
+        public string GetCurrentUsername(string emailid)
+        {
+            try
+            {
+                string connectionString = _configuration["ConnectionString:DBConnectionString"];
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select firstname  from UserList where EmailId = @id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", emailid);
+                    var results = con.Query<string>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (Exception)
+            {
+                return "";
+            }
         }
     }
 }

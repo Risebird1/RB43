@@ -22,7 +22,7 @@
                 </div>
 
                 <div class="pull-right client-ms">
-                    <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                    <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
                         <option value="1">January</option>
                         <option value="2">February</option>
                         <option value="3">March</option>
@@ -49,28 +49,42 @@
                         <span data-toggle="tooltip" data-placement="top" title="22-month end of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" title="Payment History">
-                        <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Payment History</font></span>
+                        <span class="fa fa-history" data-toggle="tooltip" data-placement="top" title="Payment History" onclick="openPaymentHistory()" data-original-title="Tooltip on top">
+                            <font style="        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        padding-left: 3px;
+">Payment History</font>
+                        </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to generate invoice.">
-                        <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Generate Invoice</font></span>
+                        <span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Click here to generate invoice." onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
+                            <font style="        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        padding-left: 3px;">Generate Invoice</font>
+                        </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" title="Click here to Advance Payment.">
-                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Click here to Advance Payment." onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">Advance Payment</font></span>
+                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Click here to Advance Payment." onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;padding-left:3px;">Advance Payment</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                         @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>*@
-                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
+                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
+                            <font style="        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        padding-left: 3px;
+"> Export Excel</font>
+                        </span>
                     </button>
                     <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
 
-                        <div class="searchCon">
-
+                        <div class="searchCon mt-20">
                             <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="">
+                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeypress="searchResultEnter(event)" value="@ViewBag.Searchvalue">
+
+                            <span id="trigger-update-search" class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
 
 
 
-                            <button style="display:none;" type="button" id="x">x</button>
 
                         </div>
                     </div>
@@ -101,9 +115,15 @@
 
                                         <div class="clearfix"></div>
                                         <div>
-                                            <label id="txtAmount">Amount: @ViewBag.totalAmount </label>
-                                            <label id="txtTdsdeducted">Tds deducted: @ViewBag.Tds</label>
-                                            <label id="txtPayableAmount">Payable Amount: @ViewBag.payableAmount</label>
+                                            <label id="txtAmount" style="padding:0 0 0 0">Amount: @ViewBag.totalAmount </label> |
+                                            <label id="txtTdsdeducted" style="padding:0 0 0 0">Tds: @ViewBag.Tds</label> |
+                                            <label id="txtPayableAmount" style="padding:0 0 0 0">Payable Amount: @ViewBag.payableAmount</label> |
+                                            <label id="txtpaidamount" style="padding:0 0 0 0">Paid Amount: 0</label> |
+                                            <label id="txtinterviewamount" style="padding:0 0 0 0">Interview Amount: 0</label> |
+                                            <label id="txtnoshowamount" style="padding:0 0 0 0">No Show Amount: 0</label> |
+                                            <label id="txtdroppedamount" style="padding:0 0 0 0">Dropped Amount: 0</label> |
+                                            <label id="txtpendingamount" style="padding:0 0 0 0">Pending Amount: 0</label> |
+                                            <label id="txtqcamount" style="padding:0 0 0 0">QC Amount: 0</label>
                                         </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
@@ -449,24 +469,44 @@
         var html = '';
         html += '<div class="pagination-container">';
         html += '<ul class="pagination">';
-        for (var i = 1; i <= pagecount; i++) {
+        var abc = currentpage - 5;
+        var pagevale = pagecount - currentpage;
+        if (pagevale < 9) {
+            abc = pagecount - 9;
+        }
+        if (abc < 0) {
+            abc = 1;
+        } else {
+            abc = currentpage - 1;
+        }
+
+        var next = abc + 2;
+        var nextset = abc + 10;
+        var previousset = abc + 9;
+        if (next = pagecount) {
+            next = pagecount;
+        }
+        if (nextset >= pagecount) {
+            nextset = pagecount;
+        }
+        for (var i = abc; i <= pagecount; i++) {
             if (i == currentpage) {
                 html += '   <li class="active"><span>' + i + '</span></li>';
-            } else if (i <= 10) {
+            } else if (i <= previousset) {
                 if (Generateinvoiceflag == 2) {
                     html += '<li><a onclick="FinacneChangePage(' + i + ')">' + i + '</a></li> ';
                 } else {
                     html += '<li><a href="/Finance/FNPayment?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '&st=' + St_date + '&se=' + Se_date + '">' + i + '</a></li>';
                 }
-            } else if (i == 11) {
+            } else if (i == nextset) {
                 if (Generateinvoiceflag == 2) {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(2)" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 }
                 else {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
             } else {
@@ -475,11 +515,11 @@
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 if (Generateinvoiceflag == 2) {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(2)" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 } else {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                    html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
             }
@@ -645,7 +685,17 @@
             confirmButtonText: 'Yes',
         }).then((result) => {
             if (result.value) {
-                window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
+                $.ajax({
+                    url: "/Finance/ConfirmPayment",
+                    type: "POST",
+                    data: { id: interviewerid, index: Generateinvoiceflag, email: $("#hidcomment_" + interviewerid).val(), amount: $("#hidpoint_" + interviewerid).val(), st: St_date, se: Se_date },
+                    dataType: 'json',
+                    success: function (data) {
+                        swal.fire(data);
+                        Fetchinvoice(actionbutton, 1);
+                    }
+                });
+                //window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
             }
         })
     }
@@ -796,7 +846,13 @@
                     bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry, data.currentpage);
                     $("#txtAmount").text("Amount: " + data.totalAmount);
                     $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
-                    $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
+                    $("#txtTdsdeducted").text("Tds: " + data.tds);
+                    $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
+                    $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
+                    $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
+                    $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
+                    $("#txtpendingamount").text("Pending Amount: " + data.pendingAmount);
+                    $("#txtqcamount").text("QC Amount: " + data.qcamount);
                 }
             }
         });
@@ -831,7 +887,13 @@
                             $(".Fnactive-header").addClass("mdc-button--raised");
                             $("#txtAmount").text("Amount: " + data.totalAmount);
                             $("#txtPayableAmount").text("Payable Amount: " + data.payableAmount);
-                            $("#txtTdsdeducted").text("Tds deducted: " + data.tds);
+                            $("#txtTdsdeducted").text("Tds: " + data.tds);
+                            $("#txtpaidamount").text("Paid Amount: " + data.totalpaidamount);
+                            $("#txtinterviewamount").text("Interview Amount: " + data.totalinterviewamount);
+                            $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
+                            $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
+                            $("#txtpendingamount").text("Pending Amount: " + data.pendingAmount);
+                            $("#txtqcamount").text("QC Amount: " + data.qcamount);
                         }
                     }
                 });
@@ -850,5 +912,69 @@
     function openPaymentHistory() {
         window.location.href = "/Finance/PaymentHistory";
     }
+    function Changemonth() {
+        $(".Fnactive-header").removeClass("Fnactive-header-button");
+        $(".Fnactive-header").addClass("mdc-button--raised");
+        bindtableDataChangeMonth();
+        bindPagesChangeMonth();
+        $("#txtAmount").text("Amount: 0");
+        $("#txtPayableAmount").text("Payable Amount: 0");
+        $("#txtTdsdeducted").text("Tds: 0");
+        $("#txtpaidamount").text("Paid Amount: 0");
+        $("#txtinterviewamount").text("Interview Amount: 0");
+        $("#txtnoshowamount").text("No Show Amount: 0");
+        $("#txtdroppedamount").text("Dropped Amount: 0");
+        $("#txtpendingamount").text("Pending Amount: 0");
+        $("#txtqcamount").text("QC Amount: 0");
+    }
+    function bindtableDataChangeMonth() {
+        var html = '';
+        html += '  <tr>';
+        html += ' <td colspan="9" class="text-center">No data available in table</td>';
+        html += ' </tr>';
+        $("#tblbodyPayment").empty().html(html);
+    }
+    function bindPagesChangeMonth() {
+        St_date = '';
+        Se_date = '';
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing 0 to 0 of 0 entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
+
+    }
 </script>
 
+<script>
+    function RefreshSearch() {
+        $(".dataTables_filter input").val('');
+        searchResult();
+    }
+
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+
+
+
+
+    });
+</script>

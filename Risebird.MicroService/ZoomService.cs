@@ -26,23 +26,27 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IZoomHelper _zoomHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
         private readonly string ContainerName;
-        private readonly string SASConnectionString;
+        //private readonly string SASConnectionString;
 
-        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository)
+        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _meetingRespository = meetingRespository;
+            _zoomHelper = zoomHelper;
+            _sasUrlHelper = sasUrlHelper;
             ContainerName = _configuration["SASURLSettings:ContainerName"];
-            SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
+            //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
 
 
         }
         [FunctionName("ZoomService")]
-        public async Task Run([TimerTrigger("0 0 */3 * * *")] TimerInfo myTimer, ILogger log) //after every 3 hours
+        public async Task Run([TimerTrigger("0 0 */6 * * *")] TimerInfo myTimer, ILogger log) //after every 6 hours
         {
             try
             {
@@ -50,6 +54,9 @@ namespace Risebird.MicroService
 
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
 
+                //get jwt authentication token 
+                //string token = ZoomToken();
+                string token = _zoomHelper.ZoomToken();
 
                 Parallel.ForEach(pendingVideoMeetings, meeting =>
                 {
@@ -80,8 +87,7 @@ namespace Risebird.MicroService
                                 meeting.ZoomMeetingId = zoommeetingId.ToString();
                             }
 
-                            //get jwt authentication token 
-                            string token = ZoomToken();
+                            
 
                             //create HTTP Rest Client
                             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));
@@ -131,7 +137,8 @@ namespace Risebird.MicroService
 
 
                                         //generate SAS URL from the uploaded video url
-                                        var sas = CreateSasUrl();
+                                        //var sas = CreateSasUrl();
+                                        var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
 
                                         if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
                                         {
@@ -174,79 +181,6 @@ namespace Risebird.MicroService
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-        }
-
-        private string ZoomToken()
-        {
-            // Token will be good for 1 day
-            DateTime Expiry = DateTime.UtcNow.AddDays(1);
-
-
-            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
-            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
-
-            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
-
-            // Create Security key  using private key above:
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
-
-            // length should be >256b
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            //Finally create a Token
-            var header = new JwtHeader(credentials);
-
-            //Zoom Required Payload
-            var payload = new JwtPayload
-            {
-                { "iss", ApiKey},
-                { "exp", ts },
-            };
-
-            var secToken = new JwtSecurityToken(header, payload);
-            var handler = new JwtSecurityTokenHandler();
-
-            // Token to String so you can use it in your client
-            var tokenString = handler.WriteToken(secToken);
-
-            return tokenString;
-        }
-
-        private string CreateSasUrl()
-        {
-            BlobContainerClient blobcontainerclient = new BlobContainerClient(SASConnectionString, ContainerName);
-            var uri = GetServiceSasUriForContainer(blobcontainerclient);
-            return uri.AbsoluteUri.ToString().Split("?")[1].ToString();
-        }
-        private Uri GetServiceSasUriForContainer(BlobContainerClient containerClient, string storedPolicyName = null)
-        {
-            if (containerClient.CanGenerateSasUri)
-            {
-                BlobSasBuilder sasBuilder = new BlobSasBuilder()
-                {
-                    BlobContainerName = containerClient.Name,
-                    Resource = "c",
-                };
-                if (storedPolicyName == null)
-                {
-
-                    sasBuilder.SetPermissions(BlobContainerSasPermissions.Read);
-                    sasBuilder.StartsOn = DateTimeOffset.UtcNow;
-                    sasBuilder.ExpiresOn = DateTimeOffset.UtcNow.AddMonths(7);
-                    sasBuilder.Protocol = SasProtocol.Https;
-
-                }
-                else
-                {
-                    sasBuilder.Identifier = storedPolicyName;
-                }
-                Uri sasUri = containerClient.GenerateSasUri(sasBuilder);
-                return sasUri;
-            }
-            else
-            {
-                return null;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FileTypeInterrogator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -37,10 +38,19 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly IClientService _clientService;
+        private readonly ICalendlyHelper _calendlyHelper;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IIRFRepository _irfRepository;
+        private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
 
         //private static string Searchvalue;
-
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper)
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
+            IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
+            IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
+            INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
+            ISASUrlHelper sasUrlHelper, IClientService clientService,
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, IInterviewSchedulerRepository interviewSchedulerRepository)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -53,7 +63,14 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _whatsAppHelper = whatsAppHelper;
             _sasUrlHelper = sasUrlHelper;
+            _calendlyHelper = calendlyHelper;
+            _clientService = clientService;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
+            _irfRepository = irfRepository;
+            _interviewSchedulerRepository = interviewSchedulerRepository;
         }
+
+        [HttpGet]
         public async Task<IActionResult> CandidateTimeline()
         {
             var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -62,8 +79,9 @@ namespace Risebird.Web.Controllers
             emailid = emailid.Replace("\"", "");
             try
             {
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                 {
+
                     var model = new List<CandidateTimelineVM>();
 
                     var candidateData = new List<CandidateTimelineData>();
@@ -73,38 +91,54 @@ namespace Risebird.Web.Controllers
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" ? emailid : null)).ToList();
+                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                         }
                         else
                         {
                             //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                            candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
                         }
                     }
                     else
                     {
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                     }
-
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                     foreach (var candidate in distinctCandidates)
                     {
                         var firstData = new CandidateTimelineData();
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
-                        if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                        //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                        //{
+                        //    data = data.Where(x => x.confirmationStatus == 1);
+                        //    var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        //    var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //    firstData = data.FirstOrDefault();
+                        //}
+                        //else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                        //{
+                        //    var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        //    var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //    data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                        //    firstData = data.FirstOrDefault();
+                        //}
+                        if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            //data = data.Where(x => x.confirmationStatus != 2);
-                            //data = data.OrderByDescending(x => x.InterviewId);
-                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                            firstData = data.FirstOrDefault();
                         }
                         else
                         {
                             firstData = data.FirstOrDefault();
-                        }
 
+                        }
                         var candidateTimeline = new CandidateTimelineVM();
 
                         candidateTimeline.HREmail = firstData.HREmail;
@@ -207,6 +241,13 @@ namespace Risebird.Web.Controllers
                                 interviewStatusObjList.Add(interviewStatusObj);
                             }
                             candidateTimeline.InterviewStatus = interviewStatusObjList;
+                        }
+                        if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                        {
+                            if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                            {
+                                candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                            }
                         }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
@@ -286,6 +327,12 @@ namespace Risebird.Web.Controllers
                         }
 
                     }
+                    if (profileName == "Client")
+                    {
+                        var role = await _clientService.GetClientRoleByEmailId(emailid);
+                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                    }
+                    ViewBag.Profile = profileName;
                     return View(model);
 
                 }
@@ -301,6 +348,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("CandidateTimeline");
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> CandidateTimeline(CandidateTimelineFilter filter)
         {
@@ -310,7 +358,7 @@ namespace Risebird.Web.Controllers
             emailid = emailid.Replace("\"", "");
             try
             {
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                 {
                     var model = new List<CandidateTimelineVM>();
 
@@ -322,30 +370,60 @@ namespace Risebird.Web.Controllers
                     var candidateData = new List<CandidateTimelineData>();
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(filter.StartDate.Value, filter.EndDate.Value, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
 
                     }
                     else
                     {
                         //candidateData = (await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null)).ToList();
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" ? emailid : null)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-7), DateTime.Now, profileName == "Client" || profileName == "SeniorHR" ? emailid : null)).ToList();
                     }
                     var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+
                     foreach (var candidate in distinctCandidates)
                     {
                         var firstData = new CandidateTimelineData();
                         var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
-                        if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                        //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                        //{
+                        //    //data = data.Where(x => x.confirmationStatus != 2);
+                        //    //data = data.OrderByDescending(x => x.InterviewId);
+                        //    firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //}
+                        //else
+                        //{
+                        //    firstData = data.FirstOrDefault();
+                        //}
+                        //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                        //{
+
+                        //    data = data.Where(x => x.confirmationStatus == 1);
+                        //    var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        //    var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //    firstData = data.FirstOrDefault();
+                        //}
+                        //else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                        //{
+                        //    var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        //    var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //    data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                        //    firstData = data.FirstOrDefault();
+                        //}
+
+                        if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            //data = data.Where(x => x.confirmationStatus != 2);
-                            //data = data.OrderByDescending(x => x.InterviewId);
-                            firstData = data.Where(x => x.confirmationStatus == 1).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                            var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                            firstData = data.FirstOrDefault();
                         }
                         else
                         {
                             firstData = data.FirstOrDefault();
-                        }
 
+                        }
                         var candidateTimeline = new CandidateTimelineVM();
 
                         candidateTimeline.HREmail = firstData.HREmail;
@@ -449,6 +527,13 @@ namespace Risebird.Web.Controllers
                             }
                             candidateTimeline.InterviewStatus = interviewStatusObjList;
                         }
+                        if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                        {
+                            if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                            {
+                                candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                            }
+                        }
                         //add candidate to final model
                         if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
                         {
@@ -520,6 +605,12 @@ namespace Risebird.Web.Controllers
                         model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
 
                     }
+                    if (profileName == "Client")
+                    {
+                        var role = await _clientService.GetClientRoleByEmailId(emailid);
+                        ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                    }
+                    ViewBag.Profile = profileName;
                     return View(model);
 
                 }
@@ -541,6 +632,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
+        [HttpGet]
         public async Task<FileContentResult> CandidateStatusExporttoExcel(/*string modelData*/)
         {
             ExcelPackage Ep = new ExcelPackage();
@@ -584,13 +676,42 @@ namespace Risebird.Web.Controllers
                 foreach (var candidate in distinctCandidates)
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
-                    if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
-                    {
-                        data = data.Where(x => x.confirmationStatus != 2);
-                        data = data.OrderByDescending(x => x.InterviewId);
-                    }
-                    var firstData = data.FirstOrDefault();
+                    //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    //{
+                    //    data = data.Where(x => x.confirmationStatus != 2);
+                    //    data = data.OrderByDescending(x => x.InterviewId);
+                    //}
+                    //var firstData = data.FirstOrDefault();
+                    var firstData = new CandidateTimelineData();
 
+                    //if (data.Where(x => x.confirmationStatus == 1).Any() && data.Where(x => x.confirmationStatus == 2).Any())
+                    //{
+                    //    data = data.Where(x => x.confirmationStatus == 1);
+                    //    var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                    //    var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                    //    firstData = data.FirstOrDefault();
+                    //}
+                    //else if (data.Where(x => x.confirmationStatus == 1).Any() && !data.Where(x => x.confirmationStatus == 2).Any())
+                    //{
+                    //    var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                    //    var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                    //    data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                    //    firstData = data.FirstOrDefault();
+                    //}
+                    if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        var interviewDates = data.Select(x => (x.interviewDate, x.InterviewId)).Distinct();
+                        var latestInterviewDate = interviewDates.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        data = data.Where(x => x.interviewDate == latestInterviewDate.interviewDate);
+
+                        firstData = data.FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+
+                    }
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
@@ -694,6 +815,13 @@ namespace Risebird.Web.Controllers
                         }
                         candidateTimeline.InterviewStatus = interviewStatusObjList;
                     }
+                    if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                    {
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
+                    }
                     //add candidate to final model
                     if (candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
                     {
@@ -771,7 +899,11 @@ namespace Risebird.Web.Controllers
                     }
 
                 }
-
+                int role = 0;
+                if (profileName == "Client")
+                {
+                    role = await _clientService.GetClientRoleByEmailId(emailid);
+                }
 
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
@@ -787,11 +919,17 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 4].Value = "Client HR Email";
                 Sheet.Cells[1, 5].Value = "Candidated Added On/At";
                 Sheet.Cells[1, 6].Value = "Schedule Status";
-                Sheet.Cells[1, 7].Value = "Current Status";
-                Sheet.Cells[1, 8].Value = "Current Status Date";
-                Sheet.Cells[1, 9].Value = "Profile Source";
-                Sheet.Cells[1, 10].Value = "Skill Channel ID";
-                Sheet.Cells[1, 11].Value = "Phone";
+                Sheet.Cells[1, 7].Value = "Phone";
+
+                if (role != (int)ClientRoleEnum.RestrictedIRFowner)
+                {
+                    Sheet.Cells[1, 8].Value = "Current Status";
+                    Sheet.Cells[1, 9].Value = "Current Status Date";
+                    Sheet.Cells[1, 10].Value = "Profile Source";
+                    Sheet.Cells[1, 11].Value = "Skill Channel ID";
+                }
+
+
 
 
                 int i = 2;
@@ -830,28 +968,33 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 6].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
                         }
 
-                        if (!string.IsNullOrEmpty(item.CurrentStatus))
-                        {
-                            Sheet.Cells[i, 7].Value = item.CurrentStatus;
-                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 7].Value = string.Empty;
-                            Sheet.Cells[i, 8].Value = string.Empty;
-                        }
-                        if (!string.IsNullOrEmpty(item.ProfileSource))
-                        {
-                            Sheet.Cells[i, 9].Value = item.ProfileSource;
+                        Sheet.Cells[i, 7].Value = item.Phone ?? string.Empty;
 
-                        }
-                        else
+                        if (role != (int)ClientRoleEnum.RestrictedIRFowner)
                         {
-                            Sheet.Cells[i, 9].Value = string.Empty;
+                            if (!string.IsNullOrEmpty(item.CurrentStatus))
+                            {
+                                Sheet.Cells[i, 8].Value = item.CurrentStatus;
+                                Sheet.Cells[i, 9].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 8].Value = string.Empty;
+                                Sheet.Cells[i, 9].Value = string.Empty;
+                            }
+                            if (!string.IsNullOrEmpty(item.ProfileSource))
+                            {
+                                Sheet.Cells[i, 10].Value = item.ProfileSource;
+
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 10].Value = string.Empty;
+                            }
+
+                            Sheet.Cells[i, 11].Value = item.IRFName;
                         }
 
-                        Sheet.Cells[i, 10].Value = item.IRFName;
-                        Sheet.Cells[i, 11].Value = item.Phone ?? string.Empty;
 
                         i++;
                     }
@@ -876,6 +1019,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetCandidateTimelineFilter()
         {
             try
@@ -911,14 +1055,16 @@ namespace Risebird.Web.Controllers
 
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
                         ViewBag.Profile = profileName;
-
+                        var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim();
+                        ClientRole = ClientRole.Replace("\"", "");
+                        ViewBag.ClientRole = ClientRole;
                         var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
-                        var candidateList = (await _irfService.GetIRFCandidates(id))?.ToList();
+                        var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                         if (profileName == "Recruiter")
                         {
                             var userId = _irfService.GetUserId(emailid, profileName);
@@ -940,10 +1086,11 @@ namespace Risebird.Web.Controllers
                         }
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            searchValue = searchValue.ToUpper();
+                            searchValue = searchValue.ToUpper().Trim();
                             candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                         }
+
                         ViewBag.TotalCount = candidateList.Count;
 
                         ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
@@ -1009,7 +1156,7 @@ namespace Risebird.Web.Controllers
 
 
                 var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
-                var candidateList = (await _irfService.GetIRFCandidates(id))?.ToList();
+                var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
                 if (profileName == "Recruiter")
                 {
                     var userId = _irfService.GetUserId(emailid, profileName);
@@ -1025,7 +1172,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (!String.IsNullOrEmpty(searchValue))
                 {
-                    searchValue = searchValue.ToUpper();
+                    searchValue = searchValue.ToUpper().Trim();
                     candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
                 }
@@ -1063,6 +1210,7 @@ namespace Risebird.Web.Controllers
             }
             else { return Json("Failed"); }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Add(string irfId, string irfName)
@@ -1075,7 +1223,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         var model = new Candidate
                         {
@@ -1117,8 +1265,17 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
+                        if (!string.IsNullOrEmpty(model.EmailId))
+                        {
+                            model.EmailId = model.EmailId.ToLower();
+                        }
+                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
+                        {
+                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
+                        }
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
@@ -1156,7 +1313,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         var model = await _irfService.GetCandidate(id, Convert.ToInt32(irfId));
                         model.IRFName = irfName;
@@ -1197,16 +1354,24 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
+                        if (!string.IsNullOrEmpty(model.EmailId))
+                        {
+                            model.EmailId = model.EmailId.ToLower();
+                        }
+                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
+                        {
+                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
+                        }
                         if (await _irfService.UpdateCandidate(model, emailid))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate has been updated Successfully!";
                             return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
+                            TempData["SuccessErrorMessageCandidate"] = "Failed to update Candidate!";
                             return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
 
@@ -1225,10 +1390,11 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
+                TempData["SuccessErrorMessageCandidate"] = "Failed to update  Candidate!";
                 return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> ExportCandidateList(string irfId, string irfName)
@@ -1244,10 +1410,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(irfId), profileName, emailid))?.ToList();
-                        var candidateList = (await _irfService.GetIRFCandidates(Convert.ToInt32(irfId)))?.ToList();
+                        var candidateList = (await _irfService.GetIRFCandidates(Convert.ToInt32(irfId), emailid))?.ToList();
                         if (candidateList != null && candidateList.Count > 0)
                         {
                             candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
@@ -1410,16 +1576,16 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         if (await _irfService.DeleteCandidate(id))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate deleted Successfully";
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate has been deleted Successfully!";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
+                            TempData["SuccessErrorMessageCandidate"] = "Failed to delete Candidate!";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
                         }
                     }
@@ -1437,7 +1603,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
+                TempData["SuccessErrorMessageCandidate"] = "Failed to delete Candidate!";
                 return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
             }
 
@@ -1455,7 +1621,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         if (endDate < DateTime.Now)
                         {
@@ -1464,7 +1630,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Invitation sent successfully!";
+                            TempData["SuccessErrorMessageCandidate"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
                         }
                         else
@@ -1505,12 +1671,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
 
                         if (await _irfService.CancelInvite(irfId, emailId))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Invite cancelled successfully!";
+                            TempData["SuccessErrorMessageCandidate"] = "Invite has been cancelled Successfully!";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
                         }
                         else
@@ -1547,7 +1713,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter" || profileName == "SeniorHR")
                 {
                     var model = await _evaluatorService.GetCandidate(candidateId, irfId);
                     model.CandidateAudios = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).Where(x => x.IsVoiceBiometric == true).ToList();
@@ -1602,23 +1768,30 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
-                                return View("UploadAudio", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                    return View("UploadAudio", model);
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+
+
                         }
 
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -1626,12 +1799,12 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
                         {
-                            TempData["SuccessErrorMessageUploadAudio"] = "Audio uploaded successfully";
+                            TempData["SuccessErrorMessageUploadAudio"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+                            TempData["SuccessErrorMessageUploadAudio"] = "Failed to upload Audio!";
                             return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
                         }
                     }
@@ -1648,7 +1821,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+                TempData["SuccessErrorMessageUploadAudio"] = "Failed to upload Audio!";
                 return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
             }
         }
@@ -1664,7 +1837,6 @@ namespace Risebird.Web.Controllers
             return new SelectList(listItems, "Value", "Text", listItems.First().Value);
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Report(int candidateId, int irfId, string rfName)
         {
@@ -1673,7 +1845,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
                 {
                     var model = await _evaluatorService.GetEvaluatorReport(candidateId, irfId);
                     model.HRReport = await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId);
@@ -1710,12 +1882,87 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter" || profileName == "SeniorHR")
                     {
 
                         if (await _evaluatorService.AddSelectabilityReport(model))
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Data saved successfully";
+                            TempData["SuccessErrorMessageCandidate"] = "Data has been saved Successfully!";
+                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FitmentReport(int candidateId, int irfId, string rfName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                {
+                    var model = await _candidateService.GetFitmentReportReport(candidateId, irfId);
+                    //model.HRReport = await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId);
+                    //model.TechSkillEvaluatorReportCollection = await _evaluatorService.GetTechReport(candidateId, irfId);
+                    //model.SkillGeneralEvaluatorReportCollection = await _evaluatorService.GetSkillGeneralReport(candidateId, irfId);
+                    //model.CandidateAudioCollection = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).ToList().Where(x => !x.IsVoiceBiometric).ToList();
+                    model.Profile = profileName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("GetCandidates", new { id = irfId, irfName = rfName });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> FitmentReport(FitmentReportModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+
+                        if (await _candidateService.AddEditFitmentReport(model))
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Data has been saved Successfully!";
                             return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
                         else
@@ -1816,7 +2063,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
         //[ValidateAntiForgeryToken]
         //[HttpPost]
         //public async Task<IActionResult> AddStatus(CandidateStatus model)
@@ -1880,8 +2126,6 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-
-
         [HttpPost]
         public async Task<IActionResult> AddStatus()
         {
@@ -1933,25 +2177,34 @@ namespace Risebird.Web.Controllers
                             if (Request.Form.Files.Count() > 0)
                             {
                                 var audioFile = Request.Form.Files[0];
-                                await _azureStorageHelper.InsertBlob(audioFile.FileName, "audios", audioFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                                var blob = containerRef.GetBlockBlobReference(audioFile.FileName);
-                                string uploadedaudioFileURL = blob.Uri.ToString();
-                                if (uploadedaudioFileURL == null)
+                                if (audioFile != null)
                                 {
-                                    TempData["SuccessErrorMessageCandidate"] = "Audio Upload failed.";
-                                    return Json(false);
+                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(audioFile);
+                                    if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                                    || fileMimeType == "audio/x-wav")
+                                    {
+                                        await _azureStorageHelper.InsertBlob(audioFile.FileName, "audios", audioFile);
+                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                        var blob = containerRef.GetBlockBlobReference(audioFile.FileName);
+                                        string uploadedaudioFileURL = blob.Uri.ToString();
+                                        if (uploadedaudioFileURL == null)
+                                        {
+                                            TempData["SuccessErrorMessageCandidate"] = "Failed to upload Audio!";
+                                            return Json(false);
 
+                                        }
+                                        else
+                                        {
+                                            model.AudioFileLink = uploadedaudioFileURL;
+                                        }
+                                    }
                                 }
-                                else
-                                {
-                                    model.AudioFileLink = uploadedaudioFileURL;
-                                }
+
                             }
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
                             {
-                                TempData["SuccessErrorMessageCandidate"] = "Candidate status saved successfully.";
+                                TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
                             }
                             else
                             {
@@ -1983,7 +2236,6 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-
 
         [HttpGet]
         public async Task<IActionResult> EditStatus(int id, int candidateId, int irfId, string rfName, string candidateName)
@@ -2031,30 +2283,36 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg"
+                            || fileMimeType == "audio/x-wav")
                             {
-                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
-                                return RedirectToAction("StatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    TempData["SuccessErrorCandidateStatus"] = "Failed to upload Audio!";
+                                    return RedirectToAction("StatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
 
+                                }
+                                else
+                                {
+                                    model.AudioFileLink = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
+
                         }
 
                         if (await _irfService.EditCandidateStatus(model))
                         {
-                            TempData["SuccessErrorCandidateStatus"] = "Candidate status updated successfully.";
+                            TempData["SuccessErrorCandidateStatus"] = "Candidate status has been updated Successfully!";
                             return RedirectToAction("StatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
                         }
                         else
@@ -2091,7 +2349,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         var result = await _irfService.DeleteCandidateStatus(id);
                         return Json(result);
@@ -2115,6 +2373,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> OpenInvites()
@@ -2236,6 +2495,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+
         [HttpPost]
         public JsonResult InterestList(string IRFID)
         {
@@ -2251,6 +2511,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> Video(int id)
         {
             try
@@ -2277,6 +2538,7 @@ namespace Risebird.Web.Controllers
                             var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
                             if (valuestatus == "Yes")
                             {
+
                                 var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                 emailaddress = emailaddress.Replace("\"", "");
                                 await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
@@ -2420,6 +2682,7 @@ namespace Risebird.Web.Controllers
                         NewModel.InterviewerComment = model.InterviewerComment;
                         NewModel.InterviewStatus = model.InterviewStatus;
                         NewModel.JDTiltle = model.JDTiltle;
+
                         NewModel.JDLink = model.JDLink;
                         NewModel.MeetingStatus = model.MeetingStatus;
                         NewModel.confirmationStatus = model.confirmationStatus;
@@ -2483,6 +2746,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -2503,6 +2767,7 @@ namespace Risebird.Web.Controllers
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
 
+        [HttpGet]
         public JsonResult ChangeCandidateStatus(int videoid, string Status)
         {
             try
@@ -2598,7 +2863,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 4].Value = "Phone(With Country code)";
                 Sheet.Cells[1, 5].Value = "WhatsApp Number(Without Country code)";
                 Sheet.Cells[1, 6].Value = "Client HR Email ID";
-                Sheet.Cells[1, 7].Value = "Profile Source";
+                Sheet.Cells[1, 7].Value = "Staffing Agency Email ID";
 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 
@@ -2634,57 +2899,78 @@ namespace Risebird.Web.Controllers
 
                         if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
                         {
-
-                            string fileName = file.FileName;
-                            string fileContentType = file.ContentType;
-                            byte[] fileBytes = new byte[file.Length];
-                            var data = file.OpenReadStream();
-                            var candidateList = new List<CandidateQuickAddModel>();
-                            using (var package = new ExcelPackage(file.OpenReadStream()))
+                            FileInfo fi = new FileInfo(file.FileName);
+                            if (fi.Extension == ".xls" || fi.Extension == ".xlsx")
                             {
-                                var currentSheet = package.Workbook.Worksheets;
-                                var workSheet = currentSheet.First();
-                                var noOfCol = workSheet.Dimension.End.Column;
-                                var noOfRow = workSheet.Dimension.End.Row;
-                                for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    || fileMimeType == "application/vnd.ms-excel")
                                 {
-                                    if (workSheet.Cells[rowIterator, 2].Value != null)
+                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                    string fileName = file.FileName;
+                                    string fileContentType = file.ContentType;
+                                    byte[] fileBytes = new byte[file.Length];
+                                    var data = file.OpenReadStream();
+                                    var candidateList = new List<CandidateQuickAddModel>();
+                                    using (var package = new ExcelPackage(file.OpenReadStream()))
                                     {
-                                        var candidate = new CandidateQuickAddModel
+                                        var currentSheet = package.Workbook.Worksheets;
+                                        var workSheet = currentSheet.First();
+                                        var noOfCol = workSheet.Dimension.End.Column;
+                                        var noOfRow = workSheet.Dimension.End.Row;
+                                        for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
                                         {
-                                            Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                            EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim(),
-                                            ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
-                                                ? workSheet.Cells[rowIterator, 3].Value.ToString()
-                                                : string.Empty,
-                                            Phone = (workSheet.Cells[rowIterator, 4].Value != null)
-                                                ? ("+" + workSheet.Cells[rowIterator, 4].Value)
-                                                : string.Empty,
-                                            WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                                ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                                : string.Empty,
-                                            ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
-                                                ? workSheet.Cells[rowIterator, 6].Value.ToString()
-                                                : string.Empty,
-                                            ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
-                                            IRFId = IRFId
-                                        };
+                                            if (workSheet.Cells[rowIterator, 2].Value != null)
+                                            {
+                                                var candidate = new CandidateQuickAddModel
+                                                {
+                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                    EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
+                                                    ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
+                                                        ? workSheet.Cells[rowIterator, 3].Value.ToString()
+                                                        : string.Empty,
+                                                    Phone = (workSheet.Cells[rowIterator, 4].Value != null)
+                                                        ? ("+" + workSheet.Cells[rowIterator, 4].Value)
+                                                        : string.Empty,
+                                                    WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                                        ? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                                        : string.Empty,
+                                                    //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
+                                                    //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
+                                                    //    : string.Empty,
+                                                    ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
 
-                                        candidateList.Add(candidate);
+                                                    ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
+                                                    IRFId = IRFId
+
+                                                };
+
+                                                candidateList.Add(candidate);
+                                            }
+                                        }
+
                                     }
+                                    StringBuilder result = new StringBuilder();
+                                    if (candidateList != null && candidateList.Any())
+                                    {
+                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                                    }
+                                    else
+                                    {
+                                        result.Append("No candidates to add!");
+                                    }
+                                    return result.ToString();
                                 }
+                                else
+                                {
+                                    return "Please select valid file for import(.xls, .xslx)!";
 
-                            }
-                            StringBuilder result = new StringBuilder();
-                            if (candidateList != null && candidateList.Any())
-                            {
-                                result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
+                                }
                             }
                             else
                             {
-                                result.Append("No candidates to add!");
+                                return "Please select valid file for import(.xls, .xslx)!";
                             }
-                            return result.ToString();
                         }
                         else
                         {
@@ -2723,6 +3009,7 @@ namespace Risebird.Web.Controllers
 
                     return PartialView("StatusListPartial", model);
 
+
                 }
                 else
                 {
@@ -2738,6 +3025,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> AutoCallCandidate(string phoneNumber, int irfId, int candidateId)
         {
             try
@@ -2760,6 +3048,7 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> CancelInterviewProcess(int id)
@@ -2773,14 +3062,35 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> CancelInterviewProcess(int id, string CandidateEmail)
         {
             var model = await _candidateService.CancelInterviewDetails(id, CandidateEmail);
+
             if (model.Contains("Successfully"))
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
+                string oneTimeSchedulingLink = String.Empty;
+                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                {
+                    string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
+                    var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                    oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                    if (String.IsNullOrEmpty(oneTimeSchedulingLink))
+                    {
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid);
+                    }
+                }
+                else
+                {
+                    oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(result.irfIntId).Result;
+                }
+
+
+
                 List<string> interviewers = new List<string>();
                 if (!String.IsNullOrEmpty(result.interviewer))
                 {
@@ -2790,15 +3100,29 @@ namespace Risebird.Web.Controllers
                 {
                     interviewers.Add(result.EmailId);
                 }
-                _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString());
+                _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
-                _whatsapp.Event = "Interview Reschedule Send";
+                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                {
+                    _whatsapp.Event = "Interview Reschedule Send Risebird";
+                }
+                else
+                {
+                    _whatsapp.Event = "Interview Reschedule Send";
+                }
                 _whatsapp.InterviewDate = result.interviewDate.ToString();
                 _whatsapp.Header = result.ClientName;
                 _whatsapp.MessageValue = result.JDTiltle;
-                _whatsapp.buttonlink = !String.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
+                if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
+                {
+                    _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
+                }
+                else
+                {
+                    _whatsapp.buttonlink = !String.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
+                }
                 _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);
@@ -2814,7 +3138,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new UploadCandidateResumesViewModel();
                         //var candidateDetails = await _candidateService.GetCandidatesDetails(irfId, candidateId);
@@ -2947,7 +3271,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         if (ModelState.IsValid)
                         {
@@ -2964,22 +3288,44 @@ namespace Risebird.Web.Controllers
                                         //upload in blob and get the link and and the entry in the list
                                         var fileName = file.FileName.Replace(" ", "_");
                                         FileInfo fi = new FileInfo(fileName);
-                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
-                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                        var blob = containerRef.GetBlockBlobReference(fileName);
-                                        string uploadedaudioFileURL = blob.Uri.ToString();
-                                        string sasUrl = string.Empty;
-                                        if (uploadedaudioFileURL == null)
+                                        if (fi.Extension.ToLower() == ".docx" || fi.Extension.ToLower() == ".doc" || fi.Extension.ToLower() == ".pdf")
                                         {
-                                            ModelState.AddModelError(string.Empty, "Resume upload has failed.");
-                                            return View(model);
+                                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                            {
+
+                                                await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                                string sasUrl = string.Empty;
+                                                if (uploadedaudioFileURL == null)
+                                                {
+                                                    ModelState.AddModelError(string.Empty, "Resume upload has failed.");
+                                                    return View(model);
+                                                }
+                                                else
+                                                {
+                                                    //generate SAS URL from the uploaded video url
+                                                    var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                                    sasUrl = uploadedaudioFileURL + "?" + sas;
+                                                    resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                                return View(model);
+
+                                            }
+
                                         }
                                         else
                                         {
-                                            //generate SAS URL from the uploaded video url
-                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
-                                            sasUrl = uploadedaudioFileURL + "?" + sas;
-                                            resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                            ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
+                                            return View(model);
+
                                         }
                                     }
 
@@ -2987,11 +3333,11 @@ namespace Risebird.Web.Controllers
                                     var result = await _candidateService.AddResume(resumeList);
                                     if (result)
                                     {
-                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) uploaded successfully.";
+                                        TempData["SuccessErrorMessageCandidateResume"] = "Resume(s) has been uploaded Successfully!";
                                     }
                                     else
                                     {
-                                        TempData["SuccessErrorMessageCandidateResume"] = "Failed to upload Resume(s)";
+                                        TempData["SuccessErrorMessageCandidateResume"] = "Failed to upload Resume(s)!";
 
                                     }
                                     return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
@@ -3046,7 +3392,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new ResumeListViewModel();
                         model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
@@ -3091,7 +3437,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var result = await _candidateService.DeleteCandidateResume(id);
                         return Json(result);
@@ -3206,6 +3552,613 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
+        [HttpGet]
+        public async Task<IActionResult> PublicCandidateStatus(string emailid, string id)
+        {
+            try
+            {
+                var Emailid = String.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+                var model = new List<CandidateTimelineVM>();
+                ViewBag.emailid = emailid;
+                ViewBag.id = id;
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+                HttpContext.Session.Remove("PublicCandidateStatusfilters");
+                var candidateData = new List<CandidateTimelineData>();
+                candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+                foreach (var candidate in distinctCandidates)
+                {
+                    var firstData = new CandidateTimelineData();
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
+
+                    var candidateTimeline = new CandidateTimelineVM();
+
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ProfileSource = firstData.ProfileSource;
+                    candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                    candidateTimeline.Phone = firstData.MobileNumber;
+                    candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
+                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.imid = firstData.imid;
+                    candidateTimeline.CalendlyLink = firstData.CalendlyLink;
+                    candidateTimeline.staffingAgency = firstData.staffingAgency;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                    }
+                    if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                    {
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
+                    }
+                    //add candidate to final model
+                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
+                    {
+                        model.Add(candidateTimeline);
+                    }
+                }
+                var role = await _clientService.GetClientRoleByEmailId(emailid);
+                ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                ViewBag.Profile = "Client";
+                ViewBag.PageStatus = "Public";
+                if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicAllMeetings", new { id = id });
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.id = id;
+            try
+            {
+                var model = new List<CandidateTimelineVM>();
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("PublicCandidateStatusfilters", JsonConvert.SerializeObject(filter));
+                }
+                var candidateData = new List<CandidateTimelineData>();
+                int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 1;
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
+                }
+                else
+                {
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, datatype, emailid)).ToList();
+                }
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+                foreach (var candidate in distinctCandidates)
+                {
+                    var firstData = new CandidateTimelineData();
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
+
+                    var candidateTimeline = new CandidateTimelineVM();
+
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ProfileSource = firstData.ProfileSource;
+                    candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                    candidateTimeline.Phone = firstData.MobileNumber;
+                    candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
+                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.imid = firstData.imid;
+                    candidateTimeline.CalendlyLink = firstData.CalendlyLink;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                    }
+                    if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                    {
+                        if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                        {
+                            candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
+                    }
+                    //add candidate to final model
+                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
+                    {
+                        model.Add(candidateTimeline);
+                    }
+                }
+                filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
+                filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
+                filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                if (filter.HREmail != null)
+                {
+                    model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
+                }
+                if (filter.ProfileSource != null)
+                {
+                    model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+                }
+                if (filter.MeetingStatus != null)
+                {
+                    model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
+                }
+                var role = await _clientService.GetClientRoleByEmailId(emailid);
+                ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
+                ViewBag.Profile = "Client";
+                ViewBag.PageStatus = "Public";
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PublicAllMeetings(string id)
+        {
+            var model = new List<CandidateTimelineVM>();
+            ViewBag.PageType = "Public";
+            ViewBag.Id = id;
+            ViewBag.Status = "Client";
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View("PublicCandidateStatus", model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> PublicAllMeetings(string id, string Emailid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            var role = await _clientService.GetUniqueClientRoleByEmailId(Emailid, id);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have access.");
+            }
+        }
+
+        [HttpGet]
+        public async Task<FileContentResult> PublicCandidateStatusExporttoExcel(string emailid)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Status");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
+            try
+            {
+                var model = new List<CandidateTimelineVM>();
+                var candidateData = new List<CandidateTimelineData>();
+                if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                    int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 1;
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
+                    }
+                    else
+                    {
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, datatype, emailid)).ToList();
+                    }
+                }
+                else
+                {
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                }
+
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+                foreach (var candidate in distinctCandidates)
+                {
+                    var firstData = new CandidateTimelineData();
+                    var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
+                    if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
+                    {
+                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                    }
+                    else
+                    {
+                        firstData = data.FirstOrDefault();
+                    }
+                    firstData = data.FirstOrDefault();
+
+                    var candidateTimeline = new CandidateTimelineVM();
+
+                    candidateTimeline.HREmail = firstData.HREmail;
+                    candidateTimeline.CandidateEmailId = firstData.EmailId;
+                    candidateTimeline.CandidateName = firstData.Name;
+                    candidateTimeline.IRFId = firstData.IRFId;
+                    candidateTimeline.InterviewId = firstData.InterviewId;
+                    candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                    candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                    candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                    candidateTimeline.QCStatus = firstData.QCStatus;
+                    candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                    candidateTimeline.ProfileSource = firstData.ProfileSource;
+                    candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                    candidateTimeline.IRFName = firstData.IRFName;
+                    candidateTimeline.Phone = firstData.Phone;
+                    candidateTimeline.interviewDate = firstData.interviewDate.ToString();
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                    {
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var scheduleStatusObjList = new List<TimelineStatus>();
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status" && x.ScheduleStatusComments != CandidateStatusOptions.QCPending.GetDescription()))
+                        {
+                            var scheduleStatusObj = new TimelineStatus();
+                            scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
+                            scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
+                            scheduleStatusObj.Time = item.ScheduleStatusDate.ToString("hh:mm tt");
+                            scheduleStatusObj.Status = item.ScheduleStatusValue;
+                            scheduleStatusObj.ActualDate = item.ScheduleStatusDate;
+                            scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
+                            scheduleStatusObjList.Add(scheduleStatusObj);
+                        }
+                        candidateTimeline.ScheduleStatus = scheduleStatusObjList;
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+                            candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
+                    {
+                        model.Add(candidateTimeline);
+                    }
+                }
+                if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
+                    filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
+                    filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
+                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                    if (filter.HREmail != null)
+                    {
+                        model = model.Where(x => filter.HREmail.Contains(x.PrimarySkill)).ToList();
+                    }
+                    if (filter.ProfileSource != null)
+                    {
+                        model = model.Where(x => filter.ProfileSource.Contains(x.ProfileSource)).ToList();
+                    }
+                    if (filter.MeetingStatus != null)
+                    {
+                        model = model.Where(x => filter.MeetingStatus.Contains(x.CurrentStatus)).ToList();
+                    }
+                }
+                int role = 0;
+                role = await _clientService.GetClientRoleByEmailId(emailid);
+                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:S1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 12;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Candidate name";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "JD Title";
+                Sheet.Cells[1, 4].Value = "Candidated Added On/At";
+                Sheet.Cells[1, 5].Value = "Schedule Status";
+                Sheet.Cells[1, 6].Value = "Phone";
+                Sheet.Cells[1, 7].Value = "Current Status";
+                Sheet.Cells[1, 8].Value = "Current Status Date";
+                Sheet.Cells[1, 9].Value = "Staffing Agency EmailId";
+                Sheet.Cells[1, 10].Value = "Skill Channel ID";
+                Sheet.Cells[1, 11].Value = "Client Hr";
+                Sheet.Cells[1, 12].Value = "Interview Date";
+                int i = 2;
+                if (model.Count() > 0)
+                {
+                    foreach (var item in model)
+                    {
+                        Sheet.Cells[i, 1].Value = item.CandidateName;
+                        Sheet.Cells[i, 2].Value = item.CandidateEmailId;
+                        Sheet.Cells[i, 3].Value = item.PrimarySkill;
+                        if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
+                        {
+                            var addedOnData = item.ScheduleStatus.Where(x => x.Status == CandidateStatusOptions.Added.GetDescription())?.FirstOrDefault();
+                            if (addedOnData != null)
+                            {
+                                Sheet.Cells[i, 4].Value = addedOnData.Date + " " + addedOnData.StatusDate + ", " + addedOnData.Time;
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 4].Value = string.Empty;
+                            }
+                            if (item.ScheduleStatus.Where(x => x.Status == MeetingStatus.Scheduled.GetDescription()).Any())
+                            {
+                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.Scheduled.GetDescription();
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 4].Value = string.Empty;
+                            Sheet.Cells[i, 5].Value = ScheduleStatusTypes.NotYetScheduled.GetDescription();
+                        }
+                        Sheet.Cells[i, 6].Value = item.Phone ?? string.Empty;
+                        if (!string.IsNullOrEmpty(item.CurrentStatus))
+                        {
+                            Sheet.Cells[i, 7].Value = item.CurrentStatus;
+                            Sheet.Cells[i, 8].Value = item.CurrentStatusDate.HasValue && item.CurrentStatusDate.Value != DateTime.MinValue ? item.CurrentStatusDate.Value.ToString() : string.Empty;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 7].Value = string.Empty;
+                            Sheet.Cells[i, 8].Value = string.Empty;
+                        }
+                        if (!string.IsNullOrEmpty(item.ProfileSource))
+                        {
+                            Sheet.Cells[i, 9].Value = item.ProfileSource;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = string.Empty;
+                        }
+                        Sheet.Cells[i, 10].Value = item.IRFName;
+                        Sheet.Cells[i, 11].Value = item.HREmail;
+                        Sheet.Cells[i, 12].Value = item.interviewDate;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPublicCandidateTimelineFilter(string emailid, string id)
+        {
+            try
+            {
+                HttpContext.Session.Remove("PublicCandidateStatusfilters");
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicCandidateStatus", new { emailid = emailid, id = id });
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PublicAllMeetingsAdmin()
+        {
+            var model = new List<CandidateTimelineVM>();
+            ViewBag.PageType = "Public";
+            ViewBag.Status = "Admin";
+            var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+            if (menus != null)
+            {
+                menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+            }
+            return View("PublicCandidateStatus", model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> PublicAllMeetingsAdmin(string Emailid)
+        {
+            var role = await _clientService.GetClientRoleByEmailId(Emailid);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have access.");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
+        {
+            try
+            {
+                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser))
+                {
+                    return Json("Invitation has been sent Successfully!");
+                }
+                else
+                {
+                    return Json("Sorry! Could not send invite!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not send invite!");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicCancelInterview(int id, DateTime interviewDate, string candidateEmail, string emailId, int IRFId)
+        {
+            try
+            {
+                if (_meetingService.PublicCancelInterview(id))
+                {
+                    var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
+                    var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
+                    var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
+                    List<string> interviewers = new List<string>();
+                    if (!String.IsNullOrEmpty(result.interviewer))
+                    {
+                        interviewers.Add(result.interviewer);
+                    }
+                    if (!String.IsNullOrEmpty(result.EmailId))
+                    {
+                        interviewers.Add(result.EmailId);
+                    }
+                    var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                    var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidate(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName);
+                    return Json("Invitation has been cancelled Successfully!");
+                }
+                else
+                {
+                    return Json("Sorry! Could not cancel invite!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not cancel invite!");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> FetchSchedulingLinks(string emailid)
+        {
+            try
+            {
+                var model = await _meetingService.FetchSchedulingLinks(emailid);
+                if (model != null)
+                {
+                    return Json(model);
+                }
+                return Json("");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicStatusList(int irfId, int candidateId)
+        {
+            try
+            {
+                var model = new CandidateStatusListVM();
+                model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
+                model.CandidateId = candidateId;
+                model.IRFId = irfId;
+                return Json(model);
+            }
+            catch (Exception)
+            {
+                return Json("Failed");
+            }
+        }
     }
 }

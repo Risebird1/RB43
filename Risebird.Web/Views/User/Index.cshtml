@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.UserList>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Users";
     ViewBag.PageHeader = "Risebird Users";
@@ -48,52 +50,72 @@
                             <table id="risebirduser" class="table table-striped table-bordered dt-responsive dataTable dtr-inline" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th hidden id='start'></th>
-                                        <th hidden></th>
-                                        <th>First Name</th>
+
+                                        <th id='start'>First Name</th>
                                         <th>Last Name</th>
                                         <th>Email Id</th>
                                         <th>Profile Name</th>
                                         <th>Mobile Number</th>
+                                        <th>Status</th>
                                         <th class="disabled-sorting text-center">Actions</th>
+                                        <th hidden></th>
+                                        <th hidden></th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
-                                        <th hidden></th>
-                                        <th hidden></th>
+
                                         <th>First Name</th>
                                         <th>Last Name</th>
                                         <th>Email Id</th>
                                         <th>Profile Name</th>
                                         <th>Mobile Number</th>
+                                        <th>Status</th>
                                         <th class="disabled-sorting text-center">Actions</th>
+                                        <th hidden></th>
+                                        <th hidden></th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr id=@item.Id>
-                                            <td hidden>@item.Id</td>
-                                            <td hidden>@item.IdProfile</td>
-                                            <td>@item.FirstName</td>
-                                            <td>@item.LastName</td>
-                                            <td>@item.EmailId</td>
-                                            <td>@item.ProfileName</td>
-                                            <td>@item.MobileNumber</td>
-                                            <td class="text-center action">
+                                    <tr id=@item.Id>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>@item.EmailId</td>
+                                        <td>@item.ProfileName</td>
+                                        <td>@item.MobileNumber</td>
+                                        @if (item.IsActive)
+                                        {
+                                            <td style="color:green">Active</td>
+                                        }
+                                        else
+                                        {
+                                            <td style="color:grey">Inactive</td>
+                                        }
+                                        <td class="text-center action">
+                                            @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                            {
 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit risebird user">
-                                                    <span onclick="location.href = '@Url.Action("Edit", "User", new { id = item.Id})'" title="Click here to edit risebird user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                </button>
+                                                var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                                var email = emailid.Trim('"');
+                                                @if (email != item.EmailId)
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit risebird user">
+                                                        <span onclick="location.href = '@Url.Action("Edit", "User", new { id = item.Id})'" title="Click here to edit risebird user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
 
 
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.Id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                </button>
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
+                                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.Id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                    </button>
+                                                }
+                                            }
 
-                                            </td>
-                                        </tr>
+                                        </td>
+                                        <td hidden>@item.Id</td>
+                                        <td hidden>@item.IdProfile</td>
+                                    </tr>
                                     }
                                 </tbody>
                             </table>
@@ -243,7 +265,7 @@
 
     $(document).ready(function () {
 
-   
+
 
         $("#x").click(function (e) {
             $(".dataTables_filter input").val('');
@@ -338,6 +360,7 @@
     }
 </script>
 <script>
+
     var start = document.getElementById('start');
     start.focus();
 

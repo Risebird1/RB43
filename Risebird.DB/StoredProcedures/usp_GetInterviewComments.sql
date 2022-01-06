@@ -21,12 +21,14 @@ Begin
 SELECT [InterviewStatus], [InterviewerComment], [FraudCheckStatus], ic.[HRComment],[TrainingStatus], [TrainerComment],  
 	   [AudioLink], [VideoLink], [L2InterviewStatus], [ClientInterviewStatus] as FinalInterviewMeetingStatus,
 	   [MeetingStatus], [OfferStatus], [PreparationStatus], [JoiningStatus], [AadharFileLink],[CandidateAvailable],
-	   qcfr.QCStatus, qcfr.QCComment, im.candidateEmail, irf.id as irfIntId, irf.IRFId as IRFName,(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle)-1) ELSE JDTiltle END) as PrimarySkill, im.interviewDate
+	   qcfr.QCStatus, qcfr.QCComment, ul.EmailId as candidateEmail, irf.id as irfIntId, irf.IRFId as IRFName, im.interviewDate,
+	   (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle)-1) ELSE JDTiltle END) as PrimarySkill, im.interviewDate
 
 FROM [dbo].[InterviewComments] ic 
 left join QCFeedbackReport qcfr on qcfr.InterviewId =ic.InterviewId
-left join InterviewMeetings im on im.id = ic.InterviewId
-left join IRF on irf.IRFId=im.IRFId
+join InterviewMeetings im on im.id = ic.InterviewId
+join IRF on irf.IRFId=im.IRFId
+join UserList ul on ul.EmailId = im.candidateEmail
 WHERE  
      ic.InterviewId =@interviewId  
 End  

@@ -43,7 +43,7 @@
                                                 <span class="red">*</span>
                                             </div>
 
-                                            @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "ClientblockActive()" })
                                             @Html.ValidationMessageFor(model => model.IdProfile, "", new { @class = "text-danger" })
 
                                         </div>
@@ -106,6 +106,30 @@
                                             @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left" id="divclientname" style="display:none">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.Label("Clients", "Clients", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            </div>
+                                            <select id="ClientsArray" name="ClientsArray" class="form-control multiselect" multiple="multiple">
+                                                @foreach (var item in Model.ClientList.ToList())
+                                                {
+                                                    @if (item != null)
+                                                    {
+                                                        @if (item.Selected)
+                                                        {
+                                                            <option value="@item.Value" selected>@item.Text</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.Value">@item.Text</option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                            @Html.ValidationMessageFor(model => model.ClientsArray, "", new { @id = "err_clients", @class = "text-danger" })
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -115,6 +139,7 @@
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "Index", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                        @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="return CheckvalidationforProfile();" id="btnUpload" value="Submit">Submit</button>*@
                                     </div>
                                 </div>
                             </div>
@@ -132,5 +157,33 @@
 
 </div>
 
-
+<script>
+    $(document).ready(function () {
+        ClientblockActive();
+        $("#ClientsArray").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+    });
+    function ClientblockActive() {
+        if ($("#IdProfile").val() == "31") {
+            document.getElementById("divclientname").style.display = "block";
+        } else {
+            document.getElementById("divclientname").style.display = "none";
+        }
+    }
+</script>
+@*<script>
+        function CheckvalidationforProfile() {
+            if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+                $("#err_clients").text("");
+                return true;
+            }
+            $(".multiselect-selected-text").focus();
+            $("#err_clients").text("Select Atleast one Client.");
+            return false;
+        }
+    </script>*@
 

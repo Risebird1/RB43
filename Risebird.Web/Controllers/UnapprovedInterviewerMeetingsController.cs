@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class UnapprovedInterviewerMeetingsController : Controller
     {
         private readonly IUnapprovedInterviewerMeetingsService _unapprovedInterviewerMeetingsService;
@@ -34,7 +35,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageUnapprovedInterviewer"] != null)
                         {
@@ -304,6 +305,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Add()
@@ -314,7 +316,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = new InterviewerMeetingVM();
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
@@ -343,6 +345,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
+        
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -356,7 +359,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
@@ -374,11 +377,11 @@ namespace Risebird.Web.Controllers
                             {
                                 if (meeting.IsEditable)
                                 {
-                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting is updated Successfully";
+                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting has been updated Successfully!";
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting is added Successfully";
+                                    TempData["SuccessErrorMessageUnapprovedInterviewer"] = "Meeting has been added Successfully!";
                                 }
                                 return RedirectToAction("Index");
                             }
@@ -425,6 +428,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -435,7 +439,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
 
                         InterviewerMeetingVM meetingToUpdate = _unapprovedInterviewerMeetingsService.GetMeeting(id);
@@ -485,7 +489,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageUnapprovedInterviewer"] != null)
                         {
@@ -549,7 +553,9 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ResetUnapprovedInterviewsFilter()
         {
             try

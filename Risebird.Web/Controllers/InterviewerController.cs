@@ -43,8 +43,10 @@ namespace Risebird.Web.Controllers
         private static string Searchvalue;
         private static string Searchvalueprofile;
         private static string SearchvalueInterviewer;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper)
 
         {
             _interviewerService = interviewerService;
@@ -61,12 +63,13 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _irfService = irfService;
             _userRepository = userRepository;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
 
 
         #region Interviewer Profile functions
-
+        [HttpGet]
         public async Task<IActionResult> Index(int? Page, string searchValue)
         {
             try
@@ -75,7 +78,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         ViewBag.Profile = profileName;
                         if (TempData["MessageInterviewer"] != null)
@@ -118,6 +121,7 @@ namespace Risebird.Web.Controllers
                             filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
                             filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                             filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
+                            filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
 
                             model = model.Where(c =>
                                (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -127,7 +131,8 @@ namespace Risebird.Web.Controllers
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
                           && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
-                          && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)).ToList();
+                          && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
+                          && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
 
                         }
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
@@ -161,6 +166,8 @@ namespace Risebird.Web.Controllers
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
+                        var _isleadinterviewer = from LeadInterviewerenum s in Enum.GetValues(typeof(LeadInterviewerenum))
+                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
@@ -171,6 +178,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
+                        ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
 
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
@@ -233,6 +241,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> Index(int? Page, InterviewFilter filter, string searchValue)
         {
@@ -242,7 +251,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         ViewBag.Profile = profileName;
                         if (TempData["MessageInterviewer"] != null)
@@ -286,6 +295,7 @@ namespace Risebird.Web.Controllers
                         filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
                         filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
                         filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
+                        filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
 
                         model = model.Where(c =>
                              (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
@@ -295,7 +305,9 @@ namespace Risebird.Web.Controllers
                           && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
                            && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
                            && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
-                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)).ToList();
+                           && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
+                           && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
+
 
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         foreach (var item in model)
@@ -317,6 +329,8 @@ namespace Risebird.Web.Controllers
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
+                        var _isleadinterviewer = from LeadInterviewerenum s in Enum.GetValues(typeof(LeadInterviewerenum))
+                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
@@ -327,7 +341,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
                         //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
-
+                        ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
 
                         if (String.IsNullOrEmpty(searchValue) && Page > 1)
                         {
@@ -389,6 +403,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
         public async Task<IActionResult> ResetInterviewerIndexFilter()
         {
             try
@@ -420,7 +436,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         InterviewerProfileVM model = new InterviewerProfileVM();
                         // Get all the select Lists
@@ -456,7 +472,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         string uploadedFileURL = string.Empty;
 
@@ -464,23 +480,35 @@ namespace Risebird.Web.Controllers
                         {
                             if (interviewerProfile.ResumeFile != null)
                             {
-                                var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
-                                await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.ResumeLink = uploadedFileURL;
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+                                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.ResumeLink = uploadedFileURL;
+                                }
+
 
                             }
                             if (interviewerProfile.CodedResumeFile != null)
                             {
-                                var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
 
-                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                    await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                }
+
                             }
                         }
                         else
@@ -507,12 +535,12 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.AddInterviewerProfile(interviewerProfile).Result)
                         {
-                            TempData["MessageInterviewer"] = "Interviewer Profile is added Successfully";
+                            TempData["MessageInterviewer"] = "Interviewer Profile has been added Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["MessageInterviewer"] = "Interviewer Profile addition is Failed";
+                            TempData["MessageInterviewer"] = "Interviewer Profile addition has been Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -543,7 +571,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
                         // Get all the select Lists
@@ -578,7 +606,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         string uploadedFileURL = string.Empty;
 
@@ -586,30 +614,42 @@ namespace Risebird.Web.Controllers
                         {
                             if (interviewerProfile.ResumeFile != null)
                             {
-                                var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var resumeFileName = interviewerProfile.ResumeFile.FileName.Replace(" ", "_");
 
-                                await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(resumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.ResumeLink = uploadedFileURL;
+                                    await _azureStorageHelper.InsertBlob(resumeFileName, "resumes", interviewerProfile.ResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(resumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.ResumeLink = uploadedFileURL;
+                                }
+
 
                             }
                             if (interviewerProfile.CodedResumeFile != null)
                             {
-                                var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.CodedResumeFile);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+                                    var codedResumeFileName = interviewerProfile.CodedResumeFile.FileName.Replace(" ", "_");
 
-                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                                interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                    await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", interviewerProfile.CodedResumeFile);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                                    uploadedFileURL = blob.Uri.ToString();
+                                    interviewerProfile.CodedResumeLink = uploadedFileURL;
+                                }
+
                             }
                         }
 
                         if (_interviewerService.EditInterviewerProfile(interviewerProfile).Result)
                         {
-                            TempData["MessageInterviewer"] = "Interviewer updated Successfully";
+                            TempData["MessageInterviewer"] = "Interviewer has been updated Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
@@ -635,6 +675,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
         private void GetAllSelectList(InterviewerProfileVM model)
         {
             //=========Availability============
@@ -689,6 +731,7 @@ namespace Risebird.Web.Controllers
                                       select new { ID = (int)s, Name = s.GetDescription() };
             model.SkillExpertiseLevelList = new SelectList(SkillExpertiseLevel, "ID", "Name");
             var SkillIP = from SkillIP s in Enum.GetValues(typeof(SkillIP))
+
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.SkillIPList = new SelectList(SkillIP, "ID", "Name");
             var SkillYearsOfExperience = from SkillYearsOfExperience s in Enum.GetValues(typeof(SkillYearsOfExperience))
@@ -719,7 +762,7 @@ namespace Risebird.Web.Controllers
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.DaySlotList = new SelectList(daySlot, "ID", "Name");
             var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
-            var tagList = _interviewerService.GetAllTagsFromIRF().Result;
+
             var selectList = new List<SelectListItem>();
             var AssessmentselectList = new List<SelectListItem>();
             foreach (var item in Assessmentgroup)
@@ -733,6 +776,13 @@ namespace Risebird.Web.Controllers
                 AssessmentselectList.Add(selectItem);
             }
             model.AssessmentGroupList = AssessmentselectList;
+            var IndiaPrice = from IndiaPrice s in Enum.GetValues(typeof(IndiaPrice))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.IndiaServiceRateList = new SelectList(IndiaPrice, "ID", "Name");
+
+            var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.OutsideIndiaServiceRateList = new SelectList(OutSideIndiaPrice, "ID", "Name");
         }
 
         [HttpPost]
@@ -757,6 +807,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public JsonResult IsNickNameExists(string NickName, int UserId)
         {
             //check if the NickName exists
@@ -769,6 +820,7 @@ namespace Risebird.Web.Controllers
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
 
+        [HttpGet]
         public JsonResult IsEmailIdExists(string EmailId, int UserId)
         {
             //check if the Email Id exists
@@ -780,6 +832,7 @@ namespace Risebird.Web.Controllers
             else
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
+
         [HttpPost]
         public JsonResult EmailIdVilidation(string EmailId, int UserId)
         {
@@ -792,7 +845,6 @@ namespace Risebird.Web.Controllers
             else
                 return Json("Not", new Newtonsoft.Json.JsonSerializerSettings());
         }
-
 
         #endregion
 
@@ -854,6 +906,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("IndexEmployer", new { id = IProfileId });
             }
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddEmployerDetails(InterviewerProfessional interviewerProfessional)
@@ -886,6 +939,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
             }
         }
+
+        [HttpGet]
         private void GetAllEmployerSelectList()
         {
             ViewBag.ExperienceRange = new SelectList(_interviewerService.GetExperienceRange(), "id", "Description");
@@ -977,7 +1032,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> DeleteEmployerDetails(int id, int IProfileId)
         {
             try
@@ -1009,7 +1064,6 @@ namespace Risebird.Web.Controllers
                 return Json(new { url = Url.Action("IndexEmployer", "Interviewer", new { id = IProfileId }) });
             }
         }
-
 
 
         #endregion
@@ -1066,6 +1120,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview", "Interview");
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> MyProfile(InterviewerProfileVM interviewerProfile)
         {
@@ -1081,29 +1136,41 @@ namespace Risebird.Web.Controllers
                     {
                         if (interviewerProfile.ResumeFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ResumeLink = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ResumeFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.ResumeLink = uploadedFileURL;
+                            }
+
 
                         }
                         if (interviewerProfile.ImageUpload != null)
                         {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ImageUpload.FileName, "profileimages", interviewerProfile.ImageUpload);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ImageUpload.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ImageURL = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(interviewerProfile.ImageUpload);
+                            if (fileMimeType == "image/jpeg" || fileMimeType == "image/x-icon"
+                                                || fileMimeType == "image/tiff")
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.ImageUpload.FileName, "profileimages", interviewerProfile.ImageUpload);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("profileimages");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ImageUpload.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.ImageURL = uploadedFileURL;
+                            }
+
                         }
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {
-                            TempData["MyProfileMessage"] = "Profile updated Successfully";
+                            TempData["MyProfileMessage"] = "Profile has been updated Successfully!";
                             return RedirectToAction("MyProfile");
                         }
                         else
                         {
-                            TempData["MyProfileMessage"] = "Profile update failed";
+                            TempData["MyProfileMessage"] = "Failed to update Profile";
                             return RedirectToAction("MyProfile");
                         }
                     }
@@ -1232,7 +1299,6 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
 
         [Authorize]
         [HttpGet]
@@ -1639,7 +1705,9 @@ namespace Risebird.Web.Controllers
 
         }
 
+
         [Authorize]
+        [HttpGet]
         //[HttpPost]
         public async Task<IActionResult> AssignYourself(int id, DateTime InterviewDate)
         {
@@ -1675,6 +1743,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenInterviewerAssessment");
             }
         }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnassignYourself(int id)
@@ -1720,6 +1789,8 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+
+        [HttpGet]
         public IActionResult AddReport(int interviewId, int iscId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string backUrl = null)
         {
             try
@@ -1729,7 +1800,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR")
                     {
                         var model = _interviewerService.GetInterviewerinteviewReport(interviewId, iscId).Result;
                         model.ProfileName = profileName;
@@ -1778,24 +1849,29 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "Interviewer")
+                    if (profileName == "Admin" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR")
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("AddReport", model);
+                                }
+                                else
+                                {
+                                    model.ThumbnailImage = uploadedaudioFileURL;
+                                }
                             }
-                            else
-                            {
-                                model.ThumbnailImage = uploadedaudioFileURL;
-                            }
+
                         }
                         string uploadedvideoFileURL = string.Empty;
 
@@ -1825,7 +1901,7 @@ namespace Risebird.Web.Controllers
 
                         if (_interviewerService.AddInterviewerReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageLeadInterviewer"] = "Report saved Successfully";
+                            TempData["SuccessErrorMessageLeadInterviewer"] = "Report has been saved Successfully!";
                             return RedirectToAction("MyInterviewerAssessment");
                         }
                         else
@@ -1852,6 +1928,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterviewerAssessment");
             }
         }
+
+        [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
@@ -1997,13 +2075,14 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="Page"></param>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult InterviewerAssessment(int? Page)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
@@ -2028,13 +2107,15 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpGet]
         public IActionResult AddAssessments()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
                 {
                     //Fetch Assessment Group List
                     var resultset = _interviewerService.FetchAssessmentGroups();
@@ -2074,6 +2155,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+
         [HttpPost]
         public IActionResult AddAssessments(AssignmentVM model)
         {
@@ -2081,7 +2164,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
@@ -2113,13 +2196,15 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpGet]
         public IActionResult AssessmentForApproval(int id, string EmailAddress)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
@@ -2148,6 +2233,7 @@ namespace Risebird.Web.Controllers
         /// <param name="assessmentid"></param>
         /// <param name="status"></param>
         /// <returns></returns>
+        [HttpGet]
         public JsonResult ChangeStatusAssessment(int assessmentid, int status)
         {
             var model = _interviewerService.ChangeStatusAssessment(assessmentid, status);
@@ -2161,6 +2247,7 @@ namespace Risebird.Web.Controllers
         /// <param name="assessment"></param>
         /// <param name="comments"></param>
         /// <returns></returns>
+        [HttpGet]
         public JsonResult ShareAssessmentcomment(int assessmentid, string EmailAddress, string assessment, string comments)
         {
             Mail _mail = new Mail
@@ -2175,6 +2262,7 @@ namespace Risebird.Web.Controllers
         /// Edit Assessment Details By interviewer
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult EditAssessment(int id)
         {
             var result = _irfService.FetchAssessmentdetails(id);
@@ -2202,6 +2290,7 @@ namespace Risebird.Web.Controllers
             model.AssessmentLevellist = new SelectList(_assessmentLevel, "ID", "Name");
             return View(model);
         }
+
         [HttpPost]
         public IActionResult EditAssessment(AssignmentVM model)
         {
@@ -2209,29 +2298,92 @@ namespace Risebird.Web.Controllers
             return RedirectToAction("InterviewerAssessment");
         }
 
-
         [HttpPost]
-
         public JsonResult InterviewerProfileJson(string searchValue)
         {
             try
             {
                 int Page = 1;
-                var model = _modelDetails;
+                //var model = _modelDetails;
+                var model = _interviewerService.GetInterviewers();
+                model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
+                var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                foreach (var item in model)
+                {
+                    if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                    {
+                        var Assessmentgroups = String.Empty;
+                        foreach (var groups in item.AssessmentGroupId.Split(","))
+                        {
+                            int assesmsnetid = Convert.ToInt32(groups);
+                            if (String.IsNullOrEmpty(Assessmentgroups))
+                            {
+                                Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                            }
+                            else
+                            {
+                                Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                            }
+                        }
+                        item.AssessmentGroupId = Assessmentgroups;
+                    }
+                }
+                if (HttpContext.Session.GetString("InterviewerIndexfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("InterviewerIndexfilters"));
+                    filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = model.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
+                    filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = model.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
+                    filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = model.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
+                    filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
+                    filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
+                    filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
+                    filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
+                    filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
+                    filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
+
+                    model = model.Where(c =>
+                       (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
+                      && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
+                      && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
+                       && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
+                  && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
+                  && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
+                  && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
+                  && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
+                  && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)).ToList();
+                }
+                var Senioritylevel = _iRFRepository.GetSenioritylevel();
+                foreach (var item in model)
+                {
+                    if (!String.IsNullOrEmpty(item.Senioritylevel))
+                    {
+                        var Senioritylevelgroups = String.Empty;
+                        foreach (var itemseniority in item.Senioritylevel.Split(","))
+                        {
+                            int Seniorityid = Convert.ToInt32(itemseniority);
+                            if (String.IsNullOrEmpty(Senioritylevelgroups))
+                            {
+                                Senioritylevelgroups = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            }
+                            else
+                            {
+                                Senioritylevelgroups = Senioritylevelgroups + " , " + Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
+                            }
+                        }
+                        item.Senioritylevel = Senioritylevelgroups;
+                    }
+                }
                 Searchvalue = searchValue;
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
-
                 ViewBag.Searchvalue = searchValue;
                 if (!String.IsNullOrEmpty(searchValue))
                 {
                     searchValue = searchValue.ToUpper().Trim();
                     model = model.Where(x => (!String.IsNullOrEmpty(x.FirstName) ? x.FirstName.ToUpper().Contains(searchValue) : x.FirstName == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "") || (!String.IsNullOrEmpty(x.NickName) ? x.NickName.ToUpper().Contains(searchValue) : x.NickName == "") || ((x.PrimarySkill != null) ? x.PrimarySkill.ToUpper().Contains(searchValue) : x.PrimarySkill == "")).ToList();
-
                 }
                 ViewBag.TotalCount = model.Count;
-
                 Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
                 int a = model.Count / 10;
                 if (model.Count % 10 == 0)
@@ -2248,16 +2400,13 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
                     }
-
                 }
                 if (model.Count == 0)
                 {
                     Pagestart = 0;
                     Pageend = 0;
                 }
-
                 return Json(new { result = model.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count });
             }
             catch (Exception ex)
@@ -2323,13 +2472,14 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> InterviewerRecommendation(int id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
@@ -2392,20 +2542,26 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (model.CodedResumeFile != null)
                         {
-                            var codedResumeFileName = model.CodedResumeFile.FileName.Replace(" ", "_");
-                            await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", model.CodedResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
-                            var uploadedFileURL = blob.Uri.ToString();
-                            model.CodedResumeLink = uploadedFileURL;
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CodedResumeFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                var codedResumeFileName = model.CodedResumeFile.FileName.Replace(" ", "_");
+                                await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", model.CodedResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                                var uploadedFileURL = blob.Uri.ToString();
+                                model.CodedResumeLink = uploadedFileURL;
+                            }
+
                         }
                         if (_interviewerService.InterviewerRecommendation(model).Result)
                         {
-                            TempData["MessageInterviewer"] = "Recommendation saved Successfully";
+                            TempData["MessageInterviewer"] = "Recommendation has been saved Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
@@ -2431,6 +2587,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
         [HttpPost]
         public JsonResult BankDetailsJson(int interviewerid)
         {
@@ -2438,6 +2595,7 @@ namespace Risebird.Web.Controllers
             return Json(results.Result);
 
         }
+
         [HttpPost]
         public async Task<JsonResult> AvailDetailsJson(int interviewerid)
         {
@@ -2452,7 +2610,9 @@ namespace Risebird.Web.Controllers
             }
             return Json(results);
         }
+
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> FeedbackDetails(string type)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -2516,6 +2676,86 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SendPublicURLInterviewer(string Emailid)
+        {
+            try
+            {
+                Guid uniqueid = Guid.NewGuid();
+                var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
+                if (!String.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
+                }
+                Mail _mail1 = new Mail
+                {
+                    TO = Emailid,
+                    CC = "talent@risebird.io",
+                    Subject = "Open Interviews URL"
+                };
+                var emailsend1 = _notificationHelper.SendPublicUrlToInterviewer(_mail1, sendreporturl);
+                if (emailsend1.Contains("successfully"))
+                    return Json("Success");
+                else
+                    return Json("Failed");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CopyPublicURLInterviewer(string Emailid)
+        {
+            try
+            {
+                Guid uniqueid = Guid.NewGuid();
+                var _uniqueid = await _clientService.PublicInterviewerUrlSave(Emailid, uniqueid.ToString());
+                string sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + uniqueid;
+                if (!String.IsNullOrEmpty(_uniqueid))
+                {
+                    sendreporturl = "https://" + Request.Host.ToString() + "/Interview/PublicOpenInterviewInvite?id=" + _uniqueid;
+                }
+                return Json(sendreporturl);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
+        public IActionResult LeadInterviewer()
+        {
+            var model = _interviewerService.GetInterviewers();
+            model = model.Where(x => x.IsLeadInterviewer == true).ToList();
+            model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
+            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            foreach (var item in model)
+            {
+                if (!String.IsNullOrEmpty(item.AssessmentGroupId))
+                {
+                    var Assessmentgroups = String.Empty;
+                    foreach (var groups in item.AssessmentGroupId.Split(","))
+                    {
+                        int assesmsnetid = Convert.ToInt32(groups);
+                        if (String.IsNullOrEmpty(Assessmentgroups))
+                        {
+                            Assessmentgroups = AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                        }
+                        else
+                        {
+                            Assessmentgroups = Assessmentgroups + " , " + AssessmentsGroups.Where(x => x.id == assesmsnetid).Select(x => x.AssessmentGroup).FirstOrDefault();
+                        }
+                    }
+                    item.AssessmentGroupId = Assessmentgroups;
+                }
+            }
+            return View(model);
         }
     }
 }

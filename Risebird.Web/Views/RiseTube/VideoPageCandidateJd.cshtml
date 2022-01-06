@@ -55,7 +55,10 @@
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
 </script>
-
+<script>
+    var Header = "<div >RB Matches Candidates</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
 
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
@@ -69,7 +72,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <div class="main-panel bg-white" id="main-panel">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+    @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
                 <div class="navbar-toggle">
@@ -83,7 +86,7 @@
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
         </div>
-    </nav>
+    </nav>*@
     <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
@@ -680,7 +683,7 @@
                                                                                         {
                                                                                             <div class="audio-wrap">
 
-                                                                                                <h1>Audio Feedback</h1>
+                                                                                                <h6>Audio Feedback</h6>
                                                                                                 <audio src='@Model.FeedbackAudioLink' controls></audio>
                                                                                                 <!--end of col-md-12-->
                                                                                             </div>

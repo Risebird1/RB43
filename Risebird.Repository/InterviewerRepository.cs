@@ -259,8 +259,14 @@ namespace Risebird.Repository
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@UserPassword", entity.UserPassword);
             parameters.Add("@WhatsappNumber", entity.WhatsappNumber);
+            parameters.Add("@Isinstaavailable", entity.Isinstaavailable);
             parameters.Add("@InterviewerProfileId", dbType: DbType.Int32, direction: ParameterDirection.Output);
-
+            //parameters.Add("@IsServiceDomain", entity.IsServiceDomain);
+            //parameters.Add("@IsProductDomain", entity.IsProductDomain);
+            parameters.Add("@IndiaServiceRate", entity.IndiaServiceRate);
+            parameters.Add("@IndiaProductRate", entity.IndiaProductRate);
+            parameters.Add("@OutsideIndiaServiceRate", entity.OutsideIndiaServiceRate);
+            parameters.Add("@OutsideIndiaProductRate", entity.OutsideIndiaProductRate);
             return parameters;
         }
         private DynamicParameters SetSPParametersForSkills(InterviewerProfileVM entity)
@@ -871,7 +877,8 @@ namespace Risebird.Repository
                 parameters.Add("@AltMobileNumber", interviewerProfile.AltMobileNumber);
                 parameters.Add("@ResumeLink", interviewerProfile.ResumeLink);
                 parameters.Add("@InterviewerProfileId", interviewerProfile.id);
-
+                parameters.Add("@Isinstaavailable", interviewerProfile.Isinstaavailable);
+                parameters.Add("@CodedResumeLink", interviewerProfile.CodedResumeLink);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,
@@ -1600,7 +1607,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select id,AssessmentGroup from AssessmentGroup";
+                var query = "Select id,AssessmentGroup,Isinstaavailable from AssessmentGroup";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query<AssignmentVM>(query, null);
@@ -1842,6 +1849,8 @@ namespace Risebird.Repository
                     parametersRecomm.Add("@CodedResumeLink", reportDetails.CodedResumeLink);
                     parametersRecomm.Add("@Trained", reportDetails.Trained);
                     parametersRecomm.Add("@DomainName", "");
+                    parametersRecomm.Add("@IndiaProductRate", reportDetails.IndiaProductRate);
+                    parametersRecomm.Add("@OutsideIndiaProductRate", reportDetails.OutsideIndiaProductRate);
 
                     if (reportDetails.Domain == "Other")
                     {
@@ -1987,5 +1996,52 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_FetchAllInterviewerupcommingInterviewes", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return (List<CommonInterviewDetailsVM>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+        public async Task<List<string>> FetchAllPasswordResetDetails(int noofdays)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@noofdays", noofdays);
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_FetchPasswordresetDetails", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return (List<string>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+
     }
 }

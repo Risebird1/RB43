@@ -36,6 +36,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -101,6 +102,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
         public IActionResult Index(ProjectFilter filter)
@@ -169,7 +171,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> ResetProjectFilter()
         {
             try
@@ -238,12 +240,12 @@ namespace Risebird.Web.Controllers
                     //profileName = profileName.Replace("\"", "");
                     if (_projectService.AddProject(model).Result)
                     {
-                        TempData["SuccessErrorMessageProject"] = "Project added Successfully";
+                        TempData["SuccessErrorMessageProject"] = "Project has been added Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageProject"] = "Adding Project has Failed";
+                        TempData["SuccessErrorMessageProject"] = "Failed to add Project!";
                         return RedirectToAction("Index");
                     }
 
@@ -288,12 +290,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_projectService.UpdateProject(model))
                     {
-                        TempData["SuccessErrorMessageProject"] = "Project edited Successfully";
+                        TempData["SuccessErrorMessageProject"] = "Project has been edited Successfully!";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageProject"] = "Editing Project has Failed";
+                        TempData["SuccessErrorMessageProject"] = "Failed to edit Project!";
                         return RedirectToAction("Index");
                     }
 
@@ -312,6 +314,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult DeleteProject(string id)
         {
             try
@@ -353,6 +356,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult UnArchiveProject(int id)
         {
             try
@@ -365,12 +369,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_projectService.UnArchiveProject(id).Result)
                         {
-                            TempData["SuccessErrorMessageProject"] = "Project restored Successfully";
+                            TempData["SuccessErrorMessageProject"] = "Project has been restored Successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageProject"] = "Project restore Failed";
+                            TempData["SuccessErrorMessageProject"] = "Failed to restore Project!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -393,6 +397,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetFilteredIRF(string clientId)
         {
             try
@@ -453,6 +458,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
         public async Task<IActionResult> GetEditFilteredIRF(string clientId, string projectId)
         {
             try
@@ -838,6 +845,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Stats(string id, string name)
         {
             //TempData["id"] = id;
@@ -1257,8 +1265,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-
 
         [HttpPost]
         public JsonResult ProjectInterviewMeetingsJson(string searchValue)
