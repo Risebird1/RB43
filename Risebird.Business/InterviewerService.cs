@@ -912,5 +912,42 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<TdsCertificateReport>> FetchTdsCertificatesbyEmailid(string Emailid)
+        {
+            try
+            {
+                var result = await _interviewerRepository.FetchTdsCertificatesbyEmailid(Emailid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool AddTdsCertificates(TdsCertificateReport model)
+        {
+            try
+            {
+                return _interviewerRepository.AddTdsCertificates(model);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public TdsCertificateReport FetchTdsCertificatebyid(int certificateid)
+        {
+            try
+            {
+                return _interviewerRepository.FetchTdsCertificatebyid(certificateid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -473,8 +473,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>*@
 <script>
-
     $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        });
         $(".jd-name").each(function () {
             if ($(this).text().length > 10) {
                 $(this).text($(this).text().substr(0, 10) + "...")
@@ -487,6 +489,9 @@
             else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
         });
     })
+    function ResetFilter() {
+        window.location.href = "/Client/ResetCreateJdFilter";
+    }
 </script>
 <script>
     $("#fillter_AssessmentGroupName").multiselect({

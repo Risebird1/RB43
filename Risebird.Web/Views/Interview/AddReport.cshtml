@@ -34,6 +34,7 @@
         .sidebar-mini .sidebar:hover {
             width: 80px !important;
         }
+
         .sidebar .navbar-minimize .btn {
             display: none !important
         }
@@ -48,6 +49,7 @@
         .sidebar-mini .sidebar:hover {
             width: 80px !important;
         }
+
         .sidebar .navbar-minimize .btn {
             display: none !important
         }
@@ -62,6 +64,7 @@
         .sidebar-mini .sidebar:hover {
             width: 80px !important;
         }
+
         .sidebar .navbar-minimize .btn {
             display: none !important
         }
@@ -653,7 +656,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                 </td>
                                                                 <td>
@@ -675,6 +678,7 @@
 
                                                 </tbody>
                                             </table>
+                                            <label class="text-danger" id="TechSkills_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
                                         </div>
                                         @if (ViewBag.PageReport != "Insta" && ViewBag.PageStatus != "PublicExternal")
                                         {
@@ -1640,6 +1644,10 @@
         var num = id.match(/(\d+)/);
         var index = num[0];
         value = parseInt(value);
+        if (isNaN(value))
+        {
+            value= 0;
+        }
         var skillName;
         if (id.includes("Tech")) {
 
@@ -1667,7 +1675,6 @@
 
         }
         else {
-
             var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
             var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
             $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
@@ -1917,12 +1924,12 @@
             document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped so early (5-10 mins) that a conclusive judgement regarding selection cannot be made.";
 
         }
-        //for dropped with interview status 
+        //for dropped with interview status
         if (value == 6 || value == 7 || value == 8) {
             document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped but ran for a duration long enough (20 or more mins) to pass a conclusive judgement regarding selection.";
 
         }
-        
+
 
         if (value != 4) {
             if (value == 6) {
@@ -1949,7 +1956,7 @@
 
     function CheckConditions() {
 
-        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckQuestionsTiming());
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckQuestionsTiming() && CheckTechSkills());
     }
 
     function CheckInterviewerComments() {
@@ -2011,9 +2018,7 @@
                     document.getElementById('QuestionsCollection_CommentError').focus();
                     return false;
                 }
-
             }
-
         }
         document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
         return true;
@@ -2051,7 +2056,19 @@
         }
         return true;
     }
-
+    function CheckTechSkills() {
+        var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                    document.getElementById('TechSkills_CommentError').focus();
+                    return false;
+                }
+            }
+        document.getElementById('TechSkills_CommentError').innerHTML = "";
+        return true;
+    }
     $(document).ready(function () {
         //Perform Ajax request.
         var count = '@ViewBag.QuestionsDiscussedCount';

@@ -49,8 +49,20 @@ body {
     width: 40%;
     float: left;
 }
-.rightpad{
-    padding-right:7px;
+.tds select, .tds input {
+    border: 1px #80808024 solid!important;
+    border-radius: 5px!important;
+}
+.tds .modal-lg {
+    max-width: 790px !important;
+}
+#reportForm .tds #SkillTable.table-bordered th {
+    border-right: 1px solid #c9c9c973 !important;
+    color: #746e6e !important;
+    background: rgba(179, 172, 172, 0.3) !important;
+}
+.rightpad {
+    padding-right: 7px;
 }
 #divvideodetailsmodel .table > tbody > tr > th {
     padding: 4px 5px!important;

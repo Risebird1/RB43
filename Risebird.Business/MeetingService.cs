@@ -2796,9 +2796,7 @@ namespace Risebird.Business
             {
                 var result = _meetingRespository.FetchAllFNDetail();
                 return result.Result;
-
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -3246,6 +3244,32 @@ namespace Risebird.Business
             try
             {
                 var result = _meetingRespository.FetchCustomerDetails();
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se)
+        {
+            try
+            {
+                var result = _meetingRespository.FNAllGeneratedPayoutDetails(st, se);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.FetchAllPayoutDetails();
                 return result.Result;
             }
             catch (Exception e)

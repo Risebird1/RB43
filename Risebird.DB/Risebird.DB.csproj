@@ -9,4 +9,8 @@
     <Folder Include="Views\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Tables\InterviewerCertificates.sql" />
+  </ItemGroup>
+
 </Project>

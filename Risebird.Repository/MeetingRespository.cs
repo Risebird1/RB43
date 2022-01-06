@@ -4228,7 +4228,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@st", st);
                 dynamicParameters.Add("@se", se);
-                var query = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,irf.JobCountry as  PreferredLocation,ul.EmailId as InterviewerEmailid,IRF.ClientName,ic.VideoLink, ic.VideoDuration,uli.Emailid as ChannelOwner,CASE WHEN ip.Type='Interview' and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,ip.Points) WHEN ip.Type='Interview' and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ip.Points) WHEN ip.Type='Quality Controller' THEN IsNull(tqi.PerSuccessRate,ip.Points) ELSE '' END as Rate,IRF.PrimarySkillInvite,im.IRFId,im.IsEmergency from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFID=im.IRFId left join Userlist uli on uli.id=irf.risebirdhr left join TransInterviewer ti on ti.IRFId=irf.id and ti.UserId=ip.Userid left join TransEmergencyInterviewer tei on tei.IRFId=irf.id and tei.UserId=ip.Userid left join TransQualityController tqi on tqi.IRFId=irf.id and tqi.UserId=ip.Userid where ip.Interviewid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union   Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,(ip.Points) as Points, im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation,ul.EmailId as InterviewerEmailid ,'Interviewer' as ClientName,ic.VideoLink, null as VideoDuration,uli.Emailid as ChannelOwner,IsNull(ti.PerSuccessRate,ip.Points) as Rate,'' as PrimarySkillInvite,im.ISCId as IRFId,0 as IsEmergency from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.InterviewId=im.id join InterviewerSkillsChannel  irf on IRF.InterviewerSkillId=im.ISCId left join Userlist uli on uli.id=irf.risebirdhr   left join TransInterviewerSkillsLeadInterviewer ti on ti.InterviewerSkillId=irf.id and ti.UserId=ip.Userid   where ip.Interviewerid!=0  and (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)  union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation,ul.EmailId as InterviewerEmailid ,'Interviewer' as ClientName,ic.VideoLink, null as VideoDuration,uli.Emailid as ChannelOwner,0 as Rate,'' as PrimarySkillInvite,'' as IRFId,0 as IsEmergency   from InterviewPoints ip join UserList ul on ul.id=ip.userid   left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId   left join InterviewerComments ic on ic.InterviewId=im.id   left join InterviewerSkillsChannel  irf on IRF.InterviewerSkillId=im.ISCId left join Userlist uli on uli.id=irf.risebirdhr   where ip.Interviewerid=0 and ip.Interviewid=0 and (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                var query = "Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,irf.JobCountry as  PreferredLocation,ul.EmailId as InterviewerEmailid,IRF.ClientName,ic.VideoLink, ic.VideoDuration,uli.Emailid as ChannelOwner,CASE WHEN ip.Type='Interview' and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN ip.Type='Interview' and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,0) WHEN ip.Type='Quality Controller' THEN IsNull(tqi.PerSuccessRate,0) ELSE '' END as Rate,IRF.PrimarySkillInvite,im.IRFId,im.IsEmergency from InterviewPoints ip join UserList ul on ul.id=ip.userid left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id join IRF on IRF.IRFID=im.IRFId left join Userlist uli on uli.id=irf.risebirdhr left join TransInterviewer ti on ti.IRFId=irf.id and ti.UserId=ip.Userid left join TransEmergencyInterviewer tei on tei.IRFId=irf.id and tei.UserId=ip.Userid left join TransQualityController tqi on tqi.IRFId=irf.id and tqi.UserId=ip.Userid where ip.Interviewid!=0  and (ip.Status='Submitted' or ip.Status='Pending')  and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se) Union   Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,(ip.Points) as Points, im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation,ul.EmailId as InterviewerEmailid ,'Interviewer' as ClientName,ic.VideoLink, null as VideoDuration,uli.Emailid as ChannelOwner,IsNull(ti.PerSuccessRate,0) as Rate,'' as PrimarySkillInvite,im.ISCId as IRFId,0 as IsEmergency from InterviewPoints ip join UserList ul on ul.id=ip.userid left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.InterviewId=im.id join InterviewerSkillsChannel  irf on IRF.InterviewerSkillId=im.ISCId left join Userlist uli on uli.id=irf.risebirdhr   left join TransInterviewerSkillsLeadInterviewer ti on ti.InterviewerSkillId=irf.id and ti.UserId=ip.Userid   where ip.Interviewerid!=0  and (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)  union Select Distinct ip.id,ip.InterviewId,ip.Type,ip.Comment,(ul.FirstName+ul.LastName) as FirstName,ip.Status,ip.Userid,(ip.Points) as Points,im.candidateEmail,im.candidateName,ic.MeetingStatus,ic.InterviewStatus,isNull(im.interviewdate,ip.Date) as Date,'' as PreferredLocation,ul.EmailId as InterviewerEmailid ,'Interviewer' as ClientName,ic.VideoLink, null as VideoDuration,uli.Emailid as ChannelOwner,0 as Rate,'' as PrimarySkillInvite,'' as IRFId,0 as IsEmergency   from InterviewPoints ip join UserList ul on ul.id=ip.userid   left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId   left join InterviewerComments ic on ic.InterviewId=im.id   left join InterviewerSkillsChannel  irf on IRF.InterviewerSkillId=im.ISCId left join Userlist uli on uli.id=irf.risebirdhr   where ip.Interviewerid=0 and ip.Interviewid=0 and (ip.Status='Submitted' or ip.Status='Pending') and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(query, dynamicParameters);
@@ -5184,7 +5184,7 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=1,interviewer=null from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0,interviewer=null from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
@@ -5253,6 +5253,100 @@ namespace Risebird.Repository
                 return false;
             }
         }
-
+        public async Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se)
+        {
+            try
+            {
+                List<RBInterviewerPayoutDetails> _list = new List<RBInterviewerPayoutDetails>();
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<RBInterviewerPayoutDetails>(con, "usp_FetchInterviewerPayoutDetailsBydate", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    _list = (List<RBInterviewerPayoutDetails>)results;
+                }
+                if (_list.Count > 0)
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = await SqlMapper.QueryAsync<RBInterviewerPayoutDetails>(con, "usp_FetchInterviewerPayoutDetailsAdvance", null,
+                           commandType: CommandType.StoredProcedure);
+                        var resultset = (from c in _list
+                                         join p in results on c.Userid equals p.Userid into ps
+                                         from p in ps.DefaultIfEmpty()
+                                         select new RBInterviewerPayoutDetails
+                                         {
+                                             id = c.id,
+                                             Points = p == null ? c.Points : c.Points - p.Points,
+                                             Userid = c.Userid,
+                                             FirstName = c.FirstName,
+                                             InterviewerEmailid = c.InterviewerEmailid,
+                                             AccountName = c.AccountName,
+                                             AccountNumber = c.AccountNumber,
+                                             PAN = c.PAN,
+                                             IFSCCode = c.IFSCCode
+                                         }).ToList();
+                        return resultset.ToList();
+                    }
+                }
+                else
+                {
+                    return _list.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails()
+        {
+            try
+            {
+                List<RBInterviewerPayoutDetails> _list = new List<RBInterviewerPayoutDetails>();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<RBInterviewerPayoutDetails>(con, "usp_FetchInterviewerPayoutDetails", null,
+                       commandType: CommandType.StoredProcedure);
+                    _list = (List<RBInterviewerPayoutDetails>)results;
+                }
+                if (_list.Count > 0)
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = await SqlMapper.QueryAsync<RBInterviewerPayoutDetails>(con, "usp_FetchInterviewerPayoutDetailsAdvance", null,
+                           commandType: CommandType.StoredProcedure);
+                        var resultset = (from c in _list
+                                         join p in results on c.Userid equals p.Userid into ps
+                                         from p in ps.DefaultIfEmpty()
+                                         select new RBInterviewerPayoutDetails
+                                         {
+                                             id = c.id,
+                                             Points = p == null ? c.Points : c.Points - p.Points,
+                                             Userid = c.Userid,
+                                             FirstName = c.FirstName,
+                                             InterviewerEmailid = c.InterviewerEmailid,
+                                             AccountName = c.AccountName,
+                                             AccountNumber = c.AccountNumber,
+                                             PAN = c.PAN,
+                                             IFSCCode = c.IFSCCode
+                                         }).ToList();
+                        return resultset.ToList();
+                    }
+                }
+                else
+                {
+                    return _list.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

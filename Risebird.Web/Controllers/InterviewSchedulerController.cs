@@ -257,7 +257,7 @@ namespace Risebird.Web.Controllers
                             string sasUrl = string.Empty;
                             if (uploadedaudioFileURL == null)
                             {
-                                ModelState.AddModelError(string.Empty, "Resume upload has failed.");
+                                ModelState.AddModelError("ResumeFile", "Resume upload has failed.");
                                 return View(model);
                             }
                             else
@@ -269,19 +269,19 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            ModelState.AddModelError(string.Empty, "Please select valid file(.pdf, .doc, .docx)!");
+                            ModelState.AddModelError("ResumeFile", "Please select valid file(.pdf, .doc, .docx)!");
                             return View(model);
                         }
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Please select valid file(.pdf, .doc, .docx)!");
+                        ModelState.AddModelError("ResumeFile", "Please select valid file(.pdf, .doc, .docx)!");
                         return View(model);
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Please upload resume file(.pdf, .doc, .docx)!");
+                    ModelState.AddModelError("ResumeFile", "Please upload resume file(.pdf, .doc, .docx)!");
                     return View(model);
                 }
                 string interviewOnDevice = string.Empty;

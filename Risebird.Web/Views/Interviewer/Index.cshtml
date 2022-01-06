@@ -545,6 +545,9 @@
                                                             <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
                                                                 <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                                                             </button>
+                                                            <button class="mdc-fab app-fab--absolute " aria-label="Tds Certificates">
+                                                                <span onclick="javascript:OpenTdsCertificates('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" /><path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" /></svg></span>
+                                                            </button>
                                                         </td>
                                                     </tr>
 
@@ -1299,6 +1302,9 @@
             html += '<button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">';
             html += '<span onclick="javascript:CopyPublicUrlJson('+i+');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>';
             html += '</button>';
+            html += ' <button class="mdc-fab app-fab--absolute " aria-label="Tds Certificates">';
+            html += ' <span onclick="javascript:OpenTdsCertificatesJson(' + i +');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" /><path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" /></svg></span>';
+            html += ' </button>';
             html += '</td>';
             html += '  </tr>';
             html += '   <tr class="collapse ' + data[i].id + '">';
@@ -1555,6 +1561,10 @@
         var EmailId = $("#hidpublicemail_" + index).val();
         CopyPublicUrl(EmailId);
     }
+    function OpenTdsCertificatesJson(index) {
+        var EmailId = $("#hidpublicemail_" + index).val();
+        OpenTdsCertificates(EmailId);
+    }
     function SendPublicURL(EmailId) {
         swal.fire({
             title: 'Are you sure you want to send Public Url for client user ' + EmailId + '?',
@@ -1624,6 +1634,9 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
+    }
+    function OpenTdsCertificates(EmailId) {
+        window.location.href = "/Interviewer/TdsCertificateInterviewers?emailid=" + EmailId;
     }
 </script>
 <script type="text/javascript">

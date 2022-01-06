@@ -218,19 +218,14 @@
                                                                 }
                                                             </div>
                                                             @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
-
+                                                            <div class="col-md-12">
+                                                                <input type="button" class="form-control mdc-button mdc-button--raised mdc-ripple-upgraded" value="Tds Certificates" onclick="OpenTdsCertificate()" />
+                                                            </div>
                                                         }
                                                     }
-
-
-
                                                 </div>
-
                                                 <div class="col-sm-12 pull-left">
-
                                                 </div>
-
-
                                             </div>
                                         </div>
                                         @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
@@ -274,25 +269,33 @@
 
 
 
+
+
                                                                                     <div class="mdc-checkbox">
+
+
 
 
 
                                                                                         <div class="mdc-checkbox">
 
-                                                                                            @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
-                                                                                            <div class="mdc-checkbox__background">
-                                                                                                <svg class="mdc-checkbox__checkmark"
-                                                                                                     viewBox="0 0 24 24">
-                                                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                                                          fill="none"
-                                                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                                                </svg>
-                                                                                                <div class="mdc-checkbox__mixedmark"></div>
-                                                                                            </div>
-                                                                                            <div class="mdc-checkbox__ripple"></div>
 
-                                                                                        </div>
+
+                                                                                            <div class="mdc-checkbox">
+
+                                                                                                @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
+                                                                                                <div class="mdc-checkbox__background">
+                                                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                                                         viewBox="0 0 24 24">
+                                                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                                                              fill="none"
+                                                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                                    </svg>
+                                                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                                                </div>
+                                                                                                <div class="mdc-checkbox__ripple"></div>
+
+                                                                                            </div>
 
                                                                                 </td>
                                                                                 <td class="action text-center">
@@ -574,7 +577,11 @@
 
 
 </script>
-
+<script>
+    function OpenTdsCertificate() {
+        window.location.href = "/Interviewer/TdsCertificateInterviewers";
+    }
+</script>
 <script>
     function readURL(input) {
         if (input.files && input.files[0]) {

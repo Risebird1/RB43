@@ -196,7 +196,7 @@
                                                                     }
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span id="intselmeet_9" onclick="callCandidate(@item.MobileNumber,@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
+                                                                        <span id="intselmeet_9" onclick="callCandidate('@item.MobileNumber',@item.imid)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
                                                                         <span id="intselmeet_10" onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
 
                                                                     }
@@ -658,8 +658,8 @@
                 html += '     </td>';
             }
             if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
-                html += '    <td class="text-right action">';
-                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ',' + data[i].imid + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>';
+                html += '    <td class="text-right action"><input type="hidden" value="' + data[i].mobileNumber + '" id="txtmobile_' + data[i].imid + '" />';
+                html += '   <span onclick="callCandidateJson(' + data[i].imid + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>';
                 html += ' <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>';
                 html += '     </td>';
             }
@@ -799,7 +799,10 @@
     Twilio.Device.disconnect(function (connection) {
 
     });
-
+    function callCandidateJson(interviewid) {
+        var phonenumber = $("#txtmobile_" + interviewid).val();
+        callCandidate(phonenumber, interviewid);
+    }
 
 </script>
 <script>

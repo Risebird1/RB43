@@ -51,5 +51,8 @@ namespace Risebird.Business.Interface
         Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid);
         Task<List<CommonInterviewDetailsVM>> FetchAllInterviewerallUpcomingInterview();
         Task<List<string>> FetchAllPasswordResetDetails(int noofdays);
+        Task<List<TdsCertificateReport>> FetchTdsCertificatesbyEmailid(string Emailid);
+        bool AddTdsCertificates(TdsCertificateReport model);
+        TdsCertificateReport FetchTdsCertificatebyid(int certificateid);
     }
 }

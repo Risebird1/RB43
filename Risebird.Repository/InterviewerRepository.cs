@@ -2042,6 +2042,79 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public async Task<List<TdsCertificateReport>> FetchTdsCertificatesbyEmailid(string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", Emailid);
+                    var results = await SqlMapper.QueryAsync<TdsCertificateReport>(con, "usp_FetchInterviewerTdsCertificates", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return (List<TdsCertificateReport>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+        public bool AddTdsCertificates(TdsCertificateReport model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", model.emailid);
+                    parameters.Add("@year", model.year);
+                    parameters.Add("@comment", model.comment);
+                    parameters.Add("@clink", model.certificatelink);
+                    parameters.Add("@month", model.month);
+                    parameters.Add("@id", model.id);
+                    var results = SqlMapper.Query(con, "usp_AddCertificates", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
+        public TdsCertificateReport FetchTdsCertificatebyid(int certificateid)
+        {
+            try
+            {
+                var query = "Select * from InterviewerCertificates where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", certificateid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<TdsCertificateReport>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }

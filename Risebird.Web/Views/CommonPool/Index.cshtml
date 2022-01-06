@@ -521,93 +521,93 @@
                                                             </div>
                                                         </div>
 
-                                                            <div class="video-page text-success">
-                                                                @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
-
-                                                            </div>
-                                                            <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                                <i class="fas fa-calendar-alt"></i>
-                                                                <span>@item.interviewDate</span>
-                                                            </div>
-                                                            <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-                                                                <span class="pull-left">Tech Skill Score:</span>
-
-                                                                <span class="pull-left">@(item.TechSkillScore)%</span>
-
-
-                                                            </div>
-
-
-                                                            <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-
-
-                                                                <span class="notice"> Notice Period: </span>
-
-                                                                @if (item.joiningTime != null && item.joiningTime != "")
-                                                                {
-                                                                    @if (item.joiningTime.Length > 12)
-                                                                    {
-
-                                                                        <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span class="join"> @item.joiningTime</span>
-                                                                    }
-                                                                }
-                                                                else
-                                                                { <span></span>}
-                                                            </div>
-
-                                                            <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-                                                                <span>Status:</span>
-                                                                @if (item.InterviewStatus == 4)
-                                                                {
-                                                                    <span style="color:palevioletred">Border Line</span>
-                                                                }
-
-                                                                else if (item.InterviewStatus == 2)
-                                                                {
-                                                                    <span style="color:green">Selected</span>
-
-                                                                }
-                                                            </div>
-                                                            <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                                <span>Expected Salary:</span>
-                                                                @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
-                                                                {
-                                                                    @if (@item.expectedPerHourRate.Length > 5)
-                                                                    {
-                                                                        <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
-
-                                                                    else
-                                                                    {
-                                                                        <span>@item.expectedPerHourRate</span>}
-                                                                }
-                                                                else
-                                                                { <span></span>}
-                                                            </div>
-
-                                                            <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-
-                                                                <span>Location:</span>
-                                                                <span>
-
-                                                                    @if (item.preferredLocation != null && item.preferredLocation != "")
-                                                                    {
-                                                                        @if (@item.preferredLocation.Length > 10)
-                                                                        {
-                                                                            <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
-                                                                        else
-                                                                        {<span>@item.preferredLocation</span>}
-                                                                    }
-                                                                    else
-                                                                    { <span></span>}
-                                                                </span>
-
-                                                            </div>
+                                                        <div class="video-page text-success">
+                                                            @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
 
                                                         </div>
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                            <i class="fas fa-calendar-alt"></i>
+                                                            <span>@item.interviewDate</span>
+                                                        </div>
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span class="pull-left">Tech Skill Score:</span>
+
+                                                            <span class="pull-left">@(item.TechSkillScore)%</span>
+
+
+                                                        </div>
+
+
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+
+
+                                                            <span class="notice"> Notice Period: </span>
+
+                                                            @if (item.joiningTime != null && item.joiningTime != "")
+                                                            {
+                                                                @if (item.joiningTime.Length > 12)
+                                                                {
+
+                                                                    <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="join"> @item.joiningTime</span>
+                                                                }
+                                                            }
+                                                            else
+                                                            { <span></span>}
+                                                        </div>
+
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span>Status:</span>
+                                                            @if (item.InterviewStatus == 4)
+                                                            {
+                                                                <span style="color:palevioletred">Border Line</span>
+                                                            }
+
+                                                            else if (item.InterviewStatus == 2)
+                                                            {
+                                                                <span style="color:green">Selected</span>
+
+                                                            }
+                                                        </div>
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                            <span>Expected Salary:</span>
+                                                            @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
+                                                            {
+                                                                @if (@item.expectedPerHourRate.Length > 5)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
+
+                                                                else
+                                                                {
+                                                                    <span>@item.expectedPerHourRate</span>}
+                                                            }
+                                                            else
+                                                            { <span></span>}
+                                                        </div>
+
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+
+                                                            <span>Location:</span>
+                                                            <span>
+
+                                                                @if (item.preferredLocation != null && item.preferredLocation != "")
+                                                                {
+                                                                    @if (@item.preferredLocation.Length > 10)
+                                                                    {
+                                                                        <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                                    else
+                                                                    {<span>@item.preferredLocation</span>}
+                                                                }
+                                                                else
+                                                                { <span></span>}
+                                                            </span>
+
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         }
@@ -1002,226 +1002,226 @@
     </script>
 }
 @*
-    @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-    {
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
+        @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+        {
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
-        <script type="text/javascript">
-            hopscotch.registerHelper('addOverlay', function () {
-                $('body').append('<div class="overlay"></div>');
-            });
-
-            hopscotch.registerHelper('removeOverlay', function () {
-                $('.overlay').fadeOut(function () {
-                    $(this).remove();
-                    $('.helper').remove();
+            <script type="text/javascript">
+                hopscotch.registerHelper('addOverlay', function () {
+                    $('body').append('<div class="overlay"></div>');
                 });
-            });
 
-            hopscotch.listen('show', function () {
-                var elementObject = $(hopscotch.getCurrTarget(tour));
-                var element = $('#' + elementObject[0].id);
+                hopscotch.registerHelper('removeOverlay', function () {
+                    $('.overlay').fadeOut(function () {
+                        $(this).remove();
+                        $('.helper').remove();
+                    });
+                });
 
-                element.prev().removeClass('overlay-relative');
-                element.addClass('overlay-relative');
+                hopscotch.listen('show', function () {
+                    var elementObject = $(hopscotch.getCurrTarget(tour));
+                    var element = $('#' + elementObject[0].id);
 
-                if ($('.helper').length !== 0) {
+                    element.prev().removeClass('overlay-relative');
+                    element.addClass('overlay-relative');
 
-                    // Use Helper Layer for hilight target element.
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
+                    if ($('.helper').length !== 0) {
 
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                        // Use Helper Layer for hilight target element.
+                        var helper = $('.helper');
+                        var padding = 5;
+                        var helperPosX = element.position().left - padding;
+                        var helperPosY = element.position().top - padding;
+                        var targetWidth = element.outerWidth();
+                        var targetHeight = element.outerHeight();
 
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
+                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-                } else {
+                        helper.css('width', targetWidth);
+                        helper.css('height', targetHeight);
+                        helper.offset({ left: helperPosX, top: helperPosY });
 
-                    // Add Helper Layer for highlight target element.
-                    var newHelper = '<div class="helper"></div>';
-                    $('body').append(newHelper);
+                    } else {
 
-                    var helper = $('.helper');
-                    var padding = 5;
-                    var helperPosX = element.position().left - padding;
-                    var helperPosY = element.position().top - padding;
-                    var targetWidth = element.outerWidth();
-                    var targetHeight = element.outerHeight();
+                        // Add Helper Layer for highlight target element.
+                        var newHelper = '<div class="helper"></div>';
+                        $('body').append(newHelper);
 
-                    console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
-                    console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
+                        var helper = $('.helper');
+                        var padding = 5;
+                        var helperPosX = element.position().left - padding;
+                        var helperPosY = element.position().top - padding;
+                        var targetWidth = element.outerWidth();
+                        var targetHeight = element.outerHeight();
 
-                    helper.css('width', targetWidth);
-                    helper.css('height', targetHeight);
-                    helper.offset({ left: helperPosX, top: helperPosY });
-                }
+                        console.log('PositionX : ' + helperPosX + ' PositionY : ' + helperPosY);
+                        console.log('TargetWidth : ' + targetWidth + ' TargetHeight : ' + targetHeight);
 
-            });
-
-            var tour = {
-                id: "hello-hopscotch",
-                showCloseButton: false,
-                steps: [
-                    {
-                        title: "CommonPool",
-                        content: "Find selected candidate here which has been pass on by the different HR of your organization",
-                        target: "commonpool_1",
-                        placement: "bottom",
-                        showPrevButton: true,
-
-                        highlight: true,
-                        zindex: 999999,
-                        yOffset: 10,
-
-                        onCTA: function () {
-                            hopscotch.showStep(2);
-                            $('#commonpool_1').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onNext: function () {
-                            $('#commonpool_1').removeClass('overlay-relative');
-                            $('.helper').remove();
-
-                        }
-                    },
-
-
-                    {
-                        title: "Candidate Stats Menu",
-                        content: "Click on Candidate Stats menu to see its features",
-                        target: "status_menu",
-                        placement: "top",
-                        showPrevButton: true,
-                        zindex: 999999,
-                        yOffset: 10,
-                        xOffset: 10,
-                        arrowOffset: 'left',
-                        onNext: function () {
-                            $('#status_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        },
-                        onPrev: function () {
-                            $('#status_menu').removeClass('overlay-relative');
-                            $('.helper').remove();
-                        }
-                    },
-                    //{
-                    //    title: "Search",
-                    //    content: "Enter Skill or Candidate name and Search result",
-                    //    target: "commonpool_2",
-                    //    placement: "left",
-                    //    showPrevButton: true,
-
-                    //    zindex: 999999,
-                    //    xOffset: 0,
-                    //    yOffset: -10,
-                    //    onPrev: function () {
-
-                    //        $('#commonpool_2').removeClass('overlay-relative');
-                    //        $('.helper').remove();
-                    //    },
-
-                    //    onNext: function () {
-
-                    //        $('#commonpool_2').removeClass('overlay-relative');
-                    //        $('.helper').remove();
-                    //    },
-
-
-                    //},
-                    //{
-                    //    title: "Filter",
-                    //    content: "Filter here based on available attributes or reset filter if applied earlier",
-                    //    target: "commonpool_3",
-                    //    showPrevButton: true,
-                    //    placement: "left",
-                    //    zindex: 999999,
-                    //    xOffset: 5,
-                    //    yOffset: -20,
-                    //    onPrev: function () {
-
-                    //        $('#commonpool_3').removeClass('overlay-relative');
-                    //        $('.helper').remove();
-                    //    },
-                    //    onNext: function () {
-
-                    //        $('#commonpool_3').removeClass('overlay-relative');
-                    //        $('.helper').remove();
-                    //    },
-
-                    //},
-                    //{
-                    //    title: "Candidate Video",
-                    //    content: "Click here to see the Candidate Video & detailed feedback",
-                    //    target: "commonpool_4",
-                    //    showPrevButton: true,
-                    //    zindex: 999999,
-                    //    placement: "bottom",
-                    //    xOffset: 0,
-                    //    yOffset: 0,
-
-                    //    onNext: function () {
-                    //        $('#commonpool_4').removeClass('overlay-relative');
-                    //        $('.helper').remove();
-                    //    },
-                    //    onPrev: function () {
-                    //        $('#commonpool_4').removeClass('overlay-relative');
-                    //        $('.helper').remove();
-                    //    }
-                    //},
-
-
-                ],
-                onStart: ["addOverlay"],
-                onEnd: ["removeOverlay"],
-            };
-
-            hopscotch.startTour(tour);
-
-        </script>
-
-
-     <script src="~/Newassets/js/enjoyhint.min.js"></script>
-            <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-            <script>
-
-                var enjoyhint_instance = new EnjoyHint({});
-
-                var enjoyhint_script_steps = [
-                    {
-                        'next #commonpoolid': 'CommonPool! Selected Candidate Videos will be available over here  and click on continue to know its features',
-                        'nextButton': { className: "myNext", text: "Continue" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .btn3': 'Enter Skill or Candidate name and Search result',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'click .video-card': 'Click here to see the Candidate Video',
+                        helper.css('width', targetWidth);
+                        helper.css('height', targetHeight);
+                        helper.offset({ left: helperPosX, top: helperPosY });
                     }
 
-                ];
-                setTimeout(function () {
-                    enjoyhint_instance.set(enjoyhint_script_steps);
-                    enjoyhint_instance.run();
-                }, 10000)
-            </script>*@
-}
+                });
+
+                var tour = {
+                    id: "hello-hopscotch",
+                    showCloseButton: false,
+                    steps: [
+                        {
+                            title: "CommonPool",
+                            content: "Find selected candidate here which has been pass on by the different HR of your organization",
+                            target: "commonpool_1",
+                            placement: "bottom",
+                            showPrevButton: true,
+
+                            highlight: true,
+                            zindex: 999999,
+                            yOffset: 10,
+
+                            onCTA: function () {
+                                hopscotch.showStep(2);
+                                $('#commonpool_1').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onNext: function () {
+                                $('#commonpool_1').removeClass('overlay-relative');
+                                $('.helper').remove();
+
+                            }
+                        },
+
+
+                        {
+                            title: "Candidate Stats Menu",
+                            content: "Click on Candidate Stats menu to see its features",
+                            target: "status_menu",
+                            placement: "top",
+                            showPrevButton: true,
+                            zindex: 999999,
+                            yOffset: 10,
+                            xOffset: 10,
+                            arrowOffset: 'left',
+                            onNext: function () {
+                                $('#status_menu').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            },
+                            onPrev: function () {
+                                $('#status_menu').removeClass('overlay-relative');
+                                $('.helper').remove();
+                            }
+                        },
+                        //{
+                        //    title: "Search",
+                        //    content: "Enter Skill or Candidate name and Search result",
+                        //    target: "commonpool_2",
+                        //    placement: "left",
+                        //    showPrevButton: true,
+
+                        //    zindex: 999999,
+                        //    xOffset: 0,
+                        //    yOffset: -10,
+                        //    onPrev: function () {
+
+                        //        $('#commonpool_2').removeClass('overlay-relative');
+                        //        $('.helper').remove();
+                        //    },
+
+                        //    onNext: function () {
+
+                        //        $('#commonpool_2').removeClass('overlay-relative');
+                        //        $('.helper').remove();
+                        //    },
+
+
+                        //},
+                        //{
+                        //    title: "Filter",
+                        //    content: "Filter here based on available attributes or reset filter if applied earlier",
+                        //    target: "commonpool_3",
+                        //    showPrevButton: true,
+                        //    placement: "left",
+                        //    zindex: 999999,
+                        //    xOffset: 5,
+                        //    yOffset: -20,
+                        //    onPrev: function () {
+
+                        //        $('#commonpool_3').removeClass('overlay-relative');
+                        //        $('.helper').remove();
+                        //    },
+                        //    onNext: function () {
+
+                        //        $('#commonpool_3').removeClass('overlay-relative');
+                        //        $('.helper').remove();
+                        //    },
+
+                        //},
+                        //{
+                        //    title: "Candidate Video",
+                        //    content: "Click here to see the Candidate Video & detailed feedback",
+                        //    target: "commonpool_4",
+                        //    showPrevButton: true,
+                        //    zindex: 999999,
+                        //    placement: "bottom",
+                        //    xOffset: 0,
+                        //    yOffset: 0,
+
+                        //    onNext: function () {
+                        //        $('#commonpool_4').removeClass('overlay-relative');
+                        //        $('.helper').remove();
+                        //    },
+                        //    onPrev: function () {
+                        //        $('#commonpool_4').removeClass('overlay-relative');
+                        //        $('.helper').remove();
+                        //    }
+                        //},
+
+
+                    ],
+                    onStart: ["addOverlay"],
+                    onEnd: ["removeOverlay"],
+                };
+
+                hopscotch.startTour(tour);
+
+            </script>
+
+
+         <script src="~/Newassets/js/enjoyhint.min.js"></script>
+                <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+                <script>
+
+                    var enjoyhint_instance = new EnjoyHint({});
+
+                    var enjoyhint_script_steps = [
+                        {
+                            'next #commonpoolid': 'CommonPool! Selected Candidate Videos will be available over here  and click on continue to know its features',
+                            'nextButton': { className: "myNext", text: "Continue" },
+                            'skipButton': { className: "mySkip", text: "Skip" }
+                        },
+                        {
+                            'next .btn3': 'Enter Skill or Candidate name and Search result',
+                            'nextButton': { className: "myNext", text: "Next" },
+                            'skipButton': { className: "mySkip", text: "Skip" }
+                        },
+                        {
+                            'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
+                            'nextButton': { className: "myNext", text: "Next" },
+                            'skipButton': { className: "mySkip", text: "Skip" }
+                        },
+                        {
+                            'click .video-card': 'Click here to see the Candidate Video',
+                        }
+
+                    ];
+                    setTimeout(function () {
+                        enjoyhint_instance.set(enjoyhint_script_steps);
+                        enjoyhint_instance.run();
+                    }, 10000)
+                </script>
+    }*@
 
 <script>
     var candidate = "";
@@ -1238,87 +1238,87 @@
             // Set up the Twilio Client Device with the token
             Twilio.Device.setup(data.token);
         });
-        //});
+    });
 
-        /* Callback to let us know Twilio Client is ready */
-        Twilio.Device.ready(function (device) {
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
 
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        startCallRecording(connection.parameters.CallSid);
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+    function startCallRecording(sid) {
+        console.log("sid:" + sid);
+        $.ajax({
+            url: '/User/makecall',
+            type: "GET",
+            data: { 'sid': sid, 'interviewid': caninterviewid },
+            success: function (data) {
+                console.log("rsid:" + data);
+            }
         });
+    }
+    function CallButtonClick(name, phoneNumber, interviewid) {
+        candidate = name;
+        caninterviewid = interviewid;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(phoneNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    function Lockvideo(interviewid, islock) {
+        $.ajax({
+            url: '/CommonPool/LockorUnlockVideo',
+            data: { 'imid': interviewid, 'islock': islock },
+            success: function (data) {
+                if (data == "Success") {
+                    if (islock == 0) {
+                        swal.fire("Profile Unlocked Successfully");
+                        document.getElementById("unlock_" + interviewid).style.display = "block";
+                        document.getElementById("lock_" + interviewid).style.display = "none";
+                        document.getElementById("commonpool_" + interviewid).style.border = "3px solid green";
 
-        function callCandidate(phoneNumber) {
-            var params = { "phoneNumber": phoneNumber };
-            Twilio.Device.connect(params);
-        }
-        function hangUp() {
-            Twilio.Device.disconnectAll();
-        }
-
-        Twilio.Device.connect(function (connection) {
-            var appendText = "In call with " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            startCallRecording(connection.parameters.CallSid);
-        });
-
-        function afterTimeOut() {
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
-
-        Twilio.Device.disconnect(function (connection) {
-            var appendText = "Call disconnected! ";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            setTimeout(afterTimeOut, 2000);
-
-        });
-        function startCallRecording(sid) {
-            console.log("sid:" + sid);
-            $.ajax({
-                url: '/User/makecall',
-                type: "GET",
-                data: { 'sid': sid, 'interviewid': caninterviewid },
-                success: function (data) {
-                    console.log("rsid:" + data);
-                }
-            });
-        }
-        function CallButtonClick(name, phoneNumber, interviewid) {
-            candidate = name;
-            caninterviewid = interviewid;
-            // Get the modal
-            var modal = document.getElementById("myCallModal");
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-            var appendText = "Calling... " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            callCandidate(phoneNumber);
-        }
-        function closeCallPopUp() {
-            hangUp();
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
-        function Lockvideo(interviewid, islock) {
-            $.ajax({
-                url: '/CommonPool/LockorUnlockVideo',
-                data: { 'imid': interviewid, 'islock': islock },
-                success: function (data) {
-                    if (data == "Success") {
-                        if (islock == 0) {
-                            swal.fire("Profile Unlocked Successfully");
-                            document.getElementById("unlock_" + interviewid).style.display = "block";
-                            document.getElementById("lock_" + interviewid).style.display = "none";
-                            document.getElementById("commonpool_" + interviewid).style.border = "3px solid green";
-
-                        } else {
-                            swal.fire("Profile Locked Successfully");
-                            document.getElementById("lock_" + interviewid).style.display = "block";
-                            document.getElementById("unlock_" + interviewid).style.display = "none";
-                            document.getElementById("commonpool_" + interviewid).style.border = "3px solid black";
-                        }
+                    } else {
+                        swal.fire("Profile Locked Successfully");
+                        document.getElementById("lock_" + interviewid).style.display = "block";
+                        document.getElementById("unlock_" + interviewid).style.display = "none";
+                        document.getElementById("commonpool_" + interviewid).style.border = "3px solid black";
                     }
                 }
-            });
-        }
+            }
+        });
+    }
 
 </script>
 

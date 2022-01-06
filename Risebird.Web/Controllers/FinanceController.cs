@@ -75,11 +75,35 @@ namespace Risebird.Web.Controllers
                     }
                     foreach (var item in model)
                     {
-                        var _onemoth = item.Date.AddMonths(1).DayOfWeek;
-                        int diff = (7 + (_onemoth - DayOfWeek.Monday)) % 7;
-                        var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
-                        var _lastdate = _firstdate.AddDays(6);
-                        item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        //var _onemoth = item.Date.AddMonths(1).DayOfWeek;
+                        //int diff = (7 + (_onemoth - DayOfWeek.Monday)) % 7;
+                        //var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
+                        //var _lastdate = _firstdate.AddDays(6);
+                        //item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        if (1 <= item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 7)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 1));
+                            var _lastdate = item.Date.AddMonths(1).AddDays(7 - item.Date.AddMonths(1).Day);
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
+                        else if (7 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 14)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 7));
+                            var _lastdate = item.Date.AddMonths(1).AddDays(14 - item.Date.AddMonths(1).Day);
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
+                        else if (14 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 21)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 14));
+                            var _lastdate = item.Date.AddMonths(1).AddDays(21 - item.Date.AddMonths(1).Day);
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
+                        else if (21 < item.Date.AddMonths(1).Day && item.Date.AddMonths(1).Day <= 31)
+                        {
+                            var _firstdate = item.Date.AddMonths(1).AddDays(-(item.Date.AddMonths(1).Day - 21));
+                            var _lastdate = item.Date.AddMonths(2).AddDays(-(item.Date.AddMonths(1).Day + 1));
+                            item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
+                        }
                     }
                     return View(model);
                 }
@@ -273,7 +297,7 @@ namespace Risebird.Web.Controllers
         /// <returns></returns>
 
         [HttpGet]
-        public async Task<IActionResult> FNPayment(int? Page, string searchValue)
+        public async Task<IActionResult> FNPayment(int? Page, string searchValue, string year)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -330,6 +354,29 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("PaymentMessage");
 
                     }
+                    List<string> _listyear = new List<string>();
+                    var currentyear = DateTime.Now.Year;
+                    var counter = currentyear - 2020;
+                    for (int i = 0; i < counter; i++)
+                    {
+                        _listyear.Add(DateTime.Now.AddYears(-i).Year.ToString());
+                    }
+                    var selectListforsize = new List<SelectListItem>();
+                    if (String.IsNullOrEmpty(year))
+                    {
+                        year = currentyear.ToString();
+                    }
+                    foreach (var item in _listyear)
+                    {
+                        bool selected = false;
+                        if (item == year)
+                        {
+                            selected = true;
+                        }
+                        var selectItem = new SelectListItem(item, Convert.ToString(item), selected);
+                        selectListforsize.Add(selectItem);
+                    }
+                    ViewBag.TdsYears = selectListforsize;
                     return View(model.ToPagedList(Page ?? 1, 10));
 
                 }
@@ -1541,13 +1588,14 @@ namespace Risebird.Web.Controllers
                 {
                     var model = await _meetingService.FetchCustomerDetails();
                     foreach (var item in model)
-                    {  if (item.JobCountry.ToUpper() == "INDIA" || item.JobCountry == "1") 
-                            {
-                                item.JobCountry = "INDIA";
-                            }
-                            else { item.JobCountry = "OUTSIDE INDIA"; }
-                      
-                        item.CompanyType=!String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
+                    {
+                        if (item.JobCountry.ToUpper() == "INDIA" || item.JobCountry == "1")
+                        {
+                            item.JobCountry = "INDIA";
+                        }
+                        else { item.JobCountry = "OUTSIDE INDIA"; }
+
+                        item.CompanyType = !String.IsNullOrEmpty(item.CompanyType) ? ((CompanyType)Convert.ToInt32(item.CompanyType)).GetDescription() : string.Empty;
                     }
                     return View(model);
                 }
@@ -1559,6 +1607,186 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+        /// <summary>
+        /// Download Interviewers Payout list
+        /// </summary>
+        /// <param name="st"></param>
+        /// <param name="se"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        public FileContentResult ExportGenerateFNPayout(DateTime st, DateTime se)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Payout Details");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_PayoutDetails.xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance")
+                    {
+                        var model = _meetingService.FNAllGeneratedPayoutDetails(st, se.AddDays(1));
+                        var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
+                        string userEmailId = string.Empty;
+
+                        Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                        Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                        Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                        int startColumn = 1; int endColumn = 12;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 25;
+                        }
+                        Sheet.Cells[1, 1].Value = "S.No.";
+                        Sheet.Cells[1, 2].Value = "Interviewer Name";
+                        Sheet.Cells[1, 3].Value = "Email id";
+                        Sheet.Cells[1, 4].Value = "PAN Number";
+                        Sheet.Cells[1, 5].Value = "A/C holder Name";
+                        Sheet.Cells[1, 6].Value = "A/C Number";
+                        Sheet.Cells[1, 7].Value = "IFSC";
+                        Sheet.Cells[1, 8].Value = "Total";
+                        Sheet.Cells[1, 9].Value = "TDS";
+                        Sheet.Cells[1, 10].Value = "Balance";
+                        int i = 2;
+                        if (model.Result.Count() > 0)
+                        {
+                            foreach (var interviewer in Interviewers)
+                            {
+                                Sheet.Cells[i, 1].Value = i - 1;
+                                Sheet.Cells[i, 2].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.FirstName).FirstOrDefault();
+                                Sheet.Cells[i, 3].Value = interviewer;
+                                Sheet.Cells[i, 4].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.PAN).FirstOrDefault();
+                                Sheet.Cells[i, 5].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.AccountName).FirstOrDefault();
+                                Sheet.Cells[i, 6].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.AccountNumber).FirstOrDefault();
+                                Sheet.Cells[i, 7].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.IFSCCode).FirstOrDefault();
+                                Sheet.Cells[i, 8].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum();
+                                Sheet.Cells[i, 9].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 10].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "Data export failed !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public FileContentResult ExportFNPayout()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Payout Details");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_PayoutDetails.xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance")
+                    {
+                        var model = _meetingService.FetchAllPayoutDetails();
+                        var Interviewers = model.Result.OrderBy(x => x.InterviewerEmailid).Select(x => x.InterviewerEmailid).Distinct().ToList();
+                        string userEmailId = string.Empty;
+
+                        Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                        Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                        Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                        int startColumn = 1; int endColumn = 12;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 25;
+                        }
+                        Sheet.Cells[1, 1].Value = "S.No.";
+                        Sheet.Cells[1, 2].Value = "Interviewer Name";
+                        Sheet.Cells[1, 3].Value = "Email id";
+                        Sheet.Cells[1, 4].Value = "PAN Number";
+                        Sheet.Cells[1, 5].Value = "A/C holder Name";
+                        Sheet.Cells[1, 6].Value = "A/C Number";
+                        Sheet.Cells[1, 7].Value = "IFSC";
+                        Sheet.Cells[1, 8].Value = "Total";
+                        Sheet.Cells[1, 9].Value = "TDS";
+                        Sheet.Cells[1, 10].Value = "Balance";
+                        int i = 2;
+                        if (model.Result.Count() > 0)
+                        {
+                            foreach (var interviewer in Interviewers)
+                            {
+                                Sheet.Cells[i, 1].Value = i - 1;
+                                Sheet.Cells[i, 2].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.FirstName).FirstOrDefault();
+                                Sheet.Cells[i, 3].Value = interviewer;
+                                Sheet.Cells[i, 4].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.PAN).FirstOrDefault();
+                                Sheet.Cells[i, 5].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.AccountName).FirstOrDefault();
+                                Sheet.Cells[i, 6].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.AccountNumber).FirstOrDefault();
+                                Sheet.Cells[i, 7].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.IFSCCode).FirstOrDefault();
+                                Sheet.Cells[i, 8].Value = model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum();
+                                Sheet.Cells[i, 9].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100;
+                                Sheet.Cells[i, 10].Value = (model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) - ((model.Result.Where(x => x.InterviewerEmailid == interviewer).Select(x => x.Points).Sum()) * 10 / 100);
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "Data export failed !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
     }

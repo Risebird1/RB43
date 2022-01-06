@@ -11,12 +11,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-  
-    
-    
-      
-      
-CREATE PROCEDURE [dbo].[usp_GetAllIRF]       
+Create PROCEDURE [dbo].[usp_GetAllIRF]       
 @EmailId varchar(200),         
 @Profile varchar(100),      
 @timeNow datetime      
@@ -56,9 +51,18 @@ left join QCFeedbackReport qcf on qcf.InterviewId = im.id
 inner join UserList ul on ul.EmailId = im.candidateEmail       
 inner join CandidatesMaster cm on ul.id =cm.UserId      
 inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)      
-where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.QCStatus=1 --and qcf.InterviewId is not null      
-group by irf.id      
-      
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.QCStatus=1 and irf.IsQCRequired=1 --and qcf.InterviewId is not null      
+group by irf.id
+union
+select irf.id as IRFId, count(im.id) as SelectedMeetings      
+from irf left join InterviewMeetings im on irf.IRFId= im.IRFId       
+left join InterviewComments ic on im.id= ic.InterviewId      
+inner join UserList ul on ul.EmailId = im.candidateEmail       
+inner join CandidatesMaster cm on ul.id =cm.UserId      
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)      
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0
+group by irf.id
+
 DECLARE @tbl_CompletedMeetings TABLE (      
     IRFId INT,      
     ScheduledMeetings int       

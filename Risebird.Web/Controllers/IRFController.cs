@@ -326,7 +326,7 @@ namespace Risebird.Web.Controllers
                         }
 
                     }
-                    
+
                     return View(model);
 
                 }
@@ -449,7 +449,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (pageNumber.HasValue)
                     {
-                        if(model.IRFList != null && (model.IRFList.Count() >= (pageNumber.Value - 1) * 15))
+                        if (model.IRFList != null && (model.IRFList.Count() >= (pageNumber.Value - 1) * 15))
                         {
                             try
                             {
@@ -484,7 +484,7 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-                        
+
                     }
                     model.Profile = profileName;
                     
@@ -1526,13 +1526,13 @@ namespace Risebird.Web.Controllers
                         var meetings = new List<MeetingVM>();
                         if (profileName == "Client")
                         {
-                            meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
-
+                            //meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
+                            meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).Where(x => !x.IsQCRequired || (x.QCInterview > 0 && x.QCStatus == 1 && x.IsQCRequired)).ToList();
                         }
                         else
                         {
-                            meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
-
+                            //meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
+                            meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)).Where(x => !x.IsQCRequired || (x.QCInterview > 0 && x.QCStatus == 1 && x.IsQCRequired)).ToList();
                         }
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
@@ -1615,6 +1615,10 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            if (Page == null)
+                            {
+                                Page = 1;
+                            }
                             a = a + 1;
                             if (a == Page)
                             {
@@ -1882,9 +1886,10 @@ namespace Risebird.Web.Controllers
                 {
                     var model = await _irfService.GetEditIRF(id, isClone);
                     int abc;
-                    if(!int.TryParse(model.JobCountry, out abc))
+                    if (!int.TryParse(model.JobCountry, out abc))
                     {
-                        if (model.JobCountry.ToUpper() == "INDIA") {
+                        if (model.JobCountry.ToUpper() == "INDIA")
+                        {
                             model.JobCountry = "1";
                         }
                         else { model.JobCountry = "2"; }

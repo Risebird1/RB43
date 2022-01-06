@@ -79,11 +79,13 @@
             font-size: 19px;
             font-weight: normal;
         }
+
     .navbar {
         display: none;
     }
+
     .sidebar {
-        display: none!important;
+        display: none !important;
     }
 </style>
 
@@ -357,7 +359,7 @@
                                     <div class="col-md-6 pull-left">
                                         @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden" })
                                         @*<label class="upload" for="ResumeFile">Choose File</label>*@
-
+                                        @Html.ValidationMessageFor(model => model.ResumeFile)
                                         <!-- name of file chosen -->
                                         <span id="file-chosen"></span>
                                     </div>
