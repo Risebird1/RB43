@@ -404,6 +404,26 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ResetCreateJdFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    return RedirectToAction("CreateJd");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
         /// <summary>
         /// Craete New Jd
         /// </summary>
@@ -1229,7 +1249,7 @@ namespace Risebird.Web.Controllers
                 {
                     m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                 }
-                if(m.IsQCRequired)
+                if (m.IsQCRequired)
                 {
                     if (m.QCStatus.HasValue)
                     {
@@ -1264,7 +1284,7 @@ namespace Risebird.Web.Controllers
 
                 }
 
-                if(m.IsQCRequired)
+                if (m.IsQCRequired)
                 {
                     if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
                     {
@@ -1287,7 +1307,7 @@ namespace Risebird.Web.Controllers
                         m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                     }
                 }
-                
+
                 if (m.intervieweStatusStatDesc == null)
                 {
                     m.intervieweStatusStatDesc = string.Empty;
@@ -2147,7 +2167,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                             }
-                            if(m.IsQCRequired)
+                            if (m.IsQCRequired)
                             {
                                 if (m.QCStatus.HasValue)
                                 {
@@ -2326,7 +2346,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                             }
-                            if(m.IsQCRequired)
+                            if (m.IsQCRequired)
                             {
                                 if (m.QCStatus.HasValue)
                                 {
@@ -2788,7 +2808,7 @@ namespace Risebird.Web.Controllers
                     {
                         m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                     }
-                    if(m.IsQCRequired)
+                    if (m.IsQCRequired)
                     {
                         if (m.QCStatus != null && m.QCStatus.HasValue)
                         {
@@ -3028,7 +3048,7 @@ namespace Risebird.Web.Controllers
                     if (!String.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper().Trim();
-                        selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ")|| (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ")).ToList();
+                        selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == " ") || (!String.IsNullOrEmpty(x.candidateEmail) ? x.candidateEmail.ToUpper().Contains(searchValue) : x.candidateEmail == " ") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == " ") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == " ")).ToList();
                     }
                     int totalcount = selectedMeeting.Count;
                     int Pagestart = 0;
