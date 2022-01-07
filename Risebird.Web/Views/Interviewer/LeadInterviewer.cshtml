@@ -232,7 +232,20 @@
         <!-- end row -->
     </div>
 </div>
+<script>
+    function moreless1(id) {
 
+        $('.moretext1_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
+</script>
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -313,9 +326,7 @@
         loader.style.top = top + "px";
         loader.style.left = left + "px";
     };
-    ShowProgress();
-
-    window.onload = function () {
+    ShowProgress();    window.onload = function () {
         setTimeout(function () {
             loader.style.display = "none";
             $(".dataloading").show();
@@ -324,7 +335,6 @@
     };
     //// script for loader ends here
 </script>
-
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
