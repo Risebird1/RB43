@@ -275,9 +275,13 @@ input [type='radio']:checked:after {
     color: #000;
 }
 
-.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .modal .select2-container--default .select2-selection--multiple {
+ .modal .select2-container--default .select2-selection--multiple {
     background-color: white !important;
-    border-bottom: 1px solid #aaa !important;
+    border-bottom: 1px solid #aaaaaa4f !important;
+}
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-bottom: 2px solid #42a5f5 !important;
+    background-color: white !important;
 }
 
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
