@@ -16,6 +16,7 @@ namespace Risebird.Entities.Data
         public string[] CandidateName { get; set; }
         public int irfId { get; set; }
         public string IRFName { get; set; }
+        //public string searchValue { get; set; }
 
     }
 }
