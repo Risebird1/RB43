@@ -279,6 +279,7 @@
                                                         </div>
                                                         <input type="hidden" name="irfId" for="irfId" value="@ViewBag.IRFintId"/>
                                                         <input type="hidden" name="IRFName" for="IRFName" value="@ViewBag.IRF"/>
+                                                        @*<input type="hidden" id ="searchValueFilter" name="searchValue" for="searchValue" value="@ViewBag.IRF"/>*@
                                                     </form>
                                                 </div>
                                             </div>
@@ -695,6 +696,8 @@
 
 
     function searchResult() {
+        //var searchValue = $('#txtmeeting_filter').val();
+        //$('#searchValueFilter').val(searchValue);
         $.ajax({
             type: "POST",
             url: "/IRF/InterviewMeetingsJson",
@@ -745,13 +748,13 @@
                 html += '<td></td>';
             }
             if (!data[i].isQCRequired) {
-                html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
+                html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + irfid + '">Report</a></td>';
 
             }
             else {
 
                 if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-                    html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
+                    html += '<td><a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + irfid + '">Report</a></td>';
                 }
                 else {
                     html += '<td>No Report</td>';
