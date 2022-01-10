@@ -3168,7 +3168,16 @@ table.interviewertable td.cadEmail {
 .interviewertable .action a {
     color: #fff
 }
-
+.interviewr-cmt .choose-file, .choose-file {
+    background: #f1f1f1;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    width: calc(100% - 10px);
+    margin: 0px 10px !important;
+    color: #8d8d8f;
+    font-size: 12px;
+}
 table.journey th, table.journey td {
     border-right: 1px solid #dee2e6 !important;
     max-width: 187px;
@@ -10121,7 +10130,11 @@ blockquote {
 .interviewer_2 .searchCon {
     z-index: 0
 }
-
+.interview_meetings .searchCon {
+    width: 260px;
+    float: left;
+    margin: 0px 10px 0px 10px !important;
+}
 .table-h {
     padding: 12px 5px !important;
 }

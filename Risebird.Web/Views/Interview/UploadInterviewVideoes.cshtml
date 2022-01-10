@@ -83,10 +83,10 @@
                                                             @Html.TextBoxFor(m => m.questionset[i].ThumbnailLink, new { @class = "form-control text-box single-line" })
                                                         </td>
                                                         <td>
-                                                            @Html.TextBoxFor(m => m.questionset[i].Thumbnail, new { type = "file", @class = "form-control btn ", @accept = ".jpg,.png" })
+                                                            @Html.TextBoxFor(m => m.questionset[i].Thumbnail, new { type = "file", @class = "choose-file", @accept = ".jpg,.png" })
                                                         </td>
                                                         <td>
-                                                            @Html.TextBoxFor(m => m.questionset[i].VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+                                                            @Html.TextBoxFor(m => m.questionset[i].VideoFile, new { type = "file", @class = "choose-file", @accept = ".mp4" })
                                                         </td>
                                                     </tr>
                                                 }
