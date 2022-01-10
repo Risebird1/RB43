@@ -52,18 +52,18 @@
                 </div>
 
                 <div class="pull-right client-ms">
-                    <div>
+                    <div class="interview_meetings">
 
-                        <div id="meeting_filter" class="dataTables_filter pull-left" style="margin-right:10px;">
-                            <span class="interview_3">
+                        <div id="meeting_filter" class="dataTables_filter pull-left">
+                            <span class="interview_3 pull-left">
 
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space " data-toggle="modal" data-target="#filterModal">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             </span>
-                            <div id="intmeet_2" class="searchCon">
+                            <div id="intmeet_2" class="searchCon pull-left">
 
 
                                 <button onclick="searchResult()" type="button" id="search">&nbsp</button>
@@ -106,7 +106,7 @@
                                 <div id="tableID">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                         <div class="clearfix"></div>
-                                        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                        <div class="modal" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="filheader">
@@ -565,13 +565,21 @@
     });
 
     function ResetFilter() {
-        debugger;
+      
         if ('@filter' != null && '@filter' != '') {
             window.location.href = "/IRF/ResetIRFInterviewFilter";
         }
-        else {
-            $("#filterModal").modal("hide");
+
+        else if ($('#filterModal').modal('hide')) {
+            $('body').removeClass('modal-open')
+            $('.modal-backdrop').remove() 
+        } else {
+            $('body').addClass('modal-open')
+            $('.modal-backdrop').add() 
         }
+
+
+
     }
 
     function ApplySessionFilter() {

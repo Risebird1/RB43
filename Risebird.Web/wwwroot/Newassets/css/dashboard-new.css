@@ -10121,7 +10121,11 @@ blockquote {
 .interviewer_2 .searchCon {
     z-index: 0
 }
-
+.interview_meetings .searchCon {
+    width: 260px;
+    float: left;
+    margin: 0px 10px 0px 10px !important;
+}
 .table-h {
     padding: 12px 5px !important;
 }
