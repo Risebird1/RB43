@@ -14,7 +14,7 @@ Create Procedure usp_FetchAllUnassignedInterviewAutoCancel
 As
 BEGIN
 
-Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where interviewDate>=dateadd(minute,330,GetDate()) and interviewDate<=dateadd(minute,420,GetDate()) and Interviewer is null
+Select IRF.id as Irfid,im.id as Interviewid,candidateEmail as CandidateEmail From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where interviewDate>=dateadd(minute,330,GetDate()) and interviewDate<=dateadd(minute,420,GetDate()) and Interviewer is null and confirmationStatus=1 
 
 END
 

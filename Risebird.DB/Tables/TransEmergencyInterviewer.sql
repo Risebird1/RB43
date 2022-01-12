@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[TransEmergencyInterviewer](
 	[InterviewerId] [int] NOT NULL,
 	[UserId] [int] NULL,
     [IsActive] [bit] NOT NULL default 1,
+    [ClientAction] [Varchar](12) NULL,
 	CONSTRAINT [FK__TransEmergencyInterviewer] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 	CONSTRAINT [FK__TransEmergencyInterviewer_1] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
  CONSTRAINT [PK_TransEmergencyInterviewer] PRIMARY KEY CLUSTERED 
@@ -34,6 +35,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE TransEmergencyInterviewer
     Add IsActive bit NOT NULL default 1
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientAction')
+      AND Object_ID = Object_ID(N'TransEmergencyInterviewer'))
+BEGIN
+    ALTER TABLE TransEmergencyInterviewer
+    Add ClientAction varchar(12)
 END
 
 End
