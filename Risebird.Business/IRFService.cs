@@ -2153,6 +2153,18 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public async Task<bool> IsQuestionUsedInReport(string question)
+        {
+            try
+            {
+                return await _irfRepository.IsQuestionUsedInReport(question);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
 
     }
 }

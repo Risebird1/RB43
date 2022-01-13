@@ -1441,7 +1441,20 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpPost]
+        public JsonResult IsQuestionUsedInReport(string question)
+        {
+            try
+            {
+                bool isQuestionUsed = _irfService.IsQuestionUsedInReport(question/*.Replace("\n", "").Replace("\r", "")*/).Result;
+                return Json(isQuestionUsed);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ArchiveIRF(int id)

@@ -97,27 +97,27 @@
                                                             <td>
                                                                 @if ((Model.SkillCollection[i].UserId.HasValue && Model.SkillCollection[i].UserId.Value == Model.UserId)@*|| Model.Profile=="Admin"*@)
 {
-                        @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+@Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
-                    }
-                    else
-                    {
-                        var newList = new List<SelectListItem>();
-                        newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
+}
+else
+{
+var newList = new List<SelectListItem>();
+newList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = ((SelectList)ViewBag.Skills).Where(x => x.Value == Model.SkillCollection[i].Skill).FirstOrDefault()?.Text });
 
-                        if (newList != null && newList.Count() > 0)
-                        {
-                            @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
-                        }
-                        else
-                        {
-                            var handleList = new List<SelectListItem>();
-                            handleList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = Model.SkillCollection[i].SkillName });
+if (newList != null && newList.Count() > 0)
+{
+    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, newList, new { @class = "select-css form-control" })
+}
+else
+{
+    var handleList = new List<SelectListItem>();
+    handleList.Add(new SelectListItem() { Value = Model.SkillCollection[i].Skill, Text = Model.SkillCollection[i].SkillName });
 
-                            @Html.DropDownListFor(m => m.SkillCollection[i].Skill, handleList, new { @class = "select-css form-control", @disabled = "disabled" })
+    @Html.DropDownListFor(m => m.SkillCollection[i].Skill, handleList, new { @class = "select-css form-control", @disabled = "disabled" })
 
-                        }
-                    }
+}
+}
 
 
                                                             </td>
@@ -176,7 +176,7 @@
                                 </div><!--end of col-md-12-->
 
                             </div>
-                            <div class="row"><div class="col-md-12 text-right" style="padding-right:30%"> <span id="error_0" ></span></div></div>
+                            <div class="row"><div class="col-md-12 text-right" style="padding-right:30%"> <span id="error_0"></span></div></div>
                             <div class="card-footer mt-10">
                                 <div class="row">
 
@@ -276,7 +276,7 @@
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
-        
+
         //var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillTable tr").length - 1;
 
@@ -350,9 +350,27 @@
         //$.validator.unobtrusive.parse(document);
 
     }
-
+    function CheckIfQuestionUsedInReport(elementId)
+    {
+        debugger;
+        var question = document.getElementById(elementId).value;
+        //var isQuestionInUse = false;
+        $.ajax({
+            async: false,
+            type: "POST",
+            url: "/IRF/IsQuestionUsedInReport",
+            data: { 'question': question },
+            success: function (response) {
+                debugger;
+                return response;
+            }
+        });
+        return false;
+       
+    }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
+
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -361,35 +379,47 @@
 
         else {
 
-            //var currentvalue = $(this).attr('value');
             var closestRow = $(element).closest('tr');
             var currentIndex = closestRow[0].sectionRowIndex;
-            var totalRows = $(element).parents('tbody').find('tr').length;
-            var maxIndex = totalRows - 1;
-            if (currentIndex == maxIndex) {
-                $(element).closest('tr').remove();
-            }
-            //ClientCollection_1__ClientRoleId
-            else {
-                $(element).closest('tr').remove();
-                var startIndex = currentIndex + 1;
-                var endIndex = maxIndex + 1;
-                for (i = startIndex; i < endIndex; i++) {
-                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                    //name="ClientCollection[3].ClientUserId"
-                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+            var isQuestionInUse = false;
+            isQuestionInUse = CheckIfQuestionUsedInReport(collectionName + "_" + currentIndex + "__" + tdTwo);
+            if (isQuestionInUse) {
+                swal.fire("Question in use in one or more Reports. Cannot delete this question.");
 
-                    elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                //return;
+            }
+            else {
+                var totalRows = $(element).parents('tbody').find('tr').length;
+                var maxIndex = totalRows - 1;
+                if (currentIndex == maxIndex) {
+                    $(element).closest('tr').remove();
+                }
+                //ClientCollection_1__ClientRoleId
+                else {
+                    $(element).closest('tr').remove();
+                    var startIndex = currentIndex + 1;
+                    var endIndex = maxIndex + 1;
+                    for (i = startIndex; i < endIndex; i++) {
+                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                        //name="ClientCollection[3].ClientUserId"
+                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                        elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                        elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    }
 
                 }
 
             }
+            //var currentvalue = $(this).attr('value');
+            
+            
 
         }
 
@@ -411,7 +441,7 @@
                 error.style.color = "red";
                 //flag = true;
                 return false;
-            } 
+            }
         }
         //if (flag) {
         //    return false;
