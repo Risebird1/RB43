@@ -1,5 +1,5 @@
 ﻿body {
-    font-family: Roboto, sans-serif;
+    font-family: Roboto, sans-serif!important;
 }
 
 #style-2::-webkit-scrollbar-track {
@@ -25,7 +25,9 @@ textarea::-webkit-scrollbar-thumb {
     pointer-events: none !important;
     cursor: default !important;
 }
-
+.mb-10 {
+    margin-bottom: 10px!important;
+}
 .report-btn {
     width: 145px;
     margin-bottom: 16px;
@@ -711,8 +713,12 @@ input[type=number] {
     padding-right: 0px;
     font-size: 13px;
 }
-
-#nonExistingModal {
+    #irf-card-footer h6 {
+        font-size: 0.75rem;
+        padding-left: 6px;
+        font-weight: bold;
+    }
+    #nonExistingModal {
     z-index: 1000 !important
 }
 
@@ -966,7 +972,7 @@ input[type=number] {
 
 
     .card-blue .card-footer .stats-bttm-btn {
-        padding: 0px 25px 0px 0px;
+        padding: 0px 10px 0px 10px;
         text-align: right;
     }
 
@@ -1104,7 +1110,7 @@ input[type=number] {
     flex: 0 0 82.333333%;
     max-width: 82.333333%;
     float: left;
-    padding: 0px 15px;
+    padding: 0px 0px!important;
 }
 
 #statusListModal {

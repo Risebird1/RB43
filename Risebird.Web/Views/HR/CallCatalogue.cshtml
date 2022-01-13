@@ -48,7 +48,7 @@
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
@@ -78,7 +78,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <form action="@Url.Action("CallCatalogue","HR")" method="post" id="form">
@@ -108,7 +108,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -124,7 +124,7 @@
                                                                 Skill Channel Id
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -179,7 +179,7 @@
                                                                     Client Name
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -325,18 +325,18 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon">
+                    <span>
                         <i class="fa fa-phone-square" style="font-size: 25px;"></i>
                     </span>
                 </div>
                 <h5 class="modal-title pull-left">Call Details <span class="popup-text" id="candidate_email_pop"></span> </h5>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closemyCallRecords()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row">
-                    <div class="table-responsive style-2" style="height:300px;">
+                    <div class="table-responsive style-2" style="height:300px;margin-top:20px;">
                         <table class="table table-striped table-bordered" style="width:100%;" cellspacing="0">
                             <thead>
                                 <tr>
@@ -377,32 +377,32 @@
                 ApplySessionFilter();
               }
 
-            $("#PrimarySkill").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+        //    $("#PrimarySkill").multiselect({
+        //            includeSelectAllOption: true,
+        //            selectedClass: 'active1',
+        //            buttonWidth: '100%',
+        //            maxHeight: 200
+        //        });
 
 
-            $("#ClientHR").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-        $("#RFID").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+        //    $("#ClientHR").multiselect({
+        //        includeSelectAllOption: true,
+        //        selectedClass: 'active1',
+        //        buttonWidth: '100%',
+        //        maxHeight: 200
+        //    });
+        //$("#RFID").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //    $("#ClientName").multiselect({
+        //        includeSelectAllOption: true,
+        //        selectedClass: 'active1',
+        //        buttonWidth: '100%',
+        //        maxHeight: 200
+        //    });
 
     });
     function ResetFilter() {

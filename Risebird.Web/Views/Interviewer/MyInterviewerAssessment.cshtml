@@ -43,7 +43,7 @@
                             @*<button style="display:none;" type="button" id="x">x</button>*@
 
                         </div>
-                        <span id="myinterviewerassmenu_7"><i type="submit" class="fa fa-file-excel-o excel-file card-title-space pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyAssessmentsExportToExcel", "Interviewer")'"></i></span>
+                        <span id="myinterviewerassmenu_7"><i type="submit" class="far fa-file-excel excel-file card-title-space pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyAssessmentsExportToExcel", "Interviewer")'"></i></span>
 
 
                     </div>
@@ -816,10 +816,12 @@
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
+      $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
+    $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }

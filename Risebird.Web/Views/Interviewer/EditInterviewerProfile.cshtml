@@ -258,7 +258,7 @@
                                     </div>
                                     <div class="" id="uploadDiv">
 
-                                        @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
                                     </div>
                                     <div>
                                         @if (Model.ResumeLink != null)
@@ -833,8 +833,7 @@
                                                         <td>
                                                             @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, "Select", new { @class = "select-css form-control text-box single-line" })
                                                         </td>
-                                                        <td>
-                                                            <div class="mdc-checkbox">
+                                                        <td><div class="mdc-checkbox">
                                                                 @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"

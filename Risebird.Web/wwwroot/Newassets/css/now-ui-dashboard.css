@@ -2040,7 +2040,7 @@ input,
 optgroup,
 select,
 textarea {
-    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif!important;
 }
 
 h1,
@@ -2248,7 +2248,7 @@ body {
     color: #2c2c2c;
     font-size: 14px;
     /* font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;*/
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif!important;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
 }
@@ -2317,84 +2317,69 @@ body {
 
 .sidebar .nav .fa-home:before {
     content: "\f015";
-    font-size: 21px !important;
 }
 
 .sidebar .nav .fa-cogs:before {
     content: "\f085";
-    font-size: 17px !important;
 }
 
 .sidebar .nav .fa-file-video-o:before {
     content: "\f1c8";
-    font-size: 17px !important;
 }
 
 .sidebar .nav .fa-chart-line:before {
     content: "\f201";
-    font-size: 17px !important;
 }
 
 .sidebar .nav .fa-user-o:before {
     content: "\f2c0";
-    font-size: 16px;
 }
 
 .sidebar .nav .fa-calendar-check-o:before {
     content: "\f274";
-    font-size: 17px;
 }
 
 .sidebar .nav .fa-th-list:before {
     content: "\f00b";
-    font-size: 17px;
 }
 
 .sidebar .nav .fa-users:before {
     content: "\f0c0";
-    font-size: 17px;
 }
 
 .sidebar .nav .fa-user-cog:before {
     content: "\f4fe";
-    font-size: 17px;
     color: #fff;
 }
 
 .sidebar .nav .fa-envelope:before {
     content: "\f0e0";
-    font-size: 17px;
 }
 
 .sidebar .nav .fa-calendar-alt:before {
     content: "\f073";
-    font-size: 16px;
 }
 
 .sidebar .nav .fa-handshake-o:before {
     content: "\f2b5";
-    font-size: 18px;
 }
 
 .sidebar .nav .fa-user-circle:before {
     content: "\f2bd";
-    font-size: 18px;
 }
 
 .sidebar .nav .fa-user-plus:before {
     content: "\f234";
-    font-size: 18px;
 }
 
 .sidebar .nav .fa-user-tie:before {
     content: "\f508";
     color: #fff;
-    font-size: 17px;
 }
 
 .sidebar .nav a i {
-    font-family: FontAwesome;
     color: #fff;
+    font-size: 17px;
 }
 
 .dropdown-toggle:after,
@@ -2781,7 +2766,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 
 .dropdown-menu {
     border: 0;
-    box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2);
+   /* box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2);*/
     border-radius: 0.125rem;
     -webkit-transition: all 150ms linear;
     -moz-transition: all 150ms linear;
@@ -2789,6 +2774,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     -ms-transition: all 150ms linear;
     transition: all 150ms linear;
     font-size: 14px;
+    background:#fff!important;
 }
 
     .dropdown-menu.dropdown-menu-right:before {
@@ -3415,6 +3401,11 @@ Created using IcoMoon - icomoon.io
 
 .now-ui-icons.design_bullet-list-67:before {
     content: "\ea14";
+    color: #fff;
+    font-size: 16px;
+    position: relative;
+    top: 10px;
+    left: 10px;
 }
 
 .now-ui-icons.design_image:before {
@@ -6955,7 +6946,7 @@ Created using IcoMoon - icomoon.io
 
     .sidebar .nav i,
     .off-canvas-sidebar .nav i {
-        font-size: 20px;
+        font-size: 18px;
         float: left;
         margin-right: 4px;
         line-height: 30px;
@@ -14150,6 +14141,10 @@ be a descendant of the grid when it is being dragged.
     /* For Firefox 3.6 to 15 */
     background: linear-gradient(0deg, rgba(44, 44, 44, 0.2), rgba(44, 168, 255, 0.6));
     /* Standard syntax */
+}
+.fa, .fas, .far {
+    font-family: "Font Awesome 5 Pro!important";
+    font-weight: 500!important;
 }
 
 .full-page {

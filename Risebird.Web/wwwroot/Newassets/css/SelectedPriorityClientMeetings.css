@@ -341,7 +341,7 @@ table {
     display: inline-block;
 }
 
-    .btn-call .fa {
+    .btn-call .fa, .btn-call .far {
         color: #fff;
         font-size: 14px;
         padding: 0px;

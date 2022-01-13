@@ -319,7 +319,7 @@
                                                 <div class="mandate">
                                                     @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label  desp-label" })<span class="red">*</span>
                                                 </div>
-                                                @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12", @accept = ".doc, .docx, .pdf, .txt" })
+                                                @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "choose-file col-lg-12 col-md-12 col-sm-12 col-xs-12", @accept = ".doc, .docx, .pdf, .txt",@style= "padding:8px!important;background:#f7f7f7!important;" })
                                             <div>
                                                 @if (Model.CodedResumeLink != null && Model.CodedResumeLink != "")
                                                 {
