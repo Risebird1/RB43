@@ -133,7 +133,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from ScheduleInterviewEvent sie where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
+                //var query = "Select * from ScheduleInterviewEvent sie where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
+                var query = "Select * from ScheduleInterviewEvent sie where uniqueid=@uniqueid and IsActive=1 and IsNull(IsSingleUse,0)=0 union Select * from ScheduleInterviewEvent sie where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and IsSingleUse=1";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))

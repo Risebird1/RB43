@@ -2880,6 +2880,14 @@
                 <div class="col-md-12 clearfix">
                     <input class="txtratingComment" type="text" id="txtratingComment" placeholder="Please comment here.." />
                 </div>
+                <div class="col-md-12 clearfix">
+                    <div class="col-md-4 pull-left">
+                        <input type="radio" name="rdclientaction" id="rd_removeinterviewer" style="position:relative;left:-4px;top:4px;" /> Remove Interviewer
+                    </div>
+                    <div class="col-md-4 pull-left">
+                        <input type="radio" name="rdclientaction" id="rd_shortlistinterviewer" style="position:relative;left:-4px;top:4px;" /> Shortlist Interviewer
+                    </div>
+                </div>
                 <div class="col-md-12 text-right clearfix">
                     <input type="button" onclick="closemyRaitingPopup()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
                     <input type="button" onclick="SaveRating()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Save">
@@ -4133,6 +4141,14 @@
             success: function (data) {
                 $("#txtratingvalue").val(data.starRating);
                 $("#txtratingComment").val(data.comment);
+                if (data.clientAction == 'Shortlisted') {
+                    document.getElementById('rd_shortlistinterviewer').checked = true;
+                } else if (data.clientAction == 'Rejected') {
+                    document.getElementById('rd_removeinterviewer').checked = true;
+                } else {
+                    document.getElementById('rd_shortlistinterviewer').checked = false;
+                    document.getElementById('rd_removeinterviewer').checked = false;
+                }
                 var modal = document.getElementById("myRaitingPopup");
                 modal.style.display = "block";
                 setRating(data.starRating);
@@ -4147,6 +4163,14 @@
         var interviewid = $("#txtratinginterviewid").val();
         var ratingvalue = $("#txtratingvalue").val();
         var comments = $("#txtratingComment").val();
+        var clientaction = '';
+        if (document.getElementById('rd_shortlistinterviewer').checked) {
+            clientaction = 'Shortlisted';
+        } else if (document.getElementById('rd_removeinterviewer').checked) {
+            clientaction = 'Rejected';
+        } else {
+            clientaction = '';
+        }
         if (parseInt(ratingvalue) > 0) {
             $.ajax({
                 url: '/RiseTube/SaveRaitingDetails',

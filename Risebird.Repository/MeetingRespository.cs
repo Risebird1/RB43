@@ -4643,7 +4643,8 @@ namespace Risebird.Repository
                     var result = await con.QueryAsync<int>(query, dp);
                     userid = result.FirstOrDefault();
                 }
-                var queryfinal = "Select * From InterviewRatings where Userid=@Userid and Interviewid=@Interviewid";
+                //var queryfinal = "Select * From InterviewRatings where Userid=@Userid and Interviewid=@Interviewid";
+                var queryfinal = "Select distinct ir.*,ti.IsActive,ISNULL(ti.ClientAction,tie.ClientAction) as ClientAction From InterviewRatings ir join InterviewMeetings im on im.id=ir.Interviewid join IRF on IRF.IRFId=im.IRFId join UserList ul on ul.EmailId=im.interviewer left join TransInterviewer ti on ti.UserId=ul.id and ti.IRFId=irf.id left join TransEmergencyInterviewer tie on tie.UserId=ul.id and ti.IRFId=irf.id where ir.Userid=@Userid and ir.Interviewid=@Interviewid";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DynamicParameters dpfinal = new DynamicParameters();
@@ -4674,6 +4675,7 @@ namespace Risebird.Repository
                     parameters.Add("@Interviewid", model.Interviewid);
                     parameters.Add("@StarRating", model.StarRating);
                     parameters.Add("@Comment", model.Comment);
+                    parameters.Add("@ClientAction", model.ClientAction);
                     await SqlMapper.QueryAsync(con, "usp_SaveInterviewRating", parameters,
                          commandType: CommandType.StoredProcedure);
                     return "Save Successfully";
