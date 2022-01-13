@@ -3128,7 +3128,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveRaitingDetails(int imid, int rating, string comment)
+        public async Task<JsonResult> SaveRaitingDetails(int imid, int rating, string comment, string clientaction)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -3139,6 +3139,7 @@ namespace Risebird.Web.Controllers
                 model.Comment = comment;
                 model.Emailid = emailid;
                 model.Interviewid = imid;
+                model.ClientAction = clientaction;
                 var result = await _meetingService.SaveRatingDetails(model);
                 //Send Mail and WhatsApp
                 var resultset = await _candidateService.FetchInterviewerDetails(imid);

@@ -66,6 +66,6 @@ namespace Risebird.Entities.ViewModel
         public int Interviewid { get; set; }
         public DateTime interviewdate { get; set; }
         public string Name { get; set; }
-
+        public string ClientAction { get; set; }
     }
 }

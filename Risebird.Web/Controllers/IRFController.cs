@@ -2294,7 +2294,6 @@ namespace Risebird.Web.Controllers
                 }
 
                 string prof = HttpContext.Session.GetString("profileName");
-
                 if (prof != null)
                 {
                     prof = prof.Replace("\"", "");
