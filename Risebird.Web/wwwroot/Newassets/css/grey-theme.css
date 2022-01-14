@@ -572,7 +572,9 @@ table.journey {
     background-size:5% !important;
     padding: 10px !important;
 }
-
+.dashboardcode-bsmultiselect .form-control.focus {
+    border-bottom: 2px #929292 solid !important;
+}
 .edit-share {
     background: url('../../img/editicon-grey.png') #fff no-repeat !important;
 }

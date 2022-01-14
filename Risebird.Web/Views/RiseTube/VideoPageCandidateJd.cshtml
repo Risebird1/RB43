@@ -73,20 +73,20 @@
 <div class="main-panel bg-white" id="main-panel">
     <!-- Navbar -->
     @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+                    </div>
+                    <a class="navbar-brand card-title">RB Matches Candidates</a>
+                    @if (!String.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <img src="@Model.LogoUrl" style="width:60px;height:60px" />
+                    }
                 </div>
-                <a class="navbar-brand card-title">RB Matches Candidates</a>
-                @if (!String.IsNullOrEmpty(Model.LogoUrl))
-                {
-                    <img src="@Model.LogoUrl" style="width:60px;height:60px" />
-                }
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
-        </div>
-    </nav>*@
+        </nav>*@
     <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
@@ -175,7 +175,7 @@
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName"> Candidate Name </label>
                                                         <div class="col-md-12 col-sm-12">
                                                             <input type="text" id="txtVideoId" value="@Model.imid" hidden />
-                                                            <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                            <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                 @foreach (var item in Model.SubVideo_List.Select(x => x.candidateName).Distinct().ToList())
                                                                 {
@@ -193,7 +193,7 @@
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation"> Candidate Location </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
+                                                            <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                 @foreach (var item in Model.SubVideo_List.Select(x => x.preferredLocation).Distinct().ToList())
                                                                 {
@@ -215,7 +215,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus"> Selection Status </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                     {
@@ -233,7 +233,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR"> Client HR </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
                                                                     {
@@ -253,7 +253,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus"> Approval Status </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
                                                                     {
@@ -271,7 +271,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus"> Joining Status </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
                                                                     {
@@ -291,7 +291,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus"> Offer Status </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
+                                                                <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
                                                                     {
@@ -309,7 +309,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
                                                                     {
@@ -332,7 +332,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed"> Shortlisted </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
+                                                                <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ShortListstatus).Distinct().ToList())
                                                                     {
@@ -350,7 +350,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested"> Interested </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
+                                                                <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.IsIntrested).Distinct().ToList())
                                                                     {
@@ -369,7 +369,7 @@
                                                 <div class="form-group col-md-6 border-rv">
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                     <div class="col-md-12 col-sm-12">
-                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
+                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                             <option value="Available">Available</option>
                                                             <option value="NotAvailable">NotAvailable</option>
 
@@ -1208,7 +1208,7 @@
                                                                                 <div>
                                                                                     <div class="table-responsive-sm">
 
-                                                                                        <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                                                        <table class="table table-bordered mbn" id="SelectabilityTable" cellpadding="0" cellspacing="0">
                                                                                             <thead>
                                                                                                 <tr>
                                                                                                     <th class="desktop-view">Required Level</th>
@@ -1472,7 +1472,7 @@
                                                                                             {
                                                                                                 <span class="candidate">@videolist.candidateName</span>}
 
-                                                                                            @if (@videolist.JDTiltle.Length > 10)
+                                                                                            @if (@videolist.JDTiltle.Length > 20)
                                                                                             {
                                                                                                 <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
@@ -1633,7 +1633,7 @@
                                                                                     {
                                                                                         <span class="candidate">@videolist.candidateName</span>}
 
-                                                                                    @if (@videolist.JDTiltle.Length > 10)
+                                                                                    @if (@videolist.JDTiltle.Length > 20)
                                                                                     {
                                                                                         <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
@@ -1785,7 +1785,7 @@
                                                                         {
                                                                             <span class="candidate">@videolist.candidateName</span>}
 
-                                                                        @if (@videolist.JDTiltle.Length > 10)
+                                                                        @if (@videolist.JDTiltle.Length > 20)
                                                                         {
                                                                             <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
@@ -1893,7 +1893,7 @@
 
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon">
+                    <span>
 
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
@@ -2559,6 +2559,8 @@
 
     }
 </script>
+
+
 <script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 
@@ -2747,6 +2749,21 @@
            of last tab */
         $('ul.tabs li').last().addClass("tab_last");
     })
+
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
+<script>
+    $(".share-btn").click(function () {
+        if ($(".btn-group").hasClass("open")) {
+            $(".btn-group").addClass("show");
+            $(".dropdown-menu").addClass("show");
+        }
+        else {
+            $(".btn-group").removeClass("show");
+            $(".dropdown-menu").removeClass("show");
+        }
+    });
+
 
 </script>
 <script>
@@ -3169,75 +3186,75 @@
 
 
 
-        $("#ClientHR").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+        // $("#ClientHR").multiselect({
+                    // includeSelectAllOption: true,
+                    // selectedClass: 'active1',
+                    // buttonWidth: '100%',
+                   //  maxHeight: 200
+                // });
 
-            $("#CandidateName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+          //   $("#CandidateName").multiselect({
+              //  includeSelectAllOption: true,
+               //  selectedClass: 'active1',
+                // buttonWidth: '100%',
+                // maxHeight: 200
+            // });
 
-        $("#InterviewStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-            buttonWidth: '100%',
-                    maxHeight: 200
-                });
+        // $("#InterviewStatus").multiselect({
+                    // includeSelectAllOption: true,
+                     //selectedClass: 'active1',
+             //buttonWidth: '100%',
+                    // maxHeight: 200
+                 //});
 
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ApprovalStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#JoiningStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#OfferStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#CandidateLocation").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-             $("#IsShortListed").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                 buttonWidth: '100%',
-                    maxHeight: 200
-         });
-          $("#IsIntrested").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-              buttonWidth: '100%',
-                    maxHeight: 200
-          });
-            $("#CandidateAvailable").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+             //$("#ClientName").multiselect({
+                // includeSelectAllOption: true,
+               //  selectedClass: 'active1',
+               //  buttonWidth: '100%',
+               //  maxHeight: 200
+             //});
+            // $("#ApprovalStatus").multiselect({
+               //  includeSelectAllOption: true,
+                // selectedClass: 'active1',
+               //  buttonWidth: '100%',
+               //  maxHeight: 200
+           //  });
+           //  $("#JoiningStatus").multiselect({
+                // includeSelectAllOption: true,
+              //   selectedClass: 'active1',
+               //  buttonWidth: '100%',
+               //  maxHeight: 200
+            // });
+            // $("#OfferStatus").multiselect({
+                // includeSelectAllOption: true,
+                 //selectedClass: 'active1',
+                // buttonWidth: '100%',
+                // maxHeight: 200
+            // });
+             // $("#CandidateLocation").multiselect({
+                //  includeSelectAllOption: true,
+                  //selectedClass: 'active1',
+                 // buttonWidth: '100%',
+                 // maxHeight: 200
+            //  });
+              // $("#IsShortListed").multiselect({
+                     // includeSelectAllOption: true,
+                     // selectedClass: 'active1',
+                  // buttonWidth: '100%',
+                     // maxHeight: 200
+           //});
+          //  $("#IsIntrested").multiselect({
+            // includeSelectAllOption: true,
+                   // selectedClass: 'active1',
+              //buttonWidth: '100%',
+                  // maxHeight: 200
+         // });
+         // $("#CandidateAvailable").multiselect({
+                   // includeSelectAllOption: true,
+                  //  selectedClass: 'active1',
+                 // buttonWidth: '100%',
+                  // maxHeight: 200
+              //});
 
     });
     function ResetFilter() {

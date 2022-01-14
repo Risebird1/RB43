@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\multiselection.js" />
     <Content Remove="wwwroot\Newassets\css\chat.cs" />
   </ItemGroup>
 

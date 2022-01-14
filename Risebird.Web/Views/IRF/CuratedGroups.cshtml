@@ -26,7 +26,7 @@
 
                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fas fa-user-plus" data-toggle="tooltip" data-placement="top" title="Click here to add a Curated Group." onclick="location.href='@Url.Action("AddCuratedGroup", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Curated Group</font></span>
+                            <span class="fas fa-user-plus" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("AddCuratedGroup", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Curated Group</font></span>
                         </button>
 
                     </div>
@@ -78,13 +78,13 @@
                                                     <td class="action" style="text-align:center">
 
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="location.href = '@Url.Action("EditCuratedGroup", "IRF", new { id = item.id })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                            <span onclick="location.href = '@Url.Action("EditCuratedGroup", "IRF", new { id = item.id })'"  class="mdc-fab__icon material-icons">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                                             </span>
                                                         </button>
 
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Add/Update Curated Users">
-                                                            <span onclick="location.href = '@Url.Action("AddUpdateCuratedGroupUsers", "IRF", new { id = item.id})'" title="Add Curated Users" class="mdc-fab__icon material-icons">
+                                                            <span onclick="location.href = '@Url.Action("AddUpdateCuratedGroupUsers", "IRF", new { id = item.id})'"  class="mdc-fab__icon material-icons">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg>
                                                             </span>
                                                         </button>

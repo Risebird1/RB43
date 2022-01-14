@@ -103,13 +103,13 @@
                     <div class="pull-right">
                         <div>
                             <span>
-                                <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
+                                <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
 
-                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             </span>
-                            <span id="status_3"><i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i></span>
+                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i></span>
 
 
                         </div>
@@ -143,7 +143,7 @@
                                                         </div>
                                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                     </div>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                     <form action="@Url.Action("CandidateTimeline", "Candidate")" method="post" id="form">
@@ -181,7 +181,7 @@
                                                                             Meeting Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 <option value="@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())</option>
                                                                                 <option value="@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())</option>
                                                                                 <option value="@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())</option>
@@ -195,7 +195,7 @@
                                                                                 Interview Status
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())</option>
                                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())</option>
                                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())</option>
@@ -210,7 +210,7 @@
                                                                                 Staffing Agency Email ID
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @foreach (var item in Model.Select(x => x.ProfileSource).Distinct().ToList())
                                                                                     {
                                                                                         @if (item != null && item != "")
@@ -234,7 +234,7 @@
                                                                             Schedule Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="ScheduleStatus" name="ScheduleStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="ScheduleStatus" name="ScheduleStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 <option value="@(ScheduleStatusTypes.Scheduled.GetDescription())">@(ScheduleStatusTypes.Scheduled.GetDescription())</option>
                                                                                 <option value="@(ScheduleStatusTypes.NotYetScheduled.GetDescription())">@(ScheduleStatusTypes.NotYetScheduled.GetDescription())</option>
 
@@ -246,7 +246,7 @@
                                                                             Client HR Email
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @foreach (var item in Model.Select(x => x.HREmail).Distinct().ToList())
                                                                                 {
                                                                                     @if (item != null && item != "")
@@ -796,7 +796,7 @@
                                                         </div>
                                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                     </div>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                     <form action="@Url.Action("CandidateTimeline", "Candidate")" method="post" id="form">
@@ -834,7 +834,7 @@
                                                                             Meeting Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 <option value="@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.NoShow.GetDescription())</option>
                                                                                 <option value="@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Dropped.GetDescription())</option>
                                                                                 <option value="@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())">@(Risebird.Entities.Enum.MeetingStatus.Completed.GetDescription())</option>
@@ -848,7 +848,7 @@
                                                                                 Interview Status
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Proxy.GetDescription())</option>
                                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Selected.GetDescription())</option>
                                                                                     <option value="@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())">@(Risebird.Entities.Enum.InterviewStatus.Rejected.GetDescription())</option>
@@ -863,7 +863,7 @@
                                                                                 Staffing Agency Email ID
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="ProfileSource" name="ProfileSource" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @foreach (var item in Model.Select(x => x.ProfileSource).Distinct().ToList())
                                                                                     {
                                                                                         @if (item != null && item != "")
@@ -887,7 +887,7 @@
                                                                             Schedule Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="ScheduleStatus" name="ScheduleStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="ScheduleStatus" name="ScheduleStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 <option value="@(ScheduleStatusTypes.Scheduled.GetDescription())">@(ScheduleStatusTypes.Scheduled.GetDescription())</option>
                                                                                 <option value="@(ScheduleStatusTypes.NotYetScheduled.GetDescription())">@(ScheduleStatusTypes.NotYetScheduled.GetDescription())</option>
 
@@ -899,7 +899,7 @@
                                                                             Client HR Email
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @foreach (var item in Model.Select(x => x.HREmail).Distinct().ToList())
                                                                                 {
                                                                                     @if (item != null && item != "")
@@ -1453,40 +1453,40 @@
             ApplySessionFilter();
         }
 
-        $("#HREmail").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+      // $("#HREmail").multiselect({
+           //includeSelectAllOption: true,
+          // selectedClass: 'active1',
+          // buttonWidth: '100%',
+          // maxHeight: 200
+       //});
 
-        $("#MeetingStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+       //$("#MeetingStatus").multiselect({
+         //  includeSelectAllOption: true,
+           //selectedClass: 'active1',
+          // buttonWidth: '100%',
+           //maxHeight: 200
+       //});
 
-        $("#InterviewStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+       //$("#InterviewStatus").multiselect({
+           //includeSelectAllOption: true,
+          // selectedClass: 'active1',
+           //buttonWidth: '100%',
+           //maxHeight: 200
+       //});
 
-        $("#ScheduleStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+      // $("#ScheduleStatus").multiselect({
+         //  includeSelectAllOption: true,
+          // selectedClass: 'active1',
+         //  buttonWidth: '100%',
+        //   maxHeight: 200
+      // });
 
-        $("#ProfileSource").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+     //  $("#ProfileSource").multiselect({
+           //includeSelectAllOption: true,
+          // selectedClass: 'active1',
+          // buttonWidth: '100%',
+           //maxHeight: 200
+      //});
 
     })
 

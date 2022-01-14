@@ -919,7 +919,7 @@
                                                                                             {
                                                                                                 <span class="candidate">@videolist.candidateName</span>}
 
-                                                                                            @if (@videolist.JDTiltle.Length > 10)
+                                                                                            @if (@videolist.JDTiltle.Length > 20)
                                                                                             {
                                                                                                 <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
@@ -1078,7 +1078,7 @@
                                                                                     {
                                                                                         <span class="candidate">@videolist.candidateName</span>}
 
-                                                                                    @if (@videolist.JDTiltle.Length > 10)
+                                                                                    @if (@videolist.JDTiltle.Length > 20)
                                                                                     {
                                                                                         <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
@@ -1224,7 +1224,7 @@
                                                                         {
                                                                             <span class="candidate">@videolist.candidateName</span>}
 
-                                                                        @if (@videolist.JDTiltle.Length > 10)
+                                                                        @if (@videolist.JDTiltle.Length > 20)
                                                                         {
                                                                             <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
@@ -1822,7 +1822,7 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-<script type="text/javascript">
+@*<script type="text/javascript">
 
     $(document).ready(function () {
         $("#ClientHR").multiselect({
@@ -1896,7 +1896,7 @@
         });
 
     });
-</script>
+</script>*@
 <script>
     var candidate = "";
     var caninterviewid = 0;

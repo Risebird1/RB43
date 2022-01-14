@@ -50,10 +50,10 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
 
 
-
-@*<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/v6.0/css/font-awesome.min.css">*@
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/v6.0/css/font-awesome.min.css">
 <div class="main-panel" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"></div>-->
@@ -73,7 +73,7 @@
                             
                             
                             <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier<br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>' data-position='left' class="pull-left" style="margin-right: 5px;">
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
@@ -85,29 +85,29 @@
 
                                     @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                     {
-                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Skill Channel</font></span>
                                         </button>
 
                                         @if (Model.Profile == "Admin" || Model.Profile == "SeniorHR")
                                         {
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                                <span data-toggle="tooltip" data-placement="top" title="Client Job Description" onclick="location.href='@Url.Action("CreateJd", "Client")'" data-original-title="Tooltip on top"><font style="font-family:arial;">RB Matches</font></span>
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                                <span data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("CreateJd", "Client")'" data-original-title="Tooltip on top"><font style="font-family:arial;">RB Matches</font></span>
                                             </button>
 
                                         }
 
                                         @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
                                         {
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                                <span data-toggle="tooltip" data-placement="top" title="Assessment Market Place" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Market Place</font></span>
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                                <span data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Market Place</font></span>
                                             </button>
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                                <span data-toggle="tooltip" data-placement="top" title="Lead Interviewers" onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                                <span data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
                                             </button>
                                         }
-                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                            <span data-toggle="tooltip" data-placement="top" title="Curated Groups" onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                            <span data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
                                         </button>
 
                                     }
@@ -145,7 +145,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
@@ -181,7 +181,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                <select id="PrimarySkill" name="PrimarySkill" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
                                                                     @foreach (var item in Model.IRFFilterList.Select(x => x.JDTiltle).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -199,7 +199,7 @@
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="EndClientName" name="EndClientName" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="EndClientName" name="EndClientName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
                                                                         @foreach (var item in Model.IRFFilterList.Select(x => x.ClientName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -217,7 +217,7 @@
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="SubscriptionStatus" name="SubscriptionStatus" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
                                                                         @foreach (var item in Model.IRFFilterList.Select(x => x.SubscriptionStatus).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -242,7 +242,7 @@
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="ClientName" name="ClientName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
                                                                         @foreach (var item in Model.IRFFilterList.Select(x => x.ClientCompName).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -259,7 +259,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" data-placeholder="None Selected" multiple="multiple" style="display: none;">
                                                                     @foreach (var item in Model.IRFFilterList.Select(x => x.IRFId).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -481,9 +481,9 @@
                                                 </div>
 
                                                 <div class="card-footer action">
-                                                    <div class="row">
+                                                    <div class="col-md-12">
 
-                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" id="irf-card-footer">
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-left" id="irf-card-footer">
 
                                                             @if (@item.IRFStatus == "Active")
                                                             {
@@ -499,7 +499,7 @@
                                                             }
                                                         </div>
 
-                                                        <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                                        <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10 pull-left">
 
                                                             <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
                                                                 <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
@@ -537,9 +537,9 @@
 
                                                             @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
                                                             {
-                                                                <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -2px;">
+                                                                <button id="skill_7" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Feedback" style=" position: relative; top: -3px;">
                                                                     <span onclick="javascript:Candidatesfeedback('@item.IRFId');" title="Candidates Feedback" class="mdc-fab__icon material-icons">
-                                                                        <i style="font-size: 16px;position: relative;top: -1px" class="fa fa-commenting-o"></i>
+                                                                        <i style="font-size: 16px;position: relative;top: -1px" class="far fa-comment-dots"></i>
                                                                     </span>
                                                                 </button>
 
@@ -655,6 +655,62 @@
     s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
     c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" /><path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
     C22.32,8.481,24.301,9.057,26.013,10.047z"><animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1643,8 +1699,51 @@
     }
 
 </script>
+@*<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>*@
+<script src="~/js/BsMultiSelect.min.js"></script>
+<script src="~/js/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 <script>
-        $(document).ready(function () {
+    var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+    var $selectMultiSelects = $("#edit-StatesPp-id, select[multiple='multiple']");
+    var $jsonMultiSelects = $(" #bsMultiSelectJson, #bsMultiSelectJson2");
+    var $multiSelects = $selectMultiSelects.add($jsonMultiSelects);
+    function install() {
+        $selectMultiSelects.bsMultiSelect(
+            {
+                cssPatch: window.cssPatch,
+                setSelected: function (o, v) {
+                    o.selected = v;
+                    if (!isIE11)
+                        $('.toast').toast('show').find('.toast-body').css('text-decoration', v ? 'none' : 'line-through').text(o.text);
+                },
+            }
+        );
+        $jsonMultiSelects.bsMultiSelect({
+            cssPatch: window.cssPatch,
+            setSelected: function (o, i) {
+                o.selected = i;
+                if (!isIE11)
+                    $('.toast').toast('show').find('.toast-body').css('text-decoration', i ? 'none' : 'line-through').text(o.text);
+            },
+            placeholder: "Placeholder from config object",
+            getDisabled: function () {
+                return $('#optionDisable').prop("checked");
+            },
+            buildConfiguration: function (element, configuration) {
+                configuration.label = $('#' + element.id + 'Label').get(0);
+                configuration.getSize = function () {
+                    var v = $("#bs-size-name-id").val();
+                    return v == "LG" ? "lg" : (v == "SM" ? "sm" : null);
+                }
+            }
+        });
+    }
+    install();
+</script>
+<script>
+
+    $(document).ready(function () {
             $("#stDateInvoice").val("");
             $("#EndDateInvoice").val("");
             $("#srNumberId").val("");
@@ -1662,48 +1761,51 @@
                 ApplySessionFilter();
             }
 
-            $("#RFID").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ArchiveStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#SubscriptionStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientRole").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-             $("#PrimarySkill").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                 buttonWidth: '100%',
-                maxHeight: 200
-             });
-            $("#EndClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#RFID").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ClientName").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ArchiveStatus").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#SubscriptionStatus").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ClientRole").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+             //$("#PrimarySkill").multiselect({
+             //   includeSelectAllOption: true,
+             //   selectedClass: 'active1',
+             //    buttonWidth: '100%',
+             //   maxHeight: 200
+             //});
+
+
+
+            //$("#EndClientName").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
         });
 
         function ResetFilter() {
@@ -1931,7 +2033,7 @@
     @if (pfName == "HR")
     {
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+        @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>*@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/js/hopscotch.min.js" type="text/javascript"></script>
 
         <script type="text/javascript">
@@ -2516,7 +2618,7 @@
     }
     else
     {
-        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        @*<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>*@
         <script src="~/Newassets/js/chardinjs.js"></script>
         <script src="~/Newassets/js/demo.js"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NSkillIndex", "1");

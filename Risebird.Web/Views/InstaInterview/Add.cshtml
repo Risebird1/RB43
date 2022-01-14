@@ -45,7 +45,7 @@
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1" id="uploadDiv">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt", @style= "margin-top:5px!important;border: 1px #e1e0e0 solid;" })
                                         <label class="text-danger" id="error_uploadDiv" style="color:red;font-size:14px"></label>
                                     </div>
                                 </div>

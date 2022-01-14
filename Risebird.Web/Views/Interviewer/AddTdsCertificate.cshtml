@@ -12,14 +12,14 @@
             @*@Html.TextBoxFor(m => m.month, new { @class = "form-control col-md-8 col-sm-8 pull-left" })*@
             <br /><br />
             @Html.LabelFor(m => m.cretificate, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left mt-10" })
-            @Html.TextBoxFor(m => m.cretificate, new { type = "file", @class = "form-control col-md-8 col-sm-8 pull-left mt-10", @accept = ".doc, .docx, .pdf, .txt" })
+            @Html.TextBoxFor(m => m.cretificate, new { type = "file", @class = "choose-file col-md-8 col-sm-8 pull-left mt-10", @accept = ".doc, .docx, .pdf, .txt",@style="background:#fff;" })
         </div>
         <div class="col-md-6">
             @Html.LabelFor(m => m.comment, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
             @Html.TextBoxFor(m => m.comment, new { @class = "form-control col-md-8 col-sm-8 pull-left", @style = "height:82px;", @maxlength = "250" })
         </div>
     </div>
-    <hr style="margin:0px 0px 5px 0px;" />
+    <hr style="margin:10px 0px 5px 0px;" />
     <div class="col-md-12 nopad text-right">
         <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
     </div>

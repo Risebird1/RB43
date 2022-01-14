@@ -60,7 +60,11 @@
                                                 <div class="avatar-upload">
                                                     <div class="avatar-edit">
                                                         @Html.TextBoxFor(model => model.ImageUpload, new { type = "file", @id = "actual-btn", @hidden = "hidden", @class = "form-control", @accept = ".jpeg,.jpg,.png" })
-                                                        <label for="actual-btn"></label>
+                                                        <label for="actual-btn"><i class="fad fa-pen" style="
+    position: relative;
+    top: 4px;
+    left: 9px;
+"></i></label>
                                                     </div>
                                                     <div class="avatar-preview">
                                                         <div id="imagePreview" style="background-image: url(../../Newassets/img/default-avatar.png);">

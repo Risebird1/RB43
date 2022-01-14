@@ -46,7 +46,7 @@
 
                     @if (ViewBag.Profile == "Admin")
                     {
-                        <i type="submit" class="fa fa-file-excel-o excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewwersExporttoExcel", "User")'"></i>
+                        <i type="submit" class="far fa-file-excel excel-file export five pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewwersExporttoExcel", "User")'"></i>
 
                     }
 
@@ -903,10 +903,12 @@ $("#divmeetingentries").empty().html(pagestartdetails);
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
+            $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
+                $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }

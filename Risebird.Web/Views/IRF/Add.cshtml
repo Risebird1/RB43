@@ -213,7 +213,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-4 col-sm-4">
+                                                @*<div class="col-md-4 col-sm-4">
 
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
 
@@ -239,7 +239,7 @@
                                                     </div>
 
 
-                                                </div>
+                                                </div>*@
                                             </div>
                                         </div>
                                         <h3 class="tab_drawer_heading" rel="tab-2">Job Details</h3>
@@ -318,7 +318,7 @@
                                                         <div class="" style="display:none" id="uploadcdDiv">
                                                             @Html.Label("Interview Instructions File", "Interview Instructions File", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                            @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
+                                                            @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
                                                         </div>
                                                     </div>
@@ -419,7 +419,7 @@
                                                         <div class="" style="display:none" id="uploadDiv">
 
                                                             @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
 
                                                         </div>
                                                         @Html.ValidationMessageFor(model => model.JDLink, "", new { @id = "error_JDLink", @class = "text-danger" })
