@@ -56,11 +56,11 @@
                         </button>
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Channel" onclick="location.href='@Url.Action("AddRequirement", "DashBoard")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Channel</font></span>
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddRequirement", "DashBoard")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Channel</font></span>
                         </button>
 
 
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
@@ -94,7 +94,7 @@
                                         </div>
                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                     </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
 
@@ -241,18 +241,18 @@
 
                                         <!-- irf body-->
                                         <div class="card-body">
-                                            <div class="row">
+                                            <div class="col-md-12">
                                                 @*<div class="statusImg">
                                                         <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
                                                     </div>*@
                                                 <div class="statusInfo" style="padding:0px 50px">
                                                     <div class="group inner list-group-item-text">
-                                                        <div class="row second">
+                                                        <div class="second">
                                                             <div class="client-field"> Interviewer Count:</div>  <div class="client-field">@item.InterviewerCount</div>
                                                         </div>
-                                                        <div class="row three"> <span>IRFID:</span><a href="#">@item.IRFIDs</a></div> <br />
+                                                        <div class="three"> <span>IRFID:</span><a href="#">@item.IRFIDs</a></div> <br />
 
-                                                        <div class="row four">
+                                                        <div class="four">
                                                             <span>Status:</span> @item.Status
                                                         </div> <br />
                                                     </div>
@@ -262,14 +262,14 @@
                                         </div>
 
                                         <div class="card-footer action">
-                                            <div class="row">
+                                            <div class="col-md-12">
 
-                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left " id="irf-card-footer">
 
 
                                                 </div>
 
-                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-left ">
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Approved" style="background:#5dc35d !important">
                                                         <span onclick="location.href='@Url.Action("AddInterviewerList", "DashBoard",new { id=item.id,channelname=item.Title})'" title="Interviewer Approved" class="mdc-fab__icon material-icons">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z" /></svg>

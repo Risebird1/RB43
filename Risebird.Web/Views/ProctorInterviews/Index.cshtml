@@ -28,7 +28,7 @@
                         @if (Model.Profile == "Admin")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Existing VMs</font></span>
                             </button>
                         }
 
@@ -119,47 +119,49 @@
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
 
-                                                        <div class="row">
+                                                        <div>
                                                             <span>VM Name:</span>@item.Name
                                                         </div> <br /> <br />
                                                         @if (item.UserName != null)
                                                         {
-                                                            <div class="row">
+                                                            <div>
                                                                 <span>User Name:</span>@item.UserName
                                                             </div> <br /> <br />
                                                         }
                                                         @if (item.PublicIP != null)
                                                         {
-                                                            <div id="procinterview_3" class="row"> <span>Public IP Address:</span>@item.PublicIP:3389</div>
+                                                            <div id="procinterview_3"> <span>Public IP Address:</span>@item.PublicIP:3389</div>
                                                             <br />
                                                             <br />
                                                         }
                                                         else
                                                         {
-                                                            <div id="procinterview_3" class="row"> <span>Public IP Address:</span>@item.PublicIP</div>
+                                                            <div id="procinterview_3"> <span>Public IP Address:</span>@item.PublicIP</div>
                                                             <br />
                                                             <br />
                                                         }
 
-                                                        <div class="row " style="position:relative;">
-                                                            <div id="procinterview_4" style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
+                                                        <div style="position:relative;">
+                                                            <div id="procinterview_4" style="padding: 11px 5px 5px 0px;">
+                                                                <span class="pull-left">Password:</span>
 
-                                                            <!--- <div class="pull-left">
-            <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
-            <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-        </div>--->
+                                                                <!--- <div class="pull-left">
+        <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
+        <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+    </div>--->
 
 
 
-                                                            <div style="position:relative">
-                                                                <div class="pull-left passshow" id="password-field_@item.id" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
+                                                                <div style="position:relative;float:left;top:-10px;">
+                                                                    <div class="pull-left passshow" id="password-field_@item.id" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
 
-                                                                @if (item.Password != null)
-                                                                {<span class="secret" id="secret_@item.id">********</span>
-                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
-                                                                }
-                                                                else
-                                                                { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
+                                                                    @if (item.Password != null)
+                                                                    {<span class="secret" id="secret_@item.id">********</span>
+                                                                        <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                                    }
+                                                                    else
+                                                                    { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -172,9 +174,9 @@
                                         </div>
 
                                         <div class="card-footer action">
-                                            <div class="row">
+                                            <div>
 
-                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 " id="irf-card-footer">
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left" id="irf-card-footer">
 
                                                     @if (@item.StatusDesc.ToLower() == "running")
                                                     {
@@ -190,7 +192,7 @@
                                                     }
                                                 </div>
 
-                                                <div class="stats-bttm-btn  col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
+                                                <div class="stats-bttm-btn  col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left ">
                                                     @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Interviewer")
                                                     {
                                                         @if (item.StatusDesc.ToLower() == "running")
@@ -306,7 +308,7 @@
 
 
                                         <div class="col-md-12 col-sm-12">
-                                            <div class="form-group">
+                                            <div class="form-group mb-0">
                                                 <label class="control-label  desp-label" for="CustomName">Name </label>
                                                 <input class="form-control w-full" type="text" name="textField" id="idCustomName" />
                                                 <label class="text-danger" id="customName_Error" style="color:red"></label>

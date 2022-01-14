@@ -74,7 +74,7 @@
                             {
                                 <div class="pull-left" data-intro='Click here to create insta request<br/><a href="/Client/NotScheduledMeetings" class="btn btn-primary insta-next-btn">NEXT</a>'>
                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to create interview request" onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Create Interview Request</font></span>
+                                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Create Interview Request</font></span>
                                     </button>
                                 </div>
                             }
@@ -143,7 +143,7 @@
                                                                 <div class="form-group">
                                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                             @foreach (var item in Model.Select(x => x.PrimarySkill).Distinct().ToList())
                                                                             {
                                                                                 @if (item != null && item != "")
@@ -283,7 +283,7 @@
                                                                     <span class="interview_5">
                                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Assign To Co-ordinator" style=" position: relative; top: -3px;">
                                                                             <span onclick="AssignToCoordinator(@item.id)" title="Assign To Co-ordinator" class="mdc-fab__icon material-icons">
-                                                                                <i style="font-size: 16px; position: relative;top: -1px;left: 7px; font-size: 14px;" class="fa fa-user user-icon fa fa-check"></i>
+                                                                                <i style="font-size: 16px; position: relative;top: -1px;font-size: 14px;" class="fas fa-user-check"></i>
                                                                             </span>
                                                                         </button>
                                                                     </span>
@@ -301,7 +301,7 @@
                                                                     <span class="interview_7">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Marked skill channel created">
                                                                             <span onclick="markedCompleted(@item.id)" title="Marked skill channel created" class="mdc-fab__icon material-icons">
-                                                                                <i class="fa fa-check-square-o" aria-hidden="true" style="font-size: 17px;"></i>
+                                                                                <i class="far fa-check-square" aria-hidden="true" style="font-size: 17px;"></i>
                                                                             </span>
                                                                         </button>
                                                                     </span>
@@ -438,48 +438,48 @@
                 ApplySessionFilter();
             }
 
-            $("#RFID").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ArchiveStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#SubscriptionStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientRole").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-             $("#PrimarySkill").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                 buttonWidth: '100%',
-                maxHeight: 200
-             });
-            $("#EndClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#RFID").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ClientName").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ArchiveStatus").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#SubscriptionStatus").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ClientRole").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            // $("#PrimarySkill").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //     buttonWidth: '100%',
+            //    maxHeight: 200
+            // });
+            //$("#EndClientName").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
         });
 
         function ResetFilter() {

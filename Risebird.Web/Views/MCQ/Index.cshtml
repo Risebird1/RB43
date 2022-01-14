@@ -45,7 +45,7 @@
 
                 <div class="pull-right">
                     <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
@@ -57,7 +57,7 @@
                             if (profileName == "Admin" || profileName == "HR")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Add MCQ Set" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add MCQ</font></span>
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add MCQ</font></span>
                                 </button>
                             }
                         }
@@ -86,7 +86,7 @@
                                         </div>
                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                     </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                     <form action="@Url.Action("Index","MCQ")" method="post" id="form">
@@ -99,7 +99,7 @@
                                                             Profile Level
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
+                                                            <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                 @foreach (var item in ViewBag.ProfileType)
                                                                 {
                                                                     @if (item != null && item != "")
@@ -117,7 +117,7 @@
                                                             Primary Skills
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                 @foreach (var item in ViewBag.Skills)
                                                                 {
                                                                     @if (item != null && item != "")
@@ -135,7 +135,7 @@
                                                             Compentency Level
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+                                                            <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                 @foreach (var item in ViewBag.CompentencyLevel)
                                                                 {
                                                                     @if (item != null && item != "")
@@ -153,7 +153,7 @@
                                                             Secondary Skills
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="SecondarySkill" name="SecondarySkill" class="form-control multiselect" multiple="multiple">
+                                                            <select id="SecondarySkill" name="SecondarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                 @foreach (var item in ViewBag.SecondarySkills)
                                                                 {
                                                                     @if (item != null && item != "")
@@ -284,7 +284,7 @@
                 </div>
                 <h5 class="modal-title pull-left">MCQ Set </h5>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeCreatePopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" style="padding: 2px 16px;">
@@ -292,7 +292,7 @@
                     @*<div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>*@
                     <div class="col-md-12"><a class="text-right mcq-dnbutton" href="@ViewBag.TemplateUrl" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #fff;">Download Template</span></a></div>
                     <input type="hidden" id="txtpartialid" />
-                    <div class="col-md-6 nopad">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
                                 Primary Skills
@@ -307,7 +307,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 nopad">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
                                 Secondary Skills
@@ -322,7 +322,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 nopad">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill" style="margin-bottom:0px;">
                                 Profile Type
@@ -337,7 +337,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 nopad">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill" style="margin-bottom:0px;">
                                 Compentency Level
@@ -356,7 +356,7 @@
                     <div class="col-md-12">
                         <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     </div>
-                    <div class="col-md-12">   <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
+                    <div class="col-md-12">   <input type="file" class="choose-file" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
@@ -379,7 +379,7 @@
                 </div>
                 <h5 class="modal-title pull-left">Share Test Link</h5>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
@@ -472,30 +472,30 @@
             ApplySessionFilter();
         }
 
-        $("#PrimarySkill").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#SelectionStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#SecondarySkill").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#CompentencyLevel").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#PrimarySkill").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#SelectionStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#SecondarySkill").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#CompentencyLevel").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
     });
     function closeCreatePopUp() {
         var modal = document.getElementById("CreateMCQPopUp");

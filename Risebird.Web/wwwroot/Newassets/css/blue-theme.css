@@ -584,8 +584,14 @@ textarea::-webkit-scrollbar-thumb {
     background-size: 5% !important;
     padding: 10px !important;
 }
-
-[type="date"] {
+.dashboardcode-bsmultiselect .form-control{
+    background:#fff!important;
+}
+.dashboardcode-bsmultiselect .form-control.focus {
+    border-bottom:2px #42a5f5 solid!important;
+    box-shadow:none!important;
+}
+    [type="date"] {
     background: #f5f5f5 url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
     padding: 10px !important;

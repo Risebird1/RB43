@@ -3759,7 +3759,7 @@ namespace Risebird.Web.Controllers
                                 };
                                 var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
-                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
+                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + model.InterviewId;
                                 Mail _mail = new Mail
                                 {
                                     TO = model.CandidateEmail,
@@ -5570,7 +5570,7 @@ namespace Risebird.Web.Controllers
 
             //send a email
 
-            string currenturl = Request.Host.ToString() + "/Interview/CandidateVideoPage/" + videoid;
+            string currenturl = Request.Host.ToString() + "/Interview/CandidateVideoPage?id=" + videoid;
             Mail _mail = new Mail
             {
                 TO = Emailids,
@@ -5864,7 +5864,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult ResendFeedbackform(int interviewid, string CandidateEmail)
         {
-            string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + interviewid;
+            string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + interviewid;
             Mail _mail = new Mail
             {
                 TO = CandidateEmail,

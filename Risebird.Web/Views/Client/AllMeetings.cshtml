@@ -116,8 +116,8 @@
                         <div style="float:left">
                             <div id="allinterview_2">
 
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-toggle="modal" data-target="#filterModal">
-                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             </div>
@@ -125,7 +125,7 @@
                         <div style="float:left">
 
 
-                            <span><i id="allinterview_3" data-intro='Click here to export the Interview data in excel sheet' data-position='right' type="submit" class="fa fa-file-excel-o excel-file export five   pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Client")'"></i></span>
+                            <span><i id="allinterview_3" data-intro='Click here to export the Interview data in excel sheet' data-position='right' type="submit" class="far fa-file-excel excel-file export five   pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Client")'"></i></span>
 
                             <div id="meeting_filter" class="dataTables_filter pull-right">
 
@@ -179,7 +179,7 @@
                                                         </div>
                                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                     </div>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
 
@@ -212,7 +212,7 @@
                                                                     <div class="form-group">
                                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                                 @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
                                                                                 {
@@ -230,7 +230,7 @@
                                                                             HR
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                                 {
                                                                                     foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
@@ -277,7 +277,7 @@
 
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel Id</label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                                     {
                                                                                         @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
@@ -305,7 +305,7 @@
                                                                         <div class="form-group">
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                                     {
                                                                                         @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
@@ -358,7 +358,7 @@
                                                                                 Interview Status
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                                     {
                                                                                         @if (item != null && item != "")
@@ -393,7 +393,7 @@
                                                                             Meeting Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @foreach (var item in Model.Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
                                                                                 {
                                                                                     @if (item != null && item != "")
@@ -409,7 +409,7 @@
                                                                             Confirmation Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
                                                                                 {
                                                                                     @if (item != null && item != "")
@@ -748,7 +748,7 @@
                                                                         {
                                                                             <tr class="collapse @item.imid">
                                                                                 <td colspan="999" class="child-section">
-                                                                                    <table class="table table-striped">
+                                                                                    <table class="table table-striped" cellpadding="0" cellspacing="0">
 
                                                                                         <tr>
 
@@ -890,7 +890,7 @@
                                                         </div>
                                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                     </div>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
 
@@ -923,7 +923,7 @@
                                                                     <div class="form-group">
                                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                                 @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
                                                                                 {
@@ -941,7 +941,7 @@
                                                                             HR
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                                 {
                                                                                     foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
@@ -988,7 +988,7 @@
 
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel Id</label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                                     {
                                                                                         @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
@@ -1016,7 +1016,7 @@
                                                                         <div class="form-group">
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                                     {
                                                                                         @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
@@ -1069,7 +1069,7 @@
                                                                                 Interview Status
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                                     {
                                                                                         @if (item != null && item != "")
@@ -1104,7 +1104,7 @@
                                                                             Meeting Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @foreach (var item in Model.Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
                                                                                 {
                                                                                     @if (item != null && item != "")
@@ -1120,7 +1120,7 @@
                                                                             Confirmation Status
                                                                         </label>
                                                                         <div class="col-md-12 col-sm-12">
-                                                                            <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                            <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                 @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
                                                                                 {
                                                                                     @if (item != null && item != "")
@@ -1462,7 +1462,7 @@ else
                                                                         {
                                                                             <tr class="collapse @item.imid">
                                                                                 <td colspan="999" class="child-section">
-                                                                                    <table class="table table-striped">
+                                                                                    <table class="table table-striped" cellpadding="0" cellspacing="0">
 
                                                                                         <tr>
 
@@ -1627,6 +1627,7 @@ else
 
 
 <script>
+
     $(document).ready(function () {
         if ($("#txtVideostatus").val() == "Public") {
             var modal = document.getElementById("PublicShareVideo");
@@ -1638,76 +1639,76 @@ else
             if ('@filter' != "") {
                 ApplySessionFilter();
               }
-        $("#PrimarySkill").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+     //   $("#PrimarySkill").multiselect({
+          //  includeSelectAllOption: true,
+            // selectedClass: 'active1',
+            // buttonWidth: '100%',
+            // maxHeight: 200
+       // });
 
-        $("#RFID").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+      //  $("#RFID").multiselect({
+           // includeSelectAllOption: true,
+           // selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+       // });
 
-        $("#ClientHR").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+       // $("#ClientHR").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+           // maxHeight: 200
+       // });
 
-        $("#ConfirmationStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#ConfirmationStatus").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+        //});
 
-        $("#MeetingStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#ClientName").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#InterviewStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#ApprovalStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#SelectionStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#JoiningStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#OfferStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+       // $("#MeetingStatus").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+            //maxHeight: 200
+        //});
+       // $("#ClientName").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+       // });
+       // $("#InterviewStatus").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+        //});
+      //  $("#ApprovalStatus").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+       // });
+       // $("#SelectionStatus").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+            //buttonWidth: '100%',
+          //  maxHeight: 200
+       // });
+      //  $("#JoiningStatus").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+        //});
+       // $("#OfferStatus").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+        //});
     });
     function RefreshSearch() {
         $(".dataTables_filter input").val('');
@@ -1742,10 +1743,12 @@ else
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
+            $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
+            $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }
@@ -1889,7 +1892,7 @@ else
             if ($('#hidcilentrole').val() != $('#hidclientdes').val()) {
                 html += '<tr class="collapse ' + data[i].imid + '">';
                 html += '<td colspan="999" class="child-section">';
-                html += '  <table class="table table-striped">';
+                html += '  <table class="table table-striped" cellspacing="0" cellpadding="0">';
                 html += '<th class="itemInterviewLink">Interview Link</th>';
                 html += '<th>End Client Name</th>';
 

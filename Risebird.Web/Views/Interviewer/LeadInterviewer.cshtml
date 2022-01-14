@@ -150,7 +150,7 @@
                                                                                     @item.AssessmentGroupId.Substring(20, @item.AssessmentGroupId.Length - 20)
                                                                                 </p>
                                                                             </div>
-                                                                            <a onclick="moreless1(@item.id)" class="moreless-button" value="Readmore" id="read1_@item.id" href="#">Read more</a>
+                                                                            <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
                                                                         }
                                                                         else
                                                                         {
@@ -334,6 +334,20 @@
         }, 2000);
     };
     //// script for loader ends here
+</script>
+<script>
+    function moreless(id) {
+
+        $('.moretext1_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {

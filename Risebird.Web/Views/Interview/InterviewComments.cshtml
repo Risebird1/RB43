@@ -80,7 +80,7 @@
                                                     <div class="col-md-6 col-sm-6 pull-left">
 
                                                         @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control" })
+                                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "choose-file" })
                                                         @{
                                                             if (Model.AudioLink != null)
                                                             {
@@ -92,7 +92,7 @@
 
                                                         @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control " })
+                                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "choose-file" })
                                                         @{
                                                             if (Model.VideoLink != null)
                                                             {
@@ -250,7 +250,7 @@
                                                                     <div>
 
                                                                         <div>
-                                                                            <div class="choose-file ">
+                                                                            <div>
                                                                                 <label class="control-label desp-label"> Upload Aadhar File</label>
 
                                                                                 <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
@@ -287,7 +287,7 @@
                                                                                 <div class="" id="uploadDiv">
                                                                                     @Html.LabelFor(model => model.AadharFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                                                    @Html.TextBoxFor(model => model.AadharFile, new { type = "file", @class = "form-control" })
+                                                                                    @Html.TextBoxFor(model => model.AadharFile, new { type = "file", @class = "choose-file" })
 
 
                                                                                     <div class="mtop-15">

@@ -930,9 +930,9 @@ ul.panel-controls > li > button {
     display: block;
     float: left;
     width: 30px;
-    height: 32px;
+    height: 30px;
     text-align: center;
-    line-height: 28px;
+    line-height: 25px;
     color: #22262e;
     border: 1px solid #BBB;
     -moz-border-radius: 20%;
@@ -1041,10 +1041,9 @@ ul.panel-controls > li > button {
 }
 
 .daily-interview {
-    -ms-flex: 0 0 66.666666%;
-    flex: 0 0 66.666666%;
-    max-width: 66.666666%;
-    padding-right: 15px;
+    width: 63%;
+    float: left;
+    padding-right: 10px;
 }
 
 .daily-slot {

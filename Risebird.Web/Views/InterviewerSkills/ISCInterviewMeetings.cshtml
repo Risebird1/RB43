@@ -268,10 +268,12 @@
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
+            $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
+         $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }

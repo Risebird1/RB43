@@ -811,7 +811,9 @@ table.journey {
     background-size: 5% !important;
     padding: 10px !important;
 }
-
+.dashboardcode-bsmultiselect .form-control.focus {
+    border-color: #e96e28!important;
+}
 .skill [type="datetime-local"] {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 6% !important;
