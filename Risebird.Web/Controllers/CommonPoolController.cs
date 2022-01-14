@@ -1128,7 +1128,7 @@ namespace Risebird.Web.Controllers
             //send a email
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
-            string currenturl = Request.Host.ToString() + "/CommonPool/VideoPage/" + videoid;
+            string currenturl = Request.Host.ToString() + "/CommonPool/VideoPage?id=" + videoid;
             Mail _mail = new Mail
             {
                 TO = Emailids,
@@ -1225,7 +1225,7 @@ namespace Risebird.Web.Controllers
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
             var modelList = _meetingService.VedioShared(Emailids, videoid, email);
-            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "/" + videoid;
+            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "?id=" + videoid;
 
             if (!String.IsNullOrEmpty(modelList))
             {
