@@ -155,5 +155,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<SkillCahnnelDetailsVM>> GetAllSkillChannelDetails();
         Task<int> GetInterviewerQCRate(int userId);
         Task<int> GetInterviewerRate(int userId, string companyType = null, int? countryType = null);
+        Task<bool> IsQuestionUsedInReport(string question);
     }
 }
