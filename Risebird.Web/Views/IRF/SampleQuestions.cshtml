@@ -352,20 +352,18 @@ else
     }
     function CheckIfQuestionUsedInReport(elementId)
     {
-        debugger;
         var question = document.getElementById(elementId).value;
-        //var isQuestionInUse = false;
+        var result = false;
         $.ajax({
             async: false,
             type: "POST",
             url: "/IRF/IsQuestionUsedInReport",
             data: { 'question': question },
             success: function (response) {
-                debugger;
-                return response;
+                result = response;
             }
         });
-        return false;
+        return result;
        
     }
 
@@ -381,14 +379,19 @@ else
 
             var closestRow = $(element).closest('tr');
             var currentIndex = closestRow[0].sectionRowIndex;
-            var isQuestionInUse = false;
-            isQuestionInUse = CheckIfQuestionUsedInReport(collectionName + "_" + currentIndex + "__" + tdTwo);
-            if (isQuestionInUse) {
-                swal.fire("Question in use in one or more Reports. Cannot delete this question.");
+            
+            if (CheckIfQuestionUsedInReport(collectionName + "_" + currentIndex + "__" + tdTwo))
+            {
+                Swal.fire({
+                    icon: 'error',
+                    type:'error',
+                    title: 'Oops!',
+                    text: 'Question in use in one or more Reports. Cannot delete this question.'//,
+                })
 
-                //return;
             }
-            else {
+            else
+            {
                 var totalRows = $(element).parents('tbody').find('tr').length;
                 var maxIndex = totalRows - 1;
                 if (currentIndex == maxIndex) {
