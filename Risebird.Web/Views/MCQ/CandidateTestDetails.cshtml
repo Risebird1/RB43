@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="pull-right">
-                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                         <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                         <div class="mdc-button__ripple"></div>
                     </button>
@@ -68,7 +68,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <input type="hidden" id="txtCanidateListId" value="@ViewBag.ID" />
@@ -104,7 +104,7 @@
                                                                     Client
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in ViewBag.Clients)
                                                                         {
                                                                             @if (item != null && item != "")
@@ -122,7 +122,7 @@
                                                                     Client HR
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in ViewBag.ClientHR)
                                                                         {
                                                                             @if (item != null && item != "")
@@ -267,7 +267,7 @@
                 </div>
                 <h5 class="modal-title pull-left">MCQ Candidate Video</h5>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeOnlineMeetingModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body" id="divvideoarea">
@@ -470,20 +470,20 @@
             ApplySessionFilter();
         }
 
-         $("#ClientHR").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        // $("#ClientHR").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+       // });
 
 
-        $("#SelectionStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#SelectionStatus").multiselect({
+           // includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+        //});
      });
     function ResetFilter() {
         var id = $("#txtCanidateListId").val();

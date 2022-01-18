@@ -25,11 +25,11 @@
 
                         @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
                         {
-                            <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
+                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
 
                             @*@Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { irfId = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
 
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#uploadResumesModal">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#uploadResumesModal">
 
                                 <span class="mdc-button__label"><span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Upload Resume(s)" data-original-title="Upload Resume(s)"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Upload Resume(s)</font></span></span>
                                 <div class="mdc-button__ripple"></div>
@@ -63,7 +63,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="UploadResumesModalLabel"> Upload Resume(s)</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
@@ -71,7 +71,7 @@
                                             <div class="canvas_div_pdf">
                                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                                <div class="row">
+                                                <div>
                                                     @*<div class="col-md-6 col-sm-6">
                                                             <div class="form-group" style="margin-bottom:10px;">
                                                                 @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })

@@ -1441,7 +1441,20 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpPost]
+        public JsonResult IsQuestionUsedInReport(string question)
+        {
+            try
+            {
+                bool isQuestionUsed = _irfService.IsQuestionUsedInReport(question/*.Replace("\n", "").Replace("\r", "")*/).Result;
+                return Json(isQuestionUsed);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ArchiveIRF(int id)
@@ -5882,7 +5895,7 @@ namespace Risebird.Web.Controllers
                     if (result.Where(x => x.interviewid == item).Count() == 0)
                     {
                         var CandidateEmail = resultset.Where(x => x.interviewid == item).Select(x => x.Intervieweremail).FirstOrDefault();
-                        string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + item;
+                        string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + item;
                         Mail _mail = new Mail
                         {
                             TO = CandidateEmail,

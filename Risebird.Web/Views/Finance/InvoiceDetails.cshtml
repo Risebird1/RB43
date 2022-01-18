@@ -34,7 +34,7 @@
                 <input type="hidden" id="txtEnddate" value="@ViewBag.Enddate" />
                 <div class="pull-right client-ms">
                     <label style="color:forestgreen">Shows Result of Month: @ViewBag.DateResult</label>
-                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-bs-toggle="modal" data-bs-target="#filterModal">
                         <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                         <div class="mdc-button__ripple"></div>
                     </button>
@@ -62,7 +62,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
@@ -113,7 +113,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">Client</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                <select id="Client" name="Client" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in ViewBag.ClientList)
                                                                     {
                                                                         @if (item != null && item != "")
@@ -131,7 +131,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="PaymentStatus">Payment Status</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="PaymentStatus" name="PaymentStatus" class="form-control multiselect" multiple="multiple">
+                                                                <select id="PaymentStatus" name="PaymentStatus" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     <option value="0">Pending</option>
                                                                     <option value="1">Paid</option>
                                                                 </select>
@@ -285,7 +285,7 @@
                             </button>
                             <div class="modal-body">
                                 <div class="col-md-12">
-                                    <div id="divDetailedView" style="max-height:300px;"></div>
+                                    <div id="divDetailedView" ></div>
                                 </div>
 
                             </div>
@@ -332,18 +332,18 @@
                 ApplySessionFilter();
             }
 
-            $("#Client").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#PaymentStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#Client").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#PaymentStatus").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
         });
 
         function ResetFilter() {

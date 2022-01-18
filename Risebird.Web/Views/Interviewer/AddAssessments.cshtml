@@ -51,12 +51,12 @@
                                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                         </div>
 
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.AssessmentGroup, Model.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.AssessmentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.AssessmentType, Model.AssessmentTypelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.AssessmentType, "", new { @class = "text-danger" })
@@ -66,72 +66,72 @@
 
 
 
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.Senioritylevel, Model.Senioritylevellist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.YearsofExprience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.YearsofExprience, Model.YearsofExpriencelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.YearsofExprience, "", new { @class = "text-danger" })
                                         </div>
 
 
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.TestedSkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.TestedSkill, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.TestedSkill, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.Evaluation, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.Evaluation, Model.Evaluationlist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.Evaluation, "", new { @class = "text-danger" })
                                         </div>
 
 
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.Environment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.Environment, new { placeholder = "Skill related IDE i.e. Visual Studio/Code or Java Development", @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Environment, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.Difficultylevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.Difficultylevel, new { placeholder = "Example 90 Percentile", @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Difficultylevel, "", new { @class = "text-danger" })
                                         </div>
 
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.EmployerType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.EmployerType, new { placeholder = "Service Based or Product Based", @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.EmployerType, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.EmployerStage, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.EmployerStage, Model.EmployerStagelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.EmployerStage, "", new { @class = "text-danger" })
                                         </div>
 
 
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 p15 pull-left">
                                             @Html.LabelFor(model => model.EmployerSize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.EmployerSize, Model.EmployerSizelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.EmployerSize, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  pull-left">
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4  p15 pull-left">
                                             @Html.LabelFor(model => model.Delivery, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.Delivery, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Delivery, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
+                                        <div class="form-group col-lg-12  col-md-12 col-sm-12  p15  pull-left">
                                             @Html.LabelFor(model => model.Overview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.Overview, new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.Overview, "", new { @class = "text-danger" })
                                         </div>
                                         @*Questions*@
                                         <div class="clearfix"></div>
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="table-responsive-sm">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12  p15">
+                                            <div class="table-responsive">
                                                 <table class="table table-bordered mbn" id="QuestionsTable">
                                                     <thead>
                                                         <tr>

@@ -33,9 +33,9 @@
                             <div class="form-horizontal w-full">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
                                     <div class="form-group">
-                                        <div class="mandate">
+                                        <div class="mandate"> 
                                             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
                                         </div>
 
@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
@@ -81,11 +81,11 @@
                                 <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                     <div class="form-group">
                                         <div class="pull-left">
-                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Upload Company Logo" style="padding:0px 20px;">Upload Company Logo</label>
+                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Upload Company Logo" style="padding:0px 25px;">Upload Company Logo</label>
                                             <input name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
                                         </div>
                                         <div class="pull-left">
-                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" Provide Logo URL" style="padding:0px 20px;">
+                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" Provide Logo URL" style="padding:0px 25px;">
                                                 Provide Logo URL
                                             </label>
                                             <input name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="top: -25px; position: relative;">
@@ -113,9 +113,9 @@
                                 <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                     <div class="form-group">
                                         Upload Company Video(GIF)
-                                        <input style="position:relative;top:5px;" name="companyVideoDetails" value="Upload" type="radio" onclick="RadioVideo(this.value)">
+                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" value="Upload" type="radio" onclick="RadioVideo(this.value)">
                                         Provide Video URL(GIF)
-                                        <input style="position:relative;top:5px;" name="companyVideoDetails" value="Link" type="radio" onclick="RadioVideo(this.value)">
+                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" value="Link" type="radio" onclick="RadioVideo(this.value)">
                                     </div>
                                     <div class="form-group" style="display:none" id="linkVideoDiv">
                                         @Html.LabelFor(model => model.CompanyVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })

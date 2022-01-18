@@ -43,7 +43,7 @@
                     </div>
 
                     <div class="pull-right">
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
@@ -51,7 +51,7 @@
 
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Account" onclick="location.href='@Url.Action("Add", "Account")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Account</font></span>
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "Account")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Account</font></span>
                         </button>
                     </div>
                 </div>
@@ -107,10 +107,10 @@
                                                             <div class="statusInfo">
                                                                 <div class="group inner list-group-item-text">
 
-                                                                    <div class="clearfix row"> <span class="pull-left"><b>Total Projects:</b></span> <span class="pull-left">@item.TotalProjects</span></div>
-                                                                    <div class="clearfix row">  <span class="pull-left"><b>Client:</b></span> <span class="pull-left"> @item.Client </span></div>
-                                                                    <div class="clearfix row">  <span class="pull-left"><b>End Client:</b></span> <span class="pull-left"> @item.EndClient</span></div>
-                                                                    <div class="clearfix row">
+                                                                    <div class="clearfix"> <span class="pull-left"><b>Total Projects:</b></span> <span class="pull-left">@item.TotalProjects</span></div>
+                                                                    <div class="clearfix">  <span class="pull-left"><b>Client:</b></span> <span class="pull-left"> @item.Client </span></div>
+                                                                    <div class="clearfix">  <span class="pull-left"><b>End Client:</b></span> <span class="pull-left"> @item.EndClient</span></div>
+                                                                    <div class="clearfix">
                                                                         <span class="pull-left"><b>Location:</b></span> <span class="pull-left"> @item.Location</span>
                                                                     </div>
 
@@ -128,7 +128,7 @@
 
                                                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
 
-                                                        <h6 style="color: green;"> Active</h6>
+                                                        <h6 style="color: green;font-size:12px;font-weight:bold;"> Active</h6>
                                                     </div>
                                                     <div class="stats stats-bttm-btn col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
                                                         @if (!@item.IsClientUser)
@@ -179,7 +179,7 @@
                                         </div>
                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                     </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
 
@@ -212,7 +212,7 @@
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="AccountId">AccountId</label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="AccountId" name="AccountId" class="form-control multiselect" multiple="multiple">
+                                                            <select id="AccountId" name="AccountId" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                 @foreach (var item in Model.AccountList.Select(x => x.Name).Distinct().ToList())
                                                                 {
                                                                     @if (item != null && item != "")
@@ -226,7 +226,7 @@
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="ArchiveStatus">Archive Status</label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                 @foreach (var item in Model.AccountList.Select(x => x.ArchiveStatus).Distinct().ToList())
                                                                 {
                                                                     @if (item != null && item != "")
@@ -251,7 +251,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.AccountList.Select(x => x.EndClient).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -266,7 +266,7 @@
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="Location">Location</label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
+                                                            <select id="Location" name="Location" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                 @foreach (var item in Model.AccountList.Select(x => x.Location).Distinct().ToList())
                                                                 {
@@ -424,30 +424,30 @@
                 ApplySessionFilter();
               }
 
-        $("#AccountId").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#ClientName").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#ArchiveStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#Location").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
+        //$("#AccountId").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
+        //$("#ClientName").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
+        //$("#ArchiveStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
+        //$("#Location").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
 
     });
 

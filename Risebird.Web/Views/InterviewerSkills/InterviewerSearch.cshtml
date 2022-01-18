@@ -87,7 +87,7 @@
 
                         <div class="pull-left">
                             <div id="intsearch_3">
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
@@ -126,7 +126,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <form action="@Url.Action("InterviewerSearch","InterviewerSkills")" method="post" id="form">
@@ -139,7 +139,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroup">Assessment Group</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="AssessmentGroup" name="AssessmentGroup" class="form-control multiselect" multiple="multiple">
+                                                                <select id="AssessmentGroup" name="AssessmentGroup" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.AssessmentGroup)
                                                                     {
@@ -158,7 +158,7 @@
                                                                 Seniority level
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="Senioritylevel" name="Senioritylevel" class="form-control multiselect" multiple="multiple">
+                                                                <select id="Senioritylevel" name="Senioritylevel" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.Senioritylevel)
                                                                     {
@@ -178,7 +178,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ProfileType">Profile Type</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ProfileType" name="ProfileType" class="form-control multiselect" multiple="multiple">
+                                                                <select id="ProfileType" name="ProfileType" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.ProfileType)
                                                                     {
@@ -196,7 +196,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">Compentency Level</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+                                                                <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.CompentencyLevel)
                                                                     {
@@ -214,7 +214,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="IndianRate">India Price</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="IndianRate" name="IndianRate" class="form-control multiselect" multiple="multiple">
+                                                                <select id="IndianRate" name="IndianRate" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.IndianRate)
                                                                     {
@@ -232,7 +232,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="OutSideIndiaRate">US Price</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="OutSideIndiaRate" name="OutSideIndiaRate" class="form-control multiselect" multiple="multiple">
+                                                                <select id="OutSideIndiaRate" name="OutSideIndiaRate" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.OutSideIndiaRate)
                                                                     {
@@ -250,7 +250,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="CompanyType" name="CompanyType" class="form-control multiselect" multiple="multiple">
+                                                                <select id="CompanyType" name="CompanyType" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.CompanyType)
                                                                     {
@@ -268,7 +268,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="Domain">Domain</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="Domain" name="Domain" class="form-control multiselect" multiple="multiple">
+                                                                <select id="Domain" name="Domain" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in ViewBag.Domain)
                                                                     {
@@ -549,7 +549,7 @@
                         </div>
                         <h5 class="modal-title pull-left"> Call Candidate !</h5>
                     </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
                     </button>
 
@@ -695,109 +695,107 @@
             ApplySessionFilter();
         }
 
-        $("#AssessmentGroup").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#AssessmentGroup").multiselect({
+           // includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+          //  maxHeight: 200
+        //});
 
 
-        $("#RFID").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
+       // $("#RFID").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+       // });
 
-        });
+        //$("#Senioritylevel").multiselect({
+           // includeSelectAllOption: true,
+           // selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
 
-        $("#Senioritylevel").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
+        //});
 
-        });
+       // $("#ConfirmationStatus").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+       //});
 
-        $("#ConfirmationStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
+        //$("#MeetingStatus").multiselect({
+           // includeSelectAllOption: true,
+           // selectedClass: 'active1',
+            //buttonWidth: '100%',
+           // maxHeight: 200
 
-        });
+         //});
 
-        $("#MeetingStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
+       // $("#InterviewStatus").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
 
-         });
-
-        $("#InterviewStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-
-        });
+        //});
 
 
-        $("#CandidateName").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#ProfileType").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#CompentencyLevel").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#IndianRate").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#OutSideIndiaRate").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#CompanyType").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#Domain").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#IsIntrested").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
-        $("#CandidateAvailable").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+       // $("#CandidateName").multiselect({
+           // includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+           // maxHeight: 200
+        //});
+       // $("#ProfileType").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+           // buttonWidth: '100%',
+          //  maxHeight: 200
+        //});
+       // $("#CompentencyLevel").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+        //});
+        //$("#IndianRate").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+        //});
+       // $("#OutSideIndiaRate").multiselect({
+           // includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+        //});
+        //$("#CompanyType").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+           // maxHeight: 200
+        //});
+       // $("#Domain").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+        //});
+       // $("#IsIntrested").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+           // maxHeight: 200
+        //});
+        //$("#CandidateAvailable").multiselect({
+            //includeSelectAllOption: true,
+            //selectedClass: 'active1',
+            //buttonWidth: '100%',
+            //maxHeight: 200
+        //});
 
 
     });

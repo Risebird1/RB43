@@ -29,12 +29,12 @@
             @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control col-md-8 col-sm-8 pull-left" })
         </div>
         <div class="col-md-6">
-            @Html.LabelFor(m => m.Comment, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
-            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control col-md-8 col-sm-8 pull-left", @maxlength = "200", @style = "height:80px;" })
+            @Html.LabelFor(m => m.fileupload, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.fileupload, new { type = "file", @class = "choose-file pull-left", @style = "background:#fff;margin:0px 0px 10px 0px!important;width:100%", @accept = ".doc, .docx, .pdf, .txt" })
         </div>
         <div class="col-md-6 border-rv">
-            @Html.LabelFor(m => m.fileupload, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
-            @Html.TextBoxFor(m => m.fileupload, new { type = "file", @class = "form-control col-md-8 col-sm-8 pull-left", @accept = ".doc, .docx, .pdf, .txt" })
+            @Html.LabelFor(m => m.Comment, new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left" })
+            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control col-md-8 col-sm-8 pull-left", @maxlength = "200", @style = "height:80px;" })
         </div>
     </div>
     <hr style="margin:0px 0px 5px 0px;" />

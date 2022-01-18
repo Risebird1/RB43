@@ -297,13 +297,14 @@
     font-size: 13px !important;
     padding: 0px 0px 0px 35px;
     height: 35px;
+    width: 100%;
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
 
 .view-video {
     background: none;
     border: 0px;
-    font-family: Roboto, sans-serif;
+    font-family: Roboto, sans-serif!important;
     font-size: 14px;
     font-weight: 500;
     text-transform: uppercase;
@@ -510,7 +511,7 @@
 
 .share-btn {
     color: #32363a;
-    font-family: Roboto, sans-serif;
+    font-family: Roboto, sans-serif !important;
     font-size: 14px;
     font-weight: 500;
     text-transform: uppercase;
@@ -930,6 +931,7 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 13px !important;
     padding: 0px 0px;
     height: 30px;
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
 }
 
 .yellow-btn {
@@ -1808,6 +1810,7 @@ table {
     font-size: 11.5px;
     padding: 6px 6px;
     background: #f2f2f2;
+    color: #00000091;
     margin: 10px 3px 0px 0px;
 }
 
@@ -1911,6 +1914,7 @@ table {
 .shortlist {
     margin-top: 0px;
     height: 40px;
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
 }
 
 .showinter {
@@ -1922,9 +1926,9 @@ table {
 }
 
 .views {
-    right: 0px;
-    position: absolute;
-    padding: 10px 10px 0px 10px;
+    right: 0%;
+    position: relative;
+    padding: 7px 10px 0px 10px;
 }
 
 .limebtn {
@@ -2725,6 +2729,8 @@ table {
     .views {
         padding: 0px 10px 0px 10px;
         right: 4px;
+        position: absolute;
+        top: 10px;
     }
 
     .comment-area .talk-bubble {
