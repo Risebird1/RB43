@@ -3758,7 +3758,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<RBInterviewDetails>(con, "Usp_FetchInterviewPayDetails", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
-                    return (List<RBInterviewDetails>)result;
+                    return (List<RBInterviewDetails>)result.OrderByDescending(x => x.Date).ToList();
                 }
             }
             catch (SqlException ex)

@@ -104,6 +104,11 @@ namespace Risebird.Web.Controllers
                             var _lastdate = item.Date.AddMonths(2).AddDays(-(item.Date.AddMonths(1).Day + 1));
                             item.ExpectedDate = _firstdate.ToShortDateString() + " - " + _lastdate.ToShortDateString();
                         }
+                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)")
+                        {
+                            item.MeetingStatusDetails = "Unassign Meeting within 1/2 hr";
+                            item.InterviewStatusDetails = "";
+                        }
                     }
                     return View(model);
                 }
@@ -197,8 +202,20 @@ namespace Risebird.Web.Controllers
                                 {
                                     Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                 }
-                                Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                                if (!string.IsNullOrEmpty(item.VideoLink))
+                                if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5)
+                                {
+                                    Sheet.Cells[i, 11].Value = "Unassign Meeting within 1/2 hr";
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                }
+                                if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5)
+                                {
+                                    Sheet.Cells[i, 6].Value = "No Video";
+                                    Sheet.Cells[i, 7].Value = "NA";
+                                }
+                                else if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
                                     try
                                     {
