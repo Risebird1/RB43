@@ -1,0 +1,678 @@
+﻿body {
+    font-family: Roboto, sans-serif;
+}
+#style-2::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 5px;
+}
+
+textarea::-webkit-scrollbar {
+    width: 2px;
+    height: 6px;
+
+}
+
+textarea::-webkit-scrollbar-thumb {
+
+    margin: 2px;
+    border-radius: 2px;
+}
+
+
+.no-sort::after {
+    display: none !important;
+}
+
+#broadcastModal .modal-lg {
+    max-width: 700px !important;
+}
+
+.no-sort {
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+#style-2::-webkit-scrollbar {
+    width: 6px;
+}
+
+#style-2::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: darkgray;
+}
+
+table {
+    white-space: nowrap !important;
+}
+
+    table.dataTable > thead > tr > th {
+        padding: 5px;
+    }
+
+
+.table > tfoot > tr > th {
+    padding: 5px 7px;
+}
+
+td .wordwrap {
+    max-width: 250px !important;
+    min-width: 250px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+td:hover.wordwrap {
+    text-overflow: clip !important;
+    white-space: normal !important;
+}
+
+/*CSS FOR Loader*/
+.loader {
+    font-family: Arial;
+    font-size: 10pt;
+    /*border: 5px solid #67CFF5;*/
+    /*width: 200px;
+                height: 100px;*/
+    display: none;
+    position: center !important;
+    background-color: White;
+    z-index: 999;
+    /*opacity: 0.5;*/
+    filter: alpha(opacity = 50);
+}
+/*table.dataTable > thead > tr > th {
+            max-width: 200px !important;
+        }*/
+table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+    max-width: 300px !important;
+}
+
+table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+    padding: 7px;
+    font-weight: normal !important;
+}
+
+.table > thead > tr > th, .table > tfoot > tr > th {
+    padding: 7px;
+    font-weight: normal !important;
+}
+
+
+table {
+    border: 1px #ccc solid !important;
+}
+
+    table td {
+        color: #504e4e;
+    }
+
+    table th {
+        color: #000000e0;
+    }
+
+
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: #fff;
+    /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
+		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
+		
+	*/
+    background-image: url('../../img/drop.png');
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right 1.2em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+    }
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('../../img/drop.png');
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
+.selectedinterview .table > tbody > tr > td {
+    padding: 0px 5px;
+}
+
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat;
+    background-size: 7% !important;
+    padding:10px!important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+.panel-header-sm {
+    height: 85px;
+    padding-top: 65px;
+    background: none !important;
+}
+.multiselect-selected-text {
+    text-transform: capitalize;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #807e7e;
+    font-size: 12px;
+}
+
+.spanclass {
+    color: black;
+    font-size: 11px;
+}
+.cmt-w {
+    width: 300px;
+}
+.desc {
+    display: inline-block;
+    width: 120px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+/*.mt50{margin-top:60px;}*/
+.multiple_row > h2 {
+    font-size: 18px;
+    background-color: #5f95b1;
+    padding: 8px 10px;
+    text-align: left;
+    color: #ffffff;
+    margin-top: 35px;
+    margin-bottom: 35px;
+}
+    .multiple_row > h2:first-child{margin-top:0px!important;}
+    .statusImg {
+        -ms-flex: 0 0 12.666667%;
+        flex: 0 0 12.666667%;
+        max-width: 12.666667%;
+        float: left;
+        padding: 0px 15px;
+    }
+
+.statusInfo {
+    -ms-flex: 0 0 82.333333%;
+    flex: 0 0 82.333333%;
+    max-width: 82.333333%;
+    float: left;
+    padding: 0px 15px;
+}
+
+.card-blue .card-footer .stats-bttm-btn {
+    padding: 0px 25px 0px 0px;
+    text-align: right;
+}
+
+.thumbnail {
+    border-top: 5px solid #443f3f;
+}
+
+.list-group-item-heading {
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 15px;
+}
+
+
+
+.icon span {
+    padding-top: 15px;
+    font-size: 19px;
+    color: #5f95b1;
+    padding-left: 5px;
+}
+
+.list-group {
+    margin-bottom: 150px;
+}
+
+.panel-header-sm {
+    height: 85px;
+    padding-top: 65px;
+    background: none !important;
+}
+
+
+
+.card .card-header .card-title, .card .card-header h4.card-title {
+    margin: 0 0px 10px 0;
+}
+
+.border-rv {
+    border-right: 1px dotted #ccc;
+}
+
+
+
+
+.mdc-card-wrapper__text-section {
+    padding: 16px;
+}
+
+
+.mdc-fab {
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #53a5f5;
+}
+
+.sidebar:after, .off-canvas-sidebar:after {
+    background: #42a5f5;
+}
+
+
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #42a5f5;
+    font-family: Roboto, sans-serif;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.mdc-button--outlined:not(:disabled) {
+    border-color: #42a5f5;
+    color: #42a5f5;
+}
+
+.mdc-fab-secondary {
+    background: #fff !important;
+    color: #53a5f5 !important;
+}
+
+.mdc-card .modal .form-control:focus {
+    border-bottom: 2px rgb(80, 158, 235) solid;
+}
+
+.caret {
+    display: none !important;
+}
+
+.multiselect-container {
+    width: 100% !important;
+}
+
+.modal-lg {
+    max-width: 690px !important;
+}
+
+
+.card-body {
+    margin: 0px;
+    padding: 5px;
+}
+
+#irf-card-footer {
+    padding-left: 25px;
+    padding-top: 10px;
+    padding-right: 0px;
+}
+
+.card-header-buttons {
+    padding: 5px 5px 0px 0px;
+    text-align: right;
+}
+
+.card-blue .card-header {
+    padding: .5rem 1.25rem 0.3rem 1.25rem;
+}
+
+ .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
+        margin-top: 0px;
+        margin-bottom: 5px;
+}
+
+.card-content-holder {
+    background-color: white;
+}
+
+.list-group-item-text {
+    line-height: 80%;
+}
+
+ .list-group-item-text span {
+        font-weight: bold;
+        padding-right: 7px;
+}
+
+.pskill {
+    display: inline-block;
+    width: 160px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+
+
+
+.card-blue {
+    border: 1px #6fb6ff59 solid;
+    border-radius: 4px;
+    background-color: #fff;
+    background-color: var(--mdc-theme-surface, #fff);
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+ .card-blue .card-header h6 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 20px;
+     color: #0c2642;
+     padding: 0;
+    margin: 0;
+}
+
+ .card-blue .card-body {
+     margin: 0px;
+     padding: 12px 5px 10px 5px;
+}
+
+
+
+.card-header-buttons button.btn-danger {
+    background: #FF3636 !important;
+}
+
+
+.card-blue .card-footer {
+    text-align: center;
+    padding: 8px 0px 8px 0px;
+}
+
+ .card-blue .card-footer .stats-bttm-btn {
+        padding: 0px 25px 0px 0px;
+        text-align: right;
+    }
+
+.mdc-card .modal .modal-content .modal-body {
+    padding-top: 10px;
+}
+
+.mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
+    border: 0;
+    border-radius: 0px 0px 0 0;
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    height: 40px;
+    font-size: 0.8rem;
+    border-bottom: 1px rgb(0 0 0 / 11%) solid;
+}
+
+    .mdc-card .modal .form-control:focus, .modal .form-control:focus, .mdc-card .form-control:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid;
+    }
+
+.mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+    background: #42a5f5;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    color: #fff;
+}
+
+.modal .modal-header .close{color:#FFF}
+
+.modal-content .modal-body {
+    padding-top: 10px;
+}
+
+.modal .form-group {
+    margin-bottom: 10px;
+}
+
+    .modal .form-group .btn {
+        margin: 0px;
+    }
+
+
+
+.dropdown-toggle {
+    border: 0;
+    border-radius: 4px 4px 0 0;
+    background: white;
+    height: 40px;
+    font-size: 0.8rem;
+    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+}
+
+    .dropdown-toggle::after {
+        color: rgba(0, 0, 0, 0.29);
+        position: absolute;
+        right: 30px;
+        top: 14px;
+    }
+
+.mdc-card button.dropdown-toggle:focus {
+    border-bottom: 2px rgb(80, 158, 235) solid;
+}
+
+
+.border-rv {
+    border-right: 1px dotted #ccc;
+}
+
+.card label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #9A9A9A;
+    padding: 0px 20px;
+}
+
+.border-bottom {
+    border-bottom: 1px #cccccc63 solid;
+}
+
+
+.mdc-fab.trash-btn {
+    background: #d20505 !important;
+}
+
+.unarchive-btn {
+    background: #848080eb !important;
+}
+
+
+
+.mdc-checkbox {
+    display: inline-block;
+    position: relative;
+    flex: 0 0 18px;
+    box-sizing: content-box;
+    width: 18px;
+    height: 18px;
+    line-height: 0;
+    white-space: nowrap;
+    cursor: pointer;
+    vertical-align: bottom;
+    padding: 15px 11px;
+}
+
+.mc-button-area {
+    text-align: right;
+}
+
+#resumeId, #zoomlinkId {
+  
+    padding: 5px 10px;
+    border-radius: 16px;
+}
+
+
+#reportId {
+    padding: 5px 10px;
+    border-radius: 16px;
+}
+
+#jdlinkId {
+
+    padding: 4px 10px;
+    border-radius: 16px;
+    border: 1px #79c0f3 solid;
+}
+
+#videoId {
+ 
+    padding: 5px 10px;
+    border-radius: 16px;
+}
+.talktext {
+    padding: 8px 8px 4px 8px;
+    text-align: left;
+    line-height: 1.5em;
+}
+.talk-bubble {
+    display: inline-block;
+    position: relative;
+    width: 300px;
+    height: auto;
+    border-radius: 7px;
+    margin: 5px 0px;
+    background-color: #fff;
+}
+    .talk-bubble textarea {
+        resize: none;
+        border: 0;
+        background: #fff;
+        padding: 5px;
+    }
+
+.border-bubble {
+    border: 1px solid #620bee21;
+}
+.caret {
+    display: none !important;
+}
+
+.multiselect-container {
+    width: 100% !important;
+}
+
+.modal-lg {
+    max-width: 630px !important;
+}
+
+
+.modal-content .modal-body {
+    padding-top: 10px;
+}
+.pa .list-group-item-text span {
+    font-weight: normal;
+    padding-right: 7px;
+    font-size: 14px;
+    line-height: 22px;
+}
+.stats .card .card-header .card-title, .card .card-header h4.card-title {
+    margin: 0 0px 10px 0;
+}
+
+.stats .card-chart .card-header {
+ 
+    border: 0;
+    margin: 0;
+    width: auto;
+    padding: 5px 10px;
+    border-top: 1px #eeeeee73 solid;
+}
+
+    .stats .card-chart .card-header h4.card-title {
+        margin: 0;
+        padding: 0;
+    }
+
+    .stats .card-chart .card-header .card-title {
+        margin-top: 10px;
+        margin-bottom: 0;
+        text-align: center;
+        font-size: 22px;
+        padding: 7px 0px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+
+@media (min-width: 1200px) {
+    .container {
+        width: 1125px;
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+    .clientName {
+        width: 170px;
+    }
+
+    .table > tbody > tr > td {
+        padding: 12px 5px !important;
+    }
+
+    .selectedinterview .table > tbody > tr > td {
+        padding: 12px 5px !important;
+    }
+    .card-header-buttons {
+        text-align: center;
+    }
+
+    #irf-card-footer {
+        padding-left: 0px !important;
+        padding-top: 5px;
+        padding-right: 0px !important;
+    }
+}
+
+    @media screen and (max-width: 640px) {
+        .card-blue .card-header h6 {
+            text-align: center;
+        }
+    }
+    
