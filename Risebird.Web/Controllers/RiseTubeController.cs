@@ -1256,7 +1256,7 @@ namespace Risebird.Web.Controllers
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
             var resultset = _meetingService.AddVedioShare(email, videoid, Emailids);
-            string currenturl = Request.Host.ToString() + "/RiseTube/VideoPage/" + videoid;
+            string currenturl = Request.Host.ToString() + "/RiseTube/VideoPage?id=" + videoid;
             Mail _mail = new Mail
             {
                 TO = Emailids,
@@ -1352,7 +1352,7 @@ namespace Risebird.Web.Controllers
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
             var modelList = _meetingService.VedioShared(Emailids, videoid, email);
-            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "/" + videoid;
+            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "?id=" + videoid;
             var resultset = _meetingService.AddVedioShare(email, videoid, Emailids);
             if (!String.IsNullOrEmpty(modelList))
             {
@@ -1416,6 +1416,10 @@ namespace Risebird.Web.Controllers
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
+                if (videoid.Contains("?"))
+                {
+                    videoid = videoid.Split("?")[1].ToString();
+                }
                 _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
             }
             else
@@ -1796,7 +1800,7 @@ namespace Risebird.Web.Controllers
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
                     string currenturl = "https://" + Request.Host + Request.Path;
-                    currenturl = currenturl.Replace("Sharecreatedview", "SharedVideoPage") + "/" + result;
+                    currenturl = currenturl.Replace("Sharecreatedview", "SharedVideoPage") + "?id=" + result;
                     if (Emailids != "" && Emailids != ";")
                     {
                         Mail _mail = new Mail
@@ -1946,7 +1950,7 @@ namespace Risebird.Web.Controllers
                     var model = _meetingService.GetallVideoSumaryDetails();
                     foreach (var item in model)
                     {
-                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "?id=" + item.Videoid.ToString();
                     }
                     return View(model.ToPagedList(Page ?? 1, 12));
                 }
@@ -1983,6 +1987,10 @@ namespace Risebird.Web.Controllers
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
+                if (videoid.Contains("?"))
+                {
+                    videoid = videoid.Split("?")[1].ToString();
+                }
                 _meetingService.AddTimeSpend(Convert.ToInt32(videoid), Emailid, "Shared", TimeSpend, CurrentTime);
 
             }
@@ -2007,7 +2015,7 @@ namespace Risebird.Web.Controllers
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
                     foreach (var item in model)
                     {
-                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "?id=" + item.Videoid.ToString();
                         item.interviewid = interviewid;
                         if (profileName == "CuratedUser")
                         {
@@ -2074,6 +2082,10 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 string videoid = currentUrl.Split("/")[currentUrl.Split("/").Count() - 1].ToString();
+                if (videoid.Contains("?"))
+                {
+                    videoid = videoid.Split("?")[1].ToString();
+                }
                 string urlType = "";
                 if (currentUrl.Contains("SharedVideoPage"))
                 {
@@ -2089,6 +2101,10 @@ namespace Risebird.Web.Controllers
             else
             {
                 string videoid = currentUrl.Split("/")[currentUrl.Split("/").Count() - 1].ToString();
+                if (videoid.Contains("?"))
+                {
+                    videoid = videoid.Split("?")[1].ToString();
+                }
                 string urlType = "";
                 if (currentUrl.Contains("SharedVideoPage"))
                 {
@@ -2137,7 +2153,7 @@ namespace Risebird.Web.Controllers
                     var model = _meetingService.GetVideoIntrestDetails();
                     foreach (var item in model)
                     {
-                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "?id=" + item.Videoid.ToString();
                     }
                     return View(model);
                 }
@@ -3029,7 +3045,7 @@ namespace Risebird.Web.Controllers
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
                     foreach (var item in model)
                     {
-                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "?id=" + item.Videoid.ToString();
                         item.interviewid = interviewid;
                         if (item.Candidate.Split("@").Length > 1)
                         {
@@ -3128,7 +3144,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveRaitingDetails(int imid, int rating, string comment)
+        public async Task<JsonResult> SaveRaitingDetails(int imid, int rating, string comment, string clientaction)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -3139,6 +3155,7 @@ namespace Risebird.Web.Controllers
                 model.Comment = comment;
                 model.Emailid = emailid;
                 model.Interviewid = imid;
+                model.ClientAction = clientaction;
                 var result = await _meetingService.SaveRatingDetails(model);
                 //Send Mail and WhatsApp
                 var resultset = await _candidateService.FetchInterviewerDetails(imid);

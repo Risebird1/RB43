@@ -2022,6 +2022,8 @@ namespace Risebird.Repository
                     cmdAddSkillComments.Parameters["@TechSkillCommentsBulkData"].Value = techSkillCommentsDt;
                     cmdAddSkillComments.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
                     cmdAddSkillComments.Parameters["@IRFId"].Value = obj.IRFId;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));
+                    cmdAddSkillComments.Parameters["@userId"].Value = obj.UserId;
                     con.Open();
 
                     if (await cmdAddSkillComments.ExecuteNonQueryAsync() != 0)
@@ -2047,21 +2049,32 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public IEnumerable<SkillComment> GetTechSkillComments(int id)
+
+        public IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId=null)
         {
             try
             {
 
 
-                var query = "Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId";
+                //var query = "Select tsc.*, sk.[Name] as SkillName from TechSkillComments tsc join Skill sk on sk.id = tsc.Skill where IRFId = @IRFId";
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@IRFId", id);
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    var results = con.Query<SkillComment>(query, dynamicParameters);
+                //    return results;
+                //}
+
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
+                dynamicParameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SkillComment>(query, dynamicParameters);
-                    return results;
-                }
+                    var result = SqlMapper.QueryAsync<SkillComment>(con, "usp_GetTechSkillComments", dynamicParameters,
+                        commandType: CommandType.StoredProcedure).Result;
+                    return result;
 
+                }
             }
             catch (SqlException ex)
             {
@@ -4604,6 +4617,31 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> IsQuestionUsedInReport(string question)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("question", question);
+                    var result = await SqlMapper.QueryAsync<bool>(con, "usp_IsQuestionUsedInReport", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

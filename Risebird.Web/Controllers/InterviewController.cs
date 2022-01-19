@@ -5570,7 +5570,7 @@ namespace Risebird.Web.Controllers
 
             //send a email
 
-            string currenturl = Request.Host.ToString() + "/Interview/CandidateVideoPage/" + videoid;
+            string currenturl = Request.Host.ToString() + "/Interview/CandidateVideoPage?id=" + videoid;
             Mail _mail = new Mail
             {
                 TO = Emailids,

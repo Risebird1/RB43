@@ -55,7 +55,7 @@
                         <div>
 
                             <div  data-intro='Filter based on available attributes or reset filter if applied earlier' data-position='left' class="pull-left" style="margin-right: 5px;">
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
@@ -66,7 +66,7 @@
                                 {
 
                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Template" onclick="location.href='@Url.Action("Create", "Template")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Template</font></span>
+                                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("Create", "Template")'" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Template</font></span>
                                     </button>
 
                                 }
@@ -94,7 +94,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
@@ -110,7 +110,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroup">Assessment Group</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="AssessmentGroup" name="AssessmentGroup" class="form-control multiselect" multiple="multiple">
+                                                                <select id="AssessmentGroup" name="AssessmentGroup" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.TemplateList.Select(x => x.AssessmentGroupName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -181,11 +181,11 @@
                                             <div class="card-content-holder border card-blue template">
                                                 <div class="card-header">
                                                     <div class="row">
-                                                        <div class=" col-md-4 col-sm-4">
+                                                        <div class="w60">
                                                             <h6 class="template-name"> @item.TemplateName </h6>
                                                         </div>
 
-                                                        <div class="col-md-8 col-sm-8 card-header-buttons action">
+                                                        <div class="w40 card-header-buttons action">
                                                             @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                                             {
 
@@ -317,12 +317,12 @@
                 ApplySessionFilter();
             }
 
-            $("#AssessmentGroup").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+           // $("#AssessmentGroup").multiselect({
+               // includeSelectAllOption: true,
+                //selectedClass: 'active1',
+               // buttonWidth: '100%',
+              //  maxHeight: 200
+            //});
             
         });
 

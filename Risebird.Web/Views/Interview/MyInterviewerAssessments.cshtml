@@ -85,7 +85,7 @@
                                     </div>
 
                                     <div>
-                                        <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
+                                        <i type="submit" class="far fa-file-excel" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
 
                                     </div>
                                 </div>
@@ -326,7 +326,7 @@
                                                             <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
 
                                                         }
-                                                        <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new {id= item.irfIntId, item.IRFID})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
                                                         <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
                                                         @{

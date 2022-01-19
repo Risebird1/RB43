@@ -123,7 +123,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
                         }
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle?.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray());
                         filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray());
@@ -131,7 +131,7 @@ namespace Risebird.Web.Controllers
                         filter.EndClientName = filter.EndClientName ?? model.IRFList.Select(x => x.ClientName).ToArray();
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                        model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                        model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle?.Split("|")[0])
                         && filter.RFID.Contains(c.IRFId)
                         && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                         && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
@@ -197,7 +197,7 @@ namespace Risebird.Web.Controllers
                         }
 
                     }
-
+                    
                     model.Profile = profileName;
                     return View(model);
 
@@ -248,7 +248,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.IsClientUser = true;
                     }
-                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle?.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                     filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray());
                     filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = irfList.Select(x => x.SubscriptionStatus).ToArray());
@@ -256,7 +256,7 @@ namespace Risebird.Web.Controllers
                     filter.EndClientName = filter.EndClientName ?? irfList.Select(x => x.ClientName).ToArray();
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                    irfList = irfList?.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                    irfList = irfList?.Where(c => filter.PrimarySkill.Contains(c.JDTiltle?.Split("|")[0])
                     && filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
@@ -297,12 +297,13 @@ namespace Risebird.Web.Controllers
                     }
                     model.IRFList = irfList?.OrderByDescending(x => x.EndDate).ToList();
 
-                    if (HttpContext.Session.GetString("IRFSearchValue") != null)
+                    if(HttpContext.Session.GetString("IRFSearchValue") != null)
                     {
                         var searchValue = HttpContext.Session.GetString("IRFSearchValue");
                         model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
                     }
-
+                    
+                    //ViewBag.searchValue = filter.searchValue != null ? filter.searchValue : string.Empty;
                     if (model.IRFList != null)
                     {
                         model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
@@ -1336,7 +1337,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
                 {
                     TechSkillComments model = new TechSkillComments();
-                    var result = _irfService.GetTechSkillComments(id);
+                    var result = _irfService.GetTechSkillComments(id, emailid);
                     //if (result.Count() > 0)
                     model.SkillCollection = result;
                     //var techSkills = new List<Skill>();
@@ -1407,12 +1408,12 @@ namespace Risebird.Web.Controllers
 
                             if (_irfService.AddSkillComments(model))
                             {
-                                TempData["SuccessErrorMessageQuestions"] = "Questions has been saved Successfully!";
-                                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf= model.IrfName });
+                                TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
+                                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageQuestions"] = "Failed to save the Questions!";
+                                TempData["SuccessErrorMessageQuestions"] = "Failed to save Question(s)!";
                                 return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
                             }
                         }
@@ -1448,7 +1449,20 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [HttpPost]
+        public JsonResult IsQuestionUsedInReport(string question)
+        {
+            try
+            {
+                bool isQuestionUsed = _irfService.IsQuestionUsedInReport(question/*.Replace("\n", "").Replace("\r", "")*/).Result;
+                return Json(isQuestionUsed);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ArchiveIRF(int id)
@@ -1533,13 +1547,13 @@ namespace Risebird.Web.Controllers
                         var meetings = new List<MeetingVM>();
                         if (profileName == "Client")
                         {
-                            meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
-
+                            //meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
+                            meetings = (await _irfService.GetIRFInterviewMeetingsForClient(Convert.ToInt16(id), profileName, emailid)).Where(x => !x.IsQCRequired || (x.QCInterview > 0 && x.QCStatus == 1 && x.IsQCRequired)).ToList();
                         }
                         else
                         {
-                            meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
-
+                            //meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)).Where(x => x.QCInterview > 0 && x.QCStatus == 1).ToList();
+                            meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)).Where(x => !x.IsQCRequired || (x.QCInterview > 0 && x.QCStatus == 1 && x.IsQCRequired)).ToList();
                         }
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
@@ -1622,6 +1636,10 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            if (Page == null)
+                            {
+                                Page = 1;
+                            }
                             a = a + 1;
                             if (a == Page)
                             {
@@ -1808,17 +1826,34 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-                        var list = new SelectList(new[]
-{
-    new { ID = "Today", Name = "Today"},
-    new { ID = "Tomorrow", Name = "Tomorrow"  },
-    new { ID = "Yesterday", Name = "Yesterday"  },
-    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-    new { ID = "All", Name = "All"},
-},
-"ID", "Name", "All");
 
-                        ViewData["list"] = list;
+                        if (HttpContext.Session.GetString("IRFInterviewFilter") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<IRFInterviewFilter>(HttpContext.Session.GetString("IRFInterviewFilter"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                meetings = meetings.Where(m=> m.interviewDate >= filter.StartDate && m.interviewDate <= filter.EndDate).ToList();
+                            }
+                            
+                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
+                            filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
+                            filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                            filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+                            //filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+                            filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = meetings.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
+                            filter.irfId = Convert.ToInt32(id);
+                            filter.IRFName = irfId;
+
+                            meetings = meetings.Where(c => ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
+                            && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
+                            && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
+                            && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                            //&& ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
+                            && ((filter.CandidateName != null && filter.CandidateName.Count() > 0) ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)).ToList();
+
+                        }
+
+
                         meetings = meetings.OrderByDescending(x => x.interviewDate).ToList();
 
                         if (!String.IsNullOrEmpty(searchValue))
@@ -1880,6 +1915,73 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> InterviewMeetings(IRFInterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    {
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("IRFInterviewFilter", JsonConvert.SerializeObject(filter));
+                        }
+
+                        return RedirectToAction("InterviewMeetings", new { id = filter.irfId.ToString(), irfId = filter.IRFName });
+                        
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetIRFInterviewFilter()
+        {
+            IRFInterviewFilter filter = new IRFInterviewFilter();
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    filter = JsonConvert.DeserializeObject<IRFInterviewFilter>(HttpContext.Session.GetString("IRFInterviewFilter"));
+
+                    HttpContext.Session.Remove("IRFInterviewFilter");
+                    return RedirectToAction("InterviewMeetings", new { id = filter.irfId.ToString(), irfId = filter.IRFName });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewMeetings", new { id = filter.irfId.ToString(), irfId = filter.IRFName });
+            }
+
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
         {
@@ -1889,9 +1991,10 @@ namespace Risebird.Web.Controllers
                 {
                     var model = await _irfService.GetEditIRF(id, isClone);
                     int abc;
-                    if(!int.TryParse(model.JobCountry, out abc))
+                    if (!int.TryParse(model.JobCountry, out abc))
                     {
-                        if (model.JobCountry.ToUpper() == "INDIA") {
+                        if (model.JobCountry.ToUpper() == "INDIA")
+                        {
                             model.JobCountry = "1";
                         }
                         else { model.JobCountry = "2"; }
@@ -2212,7 +2315,6 @@ namespace Risebird.Web.Controllers
                 }
 
                 string prof = HttpContext.Session.GetString("profileName");
-
                 if (prof != null)
                 {
                     prof = prof.Replace("\"", "");

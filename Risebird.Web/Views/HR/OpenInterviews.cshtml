@@ -53,7 +53,7 @@
                 <div class="pull-right client-ms">
                     <div>
                         <span class="hropeninterview_2">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-toggle="modal" data-target="#filterModal">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button></span>
@@ -104,7 +104,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <form action="@Url.Action("OpenInterviews","HR")" method="post" id="form">
@@ -140,7 +140,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
                                                                     {
@@ -160,7 +160,7 @@
                                                                 HR
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.Select(x => x.CandidateClientHR).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -178,7 +178,7 @@
                                                                 Client
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
+                                                                <select id="Client" name="Client" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.Select(x => x.ClientCompName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -197,7 +197,7 @@
                                                                 Interviewer
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
+                                                                <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -213,7 +213,7 @@
                                                                 End Client Name
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                     @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -227,7 +227,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">Skill Channel ID</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                     @foreach (var item in Model.Select(x => x.IRFID).Distinct().ToList())
                                                                     {
@@ -572,46 +572,46 @@
                 ApplySessionFilter();
               }
 
-            $("#PrimarySkill").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+            //$("#PrimarySkill").multiselect({
+            //        includeSelectAllOption: true,
+            //        selectedClass: 'active1',
+            //        buttonWidth: '100%',
+            //        maxHeight: 200
+            //    });
 
 
-            $("#Interviewer").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-            });
+            //$("#Interviewer").multiselect({
+            //        includeSelectAllOption: true,
+            //        selectedClass: 'active1',
+            //        buttonWidth: '100%',
+            //        maxHeight: 200
+            //});
 
-            $("#RFID").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientHR").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#RFID").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ClientHR").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
 
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#Client").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#ClientName").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#Client").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
 
 
 
@@ -876,10 +876,12 @@
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
+     $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
+    $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }

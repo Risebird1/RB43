@@ -162,7 +162,7 @@
                                             <div class="" style="display:none" id="uploadDiv">
                                                 @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
 
                                             </div>
                                         </div>
@@ -214,7 +214,7 @@
                                                         <td>
                                                             <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                         </td>
-                                                        <td class="action text-center">
+                                                        <td class="action text-center" style="border:0px!important;">
 
 
                                                             <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>

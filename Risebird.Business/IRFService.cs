@@ -720,11 +720,11 @@ namespace Risebird.Business
             }
         }
         #endregion
-        public IList<SkillComment> GetTechSkillComments(int id)
+        public IList<SkillComment> GetTechSkillComments(int id, string emailId=null)
         {
             try
             {
-                var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id);
+                var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id, emailId);
                 return result;
             }
 
@@ -2152,6 +2152,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return 0;
+            }
+        }
+        public async Task<bool> IsQuestionUsedInReport(string question)
+        {
+            try
+            {
+                return await _irfRepository.IsQuestionUsedInReport(question);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
 

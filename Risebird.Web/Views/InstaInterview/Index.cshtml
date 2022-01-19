@@ -62,10 +62,10 @@
                     <div>
                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "Client")
                         {
-                            <span class="interview_2"> <i type="submit" class="fa fa-file-excel-o excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InstaInterviewsExporttoExcel", "InstaInterview", new { id = ViewBag.Requestid })'"></i></span>
+                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InstaInterviewsExporttoExcel", "InstaInterview", new { id = ViewBag.Requestid })'"></i></span>
                         }
                         <span class="interview_3">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
@@ -94,7 +94,7 @@
                     </div>
                     <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" id="membersPopUp" style="cursor:pointer;">&times;</span>
                 </button>
 
@@ -132,7 +132,7 @@
                                                 </div>
                                                 <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                             </div>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <form action="@Url.Action("Index","InstaInterview",new { id=ViewBag.Requestid})" method="post" id="form">
@@ -168,7 +168,7 @@
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Jd Title</label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="PrimarySkill" name="Jd Title" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="PrimarySkill" name="Jd Title" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                         @foreach (var item in Model.Select(x => x.RequiredSkill).Distinct().ToList())
                                                                         {
@@ -188,7 +188,7 @@
                                                                     Meeting Status
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in Model.Where(x => !string.IsNullOrEmpty(x.MeetingStatusStatusDesc)).Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -204,7 +204,7 @@
                                                                     Interviewer
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in Model.Select(x => x.Interviewer).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -223,7 +223,7 @@
                                                                     Confirmation Status
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in Model.Select(x => x.ConfirmationStatus).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -240,7 +240,7 @@
                                                                     Interview Status
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
@@ -473,7 +473,7 @@
                                     </div>
                                     <h5 class="modal-title pull-left"> Call Candidate!</h5>
                                 </div>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
                                 </button>
 
@@ -582,67 +582,67 @@
                 ApplySessionFilter();
               }
 
-            $("#PrimarySkill").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+            //$("#PrimarySkill").multiselect({
+                   // includeSelectAllOption: true,
+                    //selectedClass: 'active1',
+                    //buttonWidth: '100%',
+                  //  maxHeight: 200
+               // });
 
 
-            $("#RFID").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-            $("#ClientHR").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+            //$("#RFID").multiselect({
+                   // includeSelectAllOption: true,
+                    //selectedClass: 'active1',
+                   // buttonWidth: '100%',
+                   // maxHeight: 200
+               // });
+            //$("#ClientHR").multiselect({
+                    //includeSelectAllOption: true,
+                    //selectedClass: 'active1',
+                    //buttonWidth: '100%',
+                   // maxHeight: 200
+                //});
 
-            $("#ConfirmationStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+            //$("#ConfirmationStatus").multiselect({
+                   // includeSelectAllOption: true,
+                   // selectedClass: 'active1',
+                    //buttonWidth: '100%',
+                    //maxHeight: 200
+                //});
 
-            $("#MeetingStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+            //$("#MeetingStatus").multiselect({
+                   // includeSelectAllOption: true,
+                   // selectedClass: 'active1',
+                   // buttonWidth: '100%',
+                    //maxHeight: 200
+                //});
 
-            $("#InterviewStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+           // $("#InterviewStatus").multiselect({
+                   // includeSelectAllOption: true,
+                    //selectedClass: 'active1',
+                    //buttonWidth: '100%',
+                    //maxHeight: 200
+                //});
 
-            $("#Interviewer").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-            });
+          // $("#Interviewer").multiselect({
+                    //includeSelectAllOption: true,
+                    //selectedClass: 'active1',
+                    //buttonWidth: '100%',
+                   // maxHeight: 200
+            //});
 
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#Client").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#ClientName").multiselect({
+               // includeSelectAllOption: true,
+                //selectedClass: 'active1',
+                //buttonWidth: '100%',
+               // maxHeight: 200
+            //});
+            //$("#Client").multiselect({
+               // includeSelectAllOption: true,
+                //selectedClass: 'active1',
+                //buttonWidth: '100%',
+                //maxHeight: 200
+           // });
 
 
 

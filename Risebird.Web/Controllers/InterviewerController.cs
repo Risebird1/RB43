@@ -2757,6 +2757,134 @@ namespace Risebird.Web.Controllers
             }
             return View(model);
         }
+
+        public async Task<IActionResult> TdsCertificateInterviewers(string emailid, string year)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Interviewer" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                {
+                    var _emailid = HttpContext.Session.GetString("email")?.Trim();
+                    _emailid = _emailid.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        emailid = _emailid;
+                    }
+                    ViewBag.Profile = profileName;
+                    InterviewerTdsVM model = new InterviewerTdsVM();
+                    List<string> _listyear = new List<string>();
+                    var currentmonth = DateTime.Now.Month;
+                    if (currentmonth > 3)
+                    {
+                        var yearstring = DateTime.Now.Year.ToString() + "-" + DateTime.Now.AddYears(1).Year.ToString();
+                        _listyear.Add(yearstring);
+                        if (String.IsNullOrEmpty(year))
+                        {
+                            year = yearstring;
+                        }
+                    }
+                    var currentyear = DateTime.Now.Year;
+                    var counter = currentyear - 2018;
+                    for (int i = 0; i < counter; i++)
+                    {
+                        _listyear.Add(DateTime.Now.AddYears(-(i + 1)).Year.ToString() + "-" + DateTime.Now.AddYears(-i).Year.ToString());
+                    }
+                    var selectListforsize = new List<SelectListItem>();
+                    foreach (var item in _listyear)
+                    {
+                        bool selected = false;
+                        if (item == year)
+                        {
+                            selected = true;
+                        }
+                        var selectItem = new SelectListItem(item, Convert.ToString(item), selected);
+                        selectListforsize.Add(selectItem);
+                    }
+                    model.TdsYears = selectListforsize;
+                    var _listcollection = _interviewerService.FetchTdsCertificatesbyEmailid(emailid);
+                    if (_listcollection != null)
+                    {
+                        model.TdsCertificateCollection = _listcollection.Result.Where(x => x.year == year).ToList();
+                    }
+                    model.InterviewerEmailid = emailid;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddTdsCertificate(int certificateid, string interviewerid, string year)
+        {
+            TdsCertificateReport model = new TdsCertificateReport();
+            if (certificateid != 0)
+            {
+                model = _interviewerService.FetchTdsCertificatebyid(certificateid);
+            }
+            var selectListforsize = new List<SelectListItem>();
+            selectListforsize.Add(new SelectListItem("January", Convert.ToString("January"), false));
+            selectListforsize.Add(new SelectListItem("February", Convert.ToString("February"), false));
+            selectListforsize.Add(new SelectListItem("March", Convert.ToString("March"), false));
+            selectListforsize.Add(new SelectListItem("April", Convert.ToString("April"), false));
+            selectListforsize.Add(new SelectListItem("May", Convert.ToString("May"), false));
+            selectListforsize.Add(new SelectListItem("June", Convert.ToString("June"), false));
+            selectListforsize.Add(new SelectListItem("July", Convert.ToString("July"), false));
+            selectListforsize.Add(new SelectListItem("August", Convert.ToString("August"), false));
+            selectListforsize.Add(new SelectListItem("September", Convert.ToString("September"), false));
+            selectListforsize.Add(new SelectListItem("October", Convert.ToString("October"), false));
+            selectListforsize.Add(new SelectListItem("November", Convert.ToString("November"), false));
+            selectListforsize.Add(new SelectListItem("December", Convert.ToString("December"), false));
+            model.MonthsList = selectListforsize;
+            model.emailid = interviewerid;
+            model.year = year;
+            model.id = certificateid;
+            return PartialView(model);
+        }
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TdsCertificateInterviewers(TdsCertificateReport model)
+        {
+            if (model.cretificate != null)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.cretificate);
+                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                {
+                    var codedResumeFileName = model.cretificate.FileName.Replace(" ", "_");
+                    await _azureStorageHelper.InsertBlob(codedResumeFileName, "resumes", model.cretificate);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                    var blob = containerRef.GetBlockBlobReference(codedResumeFileName);
+                    var uploadedFileURL = blob.Uri.ToString();
+                    model.certificatelink = uploadedFileURL;
+                }
+                else
+                {
+                    return RedirectToAction("TdsCertificateInterviewers", new { emailid = model.emailid, year = model.year });
+                }
+            }
+            else
+            {
+                return RedirectToAction("TdsCertificateInterviewers", new { emailid = model.emailid, year = model.year });
+            }
+            if (_interviewerService.AddTdsCertificates(model))
+            {
+                return RedirectToAction("TdsCertificateInterviewers", new { emailid = model.emailid, year = model.year });
+            }
+            else
+            {
+                return RedirectToAction("TdsCertificateInterviewers", new { emailid = model.emailid, year = model.year });
+            }
+        }
     }
 }
 

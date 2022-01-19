@@ -122,19 +122,19 @@
                     <div class="pull-right">
                         <div>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top" title="Create Interview Request" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                                <span data-toggle="tooltip" data-placement="top"  onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
                             </button>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top" title="Scheduling Links" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
+                                <span data-toggle="tooltip" data-placement="top"  onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
                             </button>
                             <span>
-                                <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
+                                <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             </span>
-                            <span id="status_3"><i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
 
 
                         </div>
@@ -167,7 +167,7 @@
                                                     </div>
                                                     <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                 </div>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                                 <form action="@Url.Action("PublicCandidateStatus", "Candidate",new { emailid=ViewBag.emailid,id=ViewBag.id})" method="post" id="form">
@@ -177,7 +177,7 @@
                                                             <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked", @style = "position:relative;top:4px;" }) Added Date <span style="ont-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
+                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked", @style = "position:relative;top:4px;" }) Added Date <span style="font-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -216,7 +216,7 @@
                                                                         JD Title
                                                                     </label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple">
+                                                                        <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                             @foreach (var item in Model.Select(x => x.PrimarySkill).Distinct().ToList())
                                                                             {
                                                                                 @if (item != null && item != "")
@@ -236,7 +236,7 @@
                                                                         Current Status
                                                                     </label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
+                                                                        <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                             @foreach (var item in Model.Select(x => x.CurrentStatus).Distinct().ToList())
                                                                             {
                                                                                 @if (item != null && item != "")
@@ -410,19 +410,19 @@
                                                                             {
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn-call" style=" top: -7px; position: relative;cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone"></span></span></span>
                                                                             }
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status" style="position:relative;top:4px;">
                                                                                 <span onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')" title="Candidate Status" class="mdc-fab__icon material-icons">
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                             <button aria-label="Rate Interviewer" style="border:0px;background:none">
                                                                                 <span onclick="openpopUpRating('@item.CandidateName','@item.InterviewId')" title="Rate Interviewer">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
                                                                                 </span>
                                                                             </button>
                                                                         </td>
                                                                         <td>
-                                                                            @if ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && (item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))
+                                                                            @if ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2)))
                                                                             {
                                                                                 <a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate" })'" title="Feedback Report">Report</a>
                                                                             }
@@ -504,7 +504,7 @@
 
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon">
+                    <span>
 
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
@@ -512,7 +512,7 @@
                 </div>
                 <h5 class="modal-title pull-left"> Call Candidate!</h5>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
             </button>
 
@@ -649,6 +649,14 @@
                 <div class="col-md-12 clearfix">
                     <input class="txtratingComment" type="text" id="txtratingComment" placeholder="Please comment here.." />
                 </div>
+                <div class="col-md-12 clearfix">
+                    <div class="col-md-4 pull-left">
+                        <input type="radio" name="rdclientaction" id="rd_removeinterviewer" style="position:relative;left:-4px;top:4px;" /> Remove Interviewer
+                    </div>
+                    <div class="col-md-4 pull-left">
+                        <input type="radio" name="rdclientaction" id="rd_shortlistinterviewer" style="position:relative;left:-4px;top:4px;" /> Shortlist Interviewer
+                    </div>
+                </div>
                 <div class="col-md-12 text-right clearfix">
                     <input type="button" onclick="closemyRaitingPopup()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
                     <input type="button" onclick="SaveRating()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Send Feedback">
@@ -722,40 +730,40 @@
             ApplySessionFilter();
         }
 
-        $("#HREmail").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#HREmail").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
-        $("#MeetingStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#MeetingStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
-        $("#InterviewStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#InterviewStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
-        $("#ScheduleStatus").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#ScheduleStatus").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
-        $("#ProfileSource").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#ProfileSource").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
     })
 
@@ -1059,6 +1067,14 @@
             success: function (data) {
                 $("#txtratingvalue").val(data.starRating);
                 $("#txtratingComment").val(data.comment);
+                if (data.clientAction == 'Shortlisted') {
+                    document.getElementById('rd_shortlistinterviewer').checked = true;
+                } else if (data.clientAction == 'Rejected') {
+                    document.getElementById('rd_removeinterviewer').checked = true;
+                } else {
+                    document.getElementById('rd_shortlistinterviewer').checked = false;
+                    document.getElementById('rd_removeinterviewer').checked = false;
+                }
                 var modal = document.getElementById("myRaitingPopup");
                 modal.style.display = "block";
                 setRating(data.starRating);
@@ -1073,11 +1089,19 @@
         var interviewid = $("#txtratinginterviewid").val();
         var ratingvalue = $("#txtratingvalue").val();
         var comments = $("#txtratingComment").val();
+        var clientaction = '';
+        if (document.getElementById('rd_shortlistinterviewer').checked) {
+            clientaction = 'Shortlisted';
+        } else if (document.getElementById('rd_removeinterviewer').checked) {
+            clientaction = 'Rejected';
+        } else {
+            clientaction = '';
+        }
         if (parseInt(ratingvalue) > 0) {
             $.ajax({
                 url: '/RiseTube/SaveRaitingDetails',
                 type: "POST",
-                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments },
+                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction },
                 success: function (data) {
                     swal.fire(data);
                     var modal = document.getElementById("myRaitingPopup");

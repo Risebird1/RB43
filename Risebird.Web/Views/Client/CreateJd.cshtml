@@ -13,12 +13,12 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+@*<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>*@
 
 
-<script type="text/javascript">
+@*<script type="text/javascript">
     jQuery(document).ready(function () {
         jQuery("#fillter_AssessmentGroupName").select2({ multiple: true });
     });
@@ -27,10 +27,7 @@
         jQuery("#fillter_ClientEmail").select2({ multiple: true });
     });
 
-
-
-
-</script>
+</script>*@
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <!-- End Navbar -->
@@ -52,8 +49,8 @@
                     </div>
                     @if (!Model._clientjddetails.isClientUser)
                     {
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" data-toggle="modal" data-target="#filterModal">
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
 
@@ -90,7 +87,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
@@ -117,7 +114,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupName"> Assessment Group </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple">
+                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" data-placeholder="None Selected" class="multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model._clientjd.Select(x => x.AssessmentGroupName).Distinct().ToList())
                                                                     {
@@ -134,7 +131,7 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientEmail"> Client </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="fillter_ClientEmail" name="fillter.ClientEmail" class="form-control multiselect" multiple="multiple">
+                                                                <select id="fillter_ClientEmail" name="fillter.ClientEmail" data-placeholder="None Selected" class="multiselect" multiple="multiple" >
 
                                                                     @foreach (var item in Model._clientjd.Select(x => x.ClientEmail).Distinct().ToList())
                                                                     {
@@ -148,18 +145,19 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-6 col-sm-6">
+                                                    <div class="form-group col-md-12 col-sm-12 text-align">
                                                         <div>
-                                                            <div class="col-md-12 col-sm-12 ">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
                                                                 <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
 
                                                             </div>
-                                                        </div>
+                                                        
                                                     </div>
 
                                                 </div>
                                             </div>
+                                                </div>
                                         </form>
                                     </div>
                                 </div>
@@ -359,7 +357,7 @@
                             <div class="row">
                                 <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                    @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled"})
                                     @Html.ValidationMessageFor(model => model._clientjddetails.AssessmentGroup, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
@@ -473,7 +471,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>*@
 <script>
-
     $(document).ready(function () {
         $("#ResetFilter").click(function () {
             ResetFilter();
@@ -495,17 +492,19 @@
     }
 </script>
 <script>
-    $("#fillter_AssessmentGroupName").multiselect({
-        includeSelectAllOption: true,
-        selectedClass: 'active1',
-        buttonWidth: '100%',
-        maxHeight: 200
-    });
-    $("#fillter_ClientEmail").multiselect({
-        includeSelectAllOption: true,
-        selectedClass: 'active1',
-        buttonWidth: '100%',
-        maxHeight: 200
+    $(document).ready(function () {
+        //$("#fillter_AssessmentGroupName").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+        //$("#fillter_ClientEmail").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
     });
     function CreateJd(id) {
         //var url = '/Client/AddCreateJd';
@@ -544,6 +543,7 @@
         var url = '/Client/CandidateJDScorePriority?id=' + id;
         window.location.href = url;
     }
+   
 
     function EditJD(id) {
         $.ajax({

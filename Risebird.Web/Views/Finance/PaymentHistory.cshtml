@@ -35,13 +35,13 @@
 
                 <div class="pull-right">
                     <div>
-                        <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal" style="vertical-align:top">
+                        <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
                         @Html.ActionLink("Back to List", "FNPayment", "Finance", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
+                            <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
                         </button>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         <form action="@Url.Action("PaymentHistory","Finance")" method="post" id="form">
@@ -95,13 +95,13 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label  col-md-12 col-sm-12 desp-label" for="HREmail">
                                                                 Interviewer
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="HREmail" name="HREmail" class="form-control multiselect" multiple="multiple">
+                                                                <select id="HREmail" name="HREmail" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.InterviewerEmailid).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -415,12 +415,12 @@
             ApplySessionFilter();
         }
 
-        $("#HREmail").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '100%',
-            maxHeight: 200
-        });
+        //$("#HREmail").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
     })
 
 

@@ -58,7 +58,11 @@
                                                     <div class="avatar-upload">
                                                         <div class="avatar-edit">
                                                             @Html.TextBoxFor(model => model.ImageUpload, new { type = "file", @id = "actual-btn", @hidden = "hidden", @class = "form-control", @accept = ".jpeg,.jpg,.png" })
-                                                            <label for="actual-btn"></label>
+                                                            <label for="actual-btn"><i class="fad fa-pen" style="
+    position: relative;
+    top: 4px;
+    left: 9px;
+"></i></label>
                                                         </div>
                                                         <div class="avatar-preview">
 
@@ -90,17 +94,17 @@
                                                         profileName = profileName.Trim('"');
                                                         @if (profileName == "Interviewer")
                                                         {
-                                                            <div class="form-group col-md-6 pull-left">
+                                                            <div class="form-group col-md-6 pull-left p15">
                                                                 @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "" })
                                                                 @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                                                 @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
                                                             </div>
-                                                            <div class="form-group col-md-6 pull-left">
+                                                            <div class="form-group col-md-6 pull-left p15">
                                                                 @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "" })
                                                                 @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                                                 @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
                                                             </div>
-                                                            <div class="form-group col-md-6 pull-left">
+                                                            <div class="form-group col-md-6 pull-left p15">
                                                                 @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "" })
                                                                 <span class="intrqtext">( Please enter Mobile no. with country code.Ex: +91999999999 )</span>
                                                                 @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control text-box single-line", @maxlength = "13", @minlength = "13", @placeholder = "+91XXXXXXXXXX" } })
@@ -109,7 +113,7 @@
 
                                                             </div>
 
-                                                            <div class="form-group whatsapp col-md-6 pull-left">
+                                                            <div class="form-group whatsapp col-md-6 pull-left p15">
                                                                 @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "" })
                                                                 <span class="intrqtext">( Please enter Whatsapp no. without country code.Ex: 999999999  )</span>
                                                                 @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control  text-box single-line", @maxlength = "10", @minlength = "10" })
@@ -174,13 +178,13 @@
                                                                 @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId" })
                                                                 @Html.Hidden("EmailId", Model.EmailId, htmlAttributes: new { id = "hdn_UserId" })
                                                             </div>
-                                                            <div class="form-group col-md-6 pull-left">
+                                                            <div class="form-group col-md-6 pull-left p15">
                                                                 @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "col-md-12 col-sm-12 desp-label " })
                                                                 @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", disabled = "disabled", @readonly = "readonly" } })
                                                                 @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
                                                             </div>
 
-                                                            <div class="form-group col-md-6 pull-left">
+                                                            <div class="form-group col-md-6 pull-left p15">
                                                                 @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "col-md-12 col-sm-12" })
                                                                 @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { id = "txt_AltEmailId", @class = "form-control text-box single-line", @type = "text" } })
                                                                 @Html.ValidationMessageFor(model => model.AltEmailId, "", new { @class = "text-danger" })
@@ -192,45 +196,40 @@
                                                                     @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-12" style="margin-bottom:30px;">
+                                                            <div class="col-md-12" style="margin-bottom:20px;">
                                                                 @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "" })
                                                                 @Html.CheckBoxFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "availcheck" })
                                                             </div>
                                                             <div class="col-md-12">
                                                                 @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
-                                                                @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                                @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
                                                             </div>
                                                             <div class="col-md-12" style="margin:10px 0px;">
                                                                 @if (Model.ResumeLink != null)
                                                                 {
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink.Replace(" ","%20")>Resume  </a>
+                                                                    <a id="resumeId" target="_blank" title="Resume" style="text-decoration: none; margin: 20px 10px;"  href=@Model.ResumeLink.Replace(" ","%20")>Resume  </a>
                                                                 }
                                                             </div>
                                                             @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
                                                             <div class="col-md-12">
                                                                 @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
-                                                                @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                                @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
                                                             </div>
                                                             <div class="col-md-12" style="margin:10px 0px;">
                                                                 @if (Model.CodedResumeLink != null)
                                                                 {
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume  </a>
+                                                                    <a id="resumeId" target="_blank" title="Resume" style="text-decoration: none; margin: 20px 10px;" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume  </a>
                                                                 }
                                                             </div>
                                                             @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
-
+                                                            <div class="col-md-12">
+                                                                <input type="button" class="form-control mdc-button mdc-button--raised mdc-ripple-upgraded" value="Tds Certificates" onclick="OpenTdsCertificate()" style="color:#fff!important;" />
+                                                            </div>
                                                         }
                                                     }
-
-
-
                                                 </div>
-
                                                 <div class="col-sm-12 pull-left">
-
                                                 </div>
-
-
                                             </div>
                                         </div>
                                         @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
@@ -274,25 +273,33 @@
 
 
 
+
+
                                                                                     <div class="mdc-checkbox">
+
+
 
 
 
                                                                                         <div class="mdc-checkbox">
 
-                                                                                            @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
-                                                                                            <div class="mdc-checkbox__background">
-                                                                                                <svg class="mdc-checkbox__checkmark"
-                                                                                                     viewBox="0 0 24 24">
-                                                                                                    <path class="mdc-checkbox__checkmark-path"
-                                                                                                          fill="none"
-                                                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                                                </svg>
-                                                                                                <div class="mdc-checkbox__mixedmark"></div>
-                                                                                            </div>
-                                                                                            <div class="mdc-checkbox__ripple"></div>
 
-                                                                                        </div>
+
+                                                                                            <div class="mdc-checkbox">
+
+                                                                                                @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
+                                                                                                <div class="mdc-checkbox__background">
+                                                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                                                         viewBox="0 0 24 24">
+                                                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                                                              fill="none"
+                                                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                                    </svg>
+                                                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                                                </div>
+                                                                                                <div class="mdc-checkbox__ripple"></div>
+
+                                                                                            </div>
 
                                                                                 </td>
                                                                                 <td class="action text-center">
@@ -574,7 +581,11 @@
 
 
 </script>
-
+<script>
+    function OpenTdsCertificate() {
+        window.location.href = "/Interviewer/TdsCertificateInterviewers";
+    }
+</script>
 <script>
     function readURL(input) {
         if (input.files && input.files[0]) {

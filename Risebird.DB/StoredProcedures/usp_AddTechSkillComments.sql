@@ -13,16 +13,21 @@ GO
 Create PROCEDURE [dbo].[usp_AddTechSkillComments]    
 (    
    @TechSkillCommentsBulkData AS [dbo].[TechSkillComments_TableType] READONLY,  
-   @IRFId int 
+   @IRFId int,
+   @userId int
 )    
 AS    
 BEGIN    
   
   
  begin try  
-  begin tran  
-   
-   delete from TechSkillComments where IRFId =@IRFId
+  begin tran 
+  
+  declare @profileId int
+  set @profileId = (select idProfile from UserList where id = @userId)
+  if(@profileId = 1)--Admin
+  begin
+	delete from TechSkillComments where IRFId =@IRFId
 
    INSERT INTO [dbo].[TechSkillComments](    
     [IRFId] ,    
@@ -31,7 +36,23 @@ BEGIN
     [UserId])    
      
     
-   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId FROM @TechSkillCommentsBulkData tscbd  
+   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId FROM @TechSkillCommentsBulkData tscbd
+
+  end
+  else
+  begin
+	delete from TechSkillComments where IRFId =@IRFId and UserId =@userId
+
+   INSERT INTO [dbo].[TechSkillComments](    
+    [IRFId] ,    
+    [Skill],    
+    [Comment],  
+    [UserId])    
+     
+    
+   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.UserId FROM @TechSkillCommentsBulkData tscbd
+  end
+     
   
   
   commit tran  

@@ -258,7 +258,7 @@
                                             </div>
                                             <div class="col-md-6 col-sm-6 pull-left">
                                                 <div>
-                                                    <div>
+                                                    <div class="p15">
                                                         <div class="form-group" style="margin-bottom:0px;">
                                                             @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
@@ -1645,8 +1645,9 @@
         var num = id.match(/(\d+)/);
         var index = num[0];
         value = parseInt(value);
-        if (isNaN(value)) {
-            value = 0;
+        if (isNaN(value))
+        {
+            value= 0;
         }
         var skillName;
         if (id.includes("Tech")) {
@@ -1675,7 +1676,6 @@
 
         }
         else {
-
             var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
             var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
             $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
@@ -2019,9 +2019,7 @@
                     document.getElementById('QuestionsCollection_CommentError').focus();
                     return false;
                 }
-
             }
-
         }
         document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
         return true;
@@ -2057,6 +2055,19 @@
             }
 
         }
+        return true;
+    }
+    function CheckTechSkills() {
+        var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                    document.getElementById('TechSkills_CommentError').focus();
+                    return false;
+                }
+            }
+        document.getElementById('TechSkills_CommentError').innerHTML = "";
         return true;
     }
     function CheckTechSkills() {

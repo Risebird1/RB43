@@ -381,7 +381,7 @@
         margin-bottom: 10px;" id="uploadcdDiv">
                                                             @Html.Label("Interview Instructions File", "Interview Instructions File", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                            @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
+                                                            @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
                                                         </div>
                                                         <div class="">
@@ -499,7 +499,7 @@
                                                         <div class="" style="display:none" id="uploadDiv">
                                                             @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
 
                                                         </div>
                                                         <div class="upload">
@@ -1587,7 +1587,7 @@
 
 </div>
 
-<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+@*<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -2127,8 +2127,8 @@
         }
         if (tab_skill == "SkillCollection") {
             var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
-            var drpdowns_2 = $('[id^=' + tab_skill + '][id$="Concepts"]');
-            var drpdowns_3 = $('[id^=' + tab_skill + '][id$="Natureofquestion"]');
+            var drpdowns2 = $('[id^=' + tab_skill + '][id$="Concepts"]');
+            var drpdowns3 = $('[id^=' + tab_skill + '][id$="Natureofquestion"]');
             for (i = 0; i < drpdowns1.length; i++) {
                 var interviewId = $("#" + drpdowns1[i].id).val();
                 if ($("#" + drpdowns_2[i].id).val() != '' && $("#" + drpdowns_3[i].id).val() != '') {
@@ -3786,22 +3786,22 @@
     document.body.className += "js";
 
     var spinner = document.querySelector('.input');
-    var buttonUp = document.querySelector('.up');
-    var buttonDown = document.querySelector('.down');
+    //var buttonUp = document.querySelector('.up');
+    //var buttonDown = document.querySelector('.down');
 
-    buttonUp.onclick = function () {
-        var value = parseInt(spinner.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value++;
-        spinner.value = value;
-    };
+    //buttonUp.onclick = function () {
+    //    var value = parseInt(spinner.value, 10);
+    //    value = isNaN(value) ? 0 : value;
+    //    value++;
+    //    spinner.value = value;
+    //};
 
-    buttonDown.onclick = function () {
-        var value = parseInt(spinner.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value--;
-        spinner.value = value;
-    };
+    //buttonDown.onclick = function () {
+    //    var value = parseInt(spinner.value, 10);
+    //    value = isNaN(value) ? 0 : value;
+    //    value--;
+    //    spinner.value = value;
+    //};
 
 
 
@@ -3827,43 +3827,43 @@
 
 
     var spinner2 = document.querySelector('.input-2');
-    var buttonUp2 = document.querySelector('.up-2');
-    var buttonDown2 = document.querySelector('.down-2');
+    //var buttonUp2 = document.querySelector('.up-2');
+    //var buttonDown2 = document.querySelector('.down-2');
 
-    buttonUp2.onclick = function () {
-        var value = parseInt(spinner2.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value++;
-        spinner2.value = value;
-    };
+    //buttonUp2.onclick = function () {
+    //    var value = parseInt(spinner2.value, 10);
+    //    value = isNaN(value) ? 0 : value;
+    //    value++;
+    //    spinner2.value = value;
+    //};
 
-    buttonDown2.onclick = function () {
-        var value = parseInt(spinner2.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value--;
-        spinner2.value = value;
-    };
+    //buttonDown2.onclick = function () {
+    //    var value = parseInt(spinner2.value, 10);
+    //    value = isNaN(value) ? 0 : value;
+    //    value--;
+    //    spinner2.value = value;
+    //};
 
 
 
 
     var spinner3 = document.querySelector('.input-3');
-    var buttonUp3 = document.querySelector('.up-3');
-    var buttonDown3 = document.querySelector('.down-3');
+    //var buttonUp3 = document.querySelector('.up-3');
+    //var buttonDown3 = document.querySelector('.down-3');
 
-    buttonUp3.onclick = function () {
-        var value = parseInt(spinner3.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value++;
-        spinner3.value = value;
-    };
+    //buttonUp3.onclick = function () {
+    //    var value = parseInt(spinner3.value, 10);
+    //    value = isNaN(value) ? 0 : value;
+    //    value++;
+    //    spinner3.value = value;
+    //};
 
-    buttonDown3.onclick = function () {
-        var value = parseInt(spinner3.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value--;
-        spinner3.value = value;
-    };
+    //buttonDown3.onclick = function () {
+    //    var value = parseInt(spinner3.value, 10);
+    //    value = isNaN(value) ? 0 : value;
+    //    value--;
+    //    spinner3.value = value;
+    //};
 
 
 </script>

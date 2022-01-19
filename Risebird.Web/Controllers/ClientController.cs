@@ -501,7 +501,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        
         /// <summary>
         /// Add New Candidate For JD
         /// </summary>
@@ -1715,6 +1715,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                         }
                         ViewBag.IsClient = isClient;
+                        ViewBag.Profile = profileName;
                         ViewBag.IsClientSelected = isClientSelected;
                         model.PreviousMeetingStatus = model.MeetingStatus;
                         ViewBag.PageStatus = "Mainurl";

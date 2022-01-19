@@ -34,7 +34,7 @@
                 <div class="pull-right client-ms">
 
                     <button id="intmulmeet_7" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"> Back</span>
+                        <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"> Back</span>
                     </button>
 
                     <div id="meeting_filter" class="dataTables_filter pull-left" style="margin-right:10px;">
@@ -167,7 +167,7 @@
                                                                 <td> @item.MeetingStatusStatusDesc</td>
                                                                 <td> @item.intervieweStatusStatDesc</td>
 
-                                                                <td class="text-right action">
+                                                                <td class="text-center action">
                                                                     @if (item.IsAdmin && item.MeetingStatusStatusDesc != "Completed")
                                                                     {
 
@@ -180,7 +180,7 @@
 
                                                             <tr class="collapse @item.imid">
                                                                 <td colspan="999" class="child-section">
-                                                                    <table width="100%" class="table table-striped ">
+                                                                    <table width="100%" class="table table-striped " cellpadding="0" cellspacing="0">
 
                                                                         <tr>
                                                                             <th>Candidate Email</th>
@@ -283,10 +283,12 @@
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
+     $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
+      $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }
@@ -383,7 +385,7 @@
 
             html += '   <tr class="collapse ' + data[i].imid + '">';
             html += '   <td colspan="999" class="child-section">';
-            html += '   <table width="100%" class="table table-striped ">';
+            html += '   <table width="100%" class="table table-striped " cellpadding="0" cellspacing="0">';
 
             html += ' <tr>';
             html += '   <th>Candidate Email</th>';

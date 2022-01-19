@@ -15,10 +15,10 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <!-- CSS Files -->
-
-    <link href="~/Newassets/css/bootstrap.min.css?v=9" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    @*<link href="~/Newassets/css/bootstrap.min.css?v=9" rel="stylesheet" />*@
     <link href="~/Newassets/css/chat.css?v=7" rel="stylesheet" />
     <link href="~/Newassets/css/now-ui-dashboard.css?v=765432" rel="stylesheet" />
     <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet" />
@@ -43,9 +43,12 @@
     }
     <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 
-    <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
+    @*<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>*@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
     <script src="~/Newassets/js/core/popper.min.js?v=7"></script>
-    <script src="~/Newassets/js/core/bootstrap.min.js?v=7"></script>
+    @*<script src="~/Newassets/js/core/bootstrap.min.js?v=7"></script>*@
 
     <script src="~/Newassets/js/plugins/perfect-scrollbar.jquery.min.js?v=7"></script>
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.4.6/jquery.perfect-scrollbar.js"></script>*@
@@ -58,10 +61,17 @@
 
     <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js?v=7"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js?v=7" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js?v=7"></script>
+    @*<script src="https://code.jquery.com/jquery-1.11.3.min.js?v=7"></script>*@
     <script src="~/js/canvasjs.min.js?v=3"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.js?v=7"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js?v=7"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    @*<script src="https://code.jquery.com/jquery-1.12.4.js?v=7"></script>*@
+    @*<script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>*@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js?v=7"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js?v=7"></script>
 
@@ -404,27 +414,27 @@
                         @if (profileName != "Admin")
                         {
 
-                <div class="support">
-                   
-                    <div class="desktop-view" style="float:left">
-                        <span class="divider-rm"> | </span>
-                        <a style="cursor:pointer" onclick="GetSupportModal()">
-                            <span class="sidemenu-icon no-mlr" style="position:relative;left:-5px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
-                            </span>
-                            <p>Support</p>
-                        </a>
-                    </div>
+                            <div class="support">
 
-                    <div class="mobile-view" style="float:left">
-                        <a style="cursor:pointer" onclick="GetSupportModal()">
-                            <span class="sidemenu-icon no-mlr">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
-                            </span>
-                            @*<p>Support</p>*@
-                        </a>
-                    </div>
-                </div>
+                                <div class="desktop-view" style="float:left">
+                                    <span class="divider-rm"> | </span>
+                                    <a style="cursor:pointer" onclick="GetSupportModal()">
+                                        <span class="sidemenu-icon no-mlr" style="position:relative;left:-5px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
+                                        </span>
+                                        <p>Support</p>
+                                    </a>
+                                </div>
+
+                                <div class="mobile-view" style="float:left">
+                                    <a style="cursor:pointer" onclick="GetSupportModal()">
+                                        <span class="sidemenu-icon no-mlr">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.58l2.2-2.21c.28-.27.36-.66.25-1.01C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"></path></svg>
+                                        </span>
+                                        @*<p>Support</p>*@
+                                    </a>
+                                </div>
+                            </div>
 
                             <div id="supportModal" class="modal modal-bg">
                                 <!-- Modal content -->
@@ -432,7 +442,7 @@
                                     <div class="modal-content">
                                         <div class="filheader">
                                             <div class="filavatar">
-                                                <span class="fa fa-phone" style="font-size:24px;"></span>
+                                                <span class="fa fa-phone-alt" style="font-size:24px;"></span>
                                             </div>
                                             <h5 class="modal-title pull-left">Support</h5>
                                         </div>
@@ -533,8 +543,7 @@
         @RenderBody()
     </div>
     <!--   Core JS Files   -->
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js?v=5" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
     <!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
@@ -566,6 +575,53 @@
     <script src="~/Newassets/js/plugins/chartjs.min.js"></script>
     <!--  Notifications Plugin    -->
     <script src="~/Newassets/js/plugins/bootstrap-notify.js"></script>
+    <script src="~/js/BsMultiSelect.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+        var $selectMultiSelects = $("#edit-StatesPp-id, select[multiple='multiple']");
+        var $jsonMultiSelects = $(" #bsMultiSelectJson, #bsMultiSelectJson2");
+        var $multiSelects = $selectMultiSelects.add($jsonMultiSelects);
+        function install() {
+            $selectMultiSelects.bsMultiSelect(
+                {
+                    cssPatch: window.cssPatch,
+                    setSelected: function (o, v) {
+                        o.selected = v;
+                        if (!isIE11)
+                            $('.toast').toast('show').find('.toast-body').css('text-decoration', v ? 'none' : 'line-through').text(o.text);
+                    },
+                }
+            );
+            $jsonMultiSelects.bsMultiSelect({
+                cssPatch: window.cssPatch,
+                setSelected: function (o, i) {
+                    o.selected = i;
+                    if (!isIE11)
+                        $('.toast').toast('show').find('.toast-body').css('text-decoration', i ? 'none' : 'line-through').text(o.text);
+                },
+                placeholder: "Placeholder from config object",
+                getDisabled: function () {
+                    return $('#optionDisable').prop("checked");
+                },
+                buildConfiguration: function (element, configuration) {
+                    configuration.label = $('#' + element.id + 'Label').get(0);
+                    configuration.getSize = function () {
+                        var v = $("#bs-size-name-id").val();
+                        return v == "LG" ? "lg" : (v == "SM" ? "sm" : null);
+                    }
+                }
+            });
+        }
+        install();
+    </script>
+
+
+
+
+
+
     <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 
 
@@ -604,6 +660,7 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
 <script>
 
     $(document).ready(function () {

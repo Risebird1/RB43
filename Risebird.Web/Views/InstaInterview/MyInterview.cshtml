@@ -58,7 +58,7 @@
                         <div class="pull-left filtercon">
                             <div id="myinterview_3">
                                 <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
-                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-toggle="modal" data-target="#filterModal">
+                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                                         <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                         <div class="mdc-button__ripple"></div>
                                     </button>
@@ -95,7 +95,7 @@
                                             </div>
                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
@@ -134,7 +134,7 @@
                                                                 Interview Date
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="InterviewDate" name="InterviewDate" class="form-control multiselect" multiple="multiple">
+                                                                <select id="InterviewDate" name="InterviewDate" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.RequestedDate).Distinct().ToList())
                                                                     {
                                                                         @if (item != null)
@@ -152,7 +152,7 @@
                                                                 Candidate Name
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                                <select id="CandidateName" name="CandidateName" data-placeholder="None Selected" class="multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.CandidateName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -347,39 +347,39 @@
             if ('@filter' != "") {
                 ApplySessionFilter();
               }
-        $("#InterviewSlot").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
+        //$("#InterviewSlot").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
 
-        $("#CandidateName").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
+        //$("#CandidateName").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
 
-        $("#RisebirdHR").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
+        //$("#RisebirdHR").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
 
-        $("#InterviewDate").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#JobLevel").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
+        //$("#InterviewDate").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
+        //$("#JobLevel").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
 
         $('#MyInterviewList').DataTable({
             "pagingType": "full_numbers",

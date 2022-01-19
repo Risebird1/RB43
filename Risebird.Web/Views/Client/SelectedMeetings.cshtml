@@ -85,9 +85,9 @@
 
                             <div style="float:left">
                                 <div id="selectedcandidate_2">
-                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-toggle="modal" data-target="#filterModal">
+                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three  pull-left" data-bs-toggle="modal" data-bs-target="#filterModal">
 
-                                        <span class="mdc-button__label"><span class="fa fa-filter" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-bs-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
 
                                     </button>
 
@@ -97,7 +97,7 @@
 
                             <div style="float:left">
                                 <span>
-                                    <i id="selectedcandidate_3" data-intro='Click here to export the Selected Candidate data in excel sheet' data-position='right' type="submit" class="fa fa-file-excel-o excel-file export five  pull-left" data-toggle="tooltip" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Client" )'" data-original-title="Tooltip on top"></i>
+                                    <i id="selectedcandidate_3" data-intro='Click here to export the Selected Candidate data in excel sheet' data-position='right' type="submit" class="far fa-file-excel excel-file export five  pull-left" data-toggle="tooltip" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Client" )'" data-original-title="Tooltip on top"></i>
                                 </span>
 
 
@@ -150,7 +150,7 @@
                                                             </div>
                                                             <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                         </div>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
 
@@ -185,7 +185,7 @@
                                                                         <div class="form-group">
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                                     @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
                                                                                     {
@@ -205,7 +205,8 @@
                                                                                 Candidate Name
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+
                                                                                     @foreach (var item in Model.Select(x => x.candidateName).Distinct().ToList())
                                                                                     {
                                                                                         @if (item != null && item != "")
@@ -220,7 +221,8 @@
                                                                         <div class="form-group">
                                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+
                                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                                                                                     {
                                                                                         @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
@@ -253,7 +255,7 @@
                                                                                 Interview Date
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="InterviewDate" name="InterviewDate" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="InterviewDate" name="InterviewDate" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @foreach (var item in Model.Select(x => x.interviewDate).Distinct().ToList())
                                                                                     {
                                                                                         @if (item != null)
@@ -271,7 +273,7 @@
                                                                                 HR
                                                                             </label>
                                                                             <div class="col-md-12 col-sm-12">
-                                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                                                                                     {
                                                                                         foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
@@ -690,7 +692,7 @@
                                                                                 <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
 
-                                                                                <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+                                                                                <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top"  onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
 
 
 
@@ -973,7 +975,7 @@
                                                     <div class="modal-content ">
                                                         <div class="filheader">
                                                             <div class="filavatar">
-                                                                <span class="publicsharing-icon">
+                                                                <span>
 
 
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
@@ -986,7 +988,7 @@
                                                         </button>
                                                         <div class="modal-body">
 
-                                                            <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+                                                            <h5 class="modal-title text-center" id="callingLabel">Calling...</h5>
 
 
                                                             <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
@@ -1078,60 +1080,60 @@
                 if ('@filter' != "") {
                     ApplySessionFilter();
                 }
-                $("#PrimarySkill").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#CandidateName").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#ClientHR").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#InterviewDate").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#ClientName").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#ApprovalStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#SelectionStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#JoiningStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
-                $("#OfferStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+                //$("#PrimarySkill").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#CandidateName").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#ClientHR").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#InterviewDate").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#ClientName").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#ApprovalStatus").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#SelectionStatus").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#JoiningStatus").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
+                //$("#OfferStatus").multiselect({
+                //    includeSelectAllOption: true,
+                //    selectedClass: 'active1',
+                //    buttonWidth: '100%',
+                //    maxHeight: 200
+                //});
                 //$('#meeting').DataTable({
                 //    "pagingType": "full_numbers",
                 //    "lengthMenu": [
@@ -1159,10 +1161,12 @@
         function changeicon(id) {
             if ($("#" + id).attr("data-changes") == "1") {
                 $("#" + id).addClass("shows");
+                $('.' + id).addClass("in");
                 $("#" + id).attr("data-changes", "2");
             }
             else {
                 $("#" + id).removeClass("shows");
+                $('.' + id).removeClass("in");
                 $("#" + id).attr("data-changes", "1");
             }
         }
@@ -1615,7 +1619,7 @@
                 html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
                 html += '<a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255) d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>'; html += '</button>';
             }
-            html += '</td>'; html += '<td>'; if (data[i].mobileNumber != null && data[i].mobileNumber != "") { html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>'; } html += '</td>'; html += '</tr>'; html += '<tr class="collapse ' + data[i].imid + '">'; html += '<td colspan="999" class=child-section">'; html += '<table class="table table-striped">'; html += '<tr>'; html += '<th>End Client Name</th>'; html += ' <th>Aadhar Link</th>'; html += ' <th>Approval Status</th>'; html += '<th>Final Selection Status</th>'; html += '<th>Offer Status</th>'; html += '<th>Joining Status</th>'; html += '</tr>'; html += '<tr>'; html += '<td> ' + data[i].clientName + ' </td>'; if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
+            html += '</td>'; html += '<td>'; if (data[i].mobileNumber != null && data[i].mobileNumber != "") { html += '<input type="hidden" id="hidmobile' + data[i].id + '" value="' + data[i].mobileNumber + '"/><span class="call" data-toggle="tooltip" data-placement="top"  onclick="CallButtonClickjson(' + data[i].imid + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>'; } html += '</td>'; html += '</tr>'; html += '<tr class="collapse ' + data[i].imid + '">'; html += '<td colspan="999" class=child-section">'; html += '<table class="table table-striped">'; html += '<tr>'; html += '<th>End Client Name</th>'; html += ' <th>Aadhar Link</th>'; html += ' <th>Approval Status</th>'; html += '<th>Final Selection Status</th>'; html += '<th>Offer Status</th>'; html += '<th>Joining Status</th>'; html += '</tr>'; html += '<tr>'; html += '<td> ' + data[i].clientName + ' </td>'; if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
                 html += '<td><a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';
             } else { html += '<td>No document</td>'; } if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") { html += '<td>    ' + data[i].nextLevelApprovalStat + '</td></td>'; } else { html += ' <td>No document</td>'; }
             if (data[i].finalSelectionStat != null && data[i].finalSelectionStat != "") { html += '<td>' + data[i].finalSelectionStat + ' </td>'; } else { html += ' <td>No document</td>'; } if (data[i].offerStatusStatDesc != null && data[i].offerStatusStatDesc != "") { html += ' <td>' + data[i].offerStatusStatDesc + '</td>'; } else { html += '<td>No document</td>'; } if (data[i].joiningStatusStatDesc != null && data[i].joiningStatusStatDesc != "") { html += '   <td>' + data[i].joiningStatusStatDesc + '</td>'; } else { html += '<td>No document</td>'; } html += '   </tr>'; html += '</table>'; html += '   </td>'; html += ' </tr>';

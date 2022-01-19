@@ -376,4 +376,16 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string CalendlyLink { get; set; }
     }
+    public class RBInterviewerPayoutDetails
+    {
+        public int Points { get; set; }
+        public int id { get; set; }
+        public int Userid { get; set; }
+        public string FirstName { get; set; }
+        public string InterviewerEmailid { get; set; }
+        public string AccountNumber { get; set; }
+        public string PAN { get; set; }
+        public string IFSCCode { get; set; }
+        public string AccountName { get; set; }
+    }
 }

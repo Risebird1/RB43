@@ -1,0 +1,210 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerTdsVM
+
+@{
+    ViewData["Title"] = "Interviewer Tds Certificate";
+    ViewBag.PageHeader = "Interviewer Tds Certificate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Newassets/css/interview.css?v=12345" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
+
+<div class="main-panel" id="main-panel">
+
+    <!-- End Navbar -->
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <form action="/Interviewer/TdsCertificateInterviewers" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form interviewer" id="reportForm">
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="row">
+                                <input type="hidden" value="@Model.InterviewerEmailid" id="txtintervieweremail" />
+                                <input type="hidden" value="@ViewBag.Profile" id="txtprofiledetails" />
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 tds">
+                                    <div class="row">
+                                        <div class="col-md-5 col-sm-5">
+                                            <div class="form-group companysize">
+                                                <div class="mandate">
+                                                    @Html.LabelFor(model => model.TdsYears, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                </div>
+                                                <select id="TdsSelectYear" name="TdsSelectYear" class="form-control select-css" onchange="ChangeTdsRecords()">
+                                                    @foreach (var item in Model.TdsYears.ToList())
+                                                    {
+                                                        @if (item != null)
+                                                        {
+                                                            @if (item.Selected)
+                                                            {
+                                                                <option value="@item.Value" selected>@item.Text</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item.Value">@item.Text</option>
+                                                            }
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @if (ViewBag.Profile != "Interviewer")
+                                        {
+                                            <div class="col-md-5 col-sm-5">
+                                                <div class="form-group">
+                                                    <div class="mandate">
+                                                        @Html.Label("Email Address", "Email Address", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    </div>
+                                                    @Html.TextBoxFor(m => m.InterviewerEmailid, new { @class = "form-control", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.InterviewerEmailid, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Tds Certificate Matrix</span></h3>
+                                                @if (ViewBag.Profile != "Interviewer")
+                                                {
+                                                    <input style="margin: 10px; float: right;" type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="AddTdsCretificate(0)" value="Add" />
+                                                }
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="SkillTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="20%">Month</th>
+                                                            <th width="40%">Comment</th>
+                                                            <th width="20%">Tds Certificate</th>
+                                                            @if (ViewBag.Profile != "Interviewer")
+                                                            {
+                                                                <th width="20%">Action</th>
+                                                            }
+                                                        </tr>
+                                                    </thead>
+
+
+                                                    <tbody>
+                                                        @if (Model.TdsCertificateCollection != null && Model.TdsCertificateCollection.Count() != 0)
+                                                        {
+                                                            @for (int i = 0; i < Model.TdsCertificateCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TdsCertificateCollection[i].month, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TdsCertificateCollection[i].comment, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (!String.IsNullOrEmpty(Model.TdsCertificateCollection[i].certificatelink))
+                                                                        {
+                                                                            <a target="_blank" href="@Model.TdsCertificateCollection[i].certificatelink">Click Here</a>
+                                                                        }
+                                                                    </td>
+                                                                    @if (ViewBag.Profile != "Interviewer")
+                                                                    {
+                                                                        <td class="action text-center">
+                                                                            <input style="margin: 10px; float: right;" type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="AddTdsCretificate(@Model.TdsCertificateCollection[i].id)" value="Edit" />
+                                                                        </td>
+                                                                    }
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @if (ViewBag.Profile == "Interviewer")
+                                        {
+                                            <input type="button" value="Back to List" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="backtolist()" />
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal tds">
+    <!-- Modal content -->
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <i class="fas fa-file-invoice" style="font-size: 23px;color:#fff;line-height:40px;"></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Tds Certificate ( <label id="txtyears"></label> )</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseMyModelPopup()">
+                <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div id="divDetailedView" style="max-height:300px;"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    function CloseMyModelPopup() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    function AddTdsCretificate(certificateid) {
+        var year = $("#TdsSelectYear").val();
+        var intervieweremailid = $("#txtintervieweremail").val();
+        $.ajax({
+            type: "POST",
+            url: "/Interviewer/AddTdsCertificate",
+            data: { 'certificateid': certificateid, 'interviewerid': intervieweremailid, 'year': year },
+            success: function (data) {
+                document.getElementById("myModal").style.display = "block";
+                $("#txtyears").text(year);
+                $("#divDetailedView").empty().html(data);
+            }
+        });
+    }
+    function ChangeTdsRecords() {
+        var year = $("#TdsSelectYear").val();
+        var intervieweremailid = $("#txtintervieweremail").val();
+        if ($("#txtprofiledetails").val() != "Interviewer") {
+            window.location.href = "/Interviewer/TdsCertificateInterviewers?emailid=" + intervieweremailid + "&year=" + year;
+        } else {
+            window.location.href = "/Interviewer/TdsCertificateInterviewers?year=" + year;
+        }
+    }
+    function backtolist() {
+        window.location.href = "/Account/UserProfile";
+    }
+</script>

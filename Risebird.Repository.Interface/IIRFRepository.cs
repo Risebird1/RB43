@@ -32,7 +32,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
-        IEnumerable<SkillComment> GetTechSkillComments(int id);
+        IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId=null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
         //bool CheckUniqueness(string value);
@@ -155,5 +155,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<SkillCahnnelDetailsVM>> GetAllSkillChannelDetails();
         Task<int> GetInterviewerQCRate(int userId);
         Task<int> GetInterviewerRate(int userId, string companyType = null, int? countryType = null);
+        Task<bool> IsQuestionUsedInReport(string question);
     }
 }
