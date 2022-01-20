@@ -2131,7 +2131,7 @@
             var drpdowns3 = $('[id^=' + tab_skill + '][id$="Natureofquestion"]');
             for (i = 0; i < drpdowns1.length; i++) {
                 var interviewId = $("#" + drpdowns1[i].id).val();
-                if ($("#" + drpdowns_2[i].id).val() != '' && $("#" + drpdowns_3[i].id).val() != '') {
+                if ($("#" + drpdowns2[i].id).val() != '' && $("#" + drpdowns3[i].id).val() != '') {
                     if (interviewId != '') {
                         if (parseInt(interviewId) < 1 || parseInt(interviewId) > 30) {
                             document.getElementById(tab_skill + "_WeightageError").innerHTML = "Time limit should between 0 to 30.";
