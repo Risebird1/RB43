@@ -337,6 +337,7 @@ namespace Risebird.Entities.ViewModel
         public int IndiaProductRate { get; set; }
         public int OutsideIndiaProductRate { get; set; }
         public bool IsQCRequired { get; set; }
+        public string NickName { get; set; }
     }
     public class RBInterviewDetails
     {

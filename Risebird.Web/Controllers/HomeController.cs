@@ -33,7 +33,8 @@ namespace Risebird.Web.Controllers
                 //You get the user’s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
-               string emailId = userClaims?.FindFirst("emails")?.Value;
+                string emailId = userClaims?.FindFirst("emails")?.Value;
+                //string emailId = "interview35@risebird.io";
                 if (_userService.CheckMultiSession(emailId).Result)
                 {
                     return RedirectToAction("Index", "MultiSession");

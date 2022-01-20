@@ -63,7 +63,8 @@ SELECT [InterviewMeetings].id as imid
   ,ulh.EmailId as ChannelOwner  
   ,IsEmergency  
   ,InterviewComments.VideoLink  
-  ,IRF.IsQCRequired  
+  ,IRF.IsQCRequired 
+  ,ipr.NickName
 FROM [dbo].[InterviewMeetings]  
 inner join   
 IRF on [InterviewMeetings].IRFId = IRF.IRFId  
@@ -72,6 +73,8 @@ left join UserList ul on ul.EmailId = InterviewMeetings.candidateEmail
 join CandidatesMaster cm on cm.UserId = ul.id  
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id  
 join UserList ulh on irf.RisebirdHr = ulh.id 
+left join UserList uli on uli.EmailId = InterviewMeetings.interviewer
+left join InterviewerProfile ipr on ipr.UserId =uli.id
 WHERE  
       [InterviewMeetings].id = @interviewId  
   

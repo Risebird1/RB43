@@ -1264,6 +1264,7 @@ namespace Risebird.Business
                 reportModel.ThumbnailTimeSeconds = interviewDetails.ThumbnailTimeSeconds;
                 reportModel.VideoDuration = interviewDetails.VideoDuration;
                 reportModel.IsQCRequired = interviewDetails.IsQCRequired;
+                reportModel.NickName = interviewDetails.NickName;
                 if (reportModel.IsEdited)
                 {
                     reportModel.OldInterviewerComment = reportModel.InterviewerComment;
