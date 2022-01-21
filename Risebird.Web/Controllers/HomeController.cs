@@ -26,13 +26,14 @@ namespace Risebird.Web.Controllers
         }
 
         public IActionResult Index(string url = null)
-        { if (User.Identity.IsAuthenticated)
+        { 
+            if (User.Identity.IsAuthenticated)
             {
                 var userClaims = User.Identity as ClaimsIdentity;
                 //You get the user’s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
-               string emailId = userClaims?.FindFirst("emails")?.Value;
+                string emailId = userClaims?.FindFirst("emails")?.Value;
                 if (_userService.CheckMultiSession(emailId).Result)
                 {
                     return RedirectToAction("Index", "MultiSession");
@@ -89,8 +90,8 @@ namespace Risebird.Web.Controllers
                     }
 
                     HttpContext.Session.SetString("ClientRole", role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty);
-              HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
-                   //HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));
+                    HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
+                    //HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(true));
                     HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
                     HttpContext.Session.SetString("UserLogedIn", "Yes");
                     HttpContext.Session.SetString("UserLogedInVedioId", "");
