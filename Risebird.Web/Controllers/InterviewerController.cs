@@ -2830,18 +2830,11 @@ namespace Risebird.Web.Controllers
                 model = _interviewerService.FetchTdsCertificatebyid(certificateid);
             }
             var selectListforsize = new List<SelectListItem>();
-            selectListforsize.Add(new SelectListItem("January", Convert.ToString("January"), false));
-            selectListforsize.Add(new SelectListItem("February", Convert.ToString("February"), false));
-            selectListforsize.Add(new SelectListItem("March", Convert.ToString("March"), false));
-            selectListforsize.Add(new SelectListItem("April", Convert.ToString("April"), false));
-            selectListforsize.Add(new SelectListItem("May", Convert.ToString("May"), false));
-            selectListforsize.Add(new SelectListItem("June", Convert.ToString("June"), false));
-            selectListforsize.Add(new SelectListItem("July", Convert.ToString("July"), false));
-            selectListforsize.Add(new SelectListItem("August", Convert.ToString("August"), false));
-            selectListforsize.Add(new SelectListItem("September", Convert.ToString("September"), false));
-            selectListforsize.Add(new SelectListItem("October", Convert.ToString("October"), false));
-            selectListforsize.Add(new SelectListItem("November", Convert.ToString("November"), false));
-            selectListforsize.Add(new SelectListItem("December", Convert.ToString("December"), false));
+            selectListforsize.Add(new SelectListItem("Quarter 1", Convert.ToString("Quarter 1"), false));
+            selectListforsize.Add(new SelectListItem("Quarter 2", Convert.ToString("Quarter 2"), false));
+            selectListforsize.Add(new SelectListItem("Quarter 3", Convert.ToString("Quarter 3"), false));
+            selectListforsize.Add(new SelectListItem("Quarter 4", Convert.ToString("Quarter 4"), false));
+            selectListforsize.Add(new SelectListItem("Additional", Convert.ToString("Additional"), false));
             model.MonthsList = selectListforsize;
             model.emailid = interviewerid;
             model.year = year;
