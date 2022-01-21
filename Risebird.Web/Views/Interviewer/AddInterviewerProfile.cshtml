@@ -699,12 +699,12 @@
                 buttonWidth: '100%',
                 maxHeight: 200
             });
-            $("#AssessmentGroupArray").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#AssessmentGroupArray").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
 
             $("#DOB").change(function () {
                 var dob = new Date(BirthDate);
@@ -1202,11 +1202,17 @@
             //return false;
         }
         function CheckvalidationforProfile() {
-            if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+            //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+            //    $("#err_assessmentgroup").text("");
+            //    return true;
+            //}
+            //$(".multiselect-selected-text").focus();
+            //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+            //return false;
+            if ($(".badge").length > 0) {
                 $("#err_assessmentgroup").text("");
                 return true;
             }
-            $(".multiselect-selected-text").focus();
             $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
             return false;
         }
