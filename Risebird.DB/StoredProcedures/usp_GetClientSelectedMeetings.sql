@@ -171,7 +171,7 @@ else if(@roleId=4)
     left join UserList ul on tcu.ClientUserId= ul.id      
     left join UserList uli on uli.EmailId = im.interviewer
     left join InterviewerProfile ipr on ipr.UserId = uli.id  
-    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId      
+    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and ca.ProfileSource=@EmailId--im.staffingAgency=@EmailId      
     and irf.IsDeleted=0      
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
     and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)      
@@ -207,7 +207,7 @@ else if(@roleId=4)
     left join UserList ul on tcu.ClientUserId= ul.id      
     left join UserList uli on uli.EmailId = im.interviewer
     left join InterviewerProfile ipr on ipr.UserId = uli.id  
-    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId      
+    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and ca.ProfileSource=@EmailId--im.staffingAgency=@EmailId      
     and irf.IsDeleted=0      
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
     and cast(interviewDate as date) >= cast(@startDate as date) and cast(interviewDate as date) <= cast(@endDate as date)      
@@ -243,7 +243,7 @@ else if(@roleId=4)
     left join UserList ul on tcu.ClientUserId= ul.id      
     left join UserList uli on uli.EmailId = im.interviewer
     left join InterviewerProfile ipr on ipr.UserId = uli.id   
-    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and im.staffingAgency=@EmailId      
+    where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and ca.ProfileSource=@EmailId--im.staffingAgency=@EmailId      
     and irf.IsDeleted=0      
     --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @timeNow) as date)) or IRF.IsDeleted=0)      
     and im.confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)      
