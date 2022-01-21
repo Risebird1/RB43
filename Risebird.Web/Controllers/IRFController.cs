@@ -1600,17 +1600,17 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-                        var list = new SelectList(new[]
-{
-    new { ID = "Today", Name = "Today"},
-    new { ID = "Tomorrow", Name = "Tomorrow"  },
-    new { ID = "Yesterday", Name = "Yesterday"  },
-    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-    new { ID = "All", Name = "All"},
-},
-"ID", "Name", "All");
+//                        var list = new SelectList(new[]
+//{
+//    new { ID = "Today", Name = "Today"},
+//    new { ID = "Tomorrow", Name = "Tomorrow"  },
+//    new { ID = "Yesterday", Name = "Yesterday"  },
+//    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+//    new { ID = "All", Name = "All"},
+//},
+//"ID", "Name", "All");
 
-                        ViewData["list"] = list;
+//                        ViewData["list"] = list;
                         ViewBag.ProfileName = profileName.ToLower();
                         if (!String.IsNullOrEmpty(searchValue))
                         {
