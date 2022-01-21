@@ -76,7 +76,8 @@ AS
       
     and cast(interviewDate as date) >= cast (@startDate as date)  
     and cast(interviewDate as date) <= cast (@endDate as date)  
-      
+    and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)
+	
     group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, ul.FirstName, ul.LastName, im.ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,  
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,     
@@ -127,7 +128,8 @@ AS
       
     and cast(interviewDate as date) >= cast (@startDate as date)  
     and cast(interviewDate as date) <= cast (@endDate as date)  
-  
+	and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)
+
     group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, ul.FirstName, ul.LastName, im.ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,  
     im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy,      
