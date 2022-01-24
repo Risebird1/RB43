@@ -34,7 +34,7 @@
                     </button>
                 </div>
                 <div class="pull-right ">
-                    <span style="float:left;line-height:36px;">Sort By:</span>   @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space",@style="margin:0px 5px;width:150px;", onchange = "FilterInterviews(this.value);" })
+                    <span style="float:left;line-height:36px;">Sort By:</span>   @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space", @style = "margin:0px 5px;width:150px;", onchange = "FilterInterviews(this.value);" })
 
                 </div>
             </div>
@@ -59,7 +59,7 @@
                             <div id="tableID" class="second">
                                 <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                     <div class="col-sm-12 col-md-6">
-
+                                        <input type="hidden" value="@ViewBag.CodedName" id="hidcodedname" />
                                     </div>
                                     <div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
                                         <div id="meeting_filter" class="dataTables_filter">
@@ -275,7 +275,9 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.includes("Success")) {
-                swal.fire("Successful",'@ViewBag.Message', "success");
+                var codedname = $("#hidcodedname").val();
+                swal.fire("Successful", '@ViewBag.Message', "success");
+                swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
