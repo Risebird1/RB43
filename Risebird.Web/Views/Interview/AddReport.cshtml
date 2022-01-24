@@ -1957,12 +1957,14 @@
 
     function CheckConditions() {
 
-        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckQuestionsTiming() && CheckTechSkills());
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills()); //&& CheckQuestionsTiming()
     }
 
     function CheckInterviewerComments() {
-        var interviewStatusElem = document.getElementById("InterviewStatus");
-        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
+        //var interviewStatusElem = document.getElementById("InterviewStatus");
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4) {
             var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";
@@ -1971,12 +1973,27 @@
             else {
                 //interviewerComment_Error
                 document.getElementById("InterviewerComment").focus();
-                document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
+                document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
             }
         }
         else
             return true;
+        //if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
+        //    var comments = document.getElementById("InterviewerComment").value;
+        //    if (comments.length >= 250) {
+        //        document.getElementById("interviewerComment_Error").innerHTML = "";
+        //        return true;
+        //    }
+        //    else {
+        //        //interviewerComment_Error
+        //        document.getElementById("InterviewerComment").focus();
+        //        document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
+        //        return false;
+        //    }
+        //}
+        //else
+        //    return true;
     }
 
     function CheckQuestionsTiming() {
@@ -2009,8 +2026,10 @@
 
     function CheckQuestions() {
 
-        var meetingStatusElem = document.getElementById("MeetingStatus");
-        if (meetingStatusElem.value != null && meetingStatusElem.value == 4) {
+        //var meetingStatusElem = document.getElementById("MeetingStatus");
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 ) {
             var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
             for (i = 0; i < questionItems.length; i++) {
                 var temp = $("#QuestionsCollection_" + i + "__Comment").val();
@@ -2021,6 +2040,18 @@
                 }
             }
         }
+
+        //if (value != null && meetingStatusElem.value == 4) {
+        //    var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+        //    for (i = 0; i < questionItems.length; i++) {
+        //        var temp = $("#QuestionsCollection_" + i + "__Comment").val();
+        //        if (temp == null || temp == '') {
+        //            document.getElementById('QuestionsCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
+        //            document.getElementById('QuestionsCollection_CommentError').focus();
+        //            return false;
+        //        }
+        //    }
+        //}
         document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
         return true;
     }
@@ -2058,7 +2089,10 @@
         return true;
     }
     function CheckTechSkills() {
-        var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
+            var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
             for (i = 0; i < questionItems.length; i++) {
                 var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
                 if (temp == null || temp == '') {
@@ -2067,6 +2101,7 @@
                     return false;
                 }
             }
+        }
         document.getElementById('TechSkills_CommentError').innerHTML = "";
         return true;
     }
