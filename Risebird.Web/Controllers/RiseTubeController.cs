@@ -730,6 +730,7 @@ namespace Risebird.Web.Controllers
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
                         NewModel.irfIntId = model.irfIntId;
+                        NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         if (IRListModel != null)
                         {
                             GetStatusList(IRListModel, model.irfIntId);
@@ -849,6 +850,8 @@ namespace Risebird.Web.Controllers
                         }
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
+                        NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
+
                         ViewBag.VideoStatus = "Public";
                         //ViewBag.VideoStatus = "Private";
                         var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
@@ -1158,6 +1161,7 @@ namespace Risebird.Web.Controllers
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
+                        NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         GetStatusList(IRListModel, model.irfIntId);
                         ViewBag.VideoStatus = "Private";
                         return View(NewModel);
@@ -2653,6 +2657,7 @@ namespace Risebird.Web.Controllers
                 }
                 bool isQC = false;
                 NewModel.IreportModel.IsQC = isQC;
+                NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                 ViewBag.VideoStatus = "Public";
                 //ViewBag.VideoStatus = "Private";
 
@@ -2973,6 +2978,7 @@ namespace Risebird.Web.Controllers
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
+                        NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         if (IRListModel != null)
                         {
                             GetStatusList(IRListModel, model.irfIntId);

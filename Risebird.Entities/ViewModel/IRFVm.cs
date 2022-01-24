@@ -152,6 +152,9 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("QC Required")]
         public bool IsQCRequired { get; set; }
+
+        [DisplayName("Joinability and Selectability Required")]
+        public bool IsJoinabilitySelectabilityRequired { get; set; }
     }
     public class InterviewerIds
     {
@@ -243,6 +246,7 @@ namespace Risebird.Entities.ViewModel
         public int ReScheduledCount { get; set; }
         public int FutureScheduledMeetings { get; set; }
         public bool IsQCRequired { get; set; }
+        public bool IsJoinabilitySelectabilityRequired { get; set; }
 
     }
     public class SkillCahnnelDetailsVM

@@ -38,6 +38,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @BillingOwner int,  
 @AssessmentGroupId varchar(100),
 @IsQCRequired bit,
+@IsJoinabilitySelectabilityRequired bit,
 @idIrf int output        
         
 AS        
@@ -80,6 +81,7 @@ begin tran
 	   ,[BillingOwner]=@BillingOwner
 	   ,[AssessmentGroupId]=@AssessmentGroupId
 	   ,[IsQCRequired] = @IsQCRequired
+	   ,[IsJoinabilitySelectabilityRequired] = @IsJoinabilitySelectabilityRequired
 	Where id =@id        
     
 	

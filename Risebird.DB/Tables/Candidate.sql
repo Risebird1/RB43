@@ -42,6 +42,7 @@ CREATE TABLE [dbo].[Candidate](
     [FitmentStatus] [int] NULL,
 	[PriorityStatus] [int] NULL,
 	[CompletionStatus] [int] NULL,
+	[IsProctor] [bit] NULL,
 
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
@@ -386,7 +387,15 @@ BEGIN
     ALTER TABLE Candidate
     Add CompletionStatus INT
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsProctor')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add IsProctor Bit
+END
 End
 
 GO

@@ -757,51 +757,59 @@ namespace Risebird.Repository
 
                     if (irfID > 0)
                     {
-                        DataTable joinabilityDt = new DataTable();
-                        joinabilityDt.Columns.Add("IRFId", typeof(int));
-                        joinabilityDt.Columns.Add("LevelId", typeof(int));
-                        joinabilityDt.Columns.Add("Type", typeof(string));
-                        joinabilityDt.Columns.Add("Value", typeof(string));
-                        joinabilityDt.Columns.Add("Weightage", typeof(int));
-
-
-                        foreach (var item in irfDetails.Joinability)
+                        if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
-                            joinabilityDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
-                        }
+                            DataTable joinabilityDt = new DataTable();
+                            joinabilityDt.Columns.Add("IRFId", typeof(int));
+                            joinabilityDt.Columns.Add("LevelId", typeof(int));
+                            joinabilityDt.Columns.Add("Type", typeof(string));
+                            joinabilityDt.Columns.Add("Value", typeof(string));
+                            joinabilityDt.Columns.Add("Weightage", typeof(int));
 
-                        SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
-                        cmdJoinability.CommandType = CommandType.StoredProcedure;
-                        cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
-                        cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
-                        con.Open();
-                        if (cmdJoinability.ExecuteNonQuery() != 0)
+
+                            foreach (var item in irfDetails.Joinability)
+                            {
+                                joinabilityDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
+                            }
+
+                            SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
+                            cmdJoinability.CommandType = CommandType.StoredProcedure;
+                            cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
+                            cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
+                            con.Open();
+                            if (cmdJoinability.ExecuteNonQuery() != 0)
+                            {
+                                con.Close();
+                            }
+                        }
+                        
+
+                        if(irfDetails.Selectability != null && irfDetails.Selectability.Count()>0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
-                            con.Close();
+                            DataTable selectabilityDt = new DataTable();
+                            selectabilityDt.Columns.Add("IRFId", typeof(int));
+                            selectabilityDt.Columns.Add("LevelId", typeof(int));
+                            selectabilityDt.Columns.Add("Type", typeof(string));
+                            selectabilityDt.Columns.Add("Value", typeof(string));
+                            selectabilityDt.Columns.Add("Weightage", typeof(int));
+
+
+                            foreach (var item in irfDetails.Selectability)
+                            {
+                                selectabilityDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
+                            }
+
+                            SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
+                            cmdSelectability.CommandType = CommandType.StoredProcedure;
+                            cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
+                            cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
+                            con.Open();
+                            if (cmdSelectability.ExecuteNonQuery() != 0)
+                            {
+                                con.Close();
+                            }
                         }
-
-                        DataTable selectabilityDt = new DataTable();
-                        selectabilityDt.Columns.Add("IRFId", typeof(int));
-                        selectabilityDt.Columns.Add("LevelId", typeof(int));
-                        selectabilityDt.Columns.Add("Type", typeof(string));
-                        selectabilityDt.Columns.Add("Value", typeof(string));
-                        selectabilityDt.Columns.Add("Weightage", typeof(int));
-
-
-                        foreach (var item in irfDetails.Selectability)
-                        {
-                            selectabilityDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
-                        }
-
-                        SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
-                        cmdSelectability.CommandType = CommandType.StoredProcedure;
-                        cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
-                        cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
-                        con.Open();
-                        if (cmdSelectability.ExecuteNonQuery() != 0)
-                        {
-                            con.Close();
-                        }
+                        
 
 
                         //update general skill table
@@ -935,7 +943,7 @@ namespace Risebird.Repository
                         }
 
                         //update trans QC table
-                        if (irfDetails.QualityController != null && irfDetails.QualityController.Count() > 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()))
+                        if (irfDetails.QualityController != null && irfDetails.QualityController.Count() > 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
                         {
                             DataTable qualityControllerDt = new DataTable();
                             qualityControllerDt.Columns.Add("IRFId", typeof(int));
@@ -1077,28 +1085,32 @@ namespace Risebird.Repository
 
                     try
                     {
-                        DataTable joinabilityDt = new DataTable();
-                        joinabilityDt.Columns.Add("IRFId", typeof(int));
-                        joinabilityDt.Columns.Add("LevelId", typeof(int));
-                        joinabilityDt.Columns.Add("Type", typeof(string));
-                        joinabilityDt.Columns.Add("Value", typeof(string));
-                        joinabilityDt.Columns.Add("Weightage", typeof(int));
-
-
-                        foreach (var item in irfDetails.Joinability)
+                        if(irfDetails.Joinability != null && irfDetails.Joinability.Count()>0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
-                            joinabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
-                        }
+                            DataTable joinabilityDt = new DataTable();
+                            joinabilityDt.Columns.Add("IRFId", typeof(int));
+                            joinabilityDt.Columns.Add("LevelId", typeof(int));
+                            joinabilityDt.Columns.Add("Type", typeof(string));
+                            joinabilityDt.Columns.Add("Value", typeof(string));
+                            joinabilityDt.Columns.Add("Weightage", typeof(int));
 
-                        SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
-                        cmdJoinability.CommandType = CommandType.StoredProcedure;
-                        cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
-                        cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
-                        con.Open();
-                        if (cmdJoinability.ExecuteNonQuery() != 0)
-                        {
-                            con.Close();
+
+                            foreach (var item in irfDetails.Joinability)
+                            {
+                                joinabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            }
+
+                            SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
+                            cmdJoinability.CommandType = CommandType.StoredProcedure;
+                            cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
+                            cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
+                            con.Open();
+                            if (cmdJoinability.ExecuteNonQuery() != 0)
+                            {
+                                con.Close();
+                            }
                         }
+                        
                     }
                     catch (Exception ex)
                     {
@@ -1109,28 +1121,33 @@ namespace Risebird.Repository
 
                     try
                     {
-                        DataTable selectabilityDt = new DataTable();
-                        selectabilityDt.Columns.Add("IRFId", typeof(int));
-                        selectabilityDt.Columns.Add("LevelId", typeof(int));
-                        selectabilityDt.Columns.Add("Type", typeof(string));
-                        selectabilityDt.Columns.Add("Value", typeof(string));
-                        selectabilityDt.Columns.Add("Weightage", typeof(int));
-
-
-                        foreach (var item in irfDetails.Selectability)
+                        if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
-                            selectabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            DataTable selectabilityDt = new DataTable();
+                            selectabilityDt.Columns.Add("IRFId", typeof(int));
+                            selectabilityDt.Columns.Add("LevelId", typeof(int));
+                            selectabilityDt.Columns.Add("Type", typeof(string));
+                            selectabilityDt.Columns.Add("Value", typeof(string));
+                            selectabilityDt.Columns.Add("Weightage", typeof(int));
+
+
+                            foreach (var item in irfDetails.Selectability)
+                            {
+                                selectabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            }
+
+                            SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
+                            cmdSelectability.CommandType = CommandType.StoredProcedure;
+                            cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
+                            cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
+                            con.Open();
+                            if (cmdSelectability.ExecuteNonQuery() != 0)
+                            {
+                                con.Close();
+                            }
                         }
 
-                        SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
-                        cmdSelectability.CommandType = CommandType.StoredProcedure;
-                        cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
-                        cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
-                        con.Open();
-                        if (cmdSelectability.ExecuteNonQuery() != 0)
-                        {
-                            con.Close();
-                        }
+                        
                     }
                     catch (Exception ex)
                     {
@@ -1499,7 +1516,7 @@ namespace Risebird.Repository
 
                     //    }
                     //}
-                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()))
+                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
                     {
                         try
                         {
@@ -2250,6 +2267,7 @@ namespace Risebird.Repository
             parameters.Add("@BillingOwner", entity.BillingOwner);
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@IsQCRequired", entity.IsQCRequired);
+            parameters.Add("@IsJoinabilitySelectabilityRequired", entity.IsJoinabilitySelectabilityRequired);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
@@ -2601,6 +2619,7 @@ namespace Risebird.Repository
                 parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 parameters.Add("@ProfileSource", obj.ProfileSource);
                 parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
+                parameters.Add("@IsProctor", obj.IsProctor);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2768,6 +2787,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 dynamicParameters.Add("@ProfileSource", obj.ProfileSource);
                 dynamicParameters.Add("@WhatsappNumber", obj.WhatsappNumber);
+                dynamicParameters.Add("@IsProctor", obj.IsProctor);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(

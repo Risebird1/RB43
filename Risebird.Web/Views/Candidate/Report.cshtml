@@ -149,7 +149,8 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    @if (Model.IsJoinabilitySelectabilityRequired)
+                                    {
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
@@ -307,140 +308,203 @@
                                             </div><!--end of col-md-12-->
 
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="multiple_row">
-                                                    <h3 class="mb-0"><span>Tech Skill Report</span></h3>
-                                                </div><!--end of multiple location-->
-                                            </div><!--end of col-md-12-->
+                                    }
 
 
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="table-responsive-sm">
-                                                    <table class="table table-bordered mbn" id="SkillTable">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="10%">Required Level</th>
-                                                                <th width="40%">Skill Name</th>
-                                                                <th width="20%">Actual Level</th>
-                                                                <th width="15%">Required Weightage</th>
-                                                                <th width="15%">Actual Weightage</th>
-                                                            </tr>
-                                                        </thead>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Tech Skill Report</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
 
 
-                                                        <tbody>
-                                                            @if (Model.TechSkillEvaluatorReportCollection != null)
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="SkillTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="10%">Required Level</th>
+                                                            <th width="40%">Skill Name</th>
+                                                            <th width="20%">Actual Level</th>
+                                                            <th width="15%">Required Weightage</th>
+                                                            <th width="15%">Actual Weightage</th>
+                                                        </tr>
+                                                    </thead>
+
+
+                                                    <tbody>
+                                                        @if (Model.TechSkillEvaluatorReportCollection != null)
+                                                        {
+                                                            @for (int i = 0; i < Model.TechSkillEvaluatorReportCollection.Count(); i++)
                                                             {
-                                                                @for (int i = 0; i < Model.TechSkillEvaluatorReportCollection.Count(); i++)
-                                                                {
-                                                                    <tr>
+                                                                <tr>
 
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
 
-                                                                        <td>
-                                                                            @Html.DropDownListFor(m => m.TechSkillEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'TechSkillEvaluatorReportCollection')" })
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.TechSkillEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'TechSkillEvaluatorReportCollection')" })
 
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
-                                                                        @Html.HiddenFor(m => m.TechSkillEvaluatorReportCollection[i].RequiredLevelId)
-                                                                        @Html.HiddenFor(m => m.TechSkillEvaluatorReportCollection[i].SkillId)
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    @Html.HiddenFor(m => m.TechSkillEvaluatorReportCollection[i].RequiredLevelId)
+                                                                    @Html.HiddenFor(m => m.TechSkillEvaluatorReportCollection[i].SkillId)
 
 
-                                                                    </tr>
+                                                                </tr>
 
-                                                                }
+                                                            }
+                                                        }
+
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+
+
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
+
+                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>General Skill Report</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="10%">Required Level</th>
+                                                            <th width="20%">Type</th>
+                                                            <th width="35%">Value</th>
+                                                            <th width="15%">Actual Level</th>
+                                                            <th width="10%">Required Weightage</th>
+                                                            <th width="10%">Actual Weightage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.SkillGeneralEvaluatorReportCollection != null)
+                                                        {
+                                                            @for (int i = 0; i < Model.SkillGeneralEvaluatorReportCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    @Html.HiddenFor(m => m.SkillGeneralEvaluatorReportCollection[i].RequiredLevelId)
+
+
+                                                                </tr>
+
                                                             }
 
+                                                        }
 
 
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                    </tbody>
+                                                </table>
+
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
-
+                                                    @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                         <div class="talktext">
 
-                                                            @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                            @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                                         </div>
                                                     </div>
                                                 </div>
 
 
+                                            </div>
+                                        </div><!--end of col-md-12-->
 
-                                            </div><!--end of col-md-12-->
+                                    </div>
 
-                                        </div>
-
+                                    @if (Model.CandidateAudioCollection != null && Model.CandidateAudioCollection.Count() != 0)
+                                    {
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
-                                                    <h3 class="mb-0"><span>General Skill Report</span></h3>
+                                                    <h3 class="mb-0"><span>Uploaded Audios</span></h3>
                                                 </div><!--end of multiple location-->
                                             </div><!--end of col-md-12-->
 
 
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="table-responsive-sm">
-                                                    <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                    <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
                                                         <thead>
                                                             <tr>
-                                                                <th width="10%">Required Level</th>
-                                                                <th width="20%">Type</th>
-                                                                <th width="35%">Value</th>
-                                                                <th width="15%">Actual Level</th>
-                                                                <th width="10%">Required Weightage</th>
-                                                                <th width="10%">Actual Weightage</th>
+                                                                <th width="30%">File</th>
+                                                                <th width="35%">Play</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @if (Model.SkillGeneralEvaluatorReportCollection != null)
+                                                            @for (int i = 0; i < Model.CandidateAudioCollection.Count(); i++)
                                                             {
-                                                                @for (int i = 0; i < Model.SkillGeneralEvaluatorReportCollection.Count(); i++)
-                                                                {
-                                                                    <tr>
+                                                                <tr>
 
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
-
-                                                                        <td>
-                                                                            @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
-
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                        </td>
-                                                                        @Html.HiddenFor(m => m.SkillGeneralEvaluatorReportCollection[i].RequiredLevelId)
+                                                                    <td>
+                                                                        <a href='@Model.CandidateAudioCollection[i].AudioFileLink' download>
+                                                                            @Model.CandidateAudioCollection[i].AudioFileLink.Split('/').Last()
+                                                                        </a>
+                                                                    </td>
 
 
-                                                                    </tr>
+                                                                    <td>
+                                                                        <audio src='@Model.CandidateAudioCollection[i].AudioFileLink' controls></audio>
+                                                                    </td>
 
-                                                                }
+                                                                </tr>
 
                                                             }
 
@@ -448,113 +512,53 @@
                                                         </tbody>
                                                     </table>
 
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class ="textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
-
-                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                            <div class="talktext">
-
-                                                                @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
 
                                                 </div>
                                             </div><!--end of col-md-12-->
 
                                         </div>
 
-                                        @if (Model.CandidateAudioCollection != null && Model.CandidateAudioCollection.Count() != 0)
-                                        {
-                                            <div class="row">
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    <div class="multiple_row">
-                                                        <h3 class="mb-0"><span>Uploaded Audios</span></h3>
-                                                    </div><!--end of multiple location-->
-                                                </div><!--end of col-md-12-->
-
-
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    <div class="table-responsive-sm">
-                                                        <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th width="30%">File</th>
-                                                                    <th width="35%">Play</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @for (int i = 0; i < Model.CandidateAudioCollection.Count(); i++)
-                                                                {
-                                                                    <tr>
-
-                                                                        <td>
-                                                                            <a href='@Model.CandidateAudioCollection[i].AudioFileLink' download>
-                                                                                @Model.CandidateAudioCollection[i].AudioFileLink.Split('/').Last()
-                                                                            </a>
-                                                                        </td>
-
-
-                                                                        <td>
-                                                                            <audio src='@Model.CandidateAudioCollection[i].AudioFileLink' controls></audio>
-                                                                        </td>
-
-                                                                    </tr>
-
-                                                                }
-
-
-                                                            </tbody>
-                                                        </table>
-
-
-                                                    </div>
-                                                </div><!--end of col-md-12-->
-
-                                            </div>
-
-                                        }
+                                    }
 
 
 
-                                        @Html.HiddenFor(m => m.id)
-                                        @Html.HiddenFor(m => m.IRFId)
-                                        @Html.HiddenFor(m => m.IRFName)
-                                        @Html.HiddenFor(m => m.CandidateId)
+                                    @Html.HiddenFor(m => m.id)
+                                    @Html.HiddenFor(m => m.IRFId)
+                                    @Html.HiddenFor(m => m.IRFName)
+                                    @Html.HiddenFor(m => m.CandidateId)
 
-                                        @Html.HiddenFor(m => m.IsEdited)
-                                        <div class="card-footer ">
-                                            <div class="row">
+                                    @Html.HiddenFor(m => m.IsEdited)
+                                    <div class="card-footer ">
+                                        <div class="row">
 
-                                                <div class="col-md-12 mc-button-area">
+                                            <div class="col-md-12 mc-button-area">
 
-                                                    @Html.ActionLink("Back to List", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @Html.ActionLink("Back to List", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
-                                                    @if (ViewBag.Profile != "Client")
+                                                @if (ViewBag.Profile != "Client")
+                                                {
+                                                    @if (Model.IsEdited)
                                                     {
-                                                        @if (Model.IsEdited)
-                                                        {
-                                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="submit()">Save</button>
-                                                        }
-                                                        else
-                                                        {
-                                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="submit()">Submit</button>
-                                                        }
-
+                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="submit()">Save</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="submit()">Submit</button>
                                                     }
 
+                                                }
 
-                                                </div>
+
                                             </div>
                                         </div>
-
-
-
-
-
-
                                     </div>
+
+
+
+
+
+
+                                </div>
 </form>
                         </div>
 
@@ -652,7 +656,12 @@
                 $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
             }
 
-            RenderChart();
+            if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+                RenderChart();
+            }
+            else {
+                RenderChartWithoutJoinabilityAndSelectability();
+            }
         }
 
         $(document).ready(function () {
@@ -693,9 +702,13 @@
     <script>
 
         window.onload = function () {
-            RenderChart();
+            if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+                RenderChart();
+            }
+            else {
+                RenderChartWithoutJoinabilityAndSelectability();
+            }
         }
-
 
         function RenderChart() {
             var arr = [];
@@ -858,6 +871,128 @@
 
 
         }
+        function RenderChartWithoutJoinabilityAndSelectability() {
+            var arr = [];
+
+            var objTech = { y: "", legendText: "", label: "" }
+            //TechSkills actual weightage total
+            var techItems = $('[id^="TechSkillEvaluatorReportCollection"][id$="WeightageActual"]');
+            var techTotal = 0;
+            for (i = 0; i < techItems.length; i++) {
+
+                techTotal = parseInt(techTotal) + parseInt($("#TechSkillEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objTech.y = parseInt(techTotal);
+            objTech.label = "Tech Skills Score";
+            objTech.legendText = "Tech Skills Score";
+            arr.push(objTech.y);
+            document.getElementById("TechSkillScore").value = techTotal;
+
+            var objGenSkill = { y: "", legendText: "", label: "" }
+            //TechSkills actual weightage total
+            var genSkillItems = $('[id^="SkillGeneralEvaluatorReportCollection"][id$="WeightageActual"]');
+            var genSkillTotal = 0;
+            for (i = 0; i < genSkillItems.length; i++) {
+
+                genSkillTotal = parseInt(genSkillTotal) + parseInt($("#SkillGeneralEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objGenSkill.y = parseInt(genSkillTotal);
+            objGenSkill.label = "General Skills Score";
+            objGenSkill.legendText = "General Skills Score";
+            arr.push(objGenSkill.y);
+            document.getElementById("SkillGeneralScore").value = genSkillTotal;
+            am4core.ready(function () {
+
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                // Create chart instance
+                var chart = am4core.create("scoreChart", am4charts.XYChart);//Tech General Joinability Selectability
+
+                // Add data
+                chart.data = [{
+                    "country": "Tech",
+                    "visits": arr[0]
+                }, {
+                    "country": "General",
+                    "visits": arr[1]
+                }];
+
+                // Create axes
+                chart.logo.disabled = true;
+                var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+                categoryAxis.dataFields.category = "country";
+                categoryAxis.renderer.inside = true;
+                categoryAxis.renderer.labels.template.valign = 0;
+
+                categoryAxis.renderer.grid.template.location = 0;
+                categoryAxis.renderer.minGridDistance = 30;
+                chart.fontSize = 13;
+                categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                    if (target.dataItem && target.dataItem.index & 2 == 2) {
+                        return dy;
+                    }
+                    return dy;
+                });
+
+                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                categoryAxis.renderer.labels.template.paddingBottom = -17;
+                categoryAxis.renderer.grid.template.disabled = true;
+                valueAxis.renderer.grid.template.disabled = true;
+                categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+                // Create series
+                var series = chart.series.push(new am4charts.ColumnSeries());
+                series.dataFields.valueY = "visits";
+                series.dataFields.categoryX = "country";
+                series.name = "Visits";
+                series.colorField = "color";
+                series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY}%)";
+
+                series.tooltip.label.adapter.add("text", function (text, target) {
+                    if (target.dataItem && target.dataItem.valueY == 0) {
+
+                        return "";
+                    }
+                    else {
+
+                        return text;
+                    }
+                });
+
+                series.columns.template.fillOpacity = .8;
+                series.columns.template.tooltipY = 0;
+                series.tooltip.background.strokeOpacity = 0
+                series.tooltip.pointerOrientation = "vertical";
+                series.columns.template.showTooltipOn = "always";
+                series.tooltip.background.filters.clear();
+                series.tooltip.getFillFromObject = false;
+
+                series.tooltip.label.fill = am4core.color("#9a9a9a");
+                series.tooltip.background.cornerRadius = 0;
+                series.tooltip.label.textAlign = "middle";
+                series.tooltip.background.fill = 0;
+
+
+                var columnTemplate = series.columns.template;
+                columnTemplate.strokeWidth = 0;
+                columnTemplate.strokeOpacity = 1;
+                chart.colors.list = [
+                    am4core.color("#F64042"),
+                    am4core.color("#ffbc50")
+
+                ];
+                series.columns.template.events.once("inited", function (event) {
+                    event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+                });
+
+            });
+
+
+        }
+
 
     </script>
 
