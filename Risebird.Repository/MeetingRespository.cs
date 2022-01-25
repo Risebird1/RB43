@@ -1433,90 +1433,100 @@ namespace Risebird.Repository
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
 
-                    DataTable techReportDt = new DataTable();
-                    techReportDt.Columns.Add("InterviewId", typeof(int));
-                    techReportDt.Columns.Add("RequiredLevelId", typeof(int));
-                    techReportDt.Columns.Add("SkillId", typeof(int));
-                    techReportDt.Columns.Add("ActualLevelId", typeof(int));
-                    techReportDt.Columns.Add("WeightageRequired", typeof(int));
-                    techReportDt.Columns.Add("WeightageActual", typeof(int));
-
-
-                    foreach (var item in reportDetails.TechSkillReportCollection)
+                    if (reportDetails.TechSkillReportCollection != null && reportDetails.TechSkillReportCollection.Count() > 0)
                     {
-                        techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
-                    }
-
-                    SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
-                    cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
-                    cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
-                    con.Open();
-                    if (cmdTechReport.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
-
-                    DataTable skillGeneralReportDt = new DataTable();
-                    skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
-                    skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
-                    skillGeneralReportDt.Columns.Add("Type", typeof(string));
-                    skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
-                    skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
-                    skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
-                    skillGeneralReportDt.Columns.Add("Value", typeof(string));
+                        DataTable techReportDt = new DataTable();
+                        techReportDt.Columns.Add("InterviewId", typeof(int));
+                        techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        techReportDt.Columns.Add("SkillId", typeof(int));
+                        techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        techReportDt.Columns.Add("WeightageActual", typeof(int));
 
 
-                    foreach (var item in reportDetails.SkillGeneralReportCollection)
-                    {
-                        skillGeneralReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value);
-                    }
-
-                    SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
-                    cmdSkillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralReportBulkData", SqlDbType.Structured));
-                    cmdSkillGeneralReport.Parameters["@SkillGeneralReportBulkData"].Value = skillGeneralReportDt;
-                    con.Open();
-                    if (cmdSkillGeneralReport.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
-
-
-                    DataTable questionsDt = new DataTable();
-                    questionsDt.Columns.Add("InterviewId", typeof(int));
-                    questionsDt.Columns.Add("Comment", typeof(string));
-                    questionsDt.Columns.Add("RatingId", typeof(int));
-                    questionsDt.Columns.Add("Timing", typeof(int));
-                    questionsDt.Columns.Add("SkillName", typeof(string));
-
-
-                    foreach (var item in reportDetails.QuestionsCollection)
-                    {
-                        if (!string.IsNullOrEmpty(item.Comment) && !string.IsNullOrEmpty(item.SkillName))
+                        foreach (var item in reportDetails.TechSkillReportCollection)
                         {
-                            questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                            techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
                         }
-                    }
 
-                    if (questionsDt.Rows != null && questionsDt.Rows.Count > 0)
-                    {
-                        SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
+                        SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con)
                         {
                             CommandType = CommandType.StoredProcedure
                         };
-                        cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
-                        cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                        cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
+                        cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
                         con.Open();
-                        if (cmdQuestions.ExecuteNonQuery() != 0)
+                        if (cmdTechReport.ExecuteNonQuery() != 0)
                         {
                             con.Close();
                         }
                     }
+
+                    if(reportDetails.SkillGeneralReportCollection != null && reportDetails.SkillGeneralReportCollection.Count()>0)
+                    {
+                        DataTable skillGeneralReportDt = new DataTable();
+                        skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("Type", typeof(string));
+                        skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
+                        skillGeneralReportDt.Columns.Add("Value", typeof(string));
+
+
+                        foreach (var item in reportDetails.SkillGeneralReportCollection)
+                        {
+                            skillGeneralReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value);
+                        }
+
+                        SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+                        cmdSkillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralReportBulkData", SqlDbType.Structured));
+                        cmdSkillGeneralReport.Parameters["@SkillGeneralReportBulkData"].Value = skillGeneralReportDt;
+                        con.Open();
+                        if (cmdSkillGeneralReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+
+                    if (reportDetails.QuestionsCollection != null && reportDetails.QuestionsCollection.Count() > 0)
+                    {
+                        DataTable questionsDt = new DataTable();
+                        questionsDt.Columns.Add("InterviewId", typeof(int));
+                        questionsDt.Columns.Add("Comment", typeof(string));
+                        questionsDt.Columns.Add("RatingId", typeof(int));
+                        questionsDt.Columns.Add("Timing", typeof(int));
+                        questionsDt.Columns.Add("SkillName", typeof(string));
+
+
+                        foreach (var item in reportDetails.QuestionsCollection)
+                        {
+                            if (!string.IsNullOrEmpty(item.Comment) && !string.IsNullOrEmpty(item.SkillName))
+                            {
+                                questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                            }
+                        }
+
+                        if (questionsDt.Rows != null && questionsDt.Rows.Count > 0)
+                        {
+                            SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
+                            {
+                                CommandType = CommandType.StoredProcedure
+                            };
+                            cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                            cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                            con.Open();
+                            if (cmdQuestions.ExecuteNonQuery() != 0)
+                            {
+                                con.Close();
+                            }
+                        }
+                    }
+
+                    
 
 
                     if (reportDetails.Proctoring != null)
