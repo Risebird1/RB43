@@ -9,7 +9,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_AddCandidate]      
+
+Create PROCEDURE [dbo].[usp_AddCandidate]      
 @IRFId int,      
 @Name varchar(200),      
 @EmailId varchar(200),      
@@ -33,7 +34,8 @@ CREATE PROCEDURE [dbo].[usp_AddCandidate]
 @AvailableFreeLancing bit,    
 @ClientHRAttemptContact varchar(100),    
 @ProfileSource varchar(200),  
-@WhatsappNumber varchar(15)
+@WhatsappNumber varchar(15),
+@IsProctor bit
 AS      
 Begin      
 declare      
@@ -95,7 +97,8 @@ insert into Candidate
 [AvailableFullTime],    
 [AvailableFreeLancing],    
 [ClientHRAttemptContact],    
-[ProfileSource]    
+[ProfileSource],
+[IsProctor]
 )      
 values(@IRFId,      
 @ResumeLink,      
@@ -118,7 +121,8 @@ values(@IRFId,
 @AvailableFullTime,    
 @AvailableFreeLancing,    
 @ClientHRAttemptContact,    
-@ProfileSource    
+@ProfileSource,
+@IsProctor
 )      
       
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))      
@@ -161,7 +165,8 @@ insert into Candidate
 [AvailableFullTime],    
 [AvailableFreeLancing],    
 [ClientHRAttemptContact],    
-[ProfileSource]    
+[ProfileSource] ,
+[IsProctor]
 )      
 values(@IRFId,      
 @ResumeLink,      
@@ -184,7 +189,8 @@ values(@IRFId,
 @AvailableFullTime,    
 @AvailableFreeLancing,    
 @ClientHRAttemptContact,    
-@ProfileSource)      
+@ProfileSource,
+@IsProctor)      
       
       
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))      
@@ -192,14 +198,6 @@ insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id 
 End      
       
 END 
-  
-  
-  
-  
-  
-  
-  
-  
 
 GO
 
