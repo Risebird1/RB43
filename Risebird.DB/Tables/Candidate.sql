@@ -387,6 +387,7 @@ BEGIN
     ALTER TABLE Candidate
     Add CompletionStatus INT
 END
+
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
