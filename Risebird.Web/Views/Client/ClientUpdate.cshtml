@@ -61,7 +61,7 @@
                                         @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
 
                                     </div>
-                                    </div>
+                                </div>
 
 
                                 <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
@@ -90,9 +90,9 @@
                                 <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                     <div class="form-group">
 
-                                        <input  style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
                                         Upload Company Logo
-                                        <input  style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="margin-left:10px;">
+                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="margin-left:10px;">
 
                                         Provide Logo URL
                                     </div>
@@ -113,9 +113,9 @@
 
                                 <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                     <div class="form-group">
-                                        <input  style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Upload" type="radio" onclick="RadioVideo(this.value)">
+                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Upload" type="radio" onclick="RadioVideo(this.value)">
                                         Upload Company Video(GIF)
-                                        <input  style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Link" type="radio" onclick="RadioVideo(this.value)" style="margin-left:10px;">
+                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Link" type="radio" onclick="RadioVideo(this.value)" style="margin-left:10px;">
                                         Provide Video URL(GIF)
 
                                     </div>
@@ -143,11 +143,18 @@
 
                                     </div>
                                 </div>
+                                @*<div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                    <div class="form-group">
+                                        @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.CheckBoxFor(model => model.IsPasswordReset) Reset Password after first login/Password aging.
+                                    </div>
+                                </div>*@
 
 
                             </div>
 
-
+                                @Html.HiddenFor(x=>x.IsPasswordReset)
+                                @Html.HiddenFor(x=>x.id)
 
                         </div>
 

@@ -23,32 +23,36 @@ Create PROCEDURE [dbo].[usp_AddClient]
 @Createdby varchar(200),
 @LogoLink varchar(max),
 @CompanyLink varchar(max),
-@CompanyVideoLink varchar(max)
+@CompanyVideoLink varchar(max),
+@IsPasswordReset bit
     
 AS    
 Begin    
   
-Declare @Clientid int  
-Declare @Userid int
-Select @Userid=id from USerList where Emailid=@Createdby
-INSERT INTO [dbo].[Client]    
-			   ([Name]    
-			   ,[Description]    
-			   ,[GST]    
-			   ,[OfficeAddress] 
-			   ,[LogoLink]
-			   ,[CompanyLink]
-			   ,[CompanyVideoLink]
-     )  
-       VALUES    
-				(@clientName    
-				,@clientDescr    
-				,@GST    
-				,@officeAddress
-				,@LogoLink
-				,@CompanyLink
-				,@CompanyVideoLink)    
+	Declare @Clientid int  
+	Declare @Userid int
+	Select @Userid=id from USerList where Emailid=@Createdby
+	INSERT INTO [dbo].[Client]    
+				   ([Name]    
+				   ,[Description]    
+				   ,[GST]    
+				   ,[OfficeAddress] 
+				   ,[LogoLink]
+				   ,[CompanyLink]
+				   ,[CompanyVideoLink]
+				   ,[IsPasswordReset]
+		 )  
+		   VALUES    
+					(@clientName    
+					,@clientDescr    
+					,@GST    
+					,@officeAddress
+					,@LogoLink
+					,@CompanyLink
+					,@CompanyVideoLink
+					,@IsPasswordReset)    
 
 End     
-    GO
+
+GO
   
