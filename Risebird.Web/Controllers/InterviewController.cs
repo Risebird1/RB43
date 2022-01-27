@@ -1724,6 +1724,8 @@ namespace Risebird.Web.Controllers
                         //meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.emailid = emailid;
+                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        ViewBag.CodedName = codedname;
                         var list = new SelectList(new[]
 {
     new { ID = "Today", Name = "Today"},

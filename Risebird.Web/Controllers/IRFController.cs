@@ -1372,6 +1372,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
+        [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
         public IActionResult SampleQuestions(TechSkillComments model)
         {

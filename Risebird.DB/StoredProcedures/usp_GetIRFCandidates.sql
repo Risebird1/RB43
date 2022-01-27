@@ -8,20 +8,13 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-  
-  
 Create PROCEDURE [dbo].[usp_GetIRFCandidates]  
-  
 @IRFId int,
 @emailId varchar(50) = null
-  
 AS  
 Begin    
-    
 declare @IRFName varchar(100), @roleId int
 set @IRFName = (select IRFId from IRF where id =@IRFId)
-
 declare @tblAttemptStatusCount table (IRFId int, CandidateId int, AttemptsCount int);    
  insert into @tblAttemptStatusCount    
  select IRFId, CandidateId, count(id) from CandidateStatus where IRFId = @IRFId group by IRFId, CandidateId     
@@ -48,7 +41,7 @@ case
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as [Name],
 IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,    
-tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber    
+tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor    
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId    
@@ -73,7 +66,7 @@ case
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as [Name],
 IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,    
-tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber    
+tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor    
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId    
@@ -88,9 +81,6 @@ left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEm
 end
     
 End 
-  
-   
-
 GO
 
 

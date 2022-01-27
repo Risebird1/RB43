@@ -1707,6 +1707,26 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IRFVm> GetIRFNameAndJoinability(int id)
+        {
+            try
+            {
+                var query = "Select IRFId, IsJoinabilitySelectabilityRequired from IRF where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<IRFVm>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
         {
             try

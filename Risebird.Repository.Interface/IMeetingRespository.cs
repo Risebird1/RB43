@@ -204,5 +204,6 @@ namespace Risebird.Repository.Interface
         Task<bool> ApplyInterviewPenalty(int meetingid, string JobCountry, string interviewer);
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
+        Task<IRFVm> GetIRFNameAndJoinability(int id);
     }
 }
