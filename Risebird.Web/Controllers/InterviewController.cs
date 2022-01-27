@@ -3589,11 +3589,25 @@ namespace Risebird.Web.Controllers
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 if (isClient || isClientSelected)
                 {
-                    return PartialView("ClientPartialReport", model);
+                    if (model.IsProctor)
+                    {
+                        return PartialView("ClientProctorReport", model);
+                    }
+                    else
+                    {
+                        return PartialView("ClientPartialReport", model);
+                    }
                 }
                 else
                 {
-                    return View(model);
+                    if (model.IsProctor)
+                    {
+                        return View("ProctorReport", model);
+                    }
+                    else
+                    {
+                        return View(model);
+                    }
                 }
 
             }
@@ -6238,13 +6252,26 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageReport = "Insta";
                 if (isClient || isClientSelected)
                 {
-                    return PartialView("ClientPartialReport", model);
+                    if (model.IsProctor)
+                    {
+                        return PartialView("ClientProctorReport", model);
+                    }
+                    else
+                    {
+                        return PartialView("ClientPartialReport", model);
+                    }
                 }
                 else
                 {
-                    return View("AddReport", model);
+                    if (model.IsProctor)
+                    {
+                        return View("ProctorReport", model);
+                    }
+                    else
+                    {
+                        return View("AddReport", model);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -6291,7 +6318,14 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "";
-                return View("AddReport", model);
+                if (model.IsProctor)
+                {
+                    return View("ProctorReport", model);
+                }
+                else
+                {
+                    return View("AddReport", model);
+                }
             }
             catch (Exception ex)
             {
@@ -6355,11 +6389,25 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageReport = "External";
                 if (isClient || isClientSelected)
                 {
-                    return PartialView("ClientPartialReport", model);
+                    if (model.IsProctor)
+                    {
+                        return PartialView("ClientProctorReport", model);
+                    }
+                    else
+                    {
+                        return PartialView("ClientPartialReport", model);
+                    }
                 }
                 else
                 {
-                    return View("AddReport", model);
+                    if (model.IsProctor)
+                    {
+                        return View("ProctorReport", model);
+                    }
+                    else
+                    {
+                        return View("AddReport", model);
+                    }
                 }
             }
             catch (Exception ex)
@@ -6556,5 +6604,161 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to Update Status, Please try again");
             }
         }
+
+        #region Proctor Report
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProctorReport(InterviewReport model)
+        {
+            try
+            {
+                ViewBag.PageStatus = "Mainurl";
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    model.UserDetails = emailid;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
+                        profileName == "Quality Controller" || profileName == "SeniorHR")
+                    {
+
+                        if (model.AudioFile != null)
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                            if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav")
+                            {
+                                await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("ProctorReport", model);
+                                }
+                                else
+                                {
+                                    model.ThumbnailImage = uploadedaudioFileURL;
+                                }
+                            }
+                        }
+                        string uploadedvideoFileURL = string.Empty;
+
+                        if (model.VideoFile != null)
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.VideoFile);
+                            if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                                || fileMimeType == "video/quicktime")
+                            {
+                                AzureCall _call = new AzureCall(_configuration);
+                                //var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
+                                var resulttype = _call.CallApiUpload(model.VideoFile);
+                                resulttype = resulttype.Replace("\"", "");
+                                uploadedvideoFileURL = resulttype;
+
+                                if (uploadedvideoFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    GetStatusList(model);
+                                    return View("ProctorReport", model);
+                                }
+                                else
+                                {
+                                    model.VideoLink = uploadedvideoFileURL;
+                                }
+                            }
+                        }
+                        else if (model.PageVideoLink != null)
+                        {
+                            model.VideoLink = model.PageVideoLink;
+                        }
+                        if (_meetingService.AddInterviewReport(model, emailid).Result)
+                        {
+                            //if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
+                            //{
+                            //    //Send mail to client for report
+                            //    //find all IRFowner and Users
+                            //    var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+                            //    var maillist = String.Join(";", clientlist);
+                            //    string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
+                            //    Mail _mail1 = new Mail
+                            //    {
+                            //        TO = maillist,
+                            //        Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
+                            //    };
+                            //    var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                            //    //send mail to candiate or interviewer
+                            //    string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + model.InterviewId;
+                            //    Mail _mail = new Mail
+                            //    {
+                            //        TO = model.CandidateEmail,
+                            //        Subject = "Risebird: Feedback form"
+                            //    };
+                            //    var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                            //    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                            //    _whatsAppVM.Emailid = model.CandidateEmail;
+                            //    _whatsAppVM.buttonlink = !String.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                            //    _whatsAppVM.Event = "Feedback Remainder";
+                            //    _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                            //}
+                            TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                            {
+                                return RedirectToAction("Index");
+                            }
+                            else if (model.IsQC)
+                            {
+                                return RedirectToAction("MyQualityControlledInterviews");
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterview");
+                            }
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
+                            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                            {
+                                return RedirectToAction("Index");
+                            }
+                            else if (model.IsQC)
+                            {
+                                return RedirectToAction("MyQualityControlledInterviews");
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterview");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
+                if (model.IsQC)
+                {
+                    return RedirectToAction("MyQualityControlledInterviews");
+                }
+                return RedirectToAction("Index");
+            }
+        }
+        #endregion
     }
 }

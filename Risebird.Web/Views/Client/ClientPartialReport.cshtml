@@ -866,7 +866,7 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
-                                    @if (!Model.IsInterviewer)
+                                    @if (!Model.IsInterviewer && Model.IsJoinabilitySelectabilityRequired)
                                     {
                                         <div class="row mb-40">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1715,10 +1715,19 @@
         //items.forEach(function (item) {
         //    totalCount = totalCount + item.val();
         //});
-        var average = totalCount / 4;
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+
+            average = totalCount / 4;
+            SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            SetChartWithoutJoinabilitySelectability();
+        }
+
         $("#OverallScore").val(average);
 
-        SetChart();
     }
 
     $(document).ready(function () {
@@ -1770,10 +1779,17 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
-        var average = totalCount / 4;
-        $("#OverallScore").val(average);
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
 
-        SetChart();
+            average = totalCount / 4;
+            SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            SetChartWithoutJoinabilitySelectability();
+        }
+        $("#OverallScore").val(average);
 
     });
 

@@ -1372,6 +1372,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
+        [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
         public IActionResult SampleQuestions(TechSkillComments model)
         {
@@ -2332,8 +2333,14 @@ namespace Risebird.Web.Controllers
 
                 GetStatusList(model, irfId);
                 ViewBag.PageStatus = "Mainurl";
-                return PartialView("AddReportPartial", model);
-
+                if (model.IsProctor)
+                {
+                    return PartialView("ProctorReportPartial", model);
+                }
+                else
+                {
+                    return PartialView("AddReportPartial", model);
+                }
             }
             catch (Exception ex)
             {
@@ -5945,7 +5952,14 @@ namespace Risebird.Web.Controllers
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
-                return PartialView("AddReportPartial", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ProctorReportPartial", model);
+                }
+                else
+                {
+                    return PartialView("AddReportPartial", model);
+                }
             }
             catch (Exception ex)
             {
@@ -5981,7 +5995,14 @@ namespace Risebird.Web.Controllers
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
-                return PartialView("AddReportPartial", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ProctorReportPartial", model);
+                }
+                else
+                {
+                    return PartialView("AddReportPartial", model);
+                }
             }
             catch (Exception ex)
             {
@@ -6095,7 +6116,14 @@ namespace Risebird.Web.Controllers
                     menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
-                return PartialView("AddReportPartial", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ProctorReportPartial", model);
+                }
+                else
+                {
+                    return PartialView("AddReportPartial", model);
+                }
             }
             catch (Exception ex)
             {
@@ -6181,7 +6209,6 @@ namespace Risebird.Web.Controllers
                         irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
                     }
                     return View(irfList);
-
                 }
                 else
                 {

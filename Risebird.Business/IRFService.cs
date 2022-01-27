@@ -530,6 +530,8 @@ namespace Risebird.Business
                 model.OldInterviewerCollection = model.InterviewerCollection;
                 model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
                 model.OldSkillCollection = model.SkillCollection;
+                model.IsQCRequired = IRF.IsQCRequired;
+                model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
                 return model;
 
             }
