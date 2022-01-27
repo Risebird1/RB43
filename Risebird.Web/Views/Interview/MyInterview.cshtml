@@ -149,7 +149,7 @@
 
                                         <form action="@Url.Action("MyInterview","Interview")" method="post" id="form" class="myinterview_modal">
 
-                                            <div class="modal-body ">           
+                                            <div class="modal-body ">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
@@ -199,7 +199,7 @@
                                                                 Interview Date
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="InterviewDate" name="InterviewDate"  data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                <select id="InterviewDate" name="InterviewDate" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.interviewDate).Distinct().ToList())
                                                                     {
                                                                         @if (item != null)
@@ -215,7 +215,7 @@
                                                                 Job Level
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="JobLevel" name="JobLevel"  data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                <select id="JobLevel" name="JobLevel" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.JobLevelDesc).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -235,7 +235,7 @@
                                                                 Candidate Name
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="CandidateName" name="CandidateName"  data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                <select id="CandidateName" name="CandidateName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.candidateName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -251,7 +251,7 @@
                                                                 Zoom ID
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="RisebirdHR" name="RisebirdHR"  data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                <select id="RisebirdHR" name="RisebirdHR" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.risebirdHR).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -467,7 +467,6 @@
                                                                     <button id="myinterview_10" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
                                                                         <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                     </button>
-
                                                                     @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                                     {
                                                                         <button id="myinterview_9" class="mdc-fab app-fab--absolute sampleQues" aria-label="Unassign Yourself">

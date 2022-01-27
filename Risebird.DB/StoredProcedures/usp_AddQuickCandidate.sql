@@ -92,7 +92,7 @@ Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)
   @ProfileSource)        
       
   insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy)       
-  values (@IRFId, (select id from CandidatesMaster where UserId=@UserId), 'Added', @date, 12, @addedByEmail)      
+  values (@IRFId, (select id from CandidatesMaster where UserId=@UserId), 'Added', GetDate(), 12, @addedByEmail)      
       
   insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))        
   select @operationStatus='Candidate imported successfully'      
@@ -132,7 +132,7 @@ Begin
  )          
         
  insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy)       
- values (@IRFId, (select id from CandidatesMaster where UserId=@CandidateUserId), 'Added', @date, 12, @addedByEmail)      
+ values (@IRFId, (select id from CandidatesMaster where UserId=@CandidateUserId), 'Added', GetDate(), 12, @addedByEmail)      
       
  insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))      
  select @operationStatus='Candidate imported successfully'      

@@ -1205,7 +1205,6 @@ namespace Risebird.Business
                 if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
-
                 }
                 else
                 {
@@ -1265,6 +1264,8 @@ namespace Risebird.Business
                 reportModel.VideoDuration = interviewDetails.VideoDuration;
                 reportModel.IsQCRequired = interviewDetails.IsQCRequired;
                 reportModel.IsJoinabilitySelectabilityRequired = interviewDetails.IsJoinabilitySelectabilityRequired;
+                reportModel.ProctorReport = interviewDetails.ProctorReport;
+                reportModel.IsProctor = interviewDetails.IsProctor;
                 reportModel.NickName = interviewDetails.NickName;
                 if (reportModel.IsEdited)
                 {
@@ -1272,10 +1273,8 @@ namespace Risebird.Business
                     reportModel.OldInterviewStatus = reportModel.InterviewStatus;
                     reportModel.OldMeetingStatus = reportModel.MeetingStatus;
                 }
-
                 return reportModel;
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

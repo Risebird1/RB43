@@ -208,7 +208,15 @@
                                                             <td> @item.RisebirdHREmail </td>
                                                             <td> @item.IRFId </td>
                                                             <td> @item.ClientCompName </td>
-                                                            <td> @item.JobCountry </td>
+                                                            @if(item.JobCountry=="1" || item.JobCountry.ToUpper() == "INDIA")
+                                                            {
+                                                                <td>India</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>OutSide India</td>
+                                                            }
+                                                            @*<td> @item.JobCountry </td>*@
                                                             <td> @item.BillingOwnerEmailId </td>
 
 

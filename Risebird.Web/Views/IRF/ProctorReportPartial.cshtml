@@ -1,0 +1,713 @@
+﻿@model Risebird.Entities.ViewModel.InterviewReport
+
+@using Microsoft.Extensions.Configuration;
+@inject IConfiguration configuration
+@{
+    ViewData["Title"] = "Interview Proctor Report";
+    ViewBag.PageHeader = "Interview Proctor Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (ViewBag.PageStatus == "PublicExternal")
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageStatus == "Public")
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageReport == "Insta")
+{
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+<meta charset="utf-8" />
+<link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
+<link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
+<!--  Fonts and icons-->
+<!-- CSS Files -->
+
+
+
+
+
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+</script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
+
+<div class="main-panel" id="main-panel">
+
+    <div class="mt50">
+    </div>
+    <div id="reportForm" class="content client">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="p15">
+                    @*<div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>*@
+                    @if (ViewBag.PageStatus == "Mainurl")
+                    {
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;" value="Generate Insta Public Url" onclick="GeneratePublicUrl(3)"></div>
+                        <div class="pull-right mt-20"><input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 0px;margin-right: 5px;" value="Generate Executive Public Url" onclick="GeneratePublicUrl(1)"></div>
+                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom:0px;margin-right:5px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+
+                        @if (ViewBag.ProfileName == "client" && (Model.InterviewStatus == 2 || Model.InterviewStatus == 4))
+                        {
+                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
+                            <div class="clearfix text-right">
+                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded report-btn" style="margin-bottom: 10px;">
+                                    <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
+                                </button>
+                                <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:10px;">
+                                    <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Select</font></span>
+                                </button>
+                            </div>
+                        }
+                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="Clienform">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Candidate Details</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        @if (ViewBag.PageStatus != "PublicExternal")
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                        @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                    @{
+                                                        if (Model.resumeLink != null && Model.resumeLink != "")
+                                                        {
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" style="text-decoration:underline">Click here</a>
+                                                        }
+                                                    }
+
+                                                </div>
+                                            </div>
+
+                                            @if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Interview Report</span></h3>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="card-wrap">
+                                    <div class="row">
+
+                                        <div class="col-md-6 col-sm-6 border-rv">
+                                            @*<div class="form-group">
+                                                    @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>*@
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                @if (ViewBag.PageReport != "Insta")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Interview Video</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                                            <div class="videoConplayer">
+
+                                                @Html.HiddenFor(x => Model.VideoLink)
+                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                {
+                                                    string appendTime;
+                                                    if (Model.ThumbnailTimeSeconds == 0)
+                                                    {
+                                                        appendTime = configuration["ThumbnailTimeDefault"];
+                                                    }
+                                                    else
+                                                    {
+                                                        appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                    }
+                                                    var src = Model.VideoLink + "#t=" + appendTime;
+                                                    <video width="400" controls="controls" preload="metadata" class="vjs-tech">
+                                                        <source src='@src' type="video/mp4">
+                                                    </video>
+                                                }
+                                            </div>
+
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                }
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Report Details</span></h3>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                    <div class="report-wrap">
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                            <div class="talktext">
+
+                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 86px; width:100%" })
+                                                            </div>
+                                                        </div>
+
+                                                        @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <span>
+
+                                                        </span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="content client">
+                                    <div class="row bg-w">
+                                        <div class="col-md-12">
+                                            <div class="mdc-card card bg-w">
+                                                <div class="mdc-card-wrapper__text-section">
+                                                    @if (Model.ProctorReport != null)
+                                                    {
+                                                        <div class="row">
+                                                            <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
+                                                                <!-- Calendly inline widget begin -->
+                                                                <div class="calendly-inline-widget" data-url='@Model.ProctorReport' style="height:636px"></div>
+                                                                <!-- Calendly inline widget end -->
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="row">
+                                                            <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
+                                                                <!-- Calendly inline widget begin -->
+                                                                <label style="margin-left:440px"><strong>Sorry! No Proctor details available!</strong></label>
+                                                                <!-- Calendly inline widget end -->
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <!-- end content-->
+                                                </div>
+                                            </div>
+                                            <!--  end card  -->
+                                        </div>
+                                        <!-- end col-md-12 -->
+                                    </div>
+                                    <!-- end row -->
+                                </div>
+                                @Html.HiddenFor(m => m.id)
+                                @Html.HiddenFor(m => m.IRFId)
+                                @Html.HiddenFor(m => m.InterviewId)
+                                @Html.HiddenFor(m => m.IsEdited)
+                                @Html.HiddenFor(m => m.IsProctor)
+
+
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div id="PublicUrlShareModel" class="modal modal-bg">
+            <!-- Modal content -->
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="filheader">
+                        <div class="filavatar">
+                            <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                        </div>
+                        <h5 class="modal-title pull-left">Public Share Url</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="video-url">
+                                <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                                    <p class="special-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                        <span id="special_text" class="special-text__tooltip">
+                                            Copy Link
+                                        </span>
+                                    </p>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="text-right">
+                                <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="myModal" class="modal modal-bg">
+            <!-- Modal content -->
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+
+
+
+                    <div class="filheader">
+                        <div class="filavatar">
+                            <span class="reportbtn-icon fas fa-thumbs-up"></span>
+                        </div>
+                        <h5 class="modal-title pull-left">Approved For Next Round</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" id="approvePopUp" style="cursor:pointer;">&times;</span>
+                    </button>
+
+
+
+
+                    <div class="modal-body">
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="approveDropdown">Approved For Next Round</label>
+                                <select class="form-control col-md-12 col-sm-12" id="approveDropdown" name="approveDropdown"></select>
+                            </div>
+                            <div id="approvalComments" class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label">Approval Comments</label>
+                                <input type="text" name="appComments" class="no-border  col-sm-12" id="appComments">
+                            </div>
+                            <div class="">
+                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="mySelectionModal" class="modal modal-bg">
+
+            <!-- Modal content -->
+
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+
+                    <div class="filheader">
+                        <div class="filavatar">
+                            <span class="reportbtn-icon fas fa-check"></span>
+                        </div>
+                        <h5 class="modal-title pull-left">Final Selection Status</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" id="selectPopUp" style="cursor:pointer;">&times;</span>
+                    </button>
+
+
+
+
+                    <div class="modal-body">
+                        <div class="form-group">
+
+                            <label class="control-label" for="selectionDropdown">Final Selection</label>
+                            <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                        </div>
+                        <div id="selectionComments" class="form-group">
+                            <label class="control-label">Final Comments</label>
+                            <input type="text" name="selecComments" class="form-control" id="selecComments">
+                        </div>
+                        <div class="">
+                            <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary pull-right" id="btnSelectUpload" value="Save">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+    <footer class="footer">
+        <div class="container-fluid">
+
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script>
+    var imid = "";
+    var span = document.getElementById("approvePopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+
+<script>
+    function ModalButtonClick(item) {
+        imid = item.InterviewId;
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+        document.getElementById("appComments").value = item.ApprovalComments;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getApprovalStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#approveDropdown").html(s);
+                if (item.IsApproved != null) {
+                    $("#approveDropdown").val(item.IsApproved);
+                }
+                else {
+                    $("#approveDropdown").val("-1");
+
+                }
+            }
+        });
+
+
+
+    }
+
+    function SavePopUp() {
+        var approvalComment = document.getElementById("appComments").value;
+        var isApproved = document.getElementById("approveDropdown").value;
+        var id = imid;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/ChangeApproval",
+            data: { 'imid': id, 'value': isApproved, 'comment': approvalComment },
+            success: function (data) {
+
+                location.reload(true);
+
+            }
+        });
+    }
+
+</script>
+
+<script>
+    var imidSelect = "";
+    var spanSelect = document.getElementById("selectPopUp");
+    var commSelect = '';
+    // When the user clicks on <span> (x), close the modal
+    spanSelect.onclick = function () {
+        var modal = document.getElementById("mySelectionModal");
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    //window.onclick = function (event) {
+    //    var modal = document.getElementById("myModal");
+    //    if (event.target == modal) {
+    //        modal.style.display = "none";
+    //    }
+    //}
+</script>
+
+<script>
+    function ModalSelectionButtonClick(item) {
+
+        imidSelect = item.InterviewId;
+
+        // Get the modal
+        var modal = document.getElementById("mySelectionModal");
+
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+        document.getElementById("selecComments").value = item.FinalComments;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getSelectionStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#selectionDropdown").html(s);
+                if (item.IsSelected != null) {
+                    $("#selectionDropdown").val(item.IsSelected);
+                }
+                else {
+                    $("#selectionDropdown").val("-1");
+                }
+
+
+            }
+        });
+
+
+
+    }
+
+    function SaveSelecPopUp() {
+        var selectionComment = document.getElementById("selecComments").value;
+        var isSelected = document.getElementById("selectionDropdown").value;
+        var id = imidSelect;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/ChangeSelection",
+            data: { 'imid': id, 'value': isSelected, 'comment': selectionComment },
+            success: function (data) {
+
+                location.reload(true);
+
+            }
+        });
+    }
+
+</script>
+
+<script>
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("PageVideoLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("VideoFile").value = '';
+
+        }
+
+    }
+    function getPDF() {
+
+        var HTML_Width = $(".canvas_div_pdf").width();
+        var HTML_Height = $(".canvas_div_pdf").height();
+        var top_left_margin = 15;
+        var PDF_Width = HTML_Width + (top_left_margin * 2);
+        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+        var canvas_image_width = HTML_Width;
+        var canvas_image_height = HTML_Height;
+
+        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+        html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
+            canvas.getContext('2d');
+
+            var imgData = canvas.toDataURL("image/png", 1.0);
+            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+            for (var i = 1; i <= totalPDFPages; i++) {
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+            }
+            var d = new Date();
+
+            var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
+            pdf.save(filename + ".pdf")
+
+        });
+
+    }
+    function GeneratePublicUrl(index) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        if (index == 1) {
+            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
+        }
+        else if (index == 2) {
+            urlcurrent = urlcurrent.replace("AddReport", "PublicAddReport");
+        } else {
+            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+        }
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+</script>
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

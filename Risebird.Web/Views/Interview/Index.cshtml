@@ -418,6 +418,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
                                                     <th style="text-align:center">Call</th>
+                                                    <th>Report</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -460,6 +461,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
                                                     <th style="text-align:center">Call</th>
+                                                    <th>Report</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -888,20 +890,21 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-
-
-
                                                         <td>
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
                                                                 <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-
                                                                 <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
-
-
                                                             }
-
                                                         </td>
+                                                        @if (!String.IsNullOrEmpty(item.ProctorReport))
+                                                        {
+                                                            <td>@item.ProctorReport</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                     </tr>
                                                 }
                                             </tbody>
