@@ -4193,7 +4193,7 @@
             $.ajax({
                 url: '/RiseTube/SaveRaitingDetails',
                 type: "POST",
-                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments },
+                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction },
                 success: function (data) {
                     swal.fire(data);
                     var modal = document.getElementById("myRaitingPopup");
