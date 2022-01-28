@@ -5400,5 +5400,33 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public bool UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (status == 1)
+                {
+                    query = "Update ti set ti.IsActive=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                }
+                else
+                {
+                    query = "Update ti set ti.IsActive=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", Irfid);
+                dynamicParameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

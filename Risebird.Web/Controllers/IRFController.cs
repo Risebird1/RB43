@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -198,7 +199,7 @@ namespace Risebird.Web.Controllers
                         }
 
                     }
-                    
+
                     model.Profile = profileName;
                     return View(model);
 
@@ -234,9 +235,9 @@ namespace Risebird.Web.Controllers
 
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
-                    
+
                     irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
-                    
+
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         irfList = irfList?.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
@@ -298,12 +299,12 @@ namespace Risebird.Web.Controllers
                     }
                     model.IRFList = irfList?.OrderByDescending(x => x.EndDate).ToList();
 
-                    if(HttpContext.Session.GetString("IRFSearchValue") != null)
+                    if (HttpContext.Session.GetString("IRFSearchValue") != null)
                     {
                         var searchValue = HttpContext.Session.GetString("IRFSearchValue");
                         model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
                     }
-                    
+
                     //ViewBag.searchValue = filter.searchValue != null ? filter.searchValue : string.Empty;
                     if (model.IRFList != null)
                     {
@@ -487,8 +488,8 @@ namespace Risebird.Web.Controllers
 
                     }
                     model.Profile = profileName;
-                    
-                    if (model.IRFList == null || model.IRFList.Count()==0)
+
+                    if (model.IRFList == null || model.IRFList.Count() == 0)
                     {
                         return Json(null);
                     }
@@ -1347,7 +1348,7 @@ namespace Risebird.Web.Controllers
                     model.IRFId = id;
                     model.Profile = profileName;
                     model.UserId = _irfService.GetUserId(emailid);
-                    if(!string.IsNullOrEmpty(irf))
+                    if (!string.IsNullOrEmpty(irf))
                     {
                         model.IrfName = irf;
                     }
@@ -1601,17 +1602,17 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-//                        var list = new SelectList(new[]
-//{
-//    new { ID = "Today", Name = "Today"},
-//    new { ID = "Tomorrow", Name = "Tomorrow"  },
-//    new { ID = "Yesterday", Name = "Yesterday"  },
-//    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-//    new { ID = "All", Name = "All"},
-//},
-//"ID", "Name", "All");
+                        //                        var list = new SelectList(new[]
+                        //{
+                        //    new { ID = "Today", Name = "Today"},
+                        //    new { ID = "Tomorrow", Name = "Tomorrow"  },
+                        //    new { ID = "Yesterday", Name = "Yesterday"  },
+                        //    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                        //    new { ID = "All", Name = "All"},
+                        //},
+                        //"ID", "Name", "All");
 
-//                        ViewData["list"] = list;
+                        //                        ViewData["list"] = list;
                         ViewBag.ProfileName = profileName.ToLower();
                         if (!String.IsNullOrEmpty(searchValue))
                         {
@@ -1825,9 +1826,9 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<IRFInterviewFilter>(HttpContext.Session.GetString("IRFInterviewFilter"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                meetings = meetings.Where(m=> m.interviewDate >= filter.StartDate && m.interviewDate <= filter.EndDate).ToList();
+                                meetings = meetings.Where(m => m.interviewDate >= filter.StartDate && m.interviewDate <= filter.EndDate).ToList();
                             }
-                            
+
                             filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
                             filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
                             filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
@@ -1927,7 +1928,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         return RedirectToAction("InterviewMeetings", new { id = filter.irfId.ToString(), irfId = filter.IRFName });
-                        
+
                     }
                     else
                     {
@@ -6465,6 +6466,61 @@ namespace Risebird.Web.Controllers
                 return eventurl;
             }
             return "";
+        }
+        [HttpGet]
+        public async Task<JsonResult> CheckIntervieweravailbility(int irfId, string IRFName)
+        {
+            try
+            {
+                var model = await _irfService.GetIRFInterviewerMembers(irfId);
+                model = model.Where(x => x.Type == "Interviewer").ToList();
+                var skills = _irfService.GetTechSkillswithWeightage(irfId);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
+                sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+                foreach (var item in skills)
+                {
+                    sb.Append("<tr><td style='border: 1px solid black'>");
+                    sb.Append(item.SkillName);
+                    sb.Append("</td>");
+                    sb.Append("<td style='border: 1px solid black'>");
+                    sb.Append(item.Weightage);
+                    sb.Append("</td></tr>");
+                }
+                sb.Append("</table>");
+                foreach (var item in model)
+                {
+                    if (!String.IsNullOrEmpty(item.EmailId))
+                    {
+                        string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                        string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                        Mail _mail = new Mail
+                        {
+                            TO = item.EmailId,
+                            Subject = "Risebird: Availbility check for Skill Channel "+ IRFName + " Interviews"
+                        };
+                        var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName);
+                    }
+                }
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
+        }
+        [HttpGet]
+        public JsonResult UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
+        {
+            if (_meetingService.UpdateCheckIntervieweravailbilityStatus(status, uniqueid, Irfid))
+            {
+                return Json("Successfully status updated");
+            }
+            else
+            {
+                return Json("Fail to Update Status, Please try again");
+            }
         }
     }
 }
