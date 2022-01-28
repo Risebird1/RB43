@@ -205,5 +205,6 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
         Task<IRFVm> GetIRFNameAndJoinability(int id);
+        Task<bool> SaveProctorReport(int id, string reporturl);
     }
 }
