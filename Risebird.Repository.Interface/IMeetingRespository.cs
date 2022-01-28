@@ -206,5 +206,6 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
         Task<IRFVm> GetIRFNameAndJoinability(int id);
         Task<bool> SaveProctorReport(int id, string reporturl);
+        bool UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid);
     }
 }

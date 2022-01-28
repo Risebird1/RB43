@@ -99,5 +99,6 @@ namespace Risebird.Business.Interface
         Task<int> GetInterviewerQCRate(int userId);
         Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null);
         Task<bool> IsQuestionUsedInReport(string question);
+        IEnumerable<TransSkill> GetTechSkillswithWeightage(int id);
     }
 }
