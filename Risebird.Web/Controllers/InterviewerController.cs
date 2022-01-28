@@ -1902,12 +1902,26 @@ namespace Risebird.Web.Controllers
                         if (_interviewerService.AddInterviewerReport(model).Result)
                         {
                             TempData["SuccessErrorMessageLeadInterviewer"] = "Report has been saved Successfully!";
-                            return RedirectToAction("MyInterviewerAssessment");
+                            if (profileName == "Admin")
+                            {
+                                return RedirectToAction("Index", "UnapprovedInterviewerMeetingsController");
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterviewerAssessment");
+                            }
                         }
                         else
                         {
                             TempData["SuccessErrorMessageLeadInterviewer"] = "Report was not saved.";
-                            return RedirectToAction("MyInterviewerAssessment");
+                            if (profileName == "Admin")
+                            {
+                                return RedirectToAction("Index", "UnapprovedInterviewerMeetingsController");
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterviewerAssessment");
+                            }
                         }
                     }
                     else

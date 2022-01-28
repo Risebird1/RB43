@@ -36,7 +36,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interviewer/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form interviewer" onsubmit="return CheckConditions()" id="reportForm">
+                        <form action="/Interviewer/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form interviewer" onsubmit="return CheckConditions()" id="reportForm_1">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -1792,7 +1792,7 @@
     function SubmitForm() {
 
         if (CheckConditions()) {
-            document.getElementById("reportForm").submit();
+            document.getElementById("reportForm_1").submit();
         }
         else
             return;
