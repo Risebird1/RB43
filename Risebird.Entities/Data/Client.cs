@@ -38,5 +38,8 @@ namespace Risebird.Entities.Data
 
         [Display(Name = "Upload Company Video(GIF)")]
         public IFormFile VideoFile { get; set; }
+
+        [Display(Name = "Reset Password after first login/Password aging")]
+        public bool IsPasswordReset { get; set; }
     }
 }

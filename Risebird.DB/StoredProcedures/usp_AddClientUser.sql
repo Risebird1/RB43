@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[usp_AddClientUser]
 @userMobileNumber nvarchar(200),        
 @UserPassword nvarchar(60),       
 @WhatsappNumber varchar(15),   
-@IsPasswordReset bit,  
+--@IsPasswordReset bit,  
 @message varchar(100) OUTPUT)            
             
 AS            
@@ -37,8 +37,8 @@ Begin Try
             
    set @generatedUserId = SCOPE_IDENTITY();            
             
-   INSERT INTO [dbo].[ClientUser] ([ClientId],[UserId],[RoleId],[IsPasswordReset])            
-        VALUES (@selectedClientId ,@generatedUserId ,@selectedClientRoleId,@IsPasswordReset)            
+   INSERT INTO [dbo].[ClientUser] ([ClientId],[UserId],[RoleId])            
+        VALUES (@selectedClientId ,@generatedUserId ,@selectedClientRoleId)            
   END            
   ELSE            
   BEGIN            
