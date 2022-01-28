@@ -9,7 +9,8 @@ CREATE TABLE [dbo].[Client](
             [GST] [varchar](MAX) NULL,	
             [LogoLink] [varchar](MAX) NULL,	
             [CompanyLink] [varchar](MAX) NULL,
-            [CompanyVideoLink] [varchar](MAX) NULL
+            [CompanyVideoLink] [varchar](MAX) NULL,
+            [IsPasswordReset] [bit] NULL
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -94,6 +95,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add [CompanyVideoLink] [varchar](MAX) NULL		
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsPasswordReset')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [IsPasswordReset] bit	
 END
 END
 

@@ -23,7 +23,8 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @Createdby varchar(200),
 @LogoLink varchar(max),
 @CompanyLink varchar(max),
-@CompanyVideoLink varchar(max)
+@CompanyVideoLink varchar(max),
+@IsPasswordReset bit
     
 AS    
 Begin    
@@ -40,6 +41,7 @@ SET
 		,[LogoLink]=@LogoLink
 		,[CompanyLink]=@CompanyLink
 		,[CompanyVideoLink]=@CompanyVideoLink
+		,[IsPasswordReset] = @IsPasswordReset
 WHERE    
       Id = @id    
 
