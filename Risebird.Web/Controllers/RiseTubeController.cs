@@ -3140,6 +3140,10 @@ namespace Risebird.Web.Controllers
                 {
                     model = new InterviewerRating();
                 }
+                if(!string.IsNullOrEmpty(model.Comment))
+                {
+                    model.Comment = System.Web.HttpUtility.HtmlDecode(model.Comment);
+                }
                 return Json(model);
             }
             else
@@ -3158,7 +3162,9 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var model = new InterviewerRating();
                 model.StarRating = rating;
-                model.Comment = comment;
+                //model.Comment = comment;
+                model.Comment = System.Web.HttpUtility.HtmlEncode(comment);
+
                 model.Emailid = emailid;
                 model.Interviewid = imid;
                 model.ClientAction = clientaction;
