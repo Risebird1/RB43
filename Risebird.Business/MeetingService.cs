@@ -3279,6 +3279,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
+        {
+            try
+            {
+                return _meetingRespository.UpdateCheckIntervieweravailbilityStatus(status, uniqueid, Irfid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

@@ -2167,6 +2167,18 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public IEnumerable<TransSkill> GetTechSkillswithWeightage(int id)
+        {
+            try
+            {
+                var skills = _irfRepository.GetSkillsbyIRFid(id);
+                return skills;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
