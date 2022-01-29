@@ -73,17 +73,8 @@ group by ca.IRFId, ca.CandidateMasterId,cm.UserId
  join IRF as irfNS on irfNS.id = tctv.IRFId 
  left join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfNS.IRFId
  where tctv.IRFId=IRF.id and im.id is null) as NotScheduledCount,  
- --(select count(tctv.id) from @TemporaryCandidateTableVariable tctv   
- --join UserList ul on ul.id = tctv.UserId  
- --join IRF as irfRS on irfRS.id = tctv.IRFId 
- --join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfRS.IRFId
- --join InterviewComments ic on im.id=ic.Interviewid
- --where tctv.IRFId=IRF.id and ((im.confirmationStatus=1 and (ic.MeetingStatus=1 or ic.MeetingStatus=3 or ic.MeetingStatus=5)) or confirmationStatus=2)) as ReScheduledCount,
  (select count(tctv.id) from @TemporaryCandidateTableVariable tctv   
- join UserList ul on ul.id = tctv.UserId  
- join IRF as irfRS on irfRS.id = tctv.IRFId 
- join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfRS.IRFId
- where tctv.IRFId=IRF.id and dbo.fn_IsCandidateEligibleForRescheduling(im.candidateEmail, im.IRFId, @startDate) = 1) as ReScheduledCount 
+ where tctv.IRFId=IRF.id and dbo.fn_IsCandidateEligibleForRescheduling(tctv.UserId, tctv.IRFId, @startDate) = 1) as ReScheduledCount 
  
  
  from IRF  
