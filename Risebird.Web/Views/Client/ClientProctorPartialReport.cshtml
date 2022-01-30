@@ -1,0 +1,1023 @@
+﻿@model Risebird.Entities.ViewModel.InterviewReport
+@using System.Text.RegularExpressions
+@using Risebird.Entities.Enum
+@using Microsoft.Extensions.Configuration;
+
+@inject IConfiguration configuration
+
+
+@{
+    ViewData["Title"] = "Interview Proctor Report";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .star-rating {
+        border: solid 1px white;
+        display: flex;
+        direction: rtl;
+        font-size: 2.0em;
+        justify-content: space-around;
+        padding: 0 .2em;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 10px;
+        background-color: lightgray;
+    }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            /*color: #ccc;*/
+            color: #e4e4e4;
+            cursor: pointer;
+        }
+
+        .star-rating :checked ~ label {
+            color: #f90;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #fc0;
+        }
+
+    .card-title-space {
+        margin: 20px 0px;
+        float: right
+    }
+
+    .mb10 {
+        margin-bottom: 10px
+    }
+</style>
+<script>
+    var Header = "<div>Interview Proctor Report</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+</script>
+
+
+@if (ViewBag.PageStatus == "PublicExternal")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+
+        .now-ui-icons.design_bullet-list-67:before {
+            display: none;
+        }
+    </style>
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageStatus == "Public")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+
+        .sidebar .nav li {
+            display: none;
+        }
+
+        .now-ui-icons.design_bullet-list-67:before {
+            display: none;
+        }
+    </style>
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+@if (ViewBag.PageReport == "Insta")
+{
+    <style>
+        .sidebar-mini .sidebar:hover {
+            width: 80px !important;
+        }
+
+        .now-ui-icons.design_bullet-list-67:before {
+            display: none;
+        }
+    </style>
+    <script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>
+}
+
+<input type="hidden" value="@ViewBag.PageStatus" id="hidPagestatus" />
+<div class="main-panel" id="main-panel">
+    <!-- End Navbar -->
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
+    <div class="mt50">
+    </div>
+    <div class="content dataloading client">
+
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
+                @if (ViewBag.PageStatus == "Mainurl")
+                {
+                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
+                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Executive Public URL" onclick="GeneratePublicUrl(1)"></div>
+                    <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
+                }
+            </div>
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.InterviewId)
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Candidate Details</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control  text-box single-line", @readonly = "readonly" })
+                                                    @Html.HiddenFor(m => m.CandidateEmail)
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control  text-box single-line", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        @if (ViewBag.PageStatus != "PublicExternal")
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                        @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control  text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control  text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                    @{
+                                                        if (Model.resumeLink != null && Model.resumeLink != "")
+                                                        {
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                        }
+                                                    }
+
+                                                </div>
+                                            </div>
+                                            @if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control  text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Interview Report</span></h3>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="card-wrap">
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6 border-rv">
+                                            @*<div class="form-group">
+                                                    @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>*@
+                                            <div class="form-group">
+                                                @Html.HiddenFor(m => m.PreviousMeetingStatus)
+                                                @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css  form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label class="text-danger" id="meetingStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control  webkitEnabled", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                
+
+                                <div id="playUploadedAudioOne">
+                                    @if (Model.FeedbackAudioLink != null)
+                                    {
+                                        <div class="row mb-40">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>Uploaded Feedback Audio</span></h3>
+                                                </div><!--end of multiple location-->
+                                            </div><!--end of col-md-12-->
+
+
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="table-responsive-sm">
+                                                    <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="30%">File</th>
+                                                                <th width="35%">Play</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <a href='@Model.FeedbackAudioLink' asp-append-version="true" download>
+                                                                        @Model.FeedbackAudioLink.Split('/').Last()
+                                                                    </a>
+                                                                </td>
+
+
+                                                                <td>
+                                                                    <audio src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                                </td>
+
+                                                            </tr>
+
+
+                                                        </tbody>
+                                                    </table>
+
+
+                                                </div>
+                                            </div><!--end of col-md-12-->
+
+                                        </div>
+
+                                    }
+
+                                </div>
+
+                                <div id="playUploadedAudioTwo" style="display:none">
+                                    <div class="row mb-40">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Uploaded Feedback Audio</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="30%">File</th>
+                                                            <th width="35%">Play</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+
+                                                            <td>
+                                                                <a id="anchorAudioId" asp-append-version="true" download>
+
+                                                                </a>
+                                                            </td>
+
+
+                                                            <td>
+                                                                <audio id="controlAudioId" asp-append-version="true" controls></audio>
+                                                            </td>
+
+                                                        </tr>
+
+
+                                                    </tbody>
+                                                </table>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                </div>
+                                @if (ViewBag.PageReport != "Insta")
+                                {
+                                    <div class="row mb-40">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Interview Video</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="videoConplayer mb-10">
+                                                @Html.HiddenFor(x => Model.VideoLink)
+                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                {
+                                                    string appendTime;
+                                                    if (Model.ThumbnailTimeSeconds == 0)
+                                                    {
+                                                        appendTime = configuration["ThumbnailTimeDefault"];
+                                                    }
+                                                    else
+                                                    {
+                                                        appendTime = Model.ThumbnailTimeSeconds.ToString();
+                                                    }
+                                                    var src = Model.VideoLink + "#t=" + appendTime;
+                                                    <video width="600" controls="controls" preload="metadata" class="vjs-tech">
+                                                        <source src='@src' type="video/mp4">
+                                                    </video>
+                                                }
+                                            </div>
+
+
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                }
+
+                                @* Bind iframe Report from item.proctorReport Link *@
+                                <div class="content client">
+                                    <div class="row bg-w">
+                                        <div class="col-md-12">
+                                            <div class="mdc-card card bg-w">
+                                                <div class="mdc-card-wrapper__text-section">
+                                                    @if (Model.ProctorReport != null)
+                                                    {
+                                                        <div class="row">
+                                                            <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
+                                                                <!-- Calendly inline widget begin -->
+                                                                <div class="calendly-inline-widget" data-url='@Model.ProctorReport' style="height:636px"></div>
+                                                                <!-- Calendly inline widget end -->
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="row">
+                                                            <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
+                                                                <!-- Calendly inline widget begin -->
+                                                                <label style="margin-left:440px"><strong>Sorry! No Proctor details available!</strong></label>
+                                                                <!-- Calendly inline widget end -->
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <!-- end content-->
+                                                </div>
+                                            </div>
+                                            <!--  end card  -->
+                                        </div>
+                                        <!-- end col-md-12 -->
+                                    </div>
+                                    <!-- end row -->
+                                </div>
+                                @Html.HiddenFor(m => m.id)
+                                @Html.HiddenFor(m => m.IRFId)
+                                @Html.HiddenFor(m => m.InterviewId)
+                                @Html.HiddenFor(m => m.IsEdited)
+                                @Html.HiddenFor(m => m.IsQC)
+                                @Html.HiddenFor(m => m.IRFName)
+                                @Html.HiddenFor(m => m.PrimarySkill)
+                                @Html.HiddenFor(m => m.IsProctor)
+
+                                <div class="card-footer ">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area">
+                                            @if (Model.IsInterviewer)
+                                            {
+
+                                                @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            }
+                                            else if (ViewBag.IsClient)
+                                            {
+                                                //@Html.ActionLink("Back to List", "ClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            }
+                                            else if (ViewBag.IsClientSelected)
+                                            {
+                                                // @Html.ActionLink("Back to List", "ClientSelectedMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            }
+                                            @if (!(ViewBag.IsClient || ViewBag.IsClientSelected))
+                                            {
+                                                if (Model.IsEdited)
+                                                {
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
+                                                }
+                                                else
+                                                {
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
+                                                }
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            @Html.HiddenFor(x => x.CandidateId)
+                            @Html.HiddenFor(x => x.OldInterviewStatus)
+                            @Html.HiddenFor(x => x.OldMeetingStatus)
+                            @Html.HiddenFor(x => x.OverallScore)
+                            @if (ViewBag.Profile == "Interviewer")
+                            {
+                                @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
+                            }
+                        </form>
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myRaitingPopup" class="modal modal-wrap modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left"> Rate Interviewer</h5>
+                <div class="rating-box"><i class="fa fa-star"></i> Low &nbsp; &nbsp;<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> High</div>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemyRaitingPopup()">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 clearfix">
+                    <div class="pull-left">
+                        <label class="interviewer_name" id="txtratingCandidate"></label>
+                        <input type="hidden" id="txtratinginterviewid" />
+                        <input type="hidden" id="txtratingvalue" />
+                    </div>
+                    <div class="star-rating pull-right">
+                        <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeRating(5)" />
+                        <label for="Q1_5" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeRating(4)" />
+                        <label for="Q1_4" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeRating(3)" />
+                        <label for="Q1_3" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeRating(2)" />
+                        <label for="Q1_2" class="star">&#9733;</label>
+                        <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeRating(1)" />
+                        <label for="Q1_1" class="star">&#9733;</label>
+                    </div>
+                </div>
+                <div class="col-md-12 clearfix">
+                    <input class="txtratingComment" type="text" id="txtratingComment" placeholder="Please comment here.." />
+                </div>
+                <div class="col-md-12 clearfix">
+                    <div class="col-md-4 pull-left">
+                        <input type="radio" name="rdclientaction" id="rd_removeinterviewer" style="position:relative;left:-4px;top:4px;" /> Remove Interviewer
+                    </div>
+                    <div class="col-md-4 pull-left">
+                        <input type="radio" name="rdclientaction" id="rd_shortlistinterviewer" style="position:relative;left:-4px;top:4px;" /> Shortlist Interviewer
+                    </div>
+                </div>
+                <div class="col-md-12 text-right clearfix">
+                    <input type="button" onclick="closemyRaitingPopup()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
+                    <input type="button" onclick="SaveRating()" style="" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Save">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+
+
+
+
+</script>
+<script type="text/javascript">
+
+    //$(document).ready(function ()
+    //    $('.dropques option').wrap('<span>');
+
+    //var selectedOption = $('.dropques').find("[selected]");
+    //$(selectedOption).unwrap();
+
+
+    //})
+
+    $(document).ready(function () {
+
+        var meetingStatus = document.getElementById('MeetingStatus').value;
+        if (meetingStatus == null || meetingStatus == '') {
+            document.getElementById('InterviewerComment').disabled = true;
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+
+            //interview status check
+            //document.getElementById("InterviewStatus").value = '';
+            document.getElementById("InterviewStatus").disabled = true;
+
+
+        }
+        else {
+            document.getElementById('InterviewerComment').disabled = false;
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+
+        }
+        //$('.droprating option').wrap('<span>');
+
+        //var selectedOption = $('.droprating').find("[selected]");
+        //$(selectedOption).unwrap();
+
+
+    })
+
+</script>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+
+<script>
+    function getPDF() {
+
+        var HTML_Width = $(".canvas_div_pdf").width();
+        var HTML_Height = $(".canvas_div_pdf").height();
+        var top_left_margin = 15;
+        var PDF_Width = HTML_Width + (top_left_margin * 2);
+        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+        var canvas_image_width = HTML_Width;
+        var canvas_image_height = HTML_Height;
+
+        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+        html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
+            canvas.getContext('2d');
+
+            var imgData = canvas.toDataURL("image/png", 1.0);
+            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+            for (var i = 1; i <= totalPDFPages; i++) {
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+            }
+            var d = new Date();
+
+            var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
+            pdf.save(filename + ".pdf")
+
+        });
+
+    }
+    function GeneratePublicUrl(index) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        if (index == 1) {
+            urlcurrent = urlcurrent.replace("Report", "ExecutiveReport");
+        } else if (index == 2) {
+            urlcurrent = urlcurrent.replace("Report", "PublicReport");
+        }
+        else {
+            urlcurrent = urlcurrent.replace("Report", "InstaAddReport");
+        }
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+</script>
+<script>
+    function SubmitForm() {
+        //disable button
+        document.getElementById("btnUpload").disabled = true;
+        if (CheckConditions()) {
+            document.getElementById("reportForm").submit();
+        }
+        else {
+            //enable button
+            document.getElementById("btnUpload").disabled = false;
+            return;
+
+        }
+    }
+</script>
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script>
+
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("PageVideoLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("VideoFile").value = '';
+
+        }
+
+    }
+
+    function MeetingStatusChanged(value) {
+        if (value != null && value != '') {
+            document.getElementById('InterviewerComment').disabled = false;
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+        }
+        else {
+            document.getElementById('InterviewerComment').value = '';
+            document.getElementById('InterviewerComment').disabled = true;
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+        }
+        if (value != 2) {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+        }
+        if (value != 4) {
+            document.getElementById("InterviewStatus").value = '';
+            document.getElementById("InterviewStatus").disabled = true;
+        }
+        else {
+            document.getElementById("InterviewStatus").disabled = false;
+        }
+    }
+
+    function CheckConditions() {
+
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments());
+    }
+
+    function CheckInterviewerComments() {
+        var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2 || interviewStatusElem.value == 4) {
+            var comments = document.getElementById("InterviewerComment").value;
+            if (comments.length >= 250) {
+                document.getElementById("interviewerComment_Error").innerHTML = "";
+                return true;
+            }
+            else {
+                //interviewerComment_Error
+                document.getElementById("InterviewerComment").focus();
+                document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
+                return false;
+            }
+        }
+        else
+            return true;
+    }
+
+    function CheckMeetingStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 2) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
+            meetingStatusElem.focus();
+            return false;
+        }
+        else {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+            return true;
+        }
+    }
+
+    function CheckInterviewStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 4) {
+            var interviewStatusElem = document.getElementById("InterviewStatus");
+            if (interviewStatusElem.value == null || interviewStatusElem.value == '') {
+                document.getElementById("interviewStatus_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
+                interviewStatusElem.focus();
+                return false;
+            }
+            else {
+                document.getElementById("interviewStatus_Error").innerHTML = '';
+            }
+
+        }
+        return true;
+    }
+
+
+</script>
+
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+
+<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script>
+    ; (function () {
+
+        "use strict";
+
+        var words = document.getElementById("words"),
+            input = document.getElementById("text, interviewerComment,skillComment, joinability, selectability"),
+            timeout, xhr;
+
+        input.addEventListener("keyup", function (e) {
+
+            if (timeout) clearTimeout(timeout);
+
+            if (!this.value.trim()) words.innerHTML = '';
+
+            timeout = setTimeout(function () {
+
+                var test_phrase = shuffle_words(input.value);
+
+                spell_check(test_phrase);
+
+                timeout = null;
+
+            }, 500);
+
+        });
+
+        function shuffle_words(inp) {
+
+            inp = inp.replace(/\s+/g, ' ');
+
+            var arr = inp.split(" "),
+                n = arr.length;
+
+            while (n > 0) {
+                var i = Math.floor(Math.random() * n--),
+                    t = arr[n];
+                arr[n] = arr[i];
+                arr[i] = t;
+            }
+
+            return arr.join(' ');
+        }
+
+        function spell_check(text) {
+
+            if (xhr) xhr.abort();
+
+            xhr = $.ajax({
+                url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                headers: {
+                    'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                    'Accept': 'application/json'
+                },
+                data: {
+                    'text': text
+                },
+                cache: false,
+                success: function (result) {
+
+                    xhr = null;
+                    suggest_words(result);
+
+                }
+            });
+
+        }
+
+        function suggest_words(obj) {
+
+            if (!obj.corrections) return;
+
+            words.innerHTML = '';
+
+            for (var key in obj.corrections) {
+
+                if (obj.corrections.hasOwnProperty(key)) {
+
+                    var div = document.createElement("div");
+                    div.className = "word";
+                    div.innerHTML = obj.corrections[key][0];
+                    div.orig = key;
+
+                    div.onmouseover = function () {
+                        var start = input.value.indexOf(this.orig);
+                        input.selectionStart = start;
+                        input.selectionEnd = start + this.orig.length;
+                    };
+
+                    div.onmouseout = function () {
+                        var len = input.value.length;
+                        input.selectionStart = len;
+                        input.selectionEnd = len;
+                    }
+
+                    div.onclick = function () {
+                        input.value = input.value.replace(this.orig, this.innerHTML);
+                        this.parentNode.removeChild(this);
+                    }
+
+                    words.appendChild(div);
+
+                }
+
+            }
+
+        }
+
+    })();
+</script>
+<script>
+    if ($("#hidPagestatus").val() == "Mainurl") {
+        setTimeout(openpopUpRating, 30000);
+    }
+    function closemyRaitingPopup() {
+        var modal = document.getElementById("myRaitingPopup");
+        modal.style.display = "none";
+    }
+    function openpopUpRating() {
+        var candidate = $("#CandidateName").val();
+        var interviewid = $("#InterviewId").val();
+        $("#txtratingCandidate").text(candidate);
+        $("#txtratinginterviewid").val(interviewid);
+        $.ajax({
+            url: '/RiseTube/FetchRaitingDetails',
+            type: "POST",
+            data: { 'imid': interviewid },
+            success: function (data) {
+                $("#txtratingvalue").val(data.starRating);
+                $("#txtratingComment").val(data.comment);
+                if (data.clientAction == 'Shortlisted') {
+                    document.getElementById('rd_shortlistinterviewer').checked = true;
+                } else if (data.clientAction == 'Rejected') {
+                    document.getElementById('rd_removeinterviewer').checked = true;
+                } else {
+                    document.getElementById('rd_shortlistinterviewer').checked = false;
+                    document.getElementById('rd_removeinterviewer').checked = false;
+                }
+                var modal = document.getElementById("myRaitingPopup");
+                modal.style.display = "block";
+                setRating(data.starRating);
+            }
+        });
+
+    }
+    function ChangeRating(value) {
+        $("#txtratingvalue").val(value);
+    }
+    function SaveRating() {
+        var interviewid = $("#txtratinginterviewid").val();
+        var ratingvalue = $("#txtratingvalue").val();
+        var comments = $("#txtratingComment").val();
+        var clientaction = '';
+        if (document.getElementById('rd_shortlistinterviewer').checked) {
+            clientaction = 'Shortlisted';
+        } else if (document.getElementById('rd_removeinterviewer').checked) {
+            clientaction = 'Rejected';
+        } else {
+            clientaction = '';
+        }
+        if (parseInt(ratingvalue) > 0) {
+            $.ajax({
+                url: '/RiseTube/SaveRaitingDetails',
+                type: "POST",
+                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction },
+                success: function (data) {
+                    swal.fire(data);
+                    var modal = document.getElementById("myRaitingPopup");
+                    modal.style.display = "none";
+                }
+            });
+        } else {
+            swal.fire("Rating is required.");
+        }
+    }
+    function setRating(starRating) {
+        if (starRating != '' && parseInt(starRating) > 0) {
+            document.getElementById("Q1_" + starRating).checked = true;
+        } else {
+            for (i = 1; i <= 5; i++) {
+                document.getElementById("Q1_" + i).checked = false;
+            }
+        }
+    }
+</script>

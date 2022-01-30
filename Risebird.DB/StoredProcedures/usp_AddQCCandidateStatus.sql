@@ -51,7 +51,7 @@ declare @irfId int, @candidateMasterId int, @status int, @existingInterviewStatu
 			--	End
 
 				INSERT INTO CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], [PerformedBy], InterviewId)
-				VALUES (@irfId, @candidateMasterId, @statusDescription, @Date, 15, @PerformedBy, @InterviewId)
+				VALUES (@irfId, @candidateMasterId, @statusDescription, GetDate(), 15, @PerformedBy, @InterviewId)
 		End
 	
 	

@@ -10,12 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-  
-  
-  
 Create PROCEDURE [dbo].[usp_UpdateCandidate]    
 @id int,    
 @Name varchar(200),    
@@ -39,7 +33,8 @@ Create PROCEDURE [dbo].[usp_UpdateCandidate]
 @AvailableFreeLancing bit,  
 @ClientHRAttemptContact varchar(100),  
 @ProfileSource varchar(200),
-@WhatsappNumber varchar(15)
+@WhatsappNumber varchar(15),
+@IsProctor bit
     
 AS    
 Begin    
@@ -68,11 +63,11 @@ Heuristicsscore=@Heuristicsscore,
 AvailableFullTime=@AvailableFullTime,  
 AvailableFreeLancing=@AvailableFreeLancing,  
 ClientHRAttemptContact = @ClientHRAttemptContact,  
-ProfileSource=@ProfileSource  
+ProfileSource=@ProfileSource,
+IsProctor=@IsProctor
 where id=@id    
     
-End  
-  
+End   
 
 GO
 

@@ -23,7 +23,9 @@ namespace Risebird.Entities.ViewModel
         public string ResumeLink { get; set; }
         [Display(Name = "JDLink")]
         public string JDLink { get; set; }
+
         [Display(Name = "Requested By")]
+        [EmailAddress]
         public string RequestedBy { get; set; }
         public string Interviewer { get; set; }
         public string ZoomLink { get; set; }
@@ -48,6 +50,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList AssessmentGroupList { get; set; }
 
         [Display(Name = "Insta Request Name ")]
+        [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string InstaRequestName { get; set; }
         public IList<InstaTechSkill> TechSkill { get; set; }
         public int RequestId { get; set; }

@@ -271,6 +271,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsCandidateResponsed { get; set; }
         public bool CandidateResponse { get; set; }
         public int interviewtimedifference { get; set; }
+        public bool IsJoinabilitySelectabilityRequired { get; set; }
+        public string ProctorReport { get; set; }
+        public bool IsProctor { get; set; }
     }
     public class VedioComments
     {

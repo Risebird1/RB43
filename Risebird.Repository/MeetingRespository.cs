@@ -1424,7 +1424,6 @@ namespace Risebird.Repository
                             float pointPercent = duration >= 60 ? 100 : ((duration * 100) / 60);
                             parametersPoints.Add("@Points", pointPercent);
                         }
-
                     }
 
                     parametersPoints.Add("@interviewId", reportDetails.InterviewId);
@@ -1432,8 +1431,7 @@ namespace Risebird.Repository
                     parametersPoints.Add("@Type", "Interview");
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-
-                    if (reportDetails.TechSkillReportCollection != null && reportDetails.TechSkillReportCollection.Count() > 0)
+                    if (reportDetails.TechSkillReportCollection != null)
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -1442,7 +1440,6 @@ namespace Risebird.Repository
                         techReportDt.Columns.Add("ActualLevelId", typeof(int));
                         techReportDt.Columns.Add("WeightageRequired", typeof(int));
                         techReportDt.Columns.Add("WeightageActual", typeof(int));
-
 
                         foreach (var item in reportDetails.TechSkillReportCollection)
                         {
@@ -1461,8 +1458,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-
-                    if(reportDetails.SkillGeneralReportCollection != null && reportDetails.SkillGeneralReportCollection.Count()>0)
+                    if (reportDetails.SkillGeneralReportCollection != null)
                     {
                         DataTable skillGeneralReportDt = new DataTable();
                         skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
@@ -1491,8 +1487,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-
-                    if (reportDetails.QuestionsCollection != null && reportDetails.QuestionsCollection.Count() > 0)
+                    if (reportDetails.QuestionsCollection != null)
                     {
                         DataTable questionsDt = new DataTable();
                         questionsDt.Columns.Add("InterviewId", typeof(int));
@@ -1525,9 +1520,6 @@ namespace Risebird.Repository
                             }
                         }
                     }
-
-                    
-
 
                     if (reportDetails.Proctoring != null)
                     {
@@ -1717,6 +1709,26 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IRFVm> GetIRFNameAndJoinability(int id)
+        {
+            try
+            {
+                var query = "Select IRFId, IsJoinabilitySelectabilityRequired from IRF where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<IRFVm>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
         {
             try
@@ -5196,7 +5208,7 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0,interviewer=null from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
@@ -5358,6 +5370,62 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<bool> SaveProctorReport(int id, string reporturl)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //check if the data is edited
+                    InterviewComments interviewComments = new InterviewComments();
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", id);
+                    parameters.Add("@ProctorReport", reporturl);
+                    DynamicParameters parametersPoints = new DynamicParameters();
+                    var result = SqlMapper.Query(con, "usp_SaveProctorReport", parameters,
+                                            commandType: CommandType.StoredProcedure);
+                }
+                return true;
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public bool UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (status == 1)
+                {
+                    query = "Update ti set ti.IsActive=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                }
+                else
+                {
+                    query = "Update ti set ti.IsActive=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", Irfid);
+                dynamicParameters.Add("@uniqueid", uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

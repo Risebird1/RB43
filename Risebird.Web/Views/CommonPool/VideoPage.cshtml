@@ -640,8 +640,11 @@
                                                                             <li id="commonpoolvideo_12" class="nav-link item3" rel="link3"> Tech Skill Report</li>
                                                                             <li id="commonpoolvideo_13" class="nav-link item4" rel="link4"> Questions Discussed</li>
                                                                             <li id="commonpoolvideo_14" class="nav-link item5" rel="link5">General Skill Report</li>
-                                                                            <li id="commonpoolvideo_15" class="nav-link item6" rel="link6"> Joinability Report</li>
-                                                                            <li id="commonpoolvideo_16" class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                            @if (Model.IsJoinabilitySelectabilityRequired)
+                                                                            {
+                                                                                <li id="commonpoolvideo_15" class="nav-link item6" rel="link6"> Joinability Report</li>
+                                                                                <li id="commonpoolvideo_16" class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                            }
                                                                         </ul>
                                                                         <hr />
                                                                         <div class="tab_container tab-space">
@@ -1078,153 +1081,157 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <h3 class="tab_drawer_heading" rel="link6"> Joinability Report</h3>
-                                                                            <div id="link6" class="tab_content">
-                                                                                <div>
-                                                                                    <div class="table-responsive-sm">
+                                                                            @if (Model.IsJoinabilitySelectabilityRequired)
+                                                                            {
+                                                                                <h3 class="tab_drawer_heading" rel="link6"> Joinability Report</h3>
+                                                                                <div id="link6" class="tab_content">
+                                                                                    <div>
+                                                                                        <div class="table-responsive-sm">
 
-                                                                                        <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="JoinabilityTable">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                    <th width="30%">Type</th>
-                                                                                                    <th width="25%">Value</th>
-                                                                                                    <th class="desktop-view">Required Level</th>
-                                                                                                    <th width="15%">Actual Level</th>
-                                                                                                    <th class="desktop-view">Required Weightage</th>
-                                                                                                    <th width="10%">Actual Weightage</th>
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                @if (Model.IreportModel.JoinabilityHRReportCollection != null)
-                                                                                                {
-                                                                                                    @for (int i = 0; i < Model.IreportModel.JoinabilityHRReportCollection.Count(); i++)
+                                                                                            <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="JoinabilityTable">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th width="30%">Type</th>
+                                                                                                        <th width="25%">Value</th>
+                                                                                                        <th class="desktop-view">Required Level</th>
+                                                                                                        <th width="15%">Actual Level</th>
+                                                                                                        <th class="desktop-view">Required Weightage</th>
+                                                                                                        <th width="10%">Actual Weightage</th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                                    @if (Model.IreportModel.JoinabilityHRReportCollection != null)
                                                                                                     {
-                                                                                                        <tr>
+                                                                                                        @for (int i = 0; i < Model.IreportModel.JoinabilityHRReportCollection.Count(); i++)
+                                                                                                        {
+                                                                                                            <tr>
 
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @disabled = "disabled" })
+                                                                                                                <td>
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                </td>
+                                                                                                                <td>
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                </td>
+                                                                                                                <td class="desktop-view">
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                </td>
+                                                                                                                <td>
+                                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @disabled = "disabled" })
 
-                                                                                                            </td>
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                            </td>
+                                                                                                                </td>
+                                                                                                                <td class="desktop-view">
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                                </td>
+                                                                                                                <td>
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                                </td>
 
-                                                                                                            @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
+                                                                                                                @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
 
-                                                                                                        </tr>
+                                                                                                            </tr>
 
+                                                                                                        }
                                                                                                     }
-                                                                                                }
 
 
 
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                        <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                            <div class="form-group">
+                                                                                                @Html.LabelFor(model => model.IreportModel.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
-                                                                                                <div class="talktext">
+                                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                                    <div class="talktext">
 
-                                                                                                    @Html.TextAreaFor(m => m.IreportModel.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                                                                        @Html.TextAreaFor(m => m.IreportModel.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
 
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <h3 class="tab_drawer_heading" rel="link7"> Selectability Report</h3>
-                                                                            <div id="link7" class="tab_content">
-                                                                                <div>
-                                                                                    <div class="table-responsive-sm">
-
-                                                                                        <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="SelectabilityTable">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                    <th width="30%">Type</th>
-                                                                                                    <th width="25%">Value</th>
-                                                                                                    <th class="desktop-view">Required Level</th>
-                                                                                                    <th width="15%">Actual Level</th>
-                                                                                                    <th class="desktop-view">Required Weightage</th>
-                                                                                                    <th width="10%">Actual Weightage</th>
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                @if (Model.IreportModel.SelectabilityEvaluatorReportCollection != null)
-                                                                                                {
-                                                                                                    @for (int i = 0; i < Model.IreportModel.SelectabilityEvaluatorReportCollection.Count(); i++)
-                                                                                                    {
-                                                                                                        <tr>
-
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                            </td>
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @disabled = "disabled" })
-
-                                                                                                            </td>
-                                                                                                            <td class="desktop-view">
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                            </td>
-
-                                                                                                            @Html.HiddenFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevelId)
-
-                                                                                                        </tr>
-
-                                                                                                    }
-                                                                                                }
-
-
-
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                        <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
-
-
-                                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
-                                                                                                <div class="talktext">
-
-                                                                                                    @Html.TextAreaFor(m => m.IreportModel.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
-
-
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
 
 
                                                                                         </div>
-
-
                                                                                     </div>
                                                                                 </div>
+                                                                                <h3 class="tab_drawer_heading" rel="link7"> Selectability Report</h3>
+                                                                                <div id="link7" class="tab_content">
+                                                                                    <div>
+                                                                                        <div class="table-responsive-sm">
 
-                                                                                <!-- #tab7 -->
-                                                                            </div>
+                                                                                            <table class="table table-bordered mbn" cellpadding="0" cellspacing="0" id="SelectabilityTable">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th width="30%">Type</th>
+                                                                                                        <th width="25%">Value</th>
+                                                                                                        <th class="desktop-view">Required Level</th>
+                                                                                                        <th width="15%">Actual Level</th>
+                                                                                                        <th class="desktop-view">Required Weightage</th>
+                                                                                                        <th width="10%">Actual Weightage</th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                                    @if (Model.IreportModel.SelectabilityEvaluatorReportCollection != null)
+                                                                                                    {
+                                                                                                        @for (int i = 0; i < Model.IreportModel.SelectabilityEvaluatorReportCollection.Count(); i++)
+                                                                                                        {
+                                                                                                            <tr>
+
+                                                                                                                <td>
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                </td>
+                                                                                                                <td>
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                </td>
+                                                                                                                <td class="desktop-view">
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                                                                </td>
+                                                                                                                <td>
+                                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @disabled = "disabled" })
+
+                                                                                                                </td>
+                                                                                                                <td class="desktop-view">
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                                </td>
+                                                                                                                <td>
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                                </td>
+
+                                                                                                                @Html.HiddenFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevelId)
+
+                                                                                                            </tr>
+
+                                                                                                        }
+                                                                                                    }
+
+
+
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                            <div class="form-group">
+                                                                                                @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+
+
+                                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                                    <div class="talktext">
+
+                                                                                                        @Html.TextAreaFor(m => m.IreportModel.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+
+
+                                                                                                    </div>
+                                                                                                </div>
+
+
+                                                                                            </div>
+
+
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <!-- #tab7 -->
+                                                                                </div>
+                                                                            }
+
                                                                         </div>
                                                                     </div>
                                                                     @if (ViewBag.VideoStatus != "Public")
@@ -2964,8 +2971,15 @@
         else {
             closeThMode();
         }
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True")
+        {
+            SetChartForVideoPage();
+        }
+        else
+        {
+            SetChartForVideoPageWithoutJoinabilitySelectability();
+        }
 
-        SetChartForVideoPage();
 
         //if (isTheaterMode === true) {
         //    getThMode();

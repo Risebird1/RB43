@@ -1720,7 +1720,14 @@ namespace Risebird.Web.Controllers
                         model.PreviousMeetingStatus = model.MeetingStatus;
                         ViewBag.PageStatus = "Mainurl";
                         GetStatusList(model, irfId);
-                        return PartialView("ClientPartialReport", model);
+                        if (model.IsProctor)
+                        {
+                            return PartialView("ClientProctorPartialReport", model);
+                        }
+                        else
+                        {
+                            return PartialView("ClientPartialReport", model);
+                        }
                     }
                     else
                     {
@@ -3699,7 +3706,14 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 ViewBag.PageStatus = "Public";
-                return PartialView("ClientPartialReport", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ClientProctorPartialReport", model);
+                }
+                else
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
             }
             catch (Exception ex)
             {
@@ -3859,7 +3873,14 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "";
-                return PartialView("ClientPartialReport", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ClientProctorPartialReport", model);
+                }
+                else
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
             }
             catch (Exception ex)
             {
@@ -4184,7 +4205,14 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "Insta";
-                return PartialView("ClientPartialReport", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ClientProctorPartialReport", model);
+                }
+                else
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
             }
             catch (Exception ex)
             {

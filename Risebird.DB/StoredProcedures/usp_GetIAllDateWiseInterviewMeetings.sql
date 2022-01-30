@@ -37,11 +37,9 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
        
       
  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,           
-          
   im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                     
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,         
-  case         
-  when ulc.LastName is null then ulc.FirstName        
+  case when ulc.LastName is null then ulc.FirstName        
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))        
   end as candidateName,        
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                      
@@ -171,9 +169,7 @@ else
   where interviewDate >= @startDate AND interviewDate < @endDate             
  End                      
                        
-End           
-  
-               
+End    
               
         
 GO

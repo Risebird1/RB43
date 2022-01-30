@@ -52,8 +52,8 @@
                                             <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1">Event Details</a></li>
                                             <li><a href="#" rel="tab-2" class="text-center" id="rtab-2">Job Details</a></li>
                                             <li><a href="#" rel="tab-3" class="" id="rtab-3">Tech Skill</a><span id="count_SkillCollection" class="skillcount">@(Model.SkillCollection != null ? Model.SkillCollection.Count() : 0)</span></li>
-                                            <li><a href="#" rel="tab-4" class="" id="rtab-4">Joinability</a><span id="count_Joinability" class="skillcount">0</span></li>
-                                            <li><a href="#" rel="tab-5" class="" id="rtab-5">Selectability</a><span id="count_Selectability" class="skillcount">0</span></li>
+                                            <li id="li_joinability"><a href="#" rel="tab-4" class="" id="rtab-4">Joinability</a><span id="count_Joinability" class="skillcount">0</span></li>
+                                            <li id="li_selectability"><a href="#" rel="tab-5" class="" id="rtab-5">Selectability</a><span id="count_Selectability" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a><span id="count_SkillGeneral" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-7" class="text-center" id="rtab-7">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
@@ -213,13 +213,14 @@
                                                     </div>
 
                                                 </div>
-                                                @*<div class="col-md-4 col-sm-4">
+
+                                                <div class="col-md-3 col-sm-3 pull-left">
 
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
 
 
                                                         <div class="mdc-checkbox">
-                                                            @Html.CheckBoxFor(m => m.IsQCRequired, new { @class = "mdc-checkbox__native-control" })
+                                                            @Html.CheckBoxFor(m => m.IsJoinabilitySelectabilityRequired, new { @class = "mdc-checkbox__native-control" })
 
 
                                                             <div class="mdc-checkbox__background">
@@ -235,11 +236,11 @@
 
 
                                                         </div>
-                                                        @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; " })
+                                                        @Html.LabelFor(model => model.IsJoinabilitySelectabilityRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
 
 
-                                                </div>*@
+                                                </div>
                                             </div>
                                         </div>
                                         <h3 class="tab_drawer_heading" rel="tab-2">Job Details</h3>
@@ -428,31 +429,31 @@
                                                     <div class="col-md-4 col-sm-4 pl-1">
                                                         @Html.HiddenFor(m => m.PerMintuteRate)
                                                         @*<div class="form-group">
-            <div class="mandate">
-                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-            </div>
-            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
-            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
-            <div class="spinner">
-                <button type="button" class="up-2 button">&rsaquo;</button>
-                <button type="button" class="down-2 button">&lsaquo;</button>
-            </div>
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
+                                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-2 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-2 button">&lsaquo;</button>
+                                                                </div>
 
 
-        </div>*@
+                                                            </div>*@
 
                                                         @Html.HiddenFor(m => m.TotalBudget)
                                                         @*<div class="form-group">
-            <div class="mandate">
-                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-            </div>
-            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
-            <div class="spinner">
-                <button type="button" class="up-3 button">&rsaquo;</button>
-                <button type="button" class="down-3 button">&lsaquo;</button>
-            </div>
-        </div>*@
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-3 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-3 button">&lsaquo;</button>
+                                                                </div>
+                                                            </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -473,9 +474,9 @@
                                                         </div>
                                                         @Html.HiddenFor(m => m.Type)
                                                         @*<div class="form-group">
-                                                            @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
-                                                            @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-                                                        </div>*@
+                                                                @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                                                @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+                                                            </div>*@
 
                                                     </div>
                                                 </div>
@@ -1154,61 +1155,50 @@
 
                                     </div>
 
+                                    <div class="card-footer mt-20 clearfix">
+                                        <div class="row  mc-button-area pull-right">
+                                            <div class="col-md-12">
+                                                @if (Model.TemplateId != 0)
+                                                {
+                                                    @Html.ActionLink("Back to List", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                                }
+                                                else if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
+                                                {
+                                                    @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                                }
+                                                <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
-                                </div>
+                                                <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next">
 
+                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnUpload" value="Save" style="display:none">Save</button>
 
-
-                            </div>
-
-
-
-
-
-                            <div class="card-footer mt-20 clearfix">
-                                <div class="row  mc-button-area pull-right">
-                                    <div class="col-md-12">
-                                        @if (Model.TemplateId != 0)
-                                        {
-                                            @Html.ActionLink("Back to List", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
-                                        }
-                                        else if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
-                                        {
-                                            @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
-                                        }
-                                        else
-                                        {
-                                            @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
-                                        }
-                                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
-
-                                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next">
-
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnUpload" value="Save" style="display:none">Save</button>
-
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            @*<div class="card-footer mt-20">
-                                    <div class="row">
-
-                                        <div class="col-md-12 mc-button-area">
-                                            @if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
-                                            {
-                                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                            }
-                                            else
-                                            {
-                                                @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                            }
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>*@
 
 
+                                    @*<div class="card-footer mt-20">
+                                            <div class="row">
+
+                                                <div class="col-md-12 mc-button-area">
+                                                    @if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
+                                                    {
+                                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                    }
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                </div>
+                            </div>
                         }
                         @*</form>*@
 
@@ -1283,6 +1273,30 @@
 </script>
 
 <script>
+
+    $('#IsJoinabilitySelectabilityRequired').on('change', function () {
+        CheckJoinabilitySelectabilityRequired()
+    });
+
+    function CheckJoinabilitySelectabilityRequired() {
+        var value = document.getElementById("IsJoinabilitySelectabilityRequired").checked;
+        if (value) {
+            document.getElementById("li_joinability").style.display = "block";
+            document.getElementById("li_selectability").style.display = "block";
+            document.getElementById('rtab-4').style.display = "block";
+            document.getElementById('rtab-5').style.display = "block";
+            document.getElementById('count_Joinability').style.display = "block";
+            document.getElementById('count_Selectability').style.display = "block";
+        }
+        else {
+            document.getElementById("li_joinability").style.display = "none";
+            document.getElementById("li_selectability").style.display = "none";
+            document.getElementById('rtab-4').style.display = "none";
+            document.getElementById('rtab-5').style.display = "none";
+            document.getElementById('count_Joinability').style.display = "none";
+            document.getElementById('count_Selectability').style.display = "none";
+        }
+    }
 
     $('#IsQCRequired').on('change', function () {
         CheckQCRequired()
@@ -2579,7 +2593,7 @@
 
 
         CheckQCRequired();
-
+        CheckJoinabilitySelectabilityRequired();
         if (@Model.TemplateId == null || @Model.TemplateId== 0) {
             //TechSkillChanged();
             //Perform Ajax request.
@@ -2921,9 +2935,17 @@
 
             else if (activeTab.trim() == "General Skill") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-5").addClass("active");
-                document.getElementById("tab-5").style.display = "block";
+                var isJoinabilitySelectabilityRequired = document.getElementById('IsJoinabilitySelectabilityRequired').checked;
+                if (isJoinabilitySelectabilityRequired) {
+                    $("#rtab-5").addClass("active");
+                    document.getElementById("tab-5").style.display = "block";
+                }
+                else {
+                    $("#rtab-3").addClass("active");
+                    document.getElementById("tab-3").style.display = "block";
+                }
                 document.getElementById("tab-6").style.display = "none";
+
             }
             else if (activeTab.trim() == "Client") {
                 $(".tab-menu li a").removeClass("active");
@@ -2950,13 +2972,13 @@
                 if (isQcRequired) {
                     $("#rtab-9").addClass("active");
                     document.getElementById("tab-9").style.display = "block";
-                    document.getElementById("tab-10").style.display = "none";
                 }
                 else {
                     $("#rtab-8").addClass("active");
                     document.getElementById("tab-8").style.display = "block";
-                    document.getElementById("tab-10").style.display = "none";
                 }
+                document.getElementById("tab-10").style.display = "none";
+
 
             }
 
@@ -3122,11 +3144,18 @@
             else if (activeTab.trim() == "Tech Skill") {
                 flag = checkWeightageTab("SkillCollection");
                 if (!flag) {
-
                     $(".tab-menu li a").removeClass("active");
-                    $("#rtab-4").addClass("active");
-                    document.getElementById("tab-4").style.display = "block";
+                    var isJoinabilitySelectabilityRequired = document.getElementById('IsJoinabilitySelectabilityRequired').checked;
+                    if (isJoinabilitySelectabilityRequired) {
+                        $("#rtab-4").addClass("active");
+                        document.getElementById("tab-4").style.display = "block";
+                    }
+                    else {
+                        $("#rtab-6").addClass("active");
+                        document.getElementById("tab-6").style.display = "block";
+                    }
                     document.getElementById("tab-3").style.display = "none";
+
                 }
             }
             else if (activeTab.trim() == "Joinability") {
@@ -3289,7 +3318,7 @@
                         return true;
                     }
                 }
-               
+
 
             }
         }

@@ -145,12 +145,14 @@ namespace Risebird.Business
 
 
                 var candidateDetails = await _evaluatorRespository.GetCandidate(candidateId);
-
+                var irfDetails = await _meetingRespository.GetIRFNameAndJoinability(irfId);
 
                 model.CandidateName = candidateDetails.Name;
                 model.ResumeLink = candidateDetails.ResumeLink;
                 model.IRFId = irfId;
-                model.IRFName = (await _meetingRespository.GetIRFName(irfId)).FirstOrDefault();
+                //model.IRFName = (await _meetingRespository.GetIRFName(irfId)).FirstOrDefault();
+                model.IRFName = irfDetails.IRFId;
+                model.IsJoinabilitySelectabilityRequired = irfDetails.IsJoinabilitySelectabilityRequired;
                 model.currentEmployerName = candidateDetails.CurrentEmployer;
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;

@@ -342,3 +342,270 @@ function SetChartForVideoPage() {
 
     });
 }
+
+function SetChartWithoutJoinabilitySelectability() {
+    var arr = [];
+    var obj = { y: "", legendText: "", label: "" }
+    //TechSkills actual weightage total
+    var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+    var techTotal = 0;
+    for (i = 0; i < techItems.length; i++) {
+
+        techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+    }
+    obj.y = parseInt(techTotal);
+    obj.label = "Tech Skills Score";
+    obj.legendText = "Tech Skills Score";
+    arr.push(obj.y);
+
+    //SkillsGeneral actual weightage total
+    var objGen = { y: "", legendText: "", label: "" }
+    var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
+    var genTotal = 0;
+    for (i = 0; i < genSkillsItems.length; i++) {
+        var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+        genTotal = parseInt(genTotal) + parseInt(weightage);
+
+    }
+
+    objGen.y = parseInt(genTotal);
+    objGen.label = "General Skills Score";
+    objGen.legendText = "General Skills Score";
+    arr.push(objGen.y);
+
+    
+
+    //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+    //document.getElementById("totScore").innerHTML = average;
+    document.getElementById("totTechScore").innerHTML = techTotal;
+
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // Create chart instance
+        var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+        // Add data
+        chart.data = [{
+            "country": "Tech",
+            "visits": arr[0]
+
+        }, {
+            "country": "General",
+            "visits": arr[1]
+        }];
+
+        // Create axes
+        chart.logo.disabled = true;
+        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "country";
+        categoryAxis.renderer.inside = true;
+        categoryAxis.renderer.labels.template.valign = 0;
+        categoryAxis.renderer.grid.template.location = 0;
+        //categoryAxis.renderer.minGridDistance = 30;
+        categoryAxis.renderer.minGridDistance = 100;
+        chart.fontSize = 13;
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+
+        categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+            if (target.dataItem && target.dataItem.index & 2 == 2) {
+                return dy;
+            }
+            return dy;
+        });
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+        categoryAxis.renderer.labels.template.paddingBottom = -17;
+        categoryAxis.renderer.grid.template.disabled = true;
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.grid.template.disabled = true;
+        valueAxis.min = 0;
+        //valueAxis.max = 30;
+        valueAxis.max = 100;
+        // Create series
+        var series = chart.series.push(new am4charts.ColumnSeries());
+        series.dataFields.valueY = "visits";
+        series.dataFields.categoryX = "country";
+        series.name = "Visits";
+        series.colorField = "color";
+        series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+        series.tooltip.label.adapter.add("text", function (text, target) {
+            if (target.dataItem && target.dataItem.valueY == 0) {
+
+                return "";
+            }
+            else {
+
+                return text;
+            }
+        });
+        series.columns.template.fillOpacity = .8;
+        series.columns.template.tooltipY = 0;
+        series.tooltip.background.strokeOpacity = 0
+        series.tooltip.pointerOrientation = "vertical";
+        series.columns.template.showTooltipOn = "always";
+        series.tooltip.background.filters.clear();
+        series.tooltip.getFillFromObject = false;
+
+        series.tooltip.label.fill = am4core.color("#9a9a9a");
+        series.tooltip.background.cornerRadius = 0;
+        series.tooltip.label.textAlign = "middle";
+        series.tooltip.background.fill = 0;
+        var columnTemplate = series.columns.template;
+        columnTemplate.strokeWidth = 0;
+        columnTemplate.strokeOpacity = 1;//07BEF3
+        chart.colors.list = [
+            am4core.color("#07BEF3"),
+            am4core.color("#00F96B")
+
+        ];
+        series.columns.template.events.once("inited", function (event) {
+            event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+        });
+
+    });
+}
+
+function SetChartForVideoPageWithoutJoinabilitySelectability() {
+    var arr = [];
+    var obj = { y: "", legendText: "", label: "" }
+    //TechSkills actual weightage total
+    var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
+    var techTotal = 0;
+    for (i = 0; i < (techItems.length / 2); i++) {
+
+        techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+    }
+    //obj.y = parseInt(techTotal) / 4;
+    obj.y = parseInt(techTotal);
+    obj.label = "Tech Skills Score";
+    obj.legendText = "Tech Skills Score";
+    arr.push(obj.y);
+
+    //SkillsGeneral actual weightage total
+    var objGen = { y: "", legendText: "", label: "" }
+    var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
+    var genTotal = 0;
+    for (i = 0; i < genSkillsItems.length; i++) {
+        var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+        genTotal = parseInt(genTotal) + parseInt(weightage);
+
+    }
+
+    //objGen.y = parseInt(genTotal) / 4;
+    objGen.y = parseInt(genTotal);
+    objGen.label = "General Skills Score";
+    objGen.legendText = "General Skills Score";
+    arr.push(objGen.y);
+
+    //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+    document.getElementById("totTechScore").innerHTML = techTotal;
+
+
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // Create chart instance
+        var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+        // Add data
+        chart.data = [{
+            "country": "Tech",
+            "visits": arr[0]
+
+        }, {
+            "country": "General",
+            "visits": arr[1]
+        }, {
+
+            "panelsSettings": {
+                "panEventsEnabled": false
+            }
+
+        }
+
+        ];
+
+        // Create axes
+
+        chart.logo.disabled = true;
+        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "country";
+        categoryAxis.renderer.inside = true;
+        categoryAxis.renderer.labels.template.valign = 0;
+
+        categoryAxis.renderer.grid.template.location = 0;
+        //categoryAxis.renderer.minGridDistance = 30;
+        categoryAxis.renderer.minGridDistance = 100;
+        chart.fontSize = 13;
+
+        categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+            if (target.dataItem && target.dataItem.index & 2 == 2) {
+                return dy;
+            }
+            return dy;
+        });
+
+
+
+
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        categoryAxis.renderer.grid.template.disabled = true;
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+        categoryAxis.renderer.labels.template.paddingBottom = -17;
+        valueAxis.renderer.grid.template.disabled = true;
+        valueAxis.min = 0;
+        //valueAxis.max = 30;
+        valueAxis.max = 100;
+        // Create series
+        var series = chart.series.push(new am4charts.ColumnSeries());
+        series.dataFields.valueY = "visits";
+        series.dataFields.categoryX = "country";
+        series.name = "Visits";
+        series.colorField = "color";
+
+
+        series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+        series.tooltip.label.adapter.add("text", function (text, target) {
+            if (target.dataItem && target.dataItem.valueY == 0) {
+
+                return "";
+            }
+            else {
+
+                return text;
+            }
+        });
+        series.columns.template.fillOpacity = .8;
+        series.columns.template.tooltipY = 8;
+        series.tooltip.background.strokeOpacity = 0
+        series.tooltip.pointerOrientation = "vertical";
+        series.columns.template.showTooltipOn = "always";
+        series.tooltip.background.filters.clear();
+        series.tooltip.getFillFromObject = false;
+        series.tooltip.label.fill = am4core.color("#9a9a9a");
+        series.tooltip.background.cornerRadius = 0;
+        series.tooltip.label.textAlign = "middle";
+        series.tooltip.background.fill = 0;
+        var columnTemplate = series.columns.template;
+        columnTemplate.strokeWidth = 0;
+        columnTemplate.strokeOpacity = 1;
+        chart.colors.list = [
+            am4core.color("#07BEF3"),
+            am4core.color("#00F96B")
+
+        ];
+        series.columns.template.events.once("inited", function (event) {
+            event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+        });
+
+    });
+}
