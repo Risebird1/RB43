@@ -212,35 +212,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Report Details</span></h3>
-                                            </div><!--end of multiple location-->
-                                        </div>
-                                        <div class="report-wrap">
-                                            <div class="col-md-12 col-sm-12 pull-left">
-                                                <div>
-                                                    <div>
-                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })
-                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                <div class="talktext">
-                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters" })
-                                                                    <div id="words"></div>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                            <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                     @if (ViewBag.PageReport != "Insta")
                                     {
                                         <div class="row">
