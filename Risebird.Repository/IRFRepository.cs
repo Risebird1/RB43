@@ -782,9 +782,9 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-                        
 
-                        if(irfDetails.Selectability != null && irfDetails.Selectability.Count()>0 && irfDetails.IsJoinabilitySelectabilityRequired)
+
+                        if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
                             DataTable selectabilityDt = new DataTable();
                             selectabilityDt.Columns.Add("IRFId", typeof(int));
@@ -809,7 +809,7 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-                        
+
 
 
                         //update general skill table
@@ -1085,7 +1085,7 @@ namespace Risebird.Repository
 
                     try
                     {
-                        if(irfDetails.Joinability != null && irfDetails.Joinability.Count()>0 && irfDetails.IsJoinabilitySelectabilityRequired)
+                        if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
                             DataTable joinabilityDt = new DataTable();
                             joinabilityDt.Columns.Add("IRFId", typeof(int));
@@ -1110,7 +1110,7 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -1147,7 +1147,7 @@ namespace Risebird.Repository
                             }
                         }
 
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -2014,7 +2014,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        
+
         public async Task<bool> AddSkillComments(TechSkillComments obj)
         {
             try
@@ -2068,7 +2068,7 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId=null)
+        public IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null)
         {
             try
             {
@@ -4664,5 +4664,30 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> UpdateCancellationSource(int interviewid, string emailId)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set Cancellationsource=@Cancellationsource where id=@meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", interviewid);
+                dynamicParameters.Add("@Cancellationsource", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
     }
 }

@@ -5165,7 +5165,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update InterviewMeetings set isAutoCancelled=1 where id=@meetingid and confirmationStatus=2";
+                var query = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='System Auto' where id=@meetingid and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -5208,7 +5208,7 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
+                    query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0,Cancellationsource='Candidate' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);

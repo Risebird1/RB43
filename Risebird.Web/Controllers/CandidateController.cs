@@ -3634,6 +3634,14 @@ namespace Risebird.Web.Controllers
                             candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                         }
                     }
+                    if (firstData.confirmationStatus != 2)
+                    {
+                        if (firstData.interviewDate < DateTime.Now && firstData.CurrentMeetingStatus == 2)
+                        {
+                            firstData.CurrentStatus = "Status Pending";
+
+                        }
+                    }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
                     {
@@ -4094,6 +4102,7 @@ namespace Risebird.Web.Controllers
                 if (_meetingService.PublicCancelInterview(id))
                 {
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
+                    var updatedStatus = await _irfRepository.UpdateCancellationSource(id, emailId);
                     var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
                     var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                     var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
