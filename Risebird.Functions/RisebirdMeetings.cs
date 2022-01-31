@@ -1,3 +1,4 @@
+using Dapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
@@ -396,6 +397,15 @@ namespace Risebird.Functions
             {
                 try
                 {
+                    var query = "Update InterviewMeetings set Cancellationsource='Calendly' where candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@candidateEmail", candidateEmail);
+                    dynamicParameters.Add("@IRFId", IRFID);
+                    dynamicParameters.Add("@interviewDate", interviewDate);
+                    using (SqlConnection con = new SqlConnection(str))
+                    {
+                        var results = con.Query(query, dynamicParameters);
+                    }
                     var masg = new SendGridMessage();
                     using (SqlConnection conn = new SqlConnection(str))
                     {
