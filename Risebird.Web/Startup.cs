@@ -44,6 +44,7 @@ namespace Risebird.Web
             Configuration.Bind(configOptions);
             services.Configure<FormOptions>(x =>
             {
+                x.ValueCountLimit = int.MaxValue;
                 x.ValueLengthLimit = int.MaxValue;
                 x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
             });

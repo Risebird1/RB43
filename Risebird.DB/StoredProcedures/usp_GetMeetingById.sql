@@ -64,6 +64,8 @@ SELECT [InterviewMeetings].id as imid
   ,IsEmergency  
   ,InterviewComments.VideoLink  
   ,IRF.IsQCRequired 
+  ,InterviewMeetings.ProctorReport
+  ,ca.IsProctor
   ,ipr.NickName
 FROM [dbo].[InterviewMeetings]  
 inner join   

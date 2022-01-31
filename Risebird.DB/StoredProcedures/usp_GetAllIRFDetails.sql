@@ -31,7 +31,11 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
 	UserId int
 );   
 INSERT INTO @TemporaryCandidateTableVariable      
-select min(ca.id),ca.IRFId, ca.CandidateMasterId,cm.UserId from  Candidate ca join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId) join CandidatesMaster cm on cm.id=ca.CandidateMasterId  where cs.[Status] =12 and [Date]<=@endDate and [Date] >= @startDate group by ca.IRFId, ca.CandidateMasterId,cm.UserId  
+select min(ca.id),ca.IRFId, ca.CandidateMasterId,cm.UserId from  Candidate ca 
+join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId) 
+join CandidatesMaster cm on cm.id=ca.CandidateMasterId  
+where cs.[Status] =12 and [Date]<=@endDate and [Date] >= @startDate 
+group by ca.IRFId, ca.CandidateMasterId,cm.UserId  
 
  select irf.id, irf.IRFId, irf.JDTiltle, cl.[Name] as ClientCompName, irf.JobCountry, IsNULL(ulb.EmailId, '') as BillingOwnerEmailId, ul.EmailId as RisebirdHrEmail,   
  (select count(ca.id) from Candidate ca join @TemporaryCandidateTableVariable tmpC on tmpC.id =ca.id where ca.IRFId = irf.id) as CandidateCount,  
@@ -46,12 +50,15 @@ select min(ca.id),ca.IRFId, ca.CandidateMasterId,cm.UserId from  Candidate ca jo
  join IRF as irfFI on irfFI.id = tctv.IRFId 
  join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfFI.IRFId
  where tctv.IRFId=IRF.id and (im.confirmationStatus=1 and im.interviewDate >= @timeNow)) as FutureScheduledMeetings,  
- (select count(tctv.id) from @TemporaryCandidateTableVariable tctv   
- join UserList ul on ul.id = tctv.UserId  
- join IRF as irfCI on irfCI.id = tctv.IRFId 
- join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfCI.IRFId
- join InterviewComments ic on im.id=ic.Interviewid
- where tctv.IRFId=IRF.id and im.confirmationStatus=1 and ic.MeetingStatus=4)  as CompletedInterviews,  
+ --(select count(tctv.id) from @TemporaryCandidateTableVariable tctv   
+ --join UserList ul on ul.id = tctv.UserId  
+ --join IRF as irfCI on irfCI.id = tctv.IRFId 
+ --join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfCI.IRFId
+ --join InterviewComments ic on im.id=ic.Interviewid
+ --where tctv.IRFId=IRF.id and im.confirmationStatus=1 and ic.MeetingStatus=4)  as CompletedInterviews,  
+  (select count(tctv.id) from @TemporaryCandidateTableVariable tctv   
+ where tctv.IRFId=IRF.id and dbo.fn_IsCandidateInterviewCompleted(tctv.UserId, tctv.IRFId, cast(@startDate as date)) = 1)  as CompletedInterviews,
+
  (select count(tctv.id) from @TemporaryCandidateTableVariable tctv   
  join UserList ul on ul.id = tctv.UserId  
  join IRF as irfSI on irfSI.id = tctv.IRFId  
@@ -70,16 +77,14 @@ select min(ca.id),ca.IRFId, ca.CandidateMasterId,cm.UserId from  Candidate ca jo
  left join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfNS.IRFId
  where tctv.IRFId=IRF.id and im.id is null) as NotScheduledCount,  
  (select count(tctv.id) from @TemporaryCandidateTableVariable tctv   
- join UserList ul on ul.id = tctv.UserId  
- join IRF as irfRS on irfRS.id = tctv.IRFId 
- join interviewmeetings im on im.candidateEmail=ul.Emailid and im.IRFId=irfRS.IRFId
- join InterviewComments ic on im.id=ic.Interviewid
- where tctv.IRFId=IRF.id and ((im.confirmationStatus=1 and (ic.MeetingStatus=1 or ic.MeetingStatus=3 or ic.MeetingStatus=5)) or confirmationStatus=2)) as ReScheduledCount  
+ where tctv.IRFId=IRF.id and dbo.fn_IsCandidateEligibleForRescheduling(tctv.UserId, tctv.IRFId, @startDate) = 1) as ReScheduledCount 
+ 
+ 
  from IRF  
+ join @tbl_Temp tmp on tmp.IRFId =IRF.id  
  join Client cl on cl.id = irf.ClientId  
  join UserList ul on ul.id = irf.RisebirdHr  
  left join UserList ulb on ulb.id = irf.BillingOwner  
- join @tbl_Temp tmp on tmp.IRFId =IRF.id  
   
 End      
         

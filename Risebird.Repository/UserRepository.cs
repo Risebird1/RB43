@@ -406,7 +406,7 @@ namespace Risebird.Repository
 
             if (isAdd)
             {
-                parameters.Add("@IsPasswordReset", entity.IsPasswordReset);
+                //parameters.Add("@IsPasswordReset", entity.IsPasswordReset);
                 if (entity.SelectedClient.HasValue)
                     parameters.Add("@selectedClientId", entity.SelectedClient);
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
@@ -1482,7 +1482,6 @@ namespace Risebird.Repository
             return false;
         }
 
-
         public string GetCurrentUsername(string emailid)
         {
             try
@@ -1502,5 +1501,35 @@ namespace Risebird.Repository
                 return "";
             }
         }
+
+        public async Task<bool> GetClientPasswordResetEnableStatus(int clientId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@clientId", clientId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_GetClientPasswordResetEnableStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

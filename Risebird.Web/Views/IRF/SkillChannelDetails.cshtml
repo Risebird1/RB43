@@ -195,24 +195,40 @@
                                                     foreach (var item in Model)
                                                     {
 
-                                                        <tr>
-                                                            <td> @item.JDTiltle.Split('|')[0] </td>
-                                                            <td> @item.CandidateCount </td>
-                                                            <td> @item.CompletedInterviews </td>
-                                                            <td> @item.SelectedMeetings </td>
-                                                            <td> @item.RejectedMeetings </td>
-                                                            @*<td> @item.ScheduledMeetings </td>*@
-                                                            <td> @item.NotScheduledCount </td>
-                                                            <td> @item.ReScheduledCount </td>
-                                                            <td> @item.FutureScheduledMeetings </td>
-                                                            <td> @item.RisebirdHREmail </td>
-                                                            <td> @item.IRFId </td>
-                                                            <td> @item.ClientCompName </td>
-                                                            <td> @item.JobCountry </td>
-                                                            <td> @item.BillingOwnerEmailId </td>
+                                                <tr>
+                                                    <td> @item.JDTiltle.Split('|')[0] </td>
+                                                    <td> @item.CandidateCount </td>
+                                                    <td> @item.CompletedInterviews </td>
+                                                    <td> @item.SelectedMeetings </td>
+                                                    <td> @item.RejectedMeetings </td>
+                                                    @*<td> @item.ScheduledMeetings </td>*@
+                                                    <td> @item.NotScheduledCount </td>
+                                                    <td> @item.ReScheduledCount </td>
+                                                    <td> @item.FutureScheduledMeetings </td>
+                                                    <td> @item.RisebirdHREmail </td>
+                                                    <td> @item.IRFId </td>
+                                                    <td> @item.ClientCompName </td>
+                                                    @if (!string.IsNullOrEmpty(item.JobCountry))
+                                                    {
+                                                        @if (item.JobCountry == "1" || item.JobCountry.ToUpper() == "INDIA")
+                                                        {
+                                                            <td>India</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>OutSide India</td>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @*<td> @item.JobCountry </td>*@
+                                                    <td> @item.BillingOwnerEmailId </td>
 
 
-                                                        </tr>
+                                                </tr>
 
 
                                                     }

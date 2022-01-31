@@ -9,8 +9,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-           
-CREATE PROCEDURE [dbo].[usp_GetIAllDateWiseInterviewMeetings]                  
+
+Create PROCEDURE [dbo].[usp_GetIAllDateWiseInterviewMeetings]                  
 @startDate datetime,              
 @endDate datetime,      
 @EmailId varchar(100)=null      
@@ -25,11 +25,9 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
        
       
  select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,           
-          
   im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, IRF.JobCountry,                     
   im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,         
-  case         
-  when ulc.LastName is null then ulc.FirstName        
+  case when ulc.LastName is null then ulc.FirstName        
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))        
   end as candidateName,        
   im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,                      
@@ -38,7 +36,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,            
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,            
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR,  
-  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse  
+  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport  
   from  InterviewMeetings im                      
   inner join IRF on im.IRFId = IRF.IRFId                      
   left join UserList ulc on im.candidateEmail= ulc.EmailId                    
@@ -70,7 +68,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,            
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,        
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,  
-  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse               
+  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport               
   from InterviewMeetings im                      
   inner join IRF on im.IRFId = IRF.IRFId                      
   left join UserList ulc on im.candidateEmail= ulc.EmailId                    
@@ -103,7 +101,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,            
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,            
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,  
-  ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed ,im.CandidateResponse               
+  ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed ,im.CandidateResponse,im.ProctorReport               
   from InterviewMeetings im                      
   inner join IRF on im.IRFId = IRF.IRFId    
   join SeniorHR sh on sh.Clientid=IRF.ClientId  
@@ -135,7 +133,7 @@ else
   ,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline,            
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,            
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,  
-  ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed  ,im.CandidateResponse              
+  ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed  ,im.CandidateResponse,im.ProctorReport              
   from InterviewMeetings im                      
   inner join IRF on im.IRFId = IRF.IRFId                      
   left join UserList ulc on im.candidateEmail= ulc.EmailId                    
@@ -151,9 +149,7 @@ else
   where interviewDate >= @startDate AND interviewDate < @endDate             
  End                      
                        
-End           
-  
-               
+End    
               
         
 GO

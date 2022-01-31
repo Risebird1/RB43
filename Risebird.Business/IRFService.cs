@@ -530,6 +530,8 @@ namespace Risebird.Business
                 model.OldInterviewerCollection = model.InterviewerCollection;
                 model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
                 model.OldSkillCollection = model.SkillCollection;
+                model.IsQCRequired = IRF.IsQCRequired;
+                model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
                 return model;
 
             }
@@ -2165,6 +2167,18 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public IEnumerable<TransSkill> GetTechSkillswithWeightage(int id)
+        {
+            try
+            {
+                var skills = _irfRepository.GetSkillsbyIRFid(id);
+                return skills;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

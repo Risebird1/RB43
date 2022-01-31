@@ -60,11 +60,11 @@
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
-<script>
+@*<script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
-</script>
+</script>*@
 
 
 @if (ViewBag.PageStatus == "PublicExternal")
@@ -866,7 +866,7 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
-                                    @if (!Model.IsInterviewer)
+                                    @if (!Model.IsInterviewer && Model.IsJoinabilitySelectabilityRequired)
                                     {
                                         <div class="row mb-40">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1715,10 +1715,19 @@
         //items.forEach(function (item) {
         //    totalCount = totalCount + item.val();
         //});
-        var average = totalCount / 4;
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+
+            average = totalCount / 4;
+            SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            SetChartWithoutJoinabilitySelectability();
+        }
+
         $("#OverallScore").val(average);
 
-        SetChart();
     }
 
     $(document).ready(function () {
@@ -1770,10 +1779,17 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
-        var average = totalCount / 4;
-        $("#OverallScore").val(average);
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
 
-        SetChart();
+            average = totalCount / 4;
+            SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            SetChartWithoutJoinabilitySelectability();
+        }
+        $("#OverallScore").val(average);
 
     });
 
@@ -2067,7 +2083,7 @@
 <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
-<script>
+@*<script>
     ; (function () {
 
         "use strict";
@@ -2176,10 +2192,10 @@
         }
 
     })();
-</script>
+</script>*@
 <script>
     if ($("#hidPagestatus").val() == "Mainurl") {
-        setTimeout(openpopUpRating, 30000);
+        setTimeout(openpopUpRating, 5000);
     }
     function closemyRaitingPopup() {
         var modal = document.getElementById("myRaitingPopup");
@@ -2196,7 +2212,10 @@
             data: { 'imid': interviewid },
             success: function (data) {
                 $("#txtratingvalue").val(data.starRating);
+
+                //var decodedComments = $('<div />').html(data.comment).text();
                 $("#txtratingComment").val(data.comment);
+
                 if (data.clientAction == 'Shortlisted') {
                     document.getElementById('rd_shortlistinterviewer').checked = true;
                 } else if (data.clientAction == 'Rejected') {
@@ -2219,6 +2238,9 @@
         var interviewid = $("#txtratinginterviewid").val();
         var ratingvalue = $("#txtratingvalue").val();
         var comments = $("#txtratingComment").val();
+
+        //var encodedComments = $('<div />').text(comments).html();
+
         var clientaction = '';
         if (document.getElementById('rd_shortlistinterviewer').checked) {
             clientaction = 'Shortlisted';
@@ -2231,7 +2253,7 @@
             $.ajax({
                 url: '/RiseTube/SaveRaitingDetails',
                 type: "POST",
-                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments },
+                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction },
                 success: function (data) {
                     swal.fire(data);
                     var modal = document.getElementById("myRaitingPopup");

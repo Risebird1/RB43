@@ -680,6 +680,7 @@ namespace Risebird.Web.Controllers
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
+                        NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         if (IRListModel != null)
                         {
                             GetStatusList(IRListModel, model.irfIntId);
@@ -798,6 +799,7 @@ namespace Risebird.Web.Controllers
                         }
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
+                        NewModel.IsJoinabilitySelectabilityRequired = model.IsJoinabilitySelectabilityRequired;
                         ViewBag.VideoStatus = "Public";
                         //ViewBag.VideoStatus = "Private";
                         var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();

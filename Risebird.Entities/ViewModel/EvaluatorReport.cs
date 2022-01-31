@@ -80,6 +80,8 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("General Skills Score")]
         public double SkillGeneralScore { get; set; }
         public SelectList LevelTech { get; set; }
+        public bool IsJoinabilitySelectabilityRequired { get; set; }
+
 
     }
 }

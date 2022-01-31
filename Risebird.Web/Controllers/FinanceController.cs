@@ -865,9 +865,16 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
-
-                                    Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                                    Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5)
+                                    {
+                                        Sheet.Cells[i, 11].Value = "Unassign Meeting within 1/2 hr";
+                                        Sheet.Cells[i, 12].Value = "";
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                        Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    }
                                     if (!string.IsNullOrEmpty(item.VideoLink))
                                     {
                                         try
@@ -1037,8 +1044,16 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
-                                    Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
-                                    Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5)
+                                    {
+                                        Sheet.Cells[i, 11].Value = "Unassign Meeting within 1/2 hr";
+                                        Sheet.Cells[i, 12].Value = "";
+                                    }
+                                    else
+                                    {
+                                        Sheet.Cells[i, 11].Value = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
+                                        Sheet.Cells[i, 12].Value = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
+                                    }
                                     if (!string.IsNullOrEmpty(item.VideoLink))
                                     {
                                         try
