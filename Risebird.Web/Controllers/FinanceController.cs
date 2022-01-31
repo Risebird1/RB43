@@ -865,7 +865,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
-                                    if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5)
+                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5)
                                     {
                                         Sheet.Cells[i, 11].Value = "Unassign Meeting within 1/2 hr";
                                         Sheet.Cells[i, 12].Value = "";
@@ -1044,7 +1044,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         Sheet.Cells[i, 10].Value = item.PreferredLocation;
                                     }
-                                    if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5)
+                                    if (item.Comment.Contains("Penalty") && item.MeetingStatus != 5)
                                     {
                                         Sheet.Cells[i, 11].Value = "Unassign Meeting within 1/2 hr";
                                         Sheet.Cells[i, 12].Value = "";
