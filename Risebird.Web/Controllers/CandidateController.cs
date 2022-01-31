@@ -3637,6 +3637,17 @@ namespace Risebird.Web.Controllers
                             candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                         }
                     }
+                    if (firstData.confirmationStatus != 2)
+                    {
+                        if (firstData.interviewDate < DateTime.Now && firstData.CurrentMeetingStatus == 2)
+                        {
+                            candidateTimeline.CurrentStatus = "Status Pending";
+                        }
+                        else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
+                        {
+                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                        }
+                    }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
                     {
@@ -3744,6 +3755,17 @@ namespace Risebird.Web.Controllers
                         if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
                         {
                             candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
+                    }
+                    if (firstData.confirmationStatus != 2)
+                    {
+                        if (firstData.interviewDate < DateTime.Now && firstData.CurrentMeetingStatus == 2)
+                        {
+                            candidateTimeline.CurrentStatus = "Status Pending";
+                        }
+                        else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
+                        {
+                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
