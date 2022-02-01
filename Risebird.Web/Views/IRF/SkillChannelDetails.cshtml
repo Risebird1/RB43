@@ -200,7 +200,7 @@
                                                     {
 
                                                 <tr>
-                                                    @if (!string(item.JDTiltle))
+                                                    @if (!string.IsNullOrEmpty(item.JDTiltle))
                                                     {
                                                         <td> @item.JDTiltle.Split('|')[0] </td>
                                                     }
