@@ -2100,7 +2100,34 @@ namespace Risebird.Business
         {
             try
             {
-                return await _irfRepository.GetAllIRFDetails(startDate, endDate);
+                var irfList = await _irfRepository.GetAllIRFDetails(startDate, endDate);
+                foreach (var irf in irfList)
+                {
+                    int diff = (irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings - irf.CandidateCount);
+                    
+                    if(diff > 0)
+                    {
+                        irf.ReScheduledCount = irf.ReScheduledCount - diff;
+                        if(irf.ReScheduledCount < 0)
+                        {
+                            irf.ReScheduledCount = 0;
+                        }
+                    }
+                    if((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.NotScheduledCount) != irf.CandidateCount)
+                    {
+                        int totalDiff = irf.CandidateCount - (irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.NotScheduledCount);
+
+                        if (totalDiff > 0)
+                        {
+                            irf.NotScheduledCount = irf.NotScheduledCount + totalDiff;
+                        }
+                    }
+                    if(irf.CandidateCount > 0)
+                    {
+                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings) * 100 ) / irf.CandidateCount;
+                    }
+                }
+                return irfList;
             }
 
             catch (Exception e)

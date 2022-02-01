@@ -11,19 +11,41 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create Function fn_IsCandidateRejected(@candidateEmail varchar(150), @irfId varchar(100), @startDate datetime)
+Create Function fn_IsCandidateRejected(@userId int, @irfId int, @startDate date)
 Returns bit
 as
 Begin
 
-declare @isRejected bit
-set @isRejected=0
+declare @candidateEmail varchar(150), @irfName varchar(150), @resultId int
 
-if exists(select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId = im.id    
- where im.candidateEmail=@candidateEmail and im.IRFId =@irfId and im.confirmationStatus=1 and ic.InterviewStatus= 3 and im.interviewDate >= @startDate)
+set @candidateEmail = (select EmailId from UserList where id = @userId)
+set @irfName = (select IRFId from IRF where id = @irfId)
+
+set @resultId = 0
+
+set @resultId = (select top 1 im.id 
+from InterviewMeetings im 
+join InterviewComments ic on im.id=ic.InterviewId 
+where im.candidateEmail=@candidateEmail and im.IRFId = @irfName 
+and cast(im.interviewDate as date) >= @startDate and ic.InterviewStatus =3 
+and im.confirmationStatus=1
+order by im.interviewDate desc)
+
+declare @isRejected bit
+
+if(@resultId>0)
 begin
 	set @isRejected=1
 end
- return @isRejected
+else
+begin
+	set @isRejected=0
+end
+return @isRejected
 
-End
+end
+
+
+
+
+
