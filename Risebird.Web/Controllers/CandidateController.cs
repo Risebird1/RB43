@@ -3609,7 +3609,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     //candidateTimeline.staffingAgency = firstData.staffingAgency;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
-
+                   
                     //schedule status
                     var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
@@ -3638,8 +3638,11 @@ namespace Risebird.Web.Controllers
                     {
                         if (firstData.interviewDate < DateTime.Now && firstData.CurrentMeetingStatus == 2)
                         {
-                            firstData.CurrentStatus = "Status Pending";
-
+                            candidateTimeline.CurrentStatus = "Status Pending";
+                        }
+                        else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
+                        {
+                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
@@ -3746,6 +3749,17 @@ namespace Risebird.Web.Controllers
                         if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
                         {
                             candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
+                        }
+                    }
+                    if (firstData.confirmationStatus != 2)
+                    {
+                        if (firstData.interviewDate < DateTime.Now && firstData.CurrentMeetingStatus == 2)
+                        {
+                            candidateTimeline.CurrentStatus = "Status Pending";
+                        }
+                        else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
+                        {
+                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
