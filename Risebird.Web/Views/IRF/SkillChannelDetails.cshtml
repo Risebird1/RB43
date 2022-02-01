@@ -152,6 +152,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>JD Title</th>
+                                                    <th>Flags</th>
                                                     <th>Total Candidates</th>
                                                     <th>Scheduled(%)</th>
                                                     <th>Completed Interviews</th>
@@ -173,6 +174,7 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>JD Title</th>
+                                                    <th>Flags</th>
                                                     <th>Total Candidates</th>
                                                     <th>Scheduled(%)</th>
                                                     <th>Completed Interviews</th>
@@ -198,7 +200,15 @@
                                                     {
 
                                                 <tr>
-                                                    <td> @item.JDTiltle.Split('|')[0] </td>
+                                                    @if (!string(item.JDTiltle))
+                                                    {
+                                                        <td> @item.JDTiltle.Split('|')[0] </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td></td>
                                                     <td> @item.CandidateCount </td>
                                                     @if (item.ScheduledPercentage > 0)
                                                     {
