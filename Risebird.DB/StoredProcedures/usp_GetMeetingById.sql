@@ -67,6 +67,7 @@ SELECT [InterviewMeetings].id as imid
   ,InterviewMeetings.ProctorReport
   ,ca.IsProctor
   ,ipr.NickName
+  ,ti.ClientAction
 FROM [dbo].[InterviewMeetings]  
 inner join   
 IRF on [InterviewMeetings].IRFId = IRF.IRFId  
@@ -77,10 +78,14 @@ join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 join UserList ulh on irf.RisebirdHr = ulh.id 
 left join UserList uli on uli.EmailId = InterviewMeetings.interviewer
 left join InterviewerProfile ipr on ipr.UserId =uli.id
+left join TransInterviewer ti on ti.IRFId=IRF.id and ti.UserId=uli.id
 WHERE  
       [InterviewMeetings].id = @interviewId  
   
 End  
+
+
+
   
   
 

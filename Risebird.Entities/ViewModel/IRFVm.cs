@@ -247,6 +247,7 @@ namespace Risebird.Entities.ViewModel
         public int FutureScheduledMeetings { get; set; }
         public bool IsQCRequired { get; set; }
         public bool IsJoinabilitySelectabilityRequired { get; set; }
+        public float ScheduledPercentage { get; set; }
 
     }
     public class SkillCahnnelDetailsVM
