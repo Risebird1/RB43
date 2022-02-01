@@ -3614,7 +3614,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     //candidateTimeline.staffingAgency = firstData.staffingAgency;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
-
+                   
                     //schedule status
 
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
