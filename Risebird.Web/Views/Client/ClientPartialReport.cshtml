@@ -61,10 +61,10 @@
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 @*<script>
-    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
-    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
-    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
-</script>*@
+        amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+        amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+        amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+    </script>*@
 
 
 @if (ViewBag.PageStatus == "PublicExternal")
@@ -217,14 +217,28 @@
                                             }
 
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                <div class="form-group">
-                                                    @Html.Label("Interviewer Coded Name", "Interviewer Coded Name", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.NickName, new { @class = "form-control  text-box single-line", @readonly = "readonly" })
+                                        @if (Model.ClientAction == "Shortlisted")
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.Label("Interviewer Coded Name", "Interviewer Coded Name", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.NickName, new { @class = "form-control  text-box single-line", @readonly = "readonly", @style = "background-color:green" })
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        @Html.Label("Interviewer Coded Name", "Interviewer Coded Name", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.NickName, new { @class = "form-control  text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                                 <div class="row">
@@ -238,9 +252,9 @@
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6 border-rv">
                                             @*<div class="form-group">
-                        @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                    </div>*@
+                                                    @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>*@
                                             <div class="form-group">
                                                 @Html.HiddenFor(m => m.PreviousMeetingStatus)
                                                 @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -338,138 +352,138 @@
                                 </div>
 
                                 @*@if (ViewBag.Profile != "Interviewer")
-        {
+                                    {
 
 
-            <div class="row">
+                                        <div class="row">
 
-                <div class="col-md-6 col-sm-6">
+                                            <div class="col-md-6 col-sm-6">
 
-                    <div class="card">
+                                                <div class="card">
 
-                        <div class="mdc-card-wrapper__text-section">
-                            <div class="choose-file ">
-                                <label class="file-lable"> Upload Video File</label>
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="file-lable"> Upload Video File</label>
 
 
 
-                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                    <div class="mdc-radio mdc-radio--touch">
-                                        <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
-                                        <div class="mdc-radio__background">
-                                            <div class="mdc-radio__outer-circle"></div>
-                                            <div class="mdc-radio__inner-circle"></div>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+
+                                                            Add a link
+
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+
+
+
+
+
+
+
+                                                            <div class="" style="display:none" id="linkDiv">
+                                                                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                            <div class="" id="uploadDiv">
+                                                                @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                                @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
+
+
+                                                                <div class="mtop-15">
+                                                                    @{
+                                                                        if (Model.VideoLink != null)
+                                                                        {
+                                                                            <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.ThumbnailTimeSeconds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(model => model.ThumbnailTimeSeconds, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                                </div>
+
+                                            </div>
                                         </div>
-                                        <div class="mdc-radio__ripple"></div>
-                                    </div>
-                                </div>
-
-                                Add a link
-
-                                <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                    <div class="mdc-radio mdc-radio--touch">
-                                        <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                        <div class="mdc-radio__background">
-                                            <div class="mdc-radio__outer-circle"></div>
-                                            <div class="mdc-radio__inner-circle"></div>
-                                        </div>
-                                        <div class="mdc-radio__ripple"></div>
-                                    </div>
-                                </div>
-
-
-
-
-
-
-
-                                <div class="" style="display:none" id="linkDiv">
-                                    @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                    @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                </div>
-
-                                <div class="" id="uploadDiv">
-                                    @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                    @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
-
-
-                                    <div class="mtop-15">
-                                        @{
-                                            if (Model.VideoLink != null)
-                                            {
-                                                <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
-                                            }
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-6 col-sm-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.ThumbnailTimeSeconds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(model => model.ThumbnailTimeSeconds, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
-                    </div>
-
-                </div>
-            </div>
-        }*@
+                                    }*@
 
                                 @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Record Feedback Audio</h2>
-                </div>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Record Feedback Audio</h2>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="row">
 
 
-                    <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+                                                <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
 
 
-                        <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
-                        <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId','@((int)CandidateTypeEnum.Candidate)')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
-                        <div class="pull-left">
-                            <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                <p style="font-size:18px" id="recordingStatus"></p>
-                            </div>
-                        </div>
-                        <div class="row" id="recordingRow" style="display:none">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                    <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
+                                                    <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId','@((int)CandidateTypeEnum.Candidate)')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
+                                                    <div class="pull-left">
+                                                        <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                            <p style="font-size:18px" id="recordingStatus"></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" id="recordingRow" style="display:none">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
 
-                                <div id="recordingsList"></div>
-                            </div>
+                                                            <div id="recordingsList"></div>
+                                                        </div>
 
-                        </div>
-                        <div class="row">
-                            <input type="text" asp-for="FeedbackAudioLink" style="display:none">
-                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <input type="text" asp-for="FeedbackAudioLink" style="display:none">
+                                                    </div>
 
-                    </div>
-
-
-
-
-
-                </div>
-
-            </div>
+                                                </div>
 
 
 
-        </div>*@
+
+
+                                            </div>
+
+                                        </div>
+
+
+
+                                    </div>*@
 
                                 <div id="playUploadedAudioOne">
                                     @if (Model.FeedbackAudioLink != null)
@@ -601,7 +615,7 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
-                                   
+
                                 }
                                 @if (ViewBag.PageReport != "Insta")
                                 {
@@ -2084,115 +2098,115 @@
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 @*<script>
-    ; (function () {
+        ; (function () {
 
-        "use strict";
+            "use strict";
 
-        var words = document.getElementById("words"),
-            input = document.getElementById("text, interviewerComment,skillComment, joinability, selectability"),
-            timeout, xhr;
+            var words = document.getElementById("words"),
+                input = document.getElementById("text, interviewerComment,skillComment, joinability, selectability"),
+                timeout, xhr;
 
-        input.addEventListener("keyup", function (e) {
+            input.addEventListener("keyup", function (e) {
 
-            if (timeout) clearTimeout(timeout);
+                if (timeout) clearTimeout(timeout);
 
-            if (!this.value.trim()) words.innerHTML = '';
+                if (!this.value.trim()) words.innerHTML = '';
 
-            timeout = setTimeout(function () {
+                timeout = setTimeout(function () {
 
-                var test_phrase = shuffle_words(input.value);
+                    var test_phrase = shuffle_words(input.value);
 
-                spell_check(test_phrase);
+                    spell_check(test_phrase);
 
-                timeout = null;
+                    timeout = null;
 
-            }, 500);
+                }, 500);
 
-        });
-
-        function shuffle_words(inp) {
-
-            inp = inp.replace(/\s+/g, ' ');
-
-            var arr = inp.split(" "),
-                n = arr.length;
-
-            while (n > 0) {
-                var i = Math.floor(Math.random() * n--),
-                    t = arr[n];
-                arr[n] = arr[i];
-                arr[i] = t;
-            }
-
-            return arr.join(' ');
-        }
-
-        function spell_check(text) {
-
-            if (xhr) xhr.abort();
-
-            xhr = $.ajax({
-                url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
-                headers: {
-                    'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
-                    'Accept': 'application/json'
-                },
-                data: {
-                    'text': text
-                },
-                cache: false,
-                success: function (result) {
-
-                    xhr = null;
-                    suggest_words(result);
-
-                }
             });
 
-        }
+            function shuffle_words(inp) {
 
-        function suggest_words(obj) {
+                inp = inp.replace(/\s+/g, ' ');
 
-            if (!obj.corrections) return;
+                var arr = inp.split(" "),
+                    n = arr.length;
 
-            words.innerHTML = '';
+                while (n > 0) {
+                    var i = Math.floor(Math.random() * n--),
+                        t = arr[n];
+                    arr[n] = arr[i];
+                    arr[i] = t;
+                }
 
-            for (var key in obj.corrections) {
+                return arr.join(' ');
+            }
 
-                if (obj.corrections.hasOwnProperty(key)) {
+            function spell_check(text) {
 
-                    var div = document.createElement("div");
-                    div.className = "word";
-                    div.innerHTML = obj.corrections[key][0];
-                    div.orig = key;
+                if (xhr) xhr.abort();
 
-                    div.onmouseover = function () {
-                        var start = input.value.indexOf(this.orig);
-                        input.selectionStart = start;
-                        input.selectionEnd = start + this.orig.length;
-                    };
+                xhr = $.ajax({
+                    url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                    headers: {
+                        'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                        'Accept': 'application/json'
+                    },
+                    data: {
+                        'text': text
+                    },
+                    cache: false,
+                    success: function (result) {
 
-                    div.onmouseout = function () {
-                        var len = input.value.length;
-                        input.selectionStart = len;
-                        input.selectionEnd = len;
+                        xhr = null;
+                        suggest_words(result);
+
                     }
+                });
 
-                    div.onclick = function () {
-                        input.value = input.value.replace(this.orig, this.innerHTML);
-                        this.parentNode.removeChild(this);
+            }
+
+            function suggest_words(obj) {
+
+                if (!obj.corrections) return;
+
+                words.innerHTML = '';
+
+                for (var key in obj.corrections) {
+
+                    if (obj.corrections.hasOwnProperty(key)) {
+
+                        var div = document.createElement("div");
+                        div.className = "word";
+                        div.innerHTML = obj.corrections[key][0];
+                        div.orig = key;
+
+                        div.onmouseover = function () {
+                            var start = input.value.indexOf(this.orig);
+                            input.selectionStart = start;
+                            input.selectionEnd = start + this.orig.length;
+                        };
+
+                        div.onmouseout = function () {
+                            var len = input.value.length;
+                            input.selectionStart = len;
+                            input.selectionEnd = len;
+                        }
+
+                        div.onclick = function () {
+                            input.value = input.value.replace(this.orig, this.innerHTML);
+                            this.parentNode.removeChild(this);
+                        }
+
+                        words.appendChild(div);
+
                     }
-
-                    words.appendChild(div);
 
                 }
 
             }
 
-        }
-
-    })();
-</script>*@
+        })();
+    </script>*@
 <script>
     if ($("#hidPagestatus").val() == "Mainurl") {
         setTimeout(openpopUpRating, 30000);

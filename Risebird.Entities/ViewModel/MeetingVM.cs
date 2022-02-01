@@ -274,6 +274,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsJoinabilitySelectabilityRequired { get; set; }
         public string ProctorReport { get; set; }
         public bool IsProctor { get; set; }
+        public string Cancellationsource { get; set; }
+        public string ClientAction { get; set; }
     }
     public class VedioComments
     {

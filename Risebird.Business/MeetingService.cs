@@ -1267,6 +1267,7 @@ namespace Risebird.Business
                 reportModel.ProctorReport = interviewDetails.ProctorReport;
                 reportModel.IsProctor = interviewDetails.IsProctor;
                 reportModel.NickName = interviewDetails.NickName;
+                reportModel.ClientAction = interviewDetails.ClientAction;
                 if (reportModel.IsEdited)
                 {
                     reportModel.OldInterviewerComment = reportModel.InterviewerComment;
