@@ -152,7 +152,9 @@
                                             <thead>
                                                 <tr>
                                                     <th>JD Title</th>
+                                                    <th>Flags</th>
                                                     <th>Total Candidates</th>
+                                                    <th>Scheduled(%)</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
@@ -172,7 +174,9 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>JD Title</th>
+                                                    <th>Flags</th>
                                                     <th>Total Candidates</th>
+                                                    <th>Scheduled(%)</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
@@ -196,8 +200,24 @@
                                                     {
 
                                                 <tr>
-                                                    <td> @item.JDTiltle.Split('|')[0] </td>
+                                                    @if (!string.IsNullOrEmpty(item.JDTiltle))
+                                                    {
+                                                        <td> @item.JDTiltle.Split('|')[0] </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td></td>
                                                     <td> @item.CandidateCount </td>
+                                                    @if (item.ScheduledPercentage > 0)
+                                                    {
+                                                        <td> @item.ScheduledPercentage </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
                                                     <td> @item.CompletedInterviews </td>
                                                     <td> @item.SelectedMeetings </td>
                                                     <td> @item.RejectedMeetings </td>
