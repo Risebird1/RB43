@@ -341,6 +341,7 @@ namespace Risebird.Entities.ViewModel
         public string ProctorReport { get; set; }
         public bool IsProctor { get; set; }
         public string NickName { get; set; }
+        public string ClientAction { get; set; }
         
     }
     public class RBInterviewDetails
