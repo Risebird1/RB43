@@ -14,15 +14,17 @@ body {
 }
 
 #videoId {
-  /*  background: #cbe0f5;*/
+    /*  background: #cbe0f5;*/
     color: #5097de;
 }
+
 .client #reportId, .client #reportId:hover {
     background: #fff;
     border: 1px #8eb7e0 solid;
     text-decoration: none;
     color: #007bff!important;
 }
+
 .clickhere_btn {
     color: #2970bbb8 !important;
     background: #54a5f500;
@@ -30,7 +32,7 @@ body {
     border-radius: 5px;
     font-weight: bold;
     padding: 3px 15px;
-    margin:0px 10px;
+    margin: 0px 10px;
     text-transform: uppercase;
     box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
 }
@@ -46,9 +48,11 @@ body {
         text-transform: uppercase;
         box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
     }
+
 .client .table-bordered td {
     border-right: 1px solid #dee2e6 !important;
 }
+
 .can-details a, .callatag {
     background: #e2f0ff;
     color: #007bff !important;
@@ -58,12 +62,14 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
+
 .report-full-wrap #videoId {
     background: #fff;
     font-size: 12px;
     padding: 1px 7px;
     margin: 0px 10px;
 }
+
 .Fnactive-header-button {
     background-color: #204065 !important;
     color: #fff !important;
@@ -304,15 +310,19 @@ input [type='radio']:checked:after {
 .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
     background: #2CA8FF;
 }
+
 #calender h4 {
     color: #173457;
 }
+
 #calender #current-day {
     background: #218eff !important;
 }
+
 #calender .weekday {
     color: #4a8eff;
 }
+
 .txttimezone-con {
     color: #13344c;
     background: #cadbf9;
@@ -342,15 +352,18 @@ input [type='radio']:checked:after {
     color: #56a9ff !important;
     cursor: pointer !important;
 }
+
 .time-btn {
     border: 1px solid #56a9ff !important;
     color: #218eff;
     left: 30px;
     background: none !important;
 }
+
     .time-btn:hover {
         border: 2px solid #56a9ff !important;
     }
+
 .filavatar {
     background: #42a5f5 !important;
 }
@@ -366,6 +379,7 @@ input [type='radio']:checked:after {
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }
+
 #myStatusListpopup .table-bordered td {
     border: 1px solid #dee2e6;
     BACKGROUND: #FFF;
@@ -377,6 +391,7 @@ textarea::-webkit-scrollbar {
         background: #fff;
         border: 1px solid #dee2e6;
     }
+
 .assessment h1 {
     color: #1d3b5f !important
 }
@@ -557,7 +572,7 @@ textarea::-webkit-scrollbar-thumb {
     background-size: 5% !important;
 }
 .form-field-calender input.form-control[type="datetime-local"]::-webkit-calendar-picker-indicator {
-    display:none;
+    display: none;
 }
 .form-field-calender input.form-control[type="datetime-local"] {
     background: #fff url(../img/blue-timdate.png) 96% 45% no-repeat !important;
@@ -856,7 +871,7 @@ textarea::-webkit-scrollbar-thumb {
 .trash-btn {
     background: #d20505 !important;
 }
-    .image-upload label {
+.image-upload label {
     background-color: #fff;
     color: #54a5f5;
     padding: 0 0.3rem !important;
@@ -1028,6 +1043,7 @@ table {
         width: 33.3%;
         float: left;
     }
+
     .align-r {
         text-align: left!important;
     }

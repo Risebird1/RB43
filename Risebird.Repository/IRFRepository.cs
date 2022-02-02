@@ -424,7 +424,7 @@ namespace Risebird.Repository
                     parameters.Add("@EmailId", emailID);
                     parameters.Add("@Profile", profileName);
                     parameters.Add("@timeNow", DateTime.Now);
-                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters,
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                 }
 

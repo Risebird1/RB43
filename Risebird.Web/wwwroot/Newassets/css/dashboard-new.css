@@ -1,6 +1,4 @@
-﻿
-
-/* CSS Document */
+﻿/* CSS Document */
 @charset "UTF-8";
 
 
@@ -75,13 +73,19 @@ body {
 .laptop-view {
     display: none;
 }
-.w60{
-    width:60%;
-    float:left;
+
+.w60 {
+    width: 60%;
+    float: left;
 }
+
 .w40 {
     width: 40%;
     float: left;
+}
+
+.rightpad {
+    padding-right: 7px;
 }
 .mtop50{
    margin-top:50px;
@@ -117,26 +121,33 @@ body {
 #divvideodetailsmodel .table > tbody > tr > th {
     padding: 4px 5px !important;
 }
+
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     /*   background: #fff!important;*/
 }
 
-#tab-1 .form-group input.form-control.text-box.single-line{margin-top:5px!important;}
+#tab-1 .form-group input.form-control.text-box.single-line {
+    margin-top: 5px!important;
+}
+
 .irf-radiowrap {
     padding: 25px 10px 0px 10px;
     float: left;
 }
 
-.survey .table > tbody > tr > td{
-    vertical-align:top;
-    padding:25px 5px 5px 5px!important;
+.survey .table > tbody > tr > td {
+    vertical-align: top;
+    padding: 25px 5px 5px 5px!important;
 }
+
 .survey .cadName [data-tooltip]:after {
     left: 60%!important;
 }
+
 .selectedmeeting .candidate-details .mtop-5 [data-tooltip]:before {
     margin-left: 0px!important;
 }
+
 .jdfile-error {
     bottom: -20px !important;
     color: #E04B4A !important;
@@ -145,6 +156,7 @@ input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     position: absolute;
     left: 20px;
 }
+
 .interviewer a.info span:before {
     content: '';
     width: 0;
@@ -196,6 +208,7 @@ input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     opacity: 1;
     z-index: 1000;
 }
+
 a.infos {
     width: 30px;
     height: 43px;
@@ -247,6 +260,7 @@ a.infos {
         opacity: 1;
         z-index: 1000;
     }
+
 .InvoiceDetails #search {
     right: 55px!important;
 }
@@ -258,23 +272,28 @@ a.infos {
 #dupmeeting_filter #trigger-update {
     right: 22px !important;
 }
+
 .InvoiceDetails .multiselect.btn {
     padding: 10px 15px;
 }
+
 .border-rv {
     border-right: 1px dotted #ccc;
 }
-    .interviewer .multiselect.btn {
+
+.interviewer .multiselect.btn {
     padding: 10px 15px;
     margin: 10px 1px 0px 1px;
     background: #fff !important;
 }
+
 .interviewer .multiselect.dropdown-toggle:after {
     color: #9a9a9a !important;
     position: relative;
     left: 95px;
     top: 2px;
 }
+
 .time-left-txt {
     position: relative;
     top: 9px;
@@ -322,23 +341,26 @@ a.infos {
 #scoreChart tspan {
     font-size: 12px;
 }
-#memberTableBody .table > tbody > tr > td{
-padding:5px;
+
+#memberTableBody .table > tbody > tr > td {
+    padding: 5px;
 }
 
 #memberTableBody .table-striped tbody tr > td:hover, #memberTableBody .table-striped tbody tr:hover {
     box-shadow: none !important;
 }
-    .scheduling .statusInfo {
-        max-width: 100%;
-        padding: 0px 10px;
-        flex: 0 0 100%;
-        float: none;
-    }
+
+.scheduling .statusInfo {
+    max-width: 100%;
+    padding: 0px 10px;
+    flex: 0 0 100%;
+    float: none;
+}
+
 #interviewer blockquote {
     border: 0px solid #DDD;
-   /* padding: 0.5em 1em 0.5em 1em;*/
-   padding:0px;
+    /* padding: 0.5em 1em 0.5em 1em;*/
+    padding: 0px;
     border-radius: 0.2em;
     position: relative;
     -webkit-box-flex: 1;
@@ -349,9 +371,8 @@ padding:5px;
     -ms-flex: 1;
     flex: 1;
     font-size: 12px;
-   
-  
 }
+
     #interviewer blockquote p {
         font-size: 15px;
         text-indent: 0em;
@@ -380,16 +401,18 @@ padding:5px;
 table tr td:hover, .table-striped tbody tr:hover {
     box-shadow: 3px 4px 8px 2px rgb(0 0 0 / 5%), 0 6px 20px 0 rgb(0 0 0 / 19%);
 }
+
 table tr td.relatedvideo:hover {
-    box-shadow:none!important;
+    box-shadow: none!important;
 }
-    .fa-clock:before {
-        content: "\f017";
-        position: absolute;
-        left: 2px;
-        font-weight: 500;
-        font-size: 17px;
-    }
+
+.fa-clock:before {
+    content: "\f017";
+    position: absolute;
+    left: 2px;
+    font-weight: 500;
+    font-size: 17px;
+}
 
 .nav .fa-user:before {
     content: "\f007";
@@ -654,9 +677,11 @@ table tr td.relatedvideo:hover {
     bottom: 130px !important;
     right: -400% !important;
 }
-.client .candidate-details .mtop-5 strong{
-line-height:25px;
+
+.client .candidate-details .mtop-5 strong {
+    line-height: 25px;
 }
+
 .jumbotron {
     background: none !important;
     margin: 0px !important;
@@ -751,11 +776,13 @@ line-height:25px;
             border-bottom: 0;
             font-size: 18px;
         }
+
 .tab-checkbox {
     position: relative;
     top: 4px;
     left: -10px;
 }
+
 .interviewer .recommendation .multiselect .multiselect-selected-text {
     width: 98%;
     text-align: left;
@@ -1557,6 +1584,7 @@ audio {
 .availbg td {
     border: 0px;
 }
+
 .commonpool .available {
     width: 60px;
     margin: 0px;
@@ -1883,8 +1911,9 @@ audio {
 table.journey td.cadName, table.journey td.cadEmail {
     max-width: 195px;
 }
+
 .candidate .journey td.cadEmail {
- width:17%;
+    width: 17%;
 }
 
 table.journey td.cadSkill {
@@ -2838,10 +2867,15 @@ table.journey td.cadSkill {
 .interviewer .cadName [data-tooltip]:before {
     margin-left: -25px;
 }
-.show{display:block;}
+
+.show {
+    display: block;
+}
+
 .hide {
     display: none;
 }
+
 #tblbodyCandidate .action .mdc-fab {
     width: 29px !important;
     height: 30px !important;
@@ -2858,14 +2892,17 @@ table.journey td.cadSkill {
         top: -2px;
         margin: 0px 7px 0px 3px;
     }
+
 .single-video-left .video-title [data-tooltip] {
     top: 0px;
 }
+
 .video-title [data-tooltip]:before {
-    bottom: 150%!important;
+    bottom: 150% !important;
 }
+
 .video-title [data-tooltip]:after {
-    bottom: 138%!important;
+    bottom: 138% !important;
 }
 
 .side-player .video-title [data-tooltip]:after {
@@ -5090,7 +5127,11 @@ textarea.form-control {
 #SkillTable .interviewer .star-rating {
     width: 320px;
 }
-.survey .interviewer .star-rating{width:165px;}
+
+.survey .interviewer .star-rating {
+    width: 165px;
+}
+
 .sample-btn .fa-trash:before {
     line-height: 29px;
 }
@@ -5370,13 +5411,16 @@ button .btn {
     width: 30px !important;
     height: 30px !important;
 }
-.custom-file .custom-file-label{
-    line-height:27px;
+
+.custom-file .custom-file-label {
+    line-height: 27px;
 }
+
 .custom-file .custom-file-input {
     border-bottom: 0 px;
     box-shadow: none !important;
 }
+
 .notschedulemeeting div.dataTables_wrapper div.dataTables_filter label, .survey div.dataTables_wrapper div.dataTables_filter label, .candidate-timeline div.dataTables_wrapper div.dataTables_filter label, .candidate_resume div.dataTables_wrapper div.dataTables_filter label {
     position: relative;
 }
@@ -5473,10 +5517,12 @@ input[type="date"].form-control {
     width: 200px;
     margin: 0px auto !important;
 }
+
 .radio-top {
     position: relative;
     top: 5px;
 }
+
 #reportForm table tr td:hover, #candidateForm table tr td:hover {
     box-shadow: none !important
 }
@@ -5554,6 +5600,7 @@ input[type="date"].form-control {
     height: 39px !important;
     padding: 9px 10px 9px 10px;
 }
+
 .leadinterviewer #search {
     right: 50px;
 }
@@ -5561,9 +5608,11 @@ input[type="date"].form-control {
 .leadinterviewer #search {
     right: 50px;
 }
+
 .leadinterviewer .ref-btn {
     right: 30px;
 }
+
 .notschedulemeeting #search, .survey #search, .candidate-timeline #search, .candidate_resume #search, .unassigned-int #search {
     right: 60px;
     z-index: 0;
@@ -5874,19 +5923,23 @@ input[type="date"].form-control {
     .single-video-left .video-title [data-tooltip] {
         top: 15px;
     }
+
     .single-video-left .join-time {
         width: 125px;
     }
-        .video-title .candidate {
+
+    .video-title .candidate {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: inline-block;
     }
+
     .laptop-view {
         display: block !important;
         height: 5px;
     }
+
     .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
         width: 36%
     }
@@ -5917,7 +5970,7 @@ input[type="date"].form-control {
         top: 7px;
         position: relative;
     }
-  
+
     .rbpay .modal .form-control {
         height: 40px;
         border: 0px;
@@ -5979,21 +6032,26 @@ input[type="date"].form-control {
         top: 7px;
         position: relative;
     }
-    .hremail{width:260px!important}
+
+    .hremail {
+        width: 260px !important
+    }
+
     .join-time {
         width: 160px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: inline-block;
-
     }
+
     .info-detail {
-        font-size: 14px!important;
+        font-size: 14px !important;
         position: relative;
         top: -24px;
         right: -10px
     }
+
     .commonpool .join-time {
         width: 95px !important;
         top: 0px !important;
@@ -6002,6 +6060,7 @@ input[type="date"].form-control {
         text-overflow: ellipsis;
         display: inline-block;
     }
+
     .single-video-left .join-time {
         top: -1px !important;
     }
@@ -6069,18 +6128,22 @@ input[type="date"].form-control {
         width: 285px !important;
         height: 160px !important;
     }
+
     .select-selected {
         padding: 6px 6px !important;
     }
-        #calenderTimeslot {
+
+    #calenderTimeslot {
         width: 180px !important;
         height: auto !important;
     }
+
     .support .divider-rm {
         position: relative;
         left: -75px;
         top: 2px;
     }
+
     #calender h4 {
         font-size: 19px !important;
     }
@@ -6090,7 +6153,7 @@ input[type="date"].form-control {
     }
 
     .txttimezone-con {
-         background: #dbdbdb8c;
+        background: #dbdbdb8c;
         width: 100%!important;
         display: block !important;
         margin: 10px auto 20px auto !important;
@@ -6442,12 +6505,17 @@ input[type="date"].form-control {
         max-width: 300px;
     }
 }
+
 @media only screen and (max-width:991px) {
     .tabCon .tab-main-box {
         padding: 20px 10px;
         margin-bottom: 10px;
     }
-    .support .divider-rm{display:none;}
+
+    .support .divider-rm {
+        display: none;
+    }
+
     .mob_h {
         width: 63% !important
     }
@@ -6537,23 +6605,29 @@ input[type="date"].form-control {
 
     .w60 {
         width: 55%;
-        float:left;
+        float: left;
     }
 
     .w40 {
         width: 45%;
-       float:right;
+        float: right;
     }
-    #calenderTimeslot{left:20px;}
+
+    #calenderTimeslot {
+        left: 20px;
+    }
+
     .event .calendar-con {
         min-width: 90% !important;
         max-width: 90% !important;
         margin: 40px auto 40px auto;
         padding: 20px 20px !important;
     }
+
     .candidate .journey td.cadEmail {
         width: 130px!important;
     }
+
     .filter-note {
         right: 15%
     }
@@ -6812,9 +6886,9 @@ input[type="date"].form-control {
     }
 }
 @media (max-width: 767px) {
-    #clientduser li{
-        width:100%;
-        float:left;
+    #clientduser li {
+        width: 100%;
+        float: left;
     }
     #userProfileForm .avatar-upload {
         margin: 0px auto !important;
@@ -6824,27 +6898,37 @@ input[type="date"].form-control {
         padding: 0px 5px 0px 5px;
         float: left;
     }
-        #clientduser li:nth-child(5) .dtr-title {
-            float:left;
-        }
-        #clientduser li:nth-child(5) .dtr-data {
-            float: left;
-        }
-        .action-btn {
+
+    #clientduser li:nth-child(5) .dtr-title {
+        float: left;
+    }
+
+    #clientduser li:nth-child(5) .dtr-data {
+        float: left;
+    }
+
+    .action-btn {
         width: 100px;
         margin: 0px auto;
     }
+
     .candidate .journey td.cadEmail {
         width: 130px!important;
     }
+
     .scheduling .action {
         position: inherit;
     }
-    .custom-select{font-size:12px!important;}
+
+    .custom-select {
+        font-size: 12px!important;
+    }
+
     .select-selected {
         padding: 6px 0px !important;
     }
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         width: 350px !important;
         height: 200px !important;
     }
@@ -7099,27 +7183,34 @@ input[type="date"].form-control {
 }
 
 @media (max-width: 480px) {
-  
-   
+
+
     #scoreChart tspan {
         font-size: 11.5px;
     }
-    .custom-select{line-height:17px!important;}
+
+    .custom-select {
+        line-height: 17px!important;
+    }
+
     .txttimezone-con {
         width: 300px !important;
-        min-height:30px;
-       
+        min-height: 30px;
     }
+
     .currMonth {
         padding: 0px 12px !important;
     }
+
     #calender table {
         border-collapse: separate;
         border-spacing: 4px 9px!important;
     }
+
     #calender {
         width: 100% !important;
     }
+
     #calenderTimeslot {
         width: 120px !important;
     }
@@ -7247,6 +7338,7 @@ input[type="date"].form-control {
         top: 6px;
         right: 95px;
     }
+
     #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
         margin-bottom: 10px;
     }
@@ -7257,6 +7349,7 @@ input[type="date"].form-control {
         top: 40px !important;
         line-height: 16px;
     }
+
     .support {
         position: absolute;
         left: auto;
@@ -7269,9 +7362,11 @@ input[type="date"].form-control {
     #scoreChart tspan {
         font-size: 9.3px;
     }
+
     #calenderTimeslot {
         left: 0px!important;
     }
+
     .note-meeting {
         width: 100% !important;
         top: -11px !important;
@@ -7300,7 +7395,6 @@ input[type="date"].form-control {
     .support {
         position: absolute;
         left: auto;
-       
     }
 
     .main-img-user {
@@ -7390,8 +7484,9 @@ input[type='radio'] {
     filter: alpha(opacity = 50);
     text-align: center;
 }
+
 .card-management .card-blue .card-header {
-    min-height:35px;
+    min-height: 35px;
 }
 #CreateMCQPopUp .choose-file {
     background: #fff!important;
@@ -10722,10 +10817,12 @@ button.close {
     font-weight: 600;
     left: 10px !important;
 }
+
 #candidatetimeline .multiselect.btn {
     line-height: normal!important;
     height: 40px;
 }
+
 #reportForm .form-group .select-css.form-control, #reportForm .form-group .form-control, #reportForm .select-css.form-control, #reportForm .form-control {
     width: calc(100% - 10px);
     margin: 3px 5px 5px 5px !important;
@@ -11713,10 +11810,12 @@ body .top-panel {
 #mySchedulingLinkpopup table th {
     font-size: 15px;
 }
-#loader{
-    margin:50px auto;
-    width:150px;
+
+#loader {
+    margin: 50px auto;
+    width: 150px;
 }
+
 .client-change .on-off {
     color: #393a3c;
 }
@@ -13346,12 +13445,14 @@ div.tagsinput {
         right: 27px;
         top: 11px;
     }
+
     #skill_card .pskill {
         display: block !important;
         text-align: center;
         margin: 0px auto 20px auto;
         line-height: 11px;
     }
+
     .w60 {
         width: 100%;
         text-align: center;
@@ -13361,6 +13462,7 @@ div.tagsinput {
         width: 100%;
         text-align: center;
     }
+
     .event .calendar-con {
         min-width: 90% !important;
         max-width: 90% !important;
