@@ -39,6 +39,8 @@ namespace Risebird.Entities.ViewModel
         public string staffingAgency { get; set; }
         public bool IsCandidateResponsed { get; set; }
         public bool CandidateResponse { get; set; }
+        public string ClientAction { get; set; }
+        public string NickName { get; set; }
     }
 
     public class TimelineStatus

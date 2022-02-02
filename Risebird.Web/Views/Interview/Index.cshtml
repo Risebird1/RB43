@@ -390,6 +390,7 @@
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
+                                                    <th>Cancellation source</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Candidate Response</th>
@@ -419,8 +420,8 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
                                                     <th style="text-align:center">Call</th>
-                                                    <th>Report</th>
-                                                    <th>Cancellation source</th>
+                                                    <th>ReportId</th>
+
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -435,6 +436,7 @@
                                                     <th>Interviewer</th>
                                                     <th>Interviewer Resume Link</th>
                                                     <th>Confirmation Status</th>
+                                                    <th>Cancellation source</th>
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>Candidate Response</th>
@@ -464,8 +466,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
                                                     <th style="text-align:center">Call</th>
-                                                    <th>Report</th>
-                                                    <th>Cancellation source</th>
+                                                    <th>ReportId</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -611,14 +612,14 @@
                                                     {
                                                         <td class="text-center">
 
-                                                            <a style="color:red"> @item.confirmationStatus</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td class="text-center"> @item.confirmationStatus</td>
-                                                    }
-
+                                                                <a style="color:red"> @item.confirmationStatus</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-center"> @item.confirmationStatus</td>
+                                                        }
+                                                        <td>@item.Cancellationsource</td>
 
                                                     @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
         {
@@ -925,15 +926,7 @@
                                                                 <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
                                                             }
                                                         </td>
-                                                        @if (!String.IsNullOrEmpty(item.ProctorReport))
-                                                        {
-                                                            <td>@item.ProctorReport</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
-                                                        }
-                                                        <td>@item.Cancellationsource</td>
+                                                        <td>@item.imid</td>
                                                     </tr>
                                                 }
                                             </tbody>
