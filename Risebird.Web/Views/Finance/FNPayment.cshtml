@@ -55,13 +55,13 @@
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
                         <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header"  onclick="Fetchinvoice(2,1)">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(2,1)">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header"  onclick="Fetchinvoice(3,1)">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(3,1)">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header"  onclick="Fetchinvoice(4,1)">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(4,1)">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -73,18 +73,18 @@
                         </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                        <span class="fa fa-file" data-toggle="tooltip" data-placement="top"  onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
+                        <span class="fa fa-file" data-toggle="tooltip" data-placement="top" onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
                             <font style="        font-family: Roboto, sans-serif;
         font-size: 12px;
         padding-left: 3px;">Generate Invoice</font>
                         </span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" >
-                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top"  onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;padding-left:3px;">Advance Payment</font></span>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;padding-left:3px;">Advance Payment</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                         @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>*@
-                        <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top"  onclick="ExportFNDetails()" data-original-title="Tooltip on top">
+                        <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
                             <font style="        font-family: Roboto, sans-serif;
         font-size: 12px;
         padding-left: 3px;
@@ -279,13 +279,19 @@
                         <div class="modal-body">
 
                             <input type="hidden" id="txtInterviewerid" />
-                            <div class="col-md-12"><p class="desp-label" style="margin-bottom: 5px; font-size: 15px; padding: 0px 15px;
-">Date</p><input type="date" id="addPointDate" class="form-control" style="margin-bottom: 10px;" /></div>
-                            <div class="col-md-12"><p class="desp-label" style="margin-bottom: 5px;font-size: 15px; padding: 0px 15px;
-">Please Add Points</p><input type="number" id="txtPoints" placeholder="Please Add Points" class="form-control" style="margin-bottom: 10px;" /></div>
+                            <div class="col-md-12">
+                                <p class="desp-label" style="margin-bottom: 5px; font-size: 15px; padding: 0px 15px;
+">Date</p><input type="date" id="addPointDate" class="form-control" style="margin-bottom: 10px;" />
+                            </div>
+                            <div class="col-md-12">
+                                <p class="desp-label" style="margin-bottom: 5px;font-size: 15px; padding: 0px 15px;
+">Please Add Points</p><input type="number" id="txtPoints" placeholder="Please Add Points" class="form-control" style="margin-bottom: 10px;" />
+                            </div>
 
-                            <div class="col-md-12"> <p class="desp-label" style="        margin-bottom: 5px;font-size: 15px;padding: 0px 15px;
-">Please Enter Comment</p><input type="text" id="txtComments" placeholder="Please Enter Comment" class="form-control" style="margin-bottom: 10px;" /></div>
+                            <div class="col-md-12">
+                                <p class="desp-label" style="        margin-bottom: 5px;font-size: 15px;padding: 0px 15px;
+">Please Enter Comment</p><input type="text" id="txtComments" placeholder="Please Enter Comment" class="form-control" style="margin-bottom: 10px;" />
+                            </div>
                             <div class="col-md-12">
                                 <input type="button" value="Add Points" onclick="AddPoints()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right card-title-space" />
                             </div>
@@ -348,15 +354,19 @@
 
                             <input type="hidden" id="txtInterviewerid" />
                             <div class="col-md-12"><p class="desp-label" style="margin-bottom: 5px; font-size: 15px;padding:0px 15px;">Please Enter Emailid</p><input type="text" id="adtxtEmailid" placeholder="Please Enter Emailid" class="form-control" style="margin-bottom: 10px;" /></div>
-                            <div class="col-md-12"><p class="desp-label" style="        margin-bottom: 5px;
+                            <div class="col-md-12">
+                                <p class="desp-label" style="        margin-bottom: 5px;
         font-size: 15px;
         padding: 0px 15px;
-">Please Enter Amount</p><input type="number" id="adtxtPoints" placeholder="Please Enter Amount" class="form-control" style="margin-bottom: 10px;" /></div>
+">Please Enter Amount</p><input type="number" id="adtxtPoints" placeholder="Please Enter Amount" class="form-control" style="margin-bottom: 10px;" />
+                            </div>
 
-                            <div class="col-md-12"> <p class="desp-label" style="        margin-bottom: 5px;
+                            <div class="col-md-12">
+                                <p class="desp-label" style="        margin-bottom: 5px;
         font-size: 15px;
         padding: 0px 15px;
-">Please Enter Comment</p><input type="text" id="adtxtComments" placeholder="Please Enter Comment" class="form-control" style="margin-bottom: 10px;" /></div>
+">Please Enter Comment</p><input type="text" id="adtxtComments" placeholder="Please Enter Comment" class="form-control" style="margin-bottom: 10px;" />
+                            </div>
                             <div class="col-md-12">
                                 <input type="button" value="Payment" id="btnpayment" style="display:none" onclick="PaymentDone()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right card-title-space" />
                             </div>
@@ -498,7 +508,7 @@
         } else {
             abc = currentpage - 1;
         }
-
+        _Currentpage = currentpage;
         var next = abc + 2;
         var nextset = abc + 10;
         var previousset = abc + 9;
@@ -711,7 +721,8 @@
                     dataType: 'json',
                     success: function (data) {
                         swal.fire(data);
-                        Fetchinvoice(actionbutton, 1);
+                        FinacneChangePage(_Currentpage);
+                        //Fetchinvoice(actionbutton, 1);
                     }
                 });
                 //window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
@@ -761,6 +772,7 @@
     var Se_date;
     var actionbutton;
     var actiontype = 1;
+    var _Currentpage = 1;
     $(document).ready(function () {
         document.getElementById('addPointDate').value = new Date().toISOString().slice(0, 10);
         $("#adtxtEmailid").autocomplete({
