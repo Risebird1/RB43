@@ -248,6 +248,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsQCRequired { get; set; }
         public bool IsJoinabilitySelectabilityRequired { get; set; }
         public float ScheduledPercentage { get; set; }
+        public float CompletionRate { get; set; }
+        public float SelectionRate { get; set; }
+        public int Flags { get; set; }
 
     }
     public class SkillCahnnelDetailsVM
