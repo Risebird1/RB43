@@ -103,7 +103,7 @@
 <!--<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />-->
 
 
-<input type="hidden" value="@ViewBag.IsClient" id="hidPagestatus" />
+<input type="hidden" value="@ViewBag.ClientDetails" id="hidPagestatus" />
 <div class="main-panel" id="main-panel">
 
     <div class="mt50 col-md-12">
@@ -746,7 +746,7 @@
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script>
-    if ($("#hidPagestatus").val() == "true") {
+    if ($("#hidPagestatus").val() == true) {
         setTimeout(openpopUpRating, 30000);
     }
     function closemyRaitingPopup() {
