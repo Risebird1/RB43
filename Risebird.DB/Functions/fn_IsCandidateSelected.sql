@@ -11,19 +11,41 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create Function fn_IsCandidateSelected(@candidateEmail varchar(150), @irfId varchar(100), @startDate datetime)
+Create Function fn_IsCandidateSelected(@userId int, @irfId int, @startDate date)
 Returns bit
 as
 Begin
 
-declare @isSelected bit
-set @isSelected=0
+declare @candidateEmail varchar(150), @irfName varchar(150), @resultId int
 
-if exists(select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId = im.id left join QCFeedbackReport qcf on qcf.InterviewId = im.id    
- where im.candidateEmail=@candidateEmail and im.IRFId =@irfId and im.confirmationStatus=1 and (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.InterviewId is not null and im.interviewDate >= @startDate)
+set @candidateEmail = (select EmailId from UserList where id = @userId)
+set @irfName = (select IRFId from IRF where id = @irfId)
+
+set @resultId = 0
+
+set @resultId = (select top 1 im.id 
+from InterviewMeetings im 
+join InterviewComments ic on im.id=ic.InterviewId 
+where im.candidateEmail=@candidateEmail and im.IRFId = @irfName 
+and cast(im.interviewDate as date) >= @startDate and ic.InterviewStatus in (2,4) 
+and im.confirmationStatus=1
+order by im.interviewDate desc)
+
+declare @isSelected bit
+
+if(@resultId>0)
 begin
 	set @isSelected=1
 end
- return @isSelected
+else
+begin
+	set @isSelected=0
+end
+return @isSelected
 
-End
+end
+
+
+
+
+
