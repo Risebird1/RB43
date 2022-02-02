@@ -18,7 +18,7 @@
     string[] ScheduleStatus = new string[] { };
     string[] HREmail = new string[] { };
     string[] ProfileSource = new string[] { };
-
+    
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
 {
@@ -298,6 +298,7 @@
                                                                     <th id="status_8">Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
+                                                                    <th>Interviewer</th>
                                                                     <th>Action</th>
                                                                     <th id="status_9">Report</th>
                                                                 </tr>
@@ -310,6 +311,7 @@
                                                                     <th>Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
+                                                                    <th>Interviewer</th>
                                                                     <th>Action</th>
                                                                     <th>Report</th>
 
@@ -319,7 +321,20 @@
 
                                                                 @foreach (var item in Model)
                                                                 {
-                                                                    <tr>
+                                                                    string colorcoding;
+                                                                    if (item.ClientAction== "Shortlisted")
+                                                                    {
+                                                                        colorcoding = "aquamarine";
+                                                                    }
+                                                                    else if (item.ClientAction == "Rejected")
+                                                                    {
+                                                                        colorcoding = "red";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        colorcoding = "";
+                                                                    }
+                                                                    <tr style="background-color: @colorcoding">
 
                                                                         @if (item.CandidateName != null && item.CandidateName != "")
                                                                         {
@@ -390,6 +405,7 @@
                                                                         <td>@item.HREmail</td>
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         <td>@item.ProfileSource</td>
+                                                                        <td>@item.NickName</td>
                                                                         <td>
                                                                             @if (item.CurrentStatus != "Scheduled")
                                                                             {
