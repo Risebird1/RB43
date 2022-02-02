@@ -27,7 +27,7 @@
             width: 80px !important;
         }
 
-       .sidebar .navbar-minimize .btn {
+        .sidebar .navbar-minimize .btn {
             display: none !important
         }
     </style>
@@ -197,12 +197,24 @@
                                             <div class="row">
                                                 @if (ViewBag.IsClient)
                                                 {
-                                                    <div class="col-md-6 col-sm-6 pull-left border-rv">
-                                                        <div class="form-group">
-                                                            @Html.Label("Interviewer Coded Name", "Interviewer Coded Name", htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                            @Html.TextBoxFor(m => m.NickName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @if (Model.ClientAction == "Shortlisted")
+                                                    {
+                                                        <div class="col-md-6 col-sm-6 pull-left border-rv">
+                                                            <div class="form-group">
+                                                                @Html.Label("Interviewer Coded Name", "Interviewer Coded Name", htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                                @Html.TextBoxFor(m => m.NickName, new { @class = "form-control text-box single-line", @readonly = "readonly", @style = "background-color:green" })
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-md-6 col-sm-6 pull-left border-rv">
+                                                            <div class="form-group">
+                                                                @Html.Label("Interviewer Coded Name", "Interviewer Coded Name", htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                                @Html.TextBoxFor(m => m.NickName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            </div>
+                                                        </div>
+                                                    }
                                                 }
                                             </div>
                                         </div>
