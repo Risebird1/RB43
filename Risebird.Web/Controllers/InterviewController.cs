@@ -3587,8 +3587,10 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("SignOut", "Session");
                 }
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                ViewBag.ClientDetails = "";
                 if (isClient || isClientSelected)
                 {
+                    ViewBag.ClientDetails = "client";
                     if (model.IsProctor)
                     {
                         return PartialView("ClientProctorReport", model);
@@ -3635,6 +3637,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 ViewBag.PageStatus = "Mainurl";
+                ViewBag.ClientDetails = "";
                 if (HttpContext.Session.GetString("email") != null &&
                     HttpContext.Session.GetString("profileName") != null)
                 {
@@ -6251,8 +6254,10 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "Insta";
+                ViewBag.ClientDetails = "";
                 if (isClient || isClientSelected)
                 {
+                    ViewBag.ClientDetails = "client";
                     if (model.IsProctor)
                     {
                         return PartialView("ClientProctorReport", model);
@@ -6388,8 +6393,10 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 ViewBag.PageReport = "External";
+                ViewBag.ClientDetails = "";
                 if (isClient || isClientSelected)
                 {
+                    ViewBag.ClientDetails = "client";
                     if (model.IsProctor)
                     {
                         return PartialView("ClientProctorReport", model);
