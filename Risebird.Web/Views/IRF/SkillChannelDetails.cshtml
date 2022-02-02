@@ -154,7 +154,6 @@
                                                     <th>JD Title</th>
                                                     <th>Flags</th>
                                                     <th>Total Candidates</th>
-                                                    <th>Scheduled(%)</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
@@ -176,7 +175,6 @@
                                                     <th>JD Title</th>
                                                     <th>Flags</th>
                                                     <th>Total Candidates</th>
-                                                    <th>Scheduled(%)</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
@@ -199,56 +197,57 @@
                                                     foreach (var item in Model)
                                                     {
 
-                                                <tr>
-                                                    @if (!string.IsNullOrEmpty(item.JDTiltle))
-                                                    {
-                                                        <td> @item.JDTiltle.Split('|')[0] </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
-                                                    <td></td>
-                                                    <td> @item.CandidateCount </td>
-                                                    @if (item.ScheduledPercentage > 0)
-                                                    {
-                                                        <td> @item.ScheduledPercentage </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
-                                                    <td> @item.CompletedInterviews </td>
-                                                    <td> @item.SelectedMeetings </td>
-                                                    <td> @item.RejectedMeetings </td>
-                                                    @*<td> @item.ScheduledMeetings </td>*@
-                                                    <td> @item.NotScheduledCount </td>
-                                                    <td> @item.ReScheduledCount </td>
-                                                    <td> @item.FutureScheduledMeetings </td>
-                                                    <td> @item.RisebirdHREmail </td>
-                                                    <td> @item.IRFId </td>
-                                                    <td> @item.ClientCompName </td>
-                                                    @if (!string.IsNullOrEmpty(item.JobCountry))
-                                                    {
-                                                        @if (item.JobCountry == "1" || item.JobCountry.ToUpper() == "INDIA")
-                                                        {
-                                                            <td>India</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>OutSide India</td>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
+                                                        <tr>
+                                                            @if (!string.IsNullOrEmpty(item.JDTiltle))
+                                                            {
+                                                                <td> @item.JDTiltle.Split('|')[0] </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
 
-                                                    @*<td> @item.JobCountry </td>*@
-                                                    <td> @item.BillingOwnerEmailId </td>
+                                                            @if (item.Flags > 0)
+                                                            {
+                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.IRFId', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate')">@item.Flags</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.Flags</td>
+                                                            }
+                                                            <td> @item.CandidateCount </td>
+                                                            
+                                                            <td> @item.CompletedInterviews </td>
+                                                            <td> @item.SelectedMeetings </td>
+                                                            <td> @item.RejectedMeetings </td>
+                                                            @*<td> @item.ScheduledMeetings </td>*@
+                                                            <td> @item.NotScheduledCount </td>
+                                                            <td> @item.ReScheduledCount </td>
+                                                            <td> @item.FutureScheduledMeetings </td>
+                                                            <td> @item.RisebirdHREmail </td>
+                                                            <td> @item.IRFId </td>
+                                                            <td> @item.ClientCompName </td>
+                                                            @if (!string.IsNullOrEmpty(item.JobCountry))
+                                                            {
+                                                                @if (item.JobCountry == "1" || item.JobCountry.ToUpper() == "INDIA")
+                                                                {
+                                                                    <td>India</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>OutSide India</td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+
+                                                            @*<td> @item.JobCountry </td>*@
+                                                            <td> @item.BillingOwnerEmailId </td>
 
 
-                                                </tr>
+                                                        </tr>
 
 
                                                     }
@@ -264,7 +263,33 @@
 
                                     </div>
                                 </div>
+                                <div id="flagsModal" class="modal modal-bg">
+                                    <!-- Modal content -->
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
 
+
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="flagsModalHeading"></h5>
+                                            </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true" id="flagsModalClose" style="cursor:pointer;">&times;</span>
+                                            </button>
+
+                                            <div class="modal-body" id="flagsModalBody">
+
+
+
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
 
                             </div>
                             <!-- end content-->
@@ -406,7 +431,147 @@
     //// script for loader ends here
 </script>
 
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
+<script>
+    var closeMember = document.getElementById("flagsModalClose");
+    closeMember.onclick = function () {
+        var modal = document.getElementById("flagsModal");
+        modal.style.display = "none";
+    }
+    function OpenModalForFlags(irfName, scheduledPercentage, completionRate, selectionRate) {
+
+        $('#flagsModalBody').html('');
+
+        var modal = document.getElementById("flagsModal");
+        modal.style.display = "block";
+        $('#flagsModalHeading').text('Flags for ' + irfName);
+
+        //code for setting up a bar chart
+        
+        var chartData = [];
+        if (scheduledPercentage != null && scheduledPercentage != '') {
+            if (parseFloat(scheduledPercentage) < 75) {
+
+                var scheduledDataObj = { country: "", visits: "" }
+                scheduledDataObj.country = "Scheduled Rate(%)";
+                scheduledDataObj.visits = parseFloat(scheduledPercentage);
+                chartData.push(scheduledDataObj);
+
+            }
+        }
+
+        if (completionRate != null && completionRate != '') {
+            if (parseFloat(completionRate) < 60) {
+
+                var completionDataObj = { country: "", visits: "" }
+                completionDataObj.country = "Completion Rate(%)";
+                completionDataObj.visits = parseFloat(completionRate);
+                chartData.push(completionDataObj);
+
+            }
+        }
+
+        if (selectionRate != null && selectionRate != '') {
+            if (parseFloat(selectionRate) < 20) {
+
+                var selectionDataObj = { country: "", visits: "" }
+                selectionDataObj.country = "Selection Rate(%)";
+                selectionDataObj.visits = parseFloat(selectionRate);
+                chartData.push(selectionDataObj);
+
+            }
+        }
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("flagsModalBody", am4charts.XYChart);
+
+            // Add data
+            chart.data = chartData;
+
+            // Create axes
+            CreateChartAxes(chart);
+
+        });
+        
+    }
+
+    function CreateChartAxes(chart) {
+        chart.logo.disabled = true;
+        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "country";
+        categoryAxis.renderer.inside = true;
+        categoryAxis.renderer.labels.template.valign = 0;
+        categoryAxis.renderer.grid.template.location = 0;
+        //categoryAxis.renderer.minGridDistance = 30;
+        categoryAxis.renderer.minGridDistance = 100;
+        chart.fontSize = 13;
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+
+        categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+            if (target.dataItem && target.dataItem.index & 2 == 2) {
+                return dy;
+            }
+            return dy;
+        });
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+        categoryAxis.renderer.labels.template.paddingBottom = -17;
+        categoryAxis.renderer.grid.template.disabled = true;
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.grid.template.disabled = true;
+        valueAxis.min = 0;
+        //valueAxis.max = 30;
+        valueAxis.max = 100;
+        // Create series
+        var series = chart.series.push(new am4charts.ColumnSeries());
+        series.dataFields.valueY = "visits";
+        series.dataFields.categoryX = "country";
+        series.name = "Visits";
+        series.colorField = "color";
+        series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+        series.tooltip.label.adapter.add("text", function (text, target) {
+            if (target.dataItem && target.dataItem.valueY == 0) {
+
+                return "";
+            }
+            else {
+
+                return text;
+            }
+        });
+        series.columns.template.fillOpacity = .8;
+        series.columns.template.tooltipY = 0;
+        series.tooltip.background.strokeOpacity = 0
+        series.tooltip.pointerOrientation = "vertical";
+        series.columns.template.showTooltipOn = "always";
+        series.tooltip.background.filters.clear();
+        series.tooltip.getFillFromObject = false;
+
+        series.tooltip.label.fill = am4core.color("#9a9a9a");
+        series.tooltip.background.cornerRadius = 0;
+        series.tooltip.label.textAlign = "middle";
+        series.tooltip.background.fill = 0;
+        var columnTemplate = series.columns.template;
+        columnTemplate.strokeWidth = 0;
+        columnTemplate.strokeOpacity = 1;//07BEF3
+        chart.colors.list = [
+            am4core.color("#07BEF3"),
+            am4core.color("#00F96B"),
+            am4core.color("#F64042")
+
+        ];
+        series.columns.template.events.once("inited", function (event) {
+            event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+        });
+    }
+</script>
 
 
 

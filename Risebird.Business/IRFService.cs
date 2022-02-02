@@ -2122,10 +2122,27 @@ namespace Risebird.Business
                             irf.NotScheduledCount = irf.NotScheduledCount + totalDiff;
                         }
                     }
+
                     if(irf.CandidateCount > 0)
                     {
                         irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings) * 100 ) / irf.CandidateCount;
+                        irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
+                        irf.SelectionRate =  irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CandidateCount : 0;
                     }
+
+                    if(irf.ScheduledPercentage < 75)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.CompletionRate < 60)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.SelectionRate < 20)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+
                 }
                 return irfList;
             }
