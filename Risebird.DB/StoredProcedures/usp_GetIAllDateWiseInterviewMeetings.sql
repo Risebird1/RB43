@@ -37,12 +37,14 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,              
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR,    
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource    
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink
   from  InterviewMeetings im                        
   inner join IRF on im.IRFId = IRF.IRFId                        
   left join UserList ulc on im.candidateEmail= ulc.EmailId                      
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                      
   left join UserList uli on im.interviewer= uli.EmailId                   
-  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id                
+  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id   
+  left join InterviewerProfile itp on itp.UserId = uli.id
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                        
   join CandidatesMaster cm on ulc.id = cm.UserId                  
   left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id                  
@@ -69,12 +71,14 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,          
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,    
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                 
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink
   from InterviewMeetings im                        
   inner join IRF on im.IRFId = IRF.IRFId                        
   left join UserList ulc on im.candidateEmail= ulc.EmailId                      
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                      
   left join UserList uli on im.interviewer= uli.EmailId                   
-  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id                
+  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id   
+  left join InterviewerProfile itp on itp.UserId = uli.id
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                        
   join CandidatesMaster cm on ulc.id = cm.UserId                  
   left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id                  
@@ -102,13 +106,15 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,              
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,    
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                 
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink   
   from InterviewMeetings im                        
   inner join IRF on im.IRFId = IRF.IRFId      
   join SeniorHR sh on sh.Clientid=IRF.ClientId    
   left join UserList ulc on im.candidateEmail= ulc.EmailId                      
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                      
   left join UserList uli on im.interviewer= uli.EmailId                   
-  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id                
+  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id      
+  left join InterviewerProfile itp on itp.UserId = uli.id
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                        
   join CandidatesMaster cm on ulc.id = cm.UserId                  
   left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id                  
@@ -134,12 +140,14 @@ else
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,              
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,    
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed  ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink   
   from InterviewMeetings im                        
   inner join IRF on im.IRFId = IRF.IRFId                        
   left join UserList ulc on im.candidateEmail= ulc.EmailId                      
   left join UserList ulh on im.ClientHrContact= ulh.EmailId                      
   left join UserList uli on im.interviewer= uli.EmailId                   
-  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id                
+  left join Userlist ulcu on IRF.BillingOwner  =ulcu.id   
+   left join InterviewerProfile itp on itp.UserId = uli.id
   left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                        
   join CandidatesMaster cm on ulc.id = cm.UserId                  
   left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id                  
