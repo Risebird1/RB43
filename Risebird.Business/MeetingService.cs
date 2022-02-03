@@ -1287,7 +1287,7 @@ namespace Risebird.Business
         {
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
-
+            var skillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));
             if (!techReportCollection.Any())
             {
                 var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(model.IRFId);
@@ -1317,9 +1317,39 @@ namespace Risebird.Business
                 model.TechSkillReportCollection = techReportCollection;
             }
 
+            if (!skillGeneralReportCollection.Any())
+            {
+                var levelTech = await _meetingRespository.GetLevelTech();
+                var skills = await _meetingRespository.GetSkills();
+                var skillGeneralDetails = await _meetingRespository.GetSkillsGeneralbyIRFid(model.IRFId);
+                var genSkillList = new List<SkillGeneralReport>();
+
+                foreach (var item in skillGeneralDetails ?? new List<TransSkillGeneral>())
+                {
+                    SkillGeneralReport obj = new SkillGeneralReport
+                    {
+                        InterviewId = model.InterviewId,
+                        RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                        RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
+                        Type = item.Type,
+                        Name = item.Name,
+                        Value = item.Value,
+                        WeightageRequired = item.Weightage
+                    };
+                    genSkillList.Add(obj);
+                }
+
+                model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
+
+            }
+
+            else
+            {
+                model.SkillGeneralReportCollection = skillGeneralReportCollection;
+            }
+
 
             model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
-            model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));
             model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
             model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
