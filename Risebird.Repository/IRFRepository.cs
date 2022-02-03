@@ -873,10 +873,11 @@ namespace Risebird.Repository
                             interviewerDt.Columns.Add("UserId", typeof(int));
                             interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
                             interviewerDt.Columns.Add("IsActive", typeof(bool));
+                            interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
+                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true, irfDetails.IsClone ? item.IsAvailable : true);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -1110,14 +1111,11 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-
                     }
                     catch (Exception ex)
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
-
-
 
                     try
                     {
@@ -1129,7 +1127,6 @@ namespace Risebird.Repository
                             selectabilityDt.Columns.Add("Type", typeof(string));
                             selectabilityDt.Columns.Add("Value", typeof(string));
                             selectabilityDt.Columns.Add("Weightage", typeof(int));
-
 
                             foreach (var item in irfDetails.Selectability)
                             {
@@ -1146,8 +1143,6 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-
-
                     }
                     catch (Exception ex)
                     {
@@ -1182,7 +1177,6 @@ namespace Risebird.Repository
                         skillGeneralDt.Columns.Add("Value", typeof(string));
                         skillGeneralDt.Columns.Add("Weightage", typeof(int));
 
-
                         foreach (var item in irfDetails.SkillGeneral)
                         {
                             skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
@@ -1202,7 +1196,6 @@ namespace Risebird.Repository
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
-
 
                     //update tech skill table
                     //if (irfDetails.SkillCollection != null)
@@ -1235,7 +1228,6 @@ namespace Risebird.Repository
                         foreach (var item in irfDetails.SkillCollection)
                         {
                             techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
-
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -1252,7 +1244,6 @@ namespace Risebird.Repository
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
-
 
                     if (removedTechSkills != null)
                     {
@@ -1294,10 +1285,11 @@ namespace Risebird.Repository
                             interviewerDt.Columns.Add("UserId", typeof(int));
                             interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
                             interviewerDt.Columns.Add("IsActive", typeof(bool));
+                            interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);

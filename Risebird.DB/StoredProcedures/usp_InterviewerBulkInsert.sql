@@ -27,8 +27,8 @@ INSERT INTO [dbo].[TransInterviewer](
  [UserId],  
  [PerSuccessRate], 
  [IsActive],
+ [IsAvailable],
  [InterviewerId])  
-   
   
 --SELECT ibd.*, Interviewer.id as InterviewerId FROM @InterviewerBulkData ibd left join Interviewer on ibd.UserId = Interviewer.UserId  
   

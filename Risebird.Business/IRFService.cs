@@ -572,10 +572,8 @@ namespace Risebird.Business
                                     UserId = interviewer.UserId
                                 });
                             }
-
-
                         }
-
+                        
                         if (!model.InterviewerCollection.Any(x => x.UserId == oldInterviewer.UserId))
                         {
                             removedInterviewers.Add(new RemovedInterviewersFromSkillsChannelData
@@ -612,7 +610,6 @@ namespace Risebird.Business
                             float newRate = emergencyInterviewer.PerSuccessRate;
                             float oldRate = oldEmergencyInterviewer.PerSuccessRate;
                             float percentChanges = (newRate - oldRate) * 100 / oldRate;
-
                             if (percentChanges != 0)
                             {
                                 interviewerChangesData.Add(new InterviewerSuccessRateChangeData
@@ -623,8 +620,6 @@ namespace Risebird.Business
                                     UserId = emergencyInterviewer.UserId
                                 });
                             }
-
-
                         }
                         if (!model.EmergencyInterviewerCollection.Any(x => x.UserId == oldEmergencyInterviewer.UserId))
                         {
@@ -649,7 +644,6 @@ namespace Risebird.Business
                                 UserId = newEmergencyInterviewer.UserId
                             });
                         }
-
                     }
                 }
 

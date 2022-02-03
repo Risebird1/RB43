@@ -2037,17 +2037,14 @@ namespace Risebird.Web.Controllers
                         if (interviewerCollection.Count() != interviewerCollection.Distinct().Count())
                         {
                             //duplicates exist
-
                             isDuplicate = true;
                             ModelState.AddModelError("", "Please remove duplicate entries from Interviewers' list.");
-
                         }
 
                         var emergencyInterviewerCollection = model.EmergencyInterviewerCollection.Select(x => (x.UserId));
                         if (emergencyInterviewerCollection.Count() != emergencyInterviewerCollection.Distinct().Count())
                         {
                             //duplicates exist
-
                             isDuplicate = true;
                             ModelState.AddModelError("", "Please remove duplicate entries from Emergency Interviewers' list.");
                         }
@@ -2091,10 +2088,7 @@ namespace Risebird.Web.Controllers
 
                                 }
                                 model.JDLink = uploadedFileURL;
-
                             }
-
-
                         }
                         else if (model.JDLink == null || model.JDLink == "")
                         {
@@ -2118,17 +2112,12 @@ namespace Risebird.Web.Controllers
                                 }
                                 model.CompanyDetails = uploadedFileURL;
                             }
-
-
                         }
                         else if (model.CompanyDetails == null || model.CompanyDetails == "")
                         {
                             model.CompanyDetails = model.OldCompanyDetails;
                         }
-                        //if (TempData["EditIRFId"] != null && (TempData["EditIRFId"].ToString() != model.IRFId))
-                        //{
-
-                        //}
+                        
                         if (model.IsClone && !string.IsNullOrEmpty(model.IRFId))
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
