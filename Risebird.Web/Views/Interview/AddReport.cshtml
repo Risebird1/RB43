@@ -73,6 +73,7 @@
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
+
 <div class="main-panel" id="main-panel">
 
     <div class="loader text-center">
@@ -2098,6 +2099,23 @@
             }
 
         }
+        return true;
+    }
+    function CheckTechSkills() {
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
+            var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                    document.getElementById('TechSkills_CommentError').focus();
+                    return false;
+                }
+            }
+        }
+        document.getElementById('TechSkills_CommentError').innerHTML = "";
         return true;
     }
     function CheckTechSkills() {

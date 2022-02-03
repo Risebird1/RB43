@@ -4,11 +4,8 @@
     ViewBag.PageHeader = "Client Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" />
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" type="text/css" />
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 
 <div class="main-panel" id="main-panel">
 
@@ -87,20 +84,22 @@
                                                 <td>
                                                     <div class="mobile-view">
                                                         <div>
-                                                          <span> @item.UserPassword</span>
+                                                            <span> @item.UserPassword</span>
                                                             @*Password:   <input type='password' id='test-input' /> Show password <input type='checkbox' id='check'/>*@
                                                         </div>
 
                                                     </div>
-                                                <div class="desktop-view"><div style="position:relative">
-    <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
-    @if (item.UserPassword != null && item.UserPassword != "")
-    {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
-        <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
-    }
-    else
-    { <span toggle="#password-field_@item.id" class="toggle-password" id="toggle-password_@item.id"></span>}
-</div></div>    
+                                                    <div class="desktop-view">
+                                                        <div style="position:relative">
+                                                            <div class="secret-pass passshow" id="password-field_@item.id" type="password">@item.UserPassword</div>
+                                                            @if (item.UserPassword != null && item.UserPassword != "")
+                                                            {<span class="secret" id="secret_@item.id" style="top:0px;">********</span>
+                                                                <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                            }
+                                                            else
+                                                            { <span toggle="#password-field_@item.id" class="toggle-password" id="toggle-password_@item.id"></span>}
+                                                        </div>
+                                                    </div>
 
 
                                                 </td>
@@ -461,7 +460,7 @@
     function showhidepass(id) {
         var value = document.getElementById("password-field_" + id);
         if (value.getAttribute("type") == "text") {
-           
+
             value.setAttribute("type", "password");
             $("#secret_" + id).addClass('show');
             $("#secret_" + id).removeClass('hide');
@@ -470,7 +469,7 @@
             $("#toggle-password_" + id).removeClass("fa-eye-slash");
         }
         else {
-         
+
             value.setAttribute("type", "text");
             $("#password-field_" + id).removeClass('passshow');
             $("#toggle-password_" + id).addClass("fa-eye-slash");
@@ -507,7 +506,7 @@
 
 </script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
 <script>
     $('#check').on('click', function () {
         if (document.getElementById('check').checked) {

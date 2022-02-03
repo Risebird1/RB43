@@ -1,0 +1,52 @@
+.sb-container{
+    position: relative;
+    overflow: hidden;
+    padding-right: 10px;
+}
+.sb-content {
+  height:100%;
+  width: 124%;
+  padding-right: 20%;
+  overflow-y: scroll;
+
+  box-sizing:border-box;
+}
+.sb-container .table > tbody > tr > td {
+    font-size: 13px;
+    padding: 5px 5px;
+}
+
+.sb-container #divDetailedView .table > tbody > tr > td {
+    font-size: 14px;
+    padding: 5px 5px;
+}
+.table-h {
+    height: 200px;
+    overflow-y: hidden;
+}
+.member .sb-content {
+    width: 105%;
+}
+.sb-scrollbar-container {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    top: 5px;
+    width: 10px;
+}
+.sb-container-noscroll .sb-scrollbar-container {
+    right: 0px;
+}
+
+.sb-scrollbar {
+  position: absolute;
+  right: 0;
+  height: 30px;
+  width: 7px;
+  border-radius: 10px;
+  background: rgba(50, 50, 50, 0.5);
+}
+
+.sb-scrollbar:hover {
+    background: rgba(0, 0, 0, 0.5);
+}

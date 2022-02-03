@@ -175,10 +175,9 @@ namespace Risebird.Web.Controllers
                     {
                         model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
                     }
+
                     HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
 
-
-                    //ViewBag.searchValue = searchValue != null ? searchValue : string.Empty;
                     if (model.IRFList != null)
                     {
                         model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
@@ -1342,9 +1341,17 @@ namespace Risebird.Web.Controllers
                     var result = _irfService.GetTechSkillComments(id, emailid);
                     //if (result.Count() > 0)
                     model.SkillCollection = result;
+                    //var techSkills = new List<Skill>();
                     var skills = _irfService.GetTechSkills(id);
+
+                    //foreach (var skill in skills)
+                    //{
+                    //    techSkills.Add(new Skill { id = skill.id, Name = skill.Name?.Replace("\t", "").Replace("\n", "").Replace("\r", ""), Description = skill.Description?.Replace("\t", "").Replace("\n", "").Replace("\r", "") });
+                    //}
                     ViewBag.Skills = new SelectList(skills, "id", "Name");
                     model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                    //ViewBag.Skills = new SelectList(skills, "id", "Name");
+                    //model.SkillsOptionsData = JsonConvert.SerializeObject(techSkills);
                     model.IRFId = id;
                     model.Profile = profileName;
                     model.UserId = _irfService.GetUserId(emailid);
@@ -1387,12 +1394,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (ModelState.IsValid)
                         {
+                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId)).Where(x => x.UserId == model.UserId);
 
-                            var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId));
                             if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                             {
                                 //duplicates exist
-                                ModelState.AddModelError("", "The skill,question combination added by you should contain unique entries.");
+                                ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
                                 var skills = _irfService.GetTechSkills(model.IRFId);
                                 ViewBag.Skills = new SelectList(skills, "id", "Name");
                                 model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
@@ -1602,17 +1609,17 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-                        //                        var list = new SelectList(new[]
-                        //{
-                        //    new { ID = "Today", Name = "Today"},
-                        //    new { ID = "Tomorrow", Name = "Tomorrow"  },
-                        //    new { ID = "Yesterday", Name = "Yesterday"  },
-                        //    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-                        //    new { ID = "All", Name = "All"},
-                        //},
-                        //"ID", "Name", "All");
+//                        var list = new SelectList(new[]
+//{
+//    new { ID = "Today", Name = "Today"},
+//    new { ID = "Tomorrow", Name = "Tomorrow"  },
+//    new { ID = "Yesterday", Name = "Yesterday"  },
+//    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+//    new { ID = "All", Name = "All"},
+//},
+//"ID", "Name", "All");
 
-                        //                        ViewData["list"] = list;
+//                        ViewData["list"] = list;
                         ViewBag.ProfileName = profileName.ToLower();
                         if (!String.IsNullOrEmpty(searchValue))
                         {

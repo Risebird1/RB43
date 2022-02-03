@@ -1,0 +1,417 @@
+﻿
+body {
+    font-family: Roboto, sans-serif;
+}
+.loader {
+    font-family: Arial;
+    font-size: 10pt;
+    /*border: 5px solid #67CFF5;*/
+    /*width: 200px;
+            height: 100px;*/
+    display: none;
+    position: center !important;
+ 
+    z-index: 999;
+    /*opacity: 0.5;*/
+    filter: alpha(opacity = 50);
+}
+#style-2::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 5px;
+}
+
+
+textarea::-webkit-scrollbar {
+    width: 2px;
+    height: 6px;
+ 
+}
+
+textarea::-webkit-scrollbar-thumb {
+
+    margin: 2px;
+    border-radius: 2px;
+}
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: #fff;
+    background-image: url('../../img/drop.png');
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+    }
+
+        .select-css option:hover {
+            background: pink !important;
+        }
+
+select * {
+    background-color: #fff;
+    border: 0 !important;
+    padding: 5px;
+}
+
+select {
+    padding: 10px;
+}
+
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('../../img/drop.png');
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
+
+
+.w-full{width:100%;}
+
+.no-sort::after {
+    display: none !important;
+}
+
+.no-sort {
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+#style-2::-webkit-scrollbar {
+    width: 6px;
+}
+
+#style-2::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: darkgray;
+}
+
+table {
+    white-space: nowrap !important;
+}
+
+
+table.dataTable > thead > tr > th {
+        padding: 5px;
+    }
+
+
+.table > tfoot > tr > th {
+    padding: 5px 7px;
+}
+.table > tbody > tr > td {
+    padding: 12px 5px!important;
+}
+td .wordwrap {
+    max-width: 250px !important;
+    min-width: 250px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+td:hover.wordwrap {
+    text-overflow: clip !important;
+    white-space: normal !important;
+}
+
+/*CSS FOR Loader*/
+.loader {
+    font-family: Arial;
+    font-size: 10pt;
+    /*border: 5px solid #67CFF5;*/
+    /*width: 200px;
+            height: 100px;*/
+    display: none;
+    position: center !important;
+    background-color: White;
+    z-index: 999;
+    /*opacity: 0.5;*/
+    filter: alpha(opacity = 50);
+}
+/*table.dataTable > thead > tr > th {
+        max-width: 200px !important;
+    }*/
+table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+    max-width: 300px !important;
+}
+
+table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+    padding: 7px;
+    font-weight: normal !important;
+}
+
+.table > thead > tr > th, .table > tfoot > tr > th {
+    padding: 7px;
+    font-weight: normal !important;
+}
+
+
+table {
+    border: 1px #ccc solid !important;
+}
+
+    table td {
+        color: #504e4e;
+    }
+
+    table th {
+        color: #000000e0;
+    }
+
+.panel-header-sm {
+    height: 85px;
+    padding-top: 65px;
+    background: none !important;
+}
+
+.btn-call {
+    width: 30px !important;
+    height: 30px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    BORDER: 0px;
+    line-height: 1.42857;
+    background: #53a4f4;
+    display: inline-block;
+}
+
+    .btn-call .fa {
+        color: #fff;
+        font-size: 14px;
+        padding: 0px;
+        top: 8px;
+        position: relative;
+    }
+
+.call i {
+    color: #fff
+}
+
+.call-txt {
+    border: 1px #53a5f5 solid;
+    position: relative;
+    padding: 5px 15px;
+    left: -10px;
+    top: 8px;
+    font-size: 14px;
+    font-family: arial;
+    color: #53a5f5;
+    border-left: 0px;
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 13px;
+}
+
+
+
+
+
+#x {
+    position: absolute;
+    right: 30px;
+    top: 7px;
+    border: 0;
+    /* background: none; */
+    font-size: 15px;
+    color: #53a5f5;
+    font-weight: 600;
+    border-radius: 20px;
+    width: 25px;
+    height: 25px;
+}
+
+div.dataTables_wrapper div.dataTables_filter label{position:relative;}
+/*
+
+
+.dataTables_length, .dataTables_filter, #clientduser_length, #clientduser_filter, #skill_length, #skill_filter, #skillLevel_filter, #skillLevel_length, #resumeEvaluator_filter, #resumeEvaluator_length, #recruiterTable_length, #recruiterTable_filter, #profile_filter, #profile_length {
+    margin: 10px 0px
+}
+
+    .dataTables_length label, #clientduser_length label, #skill_length label, #skillLevel_length label, #resumeEvaluator_length label, #recruiterTable_length label, #profile_length label {
+        font-size: 14px;
+    }
+
+    .dataTables_length select.form-control, #clientduser_length select.form-control, #skill_length select.form-control, #skillLevel_length select.form-control, #resumeEvaluator_length select.form-control, #recruiterTable_length select.form-control, #profile_length select.form-control {
+        padding: 8px 8px;
+    }
+
+    .dataTables_length select:focus, #clientduser_length select:focus, #skill_length select:focus, #skillLevel_length select:focus, #resumeEvaluator_length select:focus, #recruiterTable_length select:focus, #profile_length select:focus {
+        border-color: #4a93de;
+    }
+
+    .dataTables_filter input, #clientduser_filter input, #skill_filter input, #skillLevel_length input, #resumeEvaluator_length input, #recruiterTable_length input, #profile_length input {
+        outline: none;
+    }
+
+        .dataTables_filter input::-webkit-search-decoration,
+        #dataTables_filter input::-webkit-search-cancel-button, #clientduser_filter input::-webkit-search-decoration,
+        #clientduser_filter input::-webkit-search-cancel-button, #skill_filter input::-webkit-search-decoration,
+        #skill_filter input::-webkit-search-cancel-button, #skillLevel_filter input::-webkit-search-decoration,
+        #skillLevel_filter input::-webkit-search-cancel-button, #resumeEvaluator_filter input::-webkit-search-decoration,
+        #resumeEvaluator_filter input::-webkit-search-cancel-button, #recruiterTable_filter input::-webkit-search-decoration,
+        #recruiterTable_filter input::-webkit-search-cancel-button, #profile_filter input::-webkit-search-decoration,
+        #profile_filter input::-webkit-search-cancel-button {
+            display: none;
+        }
+
+        .dataTables_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
+            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+            border: solid 1px #ccc;
+            padding: 9px 10px 9px 32px;
+            width: 135px;
+            font-family: arial;
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            border-radius: 10em;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+
+            .dataTables_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
+                width: 200px;
+                background-color: #fff;
+                border-color: #4a93de;
+                font-family: arial;
+                margin: 3px;
+                -webkit-box-shadow: 0 0 5px #4a93de;
+                -moz-box-shadow: 0 0 5px #4a93de;
+                box-shadow: 0 0 5px #4a93de;
+            }
+
+
+        .dataTables_filter input:-moz-placeholder, #clientduser_filter input:-moz-placeholder, #skill_filter input:-moz-placeholder, #skillLevel_filter input:-moz-placeholder, #resumeEvaluator_filter input:-moz-placeholder, #recruiterTable_filter input:-moz-placeholder, #profile_filter input:-moz-placeholder {
+            color: #999;
+        }
+
+        .dataTables_filter input::-webkit-input-placeholder, #clientduser_filter input::-webkit-input-placeholder, #skill_filter input::-webkit-input-placeholder, #skillLevel_filter input::-webkit-input-placeholder, #resumeEvaluator_filter input::-webkit-input-placeholder, #recruiterTable_filter input::-webkit-input-placeholder, #profile_filter input::-webkit-input-placeholder {
+            color: #999;
+        }
+
+
+    */
+.multiselect-selected-text {
+    text-transform: capitalize;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #807e7e;
+    font-size: 12px;
+}
+
+
+.fa-spinner {
+    font-size: 18px;
+    position: relative;
+    top: 6px;
+    left: 4px;
+}
+.webkitEnabled {
+    -webkit-appearance: menulist;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    color: #000 !important;
+    text-decoration: none;
+    background-color: #fff !important;
+    outline: 0;
+}
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+    margin: 0 0px 10px 0;
+}
+
+.control-label {
+    color: #5f5c5c !important;
+}
+.w-full{width:100%!important}
+.m10-b {
+    margin-bottom: 10px;
+}
+.mdc-card-wrapper__text-section {
+    padding: 16px;
+}
+
+.mdc-fab {
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #53a5f5 !important;
+}
+
+.sidebar:after, .off-canvas-sidebar:after {
+    background: #42a5f5;
+}
+
+
+
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #42a5f5;
+    font-family: Roboto, sans-serif;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.mdc-button--outlined:not(:disabled) {
+    border-color: #42a5f5;
+    color: #42a5f5;
+}
+.mc-button-area {
+    text-align: right
+}
+.mdc-fab-secondary {
+    background: #fff !important;
+    color: #53a5f5 !important;
+}
+
+
+    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid;
+    }
+
+
+.mdc-fab.trash-btn {
+    background: #d20505 !important;
+}
+/* Needed */

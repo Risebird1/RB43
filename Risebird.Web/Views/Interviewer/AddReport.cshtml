@@ -373,12 +373,12 @@
                                                 @Html.ValidationMessageFor(model => model.Interviewexperience, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
-
                                     </div>
+                                    @Html.ValidationMessageFor(model => model.ProfileScore, "", new { @id = "error_ProfileScore", @class = "text-danger" })
                                 </div>
 
                                 <div class="row">
-                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h3 class="mb-0"><span>Personality Report</span></h3>
                                         </div><!--end of multiple location-->
@@ -503,7 +503,7 @@
                                                 @Html.ValidationMessageFor(model => model.Openness, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
-
+                                        @Html.ValidationMessageFor(model => model.OverallPersonalityScore, "", new { @id = "error_OverallPersonalityScore", @class = "text-danger" })
                                         @Html.HiddenFor(x => x.OverallPersonalityScore)
 
                                     </div>
@@ -676,43 +676,41 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                    <div class="row mb-40">
+
+                                <div class="row mb-40">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Record Feedback Audio</span></h3>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+                                    <div class="report-wrap">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Record Feedback Audio</span></h3>
-                                            </div><!--end of multiple location-->
-                                        </div><!--end of col-md-12-->
-                                        <div class="report-wrap">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="row">
+                                            <div class="row">
 
 
-                                                    <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+                                                <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
 
 
-                                                        <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
-                                                        <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId', '@((int)CandidateTypeEnum.Interviewer)')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
-                                                        <div class="pull-left">
-                                                            <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
+                                                    <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
+                                                    <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId', '@((int)CandidateTypeEnum.Interviewer)')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
+                                                    <div class="pull-left">
+                                                        <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                            <p style="font-size:18px" id="recordingStatus"></p>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-                                                        <div class="row">
-                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                                                <p style="font-size:18px" id="recordingStatus"></p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row" id="recordingRow" style="display:none">
-                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                                                <div id="recordingsList"></div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="row">
-                                                            <input type="text" asp-for="FeedbackAudioLink" style="display:none">
+                                                    <div class="row" id="recordingRow" style="display:none">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                            <div id="recordingsList"></div>
                                                         </div>
 
+                                                    </div>
+                                                    <div class="row">
+                                                        <input type="text" asp-for="FeedbackAudioLink" style="display:none">
                                                     </div>
 
                                                 </div>
@@ -721,13 +719,15 @@
 
                                         </div>
 
-                                        <!--end of col-md-12-->
-
                                     </div>
 
-                                    <div id="playUploadedAudioOne">
-                                        @if (Model.FeedbackAudioLink != null)
-                                        {
+                                    <!--end of col-md-12-->
+
+                                </div>
+
+                                <div id="playUploadedAudioOne">
+                                    @if (Model.FeedbackAudioLink != null)
+                                    {
                                         <div class="row mb-40">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="multiple_row">
@@ -770,772 +770,772 @@
 
                                         </div>
 
-                                        }
+                                    }
 
-                                    </div>
+                                </div>
 
-                                    <div id="playUploadedAudioTwo" style="display:none">
-                                        <div class="row mb-40">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="multiple_row">
-                                                    <h3 class="mb-0"><span>Uploaded Feedback Audio</span></h3>
-                                                </div><!--end of multiple location-->
-                                            </div><!--end of col-md-12-->
-
-
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-                                                <div class="table-responsive-sm">
-                                                    <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="30%">File</th>
-                                                                <th width="35%">Play</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-
-                                                                <td>
-                                                                    <a id="anchorAudioId" asp-append-version="true" download>
-
-                                                                    </a>
-                                                                </td>
-
-
-                                                                <td>
-                                                                    <audio id="controlAudioId" asp-append-version="true" controls></audio>
-                                                                </td>
-
-                                                            </tr>
-
-
-                                                        </tbody>
-                                                    </table>
-
-
-                                                </div>
-                                            </div><!--end of col-md-12-->
-
-                                        </div>
-
-                                    </div>
-
-                                    <div class="row">
+                                <div id="playUploadedAudioTwo" style="display:none">
+                                    <div class="row mb-40">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Interviewing Strategy</span></h3>
+                                                <h3 class="mb-0"><span>Uploaded Feedback Audio</span></h3>
                                             </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
 
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-
-                                            <div class="table-responsive-sm interviewer report">
-                                                <table class="table table-bordered mbn" id="QuestionsTable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="50%">Questions</th>
-                                                            <th width="10%">Rating</th>
-                                                            <th width="10%">Time(In Seconds)</th>
-                                                            <th width="10%" class="action text-center">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @if (Model.InterviewerQuestionsCollection == null || Model.InterviewerQuestionsCollection.Count() == 0)
-                                                        {
-                                                            <tr>
-
-                                                                <td>
-                                                                    @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
-
-                                                                </td>
-                                                                <td>
-                                                                    <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
-
-                                                                </td>
-
-                                                                <td class="action text-center">
-                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                        else
-                                                        {
-                                                            for (int i = 0; i < Model.InterviewerQuestionsCollection.Count(); i++)
-                                                            {
-                                                                <tr style="cursor:pointer">
-
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
-                                                                    </td>
-                                                                    <td>
-
-                                                                        @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
-
-                                                                    </td>
-                                                                    <td class="action text-center ">
-                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                    </td>
-                                                                </tr>
-
-
-                                                            }
-
-                                                        }
-
-
-
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <label class="text-danger" id="Question_Error" style="color:red; margin-left:433px; font-size:16px"></label>
-
-                                        </div><!--end of col-md-12-->
-
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Tech Skill Report</span></h3>
-                                            </div><!--end of multiple location-->
-                                        </div><!--end of col-md-12-->
-
-
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="table-responsive-sm">
-                                                <table class="table table-bordered mbn" id="SkillTable">
+                                                <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">Required Level</th>
-                                                            <th width="40%">Skill Name</th>
-                                                            <th width="20%">Actual Level</th>
-                                                            <th width="15%">Required Weightage</th>
-                                                            <th width="15%">Actual Weightage</th>
+                                                            <th width="30%">File</th>
+                                                            <th width="35%">Play</th>
                                                         </tr>
                                                     </thead>
-
-
                                                     <tbody>
-                                                        @if (Model.TechSkillReportCollection != null)
-                                                        {
-                                                            @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
-                                                            {
-                                                                <tr>
+                                                        <tr>
 
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            <td>
+                                                                <a id="anchorAudioId" asp-append-version="true" download>
 
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-
-                                                                    <td>
-                                                                        @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
-
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                    </td>
-                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
+                                                                </a>
+                                                            </td>
 
 
-                                                                </tr>
+                                                            <td>
+                                                                <audio id="controlAudioId" asp-append-version="true" controls></audio>
+                                                            </td>
 
-                                                            }
-                                                        }
-
+                                                        </tr>
 
 
                                                     </tbody>
                                                 </table>
+
+
                                             </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
-
-                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                    <div class="talktext">
-
-                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-
                                         </div><!--end of col-md-12-->
 
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Interviewing Ability</span></h3>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Interviewing Strategy</span></h3>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+                                        <div class="table-responsive-sm interviewer report">
+                                            <table class="table table-bordered mbn" id="QuestionsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="50%">Questions</th>
+                                                        <th width="10%">Rating</th>
+                                                        <th width="10%">Time(In Seconds)</th>
+                                                        <th width="10%" class="action text-center">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.InterviewerQuestionsCollection == null || Model.InterviewerQuestionsCollection.Count() == 0)
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                @Html.TextBox("InterviewerQuestionsCollection[0].Question", null, new { @class = "form-control" })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("InterviewerQuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerQuestionsCollection_0__Timing" name="InterviewerQuestionsCollection[0].Timing" type="number" min="60" max="5000">
+
+                                                            </td>
+
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        for (int i = 0; i < Model.InterviewerQuestionsCollection.Count(); i++)
+                                                        {
+                                                            <tr style="cursor:pointer">
+
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.InterviewerQuestionsCollection[i].Question, new { @class = "form-control text-box single-line" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.InterviewerQuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
+                                                                </td>
+                                                                <td>
+
+                                                                    @Html.EditorFor(m => m.InterviewerQuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
+
+                                                                </td>
+                                                                <td class="action text-center ">
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerQuestionsCollection', 'Question', 'RatingId','Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </td>
+                                                            </tr>
+
+
+                                                        }
+
+                                                    }
+
+
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <label class="text-danger" id="Question_Error" style="color:red; margin-left:433px; font-size:16px"></label>
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Tech Skill Report</span></h3>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-bordered mbn" id="SkillTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="10%">Required Level</th>
+                                                        <th width="40%">Skill Name</th>
+                                                        <th width="20%">Actual Level</th>
+                                                        <th width="15%">Required Weightage</th>
+                                                        <th width="15%">Actual Weightage</th>
+                                                    </tr>
+                                                </thead>
+
+
+                                                <tbody>
+                                                    @if (Model.TechSkillReportCollection != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
+
+
+                                                            </tr>
+
+                                                        }
+                                                    }
+
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "textarealabel col-lg-12 col-md-12 col-sm-12 col-xs-12 " })
+
+                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                <div class="talktext">
+
+                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="card-wrap">
-
-                                                @Html.HiddenFor(x => x.OverallInterviewingAbilityScore)
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Bias free Decision Making</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-
-                                                                            @Html.RadioButtonFor(m => m.DecisionMaking, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" }) <span class="radio-field">Yes</span>
-                                                                            @Html.RadioButtonFor(m => m.DecisionMaking, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Articulation/ Communication</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.Articulation, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" }) <span class="radio-field">Yes</span>
-                                                                            @Html.RadioButtonFor(m => m.Articulation, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Readiness for Online Interviews </label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
-                                                                            @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Interpersonal - Teamwork</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.Teamwork, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
-                                                                            @Html.RadioButtonFor(m => m.Teamwork, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Relationship Management</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
-                                                                            @Html.RadioButtonFor(m => m.RelationshipManagement, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Conflict Resolution</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.ConflictResolution, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
-                                                                            @Html.RadioButtonFor(m => m.ConflictResolution, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Adaptability</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.Adaptability, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
-                                                                            @Html.RadioButtonFor(m => m.Adaptability, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Mode of Interviews</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Telephonic</span>
-                                                                            @Html.RadioButtonFor(m => m.ModeInterviews, "Video", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Video</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Ability to Work Under Pressure</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
-                                                                                Yes
-                                                                            </span>
-                                                                            @Html.RadioButtonFor(m => m.WorkUnderPressure, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Time Management</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.TimeManagement, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
-                                                                                Yes
-                                                                            </span>
-                                                                            @Html.RadioButtonFor(m => m.TimeManagement, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Has interviewing experience</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.Interviewscompleted, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
-                                                                                Yes
-                                                                            </span>
-                                                                            @Html.RadioButtonFor(m => m.Interviewscompleted, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Ready-made Assessment</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
-
-                                                            <div>
-                                                                <div class="choose-file ">
-
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.ReadymadeAssessment, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
-                                                                                Yes
-                                                                            </span>
-                                                                            @Html.RadioButtonFor(m => m.ReadymadeAssessment, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
 
 
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> Creativity</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                            <div>
-                                                                <div class="choose-file ">
+                                    </div><!--end of col-md-12-->
 
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            @Html.RadioButtonFor(m => m.Creativity, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
-                                                                                Yes
-                                                                            </span>
-                                                                            @Html.RadioButtonFor(m => m.Creativity, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+                                </div>
 
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Interviewing Ability</span></h3>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="card-wrap">
 
+                                            @Html.HiddenFor(x => x.OverallInterviewingAbilityScore)
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Bias free Decision Making</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
 
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Recommendation</span></h3>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="card-wrap recommendation-form">
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+
+                                                                        @Html.RadioButtonFor(m => m.DecisionMaking, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" }) <span class="radio-field">Yes</span>
+                                                                        @Html.RadioButtonFor(m => m.DecisionMaking, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled"@*, @required="required"*@ })
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="CompanySize_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.Label("Country", "Country", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.DropDownListFor(m => m.Country, Model.CountryList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="CompanyHeadquarters_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Articulation/ Communication</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
 
-
-
-                                                <div class="row">
-
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
-                                                        <div class="form-group radiobox" style="margin-top:0px;">
+                                                        <div>
                                                             <div class="choose-file ">
 
                                                                 <div class="col-md-12">
                                                                     <div class="form-group" style="margin-bottom:0px;">
-                                                                        @Html.RadioButtonFor(m => m.CompanyType, "Product")<span class="radio-field">Product</span>
-                                                                        @Html.RadioButtonFor(m => m.CompanyType, "Service")<span class="radio-field">Service</span>
+                                                                        @Html.RadioButtonFor(m => m.Articulation, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" }) <span class="radio-field">Yes</span>
+                                                                        @Html.RadioButtonFor(m => m.Articulation, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Readiness for Online Interviews </label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                        @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Interpersonal - Teamwork</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.Teamwork, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                        @Html.RadioButtonFor(m => m.Teamwork, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-
-                                                            @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="CompanyStage_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                        </div>
-                                                    </div>
-
-
-
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.SkillCategory, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Relationship Management</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                        @Html.RadioButtonFor(m => m.RelationshipManagement, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                    </div>
+                                                                </div>
                                                             </div>
-
-                                                            <select id="SkillCategoryArray" name="SkillCategoryArray" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SkillCategoryList.ToList())
-                                                                {
-                                                                    @if (item != null)
-                                                                    {
-                                                                        @if (item.Selected)
-                                                                        {
-                                                                            <option value="@item.Value" selected>@item.Text</option>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <option value="@item.Value">@item.Text</option>
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                            </select>
-
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="SkillCategory_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-
-                                                            @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="Yearsofexperience_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                        </div>
-                                                    </div>
-
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
-                                                            </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Conflict Resolution</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                            @Html.DropDownListFor(x => Model.Senioritylevel, Model.SenioritylevelList, "Select Senioritylevel", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                            @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
+                                                        <div>
+                                                            <div class="choose-file ">
 
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="Senioritylevel_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.SkillNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.ConflictResolution, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                        @Html.RadioButtonFor(m => m.ConflictResolution, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
-                                                                @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                                @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="SkillNature_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                        </div>
-
                                                     </div>
-
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.DropDownListFor(x => Model.PerHourRateIndia, Model.IndianPrice, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
-                                                            @Html.ValidationMessageFor(model => model.PerHourRateIndia, "", new { @class = "text-danger" })
 
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="PerHourRateIndia_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.PerHourRateOutside, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.DropDownListFor(x => Model.PerHourRateOutside, Model.OutSideIndiaPrice, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
-                                                            @Html.ValidationMessageFor(model => model.PerHourRateOutside, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="PerHourRateOutside_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Adaptability</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+                                                        <div>
+                                                            <div class="choose-file ">
 
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
-                                                            </div>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.Adaptability, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Yes</span>
+                                                                        @Html.RadioButtonFor(m => m.Adaptability, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
 
-                                                            @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Profile Type", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                            <div class="form-group">
-                                                                <label class="text-danger" id="ProfileType_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Mode of Interviews</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+                                                        <div>
+                                                            <div class="choose-file ">
 
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Telephonic</span>
+                                                                        @Html.RadioButtonFor(m => m.ModeInterviews, "Video", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">Video</span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-
-                                                            @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Competency Level", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="text-danger" id="CompentencyLevel_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                         </div>
                                                     </div>
+                                                </div>
 
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Ability to Work Under Pressure</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
 
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                            Yes
+                                                                        </span>
+                                                                        @Html.RadioButtonFor(m => m.WorkUnderPressure, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            @Html.DropDownListFor(x => Model.Domain, Model.DomainList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required", @onchange = "Checkdoaminvalue()" })
-                                                            @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6" style="display:none" id="divdomainvalue">
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.TextBoxFor(m => m.DomainName, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.DomainName, "", new { @class = "text-danger", @id = "err_DomainName" })
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Time Management</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.TimeManagement, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                            Yes
+                                                                        </span>
+                                                                        @Html.RadioButtonFor(m => m.TimeManagement, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-
                                                     </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Has interviewing experience</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.Interviewscompleted, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                            Yes
+                                                                        </span>
+                                                                        @Html.RadioButtonFor(m => m.Interviewscompleted, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Ready-made Assessment</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.ReadymadeAssessment, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                            Yes
+                                                                        </span>
+                                                                        @Html.RadioButtonFor(m => m.ReadymadeAssessment, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
 
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Creativity</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+
+                                                        <div>
+                                                            <div class="choose-file ">
+
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        @Html.RadioButtonFor(m => m.Creativity, "Yes", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">
+                                                                            Yes
+                                                                        </span>
+                                                                        @Html.RadioButtonFor(m => m.Creativity, "No", htmlAttributes: new { @onclick = "CalculateAbilityTotal(false)" })<span class="radio-field">No</span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
 
-                                    @Html.HiddenFor(m => m.id)
-                                    @Html.HiddenFor(m => m.ISCId)
-                                    @Html.HiddenFor(m => m.InterviewId)
-                                    @Html.HiddenFor(m => m.IsEdited)
-                                    @Html.HiddenFor(m => m.IsQC)
-                                    @Html.HiddenFor(m => m.IRFName)
-                                    @Html.HiddenFor(m => m.PrimarySkill)
-                                    @Html.HiddenFor(m => m.InterviewerProfileId)
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h3 class="mb-0"><span>Recommendation</span></h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="card-wrap recommendation-form">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+                                                        @Html.DropDownListFor(m => m.CompanySize, Model.CompanySizeList, "Select Company Size", htmlAttributes: new { @class = "select-css form-control webkitEnabled"@*, @required="required"*@ })
 
-                                    <div class="card-footer">
-                                        <div class="row">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="CompanySize_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.Label("Country", "Country", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+                                                        @Html.DropDownListFor(m => m.Country, Model.CountryList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="CompanyHeadquarters_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                            <div class="col-md-12 mc-button-area">
-                                                @if (!string.IsNullOrEmpty(Model.BackUrl))
+
+
+                                            <div class="row">
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
+                                                    <div class="form-group radiobox" style="margin-top:0px;">
+                                                        <div class="choose-file ">
+
+                                                            <div class="col-md-12">
+                                                                <div class="form-group" style="margin-bottom:0px;">
+                                                                    @Html.RadioButtonFor(m => m.CompanyType, "Product")<span class="radio-field">Product</span>
+                                                                    @Html.RadioButtonFor(m => m.CompanyType, "Service")<span class="radio-field">Service</span>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+
+                                                        @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="CompanyStage_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.SkillCategory, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+
+                                                        <select id="SkillCategoryArray" name="SkillCategoryArray" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.SkillCategoryList.ToList())
+                                                            {
+                                                                @if (item != null)
+                                                                {
+                                                                    @if (item.Selected)
+                                                                    {
+                                                                        <option value="@item.Value" selected>@item.Text</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                }
+                                                            }
+
+                                                        </select>
+
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="SkillCategory_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+
+                                                        @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="Yearsofexperience_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+
+                                                        @Html.DropDownListFor(x => Model.Senioritylevel, Model.SenioritylevelList, "Select Senioritylevel", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="Senioritylevel_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.SkillNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+
+                                                            @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                            @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="SkillNature_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+                                                        @Html.DropDownListFor(x => Model.PerHourRateIndia, Model.IndianPrice, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                                        @Html.ValidationMessageFor(model => model.PerHourRateIndia, "", new { @class = "text-danger" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="PerHourRateIndia_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.PerHourRateOutside, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+                                                        @Html.DropDownListFor(x => Model.PerHourRateOutside, Model.OutSideIndiaPrice, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required" })
+                                                        @Html.ValidationMessageFor(model => model.PerHourRateOutside, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="PerHourRateOutside_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.ProfileType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+
+                                                        @Html.DropDownListFor(x => Model.ProfileType, Model.ProfileTypeList, "Select Profile Type", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        <div class="form-group">
+                                                            <label class="text-danger" id="ProfileType_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.CompentencyLevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+
+                                                        @Html.DropDownListFor(x => Model.CompentencyLevel, Model.CompentencyLevelList, "Select Competency Level", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="text-danger" id="CompentencyLevel_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        </div>
+                                                        @Html.DropDownListFor(x => Model.Domain, Model.DomainList, "Select", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @required = "required", @onchange = "Checkdoaminvalue()" })
+                                                        @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6" style="display:none" id="divdomainvalue">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.DomainName, new { @class = "form-control text-box single-line" })
+                                                        @Html.ValidationMessageFor(model => model.DomainName, "", new { @class = "text-danger", @id = "err_DomainName" })
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                @Html.HiddenFor(m => m.id)
+                                @Html.HiddenFor(m => m.ISCId)
+                                @Html.HiddenFor(m => m.InterviewId)
+                                @Html.HiddenFor(m => m.IsEdited)
+                                @Html.HiddenFor(m => m.IsQC)
+                                @Html.HiddenFor(m => m.IRFName)
+                                @Html.HiddenFor(m => m.PrimarySkill)
+                                @Html.HiddenFor(m => m.InterviewerProfileId)
+
+                                <div class="card-footer">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area">
+                                            @if (!string.IsNullOrEmpty(Model.BackUrl))
+                                            {
+
+                                                <a href="@Model.BackUrl" class="mdc-button mdc-button--raised mdc-ripple-upgraded" role="button">Back to List</a>
+
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Back to List", "MyInterviewerAssessment", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                            }
+
+                                            @if (Model.ProfileName == "Interviewer" || Model.ProfileName == "Admin")
+                                            {
+                                                @if (Model.IsEdited)
                                                 {
-
-                                                    <a href="@Model.BackUrl" class="mdc-button mdc-button--raised mdc-ripple-upgraded" role="button">Back to List</a>
-
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Back to List", "MyInterviewerAssessment", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
                                                 }
 
-                                                @if (Model.ProfileName == "Interviewer" || Model.ProfileName == "Admin")
-                                                {
-                                                    @if (Model.IsEdited)
-                                                    {
-                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
-                                                    }
-
-                                                }
+                                            }
 
 
 
-                                            </div>
                                         </div>
                                     </div>
-
                                 </div>
-                                @Html.HiddenFor(x => x.OverallScore, new { id = "OverallScore" })
-</form>
+
+                            </div>
+                            @Html.HiddenFor(x => x.OverallScore, new { id = "OverallScore" })
+                        </form>
                     </div>
 
                     <!-- end content-->
@@ -2270,7 +2270,10 @@
     }
 
     function CheckConditions() {
-        return (CheckRecommendationValues() && CheckInterviewerComments() && CheckQuestions()) && CheckScores();
+        if (CheckRecommendationValues() && CheckInterviewerComments() && CheckQuestions() && CheckScores()) {
+            return true;
+        }
+        return false;
     }
 
     function CheckScores() {
@@ -2278,14 +2281,19 @@
 
         if (profileValue == null || profileValue == '') {
             document.getElementById("ProfileScore").focus();
+            document.getElementById("error_ProfileScore").innerHTML = "All Profile Score fileds are required.";
             return false;
+        } else {
+            document.getElementById("error_ProfileScore").innerHTML = "";
         }
         var personalityValue = document.getElementById("OverallPersonalityScore").value;
 
         if (personalityValue == null || personalityValue == '') {
             document.getElementById("OverallPersonalityScore").focus();
+            document.getElementById("error_OverallPersonalityScore").innerHTML = "Overall Personality Score fileds are required.";
             return false;
-
+        } else {
+            document.getElementById("error_OverallPersonalityScore").innerHTML = "";
         }
 
         var interviewingAbilityValue = document.getElementById("OverallInterviewingAbilityScore").value;
@@ -2305,7 +2313,6 @@
             if (question == null || question == '') {
                 document.getElementById("Question_Error").innerHTML = "Kindly fill the Question(s)";
                 document.getElementById(questionItems[i].id).focus();
-
                 return false;
             }
 

@@ -1,5 +1,4 @@
 /* CSS Document */
-
 body {
     background: #151515 !important;
     color: #9a9a9a !important
@@ -754,22 +753,31 @@ div.dataTables_wrapper div.dataTables_info {
     border: 1px #77737359 solid !important;
 }
 
+.call-txt {
+    border: 1px #181818 solid;
+    color: #9A9A9A;
+}
 
 .table-striped.table-bordered th {
     background: rgb(54 52 52) !important;
 }
+
 .interviewer .multiselect {
     background: #383838 !important;
 }
+
 .interviewer .radiobox {
     background: #383838 !important;
 }
+
 .dataTables_filter input[type=search] {
     background: #000!important;
 }
+
 .sidebar-mini .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa, .sidebar:hover .sidebar-wrapper .nav li.dropmenu a .fa {
     color: #fff;
 }
+
 #mySchedulingLinkpopup .mCSB_scrollTools .mCSB_draggerRail {
     width: 4px;
 }
@@ -2035,91 +2043,114 @@ div.dataTables_wrapper div.dataTables_info {
 .info .info-title {
     color: #9a9a9a !important
 }
+
 .instainterview .form-group label {
     background: #000!important;
 }
+
 .instainterview .form-group {
     box-shadow: none!important;
 }
+
     .instainterview .form-group .select-css.form-control, .instainterview .form-group .form-control {
         background: #181818 !important;
     }
-        .single-video-right .video-card-image {
-            border: 2px #524c4cab solid;
-        }
+
+.single-video-right .video-card-image {
+    border: 2px #524c4cab solid;
+}
+
 .instainterview .table-bordered {
     border: 2px solid rgb(47 45 45)!important;
 }
+
 .instainterview .multiple_row > h2 span {
     color: #8c8888 !important;
     position: absolute;
     text-transform: uppercase;
 }
+
 .instainterview .multiple_row > h2:before, #reportForm .multiple_row > h3:before {
     background-color: rgb(43 43 43);
     border-right: 30px solid rgb(43 43 43);
 }
+
 .instainterview .upload-area {
     background: #181818;
 }
+
 .instainterview label.upload {
     border: 1px #b8b9b98f solid;
     color: #908c8c !important;
     border-radius: 0rem !important;
 }
+
 #reportForm .report-wrap, #reportForm .card-wrap {
     background: #232222;
 }
+
 .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
     background: #383838;
 }
+
     .mdc-card #reportForm .form-control, .mdc-card #reportForm .form-control[disabled], .mdc-card #reportForm .form-control[readonly] {
         color: #9c9797c4 !important;
-        font-weight:400;
+        font-weight: 400;
     }
 
 #reportForm .videoConplayer {
     background: #232222;
 }
+
 #reportForm table {
     background: #232222;
 }
+
 #reportForm .talk-bubble textarea {
     background: #181818 !important;
 }
+
 #reportForm .textarealabel {
     color: #9a9a9a !important;
 }
+
 #QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable.table-bordered td {
     border-right: 1px solid #444444 !important;
     border-left: 0px solid #444444 !important;
     border-top: 1px solid #444444 !important;
     border-top: 1px solid #444444 !important;
 }
-    input [type="radio"]:checked:before {
+
+input [type="radio"]:checked:before {
     background: #787878 !important;
 }
+
 .user-menu a:hover span, .user-menu span.color-themetxt:hover {
     color: #47484a !important;
 }
+
 .report-full-wrap #videoId {
     background: #121212;
     font-size: 12px;
     padding: 1px 7px;
     margin: 0px 10px;
 }
+
 .welcome {
     background: #252424;
     padding: 6px 5px;
     text-align: center;
 }
+
 .welcome-txt {
     font-size: 13px;
     text-transform: capitalize;
 }
+
 .user-menu:before {
     background: #252424;
 }
+
 input[type="radio"]:checked {
     border-color: #787878 !important;
 }
@@ -2127,9 +2158,11 @@ input[type="radio"]:checked {
 .text-areadiv1 textarea {
     background: #181818 !important;
 }
+
 .client .table-bordered td {
     border-right: 1px solid #dee2e647 !important;
 }
+
 .clickhere_btn {
     color: #8c8989 !important;
     background: #54a5f500;
@@ -2153,6 +2186,7 @@ input[type="radio"]:checked {
         text-transform: uppercase;
         box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
     }
+
 [data-tooltip]:before {
     background: #121212 !important;
     color: #8a8181 !important;
@@ -2164,11 +2198,13 @@ input[type="radio"]:checked {
     border-right: 8px solid transparent !important;
     border-left: 8px solid transparent !important;
 }
+
 #myStatusListpopup .table-bordered td {
     border: 1px solid #494c4e;
     BACKGROUND: #131313;
     PADDING: 0PX 10PX;
 }
+
 .resume {
     position: relative;
     display: inline-flex;
@@ -2184,14 +2220,16 @@ input[type="radio"]:checked {
     border-radius: 40px;
 }
 
-    #myStatusListpopup .table-bordered td textarea {
-        margin: 5PX;
-        background: #131313;
-        border: 1px solid #494c4e;
-    }
+#myStatusListpopup .table-bordered td textarea {
+    margin: 5PX;
+    background: #131313;
+    border: 1px solid #494c4e;
+}
+
 .form-field-calender .resume .form-label {
     color: #000 !important;
 }
+
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;

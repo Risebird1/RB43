@@ -328,6 +328,7 @@
                         <form action="/InterviewScheduler/ScheduleEvent" enctype="multipart/form-data" method="post">
                             <div>
                                 @Html.AntiForgeryToken()
+                                @Html.ValidationSummary()
                                 @Html.HiddenFor(m => m.InterviewDate)
                                 @Html.HiddenFor(m => m.Uniqueid)
                                 @Html.HiddenFor(m => m.offset)
