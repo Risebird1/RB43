@@ -12,7 +12,7 @@ GO
 
   
  
-Create PROCEDURE [dbo].[usp_GetIRFInterviewerMembers] 422 
+Create PROCEDURE [dbo].[usp_GetIRFInterviewerMembers]  
 @IRFId int  
 AS  
 Begin  
