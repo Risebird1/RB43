@@ -251,6 +251,7 @@ namespace Risebird.Entities.ViewModel
         public float CompletionRate { get; set; }
         public float SelectionRate { get; set; }
         public int Flags { get; set; }
+        public int PendingCount { get; set; }
 
     }
     public class SkillCahnnelDetailsVM

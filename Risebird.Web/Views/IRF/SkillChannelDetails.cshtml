@@ -157,6 +157,7 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
+                                                    <th>Report Pending</th>
                                                     @*<th>Total Scheduled Count</th>*@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
@@ -178,6 +179,7 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
+                                                    <th>Report Pending</th>
                                                     @*<th>Total Scheduled Count</th>*@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
@@ -209,7 +211,7 @@
 
                                                             @if (item.Flags > 0)
                                                             {
-                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.IRFId', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate')">@item.Flags</td>
+                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.IRFId', '@(item.JDTiltle != null ? item.JDTiltle.Split('|')[0] : string.Empty)', '@item.RisebirdHREmail', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate')">@item.Flags</td>
                                                             }
                                                             else
                                                             {
@@ -220,6 +222,7 @@
                                                             <td> @item.CompletedInterviews </td>
                                                             <td> @item.SelectedMeetings </td>
                                                             <td> @item.RejectedMeetings </td>
+                                                            <td> @item.PendingCount </td>
                                                             @*<td> @item.ScheduledMeetings </td>*@
                                                             <td> @item.NotScheduledCount </td>
                                                             <td> @item.ReScheduledCount </td>
@@ -441,14 +444,21 @@
         var modal = document.getElementById("flagsModal");
         modal.style.display = "none";
     }
-    function OpenModalForFlags(irfName, scheduledPercentage, completionRate, selectionRate) {
-
+    function OpenModalForFlags(irfName, jdTitle, risebirdChannelOwner, scheduledPercentage, completionRate, selectionRate) {
         $('#flagsModalBody').html('');
 
         var modal = document.getElementById("flagsModal");
         modal.style.display = "block";
-        $('#flagsModalHeading').text('Flags for ' + irfName);
+        var modalHeading = '';
 
+        if (jdTitle != null && jdTitle != '') {
+            modalHeading = 'Flags for ' + irfName + '(' + jdTitle + ')';
+        }
+        else {
+            modalHeading = 'Flags for ' + irfName;
+        }
+
+        $('#flagsModalHeading').text(modalHeading);
         //code for setting up a bar chart
         
         var chartData = [];
