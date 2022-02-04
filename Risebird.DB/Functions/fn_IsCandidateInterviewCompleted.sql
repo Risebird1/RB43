@@ -16,24 +16,33 @@ Returns bit
 as
 Begin
 
-declare @candidateEmail varchar(150), @irfName varchar(150), @resultId int
+declare @candidateEmail varchar(150), @irfName varchar(150)--, @result int
 
 set @candidateEmail = (select EmailId from UserList where id = @userId)
 set @irfName = (select IRFId from IRF where id = @irfId)
 
-set @resultId = 0
+DECLARE @TemporaryStatus TABLE (      
+		confirmationStatus int,
+		MeetingStatus int
+);   
 
-set @resultId = (select top 1 im.id 
+INSERT INTO @TemporaryStatus      
+select top 1 cast(im.confirmationStatus as int), ic.MeetingStatus
 from InterviewMeetings im 
 join InterviewComments ic on im.id=ic.InterviewId 
 where im.candidateEmail=@candidateEmail and im.IRFId = @irfName 
-and cast(im.interviewDate as date) >= @startDate and ic.MeetingStatus in (4,6,7,8) 
-and im.confirmationStatus=1
-order by im.interviewDate desc)
+and cast(im.interviewDate as date) >= @startDate 
+order by im.interviewDate desc
+
+
+declare @confirmationStatus int, @meetingStatus int
+
+set @confirmationStatus = (select top 1 confirmationStatus from @TemporaryStatus)
+set @meetingStatus = (select top 1 MeetingStatus from @TemporaryStatus)
 
 declare @isCompleted bit
 
-if(@resultId > 0)
+if(@confirmationStatus=1 and @meetingStatus in (4,6,7,8))
 begin
 	set @isCompleted=1
 end
