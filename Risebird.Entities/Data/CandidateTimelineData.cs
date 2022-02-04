@@ -35,6 +35,9 @@ namespace Risebird.Entities.Data
         public int imid { get; set; }
         public string CalendlyLink { get; set; }
         public string staffingAgency { get; set; }
+        public bool IsCandidateResponsed { get; set; }
+        public bool CandidateResponse { get; set; }
         public string ClientAction { get; set; }
+        public string NickName { get; set; }
     }
 }
