@@ -5408,11 +5408,11 @@ namespace Risebird.Repository
                 string query1 = string.Empty;
                 if (status == 1)
                 {
-                    query = "Update ti set ti.IsActive=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                    query = "Update ti set ti.IsAvailable=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
                 }
                 else
                 {
-                    query = "Update ti set ti.IsActive=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                    query = "Update ti set ti.IsActive=0,IsAvailable=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
                     query1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.IRFId=@IRFId and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();

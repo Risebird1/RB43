@@ -1115,14 +1115,10 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                        <th width="45%" class="table_heading">Skills</th>
-                                                                        <th width="15%" class="table_heading">
-                                                                            Per Interviewer Rate
-                                                                            <span style="color:red">*</span>
-                                                                        </th>
-                                                                        <th width="10%" class="table_heading">
-                                                                            Active
-                                                                        </th>
+                                                                        <th width="40%" class="table_heading">Skills</th>
+                                                                        <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Active</th>
+                                                                        <th width="10%" class="table_heading">Available</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -1131,16 +1127,10 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-
                                                                                 @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-
-
                                                                             </td>
-
                                                                             <td>
-
                                                                                 @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
-
                                                                             </td>
                                                                             <td>
                                                                                 @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
@@ -1151,10 +1141,12 @@
                                                                                 {
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                 }
-
                                                                             </td>
                                                                             <td class="text-center">
                                                                                 @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBox("InterviewerCollection[0].IsAvailable", new { @checked = "checked" })
                                                                             </td>
 
                                                                             <td class="action text-center">
@@ -1173,14 +1165,11 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-
                                                                                     @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                 </td>
-
                                                                                 <td>
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
-
                                                                                 </td>
                                                                                 <td>
                                                                                     @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
@@ -1191,23 +1180,20 @@
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                     }
-
-
-
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
+                                                                                </td>
                                                                                 <td class="action text-center">
-
                                                                                     <div>
                                                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                         @*@if (Model.IsClone)
                                                                                             {
                                                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                             }*@
-
-
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
