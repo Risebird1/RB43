@@ -18,7 +18,7 @@
     string[] ScheduleStatus = new string[] { };
     string[] HREmail = new string[] { };
     string[] ProfileSource = new string[] { };
-    
+
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
 {
@@ -122,10 +122,10 @@
                     <div class="pull-right">
                         <div>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top"  onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                                <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
                             </button>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top"  onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
+                                <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
                             </button>
                             <span>
                                 <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
@@ -321,20 +321,7 @@
 
                                                                 @foreach (var item in Model)
                                                                 {
-                                                                    string colorcoding;
-                                                                    if (item.ClientAction== "Shortlisted")
-                                                                    {
-                                                                        colorcoding = "aquamarine";
-                                                                    }
-                                                                    else if (item.ClientAction == "Rejected")
-                                                                    {
-                                                                        colorcoding = "red";
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        colorcoding = "";
-                                                                    }
-                                                                    <tr style="background-color: @colorcoding">
+                                                                    <tr>
 
                                                                         @if (item.CandidateName != null && item.CandidateName != "")
                                                                         {
