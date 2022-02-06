@@ -54,5 +54,6 @@ namespace Risebird.Business.Interface
         Task<List<TdsCertificateReport>> FetchTdsCertificatesbyEmailid(string Emailid);
         bool AddTdsCertificates(TdsCertificateReport model);
         TdsCertificateReport FetchTdsCertificatebyid(int certificateid);
+        Task<IEnumerable<IRFInterviewerMappingVM>> IRFInterviewerMappingByInterviewerid(string emailid);
     }
 }

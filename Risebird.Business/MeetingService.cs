@@ -3322,6 +3322,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public string SetInterviewerAvailability(int transid, int isavailable)
+        {
+            try
+            {
+                var meeting = _meetingRespository.SetInterviewerAvailability(transid, isavailable);
+                return meeting;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "fail";
+            }
+        }
     }
 }
 
