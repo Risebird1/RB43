@@ -5408,11 +5408,11 @@ namespace Risebird.Repository
                 string query1 = string.Empty;
                 if (status == 1)
                 {
-                    query = "Update ti set ti.IsActive=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                    query = "Update ti set ti.IsAvailable=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
                 }
                 else
                 {
-                    query = "Update ti set ti.IsActive=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                    query = "Update ti set ti.IsActive=0,IsAvailable=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
                     query1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.IRFId=@IRFId and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
@@ -5436,6 +5436,45 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public string SetInterviewerAvailability(int transid, int isavailable)
+        {
+            try
+            {
+                var dquery = string.Empty;
+                var dquery1 = string.Empty;
+                var dParameters = new DynamicParameters();
+                dParameters.Add("@isavailable", isavailable);
+                dParameters.Add("@imid", transid);
+                var dParameters1 = new DynamicParameters();
+                dParameters1.Add("@imid", transid);
+                if (isavailable == 1)
+                {
+                    dquery = "Update TransInterviewer Set IsAvailable = @isavailable Where id=@imid";
+                }
+                else
+                {
+                    dquery = "Update TransInterviewer Set IsActive=0,IsAvailable = @isavailable Where id=@imid";
+                    dquery1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.id=@imid";
+                }
+                if (isavailable != 1)
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query(dquery1, dParameters1);
+                    }
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(dquery, dParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "fail";
         }
     }
 }

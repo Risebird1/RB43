@@ -2892,6 +2892,37 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("TdsCertificateInterviewers", new { emailid = model.emailid, year = model.year });
             }
         }
+        #region IRFInterviewerMapping
+        public async Task<IActionResult> IRFInterviewerMapping()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Interviewer")
+                {
+                    var _emailid = HttpContext.Session.GetString("email")?.Trim();
+                    _emailid = _emailid.Replace("\"", "");
+                    var model = await _interviewerService.IRFInterviewerMappingByInterviewerid(_emailid);
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public JsonResult SetInterviewerAvailability(int transid, int isavailable)
+        {
+            var result = _meetingService.SetInterviewerAvailability(transid, isavailable);
+            return Json(result);
+        }
+        #endregion
     }
 }
 
