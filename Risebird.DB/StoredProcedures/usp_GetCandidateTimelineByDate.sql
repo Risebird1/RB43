@@ -70,7 +70,7 @@ if @EmailId is not null
     mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
     ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,             
-    (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill, im.staffingAgency,Irf.CalendlyLink           
+    (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill, im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName           
              
     from Candidate ca               
     join CandidatesMaster cm on cm.id =ca.CandidateMasterId              
@@ -99,7 +99,7 @@ if @EmailId is not null
     mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
     ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,             
-    (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink          
+    (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName          
              
     from Candidate ca               
     join CandidatesMaster cm on cm.id =ca.CandidateMasterId              
@@ -128,7 +128,7 @@ if @EmailId is not null
     mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
     ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone,  im.interviewDate,            
-    (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink          
+    (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName          
             
     from Candidate ca               
     join CandidatesMaster cm on cm.id =ca.CandidateMasterId              
@@ -158,7 +158,7 @@ Else
   mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
   ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
   ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone,  im.interviewDate,            
-  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink          
+  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName          
   from Candidate ca               
   join CandidatesMaster cm on cm.id =ca.CandidateMasterId         
   join UserList ul on ul.id =cm.UserId              
@@ -173,6 +173,8 @@ Else
               
                
 End    
+    
+  
 GO
 
 
