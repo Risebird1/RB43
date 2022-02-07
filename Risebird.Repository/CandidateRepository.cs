@@ -168,7 +168,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select im.interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.candidateName as CandidateName from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr where im.id=@interviewid and confirmationStatus=2";
+                var query = "Select im.interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.candidateName as CandidateName,im.ZoomMeetingId   from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr   where im.id=@interviewid and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -456,7 +456,7 @@ namespace Risebird.Repository
                     cmdAddTemplate.Parameters.Add(new SqlParameter("@PriorityStatus", SqlDbType.Int));
                     cmdAddTemplate.Parameters["@PriorityStatus"].Value = model.PriorityStatus;
                     cmdAddTemplate.Parameters.Add(new SqlParameter("@CompletionStatus", SqlDbType.Int));
-                    cmdAddTemplate.Parameters["@CompletionStatus"].Value = model.CompletionStatus; 
+                    cmdAddTemplate.Parameters["@CompletionStatus"].Value = model.CompletionStatus;
                     cmdAddTemplate.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
                     cmdAddTemplate.Parameters["@IRFId"].Value = model.IRFId;
                     cmdAddTemplate.Parameters.Add(new SqlParameter("@CandidateId", SqlDbType.Int));

@@ -38,6 +38,6 @@ namespace Risebird.Entities.Data
         public bool IsCandidateResponsed { get; set; }
         public bool CandidateResponse { get; set; }
         public string ClientAction { get; set; }
-        public string NickName { get; set; }
+        public string InterviewerNickName { get; set; }
     }
 }

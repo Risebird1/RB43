@@ -622,5 +622,16 @@ namespace Risebird.Web.Controllers
             var eventid = _interviewSchedulerservice.FetchEventidByUniqueid(id);
             return RedirectToAction("EditEvent", new { eventid = eventid, eventtype = 1 });
         }
+        public string DeleteMeetingLink(string meetingid)
+        {
+            string token = ZoomToken();
+            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
+            var request = new RestRequest(Method.DELETE);
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("authorization", "Bearer " + token);
+            IRestResponse response = client.Execute(request);
+            var content = response.Content;
+            return "Delete successfully";
+        }
     }
 }
