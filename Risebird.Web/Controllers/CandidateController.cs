@@ -3613,7 +3613,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
-                    candidateTimeline.NickName = firstData.NickName;
+                    candidateTimeline.NickName = firstData.InterviewerNickName;
                     //candidateTimeline.staffingAgency = firstData.staffingAgency;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3738,7 +3738,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
-                    candidateTimeline.NickName = firstData.NickName;
+                    candidateTimeline.NickName = firstData.InterviewerNickName;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
