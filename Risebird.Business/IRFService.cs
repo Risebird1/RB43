@@ -2098,7 +2098,7 @@ namespace Risebird.Business
                 foreach (var irf in irfList)
                 {
                     //int diff = (irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings - irf.CandidateCount);
-                    
+
                     //if(diff > 0)
                     //{
                     //    irf.ReScheduledCount = irf.ReScheduledCount - diff;
@@ -2116,7 +2116,6 @@ namespace Risebird.Business
                     //        irf.NotScheduledCount = irf.NotScheduledCount + totalDiff;
                     //    }
                     //}
-
                     if(irf.CandidateCount > 0)
                     {
                         irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100 ) / irf.CandidateCount;

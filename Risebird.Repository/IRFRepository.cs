@@ -4590,7 +4590,7 @@ namespace Risebird.Repository
                     parameters.Add("@startDate", startDate);
                     parameters.Add("@endDate", endDate);
                     parameters.Add("@timeNow", DateTime.Now);
-                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRFDetails", parameters,
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetIRFCandidateStats", parameters, //usp_GetAllIRFDetails
                         commandType: CommandType.StoredProcedure);
                 }
             }
