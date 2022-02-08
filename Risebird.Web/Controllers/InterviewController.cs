@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -15,6 +17,7 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -6604,6 +6607,7 @@ namespace Risebird.Web.Controllers
                     var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
                     var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                     var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                    DeleteMeetingLink(result.ZoomMeetingId);
                 }
                 return Json("Successfully status updated");
             }
@@ -6768,5 +6772,35 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        public string DeleteMeetingLink(string meetingid)
+        {
+            string token = ZoomToken();
+            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
+            var request = new RestRequest(Method.DELETE);
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("authorization", "Bearer " + token);
+            IRestResponse response = client.Execute(request);
+            var content = response.Content;
+            return "Delete successfully";
+        }
+        public string ZoomToken()
+        {
+            DateTime Expiry = DateTime.UtcNow.AddDays(1);
+            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
+            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
+            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var header = new JwtHeader(credentials);
+            var payload = new JwtPayload
+            {
+                { "iss", ApiKey},
+                { "exp", ts },
+            };
+            var secToken = new JwtSecurityToken(header, payload);
+            var handler = new JwtSecurityTokenHandler();
+            var tokenString = handler.WriteToken(secToken);
+            return tokenString;
+        }
     }
 }

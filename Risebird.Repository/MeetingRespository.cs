@@ -1431,7 +1431,7 @@ namespace Risebird.Repository
                     parametersPoints.Add("@Type", "Interview");
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-                    if (reportDetails.TechSkillReportCollection != null)
+                    if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x=>x.ActualLevelId==0))
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -5455,15 +5455,15 @@ namespace Risebird.Repository
                 else
                 {
                     dquery = "Update TransInterviewer Set IsActive=0,IsAvailable = @isavailable Where id=@imid";
-                    dquery1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.id=@imid";
+                    //dquery1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.id=@imid";
                 }
-                if (isavailable != 1)
-                {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = con.Query(dquery1, dParameters1);
-                    }
-                }
+                //if (isavailable != 1)
+                //{
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        var results = con.Query(dquery1, dParameters1);
+                //    }
+                //}
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query(dquery, dParameters);
