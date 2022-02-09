@@ -22,6 +22,8 @@ using RestSharp;
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
+using VirusTotalNet;
+using VirusTotalNet.ResponseCodes;
 
 namespace Risebird.Web.Controllers
 {
@@ -165,6 +167,55 @@ namespace Risebird.Web.Controllers
                             {
                                 var fileName = meeting.JDFile.FileName.Replace(" ", "_");
                                 FileInfo fi = new FileInfo(fileName);
+
+                                int virusScanResult = 0;
+
+                                if(profileName == "Client")
+                                {
+                                    if ((await _instaInterviewService.GetClientPasswordResetStatus(emailid)) == (int)BooleanResultsEnum.True)
+                                    {
+                                        using (var ms = new MemoryStream())
+                                        {
+                                            meeting.JDFile.CopyTo(ms);
+
+                                            VirusTotal virusTotal = new VirusTotal(_configuration["VirusTotal:ApiKey"]);
+
+                                            //Use HTTPS instead of HTTP
+                                            virusTotal.UseTLS = true;
+
+                                            //byte[] eicar = Encoding.ASCII.GetBytes(@"X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+                                            //VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(eicar);//ms
+
+                                            VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(ms);
+                                            bool hasFileBeenScannedBefore = fileReport.ResponseCode == FileReportResponseCode.Present;
+
+                                            if (hasFileBeenScannedBefore)
+                                            {
+                                                virusScanResult = fileReport.Positives;
+                                            }
+                                            else
+                                            {
+                                                //var fileResults = await virusTotal.ScanFileAsync(eicar, fileName);//ms
+                                                var fileResults = await virusTotal.ScanFileAsync(ms, fileName);
+                                                virusScanResult = fileReport.Positives;
+                                            }
+
+                                            if (virusScanResult > 0)
+                                            {
+                                                ModelState.AddModelError(string.Empty, "File upload failed. Virus Detected!");
+                                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                                if (profileName == "SeniorHR")
+                                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                                return View(meeting);
+                                            }
+
+                                        }
+
+                                    }
+                                }
+                                
+
                                 if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
@@ -198,7 +249,7 @@ namespace Risebird.Web.Controllers
                             }
                             if (meeting.TechSkill.Count() < 2)
                             {
-                                ModelState.AddModelError(string.Empty, "Please Add atlest 2 skills!");
+                                ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
                                 var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                                 if (profileName == "SeniorHR")
                                     Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
@@ -313,6 +364,54 @@ namespace Risebird.Web.Controllers
                             {
                                 var fileName = meeting.JDFile.FileName.Replace(" ", "_");
                                 FileInfo fi = new FileInfo(fileName);
+
+                                int virusScanResult = 0;
+                                if (profileName == "Client")
+                                {
+                                    if ((await _instaInterviewService.GetClientPasswordResetStatus(emailid)) == (int)BooleanResultsEnum.True)
+                                    {
+                                        using (var ms = new MemoryStream())
+                                        {
+                                            meeting.JDFile.CopyTo(ms);
+
+                                            //VirusTotal virusTotal = new VirusTotal("30368672cc1d7fa0497a0d2c640544ade03ad455600d24c220bfd41c83b5e6d5");
+                                            VirusTotal virusTotal = new VirusTotal(_configuration["VirusTotal:ApiKey"]);
+
+                                            //Use HTTPS instead of HTTP
+                                            virusTotal.UseTLS = true;
+
+                                            //byte[] eicar = Encoding.ASCII.GetBytes(@"X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+                                            //VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(eicar);//ms
+
+                                            VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(ms);
+                                            bool hasFileBeenScannedBefore = fileReport.ResponseCode == FileReportResponseCode.Present;
+
+                                            if (hasFileBeenScannedBefore)
+                                            {
+                                                virusScanResult = fileReport.Positives;
+                                            }
+                                            else
+                                            {
+                                                //var fileResults = await virusTotal.ScanFileAsync(eicar, fileName);//ms
+                                                var fileResults = await virusTotal.ScanFileAsync(ms, fileName);
+                                                virusScanResult = fileReport.Positives;
+                                            }
+
+                                            if (virusScanResult > 0)
+                                            {
+                                                ModelState.AddModelError(string.Empty, "File upload failed. Virus Detected!");
+                                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                                if (profileName == "SeniorHR")
+                                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                                return View(meeting);
+                                            }
+
+                                        }
+
+                                    }
+                                }
+
                                 if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
@@ -346,7 +445,7 @@ namespace Risebird.Web.Controllers
                             }
                             if (meeting.TechSkill.Count() < 2)
                             {
-                                ModelState.AddModelError(string.Empty, "Please Add atlest 2 skills!");
+                                ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
                                 var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
                                 if (profileName == "SeniorHR")
                                     Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();

@@ -279,5 +279,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+
+        public async Task<int> GetClientPasswordResetStatus(string emailId)
+        {
+            try
+            {
+                return await _instaInterviewRepository.GetClientPasswordResetStatus(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (int)BooleanResultsEnum.Failed;
+            }
+        }
     }
 }
