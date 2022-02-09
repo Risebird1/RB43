@@ -59,6 +59,7 @@
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="Twilio" Version="5.35.0" />
     <PackageReference Include="Twilio.AspNet.Core" Version="5.33.1" />
+    <PackageReference Include="VirusTotalNet" Version="2.0.0" />
     <PackageReference Include="X.PagedList.Mvc" Version="7.9.1" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="7.9.1" />
   </ItemGroup>
