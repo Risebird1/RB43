@@ -3609,7 +3609,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
                     candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
-                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
@@ -3734,7 +3734,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
                     candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
-                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
