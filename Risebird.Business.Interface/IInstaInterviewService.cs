@@ -24,5 +24,6 @@ namespace Risebird.Business.Interface
         string UpdateInstaZoomLink(int meetingid, string Zoomlink, DateTime starttime, DateTime endtime, string accountEmail);
         Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime);
         string CheckForInstaAssign(int meetingid);
+        Task<int> GetClientPasswordResetStatus(string emailId);
     }
 }

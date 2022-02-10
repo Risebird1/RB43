@@ -424,7 +424,7 @@ namespace Risebird.Repository
                     parameters.Add("@EmailId", emailID);
                     parameters.Add("@Profile", profileName);
                     parameters.Add("@timeNow", DateTime.Now);
-                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters,
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -782,9 +782,9 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-                        
 
-                        if(irfDetails.Selectability != null && irfDetails.Selectability.Count()>0 && irfDetails.IsJoinabilitySelectabilityRequired)
+
+                        if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
                             DataTable selectabilityDt = new DataTable();
                             selectabilityDt.Columns.Add("IRFId", typeof(int));
@@ -809,7 +809,7 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-                        
+
 
 
                         //update general skill table
@@ -873,10 +873,11 @@ namespace Risebird.Repository
                             interviewerDt.Columns.Add("UserId", typeof(int));
                             interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
                             interviewerDt.Columns.Add("IsActive", typeof(bool));
+                            interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
+                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true, irfDetails.IsClone ? item.IsAvailable : true);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -1085,7 +1086,7 @@ namespace Risebird.Repository
 
                     try
                     {
-                        if(irfDetails.Joinability != null && irfDetails.Joinability.Count()>0 && irfDetails.IsJoinabilitySelectabilityRequired)
+                        if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                         {
                             DataTable joinabilityDt = new DataTable();
                             joinabilityDt.Columns.Add("IRFId", typeof(int));
@@ -1110,14 +1111,11 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-                        
                     }
                     catch (Exception ex)
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
-
-
 
                     try
                     {
@@ -1129,7 +1127,6 @@ namespace Risebird.Repository
                             selectabilityDt.Columns.Add("Type", typeof(string));
                             selectabilityDt.Columns.Add("Value", typeof(string));
                             selectabilityDt.Columns.Add("Weightage", typeof(int));
-
 
                             foreach (var item in irfDetails.Selectability)
                             {
@@ -1146,8 +1143,6 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-
-                        
                     }
                     catch (Exception ex)
                     {
@@ -1182,7 +1177,6 @@ namespace Risebird.Repository
                         skillGeneralDt.Columns.Add("Value", typeof(string));
                         skillGeneralDt.Columns.Add("Weightage", typeof(int));
 
-
                         foreach (var item in irfDetails.SkillGeneral)
                         {
                             skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
@@ -1202,7 +1196,6 @@ namespace Risebird.Repository
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
-
 
                     //update tech skill table
                     //if (irfDetails.SkillCollection != null)
@@ -1235,7 +1228,6 @@ namespace Risebird.Repository
                         foreach (var item in irfDetails.SkillCollection)
                         {
                             techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
-
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -1252,7 +1244,6 @@ namespace Risebird.Repository
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
-
 
                     if (removedTechSkills != null)
                     {
@@ -1294,10 +1285,11 @@ namespace Risebird.Repository
                             interviewerDt.Columns.Add("UserId", typeof(int));
                             interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
                             interviewerDt.Columns.Add("IsActive", typeof(bool));
+                            interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
@@ -2014,7 +2006,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        
+
         public async Task<bool> AddSkillComments(TechSkillComments obj)
         {
             try
@@ -2068,7 +2060,7 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId=null)
+        public IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null)
         {
             try
             {
@@ -4598,7 +4590,7 @@ namespace Risebird.Repository
                     parameters.Add("@startDate", startDate);
                     parameters.Add("@endDate", endDate);
                     parameters.Add("@timeNow", DateTime.Now);
-                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRFDetails", parameters,
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetIRFCandidateStats", parameters, //usp_GetAllIRFDetails
                         commandType: CommandType.StoredProcedure);
                 }
             }
@@ -4664,5 +4656,30 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> UpdateCancellationSource(int interviewid, string emailId)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set Cancellationsource=@Cancellationsource where id=@meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", interviewid);
+                dynamicParameters.Add("@Cancellationsource", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
     }
 }

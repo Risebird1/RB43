@@ -76,5 +76,6 @@ namespace Risebird.CommonHelper.Interface
         string SendInterviewCancelledMailCandidateWithSchedulingLink(string CandidateEmail, string interviewDate, string CandidateName, string rescheduingLink);
         string SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton);
         string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton);
+        string SendCheckIntervieweravailbility(Mail model,string Interviewname, string yesbutton, string nobutton, string Skillslist,string IRFName);
     }
 }

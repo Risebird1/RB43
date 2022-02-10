@@ -2116,5 +2116,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<IRFInterviewerMappingVM>> IRFInterviewerMappingByInterviewerid(string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Emailid", emailid);
+                    var results = await SqlMapper.QueryAsync<IRFInterviewerMappingVM>(con, "usp_IRFInterviewerMappingByInterviewerid", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }

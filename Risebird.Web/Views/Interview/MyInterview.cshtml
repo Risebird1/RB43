@@ -70,7 +70,7 @@
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
-                <div class="col-md-10 pull-left">
+                <div class="col-md-8 pull-left">
                     <div class="pull-left myinterview">
 
                         <div class="marquees">
@@ -83,23 +83,24 @@
                     </div>
                 </div>
 
-                <div class="col-md-2 pull-left">
+                <div class="col-md-4 pull-left">
                     <div class="pull-right">
                         <div class="pull-right">
-
-
-                            <div class="pull-left">  <div id="myinterview_2">  <i type="submit" class="far fa-file-excel excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i></div></div>
-
                             <div class="pull-left">
-                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                        <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
-                                    </button>*@
+                                <div id="myinterview_2">
+                                    <i type="submit" class="far fa-file-excel excel-file card-title-space" style="margin-right:10px;float:right;margin-left:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
+                                </div>
+
+                            </div>
+                            <div class="pull-left">
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Update you availability" onclick="location.href='@Url.Action("IRFInterviewerMapping", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update you availability</font></span>
+                                </button>
                             </div>
                             <div class="pull-left filtercon">
                                 <div id="myinterview_3">
                                     <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="left">
                                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-
                                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                             <div class="mdc-button__ripple"></div>
                                         </button>

@@ -10,5 +10,9 @@
         public int TotalInterviews { get; set; }
         public int TotalQCInterviews { get; set; }
         public string MobileNumber { get; set; }
+        public string uniqueid { get; set; }
+        public string InterviewerName { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsAvailable { get; set; }
     }
 }

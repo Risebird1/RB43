@@ -122,10 +122,10 @@
                     <div class="pull-right">
                         <div>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top"  onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                                <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
                             </button>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top"  onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
+                                <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
                             </button>
                             <span>
                                 <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
@@ -298,6 +298,7 @@
                                                                     <th id="status_8">Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
+                                                                    <th>Interviewer</th>
                                                                     <th>Action</th>
                                                                     <th id="status_9">Report</th>
                                                                 </tr>
@@ -310,6 +311,7 @@
                                                                     <th>Current Status</th>
                                                                     <th>Client Hr</th>
                                                                     <th>Staffing Agency</th>
+                                                                    <th>Interviewer</th>
                                                                     <th>Action</th>
                                                                     <th>Report</th>
 
@@ -390,6 +392,7 @@
                                                                         <td>@item.HREmail</td>
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         <td>@item.ProfileSource</td>
+                                                                        <td>@item.NickName</td>
                                                                         <td>
                                                                             @if (item.CurrentStatus != "Scheduled")
                                                                             {
@@ -400,7 +403,7 @@
                                                                                     <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                                 </a>
                                                                             }
-                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
+                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
                                                                                 <span class="btn-call" style="top: -7px; position: relative;cursor: pointer;" title="Send Invite"><span class="fa fa-send-o"></span></span>
                                                                             </span>
                                                                             @if (item.CurrentStatus == "Scheduled")
