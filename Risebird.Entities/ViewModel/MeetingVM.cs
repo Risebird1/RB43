@@ -60,6 +60,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Encoded Resume Link")]
         //[Required]
         public string encodedresumeLink { get; set; }
+        [Display(Name = "Interviewer Resume Link")]
+        //[Required]
+        public string interviewerresumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]
         public string confirmationStatus { get; set; }
@@ -268,6 +271,11 @@ namespace Risebird.Entities.ViewModel
         public bool IsCandidateResponsed { get; set; }
         public bool CandidateResponse { get; set; }
         public int interviewtimedifference { get; set; }
+        public bool IsJoinabilitySelectabilityRequired { get; set; }
+        public string ProctorReport { get; set; }
+        public bool IsProctor { get; set; }
+        public string Cancellationsource { get; set; }
+        public string ClientAction { get; set; }
     }
     public class VedioComments
     {

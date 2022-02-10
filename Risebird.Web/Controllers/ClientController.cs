@@ -404,6 +404,26 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ResetCreateJdFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    return RedirectToAction("CreateJd");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
         /// <summary>
         /// Craete New Jd
         /// </summary>
@@ -481,26 +501,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [HttpGet]
-        public async Task<IActionResult> ResetCreateJdFilter()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    return RedirectToAction("CreateJd");
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Index");
-            }
-        }
+        
         /// <summary>
         /// Add New Candidate For JD
         /// </summary>
@@ -1719,7 +1720,14 @@ namespace Risebird.Web.Controllers
                         model.PreviousMeetingStatus = model.MeetingStatus;
                         ViewBag.PageStatus = "Mainurl";
                         GetStatusList(model, irfId);
-                        return PartialView("ClientPartialReport", model);
+                        if (model.IsProctor)
+                        {
+                            return PartialView("ClientProctorPartialReport", model);
+                        }
+                        else
+                        {
+                            return PartialView("ClientPartialReport", model);
+                        }
                     }
                     else
                     {
@@ -3698,7 +3706,14 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 ViewBag.PageStatus = "Public";
-                return PartialView("ClientPartialReport", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ClientProctorPartialReport", model);
+                }
+                else
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
             }
             catch (Exception ex)
             {
@@ -3858,7 +3873,14 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "";
-                return PartialView("ClientPartialReport", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ClientProctorPartialReport", model);
+                }
+                else
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
             }
             catch (Exception ex)
             {
@@ -4183,7 +4205,14 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.PageStatus = "PublicExternal";
                 ViewBag.PageReport = "Insta";
-                return PartialView("ClientPartialReport", model);
+                if (model.IsProctor)
+                {
+                    return PartialView("ClientProctorPartialReport", model);
+                }
+                else
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
             }
             catch (Exception ex)
             {

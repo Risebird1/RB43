@@ -119,6 +119,7 @@ namespace Risebird.Entities.ViewModel
         public int FitmentStatus { get; set; }
         public int PriorityStatus { get; set; }
         public int CompletionStatus { get; set; }
-
+        [Display(Name = "Is Proctor")]
+        public bool IsProctor { get; set; }
     }
 }

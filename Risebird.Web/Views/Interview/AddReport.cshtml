@@ -73,6 +73,7 @@
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
+
 <div class="main-panel" id="main-panel">
 
     <div class="loader text-center">
@@ -782,7 +783,7 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
-                                    @if (!Model.IsInterviewer)
+                                    @if (!Model.IsInterviewer && Model.IsJoinabilitySelectabilityRequired)
                                     {
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1688,13 +1689,19 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
-        //items.forEach(function (item) {
-        //    totalCount = totalCount + item.val();
-        //});
-        var average = totalCount / 4;
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+
+            average = totalCount / 4;
+            SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            SetChartWithoutJoinabilitySelectability();
+        }
+
         $("#OverallScore").val(average);
 
-        SetChart();
     }
 
     $(document).ready(function () {
@@ -1746,10 +1753,17 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
-        var average = totalCount / 4;
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+            average = totalCount / 4;
+            SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            SetChartWithoutJoinabilitySelectability();
+        }
         $("#OverallScore").val(average);
 
-        SetChart();
     });
 
     function AddRow() {
@@ -2085,6 +2099,23 @@
             }
 
         }
+        return true;
+    }
+    function CheckTechSkills() {
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
+            var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                    document.getElementById('TechSkills_CommentError').focus();
+                    return false;
+                }
+            }
+        }
+        document.getElementById('TechSkills_CommentError').innerHTML = "";
         return true;
     }
     function CheckTechSkills() {

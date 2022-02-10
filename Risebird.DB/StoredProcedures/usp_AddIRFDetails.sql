@@ -39,6 +39,7 @@ GO
 @BillingOwner int,     
 @AssessmentGroupId varchar(100),
 @IsQCRequired bit,
+@IsJoinabilitySelectabilityRequired bit,
 @idIrf int output            
             
 AS            
@@ -71,7 +72,8 @@ Begin
    ,[PrimarySkillInvite]      
    ,[BillingOwner]    
    ,[AssessmentGroupId]
-   ,[IsQCRequired])            
+   ,[IsQCRequired]
+   ,[IsJoinabilitySelectabilityRequired])            
        VALUES            
            (@IRFId,            
    @clientName,            
@@ -98,7 +100,8 @@ Begin
    @PrimarySkillInvite,      
    @BillingOwner,    
    @AssessmentGroupId,
-   @IsQCRequired)      
+   @IsQCRequired,
+   @IsJoinabilitySelectabilityRequired)      
        
     
 select @idIrf = SCOPE_IDENTITY()    

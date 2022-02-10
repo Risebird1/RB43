@@ -44,6 +44,7 @@ namespace Risebird.Web
             Configuration.Bind(configOptions);
             services.Configure<FormOptions>(x =>
             {
+                x.ValueCountLimit = int.MaxValue;
                 x.ValueLengthLimit = int.MaxValue;
                 x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
             });
@@ -84,7 +85,7 @@ namespace Risebird.Web
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {               
-                options.IdleTimeout = TimeSpan.FromMinutes(180);
+                options.IdleTimeout = TimeSpan.FromMinutes(90);
                 options.Cookie.Name = "Risebirdportal.Session";
                 //options.Cookie.HttpOnly = true;
             });

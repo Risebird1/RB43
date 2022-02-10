@@ -539,5 +539,37 @@ namespace Risebird.Repository
                 return "";
             }
         }
+
+        public async Task<int> GetClientPasswordResetStatus(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailId", emailId);
+                    var result = (await SqlMapper.QueryAsync<bool>(con, "usp_GetClientPasswordResetStatus", parameters,
+                        commandType: CommandType.StoredProcedure)).FirstOrDefault();
+                    if(result)
+                    {
+                        return (int)BooleanResultsEnum.True;
+                    }
+                    else
+                    {
+                        return (int)BooleanResultsEnum.False;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (int)BooleanResultsEnum.Failed;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (int)BooleanResultsEnum.Failed;
+            }
+        }
     }
 }

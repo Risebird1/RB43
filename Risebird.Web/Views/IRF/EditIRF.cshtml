@@ -57,8 +57,8 @@
                                             <li><a href="#" class="active text-center" id="rtab-1" onclick="headerClickchange('tab-1')">Event Details</a></li>
                                             <li><a href="#" id="rtab-2" class="text-center" onclick="headerClickchange('tab-2')">Job Details</a></li>
                                             <li><a href="#" id="rtab-3" class="" onclick="headerClickchange('tab-3')">Tech Skill </a><span id="count_SkillCollection" class="skillcount">@Model.SkillCollection.Count()</span></li>
-                                            <li><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
-                                            <li><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
+                                            <li id="li_joinability"><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
+                                            <li id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
                                             <li><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
                                             <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection!=null?@Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
@@ -271,6 +271,31 @@
                                                         @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
                                                 </div>
+                                                <div class="col-md-3 col-sm-3 pull-left">
+
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+
+
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.IsJoinabilitySelectabilityRequired, new { @class = "mdc-checkbox__native-control" })
+
+
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                          fill="none"
+                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+
+
+                                                        </div>
+                                                        @Html.LabelFor(model => model.IsJoinabilitySelectabilityRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <h3 class="tab_drawer_heading" rel="tab-2">Job Details</h3>
@@ -412,18 +437,18 @@
                                                         </div>
                                                         @Html.HiddenFor(m => m.NoOfPosition)
                                                         @*<div class="form-group">
-            <div class="mandate">
-                @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-            </div>
-            @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @id = "error_NoOfPosition", @class = "text-danger" })
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+                                                                @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @id = "error_NoOfPosition", @class = "text-danger" })
 
 
-            <div class="spinner">
-                <button type="button" class="up button">&rsaquo;</button>
-                <button type="button" class="down button">&lsaquo;</button>
-            </div>
-        </div>*@
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up button">&rsaquo;</button>
+                                                                    <button type="button" class="down button">&lsaquo;</button>
+                                                                </div>
+                                                            </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -514,29 +539,29 @@
                                                     <div class="col-md-4 col-sm-4 pl-1">
                                                         @Html.HiddenFor(m => m.PerMintuteRate)
                                                         @*<div class="form-group">
-            <div class="mandate">
-                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
-            </div>
-            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
-            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
-            <div class="spinner">
-                <button type="button" class="up-2 button">&rsaquo;</button>
-                <button type="button" class="down-2 button">&lsaquo;</button>
-            </div>
-        </div>*@
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-2 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-2 button">&lsaquo;</button>
+                                                                </div>
+                                                            </div>*@
 
                                                         @Html.HiddenFor(m => m.TotalBudget)
                                                         @*<div class="form-group">
-            <div class="mandate">
-                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-            </div>
-            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
-            <div class="spinner">
-                <button type="button" class="up-3 button">&rsaquo;</button>
-                <button type="button" class="down-3 button">&lsaquo;</button>
-            </div>
-        </div>*@
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
+                                                                <div class="spinner">
+                                                                    <button type="button" class="up-3 button">&rsaquo;</button>
+                                                                    <button type="button" class="down-3 button">&lsaquo;</button>
+                                                                </div>
+                                                            </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
@@ -557,9 +582,9 @@
 
                                                         @Html.HiddenFor(m => m.Type)
                                                         @*<div class="form-group">
-                                                            @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
-                                                            @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-                                                        </div>*@
+                                                                @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                                                @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+                                                            </div>*@
 
 
                                                     </div>
@@ -1090,14 +1115,10 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                        <th width="45%" class="table_heading">Skills</th>
-                                                                        <th width="15%" class="table_heading">
-                                                                            Per Interviewer Rate
-                                                                            <span style="color:red">*</span>
-                                                                        </th>
-                                                                        <th width="10%" class="table_heading">
-                                                                            Active
-                                                                        </th>
+                                                                        <th width="40%" class="table_heading">Skills</th>
+                                                                        <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Active</th>
+                                                                        <th width="10%" class="table_heading">Available</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -1106,19 +1127,13 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-
                                                                                 @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-
-
                                                                             </td>
-
                                                                             <td>
-
                                                                                 @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
-
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
                                                                                 {
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                 }
@@ -1126,10 +1141,12 @@
                                                                                 {
                                                                                     @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                 }
-
                                                                             </td>
                                                                             <td class="text-center">
                                                                                 @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBox("InterviewerCollection[0].IsAvailable", new { @checked = "checked" })
                                                                             </td>
 
                                                                             <td class="action text-center">
@@ -1148,17 +1165,14 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-
                                                                                     @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                 </td>
-
                                                                                 <td>
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
-
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                     }
@@ -1166,23 +1180,20 @@
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                     }
-
-
-
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
+                                                                                </td>
                                                                                 <td class="action text-center">
-
                                                                                     <div>
                                                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                         @*@if (Model.IsClone)
                                                                                             {
                                                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                             }*@
-
-
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
@@ -1233,7 +1244,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
 
                                                                                 {
                                                                                     @Html.TextBox("QualityController[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
@@ -1276,7 +1287,7 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.QualityController[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
 
@@ -1347,7 +1358,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
                                                                                 {
                                                                                     @Html.TextBox("EmergencyInterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                 }
@@ -1393,7 +1404,7 @@
 
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io")
+                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
                                                                                     {
                                                                                         @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                     }
@@ -1624,8 +1635,15 @@
 
             else if (activeTab.trim() == "General Skill") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-5").addClass("active");
-                document.getElementById("tab-5").style.display = "block";
+                var isJoinabilitySelectabilityRequired = document.getElementById('IsJoinabilitySelectabilityRequired').checked;
+                if (isJoinabilitySelectabilityRequired) {
+                    $("#rtab-5").addClass("active");
+                    document.getElementById("tab-5").style.display = "block";
+                }
+                else {
+                    $("#rtab-3").addClass("active");
+                    document.getElementById("tab-3").style.display = "block";
+                }
                 document.getElementById("tab-6").style.display = "none";
             }
             else if (activeTab.trim() == "Client") {
@@ -1649,7 +1667,7 @@
 
             else if (activeTab.trim() == "E.Interviewer") {
                 $(".tab-menu li a").removeClass("active");
-                
+
                 var isQcRequired = document.getElementById('IsQCRequired').checked;
                 if (isQcRequired) {
                     $("#rtab-9").addClass("active");
@@ -1703,8 +1721,15 @@
                 if (!flag) {
 
                     $(".tab-menu li a").removeClass("active");
-                    $("#rtab-4").addClass("active");
-                    document.getElementById("tab-4").style.display = "block";
+                    var isJoinabilitySelectabilityRequired = document.getElementById('IsJoinabilitySelectabilityRequired').checked;
+                    if (isJoinabilitySelectabilityRequired) {
+                        $("#rtab-4").addClass("active");
+                        document.getElementById("tab-4").style.display = "block";
+                    }
+                    else {
+                        $("#rtab-6").addClass("active");
+                        document.getElementById("tab-6").style.display = "block";
+                    }
                     document.getElementById("tab-3").style.display = "none";
                 }
             }
@@ -1751,7 +1776,7 @@
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                   
+
                     var isQcRequired = document.getElementById('IsQCRequired').checked;
                     if (isQcRequired) {
                         $("#rtab-9").addClass("active");
@@ -2125,7 +2150,6 @@
                 return true;
             }
         }
-
         if (tab_skill == "SkillCollection") {
             var drpdowns1 = $('[id^=' + tab_skill + '][id$="Timelimit"]');
             var drpdowns2 = $('[id^=' + tab_skill + '][id$="Concepts"]');
@@ -2320,7 +2344,24 @@
 
 <script>
     $(document).ready(function () {
+        var countryType = $("#JobCountry").val();
+        var interviewerQCRate;
+        if (countryType == "1") {
+            interviewerQCRate = 350;
+        }
+        else if (countryType == "2") {
+            interviewerQCRate = 500;
+        }
+        else {
+            interviewerQCRate = 0;
+        }
         CheckQCRequired();
+        CheckJoinabilitySelectabilityRequired();
+
+        var rateEmements = $('[id^="QualityController"][id$="PerSuccessRate"]');
+        for (i = 0; i < rateEmements.length; i++) {
+            $("#" + rateEmements[i].id).val(interviewerQCRate);
+        }
 
         if ('@Model.IsClone'=='True' && '@Model.isDuplicateEntries' == 'False') {
             document.getElementById("IRFId").value = '';
@@ -2368,6 +2409,31 @@
 
 </script>
 <script>
+
+    $('#IsJoinabilitySelectabilityRequired').on('change', function () {
+        CheckJoinabilitySelectabilityRequired()
+    });
+
+    function CheckJoinabilitySelectabilityRequired() {
+        var value = document.getElementById("IsJoinabilitySelectabilityRequired").checked;
+        if (value) {
+            document.getElementById("li_joinability").style.display = "block";
+            document.getElementById("li_selectability").style.display = "block";
+            document.getElementById('rtab-4').style.display = "block";
+            document.getElementById('rtab-5').style.display = "block";
+            document.getElementById('count_Joinability').style.display = "block";
+            document.getElementById('count_Selectability').style.display = "block";
+        }
+        else {
+            document.getElementById("li_joinability").style.display = "none";
+            document.getElementById("li_selectability").style.display = "none";
+            document.getElementById('rtab-4').style.display = "none";
+            document.getElementById('rtab-5').style.display = "none";
+            document.getElementById('count_Joinability').style.display = "none";
+            document.getElementById('count_Selectability').style.display = "none";
+        }
+    }
+
     $('#IsQCRequired').on('change', function () {
         CheckQCRequired()
     });
@@ -2596,7 +2662,7 @@
                         type: "GET",
                         async: false,
                         url: "/IRF/GetInterviewerRate",
-                        data: { 'userId': data[0].value, 'companyType': companyType, 'countryType': countryType  },
+                        data: { 'userId': data[0].value, 'companyType': companyType, 'countryType': countryType },
                         success: function (result) {
                             interviewerRate = result;
                         }

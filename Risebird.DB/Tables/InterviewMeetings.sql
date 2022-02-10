@@ -40,7 +40,9 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [IsNotificationSentToCandidate][bit] NULL,
     [isAutoCancelled][bit] NULL,
     [IsCandidateResponsed][bit] NULL,
-    [CandidateResponse][bit] NULL
+    [CandidateResponse][bit] NULL,
+    [ProctorReport][varchar](1000),
+    [Cancellationsource][varchar](100)
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -246,6 +248,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add CandidateResponse  bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ProctorReport')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add ProctorReport  varchar(1000)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Cancellationsource')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add Cancellationsource varchar(100)
 END
 END
 GO

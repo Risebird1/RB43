@@ -187,9 +187,10 @@ namespace Risebird.Business
                     LastName = clientUser.LastName.Replace(" ", ""),
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
+                var isPasswordReset = _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value).Result;
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
                 // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
-                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, clientUser.IsPasswordReset).Result;
+                clientUser.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset).Result;
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 

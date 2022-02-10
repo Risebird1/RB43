@@ -1,0 +1,43 @@
+﻿body {
+}
+.required-field::after {
+    content: "*";
+    color: red;
+}
+
+.panel-header-sm {
+    height: 85px;
+    padding-top: 65px;
+    background: none !important;
+}
+
+.mdc-card-wrapper__text-section {
+    padding: 16px;
+}
+
+.mc-button-area {
+    text-align: right;
+}
+
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #42a5f5 ;
+    font-family: Roboto, sans-serif;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.mdc-button--outlined:not(:disabled) {
+    border-color: #42a5f5;
+    color: #42a5f5;
+}
+
+.mdc-fab-secondary {
+    background: #fff;
+}
+
+
+
+
+    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid;
+    }

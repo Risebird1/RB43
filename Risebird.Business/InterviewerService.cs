@@ -949,5 +949,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<IRFInterviewerMappingVM>> IRFInterviewerMappingByInterviewerid(string emailid)
+        {
+            try
+            {
+                return await _interviewerRepository.IRFInterviewerMappingByInterviewerid(emailid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

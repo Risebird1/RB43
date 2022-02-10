@@ -530,6 +530,8 @@ namespace Risebird.Business
                 model.OldInterviewerCollection = model.InterviewerCollection;
                 model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
                 model.OldSkillCollection = model.SkillCollection;
+                model.IsQCRequired = IRF.IsQCRequired;
+                model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
                 return model;
 
             }
@@ -570,10 +572,8 @@ namespace Risebird.Business
                                     UserId = interviewer.UserId
                                 });
                             }
-
-
                         }
-
+                        
                         if (!model.InterviewerCollection.Any(x => x.UserId == oldInterviewer.UserId))
                         {
                             removedInterviewers.Add(new RemovedInterviewersFromSkillsChannelData
@@ -610,7 +610,6 @@ namespace Risebird.Business
                             float newRate = emergencyInterviewer.PerSuccessRate;
                             float oldRate = oldEmergencyInterviewer.PerSuccessRate;
                             float percentChanges = (newRate - oldRate) * 100 / oldRate;
-
                             if (percentChanges != 0)
                             {
                                 interviewerChangesData.Add(new InterviewerSuccessRateChangeData
@@ -621,8 +620,6 @@ namespace Risebird.Business
                                     UserId = emergencyInterviewer.UserId
                                 });
                             }
-
-
                         }
                         if (!model.EmergencyInterviewerCollection.Any(x => x.UserId == oldEmergencyInterviewer.UserId))
                         {
@@ -647,7 +644,6 @@ namespace Risebird.Business
                                 UserId = newEmergencyInterviewer.UserId
                             });
                         }
-
                     }
                 }
 
@@ -2098,7 +2094,50 @@ namespace Risebird.Business
         {
             try
             {
-                return await _irfRepository.GetAllIRFDetails(startDate, endDate);
+                var irfList = await _irfRepository.GetAllIRFDetails(startDate, endDate);
+                foreach (var irf in irfList)
+                {
+                    //int diff = (irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings - irf.CandidateCount);
+
+                    //if(diff > 0)
+                    //{
+                    //    irf.ReScheduledCount = irf.ReScheduledCount - diff;
+                    //    if(irf.ReScheduledCount < 0)
+                    //    {
+                    //        irf.ReScheduledCount = 0;
+                    //    }
+                    //}
+                    //if((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.NotScheduledCount) != irf.CandidateCount)
+                    //{
+                    //    int totalDiff = irf.CandidateCount - (irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.NotScheduledCount);
+
+                    //    if (totalDiff > 0)
+                    //    {
+                    //        irf.NotScheduledCount = irf.NotScheduledCount + totalDiff;
+                    //    }
+                    //}
+                    if(irf.CandidateCount > 0)
+                    {
+                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100 ) / irf.CandidateCount;
+                        irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
+                        irf.SelectionRate =  irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CandidateCount : 0;
+                    }
+
+                    if(irf.ScheduledPercentage < 75)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.CompletionRate < 60)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.SelectionRate < 20)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+
+                }
+                return irfList;
             }
 
             catch (Exception e)
@@ -2165,6 +2204,18 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public IEnumerable<TransSkill> GetTechSkillswithWeightage(int id)
+        {
+            try
+            {
+                var skills = _irfRepository.GetSkillsbyIRFid(id);
+                return skills;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -1902,12 +1902,26 @@ namespace Risebird.Web.Controllers
                         if (_interviewerService.AddInterviewerReport(model).Result)
                         {
                             TempData["SuccessErrorMessageLeadInterviewer"] = "Report has been saved Successfully!";
-                            return RedirectToAction("MyInterviewerAssessment");
+                            if (profileName == "Admin")
+                            {
+                                return RedirectToAction("Index", "UnapprovedInterviewerMeetingsController");
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterviewerAssessment");
+                            }
                         }
                         else
                         {
                             TempData["SuccessErrorMessageLeadInterviewer"] = "Report was not saved.";
-                            return RedirectToAction("MyInterviewerAssessment");
+                            if (profileName == "Admin")
+                            {
+                                return RedirectToAction("Index", "UnapprovedInterviewerMeetingsController");
+                            }
+                            else
+                            {
+                                return RedirectToAction("MyInterviewerAssessment");
+                            }
                         }
                     }
                     else
@@ -2878,6 +2892,37 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("TdsCertificateInterviewers", new { emailid = model.emailid, year = model.year });
             }
         }
+        #region IRFInterviewerMapping
+        public async Task<IActionResult> IRFInterviewerMapping()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Interviewer")
+                {
+                    var _emailid = HttpContext.Session.GetString("email")?.Trim();
+                    _emailid = _emailid.Replace("\"", "");
+                    var model = await _interviewerService.IRFInterviewerMappingByInterviewerid(_emailid);
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public JsonResult SetInterviewerAvailability(int transid, int isavailable)
+        {
+            var result = _meetingService.SetInterviewerAvailability(transid, isavailable);
+            return Json(result);
+        }
+        #endregion
     }
 }
 
