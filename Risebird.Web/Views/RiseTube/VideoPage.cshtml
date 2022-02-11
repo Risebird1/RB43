@@ -683,8 +683,10 @@
                                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
                                                                                                 <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
                                                                                             </span>
-                                                                                            <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="btninterest sharebtn1 edit-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
-
+                                                                                            @if (!Model.IreportModel.IsProctor)
+                                                                                            {
+                                                                                                <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="btninterest sharebtn1 edit-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
+                                                                                            }
 
                                                                                         </div>
                                                                                     </div>
