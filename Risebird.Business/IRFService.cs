@@ -2120,10 +2120,14 @@ namespace Risebird.Business
                     {
                         irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100 ) / irf.CandidateCount;
                         irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
-                        irf.SelectionRate =  irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CandidateCount : 0;
                     }
 
-                    if(irf.ScheduledPercentage < 75)
+                    if (irf.CompletedInterviews > 0)
+                    {
+                        irf.SelectionRate = irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CompletedInterviews : 0;
+                    }
+
+                    if (irf.ScheduledPercentage < 75)
                     {
                         irf.Flags = irf.Flags + 1;
                     }
