@@ -3649,7 +3649,8 @@ namespace Risebird.Web.Controllers
                         }
                         else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
                         {
-                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                            if (firstData.CurrentMeetingStatus != null)
+                                candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
@@ -3773,7 +3774,8 @@ namespace Risebird.Web.Controllers
                         }
                         else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
                         {
-                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                            if (firstData.CurrentMeetingStatus != null)
+                                candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model

@@ -26,5 +26,6 @@ namespace Risebird.Repository.Interface
         Task<string> CheckInstaMeetingAccount(DateTime starttime, DateTime endtime);
         string UpdateInstaZoomDetails(DateTime starttime, DateTime endtime, string Accoruntemail);
         string CheckForInstaAssign(int meetingid);
+        Task<int> GetClientPasswordResetStatus(string emailId);
     }
 }
