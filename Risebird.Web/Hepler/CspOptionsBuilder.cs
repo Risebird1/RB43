@@ -19,7 +19,7 @@ namespace Risebird.Web.Hepler
         public CspDirectiveBuilder Images { get; set; } = new CspDirectiveBuilder();
         public CspDirectiveBuilder Fonts { get; set; } = new CspDirectiveBuilder();
         public CspDirectiveBuilder Media { get; set; } = new CspDirectiveBuilder();
-        public CspDirectiveBuilder Connect { get; set; } = new CspDirectiveBuilder();
+        //public CspDirectiveBuilder Object { get; set; } = new CspDirectiveBuilder();
 
         internal CspOptions Build()
         {
@@ -29,7 +29,7 @@ namespace Risebird.Web.Hepler
             this.options.Images = this.Images.Sources;
             this.options.Fonts = this.Fonts.Sources;
             this.options.Media = this.Media.Sources;
-            this.options.Connect = this.Connect.Sources;
+            //this.options.Object = this.Object.Sources;
             return this.options;
         }
     }

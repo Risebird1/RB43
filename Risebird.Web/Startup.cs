@@ -115,28 +115,30 @@ namespace Risebird.Web
             {
                 app.UseExceptionHandler("/Home/Index");
             }
-            app.Use(async (context, next) =>
-            {
-                //context.Response.Headers.Add("Content-Security-Policy", "default-src 'self';");
-                //context.Response.Headers.Add("Content-Security-Policy-Report-Only", "default-src 'self'");
-                context.Response.Headers.Add(
-                "Content-Security-Policy-Report-Only",
-                "script-src 'self''unsafe-line''unsafe-inline'; " +
-                //"script-src-elem 'self''unsafe-inline'; " +
-                "style-src 'self''unsafe-line''unsafe-inline'; " +
-                //"style-src-elem 'self''unsafe-line''unsafe-inline'; " +
-                "img-src 'self'");
+            //app.Use(async (context, next) =>
+            //{
+            //    //context.Response.Headers.Add("Content-Security-Policy", "default-src 'self';");
+            //    //context.Response.Headers.Add("Content-Security-Policy-Report-Only", "default-src 'self'");
+            //    context.Response.Headers.Add(
+            //    "Content-Security-Policy-Report-Only",
+            //    "script-src 'self''unsafe-line''unsafe-inline'; " +
+            //    //"script-src-elem 'self''unsafe-inline'; " +
+            //    "style-src 'self''unsafe-line''unsafe-inline'; " +
+            //    //"style-src-elem 'self''unsafe-line''unsafe-inline'; " +
+            //    "img-src 'self'");
 
-                await next();
-            });
+            //    await next();
+            //});
             app.UseCsp(builder =>
             {
                 builder.Defaults
-                       .AllowSelf();
+                       .AllowSelf()
+                       .Allow("wss://chunderw-gll.twilio.com/signal")
+                       .Allow("wss://matrix.twilio.com")
+                       .Allow("https://www.google-analytics.com/");
 
                 builder.Scripts
                        .AllowSelf()
-                       //.Allow("https://ajax.aspnetcdn.com")
                        .Allow("https://risebirdblob.blob.core.windows.net/")
                        .Allow("https://unpkg.com/")
                        .Allow("https://code.jquery.com/")
@@ -150,15 +152,13 @@ namespace Risebird.Web
                        .Allow("https://canvasjs.com/")
                        .Allow("https://cdn.jsdelivr.net/")
                        .Allow("https://cdn.datatables.net/")
-                       .Allow("wss://chunderw-gll.twilio.com/")
-                       .Allow("wss://matrix.twilio.com/")
                        .Allow("https://static.twilio.com/")
+                       .Allow("https://www.googletagmanager.com/")
+                       //.Allow("https://www.google-analytics.com/")
                        .Allow("'unsafe-inline'");
-                //.Allow("'unsafe-line'");
 
                 builder.Styles
                        .AllowSelf()
-                       //.Allow("https://ajax.aspnetcdn.com");
                        .Allow("https://risebirdblob.blob.core.windows.net/")
                        .Allow("https://fonts.googleapis.com/")
                        .Allow("https://use.fontawesome.com/")
@@ -167,49 +167,41 @@ namespace Risebird.Web
                        .Allow("https://cdnjs.cloudflare.com/")
                        .Allow("https://maxcdn.bootstrapcdn.com/")
                        .Allow("https://pro.fontawesome.com/")
-                       .Allow("wss://chunderw-gll.twilio.com/")
-                       .Allow("wss://matrix.twilio.com/")
                        .Allow("https://static.twilio.com/")
                        .Allow("'unsafe-inline'");
-                //.Allow("'unsafe-line'");
 
                 builder.Fonts
                        .AllowSelf()
-                        //.Allow("https://ajax.aspnetcdn.com");
-                        .Allow("https://risebirdblob.blob.core.windows.net/")
-                        .Allow("https://fonts.gstatic.com/")
-                        .Allow("https://use.fontawesome.com/")
-                        .Allow("https://pro.fontawesome.com/")
-                        .Allow("https://maxcdn.bootstrapcdn.com/")
-                       .Allow("wss://chunderw-gll.twilio.com/")
-                       .Allow("wss://matrix.twilio.com/")
+                       .Allow("https://risebirdblob.blob.core.windows.net/")
+                       .Allow("https://fonts.gstatic.com/")
+                       .Allow("https://use.fontawesome.com/")
+                       .Allow("https://pro.fontawesome.com/")
+                       .Allow("https://maxcdn.bootstrapcdn.com/")
                        .Allow("https://static.twilio.com/")
                        .Allow("'unsafe-inline'");
-                // .Allow("'unsafe-line'");
 
                 builder.Images
                        .AllowSelf()
-                       //.Allow("https://media-www-asp.azureedge.net/");
                        .Allow("https://risebirdblob.blob.core.windows.net/")
                        .Allow("https://risebirdportal.blob.core.windows.net/")
                        .Allow("https://icla.org/")
-                       .Allow("wss://chunderw-gll.twilio.com/")
-                       .Allow("wss://matrix.twilio.com/")
                        .Allow("https://static.twilio.com/")
+                       .Allow("https://static.tumblr.com/")
+                       .Allow("http://www.w3.org/")
+                       .Allow("data:")
+                       //.Allow("data:image/svg+xml,%3csvg")
                        .Allow("'unsafe-inline'");
-                //.Allow("'unsafe-line'");
 
                 builder.Media
                        .AllowSelf()
-                       .Allow("wss://chunderw-gll.twilio.com/signal")
-                       .Allow("wss://matrix.twilio.com")
+                       .Allow("https://risebirdportal.blob.core.windows.net/")
+                       .Allow("https://prodvideo.blob.core.windows.net/")
                        .Allow("https://static.twilio.com/");
 
-                builder.Connect
-                       .AllowSelf()
-                       .Allow("wss://chunderw-gll.twilio.com/signal")
-                       .Allow("wss://matrix.twilio.com")
-                       .Allow("https://static.twilio.com/");
+                //builder.Object
+                //       //.AllowSelf()
+                //       .Allow("data:")
+                //       .Allow("'unsafe-eval'");
 
             });
 

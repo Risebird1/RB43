@@ -12,6 +12,6 @@ namespace Risebird.Entities.Data
         public List<string> Images { get; set; } = new List<string>();
         public List<string> Fonts { get; set; } = new List<string>();
         public List<string> Media { get; set; } = new List<string>();
-        public List<string> Connect { get; set; } = new List<string>();
+        //public List<string> Object { get; set; } = new List<string>();
     }
 }
