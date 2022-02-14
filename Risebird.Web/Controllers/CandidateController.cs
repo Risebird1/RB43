@@ -3609,7 +3609,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
                     candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
-                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
@@ -3649,7 +3649,8 @@ namespace Risebird.Web.Controllers
                         }
                         else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
                         {
-                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                            if (firstData.CurrentMeetingStatus != null)
+                                candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
@@ -3734,7 +3735,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
                     candidateTimeline.Phone = firstData.MobileNumber;
                     candidateTimeline.interviewDate = firstData.interviewDate.Year > 2019 ? firstData.interviewDate.ToString() : "";
-                    candidateTimeline.IRFname = firstData.IRFname;
+                    candidateTimeline.IRFname = firstData.IRFName;
                     candidateTimeline.imid = firstData.imid;
                     candidateTimeline.CalendlyLink = firstData.CalendlyLink;
                     candidateTimeline.ClientAction = firstData.ClientAction;
@@ -3773,7 +3774,8 @@ namespace Risebird.Web.Controllers
                         }
                         else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
                         {
-                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                            if (firstData.CurrentMeetingStatus != null)
+                                candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
