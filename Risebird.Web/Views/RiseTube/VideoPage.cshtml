@@ -123,6 +123,7 @@
     <script src="~/Newassets/js/chardinjs.js"></script>
     <script src="~/Newassets/js/demo.js"></script>
 }
+<input type="hidden" value="@ViewBag.ProfileName" id="hidd_profile" />
 <div class="main-panel bg-white" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"> </div>-->
@@ -683,8 +684,10 @@
                                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
                                                                                                 <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
                                                                                             </span>
-                                                                                            <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="btninterest sharebtn1 edit-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
-
+                                                                                            @if (!Model.IreportModel.IsProctor)
+                                                                                            {
+                                                                                                <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="btninterest sharebtn1 edit-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
+                                                                                            }
 
                                                                                         </div>
                                                                                     </div>
@@ -819,110 +822,127 @@
                                                                     <div>
                                                                         <div class="clearfix" data-intro='1. Report Summary showing  Candidate Tech Skill Score & Interviewer Comment <br/><br/> 2. View Candidate Detail <br/><br/> 3. View the Tech Skill Report <br/><br/> 4. Questions discussed during interview and see the specific part of the video by clicking on the question <br/><br/> 5.View the General Skill Report <br/><br/> 6. View the Joinability Report <br/><br/> 7. View the Selectability Report' data-position="right">
                                                                             <ul class="nav nav-pills nav-pills-primary tabs">
-                                                                                <li data-position='bottom' id="risetubevideo_8" class="nav-link active item1" rel="link1">Report Summary</li>
-                                                                                <li id="risetubevideo_12" class="nav-link item2" rel="link2">Candidate Details</li>
-                                                                                <li id="risetubevideo_13" class="nav-link item3" rel="link3"> Tech Skill Report</li>
-                                                                                <li id="risetubevideo_14" class="nav-link item4" rel="link4"> Questions Discussed</li>
-                                                                                <li id="risetubevideo_15" class="nav-link item5" rel="link5">General Skill Report</li>
-                                                                                @if (Model.IsJoinabilitySelectabilityRequired)
+                                                                                @if (!Model.IreportModel.IsProctor)
                                                                                 {
-                                                                                    <li id="risetubevideo_16" class="nav-link item6" rel="link6"> Joinability Report</li>
-                                                                                    <li id="risetubevideo_17" class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                                    <li data-position='bottom' id="risetubevideo_8" class="nav-link active item1" rel="link1">Report Summary</li>
+                                                                                    <li id="risetubevideo_12" class="nav-link item2" rel="link2">Candidate Details</li>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <li id="risetubevideo_12" class="nav-link active item2" rel="link2">Candidate Details</li>
                                                                                 }
 
-                                                                                @if (Model.IsBiometricEnabled)
+                                                                                @if (!Model.IreportModel.IsProctor)
                                                                                 {
-                                                                                    <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
-                                                                                    <li class="nav-link item9" rel="link9" onclick="GetMeetingAudioText('@Model.imid')"> Meeting Transcript</li>
+                                                                                    <li id="risetubevideo_13" class="nav-link item3" rel="link3"> Tech Skill Report</li>
+                                                                                    <li id="risetubevideo_14" class="nav-link item4" rel="link4"> Questions Discussed</li>
+                                                                                    <li id="risetubevideo_15" class="nav-link item5" rel="link5">General Skill Report</li>
+                                                                                    @if (Model.IsJoinabilitySelectabilityRequired)
+                                                                                    {
+                                                                                        <li id="risetubevideo_16" class="nav-link item6" rel="link6"> Joinability Report</li>
+                                                                                        <li id="risetubevideo_17" class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                                    }
+                                                                                    @if (Model.IsBiometricEnabled)
+                                                                                    {
+                                                                                        <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+                                                                                        <li class="nav-link item9" rel="link9" onclick="GetMeetingAudioText('@Model.imid')"> Meeting Transcript</li>
 
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <li class="nav-link item10" rel="link10"> Proctor Report</li>
                                                                                 }
                                                                             </ul>
                                                                             <hr />
                                                                             <div class="tab_container tab-space">
-                                                                                <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
-                                                                                <div id="link1" class="tab_content">
-                                                                                    <div class="row">
-                                                                                        <div class="left-chart">
+                                                                                @if (!Model.IreportModel.IsProctor)
+                                                                                {
+                                                                                    <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
+                                                                                    <div id="link1" class="tab_content">
+                                                                                        <div class="row">
+                                                                                            <div class="left-chart">
 
-                                                                                            <div id="risetubevideo_9" class="chart-box itemchart">
-                                                                                                @*<p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>*@
-                                                                                                <p class="card-text">Tech Skill Score: <span class="toscore" id="totTechScore"></span></p>
-                                                                                                <div class="col-lg-12 col-md-12 col-sm-12 nopad">
-                                                                                                    <div id="scoreChart" style="height: 200px; width: 100%;">
+                                                                                                <div id="risetubevideo_9" class="chart-box itemchart">
+                                                                                                    @*<p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>*@
+                                                                                                    <p class="card-text">Tech Skill Score: <span class="toscore" id="totTechScore"></span></p>
+                                                                                                    <div class="col-lg-12 col-md-12 col-sm-12 nopad">
+                                                                                                        <div id="scoreChart" style="height: 200px; width: 100%;">
 
+                                                                                                        </div>
+                                                                                                        <div class="transparent-chart">&nbsp;</div>
                                                                                                     </div>
-                                                                                                    <div class="transparent-chart">&nbsp;</div>
                                                                                                 </div>
+
+                                                                                                @if (Model.FeedbackAudioLink != null)
+                                                                                                {
+                                                                                                    <div class="audio-wrap">
+
+                                                                                                        <h6>Audio Feedback</h6>
+                                                                                                        <audio src='@Model.FeedbackAudioLink' controls></audio>
+                                                                                                        <!--end of col-md-12-->
+                                                                                                    </div>
+                                                                                                }
                                                                                             </div>
+                                                                                            <div class="interviewer-comment itemcomment">
 
-                                                                                            @if (Model.FeedbackAudioLink != null)
-                                                                                            {
-                                                                                                <div class="audio-wrap">
-
-                                                                                                    <h6>Audio Feedback</h6>
-                                                                                                    <audio src='@Model.FeedbackAudioLink' controls></audio>
-                                                                                                    <!--end of col-md-12-->
-                                                                                                </div>
-                                                                                            }
-                                                                                        </div>
-                                                                                        <div class="interviewer-comment itemcomment">
-
-                                                                                            <div class="form-group" style="margin-bottom:0px; ">
-                                                                                                @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
+                                                                                                <div class="form-group" style="margin-bottom:0px; ">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
-                                                                                                <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
-                                                                                                    @if (Model.InterviewerComment != null)
-                                                                                                    {
-                                                                                                        <a href="#" data-tooltip="@Model.InterviewerComment">
+                                                                                                    <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
+                                                                                                        @if (Model.InterviewerComment != null)
+                                                                                                        {
+                                                                                                            <a href="#" data-tooltip="@Model.InterviewerComment">
 
-                                                                                                            <div class="talktext">
+                                                                                                                <div class="talktext">
+
+
+                                                                                                                    @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;", @readonly = "readonly" })
+
+                                                                                                                </div>
+                                                                                                            </a>
+                                                                                                        }
+
+                                                                                                        else
+                                                                                                        { <div class="talktext">
 
 
                                                                                                                 @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;", @readonly = "readonly" })
 
-                                                                                                            </div>
-                                                                                                        </a>
-                                                                                                    }
+                                                                                                            </div>}
+                                                                                                    </div>
 
-                                                                                                    else
-                                                                                                    { <div class="talktext">
-
-
-                                                                                                            @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;", @readonly = "readonly" })
-
-                                                                                                        </div>}
+                                                                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                                                                 </div>
-
-                                                                                                @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                                                                @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                                                                            </div>
-                                                                                            <div class="form-group">
-                                                                                                @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  bolder" })
-                                                                                                @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                                                                            </div>
-                                                                                            @if (@Model.IreportModel.IsBiometricEnabled)
-                                                                                            {
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewBiometryScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
-                                                                                                    @if (@Model.IreportModel.InterviewBiometryScore == 0)
-                                                                                                    {
-                                                                                                        <label>Not Yet Verified</label>
-                                                                                                    }
-                                                                                                    else
-                                                                                                    {
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.InterviewBiometryScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                    }
+                                                                                                    @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  bolder" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                                                                                 </div>
-                                                                                            }
+                                                                                                @if (@Model.IreportModel.IsBiometricEnabled)
+                                                                                                {
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.InterviewBiometryScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
+                                                                                                        @if (@Model.IreportModel.InterviewBiometryScore == 0)
+                                                                                                        {
+                                                                                                            <label>Not Yet Verified</label>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            @Html.TextBoxFor(m => m.IreportModel.InterviewBiometryScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                        }
+
+                                                                                                    </div>
+                                                                                                }
+                                                                                            </div>
                                                                                         </div>
+
+
                                                                                     </div>
-
-
-                                                                                </div>
-                                                                                <!-- #tab1 -->
+                                                                                    <!-- #tab1 -->
+                                                                                }
                                                                                 <h3 class="tab_drawer_heading" rel="link2">Candidate Details</h3>
                                                                                 <div id="link2" class="tab_content">
                                                                                     <div class="row">
@@ -1092,7 +1112,6 @@
                                                                                 </div>
 
                                                                                 <h3 class="tab_drawer_heading" rel="link3">Tech Skill</h3>
-
                                                                                 <div class="tab-pane tab_content" id="link3">
                                                                                     <div>
                                                                                         <div class="table-responsive-sm">
@@ -1472,33 +1491,60 @@
 
                                                                                         <!-- #tab7 -->
                                                                                     </div>
-
                                                                                 }
-
 
                                                                                 @if (Model.IsBiometricEnabled)
                                                                                 {
                                                                                     <h3 class="tab_drawer_heading" rel="link8"> Sentiment Analysis</h3>
-
                                                                                     <div id="link8" class="tab_content text-center">
-
-
 
                                                                                     </div>
 
                                                                                     <h3 class="tab_drawer_heading" rel="link9"> Meeting Transcript</h3>
-
-
-
                                                                                     <div id="link9" class="tab_content text-center">
 
                                                                                     </div>
-
                                                                                 }
-
+                                                                                <h3 class="tab_drawer_heading" rel="link10"> Proctor Report</h3>
+                                                                                <div id="link10" class="tab_content">
+                                                                                    <div class="content client">
+                                                                                        <div class="row bg-w">
+                                                                                            <div class="col-md-12">
+                                                                                                <div class="mdc-card card bg-w">
+                                                                                                    <div class="mdc-card-wrapper__text-section">
+                                                                                                        @if (Model.IreportModel.ProctorReport != null)
+                                                                                                        {
+                                                                                                            <div class="row">
+                                                                                                                <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
+                                                                                                                    <!-- Calendly inline widget begin -->
+                                                                                                                    <div class="calendly-inline-widget" data-url='@Model.IreportModel.ProctorReport' style="height:636px"></div>
+                                                                                                                    <!-- Calendly inline widget end -->
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <div class="row">
+                                                                                                                <div class="col-lg-12  col-md-12 col-sm-12 pr-1">
+                                                                                                                    <label style="margin-left:440px"><strong>Sorry! No Proctor details available!</strong></label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                        <!-- end content-->
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <!--  end card  -->
+                                                                                            </div>
+                                                                                            <!-- end col-md-12 -->
+                                                                                        </div>
+                                                                                        <!-- end row -->
+                                                                                    </div>
+                                                                                    <!-- #tab10 -->
+                                                                                </div>
 
                                                                             </div>
                                                                         </div>
+
                                                                         @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
                                                                         {
                                                                             <div>
@@ -3096,7 +3142,7 @@
         $('#txtOnlineend').attr('min', maxDate);
     }
 </script>
-<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+
 <!-- Bootstrap core JavaScript-->
 
 
@@ -3456,7 +3502,14 @@
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script type="text/javascript">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
+        if ($("#hidd_profile").val() == "Client") {
+            var d = new Date();
+            d.setMonth(d.getMonth() - 5);
+            var _month = d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth();
+            var _day = d.getDate() > 9 ? d.getDate() : "0" + d.getDate();
+            $("#StartDate").attr("min", d.getFullYear() + "-" + _month + "-" + _day);
+        }
             $("#ResetFilter").click(function () {
                 ResetFilter();
             })
@@ -4214,9 +4267,9 @@
         }
     }
 </script>
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <script src="~/RiseTube/js/custom.js"></script>
 
-<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
 <script src="~/Newassets/js/scrollBar.js"></script>
 <script type="text/javascript">

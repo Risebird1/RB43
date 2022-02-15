@@ -77,6 +77,7 @@ namespace Risebird.Web.Controllers
             profileName = profileName.Replace("\"", "");
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
+            ViewBag.Profile = profileName;
             try
             {
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
@@ -3649,7 +3650,8 @@ namespace Risebird.Web.Controllers
                         }
                         else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
                         {
-                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                            if (firstData.CurrentMeetingStatus != null)
+                                candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
@@ -3773,7 +3775,8 @@ namespace Risebird.Web.Controllers
                         }
                         else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
                         {
-                            candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                            if (firstData.CurrentMeetingStatus != null)
+                                candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
                     }
                     //add candidate to final model
