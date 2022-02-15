@@ -123,6 +123,7 @@
     <script src="~/Newassets/js/chardinjs.js"></script>
     <script src="~/Newassets/js/demo.js"></script>
 }
+<input type="hidden" value="@ViewBag.ProfileName" id="hidd_profile" />
 <div class="main-panel bg-white" id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"> </div>-->
@@ -3501,7 +3502,14 @@
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script type="text/javascript">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
+        if ($("#hidd_profile").val() == "Client") {
+            var d = new Date();
+            d.setMonth(d.getMonth() - 5);
+            var _month = d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth();
+            var _day = d.getDate() > 9 ? d.getDate() : "0" + d.getDate();
+            $("#StartDate").attr("min", d.getFullYear() + "-" + _month + "-" + _day);
+        }
             $("#ResetFilter").click(function () {
                 ResetFilter();
             })

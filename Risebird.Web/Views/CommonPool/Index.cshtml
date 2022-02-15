@@ -79,7 +79,7 @@
 
 }
 
-
+<input type="hidden" value="@ViewBag.ProfileName" id="hidd_profile" />
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
         <div class="pt30">
@@ -199,7 +199,7 @@
                                                                 <div class="form-group">
                                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple"  data-placeholder="None Selected">
+                                                                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                             @foreach (var item in ViewBag.PrimarySkillList)
                                                                             {
@@ -219,7 +219,7 @@
                                                                         Selection Status
                                                                     </label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple"  data-placeholder="None Selected">
+                                                                        <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                             @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                             {
                                                                                 @if (item != null && item != "")
@@ -235,7 +235,7 @@
                                                                         Client HR
                                                                     </label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple"  data-placeholder="None Selected">
+                                                                        <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                             @foreach (var item in ViewBag.ClientHrContactList)
                                                                             {
                                                                                 @if (item != null && item != "")
@@ -253,7 +253,7 @@
                                                                 <div class="form-group">
                                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple"  data-placeholder="None Selected">
+                                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                             @foreach (var item in ViewBag.ClientNameList)
                                                                             {
                                                                                 @if (item != null && item != "")
@@ -270,7 +270,7 @@
                                                                 <div class="form-group">
                                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple"  data-placeholder="None Selected">
+                                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                             <option value="Available">Available</option>
                                                                             <option value="NotAvailable">NotAvailable</option>
 
@@ -288,7 +288,7 @@
                                                                     Candidate Location
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple"  data-placeholder="None Selected">
+                                                                    <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                         @foreach (var item in ViewBag.preferredLocationList)
                                                                         {
                                                                             @if (item != null && item != "")
@@ -705,14 +705,21 @@
         $('#myForm').trigger("reset");
     }
     $(document).ready(function () {
-            $("#btnSearch").click(function () {
+        if ($("#hidd_profile").val() == "Client") {
+            var d = new Date();
+            d.setMonth(d.getMonth() - 5);
+            var _month = d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth();
+            var _day = d.getDate() > 9 ? d.getDate() : "0" + d.getDate();
+            $("#StartDate").attr("min", d.getFullYear() + "-" + _month + "-" + _day);
+        }
+        $("#btnSearch").click(function () {
             var value = $("#txtsearch").val();
                 window.location.href = "/commonpool/Index?searchvalue=" + value;
                 $('#myForm').trigger("reset");
         });
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })mer
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        });
             if ('@filter' != "") {
                 ApplySessionFilter();
               }

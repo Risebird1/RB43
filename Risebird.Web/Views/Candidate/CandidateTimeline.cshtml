@@ -43,7 +43,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
-{ 
+{
     @if (HttpContextAccessor.HttpContext.Session.GetString("NCandidateTimeline") != null)
     {
 
@@ -87,6 +87,7 @@
     var Header = "<a id='status_1'>Candidates Status</a>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+<input type="hidden" value="@ViewBag.Profile" id="hidd_profile" />
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
         <div class="pt30 videocon">
@@ -364,7 +365,7 @@
                                                                                 else
                                                                                 {
                                                                                     <td class="text-left pl15">
-                                                                                         @item.CandidateName
+                                                                                        @item.CandidateName
                                                                                     </td>
                                                                                 }
                                                                             }
@@ -414,7 +415,7 @@
                                                                                 else
                                                                                 {
                                                                                     <td class="text-left pl15">
-                                                                                       @item.PrimarySkill
+                                                                                        @item.PrimarySkill
                                                                                     </td>
                                                                                 }
 
@@ -1444,7 +1445,13 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
+        if ($("#hidd_profile").val() == "Client") {
+            var d = new Date();
+            d.setMonth(d.getMonth() - 5);
+            var _month = d.getMonth() > 9 ? d.getMonth() : "0" + d.getMonth();
+            var _day = d.getDate() > 9 ? d.getDate() : "0" + d.getDate();
+            $("#StartDate").attr("min", d.getFullYear() + "-" + _month + "-" + _day);
+        }
 
         $("#ResetFilter").click(function () {
             ResetFilter();
