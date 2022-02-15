@@ -77,6 +77,7 @@ namespace Risebird.Web.Controllers
             profileName = profileName.Replace("\"", "");
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
+            ViewBag.Profile = profileName;
             try
             {
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
