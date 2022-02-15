@@ -122,9 +122,9 @@ namespace Risebird.Web
             //    context.Response.Headers.Add(
             //    "Content-Security-Policy-Report-Only",
             //    "script-src 'self''unsafe-line''unsafe-inline'; " +
-            //    //"script-src-elem 'self''unsafe-inline'; " +
+            //    "script-src-elem 'self''unsafe-inline'; " +
             //    "style-src 'self''unsafe-line''unsafe-inline'; " +
-            //    //"style-src-elem 'self''unsafe-line''unsafe-inline'; " +
+            //    "style-src-elem 'self''unsafe-line''unsafe-inline'; " +
             //    "img-src 'self'");
 
             //    await next();
@@ -135,6 +135,8 @@ namespace Risebird.Web
                        .AllowSelf()
                        .Allow("wss://chunderw-gll.twilio.com/signal")
                        .Allow("wss://matrix.twilio.com")
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("blob:")
                        .Allow("https://www.google-analytics.com/");
 
                 builder.Scripts
@@ -154,7 +156,13 @@ namespace Risebird.Web
                        .Allow("https://cdn.datatables.net/")
                        .Allow("https://static.twilio.com/")
                        .Allow("https://www.googletagmanager.com/")
-                       //.Allow("https://www.google-analytics.com/")
+                       .Allow("https://www.google-analytics.com/")
+                       //.Allow("https://prodvideo.blob.core.windows.net/")
+                       .Allow("https://amp.azure.net/")
+                       .Allow("https://assets.calendly.com/")
+                       .Allow("https://www.amcharts.com/")
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("blob:")
                        .Allow("'unsafe-inline'");
 
                 builder.Styles
@@ -168,6 +176,9 @@ namespace Risebird.Web
                        .Allow("https://maxcdn.bootstrapcdn.com/")
                        .Allow("https://pro.fontawesome.com/")
                        .Allow("https://static.twilio.com/")
+                       .Allow("https://amp.azure.net/")
+                       .Allow("https://www.amcharts.com/")
+                       .Allow("https://wchat.freshchat.com/")
                        .Allow("'unsafe-inline'");
 
                 builder.Fonts
@@ -178,6 +189,9 @@ namespace Risebird.Web
                        .Allow("https://pro.fontawesome.com/")
                        .Allow("https://maxcdn.bootstrapcdn.com/")
                        .Allow("https://static.twilio.com/")
+                       .Allow("https://amp.azure.net/")
+                       .Allow("https://www.amcharts.com/")
+                       .Allow("https://wchat.freshchat.com/")
                        .Allow("'unsafe-inline'");
 
                 builder.Images
@@ -188,6 +202,7 @@ namespace Risebird.Web
                        .Allow("https://static.twilio.com/")
                        .Allow("https://static.tumblr.com/")
                        .Allow("http://www.w3.org/")
+                       .Allow("https://www.google-analytics.com/")
                        .Allow("data:")
                        //.Allow("data:image/svg+xml,%3csvg")
                        .Allow("'unsafe-inline'");
@@ -198,6 +213,11 @@ namespace Risebird.Web
                        .Allow("https://prodvideo.blob.core.windows.net/")
                        .Allow("https://static.twilio.com/");
 
+                builder.Frame
+                       .AllowSelf()
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("*.webpush.freshchat.com/")
+                       .Allow("data:");
                 //builder.Object
                 //       //.AllowSelf()
                 //       .Allow("data:")

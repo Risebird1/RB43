@@ -35,7 +35,7 @@ namespace Risebird.Web.Security
             value += GetDirective("img-src", this.options.Images);
             value += GetDirective("font-src", this.options.Fonts);
             value += GetDirective("media-src", this.options.Media);
-            //value += GetDirective("object-src", this.options.Object);
+            value += GetDirective("frame-src", this.options.Frame);
             return value;
         }
 
