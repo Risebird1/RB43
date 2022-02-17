@@ -61,7 +61,7 @@ namespace Risebird.Repository
             {
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = SetStoredProcedureParameterForUser(user);
-
+                parameters.Add("@UserPassword", user.UserPassword);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,

@@ -114,7 +114,10 @@ namespace Risebird.Web
             else
             {
                 app.UseExceptionHandler("/Home/Index");
+                app.UseHsts();
             }
+
+            app.UseHttpsRedirection();
             //app.Use(async (context, next) =>
             //{
             //    //context.Response.Headers.Add("Content-Security-Policy", "default-src 'self';");
