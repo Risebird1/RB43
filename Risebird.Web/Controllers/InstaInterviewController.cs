@@ -157,6 +157,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
+                        ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                         if (profileName == "Client")
                         {
                             meeting.RequestedBy = emailid;

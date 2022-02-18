@@ -110,6 +110,25 @@
                                                         </td>
                                                     </tr>
                                                 }
+                                                else
+                                                {
+                                                    @for (int i = 0; i < Model.TechSkill.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.TechSkill[i].LevelId, (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.TechSkill[i].SkillId, "", new { @class = "form-control " })
+                                                            </td>
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRowSkills(this,'TechSkill', 'LevelId','SkillId','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+                                                }
                                             </tbody>
                                         </table>
                                         <label class="text-danger" id="SkillCollection_WeightageError"></label>
