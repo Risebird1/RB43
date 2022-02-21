@@ -103,6 +103,13 @@ namespace Risebird.Business
         {
             try
             {
+                var userDetails = new UserDetails
+                {
+                    FirstName = user.FirstName.Replace(" ", ""),
+                    LastName = user.LastName.Replace(" ", ""),
+                    EmailId = user.EmailId.Replace(" ", "")
+                };
+                user.UserPassword = _passwordHelper.GenerateUserPassword(userDetails, false).Result;
                 return _userRepository.AddUser(user).Result;
             }
 
