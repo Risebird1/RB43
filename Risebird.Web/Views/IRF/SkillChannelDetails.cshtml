@@ -211,14 +211,14 @@
 
                                                             @if (item.Flags > 0)
                                                             {
-                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.IRFId', '@(item.JDTiltle != null ? item.JDTiltle.Split('|')[0] : string.Empty)', '@item.RisebirdHREmail', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate')">@item.Flags</td>
+                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.IRFId', '@(item.JDTiltle != null ? item.JDTiltle.Split('|')[0] : string.Empty)', '@item.RisebirdHREmail', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.UnAttendedZoomLink)">@item.Flags</td>
                                                             }
                                                             else
                                                             {
                                                                 <td>@item.Flags</td>
                                                             }
                                                             <td> @item.CandidateCount </td>
-                                                            
+
                                                             <td> @item.CompletedInterviews </td>
                                                             <td> @item.SelectedMeetings </td>
                                                             <td> @item.RejectedMeetings </td>
@@ -284,8 +284,8 @@
 
                                             <div class="modal-body" id="flagsModalBody">
 
-
-
+                                            </div>
+                                            <div class="modal-body" id="flagsModalBodyCount" style="overflow:auto">
 
 
                                             </div>
@@ -444,7 +444,7 @@
         var modal = document.getElementById("flagsModal");
         modal.style.display = "none";
     }
-    function OpenModalForFlags(irfName, jdTitle, risebirdChannelOwner, scheduledPercentage, completionRate, selectionRate) {
+    function OpenModalForFlags(irfName, jdTitle, risebirdChannelOwner, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink, UnAttendedZoomLink) {
         $('#flagsModalBody').html('');
 
         var modal = document.getElementById("flagsModal");
@@ -460,7 +460,7 @@
 
         $('#flagsModalHeading').text(modalHeading);
         //code for setting up a bar chart
-        
+
         var chartData = [];
         if (scheduledPercentage != null && scheduledPercentage != '') {
             if (parseFloat(scheduledPercentage) < 75) {
@@ -510,7 +510,15 @@
             CreateChartAxes(chart);
 
         });
-        
+        var html = '';
+        html += '<table style="width:100%"><tr><td style="border:1px solid black">Unassigned Interviews</td><td style="border:1px solid black">' + unassigninterview + '</td></tr>';
+        html += '<tr><td style = "border:1px solid black" > Status Pending</td><td style="border:1px solid black">' + statuspending + '</td></tr>'; 
+        html += '<tr><td style = "border:1px solid black" > PENDING CANDIDATE FEEDBACK</td><td style="border:1px solid black">' + candidatepending + '</td></tr>';
+        html += ' <tr><td style="border:1px solid black">Missing Video Link</td><td style="border:1px solid black">' + missingVideoLink + '</td></tr>';
+        html += '<tr><td style="border:1px solid black">Missing Zoom Link</td><td style="border:1px solid black">' + missingzoomLink + '</td></tr>';
+        html += '<tr><td style="border:1px solid black">UnAttended Zoom Link</td><td style="border:1px solid black">' + UnAttendedZoomLink + '</td></tr> ';
+        html += '</table>';
+        $("#flagsModalBodyCount").empty().html(html);
     }
 
     function CreateChartAxes(chart) {

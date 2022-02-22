@@ -252,6 +252,13 @@ namespace Risebird.Entities.ViewModel
         public float SelectionRate { get; set; }
         public int Flags { get; set; }
         public int PendingCount { get; set; }
+        public int UnassignedInterviewsCount { get; set; }
+        public int UnfilledMeetingStatusCount { get; set; }
+        public int UnfilledInterviewStatusCount { get; set; }
+        public int UnfilledCommentsCount { get; set; }
+        public int MissingZoomLink { get; set; }
+        public int UnAttendedZoomLink { get; set; }
+        public int MissingVideoLink { get; set; }
 
     }
     public class SkillCahnnelDetailsVM
