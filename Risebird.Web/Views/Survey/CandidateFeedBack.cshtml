@@ -52,6 +52,7 @@
         right: -.3rem;
     }
 </style>
+
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
         <div class="pt30">
@@ -63,13 +64,27 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title"> Candidate FeedBack</h4></div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-md-12">
+                            @if (ViewBag.type == "Client")
+                            {
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Client',@ViewBag.PageName)"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Candidate',@ViewBag.PageName)"><strong>Candidate Feedback</strong></div>
+                            }
+                            else
+                            {
+                                <div class="feedback-tab" onclick="Changeurldetails('Client',@ViewBag.PageName)"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate',@ViewBag.PageName)"><strong>Candidate Feedback</strong></div>
+                            }
+                        </div>
+                    </div>
                     <div class="pull-right">
 
 
                         @if (ViewBag.PageName == "IRF")
                         {
-                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;" >Back to List</a>
+                            <input type="hidden" value="@ViewBag.IRFId" id="_hidIRF" />
+                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;">Back to List</a>
                             <i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>
                         }
                         else
@@ -149,22 +164,23 @@
                                                                         </div>
                                                                     </div>
                                                                 }
-                                                                
+
                                                             </div>
 
                                                             <div class="col-md-12 col-sm-12">
-                                                            <div class="form-group">
-                                                              <div>
-                                                              <div class="col-md-12 col-sm-12">
-                                                             <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
-                                                             <font style="font-size:12px;"> Reset Filter</font>
-                                                             </button>
-                                                              <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float: right; margin-bottom: 10px;">
-                                                              <font style="font-size:12px;"> Apply Filter</font>
-                                                               </button>
-        </div>
-    </div>
-</div></div>
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12">
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:5px;margin-bottom:10px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float: right; margin-bottom: 10px;">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -213,31 +229,31 @@
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                               @{var i = 0; }
+                                                @{var i = 0; }
                                                 @foreach (var item in Model)
                                                 {
                                                     <tr id=@item.interviewid>
                                                         <td class="candidate-details">
                                                             @if (item.Name != null && item.Name != "")
                                                             {@if (item.Name.Length > 10)
-{
+                                                                {
                                                                     <div class="cadfName mtop-5 text-left">
                                                                         <a onclick="" data-tooltip="@item.Name"><strong>Name:</strong> <span class="cname"> @item.Name</span> </a>
                                                                     </div>
 
 
-}
-else
-{
+                                                                }
+                                                                else
+                                                                {
                                                                     <div class="cadfName text-left">
                                                                         <a onclick=""><span class="cname"><strong>Name:</strong> @item.Name</span> </a>
                                                                     </div>
-}
-                                                            }
-                                                            else
-                                                            {
+                                                                }
+                                                        }
+                                                        else
+                                                        {
 
-                                                            }
+                                                        }
                                                             @if (item.EmailAddress != null && item.EmailAddress != "")
                                                             {
                                                                 @if (item.EmailAddress.Length > 18)
@@ -317,181 +333,181 @@ else
                                                             </td>
                                                         }
 
-                                                    <td class="interviewer">
-                                                        @*@item.Question1 out of 5*@
-                                                        <input type="hidden" id="Question1_@i" value="@item.Question1" />
-                                                        <div class="star-rating" style="pointer-events:none;">
-                                                            <input type="radio" id="Question1_5_@i" name="rating1_@i" readonly value="5" />
-                                                            <label for="Question1_5_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question1_4_@i" name="rating1_@i" readonly value="4" />
-                                                            <label for="Question1_4_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question1_3_@i" name="rating1_@i" readonly value="3" />
-                                                            <label for="Question1_3_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question1_2_@i" name="rating1_@i" readonly value="2" />
-                                                            <label for="Question1_2_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question1_1_@i" name="rating1_@i" readonly value="1" />
-                                                            <label for="Question1_1_@i" class="star">&#9733;</label>
-                                                        </div>
+                                                        <td class="interviewer">
+                                                            @*@item.Question1 out of 5*@
+                                                            <input type="hidden" id="Question1_@i" value="@item.Question1" />
+                                                            <div class="star-rating" style="pointer-events:none;">
+                                                                <input type="radio" id="Question1_5_@i" name="rating1_@i" readonly value="5" />
+                                                                <label for="Question1_5_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question1_4_@i" name="rating1_@i" readonly value="4" />
+                                                                <label for="Question1_4_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question1_3_@i" name="rating1_@i" readonly value="3" />
+                                                                <label for="Question1_3_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question1_2_@i" name="rating1_@i" readonly value="2" />
+                                                                <label for="Question1_2_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question1_1_@i" name="rating1_@i" readonly value="1" />
+                                                                <label for="Question1_1_@i" class="star">&#9733;</label>
+                                                            </div>
 
-                                                    </td>
+                                                        </td>
                                                         <td class="interviewer">
                                                             @*@item.Question2 out of 5*@
 
                                                             <input type="hidden" id="Question2_@i" value="@item.Question2" />
                                                             <div class="star-rating" style="pointer-events:none;">
-                                                                <input type="radio" id="Question2_5_@i" name="rating2_@i" value="5"  />
+                                                                <input type="radio" id="Question2_5_@i" name="rating2_@i" value="5" />
                                                                 <label for="Question2_5_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_4_@i" name="rating2_@i"  value="4"/>
+                                                                <input type="radio" id="Question2_4_@i" name="rating2_@i" value="4" />
                                                                 <label for="Question2_4_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_3_@i" name="rating2_@i"  value="3"  />
+                                                                <input type="radio" id="Question2_3_@i" name="rating2_@i" value="3" />
                                                                 <label for="Question2_3_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_2_@i" name="rating2_@i"  value="2" />
+                                                                <input type="radio" id="Question2_2_@i" name="rating2_@i" value="2" />
                                                                 <label for="Question2_2_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_1_@i" name="rating2_@i"  value="1" />
+                                                                <input type="radio" id="Question2_1_@i" name="rating2_@i" value="1" />
                                                                 <label for="Question2_1_@i" class="star">&#9733;</label>
                                                             </div>
 
 
                                                         </td>
-                                                    @if (item.Question3 == "1")
-                                                    {
-                                                        <td>
-                                                            <div style="width: 150px; white-space: initial;">
-                                                                <div>
-                                                                    I am satisfied with the interviewer and evaluation process
-
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>
-                                                            <div style="width: 150px; white-space: initial;">
-                                                                <div>
-                                                                    I didn't get a fair chance and I can do better
-
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    }
-
-
-
-                                                    <td class="interview-com">
-                                                        <div id="section">
-                                                            @if (item.Question4 != null && item.Question4 != "")
-                                                            {
-                                                                @if (item.Question4.Length > 60)
-                                                                {
-                                                                    <div class="article" style="white-space:initial;width:150px;">
-                                                                        <p style="margin-bottom:0px;">
-                                                                            @item.Question4.Substring(0, 60)
-                                                                        </p>
-                                                                        <p class="moretext_@item.interviewid moretext">
-                                                                            @item.Question4.Substring(60, @item.Question4.Length - 60)
-                                                                        </p>
-                                                                    </div>
-                                                                    <a onclick="moreless(@item.interviewid)" class="moreless-button" value="Readmore" id="read_@item.interviewid" href="#">Read more</a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="article" style="white-space:initial;width:150px;">
-
-                                                                        <p>
-                                                                            @item.Question4.Substring(0, @item.Question4.Length)
-                                                                        </p>
-                                                                    </div>
-                                                                }}
-                                                            else
-                                                            { <div></div>}
-
-
-
-
-
-
-
-
-
-
-                                                        </div>
-
-                                                    </td>
-
-
-                                                    <td class="interview-com">
-                                                        <div id="section">
-                                                            @if (item.Question5 != null && item.Question5 != "")
-                                                            {
-                                                                @if (item.Question5.Length > 70)
-                                                                {
-                                                                    <div class="article" style="white-space:initial;width:150px;">
-                                                                        <p style="margin-bottom:0px;">
-                                                                            @item.Question5.Substring(0, 70)
-                                                                        </p>
-                                                                        <p class="moretext1_@item.interviewid moretext">
-                                                                            @item.Question5.Substring(70, @item.Question5.Length - 70)
-                                                                        </p>
-                                                                    </div>
-                                                                    <a onclick="moreless1(@item.interviewid)" class="moreless-button" value="Readmore" id="read1_@item.interviewid" href="#">Read more</a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="article" style="white-space:initial;width:150px;">
-
-                                                                        <p>
-                                                                            @item.Question5.Substring(0, @item.Question5.Length)
-                                                                        </p>
-                                                                    </div>
-                                                                }
-                                                            }
-                                                            else
-                                                            { <div>
-
-
-                                                                </div>}
-
-
-
-
-
-                                                        </div>
-
-                                                    </td>
-                                                    <td class="interviewer">
-                                                        @*@item.Question6 out of 5*@
-
-                                                        <input type="hidden" id="Question6_@i" value="@item.Question6" />
-
-                                                        <div class="star-rating" style="pointer-events:none;">
-                                                            <input type="radio" id="Question6_5_@i" name="rating3_@i" value="5"/>
-                                                            <label for="Question6_5_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question6_4_@i" name="rating3_@i" value="4"/>
-                                                            <label for="Question6_4_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question6_3_@i" name="rating3_@i" value="3"/>
-                                                            <label for="Question6_3_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question6_2_@i" name="rating3_@i" value="2"/>
-                                                            <label for="Question6_2_@i" class="star">&#9733;</label>
-                                                            <input type="radio" id="Question6_1_@i" name="rating3_@i" value="1"/>
-                                                            <label for="Question6_1_@i" class="star">&#9733;</label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        @if (item.CommentforInterviewer != null && item.CommentforInterviewer != "")
+                                                        @if (item.Question3 == "1")
                                                         {
-                                                            <div style="width:250px;">
-                                                                <div class="talktext">
-                                                                    <blockquote><p class="style-2"> @item.CommentforInterviewer</p></blockquote>
+                                                            <td>
+                                                                <div style="width: 150px; white-space: initial;">
+                                                                    <div>
+                                                                        I am satisfied with the interviewer and evaluation process
+
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <div style="width: 150px; white-space: initial;">
+                                                                    <div>
+                                                                        I didn't get a fair chance and I can do better
+
+                                                                    </div>
+                                                                </div>
+                                                            </td>
                                                         }
 
-                                                        else
-                                                        { <div style="width:250px;"></div>}
-                                                    </td>
 
-                                                </tr>
+
+                                                        <td class="interview-com">
+                                                            <div id="section">
+                                                                @if (item.Question4 != null && item.Question4 != "")
+                                                                {
+                                                                    @if (item.Question4.Length > 60)
+                                                                    {
+                                                                        <div class="article" style="white-space:initial;width:150px;">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.Question4.Substring(0, 60)
+                                                                            </p>
+                                                                            <p class="moretext_@item.interviewid moretext">
+                                                                                @item.Question4.Substring(60, @item.Question4.Length - 60)
+                                                                            </p>
+                                                                        </div>
+                                                                        <a onclick="moreless(@item.interviewid)" class="moreless-button" value="Readmore" id="read_@item.interviewid" href="#">Read more</a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="article" style="white-space:initial;width:150px;">
+
+                                                                            <p>
+                                                                                @item.Question4.Substring(0, @item.Question4.Length)
+                                                                            </p>
+                                                                        </div>
+                                                                    }}
+                                                                else
+                                                                { <div></div>}
+
+
+
+
+
+
+
+
+
+
+                                                            </div>
+
+                                                        </td>
+
+
+                                                        <td class="interview-com">
+                                                            <div id="section">
+                                                                @if (item.Question5 != null && item.Question5 != "")
+                                                                {
+                                                                    @if (item.Question5.Length > 70)
+                                                                    {
+                                                                        <div class="article" style="white-space:initial;width:150px;">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.Question5.Substring(0, 70)
+                                                                            </p>
+                                                                            <p class="moretext1_@item.interviewid moretext">
+                                                                                @item.Question5.Substring(70, @item.Question5.Length - 70)
+                                                                            </p>
+                                                                        </div>
+                                                                        <a onclick="moreless1(@item.interviewid)" class="moreless-button" value="Readmore" id="read1_@item.interviewid" href="#">Read more</a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="article" style="white-space:initial;width:150px;">
+
+                                                                            <p>
+                                                                                @item.Question5.Substring(0, @item.Question5.Length)
+                                                                            </p>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                                else
+                                                                { <div>
+
+
+                                                                    </div>}
+
+
+
+
+
+                                                            </div>
+
+                                                        </td>
+                                                        <td class="interviewer">
+                                                            @*@item.Question6 out of 5*@
+
+                                                            <input type="hidden" id="Question6_@i" value="@item.Question6" />
+
+                                                            <div class="star-rating" style="pointer-events:none;">
+                                                                <input type="radio" id="Question6_5_@i" name="rating3_@i" value="5" />
+                                                                <label for="Question6_5_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question6_4_@i" name="rating3_@i" value="4" />
+                                                                <label for="Question6_4_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question6_3_@i" name="rating3_@i" value="3" />
+                                                                <label for="Question6_3_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question6_2_@i" name="rating3_@i" value="2" />
+                                                                <label for="Question6_2_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Question6_1_@i" name="rating3_@i" value="1" />
+                                                                <label for="Question6_1_@i" class="star">&#9733;</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            @if (item.CommentforInterviewer != null && item.CommentforInterviewer != "")
+                                                            {
+                                                                <div style="width:250px;">
+                                                                    <div class="talktext">
+                                                                        <blockquote><p class="style-2"> @item.CommentforInterviewer</p></blockquote>
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+                                                            else
+                                                            { <div style="width:250px;"></div>}
+                                                        </td>
+
+                                                    </tr>
 
                                                     i++;
                                                 }
@@ -814,6 +830,14 @@ else
             if (Question6_Value != null && Question6_Value != "" && parseInt(Question6_Value) > 0) {
                 $('#Question6_' + Question6_Value + '_' + i).attr('checked', 'checked');
             }
+        }
+    }
+    function Changeurldetails(type, pagevalue) {
+        if (pagevalue == 'IRF') {
+            var irfvalue = $("#_hidIRF").val();
+            window.location.href = "/Survey/CandidateFeedBackByIRFId?IRFId=" + irfvalue + "&type=" + type;
+        } else {
+            window.location.href = "/Survey/CandidateFeedBack?type=" + type;
         }
     }
 </script>

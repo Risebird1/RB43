@@ -5471,5 +5471,41 @@ namespace Risebird.Repository
             }
             return "fail";
         }
+        public async Task<List<InterviewerRating>> FetchFeedbackDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select im.interviewdate,im.interviewer,ul.Emailid,ir.Comment,ir.StarRating,im.candidateEmail,ir.Interviewid From [dbo].[InterviewRatings] ir join UserList ul on ul.id=ir.Userid join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
+                    var results = await con.QueryAsync<InterviewerRating>(query, null);
+                    return (List<InterviewerRating>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select im.interviewdate,im.interviewer,ul.Emailid,ir.Comment,ir.StarRating,im.candidateEmail,ir.Interviewid From [dbo].[InterviewRatings] ir join UserList ul on ul.id=ir.Userid join InterviewMeetings im on im.id=ir.Interviewid where im.IRFId=@irfid order by Addedon desc";
+                    var results = await con.QueryAsync<InterviewerRating>(query, dynamicParameters);
+                    return (List<InterviewerRating>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

@@ -208,5 +208,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveProctorReport(int id, string reporturl);
         bool UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid);
         string SetInterviewerAvailability(int transid, int isavailable);
+        Task<List<InterviewerRating>> FetchFeedbackDetails();
+        Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);
     }
 }

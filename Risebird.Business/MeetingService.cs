@@ -3335,6 +3335,32 @@ namespace Risebird.Business
                 return "fail";
             }
         }
+        public async Task<List<InterviewerRating>> FetchFeedbackDetails()
+        {
+            try
+            {
+                var result = await _meetingRespository.FetchFeedbackDetails();
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId)
+        {
+            try
+            {
+                var result = await _meetingRespository.FetchFeedbackDetailsByIRFId(IRFId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 
