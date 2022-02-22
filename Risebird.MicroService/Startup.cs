@@ -106,6 +106,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IInterviewSchedulerRepository, InterviewSchedulerRepository>();
             builder.Services.AddScoped<IRisebirdMeetingsRepository, RisebirdMeetingsRepository>();
             builder.Services.AddScoped<IZoomHelper, ZoomHelper>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
         }
 
 

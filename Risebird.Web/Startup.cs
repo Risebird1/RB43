@@ -219,6 +219,7 @@ namespace Risebird.Web
                 builder.Frame
                        .AllowSelf()
                        .Allow("https://wchat.freshchat.com/")
+                       .Allow("https://calendly.com/")
                        .Allow("*.webpush.freshchat.com/")
                        .Allow("data:");
                 //builder.Object

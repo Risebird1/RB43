@@ -69,5 +69,6 @@ namespace Risebird.Repository.Interface
         bool CheckMultiSession(string emailId);
         bool ClearSessionForOthersUsers(string emailId);
         Task<bool> GetClientPasswordResetEnableStatus(int clientId);
+        Task<int> DisableInactiveUser();
     }
 }
