@@ -1,0 +1,429 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerRating>
+@using X.PagedList.Mvc.Core;
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "FeedBack";
+    ViewBag.PageHeader = "FeedBack";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="hidden" id="txtrate" value="@Model.Count()" />
+
+<link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+
+<style>
+    .hopscotch-arrow.down {
+        transform: rotate( 1deg );
+        top: 6.9rem;
+        right: -.3rem;
+    }
+</style>
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad">
+                <div class="card-header bg-w clearfix">
+                    <img style="visibility:hidden" src="" data-position="right" />
+                    <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title"> FeedBack</h4></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            @if (ViewBag.type == "Client")
+                            {
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Client',@ViewBag.PageName)"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Candidate',@ViewBag.PageName)"><strong>Candidate Feedback</strong></div>
+                            }
+                            else
+                            {
+                                <div class="feedback-tab" onclick="Changeurldetails('Client',@ViewBag.PageName)"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate',@ViewBag.PageName)"><strong>Candidate Feedback</strong></div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="pull-right">
+
+
+                        @if (ViewBag.PageName == "IRF")
+                        {
+                            <input type="hidden" value="@ViewBag.IRFId" id="_hidIRF" />
+                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;">Back to List</a>
+                            @*<i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>*@
+                        }
+                        @*else
+                            {
+                                <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                                <span id="cfeedback_3">
+                                    <i id="allinterview_3" data-intro='Click here to export the Candidate data in excel sheet' data-position='left' type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedbackExporttoExcel", "Survey")'"></i>
+                                </span>
+                            }*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div id="candidatefeedback_table" data-intro="<span style='font-size:16px;'>Overview the summary of Candidate Feedback</span><hr class='btop' />1. Candidate Name<br/> 2. JD Title<br/> 3. Rating <br/> 4. Comment <br/><a href='/CommonPool/Index' class='btn btn-primary allmeetingnext-btn'>NEXT</a>" data-position="top">
+                                <div class="dataloading">
+                                    <div style="overflow-x:scroll;overflow-y:hidden" class="scrollbar survey" id="style-2">
+                                        <table id="interviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Client Email</th>
+                                                    <th>Interviewer Email</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Comment</th>
+                                                    <th>Rating</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Client Email</th>
+                                                    <th>Interviewer Email</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Comment</th>
+                                                    <th>Rating</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @{var i = 0; }
+                                                @foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td class="candidate-details">@item.Emailid</td>
+                                                        <td>@item.interviewer</td>
+                                                        <td>@item.interviewdate</td>
+                                                        <td>@item.candidateEmail</td>
+                                                        <td>
+                                                            <div id="section">
+                                                                @if (item.Comment != null && item.Comment != "")
+                                                                {
+                                                                    @if (item.Comment.Length > 70)
+                                                                    {
+                                                                        <div class="article" style="white-space:initial;width:150px;">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.Comment.Substring(0, 70)
+                                                                            </p>
+                                                                            <p class="moretext1_@item.Interviewid moretext">
+                                                                                @item.Comment.Substring(70, @item.Comment.Length - 70)
+                                                                            </p>
+                                                                        </div>
+                                                                        <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read1_@item.Interviewid" href="#">Read more</a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="article" style="white-space:initial;width:150px;">
+                                                                            <p>
+                                                                                @item.Comment.Substring(0, @item.Comment.Length)
+                                                                            </p>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div></div>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td class="interviewer">
+                                                            <input type="hidden" id="Rating_@i" value="@item.StarRating" />
+                                                            <div class="star-rating" style="pointer-events:none;">
+                                                                <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
+                                                                <label for="Rating_5_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_4_@i" name="rating1_@i" readonly value="4" />
+                                                                <label for="Rating_4_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_3_@i" name="rating1_@i" readonly value="3" />
+                                                                <label for="Rating_3_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
+                                                                <label for="Rating_2_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
+                                                                <label for="Rating_1_@i" class="star">&#9733;</label>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <!-- end row -->
+
+
+
+        </div>
+
+    </div>
+</div>
+<script>
+    function dropDwnToolTips(id) {
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("Success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/User/Interviewers';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/User/Interviewers';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+
+<script>
+    function searchResult() {
+        $('#interviewer').DataTable();
+    }
+    function RefreshSearch() {
+        $('#interviewer').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        SetRating();
+        applyDataTable();
+
+    });
+
+
+
+    function applyDataTable() {
+        $('#interviewer').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+    }
+
+
+
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+
+
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#interviewer").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#interviewer").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#interviewer").show();
+        }, 2000);
+    };
+
+</script>
+
+<script>
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
+<script>
+    function SetRating() {
+        var indexCount = $('#txtrate').val();
+        for (var i = 0; i < indexCount; i++) {
+            var Rating_Value = document.getElementById("Rating_" + i).value;
+            if (Rating_Value != null && Rating_Value != "" && parseInt(Rating_Value) > 0) {
+                $('#Rating_' + Rating_Value + '_' + i).attr('checked', 'checked');
+            }
+        }
+    }
+    function moreless(id) {
+        $('.moretext1_' + id).slideToggle();
+        if ($('#read1_' + id).val() == 'Readmore') {
+            $('#read1_' + id).empty().html('Read more');
+            $('#read1_' + id).val('Readless');
+        } else {
+            $('#read1_' + id).empty().html('Read less');
+            $('#read1_' + id).val('Readmore');
+        }
+    }
+    function Changeurldetails(type, pagevalue) {
+        if (pagevalue == 'IRF') {
+            var irfvalue = $("#_hidIRF").val();
+            window.location.href = "/Survey/CandidateFeedBackByIRFId?IRFId=" + irfvalue + "&type=" + type;
+        } else {
+            window.location.href = "/Survey/CandidateFeedBack?type=" + type;
+        }
+    }
+</script>
