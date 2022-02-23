@@ -100,5 +100,6 @@ namespace Risebird.Business.Interface
         Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null);
         Task<bool> IsQuestionUsedInReport(string question);
         IEnumerable<TransSkill> GetTechSkillswithWeightage(int id);
+        Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
     }
 }
