@@ -1531,5 +1531,35 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<int> DisableInactiveUser()
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@date", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_DisableInactiveUser", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (int)BooleanResultsEnum.True;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return (int)BooleanResultsEnum.Failed;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return (int)BooleanResultsEnum.Failed;
+            }
+        }
+
+
     }
 }
