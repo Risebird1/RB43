@@ -3653,6 +3653,14 @@ namespace Risebird.Web.Controllers
                             if (firstData.CurrentMeetingStatus != null)
                                 candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
+                        else if (firstData.CurrentMeetingStatus == 2)
+                        {
+                            candidateTimeline.CurrentStatus = "Scheduled";
+                        }
+                    }
+                    else
+                    {
+                        candidateTimeline.CurrentStatus = "Cancelled";
                     }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
@@ -3778,6 +3786,14 @@ namespace Risebird.Web.Controllers
                             if (firstData.CurrentMeetingStatus != null)
                                 candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
                         }
+                        else if (firstData.CurrentMeetingStatus == 2)
+                        {
+                            candidateTimeline.CurrentStatus = "Scheduled";
+                        }
+                    }
+                    else
+                    {
+                        candidateTimeline.CurrentStatus = "Cancelled";
                     }
                     //add candidate to final model
                     if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
