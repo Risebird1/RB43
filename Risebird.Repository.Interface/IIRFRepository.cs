@@ -157,5 +157,6 @@ namespace Risebird.Repository.Interface
         Task<int> GetInterviewerRate(int userId, string companyType = null, int? countryType = null);
         Task<bool> IsQuestionUsedInReport(string question);
         Task<bool> UpdateCancellationSource(int interviewid, string emailId);
+        Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
     }
 }
