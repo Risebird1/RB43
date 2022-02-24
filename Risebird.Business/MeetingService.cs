@@ -944,7 +944,7 @@ namespace Risebird.Business
                             var candidateEmail = meeting.Result.candidateEmail;
                             var Skillchannelid = meeting.Result.IRFId;
                             var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
-                            _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
+                            //_notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
 
                         }
                     }
