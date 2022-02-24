@@ -1017,7 +1017,12 @@ namespace Risebird.Business
 
             try
             {
-                return await _meetingRespository.GetTechSkillComments(irfId, userId);
+                var result = await _meetingRespository.GetTechSkillComments(irfId, userId);
+                foreach (var question in result)
+                {
+                    question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                }
+                return result;
             }
 
             catch (Exception e)
