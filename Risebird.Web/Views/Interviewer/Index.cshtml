@@ -78,6 +78,11 @@
 
                     <div class="pull-left" style="margin-right:10px;">
                         <span class="interviewer_3">
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Check Interviewer availability using Email" onclick="SendIntervieweravailability()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Interviewer availability</font></span>
+                            </button>
+                        </span>
+                        <span class="interviewer_3">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -89,7 +94,7 @@
                         @if (ViewBag.Profile != "Finance")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("AddInterviewerProfile", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddInterviewerProfile", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Interviewer</font></span>
                             </button>
                         }
 
@@ -515,7 +520,7 @@
                                                             <br />
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
-                                                                <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top"  onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
+                                                                <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span title="Click here to call the candidate" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
 
                                                             }
                                                             @if (ViewBag.Profile != "Finance")
@@ -1453,12 +1458,12 @@
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
-     $('.' + id).addClass("in");
+            $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
-     $('.' + id).removeClass("in");
+            $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }
@@ -1845,8 +1850,15 @@
         }
 
     }
-
-
+    function SendIntervieweravailability() {
+        $.ajax({
+            url: '/Interviewer/CheckAllIntervieweravailbility',
+            type:"POST",
+            success: function (data) {
+                swal.fire('Emails sent successfully.');
+            }
+        });
+    }
 
 
 </script>

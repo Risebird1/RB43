@@ -783,6 +783,9 @@ namespace Risebird.Web.Controllers
             var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.OutsideIndiaServiceRateList = new SelectList(OutSideIndiaPrice, "ID", "Name");
+            var AvailabilityStatus = from InterviewerAvailabilityStatus s in Enum.GetValues(typeof(InterviewerAvailabilityStatus))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+            model.AvailabilityStatus = new SelectList(AvailabilityStatus, "ID", "Name");
         }
 
         [HttpPost]
@@ -2923,6 +2926,49 @@ namespace Risebird.Web.Controllers
             return Json(result);
         }
         #endregion
+        [HttpPost]
+        public async Task<JsonResult> CheckAllIntervieweravailbility()
+        {
+            try
+            {
+                var model = await _interviewerService.GetAllInterviewerMembers();
+                foreach (var item in model)
+                {
+                    if (!String.IsNullOrEmpty(item.EmailId))
+                    {
+                        string yesbutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid;
+                        string nobutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid;
+                        string cleritybutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=3&uniqueid=" + item.uniqueid;
+                        string nodropbutton = "https://portal.risebird.io/Interviewer/UpdateIntervieweravailbilityStatus?status=4&uniqueid=" + item.uniqueid;
+                        Mail _mail = new Mail
+                        {
+                            TO = item.EmailId,
+                            Subject = "Risebird: Availbility check for Upcoming Interviewes"
+                        };
+                        var emailresult = _notificationHelper.SendAllIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, cleritybutton, nodropbutton);
+                    }
+                }
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
+        }
+        [HttpGet]
+        public JsonResult UpdateIntervieweravailbilityStatus(int status, string uniqueid)
+        {
+            //InterviewerAvailabilityStatus
+            if (_interviewerService.UpdateAllIntervieweravailbilityStatus(status, uniqueid))
+            {
+                return Json("Successfully status updated");
+            }
+            else
+            {
+                return Json("Fail to Update Status, Please try again");
+            }
+        }
     }
 }
 

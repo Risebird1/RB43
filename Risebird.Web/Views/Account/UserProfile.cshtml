@@ -58,11 +58,13 @@
                                                     <div class="avatar-upload">
                                                         <div class="avatar-edit">
                                                             @Html.TextBoxFor(model => model.ImageUpload, new { type = "file", @id = "actual-btn", @hidden = "hidden", @class = "form-control", @accept = ".jpeg,.jpg,.png" })
-                                                            <label for="actual-btn"><i class="fad fa-pen" style="
+                                                            <label for="actual-btn">
+                                                                <i class="fad fa-pen" style="
     position: relative;
     top: 4px;
     left: 9px;
-"></i></label>
+"></i>
+                                                            </label>
                                                         </div>
                                                         <div class="avatar-preview">
 
@@ -189,13 +191,23 @@
                                                                 @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { id = "txt_AltEmailId", @class = "form-control text-box single-line", @type = "text" } })
                                                                 @Html.ValidationMessageFor(model => model.AltEmailId, "", new { @class = "text-danger" })
                                                             </div>
-                                                            <div class="col-md-12" style="clear:both;">
-                                                                <div class="form-group">
-                                                                    @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
-                                                                    @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                                    @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
-                                                                </div>
+                                                            <div class="form-group col-md-6 pull-left p15">
+                                                                @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
+                                                                @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
                                                             </div>
+                                                            <div class="form-group col-md-6 pull-left p15">
+                                                                @Html.LabelFor(model => model.Isavailable, htmlAttributes: new { @class = "" })
+                                                                @Html.DropDownListFor(model => model.Isavailable, (SelectList)Model.AvailabilityStatus, new { @class = "form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.Isavailable, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            @*<div class="col-md-12" style="clear:both;">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "" })
+                                                                        @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                        @Html.ValidationMessageFor(model => model.CurrentRole, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>*@
                                                             <div class="col-md-12" style="margin-bottom:20px;">
                                                                 @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "" })
                                                                 @Html.CheckBoxFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "availcheck" })
@@ -207,7 +219,7 @@
                                                             <div class="col-md-12" style="margin:10px 0px;">
                                                                 @if (Model.ResumeLink != null)
                                                                 {
-                                                                    <a id="resumeId" target="_blank" title="Resume" style="text-decoration: none; margin: 20px 10px;"  href=@Model.ResumeLink.Replace(" ","%20")>Resume  </a>
+                                                                    <a id="resumeId" target="_blank" title="Resume" style="text-decoration: none; margin: 20px 10px;" href=@Model.ResumeLink.Replace(" ","%20")>Resume  </a>
                                                                 }
                                                             </div>
                                                             @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
@@ -222,8 +234,13 @@
                                                                 }
                                                             </div>
                                                             @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
-                                                            <div class="col-md-12">
-                                                                <input type="button" class="form-control mdc-button mdc-button--raised mdc-ripple-upgraded" value="Tds Certificates" onclick="OpenTdsCertificate()" style="color:#fff!important;" />
+                                                            <div class="row">
+                                                                <div class="form-group col-md-6 pull-left p15">
+                                                                    <input type="button" class="form-control mdc-button mdc-button--raised mdc-ripple-upgraded" value="Tds Certificates" onclick="OpenTdsCertificate()" style="color:#fff!important;" />
+                                                                </div>
+                                                                <div class="form-group col-md-6 pull-left p15">
+                                                                    <input type="button" class="form-control mdc-button mdc-button--raised mdc-ripple-upgraded" value="Update you availability" onclick="location.href='@Url.Action("IRFInterviewerMapping", "Interviewer")'" style="color:#fff!important;" />
+                                                                </div>
                                                             </div>
                                                         }
                                                     }
@@ -268,14 +285,9 @@
                                                                                         @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")
                                                                                         @*<label for="@Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")">Is Available On Public Holidays</label>*@
                                                                                     </div>-->
-
-
-
-
-
-
-
                                                                                     <div class="mdc-checkbox">
+
+
 
 
 
@@ -285,21 +297,27 @@
 
 
 
+
+
                                                                                             <div class="mdc-checkbox">
 
-                                                                                                @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
-                                                                                                <div class="mdc-checkbox__background">
-                                                                                                    <svg class="mdc-checkbox__checkmark"
-                                                                                                         viewBox="0 0 24 24">
-                                                                                                        <path class="mdc-checkbox__checkmark-path"
-                                                                                                              fill="none"
-                                                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                                                    </svg>
-                                                                                                    <div class="mdc-checkbox__mixedmark"></div>
-                                                                                                </div>
-                                                                                                <div class="mdc-checkbox__ripple"></div>
 
-                                                                                            </div>
+
+                                                                                                <div class="mdc-checkbox">
+
+                                                                                                    @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
+                                                                                                    <div class="mdc-checkbox__background">
+                                                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                                                             viewBox="0 0 24 24">
+                                                                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                                                                  fill="none"
+                                                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                                        </svg>
+                                                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                                                    </div>
+                                                                                                    <div class="mdc-checkbox__ripple"></div>
+
+                                                                                                </div>
 
                                                                                 </td>
                                                                                 <td class="action text-center">
@@ -346,6 +364,9 @@
                                                                                             @*<label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>*@
                                                                                         </div>-->
                                                                                     </td>
+
+                                                                                    <td class="action text
+                                                                                            </td>
 
                                                                                     <td class="action text-center">
                                                                                         <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
