@@ -111,7 +111,7 @@
                                             <div class="mandate">
                                                 @Html.Label("Clients", "Clients", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             </div>
-                                            <select id="ClientsArray" name="ClientsArray" class="form-control multiselect" multiple="multiple">
+                                            <select id="ClientsArray" name="ClientsArray" class="form-control multiselect" multiple="multiple" placeholder="Select">
                                                 @foreach (var item in Model.ClientList.ToList())
                                                 {
                                                     @if (item != null)
