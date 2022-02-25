@@ -45,7 +45,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -99,7 +99,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> CreateInterviewRequest()
         {
@@ -139,7 +139,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateInterviewRequest(InterviewRequestVM meeting)
@@ -196,6 +196,11 @@ namespace Risebird.Web.Controllers
                                 await SetInterviewRequestSelectLists();
                                 return View(meeting);
                             }
+                            if (meeting.TechSkill.Count() < 2)
+                            {
+                                ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
+                                return View(meeting);
+                            }
                             if (_interviewRequestService.CreateInerviewRequest(meeting))
                             {
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
@@ -244,7 +249,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> EditInterviewRequest(int id)
         {
@@ -285,7 +290,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditInterviewRequest(InterviewRequestVM meeting)
@@ -346,6 +351,11 @@ namespace Risebird.Web.Controllers
                                 await SetInterviewRequestSelectLists();
                                 return View(meeting);
                             }
+                            if (meeting.TechSkill.Count() < 2)
+                            {
+                                ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
+                                return View(meeting);
+                            }
                             if (_interviewRequestService.CreateInerviewRequest(meeting))
                             {
                                 //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
@@ -404,14 +414,14 @@ namespace Risebird.Web.Controllers
                            select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.CountryList = new SelectList(_country, "ID", "Name");
         }
-        
+
         [HttpPost]
         public JsonResult FetchCoordinators()
         {
             var coordinatorlist = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
             return Json(new { result = coordinatorlist });
         }
-        
+
         [HttpPost]
         public JsonResult AssignCoordinator(int userid, int id)
         {
@@ -483,7 +493,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
                 var model = new InterviewRequestVM();
-               // model.RequestedBy = emailid;
+                // model.RequestedBy = emailid;
                 model.uniqueid = id;
                 var skills = _irfRepository.GetSkills();
                 await SetInterviewRequestSelectLists();
@@ -517,7 +527,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PublicCreateInterviewRequest(InterviewRequestVM meeting)
@@ -565,6 +575,11 @@ namespace Risebird.Web.Controllers
                     {
                         ModelState.AddModelError("JDFile", "Jd File is required.");
                         await SetInterviewRequestSelectLists();
+                        return View(meeting);
+                    }
+                    if (meeting.TechSkill.Count() < 2)
+                    {
+                        ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
                         return View(meeting);
                     }
                     if (_interviewRequestService.CreateInerviewRequest(meeting))
