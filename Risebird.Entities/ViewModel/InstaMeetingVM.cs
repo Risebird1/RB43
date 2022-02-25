@@ -72,7 +72,10 @@ namespace Risebird.Entities.ViewModel
         public string Level { get; set; }
         public int LevelId { get; set; }
         public int ActualLevelId { get; set; }
+
         public string SkillName { get; set; }
+
+        [RegularExpression("^[a-zA-Z0-9 .,-]*$", ErrorMessage = "Only alphabets, numbers, dot, comma and hyphen allowed for Skill Name")]//^[a-zA-Z0-9]*$  ^[a-zA-Z0-9,-].*?$
         public string SkillId { get; set; }
         public int Weightage { get; set; }
     }
