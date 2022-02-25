@@ -18,7 +18,11 @@ CREATE PROCEDURE [dbo].[usp_DisableInactiveUser]
 AS
 Begin
 
-update UserList set IsActive=0 where datediff(day, cast(LastLogout as date), cast(@date as date))>180
+update UserList set IsActive=0 
+from UserList ul join ClientUser cu on cu.UserId = ul.id 
+join Client cl on cl.id = cu.ClientId
+where datediff(day, cast(LastLogout as date), cast(@date as date))>180
+and cl.IsPasswordReset = 1
 
 END
 

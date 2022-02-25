@@ -3573,6 +3573,10 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    foreach (var question in model.QuestionsCollection)
+                    {
+                        question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                    }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 ViewBag.IsClient = isClient;

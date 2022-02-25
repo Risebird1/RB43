@@ -944,7 +944,7 @@ namespace Risebird.Business
                             var candidateEmail = meeting.Result.candidateEmail;
                             var Skillchannelid = meeting.Result.IRFId;
                             var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
-                            _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
+                            //_notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
 
                         }
                     }
@@ -1017,7 +1017,12 @@ namespace Risebird.Business
 
             try
             {
-                return await _meetingRespository.GetTechSkillComments(irfId, userId);
+                var result = await _meetingRespository.GetTechSkillComments(irfId, userId);
+                foreach (var question in result)
+                {
+                    question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                }
+                return result;
             }
 
             catch (Exception e)

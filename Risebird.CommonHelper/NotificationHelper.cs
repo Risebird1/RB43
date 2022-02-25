@@ -1179,47 +1179,47 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private SendGridMessage ConstructMailMessageObject(string to, string subject, string from = null, string ccEmail = null, List<string> ccList = null, List<string> bccList = null)
-        {
-            var msg = new SendGridMessage();
-            if (from == null)
-            {
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+        //private SendGridMessage ConstructMailMessageObject(string to, string subject, string from = null, string ccEmail = null, List<string> ccList = null, List<string> bccList = null)
+        //{
+        //    var msg = new SendGridMessage();
+        //    if (from == null)
+        //    {
+        //        msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
 
-            }
-            else
-            {
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(from, from.Split("@").First());
+        //    }
+        //    else
+        //    {
+        //        msg.From = new SendGrid.Helpers.Mail.EmailAddress(from, from.Split("@").First());
 
-            }
-            msg.Subject = subject;
-            msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(to, to.Split("@").First()));
+        //    }
+        //    msg.Subject = subject;
+        //    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(to, to.Split("@").First()));
 
-            if (ccEmail != null)
-            {
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, ccEmail.Split("@").First()));
+        //    if (ccEmail != null)
+        //    {
+        //        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, ccEmail.Split("@").First()));
 
-            }
+        //    }
 
-            if (ccList != null && ccList.Count() != 0)
-            {
-                foreach (var email in ccList)
-                {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
+        //    if (ccList != null && ccList.Count() != 0)
+        //    {
+        //        foreach (var email in ccList)
+        //        {
+        //            msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
 
-                }
+        //        }
 
-            }
-            if (bccList != null && bccList.Count() != 0)
-            {
-                foreach (var email in bccList)
-                {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
+        //    }
+        //    if (bccList != null && bccList.Count() != 0)
+        //    {
+        //        foreach (var email in bccList)
+        //        {
+        //            msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
 
-                }
-            }
-            return msg;
-        }
+        //        }
+        //    }
+        //    return msg;
+        //}
         private async Task<string> SendMail(SendGridMessage msg)
         {
             try
