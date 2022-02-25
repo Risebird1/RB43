@@ -88,7 +88,7 @@ namespace Risebird.Web.Controllers
 
                         }
                         var model = _interviewerService.GetInterviewers();
-                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
+                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); x.AvailableDetails = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.Isavailable)).GetDescription(); return x; }).ToList();
                         var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                         foreach (var item in model)
                         {
@@ -286,7 +286,7 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("InterviewerIndexfilters", JsonConvert.SerializeObject(filter));
                         }
-                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
+                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); x.AvailableDetails = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.Isavailable)).GetDescription(); return x; }).ToList();
                         filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = model.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
                         filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = model.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
                         filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = model.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;

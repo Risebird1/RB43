@@ -344,6 +344,7 @@
                                                     <th class="interviewer_6">Assessment Group</th>
                                                     <th class="interviewer_7">Resume Link</th>
                                                     <th class="interviewer_8">Coded Name</th>
+                                                    <th>Available</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
                                                 </tr>
                                             </thead>
@@ -358,6 +359,7 @@
                                                     <th>Assessment Group</th>
                                                     <th>Resume Link</th>
                                                     <th>Coded Name</th>
+                                                    <th>Available</th>
                                                     <th class="disabled-sorting text-center">Actions</th>
                                                 </tr>
                                             </tfoot>
@@ -468,7 +470,7 @@
 
 
                                                         <td><b>@item.NickName</b></td>
-
+                                                        <td>@item.AvailableDetails</td>
                                                         <td class="text-left action">
                                                             <span class="interviewer_9">
                                                                 <button class="mdc-fab app-fab--absolute mb-40" aria-label="Recommendation">
@@ -1853,7 +1855,7 @@
     function SendIntervieweravailability() {
         $.ajax({
             url: '/Interviewer/CheckAllIntervieweravailbility',
-            type:"POST",
+            type: "POST",
             success: function (data) {
                 swal.fire('Emails sent successfully.');
             }

@@ -204,5 +204,6 @@ namespace Risebird.Entities.ViewModel
         public SelectList AvailabilityStatus { get; set; }
         [Display(Name = "Available for interview")]
         public int Isavailable { get; set; }
+        public string AvailableDetails { get; set; }
     }
 }
