@@ -99,6 +99,11 @@ namespace Risebird.Web
             });
 
             services.AddApplicationInsightsTelemetry();
+            services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromSeconds(31536000);
+            });
             //Dependency injection
             DependencyMapping(services);
         }
@@ -232,9 +237,9 @@ namespace Risebird.Web
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 await next();
             });
-
             app.UseSession();
             //app.UseCookiePolicy(new CookiePolicyOptions
             //{

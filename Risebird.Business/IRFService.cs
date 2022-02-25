@@ -966,12 +966,12 @@ namespace Risebird.Business
                 if (result.Contains("successfully"))
                 {
                     //get all resume evaluators and hrs to send mails to
-                    var resumeEvaluators = _irfRepository.GetResumeEvaluatorsMailIds(obj.IRFId);
-                    _notificationHelper.SendCandidateOnboardedMail(resumeEvaluators.ToList(), obj.Name, obj.IRFName, "Evaluator");
+                    //var resumeEvaluators = _irfRepository.GetResumeEvaluatorsMailIds(obj.IRFId);
+                    //_notificationHelper.SendCandidateOnboardedMail(resumeEvaluators.ToList(), obj.Name, obj.IRFName, "Evaluator");
 
-                    var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
+                    //var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
                     //send mails
-                    _notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
+                    //_notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
 
                     //get candidateId
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(obj.EmailId);

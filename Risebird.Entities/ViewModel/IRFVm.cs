@@ -155,6 +155,9 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Joinability and Selectability Required")]
         public bool IsJoinabilitySelectabilityRequired { get; set; }
+
+        [DisplayName("General Skill Required")]
+        public bool IsGeneralSkillRequired { get; set; }
     }
     public class InterviewerIds
     {
@@ -259,6 +262,8 @@ namespace Risebird.Entities.ViewModel
         public int MissingZoomLink { get; set; }
         public int UnAttendedZoomLink { get; set; }
         public int MissingVideoLink { get; set; }
+        public bool IsGeneralSkillRequired { get; set; }
+
 
     }
     public class SkillCahnnelDetailsVM
