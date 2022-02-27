@@ -2308,5 +2308,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        {
+            try
+            {
+                return await _irfRepository.GetAssessmentGroupInterviewerMembers(Assessmentid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
