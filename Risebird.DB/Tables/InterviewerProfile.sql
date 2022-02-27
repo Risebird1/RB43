@@ -24,6 +24,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[IsLeadInterviewer] [bit] NULL DEFAULT 0,
 	[IsApproved] [bit] NOT NULL,
 	[Isinstaavailable] [bit] NOT NULL,
+	[Isavailable] [int] NULL DEFAULT 0,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -214,6 +215,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add Isinstaavailable bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Isavailable')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add Isavailable int DEFAULT 0
 END
 
 

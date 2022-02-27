@@ -1255,5 +1255,16 @@ namespace Risebird.Entities.Enum
         [Description("False")]
         False = 0
     }
+    public enum InterviewerAvailabilityStatus
+    {
+        [Description("Yes")]
+        Yes = 1,
+        [Description("Not available for sometime")]
+        Notavailableforsometime = 2,
+        [Description("Need clarity")]
+        Needclarity = 3,
+        [Description("No drop my profile")]
+        Nodropmyprofile = 4
+    }
 }
 

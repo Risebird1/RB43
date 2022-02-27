@@ -99,6 +99,11 @@ namespace Risebird.Web
             });
 
             services.AddApplicationInsightsTelemetry();
+            services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromSeconds(31536000);
+            });
             //Dependency injection
             DependencyMapping(services);
         }
@@ -132,102 +137,109 @@ namespace Risebird.Web
 
             //    await next();
             //});
-            //app.UseCsp(builder =>
-            //{
-            //    builder.Defaults
-            //           .AllowSelf()
-            //           .Allow("wss://chunderw-gll.twilio.com/signal")
-            //           .Allow("wss://matrix.twilio.com")
-            //           .Allow("https://wchat.freshchat.com/")
-            //           .Allow("blob:")
-            //           .Allow("https://www.google-analytics.com/");
+            app.UseCsp(builder =>
+            {
+                builder.Defaults
+                       .AllowSelf()
+                       .Allow("wss://chunderw-gll.twilio.com/signal")
+                       .Allow("wss://matrix.twilio.com")
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("blob:")
+                       .Allow("https://www.google-analytics.com/");
 
-            //    builder.Scripts
-            //           .AllowSelf()
-            //           .Allow("https://risebirdblob.blob.core.windows.net/")
-            //           .Allow("https://unpkg.com/")
-            //           .Allow("https://code.jquery.com/")
-            //           .Allow("https://static.twilio.com/")
-            //           .Allow("https://cdnjs.cloudflare.com/")
-            //           .Allow("https://cdnjs.cloudflare.com/")
-            //           .Allow("https://html2canvas.hertzen.com/")
-            //           .Allow("https://ajax.googleapis.com/")
-            //           .Allow("https://code.highcharts.com/")
-            //           .Allow("https://maxcdn.bootstrapcdn.com/")
-            //           .Allow("https://canvasjs.com/")
-            //           .Allow("https://cdn.jsdelivr.net/")
-            //           .Allow("https://cdn.datatables.net/")
-            //           .Allow("https://static.twilio.com/")
-            //           .Allow("https://www.googletagmanager.com/")
-            //           .Allow("https://www.google-analytics.com/")
-            //           //.Allow("https://prodvideo.blob.core.windows.net/")
-            //           .Allow("https://amp.azure.net/")
-            //           .Allow("https://assets.calendly.com/")
-            //           .Allow("https://www.amcharts.com/")
-            //           .Allow("https://wchat.freshchat.com/")
-            //           .Allow("blob:")
-            //           .Allow("'unsafe-inline'");
+                builder.Scripts
+                       .AllowSelf()
+                       .Allow("https://risebirdblob.blob.core.windows.net/")
+                       .Allow("https://unpkg.com/")
+                       .Allow("https://code.jquery.com/")
+                       .Allow("https://static.twilio.com/")
+                       .Allow("https://cdnjs.cloudflare.com/")
+                       .Allow("https://cdnjs.cloudflare.com/")
+                       .Allow("https://html2canvas.hertzen.com/")
+                       .Allow("https://ajax.googleapis.com/")
+                       .Allow("https://code.highcharts.com/")
+                       .Allow("https://maxcdn.bootstrapcdn.com/")
+                       .Allow("https://canvasjs.com/")
+                       .Allow("https://cdn.jsdelivr.net/")
+                       .Allow("https://cdn.datatables.net/")
+                       .Allow("https://static.twilio.com/")
+                       .Allow("https://www.googletagmanager.com/")
+                       .Allow("https://www.google-analytics.com/")
+                       //.Allow("https://prodvideo.blob.core.windows.net/")
+                       .Allow("https://amp.azure.net/")
+                       .Allow("https://assets.calendly.com/")
+                       .Allow("https://www.amcharts.com/")
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("blob:")
+                       .Allow("'unsafe-inline'");
 
-            //    builder.Styles
-            //           .AllowSelf()
-            //           .Allow("https://risebirdblob.blob.core.windows.net/")
-            //           .Allow("https://fonts.googleapis.com/")
-            //           .Allow("https://use.fontawesome.com/")
-            //           .Allow("https://cdn.jsdelivr.net/")
-            //           .Allow("https://unpkg.com/")
-            //           .Allow("https://cdnjs.cloudflare.com/")
-            //           .Allow("https://maxcdn.bootstrapcdn.com/")
-            //           .Allow("https://pro.fontawesome.com/")
-            //           .Allow("https://static.twilio.com/")
-            //           .Allow("https://amp.azure.net/")
-            //           .Allow("https://www.amcharts.com/")
-            //           .Allow("https://wchat.freshchat.com/")
-            //           .Allow("'unsafe-inline'");
+                builder.Styles
+                       .AllowSelf()
+                       .Allow("https://risebirdblob.blob.core.windows.net/")
+                       .Allow("https://fonts.googleapis.com/")
+                       .Allow("https://use.fontawesome.com/")
+                       .Allow("https://cdn.jsdelivr.net/")
+                       .Allow("https://unpkg.com/")
+                       .Allow("https://cdnjs.cloudflare.com/")
+                       .Allow("https://maxcdn.bootstrapcdn.com/")
+                       .Allow("https://pro.fontawesome.com/")
+                       .Allow("https://static.twilio.com/")
+                       .Allow("https://amp.azure.net/")
+                       .Allow("https://www.amcharts.com/")
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("'unsafe-inline'");
 
-            //    builder.Fonts
-            //           .AllowSelf()
-            //           .Allow("https://risebirdblob.blob.core.windows.net/")
-            //           .Allow("https://fonts.gstatic.com/")
-            //           .Allow("https://use.fontawesome.com/")
-            //           .Allow("https://pro.fontawesome.com/")
-            //           .Allow("https://maxcdn.bootstrapcdn.com/")
-            //           .Allow("https://static.twilio.com/")
-            //           .Allow("https://amp.azure.net/")
-            //           .Allow("https://www.amcharts.com/")
-            //           .Allow("https://wchat.freshchat.com/")
-            //           .Allow("'unsafe-inline'");
+                builder.Fonts
+                       .AllowSelf()
+                       .Allow("https://risebirdblob.blob.core.windows.net/")
+                       .Allow("https://fonts.gstatic.com/")
+                       .Allow("https://use.fontawesome.com/")
+                       .Allow("https://pro.fontawesome.com/")
+                       .Allow("https://maxcdn.bootstrapcdn.com/")
+                       .Allow("https://static.twilio.com/")
+                       .Allow("https://amp.azure.net/")
+                       .Allow("https://www.amcharts.com/")
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("'unsafe-inline'");
 
-            //    builder.Images
-            //           .AllowSelf()
-            //           .Allow("https://risebirdblob.blob.core.windows.net/")
-            //           .Allow("https://risebirdportal.blob.core.windows.net/")
-            //           .Allow("https://icla.org/")
-            //           .Allow("https://static.twilio.com/")
-            //           .Allow("https://static.tumblr.com/")
-            //           .Allow("http://www.w3.org/")
-            //           .Allow("https://www.google-analytics.com/")
-            //           .Allow("data:")
-            //           //.Allow("data:image/svg+xml,%3csvg")
-            //           .Allow("'unsafe-inline'");
+                builder.Images
+                       .AllowSelf()
+                       .Allow("https://risebirdblob.blob.core.windows.net/")
+                       .Allow("https://risebirdportal.blob.core.windows.net/")
+                       .Allow("https://icla.org/")
+                       .Allow("https://static.twilio.com/")
+                       .Allow("https://static.tumblr.com/")
+                       .Allow("http://www.w3.org/")
+                       .Allow("https://www.google-analytics.com/")
+                       .Allow("data:")
+                       //.Allow("data:image/svg+xml,%3csvg")
+                       .Allow("'unsafe-inline'");
 
-            //    builder.Media
-            //           .AllowSelf()
-            //           .Allow("https://risebirdportal.blob.core.windows.net/")
-            //           .Allow("https://prodvideo.blob.core.windows.net/")
-            //           .Allow("https://static.twilio.com/");
+                builder.Media
+                       .AllowSelf()
+                       .Allow("https://risebirdportal.blob.core.windows.net/")
+                       .Allow("https://prodvideo.blob.core.windows.net/")
+                       .Allow("https://static.twilio.com/");
 
-            //    builder.Frame
-            //           .AllowSelf()
-            //           .Allow("https://wchat.freshchat.com/")
-            //           .Allow("*.webpush.freshchat.com/")
-            //           .Allow("data:");
-            //    //builder.Object
-            //    //       //.AllowSelf()
-            //    //       .Allow("data:")
-            //    //       .Allow("'unsafe-eval'");
+                builder.Frame
+                       .AllowSelf()
+                       .Allow("https://wchat.freshchat.com/")
+                       .Allow("https://calendly.com/")
+                       .Allow("*.webpush.freshchat.com/")
+                       .Allow("data:");
+                //builder.Object
+                //       //.AllowSelf()
+                //       .Allow("data:")
+                //       .Allow("'unsafe-eval'");
 
-            //});
+            });
 
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                await next();
+            });
             app.UseSession();
             //app.UseCookiePolicy(new CookiePolicyOptions
             //{

@@ -1609,17 +1609,17 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-//                        var list = new SelectList(new[]
-//{
-//    new { ID = "Today", Name = "Today"},
-//    new { ID = "Tomorrow", Name = "Tomorrow"  },
-//    new { ID = "Yesterday", Name = "Yesterday"  },
-//    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-//    new { ID = "All", Name = "All"},
-//},
-//"ID", "Name", "All");
+                        //                        var list = new SelectList(new[]
+                        //{
+                        //    new { ID = "Today", Name = "Today"},
+                        //    new { ID = "Tomorrow", Name = "Tomorrow"  },
+                        //    new { ID = "Yesterday", Name = "Yesterday"  },
+                        //    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                        //    new { ID = "All", Name = "All"},
+                        //},
+                        //"ID", "Name", "All");
 
-//                        ViewData["list"] = list;
+                        //                        ViewData["list"] = list;
                         ViewBag.ProfileName = profileName.ToLower();
                         if (!String.IsNullOrEmpty(searchValue))
                         {
@@ -2124,7 +2124,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.CompanyDetails = model.OldCompanyDetails;
                         }
-                        
+
                         if (model.IsClone && !string.IsNullOrEmpty(model.IRFId))
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
@@ -4427,6 +4427,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.Type = "IRF";
                 var model = await _irfService.GetIRFInterviewerMembers(irfId);
                 return PartialView("IRFInterviewerMembersPartial", model);
             }
@@ -6493,7 +6494,7 @@ namespace Risebird.Web.Controllers
                         Mail _mail = new Mail
                         {
                             TO = item.EmailId,
-                            Subject = "Risebird: Availbility check for Skill Channel "+ IRFName + " Interviews"
+                            Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
                         };
                         var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName);
                     }
@@ -6516,6 +6517,41 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Fail to Update Status, Please try again");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> StatsFlagForIRF(int IRFId)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                ViewBag.Profile = profileName;
+                var irfList = new List<IRF>();
+                irfList = (await _irfService.GetAllIRFDetailsByIRFId(IRFId))?.ToList();
+                return Json(irfList.FirstOrDefault());
+            }
+            else
+            {
+                var irfList = new IRF();
+                return Json(irfList);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        {
+            try
+            {
+                ViewBag.Type = "ALL";
+                var model = await _irfService.GetAssessmentGroupInterviewerMembers(Assessmentid);
+                model = model.Select(x => { x.AvailableStatus = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.AvailableStatus)).GetDescription(); return x; }).ToList();
+                return PartialView("IRFInterviewerMembersPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

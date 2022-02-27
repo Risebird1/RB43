@@ -573,7 +573,7 @@ namespace Risebird.Business
                                 });
                             }
                         }
-                        
+
                         if (!model.InterviewerCollection.Any(x => x.UserId == oldInterviewer.UserId))
                         {
                             removedInterviewers.Add(new RemovedInterviewersFromSkillsChannelData
@@ -715,7 +715,7 @@ namespace Risebird.Business
             }
         }
         #endregion
-        public IList<SkillComment> GetTechSkillComments(int id, string emailId=null)
+        public IList<SkillComment> GetTechSkillComments(int id, string emailId = null)
         {
             try
             {
@@ -966,12 +966,12 @@ namespace Risebird.Business
                 if (result.Contains("successfully"))
                 {
                     //get all resume evaluators and hrs to send mails to
-                    var resumeEvaluators = _irfRepository.GetResumeEvaluatorsMailIds(obj.IRFId);
-                    _notificationHelper.SendCandidateOnboardedMail(resumeEvaluators.ToList(), obj.Name, obj.IRFName, "Evaluator");
+                    //var resumeEvaluators = _irfRepository.GetResumeEvaluatorsMailIds(obj.IRFId);
+                    //_notificationHelper.SendCandidateOnboardedMail(resumeEvaluators.ToList(), obj.Name, obj.IRFName, "Evaluator");
 
-                    var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
+                    //var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
                     //send mails
-                    _notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
+                    //_notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
 
                     //get candidateId
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(obj.EmailId);
@@ -2116,9 +2116,9 @@ namespace Risebird.Business
                     //        irf.NotScheduledCount = irf.NotScheduledCount + totalDiff;
                     //    }
                     //}
-                    if(irf.CandidateCount > 0)
+                    if (irf.CandidateCount > 0)
                     {
-                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100 ) / irf.CandidateCount;
+                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100) / irf.CandidateCount;
                         irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
                     }
 
@@ -2139,7 +2139,32 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-
+                    //Start: merging 911 dashboard
+                    if (irf.UnAssignedMeeting > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledInterviewStatusCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledCommentsCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingZoomLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnAttendedZoomLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingVideoLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    //End: merging 911 dashboard
                 }
                 return irfList;
             }
@@ -2218,6 +2243,80 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetAllIRFDetailsByIRFId(IRFId);
+                foreach (var irf in irfList)
+                {
+                    if (irf.CandidateCount > 0)
+                    {
+                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100) / irf.CandidateCount;
+                        irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
+                    }
+                    if (irf.CompletedInterviews > 0)
+                    {
+                        irf.SelectionRate = irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CompletedInterviews : 0;
+                    }
+                    if (irf.ScheduledPercentage < 75)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.CompletionRate < 60)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.SelectionRate < 20)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    //Start: merging 911 dashboard
+                    if (irf.UnAssignedMeeting > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledInterviewStatusCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledCommentsCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingZoomLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnAttendedZoomLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingVideoLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                }
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        {
+            try
+            {
+                return await _irfRepository.GetAssessmentGroupInterviewerMembers(Assessmentid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

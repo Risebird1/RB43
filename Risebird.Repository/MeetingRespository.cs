@@ -5408,18 +5408,18 @@ namespace Risebird.Repository
                 else
                 {
                     query = "Update ti set ti.IsActive=0,IsAvailable=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
-                    query1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                    //query1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.IRFId=@IRFId and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", Irfid);
                 dynamicParameters.Add("@uniqueid", uniqueid);
-                if (status != 1)
-                {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = con.Query(query1, dynamicParameters);
-                    }
-                }
+                //if (status != 1)
+                //{
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        var results = con.Query(query1, dynamicParameters);
+                //    }
+                //}
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query(query, dynamicParameters);
@@ -5470,6 +5470,42 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "fail";
+        }
+        public async Task<List<InterviewerRating>> FetchFeedbackDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select im.interviewdate,im.interviewer,ul.Emailid,ir.Comment,ir.StarRating,im.candidateEmail,ir.Interviewid From [dbo].[InterviewRatings] ir join UserList ul on ul.id=ir.Userid join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
+                    var results = await con.QueryAsync<InterviewerRating>(query, null);
+                    return (List<InterviewerRating>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select im.interviewdate,im.interviewer,ul.Emailid,ir.Comment,ir.StarRating,im.candidateEmail,ir.Interviewid From [dbo].[InterviewRatings] ir join UserList ul on ul.id=ir.Userid join InterviewMeetings im on im.id=ir.Interviewid where im.IRFId=@irfid order by Addedon desc";
+                    var results = await con.QueryAsync<InterviewerRating>(query, dynamicParameters);
+                    return (List<InterviewerRating>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

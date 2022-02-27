@@ -59,7 +59,7 @@
                                             <li><a href="#" id="rtab-3" class="" onclick="headerClickchange('tab-3')">Tech Skill </a><span id="count_SkillCollection" class="skillcount">@Model.SkillCollection.Count()</span></li>
                                             <li id="li_joinability"><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
                                             <li id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
-                                            <li><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
+                                            <li id="li_generalSkill"><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
                                             <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection!=null?@Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
                                             <li id="qc"><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
@@ -294,6 +294,31 @@
 
                                                         </div>
                                                         @Html.LabelFor(model => model.IsJoinabilitySelectabilityRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-3 pull-left">
+
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+
+
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.IsGeneralSkillRequired, new { @class = "mdc-checkbox__native-control" })
+
+
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                          fill="none"
+                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+
+
+                                                        </div>
+                                                        @Html.LabelFor(model => model.IsGeneralSkillRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
                                                 </div>
                                             </div>
@@ -1604,6 +1629,9 @@
     $(document).ready(function () {
         $(".selectpicker").select2();
         $("#btnPrev").click(function () {
+            var isGeneralSkillRequired = document.getElementById('IsGeneralSkillRequired').checked;
+
+            var isJoinabilitySelectabilityRequired = document.getElementById('IsJoinabilitySelectabilityRequired').checked;
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Job Details") {
                 $(".tab-menu li a").removeClass("active");
@@ -1648,8 +1676,21 @@
             }
             else if (activeTab.trim() == "Client") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-6").addClass("active");
-                document.getElementById("tab-6").style.display = "block";
+                if (isGeneralSkillRequired) {
+                    $("#rtab-6").addClass("active");
+                    document.getElementById("tab-6").style.display = "block";
+                }
+                else {
+                    if (isJoinabilitySelectabilityRequired) {
+                        $("#rtab-5").addClass("active");
+                        document.getElementById("tab-5").style.display = "block";
+                    }
+                    else {
+                        $("#rtab-3").addClass("active");
+                        document.getElementById("tab-3").style.display = "block";
+                    }
+
+                }
                 document.getElementById("tab-7").style.display = "none";
             }
             else if (activeTab.trim() == "Interviewer") {
@@ -1694,6 +1735,7 @@
 
         });
         $("#btnNext").click(function () {
+            var isGeneralSkillRequired = document.getElementById('IsGeneralSkillRequired').checked;
             var flag = false;
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
@@ -1719,7 +1761,6 @@
             else if (activeTab.trim() == "Tech Skill") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
-
                     $(".tab-menu li a").removeClass("active");
                     var isJoinabilitySelectabilityRequired = document.getElementById('IsJoinabilitySelectabilityRequired').checked;
                     if (isJoinabilitySelectabilityRequired) {
@@ -1727,8 +1768,15 @@
                         document.getElementById("tab-4").style.display = "block";
                     }
                     else {
-                        $("#rtab-6").addClass("active");
-                        document.getElementById("tab-6").style.display = "block";
+                        if (isGeneralSkillRequired) {
+                            $("#rtab-6").addClass("active");
+                            document.getElementById("tab-6").style.display = "block";
+                        }
+                        else {
+                            $("#rtab-7").addClass("active");
+                            document.getElementById("tab-7").style.display = "block";
+                        }
+
                     }
                     document.getElementById("tab-3").style.display = "none";
                 }
@@ -1747,11 +1795,20 @@
                 if (!flag) {
 
                     $(".tab-menu li a").removeClass("active");
-                    $("#rtab-6").addClass("active");
-                    document.getElementById("tab-6").style.display = "block";
+
+                    if (isGeneralSkillRequired) {
+                        $("#rtab-6").addClass("active");
+                        document.getElementById("tab-6").style.display = "block";
+                    }
+                    else {
+                        $("#rtab-7").addClass("active");
+                        document.getElementById("tab-7").style.display = "block";
+                    }
+
                     document.getElementById("tab-5").style.display = "none";
                 }
             }
+            
             else if (activeTab.trim() == "General Skill") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
@@ -2357,7 +2414,7 @@
         }
         CheckQCRequired();
         CheckJoinabilitySelectabilityRequired();
-
+        CheckGeneralSkillRequired();
         var rateEmements = $('[id^="QualityController"][id$="PerSuccessRate"]');
         for (i = 0; i < rateEmements.length; i++) {
             $("#" + rateEmements[i].id).val(interviewerQCRate);
@@ -2452,6 +2509,23 @@
         }
     }
 
+    $('#IsGeneralSkillRequired').on('change', function () {
+        CheckGeneralSkillRequired()
+    });
+
+    function CheckGeneralSkillRequired() {
+        var value = document.getElementById("IsGeneralSkillRequired").checked;
+        if (value) {
+            document.getElementById('li_generalSkill').style.display = "block";
+            document.getElementById('rtab-6').style.display = "block";
+            document.getElementById('count_SkillGeneral').style.display = "block";
+        }
+        else {
+            document.getElementById('li_generalSkill').style.display = "none";
+            document.getElementById('rtab-6').style.display = "none";
+            document.getElementById('count_SkillGeneral').style.display = "none";
+        }
+    }
 
     function RadioLinkChanged(val) {
         if (val == 'UploadLink') {
