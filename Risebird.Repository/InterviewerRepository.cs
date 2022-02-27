@@ -879,6 +879,7 @@ namespace Risebird.Repository
                 parameters.Add("@InterviewerProfileId", interviewerProfile.id);
                 parameters.Add("@Isinstaavailable", interviewerProfile.Isinstaavailable);
                 parameters.Add("@CodedResumeLink", interviewerProfile.CodedResumeLink);
+                parameters.Add("@Isavailable", interviewerProfile.Isavailable);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,
@@ -2138,6 +2139,47 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
+        }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAllInterviewerMembers()
+        {
+            try
+            {
+                var query = "select EmailId,uniqueid,(IsNUll(FirstName,'')+' '+ISnull(LastName,'')) as InterviewerName from UserList where idProfile=3 and DATEDIFF(Day,LastLogin,Getdate())>90";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<IRFInterviewerMembers>(query, null);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public bool UpdateAllIntervieweravailbilityStatus(int status, string uniqueid)
+        {
+            try
+            {
+                var query = "Update ti set ti.IsAvailable=@status from InterviewerProfile ti join UserList ul on ul.id=ti.Userid Where ul.uniqueid=@uniqueid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@uniqueid", uniqueid);
+                dynamicParameters.Add("@status", status);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

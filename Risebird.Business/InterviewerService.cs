@@ -453,7 +453,7 @@ namespace Risebird.Business
                     var hrs = _userService.GetAllHrsEmailld()?.ToList();
                     var Skillchannelid = meeting.IRFId;
                     var client = _interviewerRepository.FetchClientName(meeting.IRFId);
-                    _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.interviewDate.ToString(), meeting.candidateEmail, email, Skillchannelid, client);
+                    //_notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.interviewDate.ToString(), meeting.candidateEmail, email, Skillchannelid, client);
                     return true;
                 }
                 else
@@ -959,6 +959,30 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAllInterviewerMembers()
+        {
+            try
+            {
+                return await _interviewerRepository.GetAllInterviewerMembers();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool UpdateAllIntervieweravailbilityStatus(int status, string uniqueid)
+        {
+            try
+            {
+                return _interviewerRepository.UpdateAllIntervieweravailbilityStatus(status, uniqueid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

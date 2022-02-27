@@ -813,29 +813,32 @@ namespace Risebird.Repository
 
 
                         //update general skill table
-
-                        DataTable skillGeneralDt = new DataTable();
-                        skillGeneralDt.Columns.Add("IRFId", typeof(int));
-                        skillGeneralDt.Columns.Add("LevelId", typeof(int));
-                        skillGeneralDt.Columns.Add("Type", typeof(string));
-                        skillGeneralDt.Columns.Add("Value", typeof(string));
-                        skillGeneralDt.Columns.Add("Weightage", typeof(int));
-
-
-                        foreach (var item in irfDetails.SkillGeneral)
+                        if (irfDetails.SkillGeneral != null && irfDetails.SkillGeneral.Count() > 0 && irfDetails.IsGeneralSkillRequired)
                         {
-                            skillGeneralDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
-                        }
+                            DataTable skillGeneralDt = new DataTable();
+                            skillGeneralDt.Columns.Add("IRFId", typeof(int));
+                            skillGeneralDt.Columns.Add("LevelId", typeof(int));
+                            skillGeneralDt.Columns.Add("Type", typeof(string));
+                            skillGeneralDt.Columns.Add("Value", typeof(string));
+                            skillGeneralDt.Columns.Add("Weightage", typeof(int));
 
-                        SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
-                        cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
-                        cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
-                        cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
-                        con.Open();
-                        if (cmdSkillGeneral.ExecuteNonQuery() != 0)
-                        {
-                            con.Close();
+
+                            foreach (var item in irfDetails.SkillGeneral)
+                            {
+                                skillGeneralDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
+                            }
+
+                            SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
+                            cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
+                            cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
+                            cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
+                            con.Open();
+                            if (cmdSkillGeneral.ExecuteNonQuery() != 0)
+                            {
+                                con.Close();
+                            }
                         }
+                        
 
                         //update tech skill table
 
@@ -1167,35 +1170,38 @@ namespace Risebird.Repository
                     //        }).Result;
                     //    }
                     //}
-
-                    try
+                    if (irfDetails.SkillGeneral != null && irfDetails.SkillGeneral.Count() > 0 && irfDetails.IsGeneralSkillRequired)
                     {
-                        DataTable skillGeneralDt = new DataTable();
-                        skillGeneralDt.Columns.Add("IRFId", typeof(int));
-                        skillGeneralDt.Columns.Add("LevelId", typeof(int));
-                        skillGeneralDt.Columns.Add("Type", typeof(string));
-                        skillGeneralDt.Columns.Add("Value", typeof(string));
-                        skillGeneralDt.Columns.Add("Weightage", typeof(int));
-
-                        foreach (var item in irfDetails.SkillGeneral)
+                        try
                         {
-                            skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            DataTable skillGeneralDt = new DataTable();
+                            skillGeneralDt.Columns.Add("IRFId", typeof(int));
+                            skillGeneralDt.Columns.Add("LevelId", typeof(int));
+                            skillGeneralDt.Columns.Add("Type", typeof(string));
+                            skillGeneralDt.Columns.Add("Value", typeof(string));
+                            skillGeneralDt.Columns.Add("Weightage", typeof(int));
+
+                            foreach (var item in irfDetails.SkillGeneral)
+                            {
+                                skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            }
+
+                            SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
+                            cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
+                            cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
+                            cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
+                            con.Open();
+                            if (cmdSkillGeneral.ExecuteNonQuery() != 0)
+                            {
+                                con.Close();
+                            }
                         }
-
-                        SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
-                        cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
-                        cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
-                        cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
-                        con.Open();
-                        if (cmdSkillGeneral.ExecuteNonQuery() != 0)
+                        catch (Exception ex)
                         {
-                            con.Close();
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    }
+                    
 
                     //update tech skill table
                     //if (irfDetails.SkillCollection != null)
@@ -4690,6 +4696,28 @@ namespace Risebird.Repository
                     parameters.Add("@IRFId", IRFId);
                     parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStatsByIRFId", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Assessmentid", Assessmentid);
+                    return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAssessmentGroupInterviewerMembers", parameters,
+                         commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)

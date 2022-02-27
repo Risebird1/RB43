@@ -14,5 +14,6 @@
         public string InterviewerName { get; set; }
         public bool IsActive { get; set; }
         public bool IsAvailable { get; set; }
+        public string AvailableStatus { get; set; }
     }
 }

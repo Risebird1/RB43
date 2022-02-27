@@ -1179,47 +1179,47 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private SendGridMessage ConstructMailMessageObject(string to, string subject, string from = null, string ccEmail = null, List<string> ccList = null, List<string> bccList = null)
-        {
-            var msg = new SendGridMessage();
-            if (from == null)
-            {
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+        //private SendGridMessage ConstructMailMessageObject(string to, string subject, string from = null, string ccEmail = null, List<string> ccList = null, List<string> bccList = null)
+        //{
+        //    var msg = new SendGridMessage();
+        //    if (from == null)
+        //    {
+        //        msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
 
-            }
-            else
-            {
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(from, from.Split("@").First());
+        //    }
+        //    else
+        //    {
+        //        msg.From = new SendGrid.Helpers.Mail.EmailAddress(from, from.Split("@").First());
 
-            }
-            msg.Subject = subject;
-            msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(to, to.Split("@").First()));
+        //    }
+        //    msg.Subject = subject;
+        //    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(to, to.Split("@").First()));
 
-            if (ccEmail != null)
-            {
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, ccEmail.Split("@").First()));
+        //    if (ccEmail != null)
+        //    {
+        //        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, ccEmail.Split("@").First()));
 
-            }
+        //    }
 
-            if (ccList != null && ccList.Count() != 0)
-            {
-                foreach (var email in ccList)
-                {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
+        //    if (ccList != null && ccList.Count() != 0)
+        //    {
+        //        foreach (var email in ccList)
+        //        {
+        //            msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
 
-                }
+        //        }
 
-            }
-            if (bccList != null && bccList.Count() != 0)
-            {
-                foreach (var email in bccList)
-                {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
+        //    }
+        //    if (bccList != null && bccList.Count() != 0)
+        //    {
+        //        foreach (var email in bccList)
+        //        {
+        //            msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(email, email.Split("@").First()));
 
-                }
-            }
-            return msg;
-        }
+        //        }
+        //    }
+        //    return msg;
+        //}
         private async Task<string> SendMail(SendGridMessage msg)
         {
             try
@@ -2018,7 +2018,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton,string Skillslist,string IRFName)
+        public string SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, string IRFName)
         {
             try
             {
@@ -2033,6 +2033,30 @@ namespace Risebird.CommonHelper
                 }
                 object[] parameters = new object[] { Interviewname, IRFName, yesbutton, nobutton, Skillslist };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbility.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton,string cleritybutton,string nodropbutton)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                }
+                object[] parameters = new object[] { Interviewname, yesbutton, nobutton, cleritybutton, nodropbutton };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckAllIntervieweravailbility.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return SendMail(msg).Result;
