@@ -852,6 +852,29 @@ namespace Risebird.Repository
             return null;
         }
 
+        public string GetUserProfileBasedOnEmailId(string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {                   
+                    return SqlMapper.QuerySingle<string>(con, "sp_GetUserProfileBasedOnEmailId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public bool CheckMultiSession(string emailId)
         {
             try
