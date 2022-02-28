@@ -263,7 +263,7 @@ namespace Risebird.Entities.ViewModel
         public int UnAttendedZoomLink { get; set; }
         public int MissingVideoLink { get; set; }
         public bool IsGeneralSkillRequired { get; set; }
-
+        public int flagcount { get; set; }
 
     }
     public class SkillCahnnelDetailsVM
