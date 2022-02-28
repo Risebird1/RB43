@@ -494,6 +494,7 @@ namespace Risebird.Web.Controllers
                     model = await _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
                     model.WhatsappNumber = model1.WhatsappNumber;
                     model.ImageURL = model1.ImageURL;
+                    model.Isavailable = model1.Isavailable;
                 }
                 else
                 {
@@ -537,11 +538,11 @@ namespace Risebird.Web.Controllers
                         uploadedFileURL = blob.Uri.ToString();
                         userProfile.ImageURL = uploadedFileURL;
                     }
-                   
+
                 }
                 if (profileName == "Interviewer")
                 {
-                    
+
                     if (userProfile.ResumeFile != null)
                     {
                         var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(userProfile.ResumeFile);
@@ -555,7 +556,7 @@ namespace Risebird.Web.Controllers
                             uploadedFileURL = blob.Uri.ToString();
                             userProfile.ResumeLink = uploadedFileURL;
                         }
-                        
+
                     }
                     if (userProfile.CodedResumeFile != null)
                     {
@@ -571,7 +572,7 @@ namespace Risebird.Web.Controllers
                             userProfile.CodedResumeLink = uploadedFileURL;
                         }
 
-                        
+
 
                     }
                     if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
@@ -621,6 +622,9 @@ namespace Risebird.Web.Controllers
             var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.WeekEndList = new SelectList(Weekend, "ID", "Name");
+            var AvailabilityStatus = from InterviewerAvailabilityStatus s in Enum.GetValues(typeof(InterviewerAvailabilityStatus))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+            model.AvailabilityStatus = new SelectList(AvailabilityStatus, "ID", "Name");
         }
     }
 }

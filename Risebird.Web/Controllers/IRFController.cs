@@ -4427,6 +4427,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.Type = "IRF";
                 var model = await _irfService.GetIRFInterviewerMembers(irfId);
                 return PartialView("IRFInterviewerMembersPartial", model);
             }
@@ -6535,6 +6536,22 @@ namespace Risebird.Web.Controllers
             {
                 var irfList = new IRF();
                 return Json(irfList);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAssessmentGroupInterviewerMembers(int Assessmentid)
+        {
+            try
+            {
+                ViewBag.Type = "ALL";
+                var model = await _irfService.GetAssessmentGroupInterviewerMembers(Assessmentid);
+                model = model.Select(x => { x.AvailableStatus = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.AvailableStatus)).GetDescription(); return x; }).ToList();
+                return PartialView("IRFInterviewerMembersPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

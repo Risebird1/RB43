@@ -5408,18 +5408,18 @@ namespace Risebird.Repository
                 else
                 {
                     query = "Update ti set ti.IsActive=0,IsAvailable=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid";
-                    query1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.IRFId=@IRFId and ul.uniqueid=@uniqueid";
+                    //query1 = "delete ti from TransInterviewer ti join UserList ul on ul.id=ti.Userid left join IRF on IRF.id=ti.IRFID Left join InterviewMeetings im on im.IRFid=IRF.IRFid and im.Interviewer=ul.Emailid Where im.id is null and ti.IRFId=@IRFId and ul.uniqueid=@uniqueid";
                 }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", Irfid);
                 dynamicParameters.Add("@uniqueid", uniqueid);
-                if (status != 1)
-                {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = con.Query(query1, dynamicParameters);
-                    }
-                }
+                //if (status != 1)
+                //{
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        var results = con.Query(query1, dynamicParameters);
+                //    }
+                //}
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query(query, dynamicParameters);

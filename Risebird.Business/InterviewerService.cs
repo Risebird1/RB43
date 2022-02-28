@@ -961,5 +961,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<IRFInterviewerMembers>> GetAllInterviewerMembers()
+        {
+            try
+            {
+                return await _interviewerRepository.GetAllInterviewerMembers();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool UpdateAllIntervieweravailbilityStatus(int status, string uniqueid)
+        {
+            try
+            {
+                return _interviewerRepository.UpdateAllIntervieweravailbilityStatus(status, uniqueid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
