@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Functions\" />
     <Folder Include="Views\" />
   </ItemGroup>
 
