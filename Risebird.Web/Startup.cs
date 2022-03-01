@@ -170,6 +170,8 @@ namespace Risebird.Web
                        .Allow("https://assets.calendly.com/")
                        .Allow("https://www.amcharts.com/")
                        .Allow("https://wchat.freshchat.com/")
+                       .Allow("https://az416426.vo.msecnd.net")
+                       .Allow("https://cdn.rawgit.com/")
                        .Allow("blob:")
                        .Allow("'unsafe-inline'");
 
@@ -200,6 +202,7 @@ namespace Risebird.Web
                        .Allow("https://amp.azure.net/")
                        .Allow("https://www.amcharts.com/")
                        .Allow("https://wchat.freshchat.com/")
+                       .Allow("https://cdnjs.cloudflare.com/")
                        .Allow("'unsafe-inline'");
 
                 builder.Images
