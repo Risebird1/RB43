@@ -1128,6 +1128,7 @@ namespace Risebird.Web.Controllers
             {
                 model.Type = "B2B";
             }
+            model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
             return;
         }
 

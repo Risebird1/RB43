@@ -1031,12 +1031,22 @@ namespace Risebird.Repository
                         //{
                         //    con.Close();
                         //}
+                        DynamicParameters recomParameters = new DynamicParameters();
+                        recomParameters.Add("IRFId", irfID);
+                        recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
+                        recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.CategoryId);
+                        recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.CompetencyLevelId);
+                        recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.SeniorityLevelId);
+                        recomParameters.Add("CountryType", irfDetails.IRFRecommendations.CountryType);
+                        recomParameters.Add("CreatedOn", irfDetails.IRFRecommendations.CreatedOn);
+                        SqlMapper.Query(con, "usp_AddIRFRecommendation", recomParameters,
+                        commandType: CommandType.StoredProcedure);
 
                         return true;
 
                     }
                     else
-                        return true;
+                        return false;
 
 
                 }

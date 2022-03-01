@@ -1,4 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.IRFVm
+@using Risebird.Entities.Enum; 
 
 @{
     ViewData["Title"] = "Add Skills Channel";
@@ -60,7 +61,8 @@
                                             <li id="qc"><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>
                                             <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
-                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-11" class="text-center" id="rtab-11">Recommendation</a></li>
+                                            <li><a href="#" rel="tab-12" class="" id="rtab-12">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
                                             @*<li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>*@
 
                                         </ul>
@@ -457,31 +459,31 @@
                                                     <div class="col-md-4 col-sm-4 pl-1">
                                                         @Html.HiddenFor(m => m.PerMintuteRate)
                                                         @*<div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
-                                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
-                                                                <div class="spinner">
-                                                                    <button type="button" class="up-2 button">&rsaquo;</button>
-                                                                    <button type="button" class="down-2 button">&lsaquo;</button>
-                                                                </div>
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+                            @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1", @onchange = "PerMinRateInterviewer()" } })
+                            @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @id = "error_PerMintuteRate", @class = "text-danger" })
+                            <div class="spinner">
+                                <button type="button" class="up-2 button">&rsaquo;</button>
+                                <button type="button" class="down-2 button">&lsaquo;</button>
+                            </div>
 
 
-                                                            </div>*@
+                        </div>*@
 
                                                         @Html.HiddenFor(m => m.TotalBudget)
                                                         @*<div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
-                                                                @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
-                                                                <div class="spinner">
-                                                                    <button type="button" class="up-3 button">&rsaquo;</button>
-                                                                    <button type="button" class="down-3 button">&lsaquo;</button>
-                                                                </div>
-                                                            </div>*@
+                            <div class="mandate">
+                                @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                            </div>
+                            @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
+                            @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @id = "error_TotalBudget", @class = "text-danger" })
+                            <div class="spinner">
+                                <button type="button" class="up-3 button">&rsaquo;</button>
+                                <button type="button" class="down-3 button">&lsaquo;</button>
+                            </div>
+                        </div>*@
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.Label("Channel Owner", "Channel Owner", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -502,9 +504,9 @@
                                                         </div>
                                                         @Html.HiddenFor(m => m.Type)
                                                         @*<div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
-                                                                @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
-                                                            </div>*@
+                            @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                            @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+                        </div>*@
 
                                                     </div>
                                                 </div>
@@ -1104,44 +1106,109 @@
                                             </div>
                                         </div>
                                         <!--<h3 class="tab_drawer_heading" rel="tab-11">Resume Evaluator</h3>
-                                        <div class="tab-box" id="tab-11">
-                                            <div class="tab-main-box">
-                                                <div class="row">
+    <div class="tab-box" id="tab-11">
+        <div class="tab-main-box">
+            <div class="row">
 
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <div class="table-responsive-sm">
-                                                            <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="table_heading">User</th>
-                                                                        <th width="10%" class="table_heading text-center">Action</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="table-responsive-sm">
+                        <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
+                            <thead>
+                                <tr>
+                                    <th class="table_heading">User</th>
+                                    <th width="10%" class="table_heading text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                                                                    <tr>
-                                                                        <td>
-                                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
-                                                                        </td>
+                                <tr>
+                                    <td>
+                                        @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
+                                    </td>
 
-                                                                        <td class="action text-center">
+                                    <td class="action text-center">
 
-                                                                            <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                        <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                        <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>-->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>-->
                                         @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
 
                                         <!--</div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+                                        <h3 class="tab_drawer_heading" rel="tab-11">Recommendation</h3>
+                                        <div class="tab-box" id="tab-11">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        Active
+                                                        <input id="recom_status_Active" name="recom_status" asp-for="IRFRecommendations.Status" value="true" type="radio" onclick="RecommendationStatusChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">
+                                                        InActive
+                                                        <input id="recom_status_Inactive" name="recom_status" asp-for="IRFRecommendations.Status" value="false" type="radio" onclick="RecommendationStatusChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">
                                                     </div>
                                                 </div>
+                                                <div class="row">
+
+                                                    <div class="col-md-6 col-sm-6 pr-1">
+                                                        
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, (SelectList)Model.CompanyTypeList, "Select", new { @class = "select-css form-control text-box single-line"})
+
+
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new {@class = "text-danger" })
+
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.CompetencyLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CompetencyLevelId, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "select-css form-control text-box single-line"})
+
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CompetencyLevelId, "", new {@class = "text-danger" })
+
+
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 pr-1">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CountryType, "", new { @class = "text -danger" })
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.SeniorityLevelId, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
+
+
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @class = "text-danger" })
+
+
+                                                        </div>
+
+                                                    </div>
+                                                    
+                                                </div>
                                             </div>
-                                        </div>-->
-                                        <h3 class="tab_drawer_heading" rel="tab-11">Coordinator</h3>
-                                        <div class="tab-box" id="tab-11">
+                                        </div>
+                                        <h3 class="tab_drawer_heading" rel="tab-12">Coordinator</h3>
+                                        <div class="tab-box" id="tab-12">
                                             <div class="tab-main-box">
                                                 <div class="row">
 
@@ -3037,12 +3104,26 @@
 
 
             }
-
-            else if (activeTab.trim() == "Coordinator") {
+            else if (activeTab.trim() == "Recommendation") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-10").addClass("active");
                 document.getElementById("tab-10").style.display = "block";
                 document.getElementById("tab-11").style.display = "none";
+            }
+
+            //else if (activeTab.trim() == "Coordinator") {
+            //    $(".tab-menu li a").removeClass("active");
+            //    $("#rtab-10").addClass("active");
+            //    document.getElementById("tab-10").style.display = "block";
+            //    document.getElementById("tab-11").style.display = "none";
+            //    document.getElementById("btnNext").style.display = "block";
+            //    document.getElementById("btnUpload").style.display = "none";
+            //}
+            else if (activeTab.trim() == "Coordinator") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-11").addClass("active");
+                document.getElementById("tab-11").style.display = "block";
+                document.getElementById("tab-12").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
             }
@@ -3303,12 +3384,18 @@
                     $("#rtab-11").addClass("active");
                     document.getElementById("tab-11").style.display = "block";
                     document.getElementById("tab-10").style.display = "none";
-                    document.getElementById("btnNext").style.display = "none";
-                    document.getElementById("btnUpload").style.display = "block";
+                    
 
                 }
             }
-
+            else if (activeTab.trim() == "Recommendation") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-12").addClass("active");
+                document.getElementById("tab-12").style.display = "block";
+                document.getElementById("tab-11").style.display = "none";
+                document.getElementById("btnNext").style.display = "none";
+                document.getElementById("btnUpload").style.display = "block";
+            }
 
         });
     });
