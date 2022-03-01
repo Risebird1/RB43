@@ -16,4 +16,15 @@
         public bool IsAvailable { get; set; }
         public string AvailableStatus { get; set; }
     }
+    public class AssessmentIRFListVM
+    {
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public string PrimarySkillInvite { get; set; }
+        public int TotalMeetings { get; set; }
+        public int SelectedMeetings { get; set; }
+        public int RejectedMeetings { get; set; }
+        public int CompletedMeetings { get; set; }
+        public int ScheduledMeetings { get; set; }
+    }
 }
