@@ -1117,7 +1117,8 @@ namespace Risebird.Repository
                     }
                     catch (Exception ex)
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                     }
 
                     try
@@ -1149,7 +1150,9 @@ namespace Risebird.Repository
                     }
                     catch (Exception ex)
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
+
 
                     }
                     //update general skill table
@@ -1198,7 +1201,9 @@ namespace Risebird.Repository
                         }
                         catch (Exception ex)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
+
                         }
                     }
 
@@ -1248,7 +1253,9 @@ namespace Risebird.Repository
                     }
                     catch (Exception ex)
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
+
                     }
 
                     if (removedTechSkills != null)
@@ -1261,7 +1268,9 @@ namespace Risebird.Repository
                             }
                             catch (Exception ex)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
+
                                 continue;
                             }
                         }
@@ -1310,7 +1319,9 @@ namespace Risebird.Repository
                         }
                         catch (Exception ex)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
+
                         }
                     }
 
@@ -1324,7 +1335,8 @@ namespace Risebird.Repository
                             }
                             catch (Exception ex)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                                 continue;
                             }
                         }
@@ -1340,7 +1352,8 @@ namespace Risebird.Repository
                             }
                             catch (Exception ex)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                                 continue;
                             }
                         }
@@ -1356,7 +1369,8 @@ namespace Risebird.Repository
                             }
                             catch (Exception ex)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                                 continue;
                             }
                         }
@@ -1403,7 +1417,8 @@ namespace Risebird.Repository
                         }
                         catch (Exception ex)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                         }
                     }
 
@@ -1417,7 +1432,8 @@ namespace Risebird.Repository
                             }
                             catch (Exception ex)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                                 continue;
                             }
                         }
@@ -1433,7 +1449,8 @@ namespace Risebird.Repository
                             }
                             catch (Exception ex)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                                 continue;
                             }
                         }
@@ -1448,7 +1465,8 @@ namespace Risebird.Repository
                             }
                             catch (Exception ex)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                                 continue;
                             }
                         }
@@ -1495,7 +1513,8 @@ namespace Risebird.Repository
                         }
                         catch (Exception ex)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                         }
                     }
 
@@ -1541,7 +1560,8 @@ namespace Risebird.Repository
                         }
                         catch (Exception ex)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                         }
                     }
 
@@ -1614,7 +1634,8 @@ namespace Risebird.Repository
                     }
                     catch (Exception ex)
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, ex);
                     }
 
 
@@ -1626,13 +1647,15 @@ namespace Risebird.Repository
 
             catch (SqlException e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, e);
                 return false;
             }
 
             catch (Exception e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogUpdateIRFMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
