@@ -838,7 +838,7 @@ namespace Risebird.Repository
                                 con.Close();
                             }
                         }
-                        
+
 
                         //update tech skill table
 
@@ -1201,7 +1201,7 @@ namespace Risebird.Repository
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
                     }
-                    
+
 
                     //update tech skill table
                     //if (irfDetails.SkillCollection != null)
@@ -4717,6 +4717,28 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Assessmentid", Assessmentid);
                     return await SqlMapper.QueryAsync<IRFInterviewerMembers>(con, "usp_GetAssessmentGroupInterviewerMembers", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Assessmentid", Assessmentid);
+                    return await SqlMapper.QueryAsync<AssessmentIRFListVM>(con, "usp_GetAssessmentGroupIRFList", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
             }

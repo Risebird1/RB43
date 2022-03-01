@@ -102,5 +102,6 @@ namespace Risebird.Business.Interface
         IEnumerable<TransSkill> GetTechSkillswithWeightage(int id);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
         Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid);
+        Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
     }
 }
