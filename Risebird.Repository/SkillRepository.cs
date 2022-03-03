@@ -332,6 +332,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

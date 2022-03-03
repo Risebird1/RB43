@@ -1034,11 +1034,11 @@ namespace Risebird.Repository
                         DynamicParameters recomParameters = new DynamicParameters();
                         recomParameters.Add("IRFId", irfID);
                         recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
-                        recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.CategoryId);
-                        recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.CompetencyLevelId);
-                        recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.SeniorityLevelId);
-                        recomParameters.Add("CountryType", irfDetails.IRFRecommendations.CountryType);
-                        recomParameters.Add("CreatedOn", irfDetails.IRFRecommendations.CreatedOn);
+                        recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null);
+                        recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null);
+                        recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null);
+                        recomParameters.Add("CountryType", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null);
+                        recomParameters.Add("CreatedOn", DateTime.Now);
                         SqlMapper.Query(con, "usp_AddIRFRecommendation", recomParameters,
                         commandType: CommandType.StoredProcedure);
 
@@ -1627,6 +1627,17 @@ namespace Risebird.Repository
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
 
+                    DynamicParameters recomParameters = new DynamicParameters();
+                    recomParameters.Add("id", irfDetails.IRFRecommendations.id);
+                    recomParameters.Add("IRFId", irfDetails.id);
+                    recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
+                    recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null);
+                    recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null);
+                    recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null);
+                    recomParameters.Add("CountryType", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null);
+                    recomParameters.Add("ModifiedOn", DateTime.Now);
+                    SqlMapper.Query(con, "usp_UpdateIRFRecommendation", recomParameters,
+                    commandType: CommandType.StoredProcedure);
 
 
                     return true;
@@ -4739,6 +4750,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<IRFRecommendations> GetIRFRecommendation(int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<IRFRecommendations>(con, "usp_GetIRFRecommendation", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

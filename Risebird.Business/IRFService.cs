@@ -53,6 +53,7 @@ namespace Risebird.Business
             {
                 irfDetails.IRFId = irfDetails.IRFId.Trim();
                 irfDetails.CreatedOn = DateTime.UtcNow;
+                irfDetails.IRFRecommendations.Status = irfDetails.IRFRecommendations.StatusRadioValue == "true" ? true : false;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
@@ -532,6 +533,11 @@ namespace Risebird.Business
                 model.OldSkillCollection = model.SkillCollection;
                 model.IsQCRequired = IRF.IsQCRequired;
                 model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
+                model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
+                if(model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
+                }
                 return model;
 
             }
@@ -661,6 +667,9 @@ namespace Risebird.Business
                         }
                     }
                 }
+
+                model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+
                 var result = _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null).Result;
                 if (result)
                 {
