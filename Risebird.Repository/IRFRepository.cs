@@ -2289,6 +2289,7 @@ namespace Risebird.Repository
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
             parameters.Add("@IsQCRequired", entity.IsQCRequired);
             parameters.Add("@IsJoinabilitySelectabilityRequired", entity.IsJoinabilitySelectabilityRequired);
+            parameters.Add("@IsGeneralSkillRequired", entity.IsGeneralSkillRequired);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             return parameters;
