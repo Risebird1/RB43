@@ -120,6 +120,7 @@ namespace Risebird.Web.Controllers
                 int Clientid = 0;
                 ViewBag.ProfileName = profileName;
                 ViewBag.type = "Client";
+                ViewBag.PageName = "Interview";
                 if (profileName == "Client" || profileName == "SeniorHR" || profileName == "Admin")
                 {
                     if (type == "Candidate")
@@ -228,7 +229,6 @@ namespace Risebird.Web.Controllers
                             modelData = modelData.Where(x => filter.ProfileSource.Contains(x.PrimarySkill)).ToList();
                             modelData = modelData.Where(x => filter.HREmail.Contains(x.Type)).ToList();
                         }
-                        ViewBag.PageName = "Interview";
                         ViewBag.IRFId = "0";
                         return View(modelData);
                     }

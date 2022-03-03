@@ -2157,10 +2157,6 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.UnAttendedZoomLink > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
                     if (irf.MissingVideoLink > 0)
                     {
                         irf.Flags = irf.Flags + 1;
@@ -2289,10 +2285,6 @@ namespace Risebird.Business
                         irf.Flags = irf.Flags + 1;
                     }
                     if (irf.MissingZoomLink > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
-                    if (irf.UnAttendedZoomLink > 0)
                     {
                         irf.Flags = irf.Flags + 1;
                     }
