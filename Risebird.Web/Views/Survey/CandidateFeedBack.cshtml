@@ -68,13 +68,13 @@
                         <div class="col-md-12">
                             @if (ViewBag.type == "Client")
                             {
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Client',@ViewBag.PageName)"><strong>Client Feedback</strong></div>
-                                <div class="feedback-tab" onclick="Changeurldetails('Candidate',@ViewBag.PageName)"><strong>Candidate Feedback</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
                             }
                             else
                             {
-                                <div class="feedback-tab" onclick="Changeurldetails('Client',@ViewBag.PageName)"><strong>Client Feedback</strong></div>
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate',@ViewBag.PageName)"><strong>Candidate Feedback</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
                             }
                         </div>
                     </div>

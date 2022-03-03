@@ -260,7 +260,6 @@ namespace Risebird.Entities.ViewModel
         public int UnfilledInterviewStatusCount { get; set; }
         public int UnfilledCommentsCount { get; set; }
         public int MissingZoomLink { get; set; }
-        public int UnAttendedZoomLink { get; set; }
         public int MissingVideoLink { get; set; }
         public bool IsGeneralSkillRequired { get; set; }
         public int flagcount { get; set; }
