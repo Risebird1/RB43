@@ -44,7 +44,7 @@
 
                 <div class="pull-right">
                     <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
@@ -87,7 +87,7 @@
                                                 </div>
                                                 <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                             </div>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <form action="@Url.Action("UnassignedInterviews","Dashboard",new { actionstatus=ViewBag.actionstatus,actiontype=ViewBag.Actiontype})" method="post" id="form">
@@ -467,24 +467,24 @@
 
                 ApplySessionFilter();
             }
-            $("#Status").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#Client").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientHREmail").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+            //$("#Status").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#Client").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
+            //$("#ClientHREmail").multiselect({
+            //    includeSelectAllOption: true,
+            //    selectedClass: 'active1',
+            //    buttonWidth: '100%',
+            //    maxHeight: 200
+            //});
 
 
 
@@ -507,7 +507,7 @@
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
-            $("#Status").val(status);
+            //$("#Status").val(status);
             $("#Client").val(client);
             $("#ClientHREmail").val(clientHREmail);
 

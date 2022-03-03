@@ -1707,7 +1707,7 @@
             url: '/IRF/StatsFlagForIRF?IRFId=' + id,
             type: 'POST',
             success: function (result) {
-                OpenModalForFlags(result.irfId, result.jdTiltle != null ? result.jdTiltle.split('|')[0] : "", result.risebirdHREmail, result.scheduledPercentage, result.completionRate, result.selectionRate, result.unassignedInterviewsCount, result.unfilledMeetingStatusCount, result.unfilledCommentsCount, result.missingVideoLink, result.missingZoomLink, result.unAttendedZoomLink);
+                OpenModalForFlags(result.irfId, result.jdTiltle != null ? result.jdTiltle.split('|')[0] : "", result.risebirdHREmail, result.scheduledPercentage, result.completionRate, result.selectionRate, result.unassignedInterviewsCount, result.unfilledMeetingStatusCount, result.unfilledCommentsCount, result.missingVideoLink, result.missingZoomLink);
             }
         });
     }
@@ -1716,7 +1716,7 @@
         var modal = document.getElementById("flagsModal");
         modal.style.display = "none";
     }
-    function OpenModalForFlags(irfName, jdTitle, risebirdChannelOwner, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink, UnAttendedZoomLink) {
+    function OpenModalForFlags(irfName, jdTitle, risebirdChannelOwner, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink) {
         $('#flagsModalBody').html('');
         var modal = document.getElementById("flagsModal");
         modal.style.display = "block";
@@ -1771,7 +1771,6 @@
         html += '<tr><td style = "border:1px solid black" > PENDING CANDIDATE FEEDBACK</td><td style="border:1px solid black">' + candidatepending + '</td></tr>';
         html += ' <tr><td style="border:1px solid black">Missing Video Link</td><td style="border:1px solid black">' + missingVideoLink + '</td></tr>';
         html += '<tr><td style="border:1px solid black">Missing Zoom Link</td><td style="border:1px solid black">' + missingzoomLink + '</td></tr>';
-        html += '<tr><td style="border:1px solid black">UnAttended Zoom Link</td><td style="border:1px solid black">' + UnAttendedZoomLink + '</td></tr> ';
         html += '</table>';
         $("#flagsModalBodyCount").empty().html(html);
     }
