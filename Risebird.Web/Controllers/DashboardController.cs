@@ -982,7 +982,7 @@ namespace Risebird.Web.Controllers
                             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
 
                             var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                            var WeekDate = DateTime.Now.AddDays(-7);
+                            var WeekDate = DateTime.Now.AddDays(-30);
                             var interviewerids = myInterview.Where(x => x.interviewDate >= WeekDate).Select(x => x.id).Distinct().ToList();
                             if (interviewerids != null)
                             {
