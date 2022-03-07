@@ -1279,6 +1279,7 @@ namespace Risebird.Business
                     reportModel.OldInterviewStatus = reportModel.InterviewStatus;
                     reportModel.OldMeetingStatus = reportModel.MeetingStatus;
                 }
+                reportModel.IsGeneralSkillRequired = irfDetails.IsGeneralSkillRequired;
                 return reportModel;
             }
             catch (Exception e)
