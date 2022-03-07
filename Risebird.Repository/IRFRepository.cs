@@ -1063,7 +1063,7 @@ namespace Risebird.Repository
             try
             {
 
-                DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
+                DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails, true);
                 parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -2236,7 +2236,7 @@ namespace Risebird.Repository
 
 
 
-        private DynamicParameters SetStoredProcedureParameterForIRF(IRFVm entity)
+        private DynamicParameters SetStoredProcedureParameterForIRF(IRFVm entity, bool isUpdateIRF = false)
         {
             var parameters = new DynamicParameters();
 
@@ -2267,7 +2267,10 @@ namespace Risebird.Repository
             parameters.Add("@IsQCRequired", entity.IsQCRequired);
             parameters.Add("@IsJoinabilitySelectabilityRequired", entity.IsJoinabilitySelectabilityRequired);
             parameters.Add("@IsGeneralSkillRequired", entity.IsGeneralSkillRequired);
-            parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            if (!isUpdateIRF)
+            {
+                parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            }
 
             return parameters;
         }
