@@ -342,7 +342,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsProctor { get; set; }
         public string NickName { get; set; }
         public string ClientAction { get; set; }
-        
+        public bool IsGeneralSkillRequired { get; set; }
+
     }
     public class RBInterviewDetails
     {

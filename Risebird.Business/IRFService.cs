@@ -532,6 +532,7 @@ namespace Risebird.Business
                 model.OldSkillCollection = model.SkillCollection;
                 model.IsQCRequired = IRF.IsQCRequired;
                 model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
+                model.IsGeneralSkillRequired = IRF.IsGeneralSkillRequired;
                 return model;
 
             }
