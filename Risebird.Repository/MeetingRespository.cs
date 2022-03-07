@@ -1458,7 +1458,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    if (reportDetails.SkillGeneralReportCollection != null  && reportDetails.IsGeneralSkillRequired)
+                    if (reportDetails.SkillGeneralReportCollection != null && reportDetails.IsGeneralSkillRequired)
                     {
                         DataTable skillGeneralReportDt = new DataTable();
                         skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
