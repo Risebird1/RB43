@@ -1233,6 +1233,12 @@ namespace Risebird.Repository
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
+                            if (String.IsNullOrEmpty(item.Concepts)){
+                                item.Concepts = "";
+                            }
+                            if (String.IsNullOrEmpty(item.Natureofquestion)){
+                                item.Natureofquestion = "";
+                            }
                             techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
                         }
 
