@@ -29,6 +29,7 @@ CREATE TABLE [dbo].[IRF](
             [PrimarySkillInvite][varchar](100) NULL,
             [IsQCRequired][bit] NULL,
             [IsJoinabilitySelectabilityRequired][bit] NULL,
+            [IsGeneralSkillRequired][bit] NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -210,6 +211,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add IsJoinabilitySelectabilityRequired bit
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsGeneralSkillRequired')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsGeneralSkillRequired bit
 END
 
 END
