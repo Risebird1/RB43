@@ -70,5 +70,6 @@ namespace Risebird.Repository.Interface
         bool ClearSessionForOthersUsers(string emailId);
         Task<bool> GetClientPasswordResetEnableStatus(int clientId);
         Task<int> DisableInactiveUser();
+        string GetUserProfileBasedOnEmailId(string emailId);
     }
 }

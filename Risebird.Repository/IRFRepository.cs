@@ -1058,178 +1058,650 @@ namespace Risebird.Repository
             }
         }
 
+        //public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null)
+        //{
+        //    try
+        //    {
+
+        //        DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails, true);
+        //        parameters.Add("@id", irfDetails.id);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
+        //               commandType: CommandType.StoredProcedure);
+
+
+        //            //if (irfDetails.Joinability != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.Joinability)
+        //            //    {
+        //            //        string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //            //        var affectedRows = con.ExecuteAsync(sqlJoinability, new
+        //            //        {
+        //            //            IRFId = irfDetails.id,
+        //            //            LevelId = item.LevelId,
+        //            //            Type = item.Type,
+        //            //            Value = item.Value,
+        //            //            Weightage = item.Weightage
+        //            //        }).Result;
+        //            //    }
+        //            //}
+
+        //            try
+        //            {
+        //                if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
+        //                {
+        //                    DataTable joinabilityDt = new DataTable();
+        //                    joinabilityDt.Columns.Add("IRFId", typeof(int));
+        //                    joinabilityDt.Columns.Add("LevelId", typeof(int));
+        //                    joinabilityDt.Columns.Add("Type", typeof(string));
+        //                    joinabilityDt.Columns.Add("Value", typeof(string));
+        //                    joinabilityDt.Columns.Add("Weightage", typeof(int));
+
+
+        //                    foreach (var item in irfDetails.Joinability)
+        //                    {
+        //                        joinabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+        //                    }
+
+        //                    SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
+        //                    cmdJoinability.CommandType = CommandType.StoredProcedure;
+        //                    cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
+        //                    cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
+        //                    con.Open();
+        //                    if (cmdJoinability.ExecuteNonQuery() != 0)
+        //                    {
+        //                        con.Close();
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //            }
+
+        //            try
+        //            {
+        //                if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
+        //                {
+        //                    DataTable selectabilityDt = new DataTable();
+        //                    selectabilityDt.Columns.Add("IRFId", typeof(int));
+        //                    selectabilityDt.Columns.Add("LevelId", typeof(int));
+        //                    selectabilityDt.Columns.Add("Type", typeof(string));
+        //                    selectabilityDt.Columns.Add("Value", typeof(string));
+        //                    selectabilityDt.Columns.Add("Weightage", typeof(int));
+
+        //                    foreach (var item in irfDetails.Selectability)
+        //                    {
+        //                        selectabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+        //                    }
+
+        //                    SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
+        //                    cmdSelectability.CommandType = CommandType.StoredProcedure;
+        //                    cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
+        //                    cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
+        //                    con.Open();
+        //                    if (cmdSelectability.ExecuteNonQuery() != 0)
+        //                    {
+        //                        con.Close();
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+        //            }
+        //            //update general skill table
+
+        //            //if (irfDetails.SkillGeneral != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.SkillGeneral)
+        //            //    {
+
+        //            //        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //            //        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
+        //            //        {
+        //            //            IRFId = irfDetails.id,
+        //            //            LevelId = item.LevelId,
+        //            //            Type = item.Type,
+        //            //            Value = item.Value,
+        //            //            Weightage = item.Weightage
+        //            //        }).Result;
+        //            //    }
+        //            //}
+        //            if (irfDetails.SkillGeneral != null && irfDetails.SkillGeneral.Count() > 0 && irfDetails.IsGeneralSkillRequired)
+        //            {
+        //                try
+        //                {
+        //                    DataTable skillGeneralDt = new DataTable();
+        //                    skillGeneralDt.Columns.Add("IRFId", typeof(int));
+        //                    skillGeneralDt.Columns.Add("LevelId", typeof(int));
+        //                    skillGeneralDt.Columns.Add("Type", typeof(string));
+        //                    skillGeneralDt.Columns.Add("Value", typeof(string));
+        //                    skillGeneralDt.Columns.Add("Weightage", typeof(int));
+
+        //                    foreach (var item in irfDetails.SkillGeneral)
+        //                    {
+        //                        skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+        //                    }
+
+        //                    SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
+        //                    cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
+        //                    cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
+        //                    cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
+        //                    con.Open();
+        //                    if (cmdSkillGeneral.ExecuteNonQuery() != 0)
+        //                    {
+        //                        con.Close();
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                }
+        //            }
+
+
+        //            //update tech skill table
+        //            //if (irfDetails.SkillCollection != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.SkillCollection)
+        //            //    {
+
+        //            //        string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
+        //            //        var affectedRows = con.Execute(sqlSkillTech, new
+        //            //        {
+        //            //            IRFId = irfDetails.id,
+        //            //            LevelId = item.LevelId,
+        //            //            SkillId = item.SkillId,
+        //            //            Weightage = item.Weightage
+        //            //        });
+        //            //    }
+        //            //}
+
+        //            try
+        //            {
+        //                DataTable techSkillDt = new DataTable();
+        //                techSkillDt.Columns.Add("IRFId", typeof(int));
+        //                techSkillDt.Columns.Add("LevelId", typeof(int));
+        //                techSkillDt.Columns.Add("SkillId", typeof(int));
+        //                techSkillDt.Columns.Add("Weightage", typeof(int));
+        //                techSkillDt.Columns.Add("Concepts", typeof(string));
+        //                techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+        //                techSkillDt.Columns.Add("Timelimit", typeof(int));
+
+        //                foreach (var item in irfDetails.SkillCollection)
+        //                {
+        //                    techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+        //                }
+
+        //                SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
+        //                cmdTechSkill.CommandType = CommandType.StoredProcedure;
+        //                cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+        //                cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+        //                con.Open();
+        //                if (cmdTechSkill.ExecuteNonQuery() != 0)
+        //                {
+        //                    con.Close();
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //            }
+
+        //            if (removedTechSkills != null)
+        //            {
+        //                foreach (var removedTechSkill in removedTechSkills)
+        //                {
+        //                    try
+        //                    {
+        //                        UpdateTechSkillQuestionsForRemovedSkills(removedTechSkill);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                        continue;
+        //                    }
+        //                }
+        //            }
+
+        //            //update trans interviewer table
+
+        //            //if (irfDetails.InterviewerCollection != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.InterviewerCollection)
+        //            //    {
+        //            //        DynamicParameters param = new DynamicParameters();
+        //            //        param.Add("@irfIntId", irfDetails.id);
+        //            //        param.Add("@InterviewerUserId", item.UserId);
+        //            //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
+        //            //                commandType: CommandType.StoredProcedure);
+
+        //            //    }
+        //            //}
+
+        //            if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
+        //            {
+        //                try
+        //                {
+        //                    DataTable interviewerDt = new DataTable();
+        //                    interviewerDt.Columns.Add("IRFId", typeof(int));
+        //                    interviewerDt.Columns.Add("UserId", typeof(int));
+        //                    interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+        //                    interviewerDt.Columns.Add("IsActive", typeof(bool));
+        //                    interviewerDt.Columns.Add("IsAvailable", typeof(bool));
+
+        //                    foreach (var item in irfDetails.InterviewerCollection)
+        //                    {
+        //                        interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+        //                    }
+
+        //                    SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
+        //                    cmdInterviewer.CommandType = CommandType.StoredProcedure;
+        //                    cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+        //                    cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+        //                    con.Open();
+        //                    if (cmdInterviewer.ExecuteNonQuery() != 0)
+        //                    {
+        //                        con.Close();
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                }
+        //            }
+
+        //            if (interviewerRateChangesList != null)
+        //            {
+        //                foreach (var interviewerChangeDetails in interviewerRateChangesList.Where(x => x.Type == "Interviewer"))
+        //                {
+        //                    try
+        //                    {
+        //                        UpdateInterviewerAmountBasedOnRateChanges(interviewerChangeDetails);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                        continue;
+        //                    }
+        //                }
+        //            }
+
+        //            if (removedInterviewers != null)
+        //            {
+        //                foreach (var removedInterviewer in removedInterviewers.Where(x => x.Type == "Interviewer"))
+        //                {
+        //                    try
+        //                    {
+        //                        UpdateInterviewerAmountForRemovedInterviewers(removedInterviewer);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                        continue;
+        //                    }
+        //                }
+        //            }
+
+        //            if (addedNewInterviewers != null)
+        //            {
+        //                foreach (var addedNewInterviewer in addedNewInterviewers.Where(x => x.Type == "Interviewer"))
+        //                {
+        //                    try
+        //                    {
+        //                        UpdateAmountForNewlyAddedInterviewers(addedNewInterviewer);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                        continue;
+        //                    }
+        //                }
+        //            }
+        //            // update trans emergency interviewers table
+        //            //if (irfDetails.EmergencyInterviewerCollection != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.EmergencyInterviewerCollection)
+        //            //    {
+        //            //        DynamicParameters param = new DynamicParameters();
+        //            //        param.Add("@irfIntId", irfDetails.id);
+        //            //        param.Add("@InterviewerUserId", item.UserId);
+        //            //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
+        //            //                commandType: CommandType.StoredProcedure);
+
+        //            //    }
+        //            //}
+
+        //            if (irfDetails.EmergencyInterviewerCollection != null && irfDetails.EmergencyInterviewerCollection.Count() != 0 && !(irfDetails.EmergencyInterviewerCollection.Where(x => x.UserId == 0).Any()))
+        //            {
+        //                try
+        //                {
+        //                    DataTable emergencyInterviewerDt = new DataTable();
+        //                    emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
+        //                    emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+        //                    emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+        //                    emergencyInterviewerDt.Columns.Add("IsActive", typeof(bool));
+
+
+        //                    foreach (var item in irfDetails.EmergencyInterviewerCollection)
+        //                    {
+        //                        emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
+        //                    }
+
+        //                    SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
+        //                    cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
+        //                    cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
+        //                    cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
+        //                    con.Open();
+        //                    if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
+        //                    {
+        //                        con.Close();
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                }
+        //            }
+
+        //            if (interviewerRateChangesList != null)
+        //            {
+        //                foreach (var interviewerChangeDetails in interviewerRateChangesList.Where(x => x.Type == "EmergencyInterviewer"))
+        //                {
+        //                    try
+        //                    {
+        //                        UpdateInterviewerAmountBasedOnRateChanges(interviewerChangeDetails);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                        continue;
+        //                    }
+        //                }
+        //            }
+
+        //            if (removedInterviewers != null)
+        //            {
+        //                foreach (var removedEmergencyInterviewer in removedInterviewers.Where(x => x.Type == "EmergencyInterviewer"))
+        //                {
+        //                    try
+        //                    {
+        //                        UpdateInterviewerAmountForRemovedInterviewers(removedEmergencyInterviewer);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                        continue;
+        //                    }
+        //                }
+        //            }
+        //            if (addedNewInterviewers != null)
+        //            {
+        //                foreach (var addedNewInterviewer in addedNewInterviewers.Where(x => x.Type == "EmergencyInterviewer"))
+        //                {
+        //                    try
+        //                    {
+        //                        UpdateAmountForNewlyAddedInterviewers(addedNewInterviewer);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                        continue;
+        //                    }
+        //                }
+        //            }
+        //            //update trans Client table
+
+        //            //if (irfDetails.ClientCollection != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.ClientCollection)
+        //            //    {
+        //            //        DynamicParameters param1 = new DynamicParameters();
+        //            //        param1.Add("@irfIntId", irfDetails.id);
+        //            //        param1.Add("@ClientUserId", item.ClientUserId);
+        //            //        //param1.Add("@ClientRoleId", item.ClientRoleId);
+        //            //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
+        //            //                commandType: CommandType.StoredProcedure);
+
+        //            //    }
+        //            //}
+
+        //            if (irfDetails.ClientCollection != null)
+        //            {
+        //                try
+        //                {
+        //                    DataTable clientUserDt = new DataTable();
+        //                    clientUserDt.Columns.Add("IRFId", typeof(int));
+        //                    clientUserDt.Columns.Add("ClientUserId", typeof(int));
+
+        //                    foreach (var item in irfDetails.ClientCollection)
+        //                    {
+        //                        clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
+        //                    }
+
+
+        //                    SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
+        //                    cmdClientUser.CommandType = CommandType.StoredProcedure;
+        //                    cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
+        //                    cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
+        //                    con.Open();
+        //                    if (cmdClientUser.ExecuteNonQuery() != 0)
+        //                    {
+        //                        con.Close();
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                }
+        //            }
+
+
+        //            //update trans QC table
+
+        //            //if (irfDetails.QualityController != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.QualityController)
+        //            //    {
+        //            //        DynamicParameters param2 = new DynamicParameters();
+        //            //        param2.Add("@irfIntId", irfDetails.id);
+        //            //        param2.Add("@InterviewerUserId", item.UserId);
+        //            //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+        //            //                commandType: CommandType.StoredProcedure);
+
+        //            //    }
+        //            //}
+        //            if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
+        //            {
+        //                try
+        //                {
+        //                    DataTable qualityControllerDt = new DataTable();
+        //                    qualityControllerDt.Columns.Add("IRFId", typeof(int));
+        //                    qualityControllerDt.Columns.Add("UserId", typeof(int));
+        //                    qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
+        //                    qualityControllerDt.Columns.Add("IsActive", typeof(bool));
+
+        //                    foreach (var item in irfDetails.QualityController)
+        //                    {
+        //                        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
+        //                    }
+
+        //                    SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
+        //                    cmdQualityController.CommandType = CommandType.StoredProcedure;
+        //                    cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+        //                    cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
+        //                    con.Open();
+        //                    if (cmdQualityController.ExecuteNonQuery() != 0)
+        //                    {
+        //                        con.Close();
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //                }
+        //            }
+
+
+        //            //if (irfDetails.ResumeEvaluatorCollection != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.ResumeEvaluatorCollection)
+        //            //    {
+        //            //        DynamicParameters param2 = new DynamicParameters();
+        //            //        param2.Add("@irfId", irfDetails.id);
+        //            //        param2.Add("@ResumeEvaluatorUserId", item.UserId);
+        //            //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
+        //            //                commandType: CommandType.StoredProcedure);
+
+        //            //    }
+        //            //}
+
+        //            //DataTable resumeEvaluatorDt = new DataTable();
+        //            //resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
+        //            //resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
+
+        //            //foreach (var item in irfDetails.ResumeEvaluatorCollection)
+        //            //{
+        //            //    resumeEvaluatorDt.Rows.Add(irfDetails.id, item.UserId);
+        //            //}
+
+        //            //SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
+        //            //cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
+        //            //cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
+        //            //cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
+        //            //con.Open();
+        //            //if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
+        //            //{
+        //            //    con.Close();
+        //            //}
+
+        //            //if (irfDetails.HRCollection != null)
+        //            //{
+        //            //    foreach (var item in irfDetails.HRCollection)
+        //            //    {
+        //            //        DynamicParameters param2 = new DynamicParameters();
+        //            //        param2.Add("@irfId", irfDetails.id);
+        //            //        param2.Add("@HRUserId", item.UserId);
+        //            //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
+        //            //                commandType: CommandType.StoredProcedure);
+
+        //            //    }
+        //            //}
+
+        //            try
+        //            {
+        //                DataTable hRDt = new DataTable();
+        //                hRDt.Columns.Add("IRFId", typeof(int));
+        //                hRDt.Columns.Add("UserId", typeof(int));
+
+        //                foreach (var item in irfDetails.HRCollection)
+        //                {
+        //                    hRDt.Rows.Add(irfDetails.id, item.UserId);
+        //                }
+
+        //                SqlCommand cmdHR = new SqlCommand("usp_HRBulkInsert", con);
+        //                cmdHR.CommandType = CommandType.StoredProcedure;
+        //                cmdHR.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
+        //                cmdHR.Parameters["@HRBulkData"].Value = hRDt;
+        //                con.Open();
+        //                if (cmdHR.ExecuteNonQuery() != 0)
+        //                {
+        //                    con.Close();
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //            }
+
+
+
+        //            return true;
+        //        }
+
+        //    }
+
+        //    catch (SqlException e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+
         public async Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null)
         {
             try
             {
 
-                DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
-                parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
-                       commandType: CommandType.StoredProcedure);
-
-
-                    //if (irfDetails.Joinability != null)
-                    //{
-                    //    foreach (var item in irfDetails.Joinability)
-                    //    {
-                    //        string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                    //        var affectedRows = con.ExecuteAsync(sqlJoinability, new
-                    //        {
-                    //            IRFId = irfDetails.id,
-                    //            LevelId = item.LevelId,
-                    //            Type = item.Type,
-                    //            Value = item.Value,
-                    //            Weightage = item.Weightage
-                    //        }).Result;
-                    //    }
-                    //}
-
-                    try
+                    DataTable joinabilityDt = new DataTable();
+                    if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                     {
-                        if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
+                        //DataTable joinabilityDt = new DataTable();
+                        joinabilityDt.Columns.Add("IRFId", typeof(int));
+                        joinabilityDt.Columns.Add("LevelId", typeof(int));
+                        joinabilityDt.Columns.Add("Type", typeof(string));
+                        joinabilityDt.Columns.Add("Value", typeof(string));
+                        joinabilityDt.Columns.Add("Weightage", typeof(int));
+
+
+                        foreach (var item in irfDetails.Joinability)
                         {
-                            DataTable joinabilityDt = new DataTable();
-                            joinabilityDt.Columns.Add("IRFId", typeof(int));
-                            joinabilityDt.Columns.Add("LevelId", typeof(int));
-                            joinabilityDt.Columns.Add("Type", typeof(string));
-                            joinabilityDt.Columns.Add("Value", typeof(string));
-                            joinabilityDt.Columns.Add("Weightage", typeof(int));
-
-
-                            foreach (var item in irfDetails.Joinability)
-                            {
-                                joinabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
-                            }
-
-                            SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
-                            cmdJoinability.CommandType = CommandType.StoredProcedure;
-                            cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
-                            cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
-                            con.Open();
-                            if (cmdJoinability.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
+                            joinabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
                     }
 
-                    try
+                    DataTable selectabilityDt = new DataTable();
+                    if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
                     {
-                        if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
+                        selectabilityDt.Columns.Add("IRFId", typeof(int));
+                        selectabilityDt.Columns.Add("LevelId", typeof(int));
+                        selectabilityDt.Columns.Add("Type", typeof(string));
+                        selectabilityDt.Columns.Add("Value", typeof(string));
+                        selectabilityDt.Columns.Add("Weightage", typeof(int));
+
+                        foreach (var item in irfDetails.Selectability)
                         {
-                            DataTable selectabilityDt = new DataTable();
-                            selectabilityDt.Columns.Add("IRFId", typeof(int));
-                            selectabilityDt.Columns.Add("LevelId", typeof(int));
-                            selectabilityDt.Columns.Add("Type", typeof(string));
-                            selectabilityDt.Columns.Add("Value", typeof(string));
-                            selectabilityDt.Columns.Add("Weightage", typeof(int));
-
-                            foreach (var item in irfDetails.Selectability)
-                            {
-                                selectabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
-                            }
-
-                            SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
-                            cmdSelectability.CommandType = CommandType.StoredProcedure;
-                            cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
-                            cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
-                            con.Open();
-                            if (cmdSelectability.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
+                            selectabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
                     }
-                    //update general skill table
 
-                    //if (irfDetails.SkillGeneral != null)
-                    //{
-                    //    foreach (var item in irfDetails.SkillGeneral)
-                    //    {
-
-                    //        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                    //        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
-                    //        {
-                    //            IRFId = irfDetails.id,
-                    //            LevelId = item.LevelId,
-                    //            Type = item.Type,
-                    //            Value = item.Value,
-                    //            Weightage = item.Weightage
-                    //        }).Result;
-                    //    }
-                    //}
+                    DataTable skillGeneralDt = new DataTable();
                     if (irfDetails.SkillGeneral != null && irfDetails.SkillGeneral.Count() > 0 && irfDetails.IsGeneralSkillRequired)
                     {
-                        try
-                        {
-                            DataTable skillGeneralDt = new DataTable();
-                            skillGeneralDt.Columns.Add("IRFId", typeof(int));
-                            skillGeneralDt.Columns.Add("LevelId", typeof(int));
-                            skillGeneralDt.Columns.Add("Type", typeof(string));
-                            skillGeneralDt.Columns.Add("Value", typeof(string));
-                            skillGeneralDt.Columns.Add("Weightage", typeof(int));
+                        skillGeneralDt.Columns.Add("IRFId", typeof(int));
+                        skillGeneralDt.Columns.Add("LevelId", typeof(int));
+                        skillGeneralDt.Columns.Add("Type", typeof(string));
+                        skillGeneralDt.Columns.Add("Value", typeof(string));
+                        skillGeneralDt.Columns.Add("Weightage", typeof(int));
 
-                            foreach (var item in irfDetails.SkillGeneral)
-                            {
-                                skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
-                            }
-
-                            SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
-                            cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
-                            cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
-                            cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
-                            con.Open();
-                            if (cmdSkillGeneral.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
-                        }
-                        catch (Exception ex)
+                        foreach (var item in irfDetails.SkillGeneral)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
                         }
+
                     }
 
-
-                    //update tech skill table
-                    //if (irfDetails.SkillCollection != null)
-                    //{
-                    //    foreach (var item in irfDetails.SkillCollection)
-                    //    {
-
-                    //        string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
-                    //        var affectedRows = con.Execute(sqlSkillTech, new
-                    //        {
-                    //            IRFId = irfDetails.id,
-                    //            LevelId = item.LevelId,
-                    //            SkillId = item.SkillId,
-                    //            Weightage = item.Weightage
-                    //        });
-                    //    }
-                    //}
-
-                    try
-                    {
-                        DataTable techSkillDt = new DataTable();
-                        techSkillDt.Columns.Add("IRFId", typeof(int));
-                        techSkillDt.Columns.Add("LevelId", typeof(int));
-                        techSkillDt.Columns.Add("SkillId", typeof(int));
-                        techSkillDt.Columns.Add("Weightage", typeof(int));
-                        techSkillDt.Columns.Add("Concepts", typeof(string));
-                        techSkillDt.Columns.Add("Natureofquestion", typeof(string));
-                        techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    DataTable techSkillDt = new DataTable();
+                    techSkillDt.Columns.Add("IRFId", typeof(int));
+                    techSkillDt.Columns.Add("LevelId", typeof(int));
+                    techSkillDt.Columns.Add("SkillId", typeof(int));
+                    techSkillDt.Columns.Add("Weightage", typeof(int));
+                    techSkillDt.Columns.Add("Concepts", typeof(string));
+                    techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                    techSkillDt.Columns.Add("Timelimit", typeof(int));
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
@@ -1242,19 +1714,214 @@ namespace Risebird.Repository
                             techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
                         }
 
-                        SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
-                        cmdTechSkill.CommandType = CommandType.StoredProcedure;
-                        cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
-                        cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
-                        con.Open();
-                        if (cmdTechSkill.ExecuteNonQuery() != 0)
+                    DataTable interviewerDt = new DataTable();
+
+                    if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
+                    {
+                        interviewerDt.Columns.Add("IRFId", typeof(int));
+                        interviewerDt.Columns.Add("UserId", typeof(int));
+                        interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        interviewerDt.Columns.Add("IsActive", typeof(bool));
+                        interviewerDt.Columns.Add("IsAvailable", typeof(bool));
+
+                        foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            con.Close();
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
                         }
                     }
-                    catch (Exception ex)
+
+                    DataTable emergencyInterviewerDt = new DataTable();
+                    if (irfDetails.EmergencyInterviewerCollection != null && irfDetails.EmergencyInterviewerCollection.Count() != 0 && !(irfDetails.EmergencyInterviewerCollection.Where(x => x.UserId == 0).Any()))
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
+                        emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+                        emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        emergencyInterviewerDt.Columns.Add("IsActive", typeof(bool));
+
+
+                        foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                        {
+                            emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
+                        }
+
+                    }
+
+                    DataTable clientUserDt = new DataTable();
+
+                    if (irfDetails.ClientCollection != null)
+                    {
+                        clientUserDt.Columns.Add("IRFId", typeof(int));
+                        clientUserDt.Columns.Add("ClientUserId", typeof(int));
+
+                        foreach (var item in irfDetails.ClientCollection)
+                        {
+                            clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
+                        }
+                    }
+
+                    DataTable qualityControllerDt = new DataTable();
+
+                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
+                    {
+                        qualityControllerDt.Columns.Add("IRFId", typeof(int));
+                        qualityControllerDt.Columns.Add("UserId", typeof(int));
+                        qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        qualityControllerDt.Columns.Add("IsActive", typeof(bool));
+
+                        foreach (var item in irfDetails.QualityController)
+                        {
+                            qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
+                        }
+                    }
+
+                    DataTable hRDt = new DataTable();
+                    hRDt.Columns.Add("IRFId", typeof(int));
+                    hRDt.Columns.Add("UserId", typeof(int));
+
+                    foreach (var item in irfDetails.HRCollection)
+                    {
+                        hRDt.Rows.Add(irfDetails.id, item.UserId);
+                    }
+
+                    SqlCommand cmdUpdateIRF = new SqlCommand("usp_UpdateIRFDetails", con);
+                    cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@id"].Value = irfDetails.id;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.NVarChar));
+                    cmdUpdateIRF.Parameters["@IRFId"].Value = irfDetails.IRFId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@ClientName"].Value = irfDetails.ClientName;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDTiltle", SqlDbType.NVarChar));
+                    cmdUpdateIRF.Parameters["@JDTiltle"].Value = irfDetails.JDTiltle;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CompanyType", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@CompanyType"].Value = irfDetails.CompanyType;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientId", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@ClientId"].Value = irfDetails.ClientId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JobCountry", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@JobCountry"].Value = irfDetails.JobCountry;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@StartDate", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@StartDate"].Value = irfDetails.StartDate;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@EndDate", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@EndDate"].Value = irfDetails.EndDate;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDLink", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@JDLink"].Value = irfDetails.JDLink;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfPosition", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@NoOfPosition"].Value = irfDetails.NoOfPosition;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfIntterview", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@NoOfIntterview"].Value = irfDetails.NoOfIntterview;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RisebirdHr", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@RisebirdHr"].Value = irfDetails.RisebirdHr;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PerMintuteRate", SqlDbType.Real));
+                    cmdUpdateIRF.Parameters["@PerMintuteRate"].Value = irfDetails.PerMintuteRate;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JobLevel", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@JobLevel"].Value = irfDetails.JobLevel;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CalendlyLink", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@CalendlyLink"].Value = irfDetails.CalendlyLink;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@TotalBudget", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@TotalBudget"].Value = irfDetails.TotalBudget;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsBiometricEnabled", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsBiometricEnabled"].Value = irfDetails.IsBiometricEnabled;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PriorityLevel", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@PriorityLevel"].Value = irfDetails.PriorityLevel;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CompanyDetails", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@CompanyDetails"].Value = irfDetails.CompanyDetails;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Type", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@Type"].Value = irfDetails.Type;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Heuristicsscore", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@Heuristicsscore"].Value = irfDetails.Heuristicsscore;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PrimarySkillInvite", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@PrimarySkillInvite"].Value = irfDetails.PrimarySkillInvite;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@BillingOwner", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@BillingOwner"].Value = irfDetails.BillingOwner;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@AssessmentGroupId"].Value = irfDetails.AssessmentGroupId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsJoinabilitySelectabilityRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsJoinabilitySelectabilityRequired"].Value = irfDetails.IsJoinabilitySelectabilityRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsGeneralSkillRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
+
+
+                    if(joinabilityDt != null && joinabilityDt.Rows.Count>0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
+                    }
+                    if (selectabilityDt != null && selectabilityDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
+                    }
+                    if (skillGeneralDt != null && skillGeneralDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
+                    }
+                    if (techSkillDt != null && techSkillDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    }
+                    if (interviewerDt != null && interviewerDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                    }
+                    if (emergencyInterviewerDt != null && emergencyInterviewerDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
+                    }
+                    if (clientUserDt != null && clientUserDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@ClientUserBulkData"].Value = clientUserDt;
+                    }
+                    if (qualityControllerDt != null && qualityControllerDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@QCBulkData"].Value = qualityControllerDt;
+                    }
+                    if (hRDt != null && hRDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@HRBulkData"].Value = hRDt;
+                    }
+
+                    con.Open();
+
+                    if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
                     }
 
                     if (removedTechSkills != null)
@@ -1270,53 +1937,6 @@ namespace Risebird.Repository
                                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 continue;
                             }
-                        }
-                    }
-
-                    //update trans interviewer table
-
-                    //if (irfDetails.InterviewerCollection != null)
-                    //{
-                    //    foreach (var item in irfDetails.InterviewerCollection)
-                    //    {
-                    //        DynamicParameters param = new DynamicParameters();
-                    //        param.Add("@irfIntId", irfDetails.id);
-                    //        param.Add("@InterviewerUserId", item.UserId);
-                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
-                    //                commandType: CommandType.StoredProcedure);
-
-                    //    }
-                    //}
-
-                    if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
-                    {
-                        try
-                        {
-                            DataTable interviewerDt = new DataTable();
-                            interviewerDt.Columns.Add("IRFId", typeof(int));
-                            interviewerDt.Columns.Add("UserId", typeof(int));
-                            interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                            interviewerDt.Columns.Add("IsActive", typeof(bool));
-                            interviewerDt.Columns.Add("IsAvailable", typeof(bool));
-
-                            foreach (var item in irfDetails.InterviewerCollection)
-                            {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
-                            }
-
-                            SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
-                            cmdInterviewer.CommandType = CommandType.StoredProcedure;
-                            cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                            cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
-                            con.Open();
-                            if (cmdInterviewer.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
                     }
 
@@ -1367,51 +1987,7 @@ namespace Risebird.Repository
                             }
                         }
                     }
-                    // update trans emergency interviewers table
-                    //if (irfDetails.EmergencyInterviewerCollection != null)
-                    //{
-                    //    foreach (var item in irfDetails.EmergencyInterviewerCollection)
-                    //    {
-                    //        DynamicParameters param = new DynamicParameters();
-                    //        param.Add("@irfIntId", irfDetails.id);
-                    //        param.Add("@InterviewerUserId", item.UserId);
-                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
-                    //                commandType: CommandType.StoredProcedure);
 
-                    //    }
-                    //}
-
-                    if (irfDetails.EmergencyInterviewerCollection != null && irfDetails.EmergencyInterviewerCollection.Count() != 0 && !(irfDetails.EmergencyInterviewerCollection.Where(x => x.UserId == 0).Any()))
-                    {
-                        try
-                        {
-                            DataTable emergencyInterviewerDt = new DataTable();
-                            emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
-                            emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
-                            emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                            emergencyInterviewerDt.Columns.Add("IsActive", typeof(bool));
-
-
-                            foreach (var item in irfDetails.EmergencyInterviewerCollection)
-                            {
-                                emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
-                            }
-
-                            SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
-                            cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
-                            cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
-                            cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
-                            con.Open();
-                            if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        }
-                    }
 
                     if (interviewerRateChangesList != null)
                     {
@@ -1459,171 +2035,6 @@ namespace Risebird.Repository
                             }
                         }
                     }
-                    //update trans Client table
-
-                    //if (irfDetails.ClientCollection != null)
-                    //{
-                    //    foreach (var item in irfDetails.ClientCollection)
-                    //    {
-                    //        DynamicParameters param1 = new DynamicParameters();
-                    //        param1.Add("@irfIntId", irfDetails.id);
-                    //        param1.Add("@ClientUserId", item.ClientUserId);
-                    //        //param1.Add("@ClientRoleId", item.ClientRoleId);
-                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
-                    //                commandType: CommandType.StoredProcedure);
-
-                    //    }
-                    //}
-
-                    if (irfDetails.ClientCollection != null)
-                    {
-                        try
-                        {
-                            DataTable clientUserDt = new DataTable();
-                            clientUserDt.Columns.Add("IRFId", typeof(int));
-                            clientUserDt.Columns.Add("ClientUserId", typeof(int));
-
-                            foreach (var item in irfDetails.ClientCollection)
-                            {
-                                clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
-                            }
-
-
-                            SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
-                            cmdClientUser.CommandType = CommandType.StoredProcedure;
-                            cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
-                            cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
-                            con.Open();
-                            if (cmdClientUser.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        }
-                    }
-
-
-                    //update trans QC table
-
-                    //if (irfDetails.QualityController != null)
-                    //{
-                    //    foreach (var item in irfDetails.QualityController)
-                    //    {
-                    //        DynamicParameters param2 = new DynamicParameters();
-                    //        param2.Add("@irfIntId", irfDetails.id);
-                    //        param2.Add("@InterviewerUserId", item.UserId);
-                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
-                    //                commandType: CommandType.StoredProcedure);
-
-                    //    }
-                    //}
-                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
-                    {
-                        try
-                        {
-                            DataTable qualityControllerDt = new DataTable();
-                            qualityControllerDt.Columns.Add("IRFId", typeof(int));
-                            qualityControllerDt.Columns.Add("UserId", typeof(int));
-                            qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
-                            qualityControllerDt.Columns.Add("IsActive", typeof(bool));
-
-                            foreach (var item in irfDetails.QualityController)
-                            {
-                                qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
-                            }
-
-                            SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
-                            cmdQualityController.CommandType = CommandType.StoredProcedure;
-                            cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
-                            cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
-                            con.Open();
-                            if (cmdQualityController.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        }
-                    }
-
-
-                    //if (irfDetails.ResumeEvaluatorCollection != null)
-                    //{
-                    //    foreach (var item in irfDetails.ResumeEvaluatorCollection)
-                    //    {
-                    //        DynamicParameters param2 = new DynamicParameters();
-                    //        param2.Add("@irfId", irfDetails.id);
-                    //        param2.Add("@ResumeEvaluatorUserId", item.UserId);
-                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
-                    //                commandType: CommandType.StoredProcedure);
-
-                    //    }
-                    //}
-
-                    //DataTable resumeEvaluatorDt = new DataTable();
-                    //resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
-                    //resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
-
-                    //foreach (var item in irfDetails.ResumeEvaluatorCollection)
-                    //{
-                    //    resumeEvaluatorDt.Rows.Add(irfDetails.id, item.UserId);
-                    //}
-
-                    //SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
-                    //cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
-                    //cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
-                    //cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
-                    //con.Open();
-                    //if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
-                    //{
-                    //    con.Close();
-                    //}
-
-                    //if (irfDetails.HRCollection != null)
-                    //{
-                    //    foreach (var item in irfDetails.HRCollection)
-                    //    {
-                    //        DynamicParameters param2 = new DynamicParameters();
-                    //        param2.Add("@irfId", irfDetails.id);
-                    //        param2.Add("@HRUserId", item.UserId);
-                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
-                    //                commandType: CommandType.StoredProcedure);
-
-                    //    }
-                    //}
-
-                    try
-                    {
-                        DataTable hRDt = new DataTable();
-                        hRDt.Columns.Add("IRFId", typeof(int));
-                        hRDt.Columns.Add("UserId", typeof(int));
-
-                        foreach (var item in irfDetails.HRCollection)
-                        {
-                            hRDt.Rows.Add(irfDetails.id, item.UserId);
-                        }
-
-                        SqlCommand cmdHR = new SqlCommand("usp_HRBulkInsert", con);
-                        cmdHR.CommandType = CommandType.StoredProcedure;
-                        cmdHR.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
-                        cmdHR.Parameters["@HRBulkData"].Value = hRDt;
-                        con.Open();
-                        if (cmdHR.ExecuteNonQuery() != 0)
-                        {
-                            con.Close();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    }
-
-
 
                     return true;
                 }

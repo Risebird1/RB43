@@ -18,7 +18,7 @@ Select Distinct 'Interviewer' as [Type],CTE.UserId,CTE.AssessmentGroupId, ul.Ema
 From CTE join Userlist ul on CTE.Userid=ul.id 
 join InterviewerProfile ip on ip.UserId=ul.id
 left join InterviewMeetings im on im.interviewer=ul.EmailId
-where CTE.value=1 and (im.confirmationStatus=1 or im.confirmationStatus is null)
+where CTE.AssessmentGroupId like @Assessmentid and (im.confirmationStatus=1 or im.confirmationStatus is null)
 group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+' '+ul.LastName,ip.ResumeLink,ip.Isavailable
 END
 GO
