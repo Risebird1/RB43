@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -6604,6 +6605,38 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Broadcast failed, Please try again.");
             }
+        }
+        [HttpPost]
+        public JsonResult FetchIRFAudioLink(int irfid)
+        {
+            var audiofilelink = _irfService.FetchIRFAudioLink(irfid);
+            return Json(audiofilelink);
+        }
+        [HttpPost]
+        public async Task<string> UploadAudio()
+        {
+            var file = Request.Form.Files;
+
+            var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
+            var Irfid = fileName.Split("_")[2];
+            string uploadedfbaudioFileURL = string.Empty;
+            if (file != null)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
+                {
+                    await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedfbaudioFileURL = blob.Uri.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            _irfService.SaveIRFAudioLink(Convert.ToInt32(Irfid), uploadedfbaudioFileURL);
+            return uploadedfbaudioFileURL;
         }
     }
 }

@@ -1703,16 +1703,18 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
 
-                        foreach (var item in irfDetails.SkillCollection)
+                    foreach (var item in irfDetails.SkillCollection)
+                    {
+                        if (String.IsNullOrEmpty(item.Concepts))
                         {
-                            if (String.IsNullOrEmpty(item.Concepts)){
-                                item.Concepts = "";
-                            }
-                            if (String.IsNullOrEmpty(item.Natureofquestion)){
-                                item.Natureofquestion = "";
-                            }
-                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                            item.Concepts = "";
                         }
+                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        {
+                            item.Natureofquestion = "";
+                        }
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                    }
 
                     DataTable interviewerDt = new DataTable();
 
@@ -1871,7 +1873,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
 
 
-                    if(joinabilityDt != null && joinabilityDt.Rows.Count>0)
+                    if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
@@ -5169,6 +5171,49 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public string FetchIRFAudioLink(int irfid)
+        {
+            try
+            {
+                var query = "Select AudioComment From IRF where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, null);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public bool SaveIRFAudioLink(int irfid, string commentAudioLink)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                dynamicParameters.Add("@AudioComment", commentAudioLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

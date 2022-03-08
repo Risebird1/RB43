@@ -30,6 +30,7 @@ CREATE TABLE [dbo].[IRF](
             [IsQCRequired][bit] NULL,
             [IsJoinabilitySelectabilityRequired][bit] NULL,
             [IsGeneralSkillRequired][bit] NULL,
+            [AudioComment][VARCHAR](1000) NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -221,6 +222,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add IsGeneralSkillRequired bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AudioComment')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add AudioComment varchar(1000)
 END
 
 END
