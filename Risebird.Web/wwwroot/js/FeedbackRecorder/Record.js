@@ -193,7 +193,6 @@ function stopIRFRecording(id) {
     rec.exportWAV(createIRFDownloadLink);
 }
 function createIRFDownloadLink(blob) {
-    debugger;
     var list = document.getElementById("recordingsList");
     var firstChild = list.firstChild;
     if (firstChild) {
