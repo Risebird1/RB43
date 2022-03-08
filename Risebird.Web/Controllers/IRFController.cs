@@ -6568,5 +6568,41 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpPost]
+        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new BroadcastModel
+                        {
+                            Message = message,
+                            Subject = subject
+                        };
+                        model.IRFId = irfid;
+                        var result = _meetingService.BroadcastIRFmembers(model);
+                        return Json(result.Result);
+                    }
+                    else
+                    {
+                        return Json("You are not authorize to send broadcast.");
+                    }
+                }
+                else
+                {
+                    return Json("Broadcast failed, Please try again.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Broadcast failed, Please try again.");
+            }
+        }
     }
 }

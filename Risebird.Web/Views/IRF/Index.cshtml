@@ -412,6 +412,12 @@
                                                                 <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                                     <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
                                                                 </button>
+                                                                @if (model.Profile == "Client")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="BroadCast">
+                                                                        <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="BroadCast" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                                    </button>
+                                                                }
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability">
                                                                     <span onclick="javascript:CheckIntervieweravailbility('@item.id', '@item.IRFId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
@@ -1035,6 +1041,45 @@
     </div>
 </div>
 
+<div id="broadcastModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Broadcast</h5>(<label id="boradcastIrfName"></label>)
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" onclick="closeBroadcastModal()">&times;</span>
+            </button>
+
+            <div class="modal-body">
+                <input type="hidden" id="hid_irfid_broadcast" />
+                <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Subject">Subject <span class="required">*</span></label>
+                        <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
+                        <div>
+                            <div class="text-areadiv1">
+                                <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 text-right">
+                    <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
+                    <button type="button" onclick="closeBroadcastModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
 
     var currentPageNumber = 1;
@@ -2060,7 +2105,33 @@
         }
     }
 </script>
+<script>
+    function closeBroadcastModal() {
+        var modal = document.getElementById("broadcastModal");
+        modal.style.display = "none";
+    }
+    function OpenBroadcastModal(irfid, Irfname) {
+        var modalBct = document.getElementById("broadcastModal");
+        modalBct.style.display = "block";
+        $("#hid_irfid_broadcast").val(irfid);
+        $("#boradcastIrfName").text(Irfname);
+        return;
+    }
 
+    function SendBroadcast() {
+        var message = document.getElementById("bcMessage").value;
+        var subject = document.getElementById("bcSubject").value;
+        var irfid = document.getElementById("hid_irfid_broadcast").value;
+        $.ajax({
+            type: "POST",
+            url: "/IRF/BroadcastIRFmembers",
+            data: { 'message': message, 'subject': subject, 'irfid': irfid },
+            success: function (data) {
+                window.location.href = '/IRF/Index';
+            }
+        });
+    }
+</script>
 @*<script type="text/javascript">
         $(".sb-container").scrollBox();
     </script>*@
