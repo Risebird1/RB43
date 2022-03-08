@@ -2074,10 +2074,10 @@ namespace Risebird.Web.Controllers
                         {
                             model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                         }
-                        else
-                        {
-                            model.id = 0;
-                        }
+                        //else
+                        //{
+                        //    model.id = 0;
+                        //}
                         if ((model.JDFile != null))
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
@@ -2140,6 +2140,7 @@ namespace Risebird.Web.Controllers
                                 model.CalendlyLink = _schedulinglink;
                             }
                             //End: Auto Generate Scheduling Link
+                            model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
