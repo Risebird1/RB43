@@ -1703,10 +1703,16 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
 
-                    foreach (var item in irfDetails.SkillCollection)
-                    {
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
-                    }
+                        foreach (var item in irfDetails.SkillCollection)
+                        {
+                            if (String.IsNullOrEmpty(item.Concepts)){
+                                item.Concepts = "";
+                            }
+                            if (String.IsNullOrEmpty(item.Natureofquestion)){
+                                item.Natureofquestion = "";
+                            }
+                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        }
 
                     DataTable interviewerDt = new DataTable();
 
