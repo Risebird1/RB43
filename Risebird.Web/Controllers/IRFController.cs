@@ -6570,6 +6570,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
         [HttpPost]
         public JsonResult BroadcastIRFmembers(string message, string subject, int irfid)
         {
@@ -6637,6 +6638,21 @@ namespace Risebird.Web.Controllers
             }
             _irfService.SaveIRFAudioLink(Convert.ToInt32(Irfid), uploadedfbaudioFileURL);
             return uploadedfbaudioFileURL;
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetAssessmentGroupQuestionList(int Assessmentid)
+        {
+            try
+            {
+                var model = await _irfService.GetAssessmentGroupQuestionList(Assessmentid);
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var model = new List<AssessmentIRFListVM>();
+                return Json(model);
+            }
         }
     }
 }

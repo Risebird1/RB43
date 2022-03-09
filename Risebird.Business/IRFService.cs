@@ -2350,5 +2350,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
+        {
+            try
+            {
+                return await _irfRepository.GetAssessmentGroupQuestionList(Assessmentid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

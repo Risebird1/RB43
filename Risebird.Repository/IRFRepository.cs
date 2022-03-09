@@ -5181,7 +5181,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", irfid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, null);
+                    var results = con.Query<string>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
@@ -5214,6 +5214,29 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
+        {
+            try
+            {
+                var query = "Select IRF.IRFId,sk.Name as PrimarySkillInvite,ts.Comment From TechSkillComments ts join IRF on IRF.id=ts.IRFId join Skill sk on sk.id=ts.Skill where AssessmentGroupId = @Assessmentid order by IRF.IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Assessmentid", Assessmentid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<AssessmentIRFListVM>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

@@ -100,7 +100,7 @@
                                             </td>
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.CategoryName</a></td>
                                             <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
-                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
+                                            <td class="table-h">@item.Assessmentcount</td>
                                             @if (item.Isinstaavailable)
                                             {
                                                 <td>Yes</td>
@@ -119,6 +119,11 @@
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Skill Channel List">
                                                     <span onclick="javascript:getIRFList('@item.id');" title="Skill Channel List" class="mdc-fab__icon material-icons">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-video2" viewBox="0 0 16 16"><path d="M10 9.05a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path d="M2 1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2ZM1 3a1 1 0 0 1 1-1h2v2H1V3Zm4 10V2h9a1 1 0 0 1 1 1v9c0 .285-.12.543-.31.725C14.15 11.494 12.822 10 10 10c-3.037 0-4.345 1.73-4.798 3H5Zm-4-2h3v2H2a1 1 0 0 1-1-1v-1Zm3-1H1V8h3v2Zm0-3H1V5h3v2Z" /></svg>
+                                                    </span>
+                                                </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Questions List">
+                                                    <span onclick="javascript:getQuestionsList('@item.id');" title="Questions List" class="mdc-fab__icon material-icons">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle-fill" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z" /></svg>
                                                     </span>
                                                 </button>
                                             </td>
@@ -234,6 +239,25 @@
                 <span aria-hidden="true" id="listmembersPopUp" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" id="listmemberTableBody" style="overflow:auto;max-height:30vw">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="QuestionsListModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Question Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" onclick="closeQuestionsListModal()" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="questionlistTableBody" style="overflow:auto;max-height:30vw">
 
             </div>
         </div>
@@ -389,5 +413,48 @@
                 $('#listmemberTableBody').html(data);
             }
         });
+    }
+    function getQuestionsList(id) {
+        $.ajax({
+            url: '/IRF/GetAssessmentGroupQuestionList',
+            type: 'POST',
+            data: { 'Assessmentid': id },
+            success: function (data) {
+                var modal = document.getElementById("QuestionsListModal");
+                modal.style.display = "block";
+                bindquestiondata(data);
+            }
+        });
+    }
+    function closeQuestionsListModal() {
+        var modal = document.getElementById("QuestionsListModal");
+        modal.style.display = "none";
+    }
+    function bindquestiondata(data) {
+        var html = '';
+        html += '<div id="style-2" class="scrollers" style="overflow-y:auto">';
+        html += '<table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">';
+        html += '<thead>';
+        html += ' <tr>';
+        html += '       <th>IRFId</th>';
+        html += '       <th class="text-center">Skill</th>';
+        html += '       <th class="text-center">Question</th>';
+        html += ' </tr>';
+        html += '</thead>';
+        html += '<tbody>';
+        for (var i = 0; i < data.length; i++) {
+            html += ' <tr>';
+            html += '       <td>' + data[i].irfId + '</td>';
+            html += '       <td>' + data[i].primarySkillInvite + '</td>';
+            html += '       <td>' + data[i].comment + '</td>';
+            html += '             </tr>';
+        }
+        html += ' </tbody> ';
+        html += ' </table>';
+        html += ' </div>';
+        if (data.length == 0) {
+            html += '  <div>No  Skill Channel for this Assessment Group</div>';
+        }
+        $("#questionlistTableBody").empty().html(html);
     }
 </script>
