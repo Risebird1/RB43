@@ -409,16 +409,16 @@
 
                                                         None
 
-                                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                            <div class="mdc-radio mdc-radio--touch">
-                                                                <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
-                                                                <div class="mdc-radio__background">
-                                                                    <div class="mdc-radio__outer-circle"></div>
-                                                                    <div class="mdc-radio__inner-circle"></div>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="ncompanydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
                                                                 </div>
-                                                                <div class="mdc-radio__ripple"></div>
                                                             </div>
-                                                        </div>
 
 
 
@@ -1888,7 +1888,7 @@
                     document.getElementById("tab-5").style.display = "none";
                 }
             }
-            
+
             else if (activeTab.trim() == "General Skill") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
@@ -2662,12 +2662,16 @@
             document.getElementById("linkcdDiv").style.display = "none";
             document.getElementById("CompanyDetails").value = '';
 
-        }
-        else {
+        } else if (val == 'Link') {
             document.getElementById("uploadcdDiv").style.display = "none";
             document.getElementById("linkcdDiv").style.display = "block";
             document.getElementById("CompanyDetailFile").value = '';
-
+        }
+        else {
+            document.getElementById("linkcdDiv").style.display = "none";
+            document.getElementById("CompanyDetails").value = '';
+            document.getElementById("uploadcdDiv").style.display = "none";
+            document.getElementById("CompanyDetailFile").value = '';
         }
 
     }
@@ -3598,7 +3602,6 @@
     }
 
     function InterviewerChanged(val, id) {
-
         var index = id.split('_')[1];
         //var index = id.charAt(22);
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
@@ -3624,7 +3627,7 @@
                 $("#" + rateElementid).val(result);
             }
         });
-
+        $("#" + id).val(val);
     }
 
     function EmergencyInterviewerChanged(val, id) {

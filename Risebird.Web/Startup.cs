@@ -145,7 +145,8 @@ namespace Risebird.Web
                        .Allow("wss://matrix.twilio.com")
                        .Allow("https://wchat.freshchat.com/")
                        .Allow("blob:")
-                       .Allow("https://www.google-analytics.com/");
+                       .Allow("https://www.google-analytics.com/")
+                       .Allow("https://dc.services.visualstudio.com/");
 
                 builder.Scripts
                        .AllowSelf()
@@ -172,6 +173,7 @@ namespace Risebird.Web
                        .Allow("https://wchat.freshchat.com/")
                        .Allow("https://az416426.vo.msecnd.net")
                        .Allow("https://cdn.rawgit.com/")
+                       .Allow("https://dc.services.visualstudio.com/")
                        .Allow("blob:")
                        .Allow("'unsafe-inline'");
 

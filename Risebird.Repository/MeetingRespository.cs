@@ -1431,7 +1431,7 @@ namespace Risebird.Repository
                     parametersPoints.Add("@Type", "Interview");
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-                    if (reportDetails.TechSkillReportCollection != null)
+                    if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x=>x.ActualLevelId==0))
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -1458,7 +1458,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    if (reportDetails.SkillGeneralReportCollection != null)
+                    if (reportDetails.SkillGeneralReportCollection != null && reportDetails.IsGeneralSkillRequired)
                     {
                         DataTable skillGeneralReportDt = new DataTable();
                         skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
@@ -1692,7 +1692,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRFId, JDTiltle from IRF where id = @id";
+                var query = "Select IRFId, JDTiltle, IsGeneralSkillRequired from IRF where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

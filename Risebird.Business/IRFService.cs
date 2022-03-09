@@ -2165,10 +2165,6 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.UnAttendedZoomLink > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
                     if (irf.MissingVideoLink > 0)
                     {
                         irf.Flags = irf.Flags + 1;
@@ -2300,10 +2296,6 @@ namespace Risebird.Business
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.UnAttendedZoomLink > 0)
-                    {
-                        irf.Flags = irf.Flags + 1;
-                    }
                     if (irf.MissingVideoLink > 0)
                     {
                         irf.Flags = irf.Flags + 1;
@@ -2322,6 +2314,18 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.GetAssessmentGroupInterviewerMembers(Assessmentid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid)
+        {
+            try
+            {
+                return await _irfRepository.GetAssessmentGroupIRFList(Assessmentid);
             }
             catch (Exception e)
             {

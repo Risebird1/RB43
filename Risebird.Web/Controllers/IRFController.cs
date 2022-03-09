@@ -2084,10 +2084,10 @@ namespace Risebird.Web.Controllers
                         {
                             model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                         }
-                        else
-                        {
-                            model.id = 0;
-                        }
+                        //else
+                        //{
+                        //    model.id = 0;
+                        //}
                         if ((model.JDFile != null))
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
@@ -2150,6 +2150,7 @@ namespace Risebird.Web.Controllers
                                 model.CalendlyLink = _schedulinglink;
                             }
                             //End: Auto Generate Scheduling Link
+                            model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel has been saved Successfully!";
@@ -6562,6 +6563,20 @@ namespace Risebird.Web.Controllers
                 var model = await _irfService.GetAssessmentGroupInterviewerMembers(Assessmentid);
                 model = model.Select(x => { x.AvailableStatus = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.AvailableStatus)).GetDescription(); return x; }).ToList();
                 return PartialView("IRFInterviewerMembersPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAssessmentGroupIRFList(int Assessmentid)
+        {
+            try
+            {
+                var model = await _irfService.GetAssessmentGroupIRFList(Assessmentid);
+                return PartialView("GetAssessmentGroupIRFList", model);
             }
             catch (Exception ex)
             {

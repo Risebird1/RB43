@@ -8,5 +8,6 @@ namespace Risebird.CommonHelper.Interface
     {
         Task LogMessage(LogLevelInfo logLevelInfo, Exception ex, string userEmailid = "");
         Task LogMessage(LogLevelInfo logLevelInfo, string message, string userEmailid = "");
+        Task LogUpdateIRFMessage(LogLevelInfo logLevelInfo, Exception ex, string userEmailid = "");
     }
 }
