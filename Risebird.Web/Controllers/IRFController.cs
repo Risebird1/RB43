@@ -6570,19 +6570,19 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAssessmentGroupIRFList(int Assessmentid)
-        {
-            try
-            {
-                var model = await _irfService.GetAssessmentGroupIRFList(Assessmentid);
-                return PartialView("GetAssessmentGroupIRFList", model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAssessmentGroupIRFList(int Assessmentid)
+        //{
+        //    try
+        //    {
+        //        var model = await _irfService.GetAssessmentGroupIRFList(Assessmentid);
+        //        return PartialView("GetAssessmentGroupIRFList", model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
     }
 }

@@ -160,6 +160,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
         Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid);
         Task<IRFRecommendations> GetIRFRecommendation(int irfId);
-        Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
+        //Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
     }
 }

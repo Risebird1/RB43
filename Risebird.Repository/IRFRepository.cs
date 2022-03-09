@@ -5192,28 +5192,28 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@Assessmentid", Assessmentid);
-                    return await SqlMapper.QueryAsync<AssessmentIRFListVM>(con, "usp_GetAssessmentGroupIRFList", parameters,
-                         commandType: CommandType.StoredProcedure);
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
+        //public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var parameters = new DynamicParameters();
+        //            parameters.Add("@Assessmentid", Assessmentid);
+        //            return await SqlMapper.QueryAsync<AssessmentIRFListVM>(con, "usp_GetAssessmentGroupIRFList", parameters,
+        //                 commandType: CommandType.StoredProcedure);
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    return null;
+        //}
     }
 }
            
