@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -6567,6 +6568,90 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new BroadcastModel
+                        {
+                            Message = message,
+                            Subject = subject
+                        };
+                        model.IRFId = irfid;
+                        var result = _meetingService.BroadcastIRFmembers(model);
+                        return Json(result.Result);
+                    }
+                    else
+                    {
+                        return Json("You are not authorize to send broadcast.");
+                    }
+                }
+                else
+                {
+                    return Json("Broadcast failed, Please try again.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Broadcast failed, Please try again.");
+            }
+        }
+        [HttpPost]
+        public JsonResult FetchIRFAudioLink(int irfid)
+        {
+            var audiofilelink = _irfService.FetchIRFAudioLink(irfid);
+            return Json(audiofilelink);
+        }
+        [HttpPost]
+        public async Task<string> UploadAudio()
+        {
+            var file = Request.Form.Files;
+
+            var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
+            var Irfid = fileName.Split("_")[2];
+            string uploadedfbaudioFileURL = string.Empty;
+            if (file != null)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
+                {
+                    await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedfbaudioFileURL = blob.Uri.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            _irfService.SaveIRFAudioLink(Convert.ToInt32(Irfid), uploadedfbaudioFileURL);
+            return uploadedfbaudioFileURL;
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetAssessmentGroupQuestionList(int Assessmentid)
+        {
+            try
+            {
+                var model = await _irfService.GetAssessmentGroupQuestionList(Assessmentid);
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var model = new List<AssessmentIRFListVM>();
+                return Json(model);
             }
         }
     }
