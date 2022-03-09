@@ -224,7 +224,8 @@ namespace Risebird.Web
                        .AllowSelf()
                        .Allow("https://risebirdportal.blob.core.windows.net/")
                        .Allow("https://prodvideo.blob.core.windows.net/")
-                       .Allow("https://static.twilio.com/");
+                       .Allow("https://static.twilio.com/")
+                       .Allow("https://api.twilio.com/");
 
                 builder.Frame
                        .AllowSelf()
