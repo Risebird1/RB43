@@ -53,6 +53,7 @@ namespace Risebird.Entities.ViewModel
         public List<AssessmentQuestions> Questionslist { get; set; }
         public bool Isinstaavailable { get; set; }
         public string CategoryName { get; set; }
+        public int IrfCount { get; set; }
     }
     public class Assessment
     {
