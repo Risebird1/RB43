@@ -420,13 +420,20 @@
                                                                     {
                                                                         <td>No JD</td>
                                                                     }*@
-                                                                @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                                                                @if (!String.IsNullOrEmpty(item.AudioComment))
                                                                 {
-                                                                    <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ","%20")>Instructions</a></td>
+                                                                    <td><a href='@item.AudioComment' asp-append-version="true" download>@item.AudioComment.Split('/').Last()</a></td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>No Instructions</td>
+                                                                    @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                                                                    {
+                                                                        <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", "%20")>Instructions</a></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No Instructions</td>
+                                                                    }
                                                                 }
                                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                                 {
