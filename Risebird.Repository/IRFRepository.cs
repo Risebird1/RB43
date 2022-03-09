@@ -5191,10 +5191,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-    }
-}
-            return null;
-        }
+
         public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid)
         {
             try
@@ -5219,3 +5216,4 @@ namespace Risebird.Repository
         }
     }
 }
+           
