@@ -76,6 +76,7 @@
                                         <th width="30%">Category</th>
                                         <th>Primary Skills</th>
                                         <th width="4%">Number Of Interviewer</th>
+                                        <th width="4%">Number Of IRF</th>
                                         <th>Insta Available</th>
                                         <th>Action</th>
                                     </tr>
@@ -101,6 +102,7 @@
                                             <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.CategoryName</a></td>
                                             <td><a class="wsp-normal" href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
                                             <td class="table-h">@item.Assessmentcount</td>
+                                            <td class="table-h">@item.IrfCount</td>
                                             @if (item.Isinstaavailable)
                                             {
                                                 <td>Yes</td>
