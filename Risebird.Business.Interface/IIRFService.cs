@@ -103,5 +103,8 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
         Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
+        string FetchIRFAudioLink(int irfid);
+        bool SaveIRFAudioLink(int irfid, string commentAudioLink);
+        Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
     }
 }

@@ -16,10 +16,10 @@ function startRecording() {
     document.getElementById("startRecButton").disabled = true;
     document.getElementById("cancelRecButton").disabled = false;
     document.getElementById("recordingStatus").innerHTML = "Recording started...";
-	
+
     var constraints = { audio: true, video: false };
 
-    
+
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
         //console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
 
@@ -52,7 +52,7 @@ function startRecording() {
 
     }).catch(function (err) {
         //enable the record button if getUserMedia() fails
-       
+
     });
 }
 
@@ -96,7 +96,7 @@ function createDownloadLink(blob) {
 
     }
 
- 
+
     var url = URL.createObjectURL(blob);
     var au = document.createElement('audio');
     //var li = document.createElement('li');
@@ -104,7 +104,7 @@ function createDownloadLink(blob) {
     var link = document.createElement('a');
     //var recordingList = document.getElementById("recordingsList");
     //name of .wav file to use during upload and download (without extendion)
-    var filename = "Audio_FeedBack_" + interviewId +"_"+ new Date().toISOString();//new Date().toISOString();
+    var filename = "Audio_FeedBack_" + interviewId + "_" + new Date().toISOString();//new Date().toISOString();
 
     //add controls to the <audio> element
     au.controls = true;
@@ -124,7 +124,7 @@ function createDownloadLink(blob) {
     //add the save to disk link to li
     li.appendChild(link);
 
-   
+
     document.getElementById('btnUpload').disabled = true;
 
     var fd = new FormData();
@@ -160,7 +160,7 @@ function createDownloadLink(blob) {
 
 }
 function afterTimeOut() {
-    document.getElementById("recordingStatus").innerHTML='';
+    document.getElementById("recordingStatus").innerHTML = '';
 }
 
 function cancelRecording() {
@@ -170,13 +170,72 @@ function cancelRecording() {
     document.getElementById("recordingStatus").innerHTML = "Recording cancelled!";
     setTimeout(afterTimeOut, 500);
     //console.log("stopButton clicked");
-
     //disable the stop button, enable the record too allow for new recordings
-
-
     //reset button just in case the recording is stopped while paused
-
     //tell the recorder to stop the recording
     rec.stop();
     gumStream.getAudioTracks()[0].stop();
+}
+function stopIRFRecording(id) {
+    document.getElementById("stopRecButton").disabled = true;
+    document.getElementById("startRecButton").disabled = false;
+    document.getElementById("cancelRecButton").disabled = true;
+    document.getElementById("recordingStatus").innerHTML = "Recording stopped!";
+        interviewId = id;
+    candidateType = 3;
+    //tell the recorder to stop the recording
+    rec.stop();
+
+    //stop microphone access
+    gumStream.getAudioTracks()[0].stop();
+
+    //create the wav blob and pass it on to createDownloadLink
+    rec.exportWAV(createIRFDownloadLink);
+}
+function createIRFDownloadLink(blob) {
+    var list = document.getElementById("recordingsList");
+    var firstChild = list.firstChild;
+    if (firstChild) {
+        list.removeChild(list.childNodes[0]);
+    }
+
+    var url = URL.createObjectURL(blob);
+    var au = document.createElement('audio');
+    var li = document.createElement('div');
+    var link = document.createElement('a');
+    var filename = "Audio_ClientIRF_" + interviewId + "_" + new Date().toISOString();
+
+    au.controls = true;
+    au.src = url;
+
+    //save to disk link
+    link.href = url;
+    link.download = filename + ".wav";
+    link.innerHTML = "Save to disk";
+
+    //add the new audio element to li
+    li.appendChild(au);
+
+    //add the save to disk link to li
+    li.appendChild(link);
+
+    var fd = new FormData();
+    fd.append("audio_data", blob, filename + ".wav");
+
+    $.ajax({
+        url: '/IRF/UploadAudio',
+        data: fd,
+        processData: false,
+        contentType: false,
+        type: "POST",
+        success: function (data) {
+            document.getElementById("recordingStatus").innerHTML = '';
+            document.getElementById('anchorAudioId').href = data;
+            splitData = data.split("/");
+            document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
+            document.getElementById('controlAudioId').src = data;
+        }
+    });
+    recordingsList.appendChild(li);
+    document.getElementById('recordingRow').style.display = "block";
 }
