@@ -31,5 +31,11 @@ namespace Risebird.Entities.ViewModel
         public string StatusRadioValue { get; set; } = "true";
         public SelectList CategoryList { get; set; }
 
+        [DisplayName("Assessment Group")]
+        public int? AssessmentGroupId { get; set; }
+
+        public SelectList AssessmentGroupsList { get; set; }
+
+
     }
 }

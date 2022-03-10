@@ -938,15 +938,15 @@ namespace Risebird.Business
                             _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
 
                         }
-                        var hrs = _userService.GetAllHrsEmailld()?.ToList();
-                        if (hrs != null)
-                        {
-                            var candidateEmail = meeting.Result.candidateEmail;
-                            var Skillchannelid = meeting.Result.IRFId;
-                            var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
-                            //_notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
+                        //var hrs = _userService.GetAllHrsEmailld()?.ToList();
+                        //if (hrs != null)
+                        //{
+                        //    var candidateEmail = meeting.Result.candidateEmail;
+                        //    var Skillchannelid = meeting.Result.IRFId;
+                        //    var client = _interviewerRepository.FetchClientName(meeting.Result.IRFId);
+                        //    //_notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email, Skillchannelid, client);
 
-                        }
+                        //}
                     }
                     return true;
                 }

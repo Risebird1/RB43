@@ -49,6 +49,13 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 	@HRBulkData AS [dbo].[TransHR_TableType] READONLY
+	--@idRecommendation int,
+	--@RecommendationStatus bit,
+	--@RecommendationCategoryId int,
+	--@RecommendationCompetencyLevelId int,
+	--@RecommendationSeniorityLevelId int,
+	--@RecommendationCountryType int,
+	--@RecommendationModifiedOn datetime
 
 )    
 AS    
@@ -208,7 +215,15 @@ BEGIN
 	[HRId])  
    
 	SELECT hrbd.IRFId, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId  
-  
+	
+	--IF EXISTS(Select 1 from IRFRecommendations where id = @idRecommendation)     
+	--BEGIN
+	--	update IRFRecommendations set 
+	--	[Status] = @RecommendationStatus, CategoryId = @RecommendationCategoryId, CompetencyLevelId = @RecommendationCompetencyLevelId, 
+	--	SeniorityLevelId = @RecommendationSeniorityLevelId,
+	--	CountryType = @RecommendationCountryType, ModifiedOn = @RecommendationModifiedOn where id = @idRecommendation
+		   
+	--END   
   
   commit tran  
  end try  

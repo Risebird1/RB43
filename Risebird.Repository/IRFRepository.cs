@@ -1880,8 +1880,42 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsGeneralSkillRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
 
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@idRecommendation", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@idRecommendation"].Value = irfDetails.IRFRecommendations.id;
 
-                    if(joinabilityDt != null && joinabilityDt.Rows.Count>0)
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationStatus", SqlDbType.Bit));
+                    //cmdUpdateIRF.Parameters["@RecommendationStatus"].Value = irfDetails.IRFRecommendations.Status;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCategoryId", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@RecommendationCategoryId"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCompetencyLevelId", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@RecommendationCompetencyLevelId"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationSeniorityLevelId", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@RecommendationSeniorityLevelId"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCountryType", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@RecommendationCountryType"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null;
+
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationModifiedOn", SqlDbType.DateTime));
+                    //cmdUpdateIRF.Parameters["@RecommendationModifiedOn"].Value = DateTime.Now;
+
+
+                    //DynamicParameters recomParameters = new DynamicParameters();
+                    //recomParameters.Add("id", irfDetails.IRFRecommendations.id);
+                    //recomParameters.Add("IRFId", irfDetails.id);
+                    //recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
+                    //recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null);
+                    //recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null);
+                    //recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null);
+                    //recomParameters.Add("CountryType", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null);
+                    //recomParameters.Add("ModifiedOn", DateTime.Now);
+                    //SqlMapper.Query(con, "usp_UpdateIRFRecommendation", recomParameters,
+                    //commandType: CommandType.StoredProcedure);
+
+
+                    if (joinabilityDt != null && joinabilityDt.Rows.Count>0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
@@ -2045,19 +2079,6 @@ namespace Risebird.Repository
                             }
                         }
                     }
-
-                    DynamicParameters recomParameters = new DynamicParameters();
-                    recomParameters.Add("id", irfDetails.IRFRecommendations.id);
-                    recomParameters.Add("IRFId", irfDetails.id);
-                    recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
-                    recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null);
-                    recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null);
-                    recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null);
-                    recomParameters.Add("CountryType", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null);
-                    recomParameters.Add("ModifiedOn", DateTime.Now);
-                    SqlMapper.Query(con, "usp_UpdateIRFRecommendation", recomParameters,
-                    commandType: CommandType.StoredProcedure);
-
 
                     return true;
                 }
@@ -5192,28 +5213,28 @@ namespace Risebird.Repository
             }
         }
 
-        //public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid)
-        //{
-        //    try
-        //    {
-        //        using (SqlConnection con = new SqlConnection(connectionString))
-        //        {
-        //            var parameters = new DynamicParameters();
-        //            parameters.Add("@Assessmentid", Assessmentid);
-        //            return await SqlMapper.QueryAsync<AssessmentIRFListVM>(con, "usp_GetAssessmentGroupIRFList", parameters,
-        //                 commandType: CommandType.StoredProcedure);
-        //        }
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //    }
-        //    return null;
-        //}
+        public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Assessmentid", Assessmentid);
+                    return await SqlMapper.QueryAsync<AssessmentIRFListVM>(con, "usp_GetAssessmentGroupIRFList", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
            

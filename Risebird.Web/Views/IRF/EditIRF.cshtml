@@ -66,7 +66,10 @@
                                             <li id="qc"><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
                                             <li><a href="#" id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>
                                             @*<li><a href="#" rel="tab-11" id="rtab-11" class="">Resume Evaluator</a></li>*@
-                                            <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Recommendation</a></li>
+                                            @if (Model.UseAsCloneTemplate)
+                                            {
+                                                <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Recommendation</a></li>
+                                            }
                                             <li><a href="#" id="rtab-12" class="" onclick="headerClickchange('tab-12')">Coordinator</a><span id="count_Hr" class="skillcount">@Model.HRCollection.Count()</span></li>
                                             @*<li><a href="#" rel="tab-13" id="rtab-13" class="">Recruiter</a></li>*@
 
@@ -409,16 +412,16 @@
 
                                                         None
 
-                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="ncompanydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
+                                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                            <div class="mdc-radio mdc-radio--touch">
+                                                                <input class="mdc-radio__native-control" type="radio" id="ncompanydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                                                <div class="mdc-radio__background">
+                                                                    <div class="mdc-radio__outer-circle"></div>
+                                                                    <div class="mdc-radio__inner-circle"></div>
                                                                 </div>
+                                                                <div class="mdc-radio__ripple"></div>
                                                             </div>
+                                                        </div>
 
 
 
@@ -1468,77 +1471,93 @@
                                             </div>
                                         </div>
                                     </div>
+                                    @if (Model.UseAsCloneTemplate)
+                                    {
+                                        <h3 class="tab_drawer_heading" rel="tab-11">Recommendation</h3>
+                                        <div class="tab-box" id="tab-11">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
+                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
 
-                                    <h3 class="tab_drawer_heading" rel="tab-11">Recommendation</h3>
-                                    <div class="tab-box" id="tab-11">
-                                        <div class="tab-main-box">
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
-                                                    @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
 
-
-                                                    @*Active
-                                                    <input id="IRFRecommendations_StatusRadioValue" name="IRFRecommendations.StatusRadioValue" asp-for="IRFRecommendations.StatusRadioValue" value="true" type="radio" checked onclick="RecommendationStatusChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">
-                                                    InActive
-                                                    <input id="IRFRecommendations_StatusRadioValue" name="IRFRecommendations.StatusRadioValue" asp-for="IRFRecommendations.StatusRadioValue" value="false" type="radio" onclick="RecommendationStatusChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">*@
+                                                       
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row" id="recommendationFields">
+                                                <div class="row" id="recommendationFields">
 
-                                                <div class="col-md-6 col-sm-6 pr-1">
+                                                    <div class="col-md-6 col-sm-6 pr-1">
 
-                                                    <div class="form-group">
-                                                        <div class="mandate">
-                                                            @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line" })@*(SelectList)ViewBag.CategoryList*@
+
+
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
+
+
                                                         </div>
-                                                        @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line" })@*(SelectList)ViewBag.CategoryList*@
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+
+                                                            @{
+                                                                var newList = new List<SelectListItem>();
+                                                                newList.Add(new SelectListItem() { Value = "", Text = "Please select Assessment Group Category" });
+                                                            }
+
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.AssessmentGroupId, newList, new { @class = "select-css form-control text-box single-line" })
+                                                            @*@Html.DropDownListFor(model => model.IRFRecommendations.AssessmentGroupId, Model.IRFRecommendations.AssessmentGroupsList, new { @class = "select-css form-control text-box single-line" })*@
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
 
 
-                                                        @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.CompetencyLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CompetencyLevelId, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "select-css form-control text-box single-line" })
 
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CompetencyLevelId, "", new { @class = "text-danger" })
+
+
+                                                        </div>
 
                                                     </div>
-                                                    <div class="form-group">
-                                                        <div class="mandate">
-                                                            @Html.LabelFor(model => model.IRFRecommendations.CompetencyLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    <div class="col-md-6 col-sm-6 pr-1">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CountryType, "", new { @class = "text -danger" })
+
                                                         </div>
-                                                        @Html.DropDownListFor(model => model.IRFRecommendations.CompetencyLevelId, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "select-css form-control text-box single-line" })
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.SeniorityLevelId, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
 
-                                                        @Html.ValidationMessageFor(model => model.IRFRecommendations.CompetencyLevelId, "", new { @class = "text-danger" })
+
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @class = "text-danger" })
 
 
+                                                        </div>
+
+                                                        @Html.HiddenFor(m => m.IRFRecommendations.id)
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-6 col-sm-6 pr-1">
-                                                    <div class="form-group">
-                                                        <div class="mandate">
-                                                            @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                        </div>
-
-                                                        @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.IRFRecommendations.CountryType, "", new { @class = "text -danger" })
-
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="mandate">
-                                                            @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                        </div>
-                                                        @Html.DropDownListFor(model => model.IRFRecommendations.SeniorityLevelId, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
-
-
-                                                        @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @class = "text-danger" })
-
-
-                                                    </div>
-
-                                                    @Html.HiddenFor(m => m.IRFRecommendations.id)
-                                                </div>
-
                                             </div>
                                         </div>
-                                    </div>
+                                    }
+
 
                                     <h3 class="tab_drawer_heading" rel="tab-12">Coordinator</h3>
                                     <div class="tab-box" id="tab-12">
@@ -1701,6 +1720,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $(".selectpicker").select2();
+        var useAsCloneTemplate = '@Model.UseAsCloneTemplate';
         $("#btnPrev").click(function () {
             var isGeneralSkillRequired = document.getElementById('IsGeneralSkillRequired').checked;
 
@@ -1805,8 +1825,14 @@
 
             else if (activeTab.trim() == "Coordinator") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-11").addClass("active");
-                document.getElementById("tab-11").style.display = "block";
+                if (useAsCloneTemplate == 'True') {
+                    $("#rtab-11").addClass("active");
+                    document.getElementById("tab-11").style.display = "block";
+                }
+                else {
+                    $("#rtab-10").addClass("active");
+                    document.getElementById("tab-10").style.display = "block";
+                }
                 document.getElementById("tab-12").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
@@ -1942,11 +1968,19 @@
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                    $("#rtab-11").addClass("active");
-                    document.getElementById("tab-11").style.display = "block";
+                    if (useAsCloneTemplate == 'True') {
+                        $("#rtab-11").addClass("active");
+                        document.getElementById("tab-11").style.display = "block";
+
+                    }
+                    else {
+                        $("#rtab-12").addClass("active");
+                        document.getElementById("tab-12").style.display = "block";
+                        document.getElementById("btnNext").style.display = "none";
+                        document.getElementById("btnUpload").style.display = "block";
+                    }
                     document.getElementById("tab-10").style.display = "none";
-                    //document.getElementById("btnNext").style.display = "none";
-                    //document.getElementById("btnUpload").style.display = "block";
+                    
 
                 }
             }
@@ -2493,6 +2527,35 @@
 
 </script>
 
+<script>
+    function AssessmentGroupCategoryChanged(categoryId) {
+
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetAssessmentGroupsByCategory",
+            data: { 'categoryId': categoryId },
+            success: function (data) {
+                var drpdwnId = $("#IRFRecommendations_AssessmentGroupId");
+                if (data.length > 0) {
+                    $("#IRFRecommendations_AssessmentGroupId option").remove();
+
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpdwnId.append(option);
+                    });
+                }
+
+            }
+        });
+
+    }
+
+</script>
 <script>
     $(document).ready(function () {
         var countryType = $("#JobCountry").val();

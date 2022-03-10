@@ -160,6 +160,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneralSkillRequired { get; set; }
 
         public IRFRecommendations IRFRecommendations { get; set; }
+        public bool UseAsCloneTemplate { get; set; }
     }
     public class InterviewerIds
     {

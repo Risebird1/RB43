@@ -1994,7 +1994,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
+        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false, bool useAsCloneTemplate = false)
         {
             try
             {
@@ -2011,6 +2011,7 @@ namespace Risebird.Web.Controllers
                         else { model.JobCountry = "2"; }
                     }
                     model.IsClone = isClone;
+                    model.UseAsCloneTemplate = useAsCloneTemplate;
                     SetEditIRFProperties(model);
                     //TempData["JDLink"] = model.JDLink;
                     model.OldJDLink = model.JDLink;
@@ -2290,6 +2291,10 @@ namespace Risebird.Web.Controllers
             }
             //ViewBag.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
             model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+            if(model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+            {
+                model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+            }
 
             //TempData["EditIRFId"] = model.IRFId;
             //model.IsClone = isClone;
@@ -6570,19 +6575,36 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        //[HttpGet]
-        //public async Task<IActionResult> GetAssessmentGroupIRFList(int Assessmentid)
-        //{
-        //    try
-        //    {
-        //        var model = await _irfService.GetAssessmentGroupIRFList(Assessmentid);
-        //        return PartialView("GetAssessmentGroupIRFList", model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAssessmentGroupIRFList(int Assessmentid)
+        {
+            try
+            {
+                var model = await _irfService.GetAssessmentGroupIRFList(Assessmentid);
+                return PartialView("GetAssessmentGroupIRFList", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId)
+        {
+            var list = new List<SelectListItem>();
+            var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
+            if (assessmentGroups != null && assessmentGroups.Count() > 0)
+            {
+                return new SelectList(assessmentGroups, "id", "AssessmentGroup");
+            }
+            else
+            {
+                list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
+
+            }
+            return new SelectList(list, "Value", "Text");
+        }
     }
 }

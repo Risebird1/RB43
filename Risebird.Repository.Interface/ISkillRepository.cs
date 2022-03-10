@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,5 +19,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateSkill(Skill entity);
         Task<bool> DeleteSkill(int id);
         IEnumerable<Skill> GetAssessmentGroupCategory();
+
+        Task<IEnumerable<AssignmentVM>> GetAssessmentGroupsByCategory(int categoryId);
     }
 }

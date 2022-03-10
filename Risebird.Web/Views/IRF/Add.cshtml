@@ -61,8 +61,8 @@
                                             <li id="qc"><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>
                                             <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
-                                            <li><a href="#" rel="tab-11" class="text-center" id="rtab-11">Recommendation</a></li>
-                                            <li><a href="#" rel="tab-12" class="" id="rtab-12">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
+                                            @*<li><a href="#" rel="tab-11" class="text-center" id="rtab-11">Recommendation</a></li>*@
+                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
                                             @*<li><a href="#" rel="tab-13" class="" id="rtab-13">Recruiter</a></li>*@
 
                                         </ul>
@@ -1142,7 +1142,7 @@
             </div>
         </div>
     </div>-->
-                                        <h3 class="tab_drawer_heading" rel="tab-11">Recommendation</h3>
+                                        <!--<h3 class="tab_drawer_heading" rel="tab-11">Recommendation</h3>
                                         <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -1150,26 +1150,40 @@
 
 
                                                         @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"}) Active<br />
-                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
+                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />-->
 
                                                         @*Active
                                                         <input id="IRFRecommendations_StatusRadioValue" name="IRFRecommendations.StatusRadioValue" asp-for="IRFRecommendations.StatusRadioValue" value="true" type="radio" checked onclick="RecommendationStatusChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">
                                                         InActive
                                                         <input id="IRFRecommendations_StatusRadioValue" name="IRFRecommendations.StatusRadioValue" asp-for="IRFRecommendations.StatusRadioValue" value="false" type="radio" onclick="RecommendationStatusChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">*@
-                                                    </div>
+                                                    <!--</div>
                                                 </div>
                                                 <div class="row" id="recommendationFields">
 
                                                     <div class="col-md-6 col-sm-6 pr-1">
-                                                        
+
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line" })@*(SelectList)ViewBag.CategoryList*@
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "AssessmentGroupCategoryChanged(this.value)" })-->@*(SelectList)ViewBag.CategoryList*@
 
 
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
+                                                            <!--@Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
+
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @{ 
+                                                                var newList = new List<SelectListItem>();
+                                                                newList.Add(new SelectListItem() { Value = "", Text = "Please select Assessment Group Category" });
+                                                            }
+                                                            
+                                                                @Html.DropDownListFor(model => model.IRFRecommendations.AssessmentGroupId, newList, new { @class = "select-css form-control text-box single-line" })-->@*(SelectList)ViewBag.CategoryList*@
+                                                                <!--@Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
 
 
                                                         </div>
@@ -1177,13 +1191,13 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.IRFRecommendations.CompetencyLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CompetencyLevelId, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "select-css form-control text-box single-line"})
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CompetencyLevelId, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "select-css form-control text-box single-line" })
 
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CompetencyLevelId, "", new {@class = "text-danger" })
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CompetencyLevelId, "", new { @class = "text-danger" })
 
 
                                                         </div>
-                                                        
+
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 pr-1">
                                                         <div class="form-group">
@@ -1211,9 +1225,9 @@
                                                     
                                                 </div>
                                             </div>
-                                        </div>
-                                        <h3 class="tab_drawer_heading" rel="tab-12">Coordinator</h3>
-                                        <div class="tab-box" id="tab-12">
+                                        </div>-->
+                                        <h3 class="tab_drawer_heading" rel="tab-11">Coordinator</h3>
+                                        <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
                                                 <div class="row">
 
@@ -1368,6 +1382,35 @@
 
 </script>
 
+@*<script>
+    function AssessmentGroupCategoryChanged(categoryId) {
+
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetAssessmentGroupsByCategory",
+            data: { 'categoryId': categoryId },
+            success: function (data) {
+                var drpdwnId = $("#IRFRecommendations_AssessmentGroupId");
+                if (data.length > 0) {
+                    $("#IRFRecommendations_AssessmentGroupId option").remove();
+
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpdwnId.append(option);
+                    });
+                }
+                
+            }
+        });
+
+    }
+
+</script>*@
 <script>
 
     $('#IsJoinabilitySelectabilityRequired').on('change', function () {
@@ -3124,12 +3167,12 @@
 
 
             }
-            else if (activeTab.trim() == "Recommendation") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-10").addClass("active");
-                document.getElementById("tab-10").style.display = "block";
-                document.getElementById("tab-11").style.display = "none";
-            }
+            //else if (activeTab.trim() == "Recommendation") {
+            //    $(".tab-menu li a").removeClass("active");
+            //    $("#rtab-10").addClass("active");
+            //    document.getElementById("tab-10").style.display = "block";
+            //    document.getElementById("tab-11").style.display = "none";
+            //}
 
             //else if (activeTab.trim() == "Coordinator") {
             //    $(".tab-menu li a").removeClass("active");
@@ -3141,9 +3184,9 @@
             //}
             else if (activeTab.trim() == "Coordinator") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-11").addClass("active");
-                document.getElementById("tab-11").style.display = "block";
-                document.getElementById("tab-12").style.display = "none";
+                $("#rtab-10").addClass("active");
+                document.getElementById("tab-10").style.display = "block";
+                document.getElementById("tab-11").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
             }
@@ -3404,18 +3447,18 @@
                     $("#rtab-11").addClass("active");
                     document.getElementById("tab-11").style.display = "block";
                     document.getElementById("tab-10").style.display = "none";
-                    
-
+                    document.getElementById("btnNext").style.display = "none";
+                    document.getElementById("btnUpload").style.display = "block";
                 }
             }
-            else if (activeTab.trim() == "Recommendation") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-12").addClass("active");
-                document.getElementById("tab-12").style.display = "block";
-                document.getElementById("tab-11").style.display = "none";
-                document.getElementById("btnNext").style.display = "none";
-                document.getElementById("btnUpload").style.display = "block";
-            }
+            //else if (activeTab.trim() == "Recommendation") {
+            //    $(".tab-menu li a").removeClass("active");
+            //    $("#rtab-12").addClass("active");
+            //    document.getElementById("tab-12").style.display = "block";
+            //    document.getElementById("tab-11").style.display = "none";
+            //    document.getElementById("btnNext").style.display = "none";
+            //    document.getElementById("btnUpload").style.display = "block";
+            //}
 
         });
     });
