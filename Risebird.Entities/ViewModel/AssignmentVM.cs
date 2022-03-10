@@ -78,6 +78,13 @@ namespace Risebird.Entities.ViewModel
         public bool Isinstaavailable { get; set; }
         public SelectList CategoryNameList { get; set; }
         public int Category { get; set; }
+        public bool IsRelevant { get; set; }
+        public int CompanyType { get; set; }
+        public SelectList CompanyTypeList { get; set; }
+        public int ProfileType { get; set; }
+        public int CompetencyLevel { get; set; }
+        public int Country { get; set; }
+        public int PerHourRate { get; set; }
     }
     public class AssessmentQuestions
     {

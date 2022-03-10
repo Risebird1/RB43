@@ -4571,8 +4571,16 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.AssessmentGroupName = "";
                 model._skilldetails.Isinstaavailable = false;
             }
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            model._skilldetails.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            var profiletype = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.ProfileTypeList = new SelectList(profiletype, "ID", "Name");
+            var CompetencyLevel = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompetencyLevellist = new SelectList(CompetencyLevel, "ID", "Name");
             return PartialView(model);
-            //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
         }
 
         /// <summary>
