@@ -1053,10 +1053,18 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
                 interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString()).ToList();
+                AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
             }
             else
             {
                 interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId).ToList();
+                var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
+                var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
+                AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
+                if (AssessmentsGroups.Where(x => x.id == _assessmentid).Count() == 0)
+                {
+                    AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
+                }
             }
             model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
             model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
@@ -2209,6 +2217,13 @@ namespace Risebird.Web.Controllers
             }
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
+            var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
+            AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
+            if (AssessmentsGroups.Where(x => x.id == _assessmentid).Count() == 0)
+            {
+                AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
+            }
             ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -4571,8 +4586,16 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.AssessmentGroupName = "";
                 model._skilldetails.Isinstaavailable = false;
             }
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            model._skilldetails.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            var profiletype = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.ProfileTypeList = new SelectList(profiletype, "ID", "Name");
+            var CompetencyLevel = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompetencyLevellist = new SelectList(CompetencyLevel, "ID", "Name");
             return PartialView(model);
-            //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
         }
 
         /// <summary>
