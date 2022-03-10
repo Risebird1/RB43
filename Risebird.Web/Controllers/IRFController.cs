@@ -1053,10 +1053,18 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
                 interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString()).ToList();
+                AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
             }
             else
             {
                 interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId).ToList();
+                var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
+                var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
+                AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
+                if (AssessmentsGroups.Where(x => x.id == _assessmentid).Count() == 0)
+                {
+                    AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
+                }
             }
             model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
             model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
@@ -2209,6 +2217,13 @@ namespace Risebird.Web.Controllers
             }
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
+            var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
+            AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
+            if (AssessmentsGroups.Where(x => x.id == _assessmentid).Count() == 0)
+            {
+                AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
+            }
             ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
