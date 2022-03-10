@@ -1608,7 +1608,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select id,AssessmentGroup,Isinstaavailable from AssessmentGroup";
+                var query = "Select id,AssessmentGroup,Isinstaavailable,ISNULL(IsRelevant,0) as IsRelevant from AssessmentGroup";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query<AssignmentVM>(query, null);
