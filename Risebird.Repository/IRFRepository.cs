@@ -5210,7 +5210,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@AudioComment", commentAudioLink);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
+                    SqlMapper.Query(con, "usp_SaveCommentAudioIRF", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
