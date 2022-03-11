@@ -4579,6 +4579,12 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.AssessmentGroupName = modeldata.AssessmentGroup;
                 model._skilldetails.Isinstaavailable = modeldata.Isinstaavailable;
                 model._skilldetails.Category = _Category.Where(x => x.Name == modeldata.CategoryName).Select(x => x.id).FirstOrDefault();
+                model._skilldetails.CompanyType = modeldata.CompanyType;
+                model._skilldetails.Country = modeldata.Country;
+                model._skilldetails.IsRelevant = modeldata.IsRelevant;
+                model._skilldetails.ProfileType = modeldata.ProfileType;
+                model._skilldetails.CompetencyLevel = modeldata.CompetencyLevel;
+                model._skilldetails.PerHourRate = modeldata.PerHourRate;
             }
             else
             {
