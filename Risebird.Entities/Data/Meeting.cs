@@ -104,5 +104,6 @@ namespace Risebird.Entities.Data
         public int VideoDuration { get; set; }
         public int Timer { get; set; }
         public bool IsProctor { get; set; }
+        public string AudioComment { get; set; }
     }
 }

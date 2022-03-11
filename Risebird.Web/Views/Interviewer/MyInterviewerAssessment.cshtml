@@ -83,6 +83,7 @@
                                                         <th>Slot</th>
                                                         <th>Duration</th>
                                                         <th>Zoom ID</th>
+                                                        <th>Meeting Link</th>
                                                         <th>Coded Name</th>
                                                         @*<th>Candidate Contact</th>*@
                                                         <th id="myinterviewerassmenu_2">Resume</th>
@@ -101,6 +102,7 @@
                                                         <th>Slot</th>
                                                         <th>Duration</th>
                                                         <th>Zoom ID</th>
+                                                        <th>Meeting Link</th>
                                                         <th>Coded Name</th>
                                                         @*<th>Candidate Contact</th>*@
                                                         <th>Resume</th>
@@ -124,6 +126,16 @@
                                                             <td> @item.interviewSlot </td>
                                                             <td> @item.interviewDuration </td>
                                                             <td> @item.ZoomId</td>
+                                                            @if (item.zoomLink != null && item.zoomLink != "")
+                                                            {
+                                                                <td class="cadName">
+                                                                    <a target="_blank" title="Meeting Link" href=@item.zoomLink>Meeting Link</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
                                                             <td> @item.NickName</td>
 
                                                             @if (item.resumeLink != null && item.resumeLink != "")
@@ -816,12 +828,12 @@
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
             $("#" + id).addClass("shows");
-      $('.' + id).addClass("in");
+            $('.' + id).addClass("in");
             $("#" + id).attr("data-changes", "2");
         }
         else {
             $("#" + id).removeClass("shows");
-    $('.' + id).removeClass("in");
+            $('.' + id).removeClass("in");
             $("#" + id).attr("data-changes", "1");
         }
     }

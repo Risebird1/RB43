@@ -1703,16 +1703,18 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
 
-                        foreach (var item in irfDetails.SkillCollection)
+                    foreach (var item in irfDetails.SkillCollection)
+                    {
+                        if (String.IsNullOrEmpty(item.Concepts))
                         {
-                            if (String.IsNullOrEmpty(item.Concepts)){
-                                item.Concepts = "";
-                            }
-                            if (String.IsNullOrEmpty(item.Natureofquestion)){
-                                item.Natureofquestion = "";
-                            }
-                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                            item.Concepts = "";
                         }
+                        if (String.IsNullOrEmpty(item.Natureofquestion))
+                        {
+                            item.Natureofquestion = "";
+                        }
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                    }
 
                     DataTable interviewerDt = new DataTable();
 
@@ -1871,7 +1873,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
 
 
-                    if(joinabilityDt != null && joinabilityDt.Rows.Count>0)
+                    if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
@@ -4406,6 +4408,12 @@ namespace Risebird.Repository
                     parameters.Add("@id", _skilldetails.id);
                     parameters.Add("@Isinstaavailable", _skilldetails.Isinstaavailable);
                     parameters.Add("@Category", _skilldetails.Category);
+                    parameters.Add("@CompanyType", _skilldetails.CompanyType);
+                    parameters.Add("@IsRelevant", _skilldetails.IsRelevant);
+                    parameters.Add("@ProfileType", _skilldetails.ProfileType);
+                    parameters.Add("@CompetencyLevel", _skilldetails.CompetencyLevel);
+                    parameters.Add("@Country", _skilldetails.Country);
+                    parameters.Add("@PerHourRate", _skilldetails.PerHourRate);
                     await SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
@@ -5158,6 +5166,72 @@ namespace Risebird.Repository
                     parameters.Add("@Assessmentid", Assessmentid);
                     return await SqlMapper.QueryAsync<AssessmentIRFListVM>(con, "usp_GetAssessmentGroupIRFList", parameters,
                          commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string FetchIRFAudioLink(int irfid)
+        {
+            try
+            {
+                var query = "Select AudioComment From IRF where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public bool SaveIRFAudioLink(int irfid, string commentAudioLink)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                dynamicParameters.Add("@AudioComment", commentAudioLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
+        {
+            try
+            {
+                var query = "Select IRF.IRFId,sk.Name as PrimarySkillInvite,ts.Comment From TechSkillComments ts join IRF on IRF.id=ts.IRFId join Skill sk on sk.id=ts.Skill where AssessmentGroupId = @Assessmentid order by IRF.IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Assessmentid", Assessmentid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<AssessmentIRFListVM>(query, dynamicParameters);
+                    return results;
                 }
             }
             catch (SqlException ex)

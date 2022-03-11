@@ -21,7 +21,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@JobCountry varchar(50),        
 	@StartDate datetime,        
 	@EndDate datetime,        
-	@JDLink varchar(1000),        
+	@JDLink varchar(1000)=null,        
 	@NoOfPosition int,        
 	@NoOfIntterview int,        
 	@RisebirdHr int,        
