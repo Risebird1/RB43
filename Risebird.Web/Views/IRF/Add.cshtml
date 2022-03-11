@@ -317,7 +317,7 @@
                                                             }
 
                                                             @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
-                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "#error_JobCountry", @class = "text -danger" })
+                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
 
                                                         </div>
                                                         <div class="form-group">
@@ -3129,8 +3129,26 @@
                 else {
                     $('#error_JDLink').text("");
                 }
-                if ($('#StartDate').val() != "") {
-                    flag = !(checkStartDate($('#StartDate').val()));
+                if ($('#StartDate').val() == "0001-01-01T00:00:00.000") {
+                    document.getElementById("startDateCheck").style.display = "block";
+                    document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
+                    flag = true;
+                }
+                else {
+                    document.getElementById("startDateCheck").innerHTML = "";
+                    document.getElementById("startDateCheck").style.display = "none";
+
+                }
+
+                if ($('#EndDate').val() == "0001-01-01T00:00:00.000") {
+                    document.getElementById("endDateCheck").style.display = "block";
+                    document.getElementById("endDateCheck").innerHTML = "Please set the End Date";
+                    flag = true;
+                }
+                else {
+                    document.getElementById("endDateCheck").innerHTML = "";
+                    document.getElementById("endDateCheck").style.display = "none";
+
                 }
                 if ($('#RisebirdHr').val() == "") {
                     $('#error_RisebirdHr').text("The Channel Owner field is required.");

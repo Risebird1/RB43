@@ -1999,7 +1999,10 @@
             //    $('#error_TotalBudget').text("");
             //}
             if ($('#StartDate').val() != "") {
-                flag = !(checkStartDate($('#StartDate').val()));
+                var result = checkStartDate($('#StartDate').val());
+                if (result == true) {
+                    flag = true;
+                }
             }
             if ($('#RisebirdHr').val() == "") {
                 $('#error_RisebirdHr').text("The Channel Owner field is required.");
@@ -2864,7 +2867,7 @@
 
 
     function checkStartDate(val) {
-
+        debugger;
         if (val == "") {
             document.getElementById("startDateCheck").innerHTML = "";
             return true;
@@ -2894,10 +2897,12 @@
         if (document.getElementById("EndDate").value != "") {
             return checkEndDate(document.getElementById("EndDate").value);
         }
+        else {
+            return false;
+        }
     }
 
     function checkEndDate(val) {
-
         if (val == "") {
             return true;
         }
