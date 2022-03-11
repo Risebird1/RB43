@@ -425,8 +425,8 @@
                                                             }
                                                             @if (Model.Profile == "Client")
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="BroadCast">
-                                                                    <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="BroadCast" class="mdc-fab__icon material-icons">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Broadcast Email to the Interviewers of this channel">
+                                                                    <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
                                                                     </span>
                                                                 </button>
@@ -2217,11 +2217,14 @@
         modalBct.style.display = "block";
         var html = '';
         html += '<div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">';
-        html += '    <div class="pull-left" > <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>';
-        html += '        <div class="pull-left"><button id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>';
-        html += '<div class="pull-left">';
-        html += '            <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>';
-        html += '</div>';
+        html += '<div class="pull-left" style="padding:10px"><button id="startRecButton" onclick="startRecording()" style="background-color:#42a5f5 !important;border-radius:50%;margin: 4px 2px;" title="Start Recording"><i class="fa fa-play" ></i></button></div>';
+        html += '<div class="pull-left" style="padding:10px"><button id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>';
+        html += '<div class="pull-left" style="padding:10px"><button id="cancelRecButton" type="button" onclick="cancelRecording()" style="background-color:red !important;border-radius:50%;margin: 4px 2px;" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>';
+        //html += '    <div class="pull-left" > <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>';
+        //html += '        <div class="pull-left"><button id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>';
+        //html += '<div class="pull-left">';
+        //html += '            <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>';
+        //html += '</div>';
         html += '   </div>';
         html += '<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">';
         html += '<div class="row">';
