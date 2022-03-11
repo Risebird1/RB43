@@ -1031,16 +1031,16 @@ namespace Risebird.Repository
                         //{
                         //    con.Close();
                         //}
-                        DynamicParameters recomParameters = new DynamicParameters();
-                        recomParameters.Add("IRFId", irfID);
-                        recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
-                        recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null);
-                        recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null);
-                        recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null);
-                        recomParameters.Add("CountryType", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null);
-                        recomParameters.Add("CreatedOn", DateTime.Now);
-                        SqlMapper.Query(con, "usp_AddIRFRecommendation", recomParameters,
-                        commandType: CommandType.StoredProcedure);
+                        //DynamicParameters recomParameters = new DynamicParameters();
+                        //recomParameters.Add("IRFId", irfID);
+                        //recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
+                        //recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null);
+                        //recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null);
+                        //recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null);
+                        //recomParameters.Add("CountryType", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null);
+                        //recomParameters.Add("CreatedOn", DateTime.Now);
+                        //SqlMapper.Query(con, "usp_AddIRFRecommendation", recomParameters,
+                        //commandType: CommandType.StoredProcedure);
 
                         return true;
 

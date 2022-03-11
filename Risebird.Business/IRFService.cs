@@ -53,7 +53,7 @@ namespace Risebird.Business
             {
                 irfDetails.IRFId = irfDetails.IRFId.Trim();
                 irfDetails.CreatedOn = DateTime.UtcNow;
-                irfDetails.IRFRecommendations.Status = irfDetails.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+                //irfDetails.IRFRecommendations.Status = irfDetails.IRFRecommendations.StatusRadioValue == "true" ? true : false;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
@@ -668,8 +668,10 @@ namespace Risebird.Business
                     }
                 }
 
-                model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
-
+                if(model.UseAsCloneTemplate && model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+                }
                 var result = _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null).Result;
                 if (result)
                 {

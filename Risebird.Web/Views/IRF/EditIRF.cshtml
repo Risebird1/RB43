@@ -1699,7 +1699,7 @@
                                     @Html.HiddenFor(m => m.OldSkillCollection[i].SkillId);
                                 }
                             }
-
+                            @Html.HiddenFor(m=>m.UseAsCloneTemplate)
 
                         </form>
 
@@ -2572,7 +2572,10 @@
         CheckQCRequired();
         CheckJoinabilitySelectabilityRequired();
         CheckGeneralSkillRequired();
-        RecommendationStatusChanged('@Model.IRFRecommendations.StatusRadioValue');
+        debugger;
+        if ('@Model.UseAsCloneTemplate' == 'True') {
+            RecommendationStatusChanged('@Model.IRFRecommendations.StatusRadioValue');
+        }
         var rateEmements = $('[id^="QualityController"][id$="PerSuccessRate"]');
         for (i = 0; i < rateEmements.length; i++) {
             $("#" + rateEmements[i].id).val(interviewerQCRate);

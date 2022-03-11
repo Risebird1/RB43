@@ -1130,8 +1130,8 @@ namespace Risebird.Web.Controllers
                 {
                     model.Type = "B2B";
                 }
-                model.IRFRecommendations = new IRFRecommendations();
-                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                //model.IRFRecommendations = new IRFRecommendations();
+                //model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
 
                 return;
             }
@@ -2285,16 +2285,20 @@ namespace Risebird.Web.Controllers
             {
                 model.InterviewerMembers = new List<IRFInterviewerMembers>();
             }
-            if(model.IRFRecommendations == null)
+
+            model.IRFRecommendations = new IRFRecommendations();
+
+            if (model.UseAsCloneTemplate)
             {
-                model.IRFRecommendations = new IRFRecommendations();
+
+                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                {
+                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                }
             }
-            //ViewBag.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
-            model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
-            if(model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
-            {
-                model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
-            }
+            
+            
 
             //TempData["EditIRFId"] = model.IRFId;
             //model.IsClone = isClone;
