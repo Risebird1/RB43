@@ -1999,7 +1999,7 @@
             //    $('#error_TotalBudget').text("");
             //}
             if ($('#StartDate').val() != "") {
-                flag = checkStartDate($('#StartDate').val());
+                flag = !(checkStartDate($('#StartDate').val()));
             }
             if ($('#RisebirdHr').val() == "") {
                 $('#error_RisebirdHr').text("The Channel Owner field is required.");
