@@ -5182,7 +5182,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select AudioComment From IRF where id=@id";
+                var query = "Select IsNull(AudioComment,'') as AudioComment From IRF where id=@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", irfid);
                 using (SqlConnection con = new SqlConnection(connectionString))
