@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[ScheduleInterviewEvent](
 	[IsSingleUse] [bit] NULL,
 	[IsOnetimeUsed] [bit] NULL,
 	[SkillChannelRelation] [varchar](50) NULL,
+	[Concurrency] [int] NULL,
  CONSTRAINT [PK_ScheduleInterviewEvent] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -45,6 +46,15 @@ IF NOT EXISTS(
 	BEGIN
 		ALTER TABLE [ScheduleInterviewEvent]
 		Add [SkillChannelRelation] varchar(50)
+	END
+	IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Concurrency')
+      AND Object_ID = Object_ID(N'ScheduleInterviewEvent'))
+	BEGIN
+		ALTER TABLE [ScheduleInterviewEvent]
+		Add Concurrency int null
 	END
 
 GO
