@@ -37,6 +37,10 @@
                                     @Html.DropDownListFor(m => m.duration, Model.IntervalList, new { @class = "form-control col-lg-8 col-md-8 col-sm-8 col-xs-6 pull-left" })
                                 </div>
                                 <div class="col-md-12 form-group">
+                                    @Html.LabelFor(m => m.Concurrency, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
+                                    @Html.ValidationMessageFor(model => model.Concurrency, "", new { @class = "text-danger", @type = "number" })
+                                </div>
+                                <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.StartDate, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
                                     @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
                                     <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>

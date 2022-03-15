@@ -24,6 +24,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string SkillChannelRelation { get; set; }
+        public int Concurrency { get; set; }
     }
     public class daytimes_report
     {
@@ -46,6 +47,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList IRFList { get; set; }
         public SelectList IntervalList { get; set; }
         public int Eventtype { get; set; }
+        public int Concurrency { get; set; }
     }
     public class ScheculeInterview
     {

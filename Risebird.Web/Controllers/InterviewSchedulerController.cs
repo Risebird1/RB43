@@ -72,6 +72,7 @@ namespace Risebird.Web.Controllers
             model_report.setvalue = model_Second;
             model_report.StartDate = DateTime.Now.AddHours(16);
             model_report.EndDate = DateTime.Now.AddDays(60);
+            model_report.Concurrency = 10;
             SetDropDownTime(model_report);
             return View(model_report);
         }
@@ -312,52 +313,61 @@ namespace Risebird.Web.Controllers
                 var JDTitle = _interviewSchedulerservice.FetchJDTitle(model.InterviewChannelId);
                 TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(model.scheduleDate, INDIAN_ZONE);
-                var zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
-                string textreminder = string.Empty;
-                textreminder = model.CountryCode + model.MobileNumber;
-                var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies);
-                if (result)
+                var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(indianTime, model.InterviewChannelId, model.Uniqueid);
+                if (_checkdetails)
                 {
-                    var updatelinkDetails = _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
-                    string timezonevalue = string.Empty;
-                    string hh = string.Empty;
-                    var valuecheck = (-model.offset / 60);
-                    if (valuecheck < 10 && valuecheck > 0)
+                    var zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
+                    string textreminder = string.Empty;
+                    textreminder = model.CountryCode + model.MobileNumber;
+                    var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies);
+                    if (result)
                     {
-                        hh = "0" + valuecheck;
-                    }
-                    if (valuecheck > -10 && valuecheck < 0)
-                    {
-                        hh = "-0" + valuecheck.ToString().Replace("-", "");
-                    }
-                    var offsetvalue = (hh + ":" + ((model.offset % 60) < 0 ? (-model.offset % 60) : (model.offset % 60))).ToString();
-                    var timeZones = TimeZoneInfo.GetSystemTimeZones();
-                    foreach (TimeZoneInfo timeZone in timeZones)
-                    {
-                        if (timeZone.DisplayName.Contains(offsetvalue))
+                        var updatelinkDetails = _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
+                        string timezonevalue = string.Empty;
+                        string hh = string.Empty;
+                        var valuecheck = (-model.offset / 60);
+                        if (valuecheck < 10 && valuecheck > 0)
                         {
-                            timezonevalue = timeZone.DisplayName;
+                            hh = "0" + valuecheck;
                         }
+                        if (valuecheck > -10 && valuecheck < 0)
+                        {
+                            hh = "-0" + valuecheck.ToString().Replace("-", "");
+                        }
+                        var offsetvalue = (hh + ":" + ((model.offset % 60) < 0 ? (-model.offset % 60) : (model.offset % 60))).ToString();
+                        var timeZones = TimeZoneInfo.GetSystemTimeZones();
+                        foreach (TimeZoneInfo timeZone in timeZones)
+                        {
+                            if (timeZone.DisplayName.Contains(offsetvalue))
+                            {
+                                timezonevalue = timeZone.DisplayName;
+                            }
+                        }
+                        if (zoomLink.accountemail == "me")
+                        {
+                            zoomLink.accountemail = "host@risebird.io";
+                        }
+                        //Send Mail Notification
+                        Mail _mail = new Mail
+                        {
+                            TO = model.Email,
+                            CC = zoomLink.accountemail,
+                            Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
+                        };
+                        var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue, model.ClientName);
+                        ViewBag.Start = 4;
+                        ViewBag.interviewDate = interviewdatetime;
+                        return View(model);
                     }
-                    if (zoomLink.accountemail == "me")
+                    else
                     {
-                        zoomLink.accountemail = "host@risebird.io";
+                        ModelState.AddModelError(string.Empty, "Please try again to schedule the event.");
+                        return View(model);
                     }
-                    //Send Mail Notification
-                    Mail _mail = new Mail
-                    {
-                        TO = model.Email,
-                        CC = zoomLink.accountemail,
-                        Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
-                    };
-                    var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue, model.ClientName);
-                    ViewBag.Start = 4;
-                    ViewBag.interviewDate = interviewdatetime;
-                    return View(model);
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Please try again to schedule the event.");
+                    ModelState.AddModelError(string.Empty, "Please change the interview date time, selected time slots are not available.");
                     return View(model);
                 }
             }
