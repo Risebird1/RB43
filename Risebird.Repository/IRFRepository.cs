@@ -1846,7 +1846,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@PriorityLevel"].Value = irfDetails.PriorityLevel;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CompanyDetails", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@CompanyDetails"].Value = irfDetails.CompanyDetails;
+                    cmdUpdateIRF.Parameters["@CompanyDetails"].Value = irfDetails.CompanyDetails ?? string.Empty;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@Type", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@Type"].Value = irfDetails.Type;
