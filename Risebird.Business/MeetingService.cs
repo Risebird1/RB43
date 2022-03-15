@@ -1946,15 +1946,12 @@ namespace Risebird.Business
                 model.BroadcastReciever = "Interviewers";
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
                 return result;
-
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "Broadcast failed.";
             }
-
         }
 
         public IEnumerable<Meeting> GetHROpenInterviews(string emailId)

@@ -26,5 +26,6 @@
         public int RejectedMeetings { get; set; }
         public int CompletedMeetings { get; set; }
         public int ScheduledMeetings { get; set; }
+        public string Comment { get; set; }
     }
 }

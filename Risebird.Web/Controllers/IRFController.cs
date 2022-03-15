@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -1046,56 +1047,62 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private void SetAddIRFProperties(IRFVm model)
         {
-            try
+            var skills = _irfRepository.GetSkills();
+            var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+            var interviewers = new List<Interviewer>();
+            if (string.IsNullOrEmpty(model.AssessmentGroupId))
             {
-                var skills = _irfRepository.GetSkills();
-                var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                var interviewers = new List<Interviewer>();
-                if (string.IsNullOrEmpty(model.AssessmentGroupId))
+                interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString()).ToList();
+                AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
+            }
+            else
+            {
+                interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId).ToList();
+                var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
+                var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
+                AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
+                if (AssessmentsGroups.Where(x => x.id == _assessmentid).Count() == 0)
                 {
-                    interviewers = _irfService.GetInterviewersForIRF(AssessmentsGroups.FirstOrDefault()?.id.ToString()).ToList();
+                    AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
                 }
-                else
-                {
-                    interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId).ToList();
-                }
-                model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
-                model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
-                model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
-                var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-                model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
-                var clients = _irfRepository.GetClients();
-                ViewBag.Clients = new SelectList(clients, "id", "Name");
-                if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
-                {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    var profilename = HttpContext.Session.GetString("profileName")?.Trim();
-                    profilename = profilename.Replace("\"", "");
-                    model.LoggedEmail = emailid;
-                    if (profilename == "SeniorHR")
-                        ViewBag.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
-                }
-                ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                var Skillset = skills;
-                if (Skillset != null)
-                {
-                    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
-                }
-                ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
-                ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
-                ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-                ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
-                ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
-                ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-                ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
-                //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
-                ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
+            }
+            model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+            model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+            model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+            var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
+            var clients = _irfRepository.GetClients();
+            ViewBag.Clients = new SelectList(clients, "id", "Name");
+            if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                profilename = profilename.Replace("\"", "");
+                model.LoggedEmail = emailid;
+                if (profilename == "SeniorHR")
+                    ViewBag.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
+            }
+            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            var Skillset = skills;
+            if (Skillset != null)
+            {
+                Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+            }
+            ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+            ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+            ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
+            ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+            ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
+            ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+            ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
+            ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+            ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+            //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+            ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
 
                 model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
                 var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
@@ -2235,6 +2242,13 @@ namespace Risebird.Web.Controllers
             }
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
+            var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
+            AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
+            if (AssessmentsGroups.Where(x => x.id == _assessmentid).Count() == 0)
+            {
+                AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
+            }
             ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -4603,6 +4617,12 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.AssessmentGroupName = modeldata.AssessmentGroup;
                 model._skilldetails.Isinstaavailable = modeldata.Isinstaavailable;
                 model._skilldetails.Category = _Category.Where(x => x.Name == modeldata.CategoryName).Select(x => x.id).FirstOrDefault();
+                model._skilldetails.CompanyType = modeldata.CompanyType;
+                model._skilldetails.Country = modeldata.Country;
+                model._skilldetails.IsRelevant = modeldata.IsRelevant;
+                model._skilldetails.ProfileType = modeldata.ProfileType;
+                model._skilldetails.CompetencyLevel = modeldata.CompetencyLevel;
+                model._skilldetails.PerHourRate = modeldata.PerHourRate;
             }
             else
             {
@@ -4610,8 +4630,16 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.AssessmentGroupName = "";
                 model._skilldetails.Isinstaavailable = false;
             }
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            model._skilldetails.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            var profiletype = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.ProfileTypeList = new SelectList(profiletype, "ID", "Name");
+            var CompetencyLevel = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompetencyLevellist = new SelectList(CompetencyLevel, "ID", "Name");
             return PartialView(model);
-            //return Json(new { id = modeldata.id, Assessmentname = modeldata.AssessmentGroup, primaryskillset = primaryskilllist });
         }
 
         /// <summary>
@@ -6607,6 +6635,92 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var model = new BroadcastModel
+                        {
+                            Message = message,
+                            Subject = subject
+                        };
+                        model.IRFId = irfid;
+                        var result = _meetingService.BroadcastIRFmembers(model);
+                        return Json(result.Result);
+                    }
+                    else
+                    {
+                        return Json("You are not authorize to send broadcast.");
+                    }
+                }
+                else
+                {
+                    return Json("Broadcast failed, Please try again.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Broadcast failed, Please try again.");
+            }
+        }
+        [HttpPost]
+        public JsonResult FetchIRFAudioLink(int irfid)
+        {
+            var audiofilelink = _irfService.FetchIRFAudioLink(irfid);
+            return Json(audiofilelink);
+        }
+        [HttpPost]
+        public async Task<string> UploadAudio()
+        {
+            var file = Request.Form.Files;
+
+            var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
+            var Irfid = fileName.Split("_")[2];
+            string uploadedfbaudioFileURL = string.Empty;
+            if (file != null)
+            {
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
+                if (fileMimeType == "audio/basic" || fileMimeType == "audio/mpeg" || fileMimeType == "audio/x-wav" || fileMimeType == "video/x-msvideo")
+                {
+                    await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedfbaudioFileURL = blob.Uri.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            _irfService.SaveIRFAudioLink(Convert.ToInt32(Irfid), uploadedfbaudioFileURL);
+            return uploadedfbaudioFileURL;
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetAssessmentGroupQuestionList(int Assessmentid)
+        {
+            try
+            {
+                var model = await _irfService.GetAssessmentGroupQuestionList(Assessmentid);
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var model = new List<AssessmentIRFListVM>();
+                return Json(model);
+            }
+        }
             }
         }
 

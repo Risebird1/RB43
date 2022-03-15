@@ -8,6 +8,12 @@ CREATE TABLE [dbo].[AssessmentGroup](
 	[PrimarySkills] [varchar](max) NULL,
     [Isinstaavailable][bit] NULL,
     [Categoryid][int] NULL,
+    [CompanyType][bit] NULL,
+    [IsRelevant][int] NULL,
+    [ProfileType][int] NULL,
+    [CompetencyLevel][int] NULL,
+    [Country][int] NULL,
+    [PerHourRate][int] NULL,
  CONSTRAINT [PK_AssessmentGroup] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -31,6 +37,60 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE AssessmentGroup
     Add Categoryid int NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CompanyType')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add CompanyType int NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsRelevant')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add IsRelevant bit NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ProfileType')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add ProfileType int NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CompetencyLevel')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add CompetencyLevel int NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Country')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add Country int NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PerHourRate')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add PerHourRate int NULL 
 END
 GO
 

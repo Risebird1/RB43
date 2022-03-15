@@ -41,20 +41,20 @@
 <div class="main-panel bg-white" id="main-panel">
     <!-- Navbar -->
     @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+                    </div>
+                    <a class="navbar-brand card-title">Interviewer Search</a>
+                    @if (!String.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <img src="@Model.LogoUrl" style="width:60px;height:60px" />
+                    }
                 </div>
-                <a class="navbar-brand card-title">Interviewer Search</a>
-                @if (!String.IsNullOrEmpty(Model.LogoUrl))
-                {
-                    <img src="@Model.LogoUrl" style="width:60px;height:60px" />
-                }
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
-        </div>
-    </nav>*@
+        </nav>*@
     <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
@@ -171,12 +171,8 @@
 
                                                                                 }
                                                                             </div>
-                                                                            <button type="button" class="share-btn" data-tooltip="To generate public share url" aria-haspopup="true" aria-expanded="false" style="color: #000; padding: 0px;margin: 0px 5px;">
-                                                                                <input type="button" class="pubshare" id="btnShare3" value="Public Share Url" Shortvalue="1" />
-                                                                            </button>
+                                                                            <input type="button" class="pubshare" id="btnShare3" title="To generate public share url" style="top:0px !important" value="Public Share Url" Shortvalue="1" />
                                                                         }
-
-
 
                                                                         <div style="float: right; padding: 0px 10px 15px 10px;">
                                                                             <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);" style="position:relative;left:-6px;">
@@ -1188,29 +1184,29 @@
                                                                                             <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
                                                                                         }
                                                                                         @*@if (videolist.VideoLink.Contains(".mp4"))
-                                                                                        {
-                                                                                            @if (videolist.ThumbnailImage != null)
                                                                                             {
-                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
-                                                                                            }
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
-                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                            </video>
+                                                                                                @if (videolist.ThumbnailImage != null)
+                                                                                                {
+                                                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                                }
+                                                                                                <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                                </video>
 
-                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            @if (videolist.ThumbnailImage != null)
-                                                                                            {
-                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                <img src="~/RiseTube/img/video-icon.png" />
-                                                                                            }
-                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                        }*@
+                                                                                                @if (videolist.ThumbnailImage != null)
+                                                                                                {
+                                                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <img src="~/RiseTube/img/video-icon.png" />
+                                                                                                }
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("InterviewerVideoPage", "InterviewerSkills", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                            }*@
 
                                                                                         @{
                                                                                             string appendTime;
@@ -1709,45 +1705,45 @@
             </div>
         </div>
     </div>
-    </div>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
-    <script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-    <script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
-    <script>
-        function dropDwnToolTips(id) {
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
+<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
+<script>
+    function dropDwnToolTips(id) {
 
-            if (id.value == 0) {
-                id.title = "";
-            }
-            else {
-                id.title = id.value
-            }
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
         }
 
 
-    </script>
-
-    <script type="text/javascript">
-
-        function getOption(id) {
-            selectElement = document.querySelector('#droplevel');
-            output =
-                selectElement.options[selectElement.selectedIndex].text;
-
-
-            if (id.value == 0) {
-                id.title = "";
-            }
-            else {
-                id.title = output
-            }
-
-
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
-    <script type="text/javascript">
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
+<script type="text/javascript">
 
     $(document).ready(function () {
         $('.dropques option').wrap('<span>');
@@ -1770,79 +1766,99 @@
 
     })
 
-    </script>
+</script>
 
-    <script>
-        function GetMeetingAudioText(imid) {
-            document.getElementById('link9').innerHTML = '';
-            $.ajax({
-                url: '/RiseTube/GetMeetingAudioText',
-                data: { 'imid': imid },
-                success: function (data) {
-                    if (data.convertedText == null || data.convertedText == '') {
-                        document.getElementById('link9').innerHTML = 'Not available';
-                    }
-                    else {
+<script>
+    function GetMeetingAudioText(imid) {
+        document.getElementById('link9').innerHTML = '';
+        $.ajax({
+            url: '/RiseTube/GetMeetingAudioText',
+            data: { 'imid': imid },
+            success: function (data) {
+                if (data.convertedText == null || data.convertedText == '') {
+                    document.getElementById('link9').innerHTML = 'Not available';
+                }
+                else {
 
-                        var innerText = '<label class="matchtxt">Total Keywords Match Found:</label><span class="matcnum ">' + data.total + '</span><br>  <div class="matchdiv"><div style="overflow-y:scroll" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
+                    var innerText = '<label class="matchtxt">Total Keywords Match Found:</label><span class="matcnum ">' + data.total + '</span><br>  <div class="matchdiv"><div style="overflow-y:scroll" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
 
-                        document.getElementById('link9').innerHTML = innerText;
-
-                    }
+                    document.getElementById('link9').innerHTML = innerText;
 
                 }
 
-            });
-        }
+            }
 
-    </script>
-    <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
-    <script>
-        function GetSentimentAnalysis(imid) {
-            document.getElementById('link8').innerHTML = '';
-            $.ajax({
-                url: '/RiseTube/GetSentimentAnalysis',
-                data: { 'imid': imid },
-                success: function (data) {
+        });
+    }
 
-                    if (data.anger != "NaN") {
-                        var sentimentObj = [{ y: data.anger, label: "Anger" },
-                        { y: data.contempt, label: "Contempt" },
-                        { y: data.disgust, label: "Disgust" },
-                        { y: data.fear, label: "Fear" },
-                        { y: data.happiness, label: "Happiness" },
-                        { y: data.neutral, label: "Neutral" },
-                        { y: data.sadness, label: "Sadness" },
-                        { y: data.surprise, label: "Surprise" }]
+</script>
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<script>
+    function GetSentimentAnalysis(imid) {
+        document.getElementById('link8').innerHTML = '';
+        $.ajax({
+            url: '/RiseTube/GetSentimentAnalysis',
+            data: { 'imid': imid },
+            success: function (data) {
+
+                if (data.anger != "NaN") {
+                    var sentimentObj = [{ y: data.anger, label: "Anger" },
+                    { y: data.contempt, label: "Contempt" },
+                    { y: data.disgust, label: "Disgust" },
+                    { y: data.fear, label: "Fear" },
+                    { y: data.happiness, label: "Happiness" },
+                    { y: data.neutral, label: "Neutral" },
+                    { y: data.sadness, label: "Sadness" },
+                    { y: data.surprise, label: "Surprise" }]
 
 
-                        var chart = new CanvasJS.Chart("link8", {
-                            theme: "light2",
-                            width: 350,//in pixels
-                            height: 200,//in pixels
-                            animationEnabled: true,
-                            title: null,
-                            data: [{
-                                type: "pie",
-                                startAngle: 60,
-                                innerRadius: 55,
-                                indexLabelFontSize: 15,
-                                indexLabel: "{label}  {y}%",
-                                toolTipContent: "<b>{label} </b>({y}%)",
+                    var chart = new CanvasJS.Chart("link8", {
+                        theme: "light2",
+                        width: 350,//in pixels
+                        height: 200,//in pixels
+                        animationEnabled: true,
+                        title: null,
+                        data: [{
+                            type: "pie",
+                            startAngle: 60,
+                            innerRadius: 55,
+                            indexLabelFontSize: 15,
+                            indexLabel: "{label}  {y}%",
+                            toolTipContent: "<b>{label} </b>({y}%)",
 
-                                dataPoints: sentimentObj
-                            }]
-                        });
-                        chart.render();
-                    }
+                            dataPoints: sentimentObj
+                        }]
+                    });
+                    chart.render();
                 }
+            }
 
-            });
-        }
+        });
+    }
 
-    </script>
-    <script>
-        function datecal() {
+</script>
+<script>
+    function datecal() {
+        var dtToday = new Date();
+        var time = dtToday.getHours() + ":" + dtToday.getMinutes();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day + 'T' + time;
+
+        $('#txtOnlinestart').attr('min', maxDate);
+    }
+
+    function endcal() {
+
+
+        var maxDate = $('#txtOnlinestart').val();
+        if (maxDate == '') {
             var dtToday = new Date();
             var time = dtToday.getHours() + ":" + dtToday.getMinutes();
             var month = dtToday.getMonth() + 1;
@@ -1853,149 +1869,129 @@
             if (day < 10)
                 day = '0' + day.toString();
 
-            var maxDate = year + '-' + month + '-' + day + 'T' + time;
-
-            $('#txtOnlinestart').attr('min', maxDate);
+            maxDate = year + '-' + month + '-' + day + 'T' + time;
         }
-
-        function endcal() {
-
-
-            var maxDate = $('#txtOnlinestart').val();
-            if (maxDate == '') {
-                var dtToday = new Date();
-                var time = dtToday.getHours() + ":" + dtToday.getMinutes();
-                var month = dtToday.getMonth() + 1;
-                var day = dtToday.getDate();
-                var year = dtToday.getFullYear();
-                if (month < 10)
-                    month = '0' + month.toString();
-                if (day < 10)
-                    day = '0' + day.toString();
-
-                maxDate = year + '-' + month + '-' + day + 'T' + time;
-            }
-            $('#txtOnlineend').attr('min', maxDate);
-        }
-    </script>
-    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
-    <!-- Bootstrap core JavaScript-->
+        $('#txtOnlineend').attr('min', maxDate);
+    }
+</script>
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+<!-- Bootstrap core JavaScript-->
 
 
-    <script src="https://www.amcharts.com/lib/4/core.js"></script>
-    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-    <!-- Core plugin JavaScript-->
-    <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <!-- Owl Carousel -->
-    <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script src="~/Newassets/js/scrollBar.js"></script>
-    <!-- Custom scripts for all pages-->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Owl Carousel -->
+<script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<!-- Custom scripts for all pages-->
 
-    <script type="text/javascript">
-        $(".sb-container").scrollBox();
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
 
 
-        (function ($) {
-            $(window).on("load", function () {
-                $(".content").mCustomScrollbar();
-            });
-        })(jQuery);
-    </script>
-
-    <script>
-        var d = new Date();
-        var starttime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-        $(window).bind('beforeunload', function () {
-            TimeCalculation();
-            //return 'Are you sure you want to leave?';
+    (function ($) {
+        $(window).on("load", function () {
+            $(".content").mCustomScrollbar();
         });
-        function TimeCalculation() {
-            var d1 = new Date();
-            var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds();
-            var currentUrl = window.location.href;
-            var vid = document.getElementsByClassName("vjs-tech");
-            var currentTime = vid[0].currentTime;
-            $.ajax({
-                type: "GET",
-                url: "/RiseTube/CalculateTimeSpend",
-                data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: starttime, timeend: end, CurrentTime: currentTime },
-                success: function (data) {
-                    $("#" + skillElementid).val(data);
+    })(jQuery);
+</script>
+
+<script>
+    var d = new Date();
+    var starttime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    $(window).bind('beforeunload', function () {
+        TimeCalculation();
+        //return 'Are you sure you want to leave?';
+    });
+    function TimeCalculation() {
+        var d1 = new Date();
+        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds();
+        var currentUrl = window.location.href;
+        var vid = document.getElementsByClassName("vjs-tech");
+        var currentTime = vid[0].currentTime;
+        $.ajax({
+            type: "GET",
+            url: "/RiseTube/CalculateTimeSpend",
+            data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: starttime, timeend: end, CurrentTime: currentTime },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+    }
+    jQuery(document).ready(function ($) {
+
+        $(".tab_content").hide();
+        $(".tab_content:first").show();
+
+        /* if in tab mode */
+        $("ul.tabs li").click(function () {
+
+            $(".tab_content").hide();
+            var activeTab = $(this).attr("rel");
+            $("#" + activeTab).fadeIn();
+
+            $("ul.tabs li").removeClass("active");
+            $(this).addClass("active");
+
+            $(".tab_drawer_heading").removeClass("d_active");
+            $(".tab_drawer_heading[rel^='" + activeTab + "']").addClass("d_active");
+
+        });
+        /* if in drawer mode */
+        $(".tab_drawer_heading").click(function () {
+
+            $(".tab_content").hide();
+            var d_activeTab = $(this).attr("rel");
+            $("#" + d_activeTab).fadeIn();
+
+            $(".tab_drawer_heading").removeClass("d_active");
+            $(this).addClass("d_active");
+
+            $("ul.tabs li").removeClass("active");
+            $("ul.tabs li[rel^='" + d_activeTab + "']").addClass("active");
+        });
+
+
+        /* Extra class "tab_last"
+           to add border to right side
+           of last tab */
+        $('ul.tabs li').last().addClass("tab_last");
+    })
+
+</script>
+<script>
+
+    jQuery(document).ready(function ($) {
+
+        var main = function () {
+            $('.btn').click(function () {
+                var post = $('.status-box').val();
+                $('<li>').text(post).prependTo('.posts');
+                $('.status-box').val('');
+                $('.counter').text('450');
+                $('.btn').addClass('disabled');
+            });
+            $('.status-box').keyup(function () {
+                var postLength = $(this).val().length;
+                var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
+                $('.counter').text(charactersLeft);
+                if (charactersLeft < 0) {
+                    $('.btn').addClass('disabled');
+                } else if (charactersLeft === 450) {
+                    $('.btn').addClass('disabled');
+                } else {
+                    $('.btn').removeClass('disabled');
                 }
             });
         }
-        jQuery(document).ready(function ($) {
-
-            $(".tab_content").hide();
-            $(".tab_content:first").show();
-
-            /* if in tab mode */
-            $("ul.tabs li").click(function () {
-
-                $(".tab_content").hide();
-                var activeTab = $(this).attr("rel");
-                $("#" + activeTab).fadeIn();
-
-                $("ul.tabs li").removeClass("active");
-                $(this).addClass("active");
-
-                $(".tab_drawer_heading").removeClass("d_active");
-                $(".tab_drawer_heading[rel^='" + activeTab + "']").addClass("d_active");
-
-            });
-            /* if in drawer mode */
-            $(".tab_drawer_heading").click(function () {
-
-                $(".tab_content").hide();
-                var d_activeTab = $(this).attr("rel");
-                $("#" + d_activeTab).fadeIn();
-
-                $(".tab_drawer_heading").removeClass("d_active");
-                $(this).addClass("d_active");
-
-                $("ul.tabs li").removeClass("active");
-                $("ul.tabs li[rel^='" + d_activeTab + "']").addClass("active");
-            });
-
-
-            /* Extra class "tab_last"
-               to add border to right side
-               of last tab */
-            $('ul.tabs li').last().addClass("tab_last");
-        })
-
-    </script>
-    <script>
-
-        jQuery(document).ready(function ($) {
-
-            var main = function () {
-                $('.btn').click(function () {
-                    var post = $('.status-box').val();
-                    $('<li>').text(post).prependTo('.posts');
-                    $('.status-box').val('');
-                    $('.counter').text('450');
-                    $('.btn').addClass('disabled');
-                });
-                $('.status-box').keyup(function () {
-                    var postLength = $(this).val().length;
-                    var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
-                    $('.counter').text(charactersLeft);
-                    if (charactersLeft < 0) {
-                        $('.btn').addClass('disabled');
-                    } else if (charactersLeft === 450) {
-                        $('.btn').addClass('disabled');
-                    } else {
-                        $('.btn').removeClass('disabled');
-                    }
-                });
-            }
-            $('.btn').addClass('disabled');
-            $(document).ready(main)
-    </script>
-    <script>
+        $('.btn').addClass('disabled');
+        $(document).ready(main)
+</script>
+<script>
             $('form').submit(function () {
                 if ($(this).valid()) {
                     $(':submit', this).attr('disabled', 'disabled');
@@ -2060,640 +2056,640 @@
                 temp.remove();
                 $('#special_text').text('Copied');
             }
-    </script>
+</script>
 
-    <script>
+<script>
 
-        window.onload = function () {
+    window.onload = function () {
 
-            if (localStorage.getItem('isTheaterMode') == "true") {
-                getThMode();
-                document.getElementById("1").value = "THEATER-MODE-OFF";
-            }
-            else {
-                closeThMode();
-            }
-            var totalScore = 0;
-            var profileScore = 0;
-            var personalityScore = 0;
-            var interviewingAbilityScore = 0;
-
-
-            // get all the other scores to add to the total count
-            var profileValue = document.getElementById("IreportModel_ProfileScore").value;
-            var personalityValue = document.getElementById("IreportModel_OverallPersonalityScore").value;
-            var interviewingAbilityValue = document.getElementById("IreportModel_OverallInterviewingAbilityScore").value;
-            var arr = [];
-            var obj = { y: "", legendText: "", label: "" }
-            //TechSkills actual weightage total
-            var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-            var techTotal = 0;
-            for (i = 0; i < techItems.length; i++) {
-                techTotal = parseFloat(techTotal) + parseFloat($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-            }
-            if (profileValue != null && profileValue != '') {
-                profileScore = parseFloat(profileValue);
-            }
-            if (personalityValue != null && personalityValue != '') {
-                personalityScore = parseFloat(personalityValue);
-            }
-            if (interviewingAbilityValue != null && interviewingAbilityValue != '') {
-                interviewingAbilityScore = parseFloat(interviewingAbilityValue);
-            }
-
-            obj.y = techTotal / 4;
-            obj.label = "Tech Skills Score";
-            obj.legendText = "Tech Skills Score";
-            arr.push(obj.y);
-
-
-            var objProfile = { y: "", legendText: "", label: "" }
-
-            objProfile.y = profileScore / 4;
-            objProfile.label = "Profile Score";
-            objProfile.legendText = "Profile Score";
-            arr.push(objProfile.y);
-
-            var objPersonality = { y: "", legendText: "", label: "" }
-
-            objPersonality.y = personalityScore / 4;
-            objPersonality.label = "Personality Score";
-            objPersonality.legendText = "Personality Score";
-            arr.push(objPersonality.y);
-
-            var objInterviewingAbility = { y: "", legendText: "", label: "" }
-
-            objInterviewingAbility.y = interviewingAbilityScore / 4;
-            objInterviewingAbility.label = "Interviewing Ability Score";
-            objInterviewingAbility.legendText = "Interviewing Ability Score";
-            arr.push(objInterviewingAbility.y);
-
-
-            totalCount = (techTotal + profileScore + personalityScore + interviewingAbilityScore) / 4;
-            if (totalCount != Math.floor(totalCount)) {
-                totalCount = totalCount.toFixed(2);
-            }
-            document.getElementById("totScore").innerHTML = totalCount;
-
-
-            am4core.ready(function () {
-
-                // Themes begin
-                am4core.useTheme(am4themes_animated);
-                // Themes end
-
-                // Create chart instance
-                var chart = am4core.create("scoreChart", am4charts.XYChart);
-
-                // Add data
-                chart.data = [{
-                    "country": "Tech",
-                    "visits": arr[0]
-
-                }, {
-                    "country": "Profile",
-                    "visits": arr[1]
-                }, {
-                    "country": "Personality",
-                    "visits": arr[2]
-                }, {
-                    "country": "Interviewing Ability",
-                    "visits": arr[3]
-                }];
-
-                // Create axes
-
-                chart.logo.disabled = true;
-                var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-                categoryAxis.dataFields.category = "country";
-                categoryAxis.renderer.inside = true;
-                categoryAxis.renderer.labels.template.valign = 0;
-
-                categoryAxis.renderer.grid.template.location = 0;
-                categoryAxis.renderer.minGridDistance = 30;
-                chart.fontSize = 13;
-
-                categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
-                    if (target.dataItem && target.dataItem.index & 2 == 2) {
-                        return dy;
-                    }
-                    return dy;
-                });
-
-
-
-
-
-                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-                categoryAxis.renderer.grid.template.disabled = true;
-                categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-                categoryAxis.renderer.labels.template.paddingBottom = -17;
-                valueAxis.renderer.grid.template.disabled = true;
-                valueAxis.min = 0;
-                valueAxis.max = 30;
-                // Create series
-                var series = chart.series.push(new am4charts.ColumnSeries());
-                series.dataFields.valueY = "visits";
-
-                series.dataFields.categoryX = "country";
-                series.name = "Visits";
-                series.colorField = "color";
-
-
-                series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-                series.columns.template.tooltipText = "{valueY.formatNumber('#.00')}";
-                series.tooltip.label.adapter.add("text", function (text, target) {
-                    if (target.dataItem && target.dataItem.valueY == 0) {
-
-                        return "";
-                    }
-                    else {
-
-                        return text;
-                    }
-                });
-                series.columns.template.fillOpacity = .8;
-                series.columns.template.tooltipY = 8;
-                series.tooltip.background.strokeOpacity = 0
-                series.tooltip.pointerOrientation = "vertical";
-                series.columns.template.showTooltipOn = "always";
-                series.tooltip.background.filters.clear();
-                series.tooltip.getFillFromObject = false;
-                series.tooltip.label.fill = am4core.color("#9a9a9a");
-                series.tooltip.background.cornerRadius = 0;
-                series.tooltip.label.textAlign = "middle";
-                series.tooltip.background.fill = 0;
-                var columnTemplate = series.columns.template;
-                columnTemplate.strokeWidth = 0;
-                columnTemplate.strokeOpacity = 1;
-                chart.colors.list = [
-                    am4core.color("#07BEF3"),
-                    am4core.color("#00F96B"),
-                    am4core.color("#F64042"),
-                    am4core.color("#ffbc50")
-
-
-
-                ];
-                series.columns.template.events.once("inited", function (event) {
-                    event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
-                });
-
-            });
-
-            if (isTheaterMode === true) {
-                getThMode();
-            }
-            checkAnotherMode();
-            checktheatre();
+        if (localStorage.getItem('isTheaterMode') == "true") {
             getThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+        else {
             closeThMode();
-            checkMode();
-
         }
-        function checktheatre() {
+        var totalScore = 0;
+        var profileScore = 0;
+        var personalityScore = 0;
+        var interviewingAbilityScore = 0;
 
-            var mode = localStorage.getItem('isTheaterMode');
 
-            if (mode == true) {
-                document.getElementById("1").value = "THEATER-MODE-OFF";
-            } else {
-                document.getElementById("1").value = "THEATER-MODE-ON";
-            }
+        // get all the other scores to add to the total count
+        var profileValue = document.getElementById("IreportModel_ProfileScore").value;
+        var personalityValue = document.getElementById("IreportModel_OverallPersonalityScore").value;
+        var interviewingAbilityValue = document.getElementById("IreportModel_OverallInterviewingAbilityScore").value;
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < techItems.length; i++) {
+            techTotal = parseFloat(techTotal) + parseFloat($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+        }
+        if (profileValue != null && profileValue != '') {
+            profileScore = parseFloat(profileValue);
+        }
+        if (personalityValue != null && personalityValue != '') {
+            personalityScore = parseFloat(personalityValue);
+        }
+        if (interviewingAbilityValue != null && interviewingAbilityValue != '') {
+            interviewingAbilityScore = parseFloat(interviewingAbilityValue);
         }
 
-        function getThMode() {
-            var ele = document.getElementById('player');
+        obj.y = techTotal / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj.y);
 
-            ele.classList.remove("col-8");
-            ele.classList.add("col-12");
+
+        var objProfile = { y: "", legendText: "", label: "" }
+
+        objProfile.y = profileScore / 4;
+        objProfile.label = "Profile Score";
+        objProfile.legendText = "Profile Score";
+        arr.push(objProfile.y);
+
+        var objPersonality = { y: "", legendText: "", label: "" }
+
+        objPersonality.y = personalityScore / 4;
+        objPersonality.label = "Personality Score";
+        objPersonality.legendText = "Personality Score";
+        arr.push(objPersonality.y);
+
+        var objInterviewingAbility = { y: "", legendText: "", label: "" }
+
+        objInterviewingAbility.y = interviewingAbilityScore / 4;
+        objInterviewingAbility.label = "Interviewing Ability Score";
+        objInterviewingAbility.legendText = "Interviewing Ability Score";
+        arr.push(objInterviewingAbility.y);
+
+
+        totalCount = (techTotal + profileScore + personalityScore + interviewingAbilityScore) / 4;
+        if (totalCount != Math.floor(totalCount)) {
+            totalCount = totalCount.toFixed(2);
+        }
+        document.getElementById("totScore").innerHTML = totalCount;
+
+
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+            // Add data
+            chart.data = [{
+                "country": "Tech",
+                "visits": arr[0]
+
+            }, {
+                "country": "Profile",
+                "visits": arr[1]
+            }, {
+                "country": "Personality",
+                "visits": arr[2]
+            }, {
+                "country": "Interviewing Ability",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = 0;
+
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+            chart.fontSize = 13;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy;
+                }
+                return dy;
+            });
+
+
+
+
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            categoryAxis.renderer.grid.template.disabled = true;
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+            categoryAxis.renderer.labels.template.paddingBottom = -17;
+            valueAxis.renderer.grid.template.disabled = true;
+            valueAxis.min = 0;
+            valueAxis.max = 30;
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+
+
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+            series.columns.template.tooltipText = "{valueY.formatNumber('#.00')}";
+            series.tooltip.label.adapter.add("text", function (text, target) {
+                if (target.dataItem && target.dataItem.valueY == 0) {
+
+                    return "";
+                }
+                else {
+
+                    return text;
+                }
+            });
+            series.columns.template.fillOpacity = .8;
+            series.columns.template.tooltipY = 8;
+            series.tooltip.background.strokeOpacity = 0
+            series.tooltip.pointerOrientation = "vertical";
+            series.columns.template.showTooltipOn = "always";
+            series.tooltip.background.filters.clear();
+            series.tooltip.getFillFromObject = false;
+            series.tooltip.label.fill = am4core.color("#9a9a9a");
+            series.tooltip.background.cornerRadius = 0;
+            series.tooltip.label.textAlign = "middle";
+            series.tooltip.background.fill = 0;
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 0;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#ffbc50")
+
+
+
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+
+        });
+
+        if (isTheaterMode === true) {
+            getThMode();
+        }
+        checkAnotherMode();
+        checktheatre();
+        getThMode();
+        closeThMode();
+        checkMode();
+
+    }
+    function checktheatre() {
+
+        var mode = localStorage.getItem('isTheaterMode');
+
+        if (mode == true) {
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        } else {
             document.getElementById("1").value = "THEATER-MODE-ON";
-            localStorage.setItem('isTheaterMode', true);
         }
+    }
 
-        function closeThMode() {
-            var ele = document.getElementById('player');
+    function getThMode() {
+        var ele = document.getElementById('player');
 
-            ele.classList.remove("col-12");
-            ele.classList.add("col-8");
-            localStorage.setItem('isTheaterMode', false);
+        ele.classList.remove("col-8");
+        ele.classList.add("col-12");
+        document.getElementById("1").value = "THEATER-MODE-ON";
+        localStorage.setItem('isTheaterMode', true);
+    }
+
+    function closeThMode() {
+        var ele = document.getElementById('player');
+
+        ele.classList.remove("col-12");
+        ele.classList.add("col-8");
+        localStorage.setItem('isTheaterMode', false);
+    }
+
+    function checkMode() {
+        var val = window.localStorage.getItem('isTheaterMode');
+
+        if (val == true) {
+            getThMode();
+        } else {
+
+            closeThMode();
         }
+    }
+    if (localStorage.getItem('isTheaterMode') == true) {
 
-        function checkMode() {
-            var val = window.localStorage.getItem('isTheaterMode');
 
-            if (val == true) {
-                getThMode();
-            } else {
+        var ele = document.getElementById('player');
 
-                closeThMode();
+        ele.classList.remove("col-8");
+        ele.classList.add("col-12");
+    }
+    if (localStorage.getItem('isTheaterMode') == false) {
+
+        var ele = document.getElementById('player');
+
+        ele.classList.remove("col-12");
+        ele.classList.add("col-8");
+    }
+
+    function toggle(button) {
+
+
+
+        if (document.getElementById("1").value == "THEATER-MODE-ON") {
+            this.getThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+        else {
+            this.closeThMode();
+            document.getElementById("1").value = "THEATER-MODE-ON";
+        }
+    }
+    function checkAnotherMode() {
+
+
+        if (localStorage.getItem('isTheaterMode') == "true") {
+
+            this.getThMode();
+
+
+        }
+        else {
+            this.closeThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+    }
+</script>
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $(".candidate-name").each(function () {
+            if ($(this).text().length > 11) {
+                $(this).text($(this).text().substr(0, 11) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
             }
-        }
-        if (localStorage.getItem('isTheaterMode') == true) {
 
 
-            var ele = document.getElementById('player');
-
-            ele.classList.remove("col-8");
-            ele.classList.add("col-12");
-        }
-        if (localStorage.getItem('isTheaterMode') == false) {
-
-            var ele = document.getElementById('player');
-
-            ele.classList.remove("col-12");
-            ele.classList.add("col-8");
-        }
-
-        function toggle(button) {
-
-
-
-            if (document.getElementById("1").value == "THEATER-MODE-ON") {
-                this.getThMode();
-                document.getElementById("1").value = "THEATER-MODE-OFF";
-            }
-            else {
-                this.closeThMode();
-                document.getElementById("1").value = "THEATER-MODE-ON";
-            }
-        }
-        function checkAnotherMode() {
-
-
-            if (localStorage.getItem('isTheaterMode') == "true") {
-
-                this.getThMode();
-
-
-            }
-            else {
-                this.closeThMode();
-                document.getElementById("1").value = "THEATER-MODE-OFF";
-            }
-        }
-    </script>
-
-
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/data.js"></script>
-    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
-
-    <script>
-        $(document).ready(function () {
-            $(".candidate-name").each(function () {
-                if ($(this).text().length > 11) {
-                    $(this).text($(this).text().substr(0, 11) + "...")
-
-                    $('[role="data-tooltip"]').css("visibility", "visible");
-
-                }
-
-
-                else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-            });
-            $(".join-time").each(function () {
-                if ($(this).text().length > 10) {
-                    $(this).text($(this).text().substr(0, 10) + "...")
-
-                    $('[role="data-tooltip"]').css("visibility", "visible");
-
-                }
-
-
-                else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-            });
-
-
-
-
-
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
         });
-    </script>
-    <script>
-        function SetStarDetails() {
-            var openness = $("#IreportModel_Openness").val();
-            if (parseInt(openness) > 0)
-                $("#Openness_" + openness).attr("checked", "checked");
-            var conscientiousness = $("#IreportModel_Conscientiousness").val();
-            if (parseInt(conscientiousness) > 0)
-                $("#Conscientiousness_" + conscientiousness).attr("checked", "checked");
-            var extroversion = $("#IreportModel_Extroversion").val();
-            if (parseInt(extroversion) > 0)
-                $("#Extroversion_" + extroversion).attr("checked", "checked");
-            var agreeableness = $("#IreportModel_Agreeableness").val();
-            if (parseInt(agreeableness) > 0)
-                $("#Agreeableness_" + agreeableness).attr("checked", "checked");
-            var neuroticism = $("#IreportModel_Neuroticism").val();
-            if (parseInt(neuroticism) > 0)
-                $("#Neuroticism_" + neuroticism).attr("checked", "checked");
-        }
-        function SetStarProfile() {
-            var skillQuality = $("#IreportModel_SkillQuality").val();
-            if (parseInt(skillQuality) > 0)
-                $("#SkillQuality_" + skillQuality).attr("checked", "checked");
-            var certificationQuality = $("#IreportModel_CertificationQuality").val();
-            if (parseInt(certificationQuality) > 0)
-                $("#CertificationQuality_" + certificationQuality).attr("checked", "checked");
-            var educationQuality = $("#IreportModel_EducationQuality").val();
-            if (parseInt(educationQuality) > 0)
-                $("#EducationQuality_" + educationQuality).attr("checked", "checked");
-            var employersQuality = $("#IreportModel_EmployersQuality").val();
-            if (parseInt(employersQuality) > 0)
-                $("#EmployersQuality_" + employersQuality).attr("checked", "checked");
-            var careerProgression = $("#IreportModel_CareerProgression").val();
-            if (parseInt(careerProgression) > 0)
-                $("#CareerProgression_" + careerProgression).attr("checked", "checked");
-            var projectsQuality = $("#IreportModel_ProjectsQuality").val();
-            if (parseInt(projectsQuality) > 0)
-                $("#ProjectsQuality_" + projectsQuality).attr("checked", "checked");
-            var onlinePresence = $("#IreportModel_OnlinePresence").val();
-            if (parseInt(onlinePresence) > 0)
-                $("#OnlinePresence_" + onlinePresence).attr("checked", "checked");
-            var behavioralScore = $("#IreportModel_BehavioralScore").val();
-            if (parseInt(behavioralScore) > 0)
-                $("#BehavioralScore_" + behavioralScore).attr("checked", "checked");
-        }
-        var shortlisttotalcount = [];
-        jQuery(document).ready(function ($) {
-            SetStarProfile();
-            SetStarDetails();
-            $("#btnShortlist").on('click', function () {
-                if ($(this).attr('Shortvalue') == 1) {
-                    $("#btnShortlist").attr('Shortvalue', "2");
-                    $.ajax({
-                        type: "POST",
-                        url: "/InterviewerSkills/CandidateShortList",
-                        data: { videoid: $("#txtVideoId").val(), status: "Shortlisted" },
-                        success: function (data) {
-                            $("#btnShortlist").val("Shortlisted");
-                        }
-                    });
-                } else {
-                    $("#btnShortlist").attr('Shortvalue', "1");
-                    $.ajax({
-                        type: "POST",
-                        url: "/InterviewerSkills/CandidateShortList",
-                        data: { videoid: $("#txtVideoId").val(), status: "Shortlist" },
-                        success: function (data) {
-                            $("#btnShortlist").val("ShortList");
-                        }
-                    });
-                }
-            });
+        $(".join-time").each(function () {
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
 
-            $("#btnComment").on('click', function () {
-                if ($("#txtComment").val().trim() != "") {
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VideoComment",
-                        data: { comment: $("#txtComment").val(), videoid: $("#txtVideoId").val() },
-                        success: function (response) {
-                            $("#txtComment").val("");
-                            $.ajax({
-                                type: "POST",
-                                url: "/RiseTube/UpdateVideoComment",
-                                data: { videoid: $("#txtVideoId").val() },
-                                success: function (data) {
-                                    var html = '';
-                                    html += '  <div class="chat"><div class="chat-history"><ul class="posts" >';
-                                    for (var i = 0; i < data.length; i++) {
+                $('[role="data-tooltip"]').css("visibility", "visible");
 
-                                        html += '                <li>';
-                                        html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message borders comment-tri-right left-tp"> ' + data[i].comment; '</div>'
-                                        html += '    </li>';
-                                    }
-                                    html += '    </ul></div></div>';
-                                    $("#divcomments").empty().html(html);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
         });
-        function ShortlistVideoLinkToMail() {
 
-            var emailaddress = $("#txtUserEmailid").val();
-            var comment = $("#txtusercomment").val();
-            var videoids = '';
-            if (emailaddress.trim() != "" && comment.trim() != "") {
-                for (var i = 0; i < shortlisttotalcount.length; i++) {
-                    var checked = $("input[id=chk" + i + "]:checked").length;
-                    if (checked != 0) {
-                        videoids = videoids + ";" + shortlisttotalcount[i];
-                    }
-                }
+
+
+
+
+    });
+</script>
+<script>
+    function SetStarDetails() {
+        var openness = $("#IreportModel_Openness").val();
+        if (parseInt(openness) > 0)
+            $("#Openness_" + openness).attr("checked", "checked");
+        var conscientiousness = $("#IreportModel_Conscientiousness").val();
+        if (parseInt(conscientiousness) > 0)
+            $("#Conscientiousness_" + conscientiousness).attr("checked", "checked");
+        var extroversion = $("#IreportModel_Extroversion").val();
+        if (parseInt(extroversion) > 0)
+            $("#Extroversion_" + extroversion).attr("checked", "checked");
+        var agreeableness = $("#IreportModel_Agreeableness").val();
+        if (parseInt(agreeableness) > 0)
+            $("#Agreeableness_" + agreeableness).attr("checked", "checked");
+        var neuroticism = $("#IreportModel_Neuroticism").val();
+        if (parseInt(neuroticism) > 0)
+            $("#Neuroticism_" + neuroticism).attr("checked", "checked");
+    }
+    function SetStarProfile() {
+        var skillQuality = $("#IreportModel_SkillQuality").val();
+        if (parseInt(skillQuality) > 0)
+            $("#SkillQuality_" + skillQuality).attr("checked", "checked");
+        var certificationQuality = $("#IreportModel_CertificationQuality").val();
+        if (parseInt(certificationQuality) > 0)
+            $("#CertificationQuality_" + certificationQuality).attr("checked", "checked");
+        var educationQuality = $("#IreportModel_EducationQuality").val();
+        if (parseInt(educationQuality) > 0)
+            $("#EducationQuality_" + educationQuality).attr("checked", "checked");
+        var employersQuality = $("#IreportModel_EmployersQuality").val();
+        if (parseInt(employersQuality) > 0)
+            $("#EmployersQuality_" + employersQuality).attr("checked", "checked");
+        var careerProgression = $("#IreportModel_CareerProgression").val();
+        if (parseInt(careerProgression) > 0)
+            $("#CareerProgression_" + careerProgression).attr("checked", "checked");
+        var projectsQuality = $("#IreportModel_ProjectsQuality").val();
+        if (parseInt(projectsQuality) > 0)
+            $("#ProjectsQuality_" + projectsQuality).attr("checked", "checked");
+        var onlinePresence = $("#IreportModel_OnlinePresence").val();
+        if (parseInt(onlinePresence) > 0)
+            $("#OnlinePresence_" + onlinePresence).attr("checked", "checked");
+        var behavioralScore = $("#IreportModel_BehavioralScore").val();
+        if (parseInt(behavioralScore) > 0)
+            $("#BehavioralScore_" + behavioralScore).attr("checked", "checked");
+    }
+    var shortlisttotalcount = [];
+    jQuery(document).ready(function ($) {
+        SetStarProfile();
+        SetStarDetails();
+        $("#btnShortlist").on('click', function () {
+            if ($(this).attr('Shortvalue') == 1) {
+                $("#btnShortlist").attr('Shortvalue', "2");
                 $.ajax({
                     type: "POST",
-                    url: "/InterviewerSkills/CandidateShortListNotification",
-                    data: { videoids: videoids, email: emailaddress, comment: comment },
+                    url: "/InterviewerSkills/CandidateShortList",
+                    data: { videoid: $("#txtVideoId").val(), status: "Shortlisted" },
                     success: function (data) {
-                        swal.fire("Shortlisted successfully.");
-                        closeShortlistModel();
+                        $("#btnShortlist").val("Shortlisted");
                     }
                 });
             } else {
-                swal.fire("All fields are required.");
+                $("#btnShortlist").attr('Shortvalue', "1");
+                $.ajax({
+                    type: "POST",
+                    url: "/InterviewerSkills/CandidateShortList",
+                    data: { videoid: $("#txtVideoId").val(), status: "Shortlist" },
+                    success: function (data) {
+                        $("#btnShortlist").val("ShortList");
+                    }
+                });
             }
-        }
-        function closeShortlistModel() {
-            var modal = document.getElementById("MyShortlistModel");
-            modal.style.display = "none";
-        }
-        function openShortlistModel() {
-            if ($("#txtUserEmailfromlogin").val() != "") {
-                $("#txtUserEmailid").attr("readonly", "readonly");
-                $("#txtUserEmailid").val($("#txtUserEmailfromlogin").val());
+        });
+
+        $("#btnComment").on('click', function () {
+            if ($("#txtComment").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VideoComment",
+                    data: { comment: $("#txtComment").val(), videoid: $("#txtVideoId").val() },
+                    success: function (response) {
+                        $("#txtComment").val("");
+                        $.ajax({
+                            type: "POST",
+                            url: "/RiseTube/UpdateVideoComment",
+                            data: { videoid: $("#txtVideoId").val() },
+                            success: function (data) {
+                                var html = '';
+                                html += '  <div class="chat"><div class="chat-history"><ul class="posts" >';
+                                for (var i = 0; i < data.length; i++) {
+
+                                    html += '                <li>';
+                                    html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message borders comment-tri-right left-tp"> ' + data[i].comment; '</div>'
+                                    html += '    </li>';
+                                }
+                                html += '    </ul></div></div>';
+                                $("#divcomments").empty().html(html);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+    function ShortlistVideoLinkToMail() {
+
+        var emailaddress = $("#txtUserEmailid").val();
+        var comment = $("#txtusercomment").val();
+        var videoids = '';
+        if (emailaddress.trim() != "" && comment.trim() != "") {
+            for (var i = 0; i < shortlisttotalcount.length; i++) {
+                var checked = $("input[id=chk" + i + "]:checked").length;
+                if (checked != 0) {
+                    videoids = videoids + ";" + shortlisttotalcount[i];
+                }
             }
             $.ajax({
                 type: "POST",
-                url: "/InterviewerSkills/FetchCandidateShortList",
+                url: "/InterviewerSkills/CandidateShortListNotification",
+                data: { videoids: videoids, email: emailaddress, comment: comment },
                 success: function (data) {
-                    var modal = document.getElementById("MyShortlistModel");
-                    modal.style.display = "block";
-                    bindShortlistdata(data.result, data.currenturl);
+                    swal.fire("Shortlisted successfully.");
+                    closeShortlistModel();
                 }
             });
+        } else {
+            swal.fire("All fields are required.");
         }
+    }
+    function closeShortlistModel() {
+        var modal = document.getElementById("MyShortlistModel");
+        modal.style.display = "none";
+    }
+    function openShortlistModel() {
+        if ($("#txtUserEmailfromlogin").val() != "") {
+            $("#txtUserEmailid").attr("readonly", "readonly");
+            $("#txtUserEmailid").val($("#txtUserEmailfromlogin").val());
+        }
+        $.ajax({
+            type: "POST",
+            url: "/InterviewerSkills/FetchCandidateShortList",
+            success: function (data) {
+                var modal = document.getElementById("MyShortlistModel");
+                modal.style.display = "block";
+                bindShortlistdata(data.result, data.currenturl);
+            }
+        });
+    }
 
-        function bindShortlistdata(data, currenturl) {
-            shortlisttotalcount = data;
-            var html = '';
-            html += '<table width="100%" style="border:1px solid #dee2e6;margin: 20px 0px;">';
-            html += '    <thead>';
-            html += '<tr">';
-            html += '   <td class="sharetr">Public Url</td>';
-            html += '   <td class="sharetr text-center">Action</td>';
+    function bindShortlistdata(data, currenturl) {
+        shortlisttotalcount = data;
+        var html = '';
+        html += '<table width="100%" style="border:1px solid #dee2e6;margin: 20px 0px;">';
+        html += '    <thead>';
+        html += '<tr">';
+        html += '   <td class="sharetr">Public Url</td>';
+        html += '   <td class="sharetr text-center">Action</td>';
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody>';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>';
+            html += '   <td class="sharetd">' + currenturl + '/' + data[i] + '</td>';
+            html += '   <td class="sharetd"><input style="width: 70px;" type="checkbox" checked id="chk' + i + '" /></td>';
             html += '</tr>';
-            html += '</thead>';
-            html += '<tbody>';
-            for (var i = 0; i < data.length; i++) {
-                html += '<tr>';
-                html += '   <td class="sharetd">' + currenturl + '/' + data[i] + '</td>';
-                html += '   <td class="sharetd"><input style="width: 70px;" type="checkbox" checked id="chk' + i + '" /></td>';
-                html += '</tr>';
-            }
-            html += '</tbody>';
-            html += '</table>';
-            $("#divshortlistdetails").empty().html(html);
         }
-        function switchtoquestionVideo(questiontime) {
-            var time = 1;
-            if (questiontime != '') {
-                time = questiontime;
+        html += '</tbody>';
+        html += '</table>';
+        $("#divshortlistdetails").empty().html(html);
+    }
+    function switchtoquestionVideo(questiontime) {
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
+
+
+    function changeVideo(index) {
+        $(".video-card-image").removeClass("active-video");
+        $("#divvideoclick_" + index).addClass("active-video");
+        $('.active-video').attr('opacity', '0.65')
+        var videourl = $("#txtvideopri_" + index).val();
+        var html = '';
+
+        if (videourl.includes(".mp4") || videourl.includes(".org")) {
+            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload "  autoplay>';
+            html += '<source src="' + videourl + '" type="video/mp4">';
+            html += '</video>';
+        }
+        else if (videourl.includes("/manifest")) {
+            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " disablePictureInPicture controlsList="nofullscreen nodownload" playsinline style="pointer-events: none;" autoplay>';
+            html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
+            html += ' </video>';
+        }
+        else {
+            html += '           <iframe width="100%" class="vjs-tech btnvideo" height="315" src="' + videourl + '" allowfullscreen></iframe>';
+        }
+        $("#divvideochange").empty().html(html);
+    }
+</script>
+<script src="~/RiseTube/js/custom.js"></script>
+
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+
+<script>
+    ; (function () {
+
+        "use strict";
+
+        var words = document.getElementById("words"),
+            input = document.getElementById("txtintrestecomment,txtComment,txtsharetext,comment,txtsharetext1,interviewercomment"),
+            timeout, xhr;
+
+        input.addEventListener("keyup", function (e) {
+
+            if (timeout) clearTimeout(timeout);
+
+            if (!this.value.trim()) words.innerHTML = '';
+
+            timeout = setTimeout(function () {
+
+                var test_phrase = shuffle_words(input.value);
+
+                spell_check(test_phrase);
+
+                timeout = null;
+
+            }, 500);
+
+        });
+
+        function shuffle_words(inp) {
+
+            inp = inp.replace(/\s+/g, ' ');
+
+            var arr = inp.split(" "),
+                n = arr.length;
+
+            while (n > 0) {
+                var i = Math.floor(Math.random() * n--),
+                    t = arr[n];
+                arr[n] = arr[i];
+                arr[i] = t;
             }
-            var vid = document.getElementsByClassName("vjs-tech");
-            vid[0].currentTime = time;
-            //time should be in seconds
+
+            return arr.join(' ');
         }
 
+        function spell_check(text) {
 
-        function changeVideo(index) {
-            $(".video-card-image").removeClass("active-video");
-            $("#divvideoclick_" + index).addClass("active-video");
-            $('.active-video').attr('opacity', '0.65')
-            var videourl = $("#txtvideopri_" + index).val();
-            var html = '';
+            if (xhr) xhr.abort();
 
-            if (videourl.includes(".mp4") || videourl.includes(".org")) {
-                html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload "  autoplay>';
-                html += '<source src="' + videourl + '" type="video/mp4">';
-                html += '</video>';
-            }
-            else if (videourl.includes("/manifest")) {
-                html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " disablePictureInPicture controlsList="nofullscreen nodownload" playsinline style="pointer-events: none;" autoplay>';
-                html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
-                html += ' </video>';
-            }
-            else {
-                html += '           <iframe width="100%" class="vjs-tech btnvideo" height="315" src="' + videourl + '" allowfullscreen></iframe>';
-            }
-            $("#divvideochange").empty().html(html);
-        }
-    </script>
-    <script src="~/RiseTube/js/custom.js"></script>
+            xhr = $.ajax({
+                url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                headers: {
+                    'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                    'Accept': 'application/json'
+                },
+                data: {
+                    'text': text
+                },
+                cache: false,
+                success: function (result) {
 
-    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
-    <script src="~/Newassets/js/scrollBar.js"></script>
-    <script type="text/javascript">
-        $(".sb-container").scrollBox();
-    </script>
+                    xhr = null;
+                    suggest_words(result);
 
-
-    <script>
-        ; (function () {
-
-            "use strict";
-
-            var words = document.getElementById("words"),
-                input = document.getElementById("txtintrestecomment,txtComment,txtsharetext,comment,txtsharetext1,interviewercomment"),
-                timeout, xhr;
-
-            input.addEventListener("keyup", function (e) {
-
-                if (timeout) clearTimeout(timeout);
-
-                if (!this.value.trim()) words.innerHTML = '';
-
-                timeout = setTimeout(function () {
-
-                    var test_phrase = shuffle_words(input.value);
-
-                    spell_check(test_phrase);
-
-                    timeout = null;
-
-                }, 500);
-
+                }
             });
 
-            function shuffle_words(inp) {
+        }
 
-                inp = inp.replace(/\s+/g, ' ');
+        function suggest_words(obj) {
 
-                var arr = inp.split(" "),
-                    n = arr.length;
+            if (!obj.corrections) return;
 
-                while (n > 0) {
-                    var i = Math.floor(Math.random() * n--),
-                        t = arr[n];
-                    arr[n] = arr[i];
-                    arr[i] = t;
-                }
+            words.innerHTML = '';
 
-                return arr.join(' ');
-            }
+            for (var key in obj.corrections) {
 
-            function spell_check(text) {
+                if (obj.corrections.hasOwnProperty(key)) {
 
-                if (xhr) xhr.abort();
+                    var div = document.createElement("div");
+                    div.className = "word";
+                    div.innerHTML = obj.corrections[key][0];
+                    div.orig = key;
 
-                xhr = $.ajax({
-                    url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
-                    headers: {
-                        'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
-                        'Accept': 'application/json'
-                    },
-                    data: {
-                        'text': text
-                    },
-                    cache: false,
-                    success: function (result) {
+                    div.onmouseover = function () {
+                        var start = input.value.indexOf(this.orig);
+                        input.selectionStart = start;
+                        input.selectionEnd = start + this.orig.length;
+                    };
 
-                        xhr = null;
-                        suggest_words(result);
-
+                    div.onmouseout = function () {
+                        var len = input.value.length;
+                        input.selectionStart = len;
+                        input.selectionEnd = len;
                     }
-                });
 
-            }
-
-            function suggest_words(obj) {
-
-                if (!obj.corrections) return;
-
-                words.innerHTML = '';
-
-                for (var key in obj.corrections) {
-
-                    if (obj.corrections.hasOwnProperty(key)) {
-
-                        var div = document.createElement("div");
-                        div.className = "word";
-                        div.innerHTML = obj.corrections[key][0];
-                        div.orig = key;
-
-                        div.onmouseover = function () {
-                            var start = input.value.indexOf(this.orig);
-                            input.selectionStart = start;
-                            input.selectionEnd = start + this.orig.length;
-                        };
-
-                        div.onmouseout = function () {
-                            var len = input.value.length;
-                            input.selectionStart = len;
-                            input.selectionEnd = len;
-                        }
-
-                        div.onclick = function () {
-                            input.value = input.value.replace(this.orig, this.innerHTML);
-                            this.parentNode.removeChild(this);
-                        }
-
-                        words.appendChild(div);
-
+                    div.onclick = function () {
+                        input.value = input.value.replace(this.orig, this.innerHTML);
+                        this.parentNode.removeChild(this);
                     }
+
+                    words.appendChild(div);
 
                 }
 
             }
 
-        })();
-    </script>
+        }
+
+    })();
+</script>
 
 
 

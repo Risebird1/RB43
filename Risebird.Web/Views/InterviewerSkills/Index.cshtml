@@ -29,7 +29,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <div class="main-panel" id="main-panel">
-  
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -44,7 +44,7 @@
                         <div class="mdc-button__ripple"></div>
                     </button>
 
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Interviewer Skills Channel </font></span></button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Interviewer Skills Channel </font></span></button>
 
 
 
@@ -128,27 +128,15 @@
                                                 </div>
                                                 <div class="col-lg-10 col-sm-10 mob-txt">
                                                     <div class="group inner list-group-item-text">
-
-                                                        <div id="intskill_2" class="row">
-                                                            <span>JD Tiltle:</span> <div class="clientName" title="@item.JDTiltle">@item.JDTiltle</div>
-                                                        </div> <br />
-
-                                                        <div id="intskill_3" class="row"> <span>Profile Type:</span>@item.HeuristicProfileType</div> <br />
-                                                        <div id="intskill_4" class="row"> <span>End Date:</span>@item.EndDate</div> <br />
-                                                        <div id="intskill_5" class="row">
-                                                            <span>Primary Skill:</span> @(item.SkillName!= null ? item.SkillName : "")
-                                                        </div> <br />
-                                                        <div id="intskill_6" class="row">
-                                                            <span>Total Discussion:</span> @item.TotalMeetings
-                                                        </div> <br />
-
-                                                        <div id="intskill_7" class="row">
-                                                            <span>Schedule Discussion:</span> @item.ScheduledMeetings
-                                                        </div> <br />
-
-                                                        <div id="intskill_8" class="row">
-                                                            <span>Approved Interviewers:</span> @item.ApprovedInterviewers
-                                                        </div> <br />
+                                                        <div id="intskill_2" class="row clearfix">
+                                                            <div class="client-field"><span>JD Tiltle:</span><span title="@item.JDTiltle" style="font-weight:normal">@item.JDTiltle</span></div>
+                                                        </div>
+                                                        <div id="intskill_3" class="clearfix row"><div class="client-field"> <span>Profile Type:</span>@item.HeuristicProfileType</div></div>
+                                                        <div id="intskill_4" class="clearfix row"><div class="client-field"> <span>End Date:</span>@item.EndDate</div></div>
+                                                        <div id="intskill_5" class="clearfix row"><div class="client-field"><span>Primary Skill:</span> @(item.SkillName!= null ? item.SkillName : "")</div></div>
+                                                        <div id="intskill_6" class="clearfix row"><div class="client-field"><span>Total Discussion:</span> @item.TotalMeetings</div></div>
+                                                        <div id="intskill_7" class="clearfix row"><div class="client-field"><span>Schedule Discussion:</span> @item.ScheduledMeetings</div></div>
+                                                        <div id="intskill_8" class="clearfix row"><div class="client-field"><span>Approved Interviewers:</span> @item.ApprovedInterviewers</div></div>
                                                     </div>
                                                 </div>
                                             </div>
