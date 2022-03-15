@@ -90,6 +90,7 @@
 </style>
 
 <link href="~/css/Calender.css" rel="stylesheet" />
+<script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.7/js/intlTelInput.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/css/intlTelInput.css" rel="stylesheet" />
 <style>
@@ -112,7 +113,7 @@
         <div id="divcalenderdetails">
             <div class="calendar-con clearfix">
                 <div class="col-md-12">
-                    <div class="col-md-4 company-info pull-left">
+                    <div class="col-md-4 company-info pull-left" style="padding-left:3vw">
                         @if (!String.IsNullOrEmpty(Model._IRFDetails.LogoLink))
                         {
                             <div class="logo-box"><div class="log-wrap"><img src=@Model._IRFDetails.LogoLink class="logo-company"></div></div>
@@ -296,7 +297,7 @@
         <div id="divCandidateDetails" style="display:none">
             <div class="calendar-con clearfix">
                 <div class="col-md-12">
-                    <div class="col-md-4 company-info pull-left">
+                    <div class="col-md-4 company-info pull-left" style="padding-left:3vw">
                         @if (!String.IsNullOrEmpty(Model._IRFDetails.LogoLink))
                         {
                             <div class="logo-box"><div class="log-wrap"><img src=@Model._IRFDetails.LogoLink class="logo-company"></div></div>
@@ -324,7 +325,7 @@
                         <div class="row"><div class="col-md-12">TimeZone : <label id="txttimezoneform">Asia/Calcutta</label></div></div>
                     </div>
 
-                    <div class="col-md-6 form-field-calender pull-left">
+                    <div class="col-md-6 form-field-calender pull-left" style="padding-left:3vw">
                         <form action="/InterviewScheduler/ScheduleEvent" enctype="multipart/form-data" method="post">
                             <div>
                                 @Html.AntiForgeryToken()
