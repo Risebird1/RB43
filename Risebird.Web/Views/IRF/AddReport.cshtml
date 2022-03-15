@@ -107,15 +107,15 @@
 
                                         <div class="row">
                                             @*<div class="col-md-6 col-sm-6">
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                            @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                                        @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                        </div>
+                                                    </div>
 
-                    </div>*@
+                                                </div>*@
                                             <div class="col-md-6 col-sm-6 border-rv">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -133,12 +133,12 @@
                                         </div>
                                         <div class="row">
                                             @*<div class="col-md-6 col-sm-6">
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                            @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                        </div>
-                    </div>*@
+                                                        @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>*@
                                             <div class="col-md-6 col-sm-6 border-rv">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -176,14 +176,8 @@
                                 <div class="card-wrap">
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6 border-rv">
-                                            @*<div class="form-group">
-                        @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                    </div>*@
-
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
                                                 @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                             </div>
@@ -191,12 +185,10 @@
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
                                                 @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                 @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
 
@@ -239,7 +231,23 @@
 
 
                                         </div>
-                                        <div class="col-md-6 col-sm-6 pull-left">
+                                        <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                            <div class="col-md-12 col-sm-12 border-rv">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 pull-left">
                                             <div>
                                                 <div class="card-body">
                                                     <div class="form-group">
@@ -278,26 +286,26 @@
                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
                                                 @*if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                        {
-                            <video width="320" height="320" style="width:100%" controls class="vjs-tech" controlsList="nodownload">
-                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                                    {
+                                                        <video width="320" height="320" style="width:100%" controls class="vjs-tech" controlsList="nodownload">
+                                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                            <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
-                                Your browser does not support the video tag.
-                            </video>
-                        }
-                        else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                        {
-                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
-                                <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    }
+                                                    else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                    {
+                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                            <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
 
-                            </video>
-                        }
-                        else
-                        {
-                            <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                                                        </video>
+                                                    }
+                                                    else
+                                                    {
+                                                        <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                        }*@
+                                                    }*@
                                                 string appendTime;
                                                 if (Model.ThumbnailTimeSeconds == 0)
                                                 {
@@ -315,7 +323,7 @@
                                         </p>
                                         @*<div class="col-md-6 col-sm-6">
 
-                </div>*@
+                                            </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -366,11 +374,11 @@
                                                             </td>
 
                                                             @*<td>
-                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                        </button>
-                                    </td>*@
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                                    </button>
+                                                                </td>*@
 
                                                         </tr>
                                                     }
@@ -403,11 +411,11 @@
                                                                 </td>
 
                                                                 @*<td>
-                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                            </button>
-                                        </td>*@
+                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                                        </button>
+                                                                    </td>*@
                                                             </tr>
 
 
@@ -1904,7 +1912,7 @@
             $.ajax({
                 url: '/RiseTube/SaveRaitingDetails',
                 type: "POST",
-                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction},
+                data: { 'imid': interviewid, 'rating': ratingvalue, 'comment': comments, 'clientaction': clientaction },
                 success: function (data) {
                     swal.fire(data);
                     var modal = document.getElementById("myRaitingPopup");
