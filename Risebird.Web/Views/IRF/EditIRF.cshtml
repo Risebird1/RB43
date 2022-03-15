@@ -1856,7 +1856,6 @@
             }
             else if (activeTab.trim() == "Job Details") {
                 flag = checkTabValidation(activeTab);
-                debugger;
                 if (!flag) {
 
                     $(".tab-menu li a").removeClass("active");
@@ -1999,7 +1998,6 @@
     });
 
     function checkTabValidation(activeTab) {
-        debugger;
         var flag = false;
         if (activeTab.trim() == "Event Details") {
             var flagvalue = $("#hidisclone").val();
@@ -2125,7 +2123,6 @@
             //}
             if ($('#StartDate').val() != "") {
                 flag = !(checkStartDate($('#StartDate').val()));
-                flag = false;
             }
             if ($('#RisebirdHr').val() == "") {
                 $('#error_RisebirdHr').text("The Channel Owner field is required.");
