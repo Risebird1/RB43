@@ -2004,11 +2004,14 @@ namespace Risebird.Web.Controllers
                     int abc;
                     if (!int.TryParse(model.JobCountry, out abc))
                     {
-                        if (model.JobCountry.ToUpper() == "INDIA")
+                        if (model.JobCountry?.ToUpper() == "INDIA")
                         {
                             model.JobCountry = "1";
                         }
-                        else { model.JobCountry = "2"; }
+                        else 
+                        { 
+                            model.JobCountry = "2"; 
+                        }
                     }
                     model.IsClone = isClone;
                     model.UseAsCloneTemplate = useAsCloneTemplate;
@@ -2160,6 +2163,19 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
+                                return RedirectToAction("Index");
+                            }
+                        }
+                        else if(model.UseAsCloneTemplate)
+                        {
+                            if (await _irfService.CreateClonableSkillChannel(model, emailId))
+                            {
+                                TempData["SuccessErrorMessage"] = "Clonable Skill Channel created Successfully!";
+                                return RedirectToAction("Index");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessage"] = "Failed! Clonable Skill Channel could not be created!";
                                 return RedirectToAction("Index");
                             }
                         }

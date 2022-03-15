@@ -1493,7 +1493,7 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line" })@*(SelectList)ViewBag.CategoryList*@
+                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "AssessmentGroupCategoryChanged(this.value)" })@*(SelectList)ViewBag.CategoryList*@
 
 
                                                             @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
@@ -1856,6 +1856,7 @@
             }
             else if (activeTab.trim() == "Job Details") {
                 flag = checkTabValidation(activeTab);
+                debugger;
                 if (!flag) {
 
                     $(".tab-menu li a").removeClass("active");
@@ -1998,6 +1999,7 @@
     });
 
     function checkTabValidation(activeTab) {
+        debugger;
         var flag = false;
         if (activeTab.trim() == "Event Details") {
             var flagvalue = $("#hidisclone").val();
@@ -2075,7 +2077,8 @@
             else {
                 $('#error_PrimarySkillInvite').text("");
             }
-            if ($('#JobCountry').val() == "") {
+
+            if ($('#JobCountry').val() == "" ) {
                 $('#error_JobCountry').text("The Job Country field is required.");
                 flag = true;
             }
@@ -2121,7 +2124,8 @@
             //    $('#error_TotalBudget').text("");
             //}
             if ($('#StartDate').val() != "") {
-                flag = checkStartDate($('#StartDate').val());
+                flag = !(checkStartDate($('#StartDate').val()));
+                flag = false;
             }
             if ($('#RisebirdHr').val() == "") {
                 $('#error_RisebirdHr').text("The Channel Owner field is required.");
@@ -2572,7 +2576,6 @@
         CheckQCRequired();
         CheckJoinabilitySelectabilityRequired();
         CheckGeneralSkillRequired();
-        debugger;
         if ('@Model.UseAsCloneTemplate' == 'True') {
             RecommendationStatusChanged('@Model.IRFRecommendations.StatusRadioValue');
         }

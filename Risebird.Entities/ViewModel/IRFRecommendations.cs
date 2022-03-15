@@ -10,7 +10,7 @@ namespace Risebird.Entities.ViewModel
     public class IRFRecommendations
     {
         public int id { get; set; }
-        public int IRFId { get; set; }
+        public int CloneIRFId { get; set; }
 
         [DisplayName("Assessment Group Category")]
         public int? CategoryId { get; set; }

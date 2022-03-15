@@ -32,6 +32,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
+        Task<bool> CreateClonableSkillChannel(IRFVm irfDetails);
         IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();

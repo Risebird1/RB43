@@ -725,6 +725,36 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> CreateClonableSkillChannel(IRFVm model, string loggedInUser)
+        {
+            try
+            {
+                if (model.UseAsCloneTemplate && model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+                }
+                var result = await _irfRepository.CreateClonableSkillChannel(model);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.CreateClonableSkillChannel;
+                    activityTrackerModel.Particulars = model.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = ActivityTypes.CreateClonableSkillChannel.GetDescription();
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         #endregion
         public IList<SkillComment> GetTechSkillComments(int id, string emailId = null)
         {
