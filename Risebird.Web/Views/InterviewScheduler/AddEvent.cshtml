@@ -38,7 +38,8 @@
                                 </div>
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.Concurrency, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
-                                    @Html.ValidationMessageFor(model => model.Concurrency, "", new { @class = "text-danger", @type = "number" })
+                                    @Html.ValidationMessageFor(model => model.Concurrency, "", new { @class = "text-danger", @type = "number", @min = "0", @max = "50" })
+                                    <input type="number" min="0" max="50" />
                                 </div>
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.StartDate, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
