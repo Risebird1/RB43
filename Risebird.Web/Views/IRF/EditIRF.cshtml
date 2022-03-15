@@ -2121,8 +2121,14 @@
             //else {
             //    $('#error_TotalBudget').text("");
             //}
+            //if ($('#StartDate').val() != "") {
+            //    flag = !(checkStartDate($('#StartDate').val()));
+            //}
             if ($('#StartDate').val() != "") {
-                flag = !(checkStartDate($('#StartDate').val()));
+                var result = checkStartDate($('#StartDate').val());
+                if (result == true) {
+                    flag = true;
+                }
             }
             if ($('#RisebirdHr').val() == "") {
                 $('#error_RisebirdHr').text("The Channel Owner field is required.");
@@ -3039,19 +3045,18 @@
 
 
     function checkStartDate(val) {
-
         if (val == "") {
             document.getElementById("startDateCheck").innerHTML = "";
             return true;
         }
-        var year = val.substring(0, 4);
-        var month = parseInt(val.substring(5, 7)) - 1;
-        var date = val.substring(8, 10);
-        var StartDate = new Date(year, month, date);
+        //var year = val.substring(0, 4);
+        //var month = parseInt(val.substring(5, 7)) - 1;
+        //var date = val.substring(8, 10);
+        //var StartDate = new Date(year, month, date);
 
 
-        var d = new Date();
-        var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        //var d = new Date();
+        //var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
         //if (StartDate < currentDate) {
         //    document.getElementById("btnUpload").disabled = true;
         //    document.getElementById("startDateCheck").style.display = "block";
@@ -3069,10 +3074,12 @@
         if (document.getElementById("EndDate").value != "") {
             return checkEndDate(document.getElementById("EndDate").value);
         }
+        else {
+            return false;
+        }
     }
 
     function checkEndDate(val) {
-
         if (val == "") {
             return true;
         }
