@@ -203,5 +203,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.CheckInterviewConcurrency(interviewdate, IRFId, Uniqueid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
