@@ -5256,7 +5256,7 @@ namespace Risebird.Repository
                 parameters.Add("@interviewer", interviewer);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<string>(
+                    SqlMapper.Query(
                         con, "usp_applyInterviewerpenalty", parameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
