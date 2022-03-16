@@ -24,5 +24,6 @@ namespace Risebird.Business.Interface
         int AutoCreateEvent(daytimes_report model);
         int FetchEventidByUniqueid(string _uniqueid);
         bool UpdateSchedulingLinkDetails(string _uniqueid);
+        Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId,string Uniqueid);
     }
 }

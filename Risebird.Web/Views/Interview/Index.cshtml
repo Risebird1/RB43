@@ -630,8 +630,14 @@
                                                         {
                                                             <td class="text-center"> @item.confirmationStatus</td>
                                                         }
-                                                        <td>@item.Cancellationsource</td>
-
+                                                        @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                        {
+                                                            <td>@item.Cancellationsource</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         @*@if (item.confirmationStatus.Trim() != Risebird.Entities.Enum.ReceiveMeetingStatus.Cancelled.GetDescription())
                                                             {
                                                                 @if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())

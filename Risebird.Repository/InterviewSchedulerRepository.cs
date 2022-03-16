@@ -52,6 +52,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@EndDate", model.EndDate);
                 dynamicParameters.Add("@duration", model.duration);
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
+                dynamicParameters.Add("@Concurrency", model.Concurrency);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
@@ -299,6 +300,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@EndDate", model.EndDate);
                 dynamicParameters.Add("@duration", model.duration);
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
+                dynamicParameters.Add("@Concurrency", model.Concurrency);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
@@ -408,6 +410,26 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+        public async Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid)
+        {
+            try
+            {
+                var query = ";With CTE as(Select Count(id) as InterviewCount from InterviewMeetings where interviewDate=@interviewdate and IRFId=@IRFId) Select Case When CTE.InterviewCount<Isnull(si.ConCurrency,0) Then 'True' When CTE.InterviewCount>=Isnull(si.ConCurrency,0) Then 'False' End from CTE join ScheduleInterviewEvent si on si.SkillChannel=@IRFId where si.Uniqueid=@Uniqueid";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@IRFId", IRFId);
+                dp.Add("@interviewdate", interviewdate);
+                dp.Add("@Uniqueid", Uniqueid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<string>(query, dp);
+                    return Convert.ToBoolean(results.FirstOrDefault());
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }
