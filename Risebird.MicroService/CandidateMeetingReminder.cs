@@ -52,7 +52,6 @@ namespace Risebird.MicroService
                         Mail _mail = new Mail
                         {
                             TO = item.CandidateEmail,
-                            CC = item.staffingAgency,
                             Subject = "Risebird: Interview Reminder"
                         };
                         var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton);
