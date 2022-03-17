@@ -6529,6 +6529,7 @@ namespace Risebird.Web.Controllers
             model_report.EventName = EventName;
             model_report.SkillChannel = SkillChannel;
             model_report.duration = 60;
+            model_report.Concurrency = 10;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)

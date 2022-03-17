@@ -216,6 +216,8 @@ namespace Risebird.Web
                        .Allow("https://static.tumblr.com/")
                        .Allow("http://www.w3.org/")
                        .Allow("https://www.google-analytics.com/")
+                       .Allow("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/")
+                       .Allow("https://d3v0px0pttie1i.cloudfront.net/")
                        .Allow("data:")
                        //.Allow("data:image/svg+xml,%3csvg")
                        .Allow("'unsafe-inline'");
