@@ -1,5 +1,7 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
 {
@@ -17,6 +19,8 @@ namespace Risebird.Business.Interface
         bool UpdateSkillLevel(SkillLevel skillLevelToUpdate);
         bool DeleteSkillLevel(int id);
         List<Skill> GetAssessmentGroupCategory();
+
+        Task<IEnumerable<AssignmentVM>> GetAssessmentGroupsByCategory(int categoryId);
 
     }
 }

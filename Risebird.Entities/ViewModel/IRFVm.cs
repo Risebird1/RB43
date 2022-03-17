@@ -158,6 +158,9 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("General Skill Required")]
         public bool IsGeneralSkillRequired { get; set; }
+
+        public IRFRecommendations IRFRecommendations { get; set; }
+        public bool UseAsCloneTemplate { get; set; }
     }
     public class InterviewerIds
     {
