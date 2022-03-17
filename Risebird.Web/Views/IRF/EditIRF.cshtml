@@ -2,7 +2,16 @@
 @using Risebird.Entities.Enum; 
 
 @{
-    ViewData["Title"] = "Edit Skills Channel";
+    if(Model.UseAsCloneTemplate)
+    {
+        ViewData["Title"] = "Create Clone Template";
+
+    }
+    else
+    {
+        ViewData["Title"] = "Edit Skills Channel";
+
+    }
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -83,7 +92,7 @@
                                         <div class="tab-main-box clearfix">
                                             <div class="col-md-4 col-sm-4 pull-left">
 
-                                                @if (!Model.IsClone)
+                                                @if (!Model.IsClone && !Model.UseAsCloneTemplate)
                                                 {
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -100,7 +109,7 @@
                                                 {
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "validateIRFName()" } })
+                                                        @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "validateName()" } })
                                                         <div style="position:relative">
                                                             <label class="text-danger" id="uniqueMsg" style="color:red; position:absolute;"></label>
                                                             @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "error_IRFName", @class = "text-danger", @style = "position:absolute" })
@@ -2564,6 +2573,7 @@
 
 </script>
 <script>
+    var useAsCloneTemplate = '@Model.UseAsCloneTemplate';
     $(document).ready(function () {
         var countryType = $("#JobCountry").val();
         var interviewerQCRate;
@@ -2579,7 +2589,7 @@
         CheckQCRequired();
         CheckJoinabilitySelectabilityRequired();
         CheckGeneralSkillRequired();
-        if ('@Model.UseAsCloneTemplate' == 'True') {
+        if (useAsCloneTemplate == 'True') {
             RecommendationStatusChanged('@Model.IRFRecommendations.StatusRadioValue');
         }
         var rateEmements = $('[id^="QualityController"][id$="PerSuccessRate"]');
@@ -4000,16 +4010,26 @@
 
     }
 
-    function validateIRFName() {
+    function validateName() {
         var letterNumber = /^[0-9a-zA-Z]+$/;
         var val = document.getElementById("IRFId").value;
         if (val == "") {
-            document.getElementById("error_IRFName").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            if (useAsCloneTemplate == 'True') {
+                document.getElementById("error_IRFName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
+            }
+            else {
+                document.getElementById("error_IRFName").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            }
             return false;
         }
         else if (val.length != 10) {
             document.getElementById("IRFId").focus();
-            document.getElementById("error_IRFName").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            if (useAsCloneTemplate == 'True') {
+                document.getElementById("error_IRFName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
+            }
+            else {
+                document.getElementById("error_IRFName").innerHTML = "The Skill Channel ID should be an exact 10 characters long.";
+            }
             return false;
         }
         else if (!(val.match(letterNumber))) {
@@ -4018,14 +4038,26 @@
             return false;
         }
         else {
+
+            var isCloneTemplate = false;
+
+            if (useAsCloneTemplate == 'True') {
+                isCloneTemplate = true;
+            }
+           
             $.ajax({
                 type: "GET",
                 url: "/IRF/CheckUniqueness",
-                data: { 'value': val },
+                data: { 'value': val, 'isCloneTemplate': isCloneTemplate},
                 success: function (response) {
                     if (response == false) {
                         //document.getElementById("btnUpload").disabled = true;
-                        document.getElementById("error_IRFName").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
+                        if (useAsCloneTemplate == 'True') {
+                            document.getElementById("error_IRFName").innerHTML = "This Clone Template Name already exists. Kindly enter a different Name.";
+                        }
+                        else {
+                            document.getElementById("error_IRFName").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
+                        }
                         document.getElementById("IRFId").focus();
                         return false;
                     }

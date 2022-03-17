@@ -37,7 +37,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
         //bool CheckUniqueness(string value);
-        Task<bool> CheckUniqueness(string value);
+        Task<bool> CheckUniqueness(string value, bool isCloneTemplate = false);
         IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
@@ -165,5 +165,6 @@ namespace Risebird.Repository.Interface
         string FetchIRFAudioLink(int irfid);
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
+        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
     }
 }

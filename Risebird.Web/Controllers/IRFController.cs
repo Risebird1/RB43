@@ -1142,11 +1142,11 @@ namespace Risebird.Web.Controllers
 
                 return;
             }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-        }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]
@@ -1255,9 +1255,9 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public bool CheckUniqueness(string value)
+        public bool CheckUniqueness(string value, bool isCloneTemplate = false)
         {
-            return _irfService.CheckUniqueness(value);
+            return _irfService.CheckUniqueness(value, isCloneTemplate);
         }
 
         //[Authorize]
@@ -2177,13 +2177,13 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _irfService.CreateClonableSkillChannel(model, emailId))
                             {
-                                TempData["SuccessErrorMessage"] = "Clonable Skill Channel created Successfully!";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Clonable Skill Channel created Successfully!";
+                                return RedirectToAction("CloneSkillChannnel");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "Failed! Clonable Skill Channel could not be created!";
-                                return RedirectToAction("Index");
+                                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed! Clonable Skill Channel could not be created!";
+                                return RedirectToAction("CloneSkillChannnel");
                             }
                         }
                         else
@@ -6329,6 +6329,11 @@ namespace Risebird.Web.Controllers
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.AssessmentGroup).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         irfList = irfList.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)).ToList();
                     }
+                    if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
+                        TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
+                    }
                     return View(irfList);
                 }
                 else
@@ -6721,8 +6726,8 @@ namespace Risebird.Web.Controllers
                 return Json(model);
             }
         }
-            }
-        }
+        //    }
+        //}
 
         [HttpGet]
         public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId)
@@ -6739,6 +6744,32 @@ namespace Risebird.Web.Controllers
 
             }
             return new SelectList(list, "Value", "Text");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCloneSkillChannelTemplates()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                {
+                    var list = await _irfService.GetAllClonableSkillChannels();
+                    
+                    return View(list);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }

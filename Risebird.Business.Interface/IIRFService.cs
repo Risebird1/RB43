@@ -23,7 +23,7 @@ namespace Risebird.Business.Interface
         Task<IRFVm> GetEditIRF(int id, bool isClone = false);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
         IList<SkillComment> GetTechSkillComments(int id, string emailId = null);
-        bool CheckUniqueness(string value);
+        bool CheckUniqueness(string value, bool isCloneTemplate = false);
 
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
@@ -108,5 +108,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
 
         Task<bool> CreateClonableSkillChannel(IRFVm model, string loggedInUser);
+        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
     }
 }

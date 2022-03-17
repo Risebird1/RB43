@@ -628,7 +628,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> CheckUniqueness(string value)
+        public async Task<bool> CheckUniqueness(string value, bool isCloneTemplate = false)
         {
             try
             {
@@ -637,12 +637,25 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@value", value);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetIRFISCUniqueness", dynamicParameters,
-                        commandType: CommandType.StoredProcedure);
-                    if (result.Count() > 0)
-                        return false;
+                    if(!isCloneTemplate)
+                    {
+                        var result = await SqlMapper.QueryAsync<string>(con, "usp_GetIRFISCUniqueness", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                        if (result.Count() > 0)
+                            return false;
+                        else
+                            return true;
+                    }
                     else
-                        return true;
+                    {
+                        var result = await SqlMapper.QueryAsync<string>(con, "usp_GetClonableSkillChannelNameUniqueness", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                        if (result.Count() > 0)
+                            return false;
+                        else
+                            return true;
+                    }
+                    
                 }
 
             }
@@ -5566,6 +5579,8 @@ namespace Risebird.Repository
             return null;
         }
 
+        //
+
         public async Task<bool> IsQuestionUsedInReport(string question)
         {
             try
@@ -5767,6 +5782,31 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //DynamicParameters parameters = new DynamicParameters();
+                    //parameters.Add("@startDate", startDate);
+                    //parameters.Add("@endDate", endDate);
+                    return await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannels", commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }
            

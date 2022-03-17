@@ -800,11 +800,11 @@ namespace Risebird.Business
             }
         }
 
-        public bool CheckUniqueness(string value)
+        public bool CheckUniqueness(string value, bool isCloneTemplate = false)
         {
             try
             {
-                return _irfRepository.CheckUniqueness(value).Result;
+                return _irfRepository.CheckUniqueness(value, isCloneTemplate).Result;
             }
 
             catch (Exception e)
@@ -2402,5 +2402,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
+        {
+            try
+            {
+                return await _irfRepository.GetAllClonableSkillChannels();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
+
+
 }
