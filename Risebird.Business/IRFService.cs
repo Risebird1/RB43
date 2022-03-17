@@ -53,6 +53,7 @@ namespace Risebird.Business
             {
                 irfDetails.IRFId = irfDetails.IRFId.Trim();
                 irfDetails.CreatedOn = DateTime.UtcNow;
+                //irfDetails.IRFRecommendations.Status = irfDetails.IRFRecommendations.StatusRadioValue == "true" ? true : false;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
@@ -532,7 +533,11 @@ namespace Risebird.Business
                 model.OldSkillCollection = model.SkillCollection;
                 model.IsQCRequired = IRF.IsQCRequired;
                 model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
-                model.IsGeneralSkillRequired = IRF.IsGeneralSkillRequired;
+                model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
+                if(model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
+                }
                 return model;
 
             }
@@ -662,6 +667,11 @@ namespace Risebird.Business
                         }
                     }
                 }
+
+                if(model.UseAsCloneTemplate && model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+                }
                 var result = _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null).Result;
                 if (result)
                 {
@@ -715,6 +725,36 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> CreateClonableSkillChannel(IRFVm model, string loggedInUser)
+        {
+            try
+            {
+                if (model.UseAsCloneTemplate && model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+                }
+                var result = await _irfRepository.CreateClonableSkillChannel(model);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.CreateClonableSkillChannel;
+                    activityTrackerModel.Particulars = model.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = ActivityTypes.CreateClonableSkillChannel.GetDescription();
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         #endregion
         public IList<SkillComment> GetTechSkillComments(int id, string emailId = null)
         {
@@ -760,11 +800,11 @@ namespace Risebird.Business
             }
         }
 
-        public bool CheckUniqueness(string value)
+        public bool CheckUniqueness(string value, bool isCloneTemplate = false)
         {
             try
             {
-                return _irfRepository.CheckUniqueness(value).Result;
+                return _irfRepository.CheckUniqueness(value, isCloneTemplate).Result;
             }
 
             catch (Exception e)
@@ -2362,5 +2402,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
+        {
+            try
+            {
+                return await _irfRepository.GetAllClonableSkillChannels();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
+
+
 }

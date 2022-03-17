@@ -32,11 +32,12 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
+        Task<bool> CreateClonableSkillChannel(IRFVm irfDetails);
         IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
         //bool CheckUniqueness(string value);
-        Task<bool> CheckUniqueness(string value);
+        Task<bool> CheckUniqueness(string value, bool isCloneTemplate = false);
         IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
@@ -159,9 +160,11 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateCancellationSource(int interviewid, string emailId);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
         Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid);
+        Task<IRFRecommendations> GetIRFRecommendation(int irfId);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
         string FetchIRFAudioLink(int irfid);
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
+        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
     }
 }
