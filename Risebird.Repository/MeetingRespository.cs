@@ -5054,7 +5054,8 @@ namespace Risebird.Repository
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
-                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
+                //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
+                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
