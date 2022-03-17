@@ -382,6 +382,9 @@ namespace Risebird.Entities.ViewModel
         public string IRFId { get; set; }
         public string JDTiltle { get; set; }
         public string CalendlyLink { get; set; }
+        public string BillingOwner { get; set; }
+        public string JDLink { get; set; }
+        public int id { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {
