@@ -38,7 +38,8 @@
                                 </div>
                                 <div class="col-md-12 form-group">
                                     @Html.LabelFor(m => m.Concurrency, htmlAttributes: new { @class = "form-label col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left marginTop10" })
-                                    @Html.ValidationMessageFor(model => model.Concurrency, "", new { @class = "text-danger", @type = "number", @min = "0", @max = "50" })
+                                    @Html.EditorFor(model => model.Concurrency, new { htmlAttributes = new { @class = "form-control text-box single-line col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left", @type = "number", @min = "0", @max = "50" } })
+                                    @Html.ValidationMessageFor(model => model.Concurrency, "", new { @class = "text-danger" })
                                     <input type="number" min="0" max="50" />
                                 </div>
                                 <div class="col-md-12 form-group">
@@ -86,7 +87,7 @@
                                                                         <!--<td>
                                                                         <span onclick="AddRow(@i)" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>-->
                                                                         @*<input type="button" value="plus" onclick="AddRow(@i)" />*@
-                                                                        <!--<span  onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" class="trash-btn mdc-fab app-fab--absolute "><i class="far fa  fa-trash"></i></span>-->
+                                                                          <!--<span  onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" class="trash-btn mdc-fab app-fab--absolute "><i class="far fa  fa-trash"></i></span>-->
                                                                         @*<input type="button" value="delete" onclick="DeleteRow(this, 'dayvalue', 'Start', 'End', @i)" />*@
                                                                         <!--</td>-->
                                                                     </tr>
