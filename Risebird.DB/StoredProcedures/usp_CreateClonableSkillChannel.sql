@@ -51,10 +51,10 @@ GO
 @QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 @HRBulkData AS [dbo].[TransHR_TableType] READONLY,
 @RecommendationStatus bit,
-@RecommendationCategoryId int,
-@RecommendationCompetencyLevelId int,
-@RecommendationSeniorityLevelId int,
-@RecommendationCountryType int,
+@RecommendationCategoryId int = null,
+@RecommendationCompetencyLevelId int = null,
+@RecommendationSeniorityLevelId int = null,
+@RecommendationCountryType int = null,
 @RecommendationCreatedOn datetime
             
 AS            
