@@ -3262,7 +3262,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
+        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
             try
             {
@@ -3271,7 +3271,7 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return "Fail";
             }
         }
         public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()

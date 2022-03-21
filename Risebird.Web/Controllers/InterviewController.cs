@@ -6591,7 +6591,8 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
-            if (_meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId))
+            var results = _meetingService.UpdateCandidateMeetingsStatus(meetingid, status, uniqueid, Irfid, candidateId);
+            if (results == "Success")
             {
                 if (status == 2)
                 {
@@ -6612,8 +6613,13 @@ namespace Risebird.Web.Controllers
                     var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                     var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                     DeleteMeetingLink(result.ZoomMeetingId);
+                    return Json("Successfully status updated, NO");
                 }
-                return Json("Successfully status updated");
+                return Json("Successfully status updated, Yes");
+            }
+            else if (results == "Already Present")
+            {
+                return Json("Your response for this meeting already present, so this time we can't accept your response, please reschedule your interview if required.");
             }
             else
             {
