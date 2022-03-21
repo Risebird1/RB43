@@ -1104,41 +1104,49 @@ namespace Risebird.Web.Controllers
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
             ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
 
-            model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
-            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                             select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                model.AssessmentGroupList = new SelectList(AssessmentsGroups, "id", "AssessmentGroup");
+                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
-            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                               select new { ID = (int)s, Name = s.GetDescription() };
-            model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-            if (!String.IsNullOrEmpty(model.InterviewerId))
-            {
-                List<InterviewerIds> _string = new List<InterviewerIds>();
-                ViewBag.InterviewerFromSearch = model.InterviewerId;
-                var interviewer = model.InterviewerId.Split(',');
-                var resultset = _irfRepository.pickInterviewerSills(model.InterviewerId);
-                for (int i = 0; i < interviewer.Count(); i++)
+                var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+                model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                if (!String.IsNullOrEmpty(model.InterviewerId))
                 {
-                    _string.Add(new InterviewerIds { index = i, Id = Convert.ToInt32(interviewer[i]) });
+                    List<InterviewerIds> _string = new List<InterviewerIds>();
+                    ViewBag.InterviewerFromSearch = model.InterviewerId;
+                    var interviewer = model.InterviewerId.Split(',');
+                    var resultset = _irfRepository.pickInterviewerSills(model.InterviewerId);
+                    for (int i = 0; i < interviewer.Count(); i++)
+                    {
+                        _string.Add(new InterviewerIds { index = i, Id = Convert.ToInt32(interviewer[i]) });
+                    }
+                    model.InterviewerIds = _string;
+                    ViewBag.InterviewerSkills = resultset;
                 }
-                model.InterviewerIds = _string;
-                ViewBag.InterviewerSkills = resultset;
+                else
+                {
+                    ViewBag.InterviewerFromSearch = "";
+                    ViewBag.InterviewerSkills = "";
+                }
+                if (string.IsNullOrEmpty(model.Type))
+                {
+                    model.Type = "B2B";
+                }
+                //model.IRFRecommendations = new IRFRecommendations();
+                //model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+
+                return;
             }
-            else
-            {
-                ViewBag.InterviewerFromSearch = "";
-                ViewBag.InterviewerSkills = "";
-            }
-            if (string.IsNullOrEmpty(model.Type))
-            {
-                model.Type = "B2B";
-            }
-            return;
-        }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]
@@ -1247,9 +1255,9 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public bool CheckUniqueness(string value)
+        public bool CheckUniqueness(string value, bool isCloneTemplate = false)
         {
-            return _irfService.CheckUniqueness(value);
+            return _irfService.CheckUniqueness(value, isCloneTemplate);
         }
 
         //[Authorize]
@@ -1993,7 +2001,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
+        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false, bool useAsCloneTemplate = false)
         {
             try
             {
@@ -2003,13 +2011,17 @@ namespace Risebird.Web.Controllers
                     int abc;
                     if (!int.TryParse(model.JobCountry, out abc))
                     {
-                        if (model.JobCountry.ToUpper() == "INDIA")
+                        if (model.JobCountry?.ToUpper() == "INDIA")
                         {
                             model.JobCountry = "1";
                         }
-                        else { model.JobCountry = "2"; }
+                        else 
+                        { 
+                            model.JobCountry = "2"; 
+                        }
                     }
                     model.IsClone = isClone;
+                    model.UseAsCloneTemplate = useAsCloneTemplate;
                     SetEditIRFProperties(model);
                     //TempData["JDLink"] = model.JDLink;
                     model.OldJDLink = model.JDLink;
@@ -2161,6 +2173,19 @@ namespace Risebird.Web.Controllers
                                 return RedirectToAction("Index");
                             }
                         }
+                        else if(model.UseAsCloneTemplate)
+                        {
+                            if (await _irfService.CreateClonableSkillChannel(model, emailId))
+                            {
+                                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Clonable Skill Channel created Successfully!";
+                                return RedirectToAction("CloneSkillChannnel");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed! Clonable Skill Channel could not be created!";
+                                return RedirectToAction("CloneSkillChannnel");
+                            }
+                        }
                         else
                         {
                             if (await _irfService.UpdateIRF(model, emailId))
@@ -2291,6 +2316,19 @@ namespace Risebird.Web.Controllers
                 model.InterviewerMembers = new List<IRFInterviewerMembers>();
             }
 
+            model.IRFRecommendations = new IRFRecommendations();
+
+            if (model.UseAsCloneTemplate)
+            {
+
+                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                {
+                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                }
+            }
+            
+            
 
             //TempData["EditIRFId"] = model.IRFId;
             //model.IsClone = isClone;
@@ -6291,6 +6329,11 @@ namespace Risebird.Web.Controllers
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.AssessmentGroup).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         irfList = irfList.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)).ToList();
                     }
+                    if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
+                        TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
+                    }
                     return View(irfList);
                 }
                 else
@@ -6682,6 +6725,51 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var model = new List<AssessmentIRFListVM>();
                 return Json(model);
+            }
+        }
+        //    }
+        //}
+
+        [HttpGet]
+        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId)
+        {
+            var list = new List<SelectListItem>();
+            var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
+            if (assessmentGroups != null && assessmentGroups.Count() > 0)
+            {
+                return new SelectList(assessmentGroups, "id", "AssessmentGroup");
+            }
+            else
+            {
+                list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
+
+            }
+            return new SelectList(list, "Value", "Text");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCloneSkillChannelTemplates()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                {
+                    var list = await _irfService.GetAllClonableSkillChannels();
+                    
+                    return View(list);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }
