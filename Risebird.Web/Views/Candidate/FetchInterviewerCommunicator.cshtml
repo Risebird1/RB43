@@ -1,0 +1,494 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.SchedulingLinkVM>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Interviewer Communicator";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<div id='myinterview_1'>Interviewer Communicator</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<style>
+    .hopscotch-arrow.down {
+        transform: rotate( 1deg );
+        top: 7.9rem;
+        right: -.3rem;
+    }
+
+    .sidebar-mini .sidebar:hover {
+        width: 80px !important;
+    }
+
+    .mob_h {
+        display: none !important
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="row card-header bg-w clearfix">
+                <div class="col-md-8 pull-left">
+                    <div class="pull-left myinterview">
+                        <div class="mobile-view"> <h4 class="card-title"> Interviewer Communicator</h4></div>
+                    </div>
+                </div>
+                <div class="col-md-4 pull-left">
+                    <div class="pull-right">
+                        @Html.ActionLink("Back to List", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client ">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
+                        </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div>
+                                <div id="tableID" class="second">
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                        <div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
+                                            <div id="meeting_filter" class="dataTables_filter">
+                                                <div class="searchbox">
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 nopad">
+                                            <div class="table-responsive">
+                                                <table id="InterviewerCommunicatorList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="border-right: 0px !important;">Skill Channel</th>
+                                                            <th style="border-left: 0px !important;">Jd Title</th>
+                                                            <th style="text-align:left">Billing Owner</th>
+                                                            <th style="text-align:left">JD-Skills</th>
+                                                            <th>JD Link</th>
+                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th style="border-right: 0px !important;">Skill Channel</th>
+                                                            <th style="border-left: 0px !important;">Jd Title</th>
+                                                            <th style="text-align:left">Billing Owner</th>
+                                                            <th style="text-align:left">JD-Skills</th>
+                                                            <th>JD Link</th>
+                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                        </tr>
+
+                                                    </tfoot>
+                                                    <tbody id="tblbodyMyInterview">
+                                                        @if (Model.Count() == 0)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="12" class="text-center">No data available in table</td>
+                                                            </tr>
+                                                        }
+
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            <tr id=@item.id>
+                                                                <td>@item.IRFId</td>
+                                                                <td> @item.JDTiltle </td>
+                                                                <td> @item.BillingOwner </td>
+                                                                <td>
+                                                                    <button type="button" class="clickhere_btn pull-left">
+                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.id)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
+                                                                    </button>
+                                                                    <input id="skill_id_@item.id" type="hidden" value="@item.IRFId" />
+                                                                </td>
+                                                                @if (item.JDLink != null && item.JDLink != "")
+                                                                {
+                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No JD</td>
+                                                                }
+                                                                <td class="text-left">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Broadcast Email to the Interviewers of this channel">
+                                                                        <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Audio Recording">
+                                                                        <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <!-- end row -->
+        </div>
+
+    </div>
+</div>
+
+
+<div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
+
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeIRFSkillModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body">
+                <div style="padding:10px" id="divcandidateskills">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="broadcastModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Broadcast</h5>(<label id="boradcastIrfName"></label>)
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" onclick="closeBroadcastModal()">&times;</span>
+            </button>
+
+            <div class="modal-body">
+                <input type="hidden" id="hid_irfid_broadcast" />
+                <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Subject">Subject <span class="required">*</span></label>
+                        <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
+                        <div>
+                            <div class="text-areadiv1">
+                                <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 text-right">
+                    <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
+                    <button type="button" onclick="closeBroadcastModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="VoiceRecordingModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Record Audio</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;" onclick="closeVoiceRecordingModal()">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="row" id="divIRFaudioRecording">
+
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="playUploadedAudioTwo">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="multiple_row">
+                                <h2>Uploaded Feedback Audio</h2>
+                            </div><!--end of multiple location-->
+                        </div><!--end of col-md-12-->
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive-sm">
+                                <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">File</th>
+                                            <th width="35%">Play</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <a id="anchorAudioId" asp-append-version="true" download>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <audio id="controlAudioId" asp-append-version="true" controls></audio>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!--end of col-md-12-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script>
+    function openSkillpopup(id) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/FetchSkillDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("IRFSkillModel");
+                var skill_id_pop = $("#skill_id_" + id).val();
+                $("#skill_id_pop").text(skill_id_pop);
+                modal.style.display = "block";
+                bindSkillData(data);
+            }
+        });
+    }
+    function closeIRFSkillModel() {
+        var model = document.getElementById("IRFSkillModel");
+        model.style.display = "none";
+    }
+    function bindSkillData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
+        html += '  <th width="70%" class="table_heading">Skill Name<span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].levelName + '</td>';
+            html += '    <td>' + data[i].skillName + '</td>';
+            html += '  <td>' + data[i].weightage + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divcandidateskills").empty().html(html);
+    }
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#InterviewerCommunicatorList").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#InterviewerCommunicatorList").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#InterviewerCommunicatorList").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.includes("Success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+<script>
+    function closeBroadcastModal() {
+        var modal = document.getElementById("broadcastModal");
+        modal.style.display = "none";
+    }
+    function OpenBroadcastModal(irfid, Irfname) {
+        var modalBct = document.getElementById("broadcastModal");
+        modalBct.style.display = "block";
+        $("#hid_irfid_broadcast").val(irfid);
+        $("#boradcastIrfName").text(Irfname);
+        return;
+    }
+
+    function SendBroadcast() {
+        var message = document.getElementById("bcMessage").value;
+        var subject = document.getElementById("bcSubject").value;
+        var irfid = document.getElementById("hid_irfid_broadcast").value;
+        $.ajax({
+            type: "POST",
+            url: "/IRF/BroadcastIRFmembers",
+            data: { 'message': message, 'subject': subject, 'irfid': irfid },
+            success: function (data) {
+                window.location.href = '/IRF/Index';
+            }
+        });
+    }
+    function closeVoiceRecordingModal() {
+        var modalBct = document.getElementById("VoiceRecordingModal");
+        modalBct.style.display = "none";
+        cancelRecording();
+    }
+    function OpenVoiceRecordingModal(irfid, Irfname) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/FetchIRFAudioLink",
+            data: { 'irfid': irfid },
+            success: function (data) {
+                document.getElementById('anchorAudioId').href = data;
+                splitData = data.split("/");
+                document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
+                document.getElementById('controlAudioId').src = data;
+            }
+        });
+        var modalBct = document.getElementById("VoiceRecordingModal");
+        modalBct.style.display = "block";
+        var html = '';
+        html += '<div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">';
+        html += '<div class="pull-left"><button id="startRecButton" onclick="startRecording()" title="Start Recording"><i class="fa fa-play" ></i></button></div>';
+        html += '<div class="pull-left"><button id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>';
+        html += '<div class="pull-left"><button id="cancelRecButton" type="button" onclick="cancelRecording()" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>';
+        html += '   </div>';
+        html += '<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">';
+        html += '<div class="row">';
+        html += '   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">';
+        html += '       <p style="font-size:18px" id="recordingStatus"></p>';
+        html += '   </div>';
+        html += '</div>';
+        html += '<div class="row" id="recordingRow" style="display:none">';
+        html += '   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">';
+        html += '       <div id="recordingsList"></div>';
+        html += '   </div>';
+        html += '</div>';
+        html += '</div>';
+        $("#divIRFaudioRecording").empty().html(html);
+    }
+</script>
+<script>
+    function searchResult() {
+        $('#InterviewerCommunicatorList').DataTable();
+    }
+    function RefreshSearch() {
+        $('#InterviewerCommunicatorList').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+        $('#InterviewerCommunicatorList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+</script>
+
+
+
