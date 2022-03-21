@@ -5214,7 +5214,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<int>(checkquery, dynamicParameters);
-                    if (results.FirstOrDefault() == 0)
+                    if (results.FirstOrDefault() > 0)
                     {
                         return "Already Present";
                     }
