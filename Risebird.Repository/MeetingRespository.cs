@@ -5207,7 +5207,7 @@ namespace Risebird.Repository
                 {
                     query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0,Cancellationsource='Candidate' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
-                checkquery = "Select count(im.id) from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid and ISNULL(IsCandidateResponsed,0)=0";
+                checkquery = "Select count(im.id) from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid and CandidateResponse=0 and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 dynamicParameters.Add("@uniqueid", uniqueid);

@@ -6619,7 +6619,7 @@ namespace Risebird.Web.Controllers
             }
             else if (results == "Already Present")
             {
-                return Json("Your response for this meeting already present, so this time we can't accept your response, please reschedule your interview if required.");
+                return Json("Your interview is already cancelled,Kindly reschedule your interview or contact to HR/Admin.");
             }
             else
             {
