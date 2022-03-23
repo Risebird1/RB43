@@ -107,7 +107,8 @@
 
 
                                                                 @if (item.IsActive)
-                                                                {<div class="text-center action">
+                                                                {
+                                                                    <div class="text-center">
                                                                         <div class="switch-btn">
                                                                             <div class="material-toggle" onclick="DeactiveEvent(@item.id)" title="Click here to Deactive">
                                                                                 <input class="switch" id="MoveToCP_@item.id" type="checkbox" checked="checked" value="false" name="Deactive">
@@ -119,7 +120,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <div class="text-center action">
+                                                                    <div class="text-center">
                                                                         <div class="switch-btn">
                                                                             <div class="material-toggle" onclick="ActiveEvent(@item.id)" title="Click here to Active">
                                                                                 <input class="switch" id="MoveToCP_@item.id" type="checkbox" value="false" name="Active">
