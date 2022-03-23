@@ -127,6 +127,9 @@
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
                             </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Interviewer Communicator</font></span>
+                            </button>
                             <span>
                                 <button id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
 
@@ -958,6 +961,9 @@
                 bindschedulingdata(data);
             }
         });
+    }
+    function FetchInterviewerCommunicator(emailid) {
+        window.location.href = "/Candidate/FetchInterviewerCommunicator?emailid=" + emailid + "&id=" + $("#hidtxtid").val();
     }
     function bindschedulingdata(data) {
         var html = '';

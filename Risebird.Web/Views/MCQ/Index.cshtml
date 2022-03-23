@@ -57,7 +57,7 @@
                             if (profileName == "Admin" || profileName == "HR")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add MCQ</font></span>
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add MCQ</font></span>
                                 </button>
                             }
                         }
@@ -208,19 +208,19 @@
                                         <!-- irf body-->
                                         <div class="card-body">
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Questions:</div> <div class="clientName"> @item.QuestionCount</div>
+                                                <div class="client-field">Questions:</div> <div class="clientName" style="width:180px !important"> @item.QuestionCount</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Time:</div> <div class="client-name">@item.Timer Mins</div>
+                                                <div class="client-field">Time:</div> <div class="client-name" style="width:180px !important">@item.Timer Mins</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Profile Level:</div> <div class="clientName"> @item.ProfileTypeName</div>
+                                                <div class="client-field">Profile Level:</div> <div class="clientName" style="width:180px !important"> @item.ProfileTypeName</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px"> @item.CompentencyLevelName</div>
+                                                <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px !important"> @item.CompentencyLevelName</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Primary Skill:</div> <div class="clientName"> @item.PrimarySkills </div>
+                                                <div class="client-field">Primary Skill:</div> <div class="clientName" style="width:180px !important"> @item.PrimarySkills </div>
                                             </div>
                                             <div class="col-md-12 col-sm-12">
                                                 @if (!String.IsNullOrEmpty(item.SecondarySkill))
@@ -256,7 +256,9 @@
                                                     <button class="mdc-fab app-fab--absolute priority" aria-label="List" title="Candidate List">
                                                         <span onclick="javascript:CandidateTestDetails('@item.PartitionKey');" title="Candidate List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
                                                     </button>
-
+                                                    <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
+                                                        <span onclick="javascript:GeneratePublicUrl('@item.PartitionKey');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -417,7 +419,41 @@
         </div>
     </div>
 </div>
-
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @*@if (Model.Message != null)
     {
         <script type="text/javascript">
@@ -613,7 +649,26 @@
             $("#PrimarySkill").val(skillsset);
             $("#SecondarySkill").val(Secondaryskills);
             $("#CompentencyLevel").val(CompentencyLevels);
-
+    }
+    function GeneratePublicUrl(index) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        urlcurrent = urlcurrent.replace("Index", "SkillTest");
+        urlcurrent = urlcurrent + "?Id=" + index;
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
     }
 </script>
 

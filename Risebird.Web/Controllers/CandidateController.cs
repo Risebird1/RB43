@@ -4216,5 +4216,27 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> FetchInterviewerCommunicator(string emailid, string id)
+        {
+            var model = new List<SchedulingLinkVM>();
+            try
+            {
+                ViewBag.id = id;
+                ViewBag.emailid = emailid;
+                model = await _meetingService.FetchSchedulingLinks(emailid);
+                if (model != null)
+                {
+                    return View(model);
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View(model);
+            }
+        }
     }
 }

@@ -1431,7 +1431,7 @@ namespace Risebird.Repository
                     parametersPoints.Add("@Type", "Interview");
                     var result = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-                    if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x=>x.ActualLevelId==0))
+                    if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -5054,7 +5054,8 @@ namespace Risebird.Repository
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
-                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
+                //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
+                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
@@ -5192,11 +5193,12 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public bool UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid)
+        public string UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid)
         {
             try
             {
                 string query = string.Empty;
+                string checkquery = string.Empty;
                 if (status == 1)
                 {
                     query = "Update im set IsCandidateResponsed=1,CandidateResponse=1 from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
@@ -5205,19 +5207,28 @@ namespace Risebird.Repository
                 {
                     query = "Update im set IsCandidateResponsed=1,confirmationStatus=2,CandidateResponse=0,Cancellationsource='Candidate' from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid";
                 }
+                checkquery = "Select count(im.id) from InterviewMeetings im join UserList ul on ul.EmailId=im.candidateEmail where im.id=@meetingid and ul.uniqueid=@uniqueid and CandidateResponse=0 and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
                 dynamicParameters.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query(query, dynamicParameters);
-                    return true;
+                    var results = con.Query<int>(checkquery, dynamicParameters);
+                    if (results.FirstOrDefault() > 0)
+                    {
+                        return "Already Present";
+                    }
+                    else
+                    {
+                        var resultset = con.Query(query, dynamicParameters);
+                        return "Success";
+                    }
                 }
             }
             catch (SqlException ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return "Fail";
             }
         }
         public async Task<List<CustomerDetailsVM>> FetchCustomerDetails()
