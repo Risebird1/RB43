@@ -38,7 +38,7 @@ namespace Risebird.MicroService
                 candidateDetails = candidateDetails.Where(x => x.Id == mcqid).ToList();
                 candidateDetails = candidateDetails.Where(x => x.CandidateEmail == emailid).ToList();
                 string candidateid = candidateDetails.FirstOrDefault().PartitionKey;
-                Questions = Questions.Where(x => x.CandidateID == candidateid).ToList();
+                //Questions = Questions.Where(x => x.CandidateID == candidateid).ToList();
                 candidateset = (from o in candidate
                                 join a in candidateDetails
                                 on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
@@ -59,12 +59,9 @@ namespace Risebird.MicroService
                                     SameID = o.Id,
                                     VideoLink = a == null ? "" : a.VideoLink,
                                     Feedbackreating = a == null ? 0 : a.Feedbackreating,
-                                    FeedbackComment = a == null ? "" : a.FeedbackComment
+                                    FeedbackComment = a == null ? "" : a.FeedbackComment,
+                                    QuestionDetails = Questions.Where(x => x.CandidateID == a.PartitionKey).ToList()
                                 }).ToList();
-                if (Questions != null)
-                {
-                    candidateset.FirstOrDefault().QuestionDetails = (List<MCQVM>)Questions;
-                }
             }
             return new OkObjectResult(candidateset);
         }
