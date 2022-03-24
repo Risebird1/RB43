@@ -24,7 +24,7 @@ namespace Risebird.MicroService
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger MCQCandiadteScore function processed a request.");
-            string name = req.Query["Emailid"];
+            string emailid = req.Query["Emailid"];
             string mcqid = req.Query["Mcqid"];
             var candidateset = new List<CandidateDetailsForTestDuplicate>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
@@ -34,7 +34,9 @@ namespace Risebird.MicroService
             if (candidateDetails != null && candidate != null)
             {
                 candidate = candidate.Where(x => x.Id == mcqid).ToList();
+                candidate = candidate.Where(x => x.EmailAddress == emailid).ToList();
                 candidateDetails = candidateDetails.Where(x => x.Id == mcqid).ToList();
+                candidateDetails = candidateDetails.Where(x => x.CandidateEmail == emailid).ToList();
                 string candidateid = candidateDetails.FirstOrDefault().PartitionKey;
                 Questions = Questions.Where(x => x.CandidateID == candidateid).ToList();
                 candidateset = (from o in candidate
