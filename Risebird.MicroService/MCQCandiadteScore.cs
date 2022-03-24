@@ -30,10 +30,13 @@ namespace Risebird.MicroService
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
             var candidate = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
+            var Questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQCandidateQuestions");
             if (candidateDetails != null && candidate != null)
             {
                 candidate = candidate.Where(x => x.Id == mcqid).ToList();
                 candidateDetails = candidateDetails.Where(x => x.Id == mcqid).ToList();
+                string candidateid = candidateDetails.FirstOrDefault().PartitionKey;
+                Questions = Questions.Where(x => x.CandidateID == candidateid).ToList();
                 candidateset = (from o in candidate
                                 join a in candidateDetails
                                 on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
@@ -56,6 +59,10 @@ namespace Risebird.MicroService
                                     Feedbackreating = a == null ? 0 : a.Feedbackreating,
                                     FeedbackComment = a == null ? "" : a.FeedbackComment
                                 }).ToList();
+                if (Questions != null)
+                {
+                    candidateset.FirstOrDefault().QuestionDetails = (List<MCQVM>)Questions;
+                }
             }
             return new OkObjectResult(candidateset);
         }
