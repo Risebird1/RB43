@@ -189,7 +189,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * From ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and SkillChannel in(Select SkillChannelRelation from ScheduleInterviewEvent where SkillChannel Is null and uniqueid=@uniqueid and Isnull(IsOnetimeUsed,0)=0) union Select * from ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0";
+                var query = "Select * From ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and IsActive=1 and SkillChannel in(Select SkillChannelRelation from ScheduleInterviewEvent where SkillChannel Is null and uniqueid=@uniqueid) union Select * from ScheduleInterviewEvent sie join ScheduleEventSlots ses on sie.id=ses.Eventid where ses.dayCheck=1 and uniqueid=@uniqueid and IsActive=1";
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@uniqueid", uniqueid);
                 using (SqlConnection con = new SqlConnection(connectionString))

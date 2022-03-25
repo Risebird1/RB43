@@ -128,5 +128,6 @@ namespace Risebird.Entities.ViewModel
         public string VideoLink { get; set; }
         public int Feedbackreating { get; set; }
         public string FeedbackComment { get; set; }
+        public List<MCQVM> QuestionDetails { get; set; }
     }
 }
