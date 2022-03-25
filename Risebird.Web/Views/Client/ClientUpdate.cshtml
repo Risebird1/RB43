@@ -24,154 +24,165 @@
                     <div class="mdc-card-wrapper__text-section">
                         @using (Html.BeginForm("EditClient", "Client", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
-                            @Html.AntiForgeryToken() 
+                            @Html.AntiForgeryToken()
 
                             <div class="row">
 
-                            <div class="col-md-12">
-                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Update Client</h4></div>
-                            </div>
-                            <div style="width: 100%;">&nbsp;</div>
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Update Client</h4></div>
+                                </div>
+                                <div style="width: 100%;">&nbsp;</div>
 
-                            <div class="form-horizontal w-full">
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="form-horizontal w-full">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
-                                    <div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                            </div>
+
+                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
                                         </div>
-
-                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-
                                     </div>
-                                </div>
 
 
-                                <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
 
-                                    <div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })<span class="red">*</span>
+                                            </div>
+
+
+                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+
                                         </div>
-
-
-                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-
                                     </div>
+
+
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                        <div class="form-group">
+
+                                            <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                            Upload Company Logo
+                                            <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="margin-left:10px;">
+
+                                            Provide Logo URL
+                                        </div>
+                                        <div class="form-group" style="display:none" id="linkDiv">
+                                            @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.LogoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.LogoLink, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="" style="display:none" id="uploadDiv">
+                                            @Html.LabelFor(model => model.LogoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.TextBoxFor(model => model.LogoFile, new { type = "file", @class = "form-control", @accept = ".png, .jpg, .jpeg" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                        <div class="form-group">
+                                            <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Upload" type="radio" onclick="RadioVideo(this.value)">
+                                            Upload Company Video(GIF)
+                                            <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Link" type="radio" onclick="RadioVideo(this.value)" style="margin-left:10px;">
+                                            Provide Video URL(GIF)
+
+                                        </div>
+                                        <div class="form-group" style="display:none" id="linkVideoDiv">
+                                            @Html.LabelFor(model => model.CompanyVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.CompanyVideoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.CompanyVideoLink, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="" style="display:none" id="uploadVideoDiv">
+                                            @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control", @accept = ".gif" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 col-sm-12 pull-left">
+                                        <div class="form-group col-md-6 nopad">
+                                            @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.CompanyLink, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    @*<div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.CheckBoxFor(model => model.IsPasswordReset) Reset Password after first login/Password aging.
+                                            </div>
+                                        </div>*@
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.CheckBoxFor(model => model.IsCandidateavailability) Check candidate availability.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.CheckBoxFor(model => model.IsMeetingNotificationSend) Risebird Meeting waiting Notification.
+                                        </div>
+                                    </div>
+
                                 </div>
 
-
-                                <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                    <div class="form-group">
-
-                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
-                                        Upload Company Logo
-                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companydetails" class="radio-top" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)" style="margin-left:10px;">
-
-                                        Provide Logo URL
-                                    </div>
-                                    <div class="form-group" style="display:none" id="linkDiv">
-                                        @Html.LabelFor(model => model.LogoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.LogoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.LogoLink, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="" style="display:none" id="uploadDiv">
-                                        @Html.LabelFor(model => model.LogoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.TextBoxFor(model => model.LogoFile, new { type = "file", @class = "form-control", @accept = ".png, .jpg, .jpeg" })
-
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
-                                    <div class="form-group">
-                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Upload" type="radio" onclick="RadioVideo(this.value)">
-                                        Upload Company Video(GIF)
-                                        <input style="position:relative;top:5px;margin:0px 5px;" name="companyVideoDetails" class="radio-top" value="Link" type="radio" onclick="RadioVideo(this.value)" style="margin-left:10px;">
-                                        Provide Video URL(GIF)
-
-                                    </div>
-                                    <div class="form-group" style="display:none" id="linkVideoDiv">
-                                        @Html.LabelFor(model => model.CompanyVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.CompanyVideoLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CompanyVideoLink, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="" style="display:none" id="uploadVideoDiv">
-                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control", @accept = ".gif" })
-
-                                    </div>
-                                </div>
-
-                                <div class="col-md-12 col-sm-12 pull-left">
-                                    <div class="form-group col-md-6 nopad">
-                                        @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.CompanyLink, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
-                                @*<div class="col-md-6 col-sm-6 pl-1 pull-left">
-                                    <div class="form-group">
-                                        @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.CheckBoxFor(model => model.IsPasswordReset) Reset Password after first login/Password aging.
-                                    </div>
-                                </div>*@
-
+                                @Html.HiddenFor(x => x.IsPasswordReset)
+                                @Html.HiddenFor(x => x.id)
 
                             </div>
 
-                                @Html.HiddenFor(x=>x.IsPasswordReset)
-                                @Html.HiddenFor(x=>x.id)
+                            <div class="card-footer">
+                                <div class="row">
 
-                        </div>
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "List", "Client", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
-                        <div class="card-footer">
-                            <div class="row">
+                                        <input type="submit" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
 
-                                <div class="col-md-12 mc-button-area">
-                                    @Html.ActionLink("Back to List", "List", "Client", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-
-                                    <input type="submit" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
-
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
 
-                    }
+                        }
                     </div>
                 </div>
             </div>

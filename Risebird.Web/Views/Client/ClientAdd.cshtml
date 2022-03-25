@@ -20,7 +20,9 @@
                 <div class="mdc-card card bg-white">
 
                     <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("AddClient", "Client", FormMethod.Post, new { enctype = "multipart/form-data" @*, @onsubmit = "return CheckConditions()"*@ }))
+                        @using (Html.BeginForm("AddClient", "Client", FormMethod.Post, new
+                        {
+                            enctype = "multipart/form-data"@*, @onsubmit = "return CheckConditions()"*@ }))
                         {
 
                             @Html.AntiForgeryToken()
@@ -139,17 +141,26 @@
                                     <div class="col-md-12 col-sm-12 pull-left">
                                         <div class="form-group col-md-6 nopad">
                                             @Html.LabelFor(model => model.CompanyLink, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
                                             @Html.EditorFor(model => model.CompanyLink, new { htmlAttributes = new { @class = "form-control" } })
                                             @Html.ValidationMessageFor(model => model.CompanyLink, "", new { @class = "text-danger" })
-
                                         </div>
-                                        
                                     </div>
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left">
                                         <div class="form-group">
                                             @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.CheckBoxFor(model => model.IsPasswordReset) Reset Password after first login/Password aging.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.CheckBoxFor(model => model.IsCandidateavailability) Check candidate availability.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.CheckBoxFor(model => model.IsMeetingNotificationSend) Risebird Meeting waiting Notification.
                                         </div>
                                     </div>
 
@@ -214,124 +225,124 @@
 </script>
 
 @*<script>
-    Filevalidation = () => {
-        debugger;
-        var result = true;
-        //const fi = document.getElementById('LogoFile');
+        Filevalidation = () => {
+            debugger;
+            var result = true;
+            //const fi = document.getElementById('LogoFile');
 
-        var fi = [document.getElementById('LogoFile'), document.getElementById('VideoFile')];
-        var fiSizeLimits = [1024, 2048];
+            var fi = [document.getElementById('LogoFile'), document.getElementById('VideoFile')];
+            var fiSizeLimits = [1024, 2048];
 
-        for (i = 0; i < fi.length; i++) {
-            if (fi[i].files.length > 0) {
-                //const length = fi.files.length;
-                const fsize = fi[i].files.item(0).size;
-                const file = Math.round((fsize / 1024));
-                // The size of the file.
-                if (file >= fiSizeLimits[i]) {
-                    //alert(
-                    //    "File too Big, please select a file less than 1mb");
-                    document.getElementById('size_' + i).innerHTML = 'File too big, please select a file less than' + Math.round((fiSizeLimits[i]/ 1024)) +'mb';
-                    //document.getElementById('LogoFile').focus();
-                    document.getElementById(fi[i].id).focus()
-                    //fi[i].id.focus();
-                    result = false;
-                    //} else if (file < 2048) {
-                    //    alert(
-                    //        "File too small, please select a file greater than 2mb");
+            for (i = 0; i < fi.length; i++) {
+                if (fi[i].files.length > 0) {
+                    //const length = fi.files.length;
+                    const fsize = fi[i].files.item(0).size;
+                    const file = Math.round((fsize / 1024));
+                    // The size of the file.
+                    if (file >= fiSizeLimits[i]) {
+                        //alert(
+                        //    "File too Big, please select a file less than 1mb");
+                        document.getElementById('size_' + i).innerHTML = 'File too big, please select a file less than' + Math.round((fiSizeLimits[i]/ 1024)) +'mb';
+                        //document.getElementById('LogoFile').focus();
+                        document.getElementById(fi[i].id).focus()
+                        //fi[i].id.focus();
+                        result = false;
+                        //} else if (file < 2048) {
+                        //    alert(
+                        //        "File too small, please select a file greater than 2mb");
+                    }
+                    else {
+                        document.getElementById('size_' + i).innerHTML = '';
+
+                    }
+
                 }
                 else {
                     document.getElementById('size_' + i).innerHTML = '';
 
                 }
-                
-            }
-            else {
-                document.getElementById('size_' + i).innerHTML = '';
 
             }
+            // Check if any file is selected.
+            //if (fi.files.length > 0) {
+            //    //const length = fi.files.length;
+            //    const fsize = fi.files.item(0).size;
+            //    const file = Math.round((fsize / 1024));
+            //    // The size of the file.
+            //    if (file >= 1024) {
+            //        //alert(
+            //        //    "File too Big, please select a file less than 1mb");
+            //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
+            //        document.getElementById('LogoFile').focus();
+            //        result = false;
+            //        //} else if (file < 2048) {
+            //        //    alert(
+            //        //        "File too small, please select a file greater than 2mb");
+            //    }
+            //    else {
+            //        document.getElementById('size').innerHTML = '';
+
+            //    }
+            //    //for (const i = 0; i <= fi.files.length - 1; i++) {
+            //    //    const length = fi.files.length;
+            //    //    const fsize = fi.files.item(i).size;
+            //    //    const file = Math.round((fsize / 1024));
+            //    //    // The size of the file.
+            //    //    if (file >= 1024) {
+            //    //        alert(
+            //    //            "File too Big, please select a file less than 1mb");
+            //    //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
+            //    //        document.getElementById('LogoFile').focus();
+            //    //        result = false;
+            //    //        return;
+            //    //        //} else if (file < 2048) {
+            //    //        //    alert(
+            //    //        //        "File too small, please select a file greater than 2mb");
+            //    //    }
+            //    //    else {
+            //    //        document.getElementById('size').innerHTML = '';
+            //    //        result = false;
+
+            //    //        return;
+            //    //    }
+            //    //}
+            //}
+            //else {
+            //    document.getElementById('size').innerHTML = '';
+
+            //}
+
+            return result;
+        }
+
+
+    </script>
+    <script>
+        CheckConditions = () => {
+            return (Filevalidation())
 
         }
-        // Check if any file is selected.
-        //if (fi.files.length > 0) {
-        //    //const length = fi.files.length;
-        //    const fsize = fi.files.item(0).size;
-        //    const file = Math.round((fsize / 1024));
-        //    // The size of the file.
-        //    if (file >= 1024) {
-        //        //alert(
-        //        //    "File too Big, please select a file less than 1mb");
-        //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
-        //        document.getElementById('LogoFile').focus();
-        //        result = false;
-        //        //} else if (file < 2048) {
-        //        //    alert(
-        //        //        "File too small, please select a file greater than 2mb");
-        //    }
-        //    else {
-        //        document.getElementById('size').innerHTML = '';
+        //for (const i = 0; i <= fi.files.length - 1; i++) {
+                    //    const length = fi.files.length;
+                    //    const fsize = fi.files.item(i).size;
+                    //    const file = Math.round((fsize / 1024));
+                    //    // The size of the file.
+                    //    if (file >= 1024) {
+                    //        alert(
+                    //            "File too Big, please select a file less than 1mb");
+                    //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
+                    //        document.getElementById('LogoFile').focus();
+                    //        result = false;
+                    //        return;
+                    //        //} else if (file < 2048) {
+                    //        //    alert(
+                    //        //        "File too small, please select a file greater than 2mb");
+                    //    }
+                    //    else {
+                    //        document.getElementById('size').innerHTML = '';
+                    //        result = false;
 
-        //    }
-        //    //for (const i = 0; i <= fi.files.length - 1; i++) {
-        //    //    const length = fi.files.length;
-        //    //    const fsize = fi.files.item(i).size;
-        //    //    const file = Math.round((fsize / 1024));
-        //    //    // The size of the file.
-        //    //    if (file >= 1024) {
-        //    //        alert(
-        //    //            "File too Big, please select a file less than 1mb");
-        //    //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
-        //    //        document.getElementById('LogoFile').focus();
-        //    //        result = false;
-        //    //        return;
-        //    //        //} else if (file < 2048) {
-        //    //        //    alert(
-        //    //        //        "File too small, please select a file greater than 2mb");
-        //    //    }
-        //    //    else {
-        //    //        document.getElementById('size').innerHTML = '';
-        //    //        result = false;
-
-        //    //        return;
-        //    //    }
-        //    //}
-        //}
-        //else {
-        //    document.getElementById('size').innerHTML = '';
-
-        //}
-
-        return result;
-    }
-
-    
-</script>
-<script>
-    CheckConditions = () => {
-        return (Filevalidation())
-
-    }
-    //for (const i = 0; i <= fi.files.length - 1; i++) {
-                //    const length = fi.files.length;
-                //    const fsize = fi.files.item(i).size;
-                //    const file = Math.round((fsize / 1024));
-                //    // The size of the file.
-                //    if (file >= 1024) {
-                //        alert(
-                //            "File too Big, please select a file less than 1mb");
-                //        document.getElementById('size').innerHTML = 'File too Big, please select a file less than 1mb';
-                //        document.getElementById('LogoFile').focus();
-                //        result = false;
-                //        return;
-                //        //} else if (file < 2048) {
-                //        //    alert(
-                //        //        "File too small, please select a file greater than 2mb");
-                //    }
-                //    else {
-                //        document.getElementById('size').innerHTML = '';
-                //        result = false;
-
-                //        return;
-                //    }
-                //}
-</script>*@
+                    //        return;
+                    //    }
+                    //}
+    </script>*@
