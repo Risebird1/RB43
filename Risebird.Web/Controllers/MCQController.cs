@@ -89,6 +89,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
                     ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
+                    ViewBag.Profile = profileName;
                     return View(resultset);
                 }
                 else
@@ -150,6 +151,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
                     ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
+                    ViewBag.Profile = profileName;
                     return View(resultset);
                 }
                 else
@@ -162,7 +164,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ResetMCQFilter()
@@ -185,7 +187,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Download(string filename)
         {
@@ -403,7 +405,66 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> DeleteMCQ(string Id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                    //Start : Delete from candidate question response
+                    var questionsresponse = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQCandidateQuestions");
+                    questionsresponse = questionsresponse.Where(x => x.Id == Id).ToList();
+                    foreach (var item in questionsresponse)
+                    {
+                        await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidateQuestions", item);
+                    }
+                    //End : Delete from candidate question response
+                    //Start : Delete from candidate MCQ Mapping
+                    var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
+                    candidateDetails = candidateDetails.Where(x => x.Id == Id).ToList();
+                    foreach (var item in candidateDetails)
+                    {
+                        await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidate", item);
+                    }
+                    //End : Delete from candidate MCQ Mapping
+                    //Start : Delete from MCQ Share List
+                    var candidateShare = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
+                    candidateShare = candidateShare.Where(x => x.Id == Id).ToList();
+                    foreach (var item in candidateShare)
+                    {
+                        await _azureTableStorageService.DeleteEntity("RisebirdMCQShareList", item);
+                    }
+                    //End : Delete from MCQ Share List
+                    //Start : Delete from MCQ Question List
+                    var questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQquestions");
+                    questions = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
+                    foreach (var item in questions)
+                    {
+                        await _azureTableStorageService.DeleteEntity("RisebirdMCQquestions", item);
+                    }
+                    //End : Delete from MCQ Question List
+                    //Start : Delete from MCQ from MCQ List
+                    var MCQsets = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
+                    MCQsets = MCQsets.Where(x => x.PartitionKey == Id).ToList();
+                    await _azureTableStorageService.DeleteEntity("RisebirdMCQSet", MCQsets.FirstOrDefault());
+                    //End : Delete from MCQ from MCQ List
+                    return Json("Successfully deleted");
+                }
+                else
+                {
+                    return Json("You are not authorized to delete MCQ.");
+                }
+            }
+            else
+            {
+                return Json("Fail to delete, please try again.");
+            }
+        }
         #endregion
 
         #region CandidateSkillTest
@@ -454,7 +515,7 @@ namespace Risebird.Web.Controllers
             ViewBag.VideoRecording = itemshareupdate.Videorecording;
             return View(modelset);
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> CandidateSelectQuestionsD(string id)
         {
@@ -480,7 +541,7 @@ namespace Risebird.Web.Controllers
             modeldetailset._questionlist = _questionlist;
             return Json(modeldetailset);
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> CandidateQuestionsD()
         {
@@ -590,7 +651,7 @@ namespace Risebird.Web.Controllers
                         values.VideoLink = uploadedvideoFileURL;
 
                     }
-                    
+
                 }
                 HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
                 return Json("");
@@ -622,7 +683,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Action = status;
             return View();
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> SubmitTest()
         {
@@ -662,7 +723,7 @@ namespace Risebird.Web.Controllers
                         string uploadedvideoFileURL = blob.Uri.ToString();
                         _list.VideoLink = uploadedvideoFileURL;
                     }
-                    
+
                 }
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
@@ -908,7 +969,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> DeleteCandidate(string id, string indexid)
         {

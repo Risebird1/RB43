@@ -259,6 +259,12 @@
                                                     <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
                                                         <span onclick="javascript:GeneratePublicUrl('@item.PartitionKey');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                                                     </button>
+                                                    @if (ViewBag.Profile == "Admin")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" title="Click here to delete MCQ">
+                                                            <span title="Click here to delete MCQ" onclick="javascript:DeleteEntityMCQ('@item.PartitionKey');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -669,6 +675,60 @@
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
+    }
+    function DeleteEntityMCQ(Id) {
+        swal.fire({
+            title: 'Are you sure you want to delete MCQ?',
+            text: "It will be permanently deleted!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/MCQ/DeleteMCQ',
+                        data: { 'Id': Id },
+                        type: 'Delete',
+                        method: 'POST',
+                        success: function (result) {
+                            if (result == "Successfully deleted") {
+                                resolve(result);
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The MCQ has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/MCQ/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
     }
 </script>
 
