@@ -24,16 +24,21 @@ namespace Risebird.MicroService
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger MCQCandiadteScore function processed a request.");
-            string name = req.Query["Emailid"];
+            string emailid = req.Query["Emailid"];
             string mcqid = req.Query["Mcqid"];
             var candidateset = new List<CandidateDetailsForTestDuplicate>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
             var candidate = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
+            var Questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQCandidateQuestions");
             if (candidateDetails != null && candidate != null)
             {
                 candidate = candidate.Where(x => x.Id == mcqid).ToList();
+                candidate = candidate.Where(x => x.EmailAddress == emailid).ToList();
                 candidateDetails = candidateDetails.Where(x => x.Id == mcqid).ToList();
+                candidateDetails = candidateDetails.Where(x => x.CandidateEmail == emailid).ToList();
+                string candidateid = candidateDetails.FirstOrDefault().PartitionKey;
+                //Questions = Questions.Where(x => x.CandidateID == candidateid).ToList();
                 candidateset = (from o in candidate
                                 join a in candidateDetails
                                 on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
@@ -54,7 +59,8 @@ namespace Risebird.MicroService
                                     SameID = o.Id,
                                     VideoLink = a == null ? "" : a.VideoLink,
                                     Feedbackreating = a == null ? 0 : a.Feedbackreating,
-                                    FeedbackComment = a == null ? "" : a.FeedbackComment
+                                    FeedbackComment = a == null ? "" : a.FeedbackComment,
+                                    QuestionDetails = Questions.Where(x => x.CandidateID == a.PartitionKey).ToList()
                                 }).ToList();
             }
             return new OkObjectResult(candidateset);
