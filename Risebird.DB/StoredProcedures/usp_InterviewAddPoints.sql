@@ -10,10 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-    
-            
-      
-              
 Create Procedure [dbo].[usp_InterviewAddPoints]                     
 @interviewId int,                           
 @Type varchar(30),                        
@@ -26,16 +22,20 @@ BEGIN
  Declare @Count int=0                        
  Declare @Irfid int                  
  Declare @IsEmergency bit      
- Declare @meetingStatus int      
+ Declare @meetingStatus int    
+ Declare @IsProctor bit      
  select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId                
  Select @Irfid=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId                 
- Select @meetingStatus=MeetingStatus from InterviewComments where InterviewId=@interviewId                 
-                      
+ Select @meetingStatus=MeetingStatus from InterviewComments where InterviewId=@interviewId 
+ Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Userlist ul on im.candidateEmail=ul.EmailId 
+ join CandidatesMaster cm on ul.id=cm.UserId join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id  where im.id=@interviewId                 
+
 if(@Type='Interview')                        
  BEGIN                    
  Select @Userid=id from UserList where EmailId=(select interviewer from InterviewMeetings where id=@interviewId)                   
  Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                   
  Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId    
+ 
  if(@Count=0)                  
     Begin                
                 
@@ -93,7 +93,11 @@ if(@Type='Interview')
   set @AddPoint=-350        
   END        
   END        
-         
+  if(@IsProctor=1)
+  BEGIN
+  set @AddPoint=0
+  set @Candidate=REPLACE(@Candidate,'Penalty','')
+  END
     Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                   
     END                  
    Else                  
@@ -150,7 +154,12 @@ END
   BEGIN        
   set @AddPoint=-350        
   END        
-  END        
+  END
+  if(@IsProctor=1)
+  BEGIN
+  set @AddPoint=0
+  set @Candidate=REPLACE(@Candidate,'Penalty','')
+  END
     update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@Candidate where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'                   
     END                  
                   
@@ -174,13 +183,7 @@ else if(@Type='Quality Controller')
    END              
    END              
  END                        
-END                 
-                   
-        
-            
-                 
-      
-    
+END      
 GO
 
 
