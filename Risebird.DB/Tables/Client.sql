@@ -10,7 +10,9 @@ CREATE TABLE [dbo].[Client](
             [LogoLink] [varchar](MAX) NULL,	
             [CompanyLink] [varchar](MAX) NULL,
             [CompanyVideoLink] [varchar](MAX) NULL,
-            [IsPasswordReset] [bit] NULL
+            [IsPasswordReset] [bit] NULL,
+            [IsCandidateavailability] [bit] NULL,
+            [IsMeetingNotificationSend] [bit] NULL
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -105,6 +107,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add [IsPasswordReset] bit	
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsCandidateavailability')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [IsCandidateavailability] bit	
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsMeetingNotificationSend')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [IsMeetingNotificationSend] bit	
 END
 END
 

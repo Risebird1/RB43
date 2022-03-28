@@ -41,5 +41,9 @@ namespace Risebird.Entities.Data
 
         [Display(Name = "Reset Password after first login/Password aging")]
         public bool IsPasswordReset { get; set; }
+        [Display(Name = "Check candidate availability")]
+        public bool IsCandidateavailability { get; set; }
+        [Display(Name = "Risebird Meeting waiting Notification")]
+        public bool IsMeetingNotificationSend { get; set; }
     }
 }
