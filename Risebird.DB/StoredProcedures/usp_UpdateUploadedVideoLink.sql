@@ -10,11 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-    
-      
-      
-      
-      
 CREATE PROCEDURE [dbo].[usp_UpdateUploadedVideoLink]       
 @interviewId int,      
 @videoLink varchar(1000),      
@@ -32,7 +27,8 @@ declare
  @interviewStatus int,      
  @updatedPoints int,      
  @candidateEmail varchar(200),  
- @jobCountry varchar(20)  
+ @jobCountry varchar(20)
+ Declare @IsProctor bit 
       
       
  set @interviewerUserId  = (select id from UserList where EmailId=(select interviewer from InterviewMeetings where id=@interviewId))      
@@ -41,7 +37,9 @@ declare
  set @interviewStatus=(select InterviewStatus from InterviewComments where InterviewId=@interviewId)      
  set @candidateEmail= (select candidateEmail from InterviewMeetings where id = @interviewId)      
  set @jobCountry = (select JobCountry from IRF where id=@irfId)         
-      
+ Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Userlist ul on im.candidateEmail=ul.EmailId 
+ join CandidatesMaster cm on ul.id=cm.UserId join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id  where im.id=@interviewId                 
+ 
 if(@meetingStatus is not null and @meetingStatus!=2)      
 Begin      
  declare @IsEmergency bit      
@@ -56,7 +54,12 @@ Begin
   if(@updatedPoints<0)
    BEGIN
    set @candidateEmail='Penalty '+@candidateEmail
-   END      
+   END 
+   if(@IsProctor=1)
+  BEGIN
+  set @updatedPoints=0
+  set @candidateEmail=REPLACE(@candidateEmail,'Penalty','')
+  END
   IF NOT EXISTS(select 1 from InterviewPoints where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview')      
    BEGIN      
         
@@ -80,6 +83,11 @@ Begin
    BEGIN
    set @candidateEmail='Penalty '+@candidateEmail
    END
+    if(@IsProctor=1)
+  BEGIN
+  set @updatedPoints=0
+  set @candidateEmail=REPLACE(@candidateEmail,'Penalty','')
+  END
    IF NOT EXISTS(select 1 from InterviewPoints where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview')      
     BEGIN      
      insert into InterviewPoints(Interviewid, userid, Points, [Type], Comment, [Status], [Date])      
@@ -103,6 +111,11 @@ Begin
    BEGIN
    set @candidateEmail='Penalty '+@candidateEmail
    END
+    if(@IsProctor=1)
+  BEGIN
+  set @updatedPoints=0
+  set @candidateEmail=REPLACE(@candidateEmail,'Penalty','')
+  END
    IF NOT EXISTS(select 1 from InterviewPoints where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview')      
  BEGIN      
      insert into InterviewPoints(Interviewid, userid, Points, [Type], Comment, [Status], [Date])      
@@ -122,6 +135,11 @@ Begin
    BEGIN
    set @candidateEmail='Penalty '+@candidateEmail
    END
+    if(@IsProctor=1)
+  BEGIN
+  set @updatedPoints=0
+  set @candidateEmail=REPLACE(@candidateEmail,'Penalty','')
+  END
   IF NOT EXISTS(select 1 from InterviewPoints where Interviewid = @interviewId and userid=@interviewerUserId and [Type]='Interview')      
    BEGIN      
     insert into InterviewPoints(Interviewid, userid, Points, [Type], Comment, [Status], [Date])      
