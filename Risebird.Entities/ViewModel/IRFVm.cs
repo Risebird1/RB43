@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -100,6 +101,7 @@ namespace Risebird.Entities.ViewModel
         public IList<TransHR> HRCollection { get; set; }
         public IList<TransRecruiter> RecruiterCollection { get; set; }
 
+        public IList<ClonableTemplateQuestion> ClonableTemplateQuestionsCollection { get; set; }
         public string ClientCompName { get; set; }
 
         public SelectList JoinabilityTypeList { get; set; }
@@ -161,6 +163,13 @@ namespace Risebird.Entities.ViewModel
 
         public IRFRecommendations IRFRecommendations { get; set; }
         public bool UseAsCloneTemplate { get; set; }
+
+        [DisplayName("Template Name")]
+        //[Remote(action: "IsClonableTemplateNameInUse", controller: "IRF")]
+        public string TemplateName { get; set; }
+
+        public int UserId { get; set; }
+
     }
     public class InterviewerIds
     {

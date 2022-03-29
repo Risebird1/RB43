@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using static System.Data.CommandType;
 
@@ -350,6 +351,34 @@ namespace Risebird.Repository
                     var results = await SqlMapper.QueryAsync<AssignmentVM>(con, "[usp_GetAssessmentGroupsByCategory]", parameters,
                         commandType: CommandType.StoredProcedure);
                     return results ;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<int?> GetAssessmentGroupCategory(int assessmentGroupId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@assessmentGroupId", assessmentGroupId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<int>(con, "[usp_GetAssessmentGroupCategory]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return results?.FirstOrDefault();
                 }
             }
 

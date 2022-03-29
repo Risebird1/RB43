@@ -2121,7 +2121,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DataTable joinabilityDt = new DataTable();
-                    if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
+                    if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 /*&& irfDetails.IsJoinabilitySelectabilityRequired*/)
                     {
                         //DataTable joinabilityDt = new DataTable();
                         joinabilityDt.Columns.Add("IRFId", typeof(int));
@@ -2139,7 +2139,7 @@ namespace Risebird.Repository
                     }
 
                     DataTable selectabilityDt = new DataTable();
-                    if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 && irfDetails.IsJoinabilitySelectabilityRequired)
+                    if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 /*&& irfDetails.IsJoinabilitySelectabilityRequired*/)
                     {
                         selectabilityDt.Columns.Add("IRFId", typeof(int));
                         selectabilityDt.Columns.Add("LevelId", typeof(int));
@@ -2155,7 +2155,7 @@ namespace Risebird.Repository
                     }
 
                     DataTable skillGeneralDt = new DataTable();
-                    if (irfDetails.SkillGeneral != null && irfDetails.SkillGeneral.Count() > 0 && irfDetails.IsGeneralSkillRequired)
+                    if (irfDetails.SkillGeneral != null && irfDetails.SkillGeneral.Count() > 0 /*&& irfDetails.IsGeneralSkillRequired*/)
                     {
                         skillGeneralDt.Columns.Add("IRFId", typeof(int));
                         skillGeneralDt.Columns.Add("LevelId", typeof(int));
@@ -2208,153 +2208,32 @@ namespace Risebird.Repository
                         }
                     }
 
-                    DataTable emergencyInterviewerDt = new DataTable();
-                    if (irfDetails.EmergencyInterviewerCollection != null && irfDetails.EmergencyInterviewerCollection.Count() != 0 && !(irfDetails.EmergencyInterviewerCollection.Where(x => x.UserId == 0).Any()))
+                    DataTable questionsDt = new DataTable();
+
+                    if (irfDetails.ClonableTemplateQuestionsCollection != null && irfDetails.ClonableTemplateQuestionsCollection.Count() != 0)
                     {
-                        emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
-                        emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
-                        emergencyInterviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        emergencyInterviewerDt.Columns.Add("IsActive", typeof(bool));
+                        questionsDt.Columns.Add("Skill", typeof(int));
+                        questionsDt.Columns.Add("Question", typeof(string));
+                        questionsDt.Columns.Add("UserId", typeof(int));
 
-
-                        foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                        foreach (var item in irfDetails.ClonableTemplateQuestionsCollection)
                         {
-                            emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
-                        }
-
-                    }
-
-                    DataTable clientUserDt = new DataTable();
-
-                    if (irfDetails.ClientCollection != null)
-                    {
-                        clientUserDt.Columns.Add("IRFId", typeof(int));
-                        clientUserDt.Columns.Add("ClientUserId", typeof(int));
-
-                        foreach (var item in irfDetails.ClientCollection)
-                        {
-                            clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
+                            questionsDt.Rows.Add(item.SkillId, item.Question, irfDetails.UserId);
                         }
                     }
 
-                    DataTable qualityControllerDt = new DataTable();
-
-                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
-                    {
-                        qualityControllerDt.Columns.Add("IRFId", typeof(int));
-                        qualityControllerDt.Columns.Add("UserId", typeof(int));
-                        qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        qualityControllerDt.Columns.Add("IsActive", typeof(bool));
-
-                        foreach (var item in irfDetails.QualityController)
-                        {
-                            qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
-                        }
-                    }
-
-                    DataTable hRDt = new DataTable();
-                    hRDt.Columns.Add("IRFId", typeof(int));
-                    hRDt.Columns.Add("UserId", typeof(int));
-
-                    foreach (var item in irfDetails.HRCollection)
-                    {
-                        hRDt.Rows.Add(irfDetails.id, item.UserId);
-                    }
 
                     SqlCommand cmdUpdateIRF = new SqlCommand("usp_CreateClonableSkillChannel", con);
                     cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
 
-                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
-                    //cmdUpdateIRF.Parameters["@id"].Value = irfDetails.id;
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@Name"].Value = irfDetails.IRFId;
+                    cmdUpdateIRF.Parameters["@Name"].Value = irfDetails.TemplateName;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromIRFId", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@CreatedFromIRFId"].Value = irfDetails.id;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@ClientName"].Value = irfDetails.ClientName;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDTiltle", SqlDbType.NVarChar));
-                    cmdUpdateIRF.Parameters["@JDTiltle"].Value = irfDetails.JDTiltle;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CompanyType", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@CompanyType"].Value = irfDetails.CompanyType;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@ClientId"].Value = irfDetails.ClientId;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JobCountry", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@JobCountry"].Value = irfDetails.JobCountry;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@StartDate", SqlDbType.DateTime));
-                    cmdUpdateIRF.Parameters["@StartDate"].Value = irfDetails.StartDate;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@EndDate", SqlDbType.DateTime));
-                    cmdUpdateIRF.Parameters["@EndDate"].Value = irfDetails.EndDate;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDLink", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@JDLink"].Value = irfDetails.JDLink;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfPosition", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@NoOfPosition"].Value = irfDetails.NoOfPosition;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfIntterview", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@NoOfIntterview"].Value = irfDetails.NoOfIntterview;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RisebirdHr", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RisebirdHr"].Value = irfDetails.RisebirdHr;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PerMintuteRate", SqlDbType.Real));
-                    cmdUpdateIRF.Parameters["@PerMintuteRate"].Value = irfDetails.PerMintuteRate;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JobLevel", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@JobLevel"].Value = irfDetails.JobLevel;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CalendlyLink", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@CalendlyLink"].Value = irfDetails.CalendlyLink;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@TotalBudget", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@TotalBudget"].Value = irfDetails.TotalBudget;
-
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsBiometricEnabled", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsBiometricEnabled"].Value = irfDetails.IsBiometricEnabled;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PriorityLevel", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@PriorityLevel"].Value = irfDetails.PriorityLevel;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CompanyDetails", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@CompanyDetails"].Value = irfDetails.CompanyDetails ?? string.Empty;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Type", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@Type"].Value = irfDetails.Type;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Heuristicsscore", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@Heuristicsscore"].Value = irfDetails.Heuristicsscore;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PrimarySkillInvite", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@PrimarySkillInvite"].Value = irfDetails.PrimarySkillInvite;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@BillingOwner", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@BillingOwner"].Value = irfDetails.BillingOwner;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@AssessmentGroupId"].Value = Convert.ToInt16(irfDetails.AssessmentGroupId);
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsJoinabilitySelectabilityRequired", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsJoinabilitySelectabilityRequired"].Value = irfDetails.IsJoinabilitySelectabilityRequired;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsGeneralSkillRequired", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
-
-                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@idRecommendation", SqlDbType.Int));
-                    //cmdUpdateIRF.Parameters["@idRecommendation"].Value = irfDetails.IRFRecommendations.id;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationStatus", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@RecommendationStatus"].Value = irfDetails.IRFRecommendations.Status;
@@ -2373,20 +2252,6 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@RecommendationCreatedOn"].Value = DateTime.Now;
-
-
-                    //DynamicParameters recomParameters = new DynamicParameters();
-                    //recomParameters.Add("id", irfDetails.IRFRecommendations.id);
-                    //recomParameters.Add("IRFId", irfDetails.id);
-                    //recomParameters.Add("Status", irfDetails.IRFRecommendations.Status);
-                    //recomParameters.Add("CategoryId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null);
-                    //recomParameters.Add("CompetencyLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null);
-                    //recomParameters.Add("SeniorityLevelId", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null);
-                    //recomParameters.Add("CountryType", irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null);
-                    //recomParameters.Add("ModifiedOn", DateTime.Now);
-                    //SqlMapper.Query(con, "usp_UpdateIRFRecommendation", recomParameters,
-                    //commandType: CommandType.StoredProcedure);
-
 
                     if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
                     {
@@ -2413,27 +2278,12 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
                     }
-                    if (emergencyInterviewerDt != null && emergencyInterviewerDt.Rows.Count > 0)
+                    
+                    if (questionsDt != null && questionsDt.Rows.Count > 0)
                     {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@QuestionsBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@QuestionsBulkData"].Value = questionsDt;
                     }
-                    if (clientUserDt != null && clientUserDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@ClientUserBulkData"].Value = clientUserDt;
-                    }
-                    if (qualityControllerDt != null && qualityControllerDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@QCBulkData"].Value = qualityControllerDt;
-                    }
-                    if (hRDt != null && hRDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@HRBulkData"].Value = hRDt;
-                    }
-
                     con.Open();
 
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
@@ -2441,117 +2291,6 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    //if (removedTechSkills != null)
-                    //{
-                    //    foreach (var removedTechSkill in removedTechSkills)
-                    //    {
-                    //        try
-                    //        {
-                    //            UpdateTechSkillQuestionsForRemovedSkills(removedTechSkill);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //            continue;
-                    //        }
-                    //    }
-                    //}
-
-                    //if (interviewerRateChangesList != null)
-                    //{
-                    //    foreach (var interviewerChangeDetails in interviewerRateChangesList.Where(x => x.Type == "Interviewer"))
-                    //    {
-                    //        try
-                    //        {
-                    //            UpdateInterviewerAmountBasedOnRateChanges(interviewerChangeDetails);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //            continue;
-                    //        }
-                    //    }
-                    //}
-
-                    //if (removedInterviewers != null)
-                    //{
-                    //    foreach (var removedInterviewer in removedInterviewers.Where(x => x.Type == "Interviewer"))
-                    //    {
-                    //        try
-                    //        {
-                    //            UpdateInterviewerAmountForRemovedInterviewers(removedInterviewer);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //            continue;
-                    //        }
-                    //    }
-                    //}
-
-                    //if (addedNewInterviewers != null)
-                    //{
-                    //    foreach (var addedNewInterviewer in addedNewInterviewers.Where(x => x.Type == "Interviewer"))
-                    //    {
-                    //        try
-                    //        {
-                    //            UpdateAmountForNewlyAddedInterviewers(addedNewInterviewer);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //            continue;
-                    //        }
-                    //    }
-                    //}
-
-
-                    //if (interviewerRateChangesList != null)
-                    //{
-                    //    foreach (var interviewerChangeDetails in interviewerRateChangesList.Where(x => x.Type == "EmergencyInterviewer"))
-                    //    {
-                    //        try
-                    //        {
-                    //            UpdateInterviewerAmountBasedOnRateChanges(interviewerChangeDetails);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //            continue;
-                    //        }
-                    //    }
-                    //}
-
-                    //if (removedInterviewers != null)
-                    //{
-                    //    foreach (var removedEmergencyInterviewer in removedInterviewers.Where(x => x.Type == "EmergencyInterviewer"))
-                    //    {
-                    //        try
-                    //        {
-                    //            UpdateInterviewerAmountForRemovedInterviewers(removedEmergencyInterviewer);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //            continue;
-                    //        }
-                    //    }
-                    //}
-                    //if (addedNewInterviewers != null)
-                    //{
-                    //    foreach (var addedNewInterviewer in addedNewInterviewers.Where(x => x.Type == "EmergencyInterviewer"))
-                    //    {
-                    //        try
-                    //        {
-                    //            UpdateAmountForNewlyAddedInterviewers(addedNewInterviewer);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    //            continue;
-                    //        }
-                    //    }
-                    //}
 
                     return true;
                 }
@@ -5806,6 +5545,279 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<ClonableSkillChannelVM> GetClonableSkillChannelById(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetClonableSkillChannelById", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id)
+        {
+            try
+            {
+                var query = "Select tcits.*, Skill.[Name] as SkillName from TransClonableIRFTechSkill tcits join Skill on tcits.SkillId=Skill.id  where tcits.ClonableIRFId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSkill>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<TransSkillGeneral> GetClonableIRFSkillsGeneralbyId(int id)
+        {
+            try
+            {
+                var query = "select * from TransClonableIRFSkillGeneral where ClonableIRFId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSkillGeneral>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransJoinability> GetClonableIRFTransJoinability(int id)
+        {
+            try
+            {
+                var query = "Select * from TransClonableIRFJoinability where ClonableIRFId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransJoinability>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransSelectability> GetClonableIRFTransSelectability(int id)
+        {
+            try
+            {
+                var query = "Select * from TransClonableIRFSelectability where ClonableIRFId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSelectability>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransInterviewer> GetClonableIRFTransInterviewer(int id)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransInterviewer>(con, "usp_GetClonableIRFTransInterviewer", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<TransEmergencyInterviewer> GetClonableIRFTransEmergencyInterviewer(int id)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransEmergencyInterviewer>(con, "usp_GetClonableIRFTransEmergencyInterviewer", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransHR> GetTransClonableIRFHR(int id)
+        {
+            try
+            {
+                var query = "select tcihr.*, HR.UserId from TransClonableIRFHR tcihr inner join HR  on tcihr.HRId = HR.id where ClonableIRFId=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransHR>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        public IEnumerable<TransQualityController> GetTransClonableIRFQualityController(int id)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransQualityController>(con, "usp_GetTransClonableIRFQualityController", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransClientUser> GetTransClonableIRFClientUser(int id)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransClientUser>(con, "usp_GetTransClonableIRFClientUser", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransInterviewer> GetInterviewersByAssessmentGroup(int assessmentGroupId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@assessmentGroupId", assessmentGroupId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransInterviewer>(con, "usp_GetInterviewersByAssessmentGroup", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<ClonableTemplateQuestion>> GetQuestionsForAssessmentGroup(int assessmentGroupId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@assessmentGroupId", assessmentGroupId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<ClonableTemplateQuestion>(con, "usp_GetQuestionsForAssessmentGroup", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> IsClonableTemplateNameInUse(string name)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@name", name);
+                    var result = (await SqlMapper.QueryAsync<bool>(con, "usp_IsClonableTemplateNameInUse", parameters,
+                        commandType: CommandType.StoredProcedure)).FirstOrDefault();
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 }
