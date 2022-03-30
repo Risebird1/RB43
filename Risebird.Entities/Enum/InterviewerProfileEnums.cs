@@ -100,6 +100,8 @@ namespace Risebird.Entities.Enum
     }
     public enum IndiaPrice
     {
+        [Description("400")]
+        Fourhundred = 400,
         [Description("600")]
         Sixhundred = 600,
         [Description("800")]
@@ -115,6 +117,8 @@ namespace Risebird.Entities.Enum
     }
     public enum OutSideIndiaPrice
     {
+        [Description("600")]
+        Sixhundred = 600,
         [Description("900")]
         Ninehundred = 900,
         [Description("1200")]
