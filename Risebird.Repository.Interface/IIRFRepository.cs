@@ -166,5 +166,19 @@ namespace Risebird.Repository.Interface
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
         Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
+        Task<ClonableSkillChannelVM> GetClonableSkillChannelById(int id);
+        IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id);
+        IEnumerable<TransSkillGeneral> GetClonableIRFSkillsGeneralbyId(int id);
+        IEnumerable<TransJoinability> GetClonableIRFTransJoinability(int id);
+        IEnumerable<TransSelectability> GetClonableIRFTransSelectability(int id);
+        IEnumerable<TransInterviewer> GetClonableIRFTransInterviewer(int id);
+        IEnumerable<TransEmergencyInterviewer> GetClonableIRFTransEmergencyInterviewer(int id);
+        IEnumerable<TransHR> GetTransClonableIRFHR(int id);
+        IEnumerable<TransQualityController> GetTransClonableIRFQualityController(int id);
+        IEnumerable<TransClientUser> GetTransClonableIRFClientUser(int id);
+        IEnumerable<TransInterviewer> GetInterviewersByAssessmentGroup(int assessmentGroupId);
+        Task<IEnumerable<ClonableTemplateQuestion>> GetQuestionsForAssessmentGroup(int assessmentGroupId);
+
+        Task<bool> IsClonableTemplateNameInUse(string name);
     }
 }

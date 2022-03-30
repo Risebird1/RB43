@@ -13,43 +13,16 @@ GO
  Create PROCEDURE [dbo].[usp_CreateClonableSkillChannel]            
   
 @Name varchar(200),
-@CreatedFromIRFId int,            
-@clientName varchar(200),            
-@JDTiltle nvarchar(200),            
-@CompanyType varchar(200),            
-@ClientId int,            
-@JobCountry varchar(50),            
-@StartDate datetime,            
-@EndDate datetime,            
-@JDLink varchar(1000),            
-@NoOfPosition int,            
-@NoOfIntterview int,            
-@RisebirdHr int,            
-@PerMintuteRate real,            
-@JobLevel int,            
-@CalendlyLink varchar(500),            
-@TotalBudget int,            
+@CreatedFromIRFId int,                        
 @CreatedOn date,            
-@IsBiometricEnabled bit,            
-@PriorityLevel int,            
-@CompanyDetails varchar(1000),           
-@Type varchar(5),        
-@Heuristicsscore int,        
-@PrimarySkillInvite varchar(100),        
-@BillingOwner int,     
-@AssessmentGroupId int,
-@IsQCRequired bit,
-@IsJoinabilitySelectabilityRequired bit,
-@IsGeneralSkillRequired bit,
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
 @InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
-@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
-@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
-@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
-@HRBulkData AS [dbo].[TransHR_TableType] READONLY,
+--@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
+--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
+@QuestionsBulkData AS [dbo].[ClonableTemplateQuestions_TableType] READONLY,
 @RecommendationStatus bit,
 @RecommendationCategoryId int = null,
 @RecommendationCompetencyLevelId int = null,
@@ -71,66 +44,13 @@ begin try
 
 		INSERT INTO [dbo].[ClonableSkillChannel]            
 		   ([Name]            
-		   ,[ClientName]            
-		   ,[JDTiltle]            
-		   ,[CompanyType]            
-		   ,[ClientId]            
-		   ,[JobCountry]            
-		   ,[StartDate]            
-		   ,[EndDate]                       
-		   ,[JDLink]            
-		   ,[NoOfPosition]            
-		   ,[NoOfIntterview]            
-		   ,[RisebirdHr]            
-		   ,[PerMintuteRate]              
-		   ,[JobLevel]            
-		   ,[CalendlyLink]            
 		   ,[CreatedOn]            
-		   ,[IsBiometricEnabled]            
-		   ,[TotalBudget]            
-		   ,[PriorityLevel]            
-		   ,[CompanyDetails]            
-		   ,[BussinessType]        
-		   ,[Heuristicsscore]        
-		   ,[PrimarySkillInvite]      
-		   ,[BillingOwner]    
-		   ,[AssessmentGroupId]
-		   ,[IsQCRequired]
-		   ,[IsJoinabilitySelectabilityRequired]
-		   ,[IsGeneralSkillRequired]
 		   ,[CreatedFromIRFId])            
-			   VALUES            
-				   (@Name,            
-		   @clientName,            
-		   @JDTiltle,            
-		   @CompanyType,            
-		   @ClientId,            
-		   @JobCountry,            
-		   @StartDate,            
-		   @EndDate,            
-		   @JDLink,            
-		   @NoOfPosition,            
-		   @NoOfIntterview,            
-		   @RisebirdHr,            
-		   @PerMintuteRate,            
-		   @JobLevel,            
-		   @CalendlyLink,            
+		VALUES            
+		  (@Name,            
 		   @CreatedOn,            
-		   @IsBiometricEnabled,            
-		   @TotalBudget,            
-		   @PriorityLevel,            
-		   @CompanyDetails,          
-		   @Type,        
-		   @Heuristicsscore,        
-		   @PrimarySkillInvite,      
-		   @BillingOwner,    
-		   @AssessmentGroupId,
-		   @IsQCRequired,
-		   @IsJoinabilitySelectabilityRequired,
-		   @IsGeneralSkillRequired,
 		   @CreatedFromIRFId)      
        
-    
 		select @idClonableIrf = SCOPE_IDENTITY()    
   End
 
@@ -197,56 +117,18 @@ begin try
 	SELECT @idClonableIrf, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id 
 	as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
 
-  
-    --emergency interviewers
-    delete from TransClonableIRFEmergencyInterviewer where ClonableIRFId= @idClonableIrf
 
-	INSERT INTO [dbo].[TransClonableIRFEmergencyInterviewer](  
+	--questions
+	delete from ClonableTemplateQuestions where ClonableIRFId= @idClonableIrf
+
+	INSERT INTO [dbo].[ClonableTemplateQuestions](  
 	[ClonableIRFId] ,  
 	[UserId],  
-	[PerSuccessRate], 
-	[IsActive],
-	[InterviewerId])  
-   
-  	--SELECT eibd.*, InterviewerProfile.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join InterviewerProfile on eibd.UserId = InterviewerProfile.UserId  
+	[Skill],  
+	[Question])  
   
-	SELECT @idClonableIrf, eibd.UserId, eibd.PerSuccessRate, eibd.IsActive, InterviewerProfile.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join InterviewerProfile on eibd.UserId = InterviewerProfile.UserId  
+	SELECT @idClonableIrf, qbd.UserId, qbd.[Skill], qbd.[Question] FROM @QuestionsBulkData qbd
 
-	--client users
-	delete from TransClonableIRFClientUser where ClonableIRFId= @idClonableIrf
-
-	INSERT INTO [dbo].[TransClonableIRFClientUser](  
-	[ClonableIRFId] ,  
-	[ClientUserId],  
-	[ClientRoleId])  
-   
-  
-	--SELECT cubd.*, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd left join ClientUser on cubd.ClientUserId= ClientUser.UserId  
- 
-	SELECT @idClonableIrf, cubd.ClientUserId, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd left join ClientUser on cubd.ClientUserId= ClientUser.UserId  
-
-    --quality controllers
- 	delete from TransClonableIRFQualityController where ClonableIRFId= @idClonableIrf        
-
-	INSERT INTO [dbo].[TransClonableIRFQualityController](  
-	[ClonableIRFId] ,  
-	[UserId],  
-	[PerSuccessRate],
-	[IsActive],
-	[InterviewerId])  
-     
-	SELECT @idClonableIrf, qcbd.UserId, qcbd.PerSuccessRate, qcbd.IsActive, InterviewerProfile.id as InterviewerId FROM @QCBulkData qcbd left join InterviewerProfile on qcbd.UserId = InterviewerProfile.UserId  
- 
-    --HRs
-	delete from TransClonableIRFHR where ClonableIRFId= @idClonableIrf 
-	
-	INSERT INTO [dbo].[TransClonableIRFHR](  
-	[ClonableIRFId] ,  
-	[HRId])  
-   
-	SELECT @idClonableIrf, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId  
-	
-	
 	
 	IF Not EXISTS(Select 1 from IRFRecommendations where CloneIRFId = @idClonableIrf)     
 	BEGIN
