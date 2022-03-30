@@ -195,5 +195,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<int?> GetAssessmentGroupCategory(int assessmentGroupId)
+        {
+            try
+            {
+                return await _skillRepository.GetAssessmentGroupCategory(assessmentGroupId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
