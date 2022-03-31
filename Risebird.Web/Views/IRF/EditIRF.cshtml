@@ -1387,13 +1387,14 @@
                                                                             @if (Model.UseAsCloneTemplate)
                                                                             {
                                                                                 @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
                                                                             }
                                                                             else
                                                                             {
                                                                                 @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
 
                                                                             }
+                                                                            @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
+
                                                                         </td>
                                                                         <td>
                                                                             @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
@@ -1475,12 +1476,13 @@
                                                                                 @if (Model.UseAsCloneTemplate)
                                                                                 {
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                 }
+                                                                                @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+
                                                                             </td>
                                                                             <td>
                                                                                 @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
