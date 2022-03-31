@@ -1489,15 +1489,10 @@
                                                     <div class="form-group">
                                                         @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
                                                         @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
-
-
-                                                       
                                                     </div>
                                                 </div>
                                                 <div class="row" id="recommendationFields">
-
                                                     <div class="col-md-6 col-sm-6 pr-1">
-
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>

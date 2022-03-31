@@ -682,6 +682,57 @@
         </div>
     </div>
 </div>
+<div id="InterviewerNotificationModel" class="modal modal-bg" style="z-index:3">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Notification <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeInterviewerNotificationModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body">
+                Dear Partner,<br />
+
+                Risebird is committed to provide safe and secure interviewing experience for all interviewees. Our interviews are designed to assess the skills of candidates irrespective of gender, attire, appearance, race, religion, caste etc. As our esteemed partners, we expect you to follow the guidelines in a way that represents our values. It is required that you conduct an interview in a professional manner.
+                <br />
+                <strong>Few guidelines -</strong><br />
+                <div>
+                    1.During the interview, please do not make any comments of personal nature including gender, attire, appearance, race, religion, caste etc.<br />
+                    2.It is prohibited to take an interview under the influence of any substance (alcohol, drugs etc.)<br />
+                    3.Conduct unbiased assessment of the skills of the candidate irrespective of gender, attire, appearance, race, religion, caste etc.<br />
+                    4.Do not collect or attempt to collect any information that is personal in nature including phone number, salary etc. Do not connect or attempt to connect with the candidate for networking (professional or otherwise)<br />
+                    5.Keep the discussion limited to skills and avoid giving feedback during the interview process<br />
+                    6.Do not comment on the performance of the candidate during the interview. In case the candidate asks, guide them to connect with HR.<br />
+                    7.In case you have to switch on your webcam, be in professional attire.<br />
+                </div>
+                These guidelines are not compressive and are only a few pointers. We expect our interviewers to display exemplary professional behavior.
+                <br />
+                <strong>Identifying Non Compliance</strong><br />
+                <ul>
+                    <li>We review interviews for any compliance issues manually as well as by script analysis. Any non-compliance will result in immediate actions.</li>
+                    <li>We collect candidate feedback in a regular manner. Any complaints by the candidates will trigger our review in detail.</li>
+                    <li>We are continuously in touch with our clients and act on their feedback.</li>
+                </ul>
+                <strong>Action, in case of non compliance</strong><br />
+                <ul>
+                    <li>Immediate deactivation from Risebird platform pending our review. In case, our review finds non compliance, we will remove you from the platform permanently.</li>
+                    <li>Any legal action initiated would be your individual responsibility. Risebird will cooperate with competent authority in all such cases.</li>
+                    <li>We reserve the right to recover damages including but not limited to reputation, contractual fines, legal charges etc.</li>
+                </ul>
+                <input type="checkbox" id="chk_interviewernotifcation" onchange="changeinterviewnotificationstatus()" />I have acknowledged
+            </div>
+
+        </div>
+    </div>
+</div>
 <script>
     var interviewUnassignedMinutes;
     $(document).ready(function () {
@@ -1580,9 +1631,6 @@
 
                     }
                 },
-
-
-
                 {
                     title: "Export",
                     content: "Click here to export the Interviews data in excel sheet",
@@ -1650,11 +1698,7 @@
                         $('#myinterview_4').removeClass('overlay-relative');
                         $('.helper').remove();
                     },
-
                 },
-
-
-
                 {
                     title: "JD Link",
                     content: "Find the JD Link here",
@@ -1747,10 +1791,6 @@
                         $('.helper').remove();
                     }
                 },
-
-
-
-
                 {
                     title: "Report",
                     content: "Click here to update Candidate Report ",
@@ -1793,19 +1833,13 @@
             onStart: ["addOverlay"],
             onEnd: ["removeOverlay"],
         };
-
         hopscotch.startTour(tour);
-
     </script>
 
 }
 
 <script>
-
-
     startTimer();
-
-
     function startTimer() {
         var presentTime1 = document.getElementsByClassName('timer');
         var presentTab = document.getElementsByClassName('time_tab');
@@ -1827,20 +1861,41 @@
                 presentTab[i].style.display = 'block';
             }
             presentTime1[i].innerHTML = m + ":" + s;
-
         }
-
-
-
-
         setTimeout(startTimer, 1000);
-
     }
 
     function checkSecond(sec) {
         if (sec < 10 && sec >= 0) { sec = "0" + sec }; // add zero in front of numbers < 10
         if (sec < 0) { sec = "59" };
         return sec;
+    }
+    function changeinterviewnotificationstatus() {
+        if (document.getElementById("chk_interviewernotifcation").checked) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/ChangeInterviewernotificationStatus",
+                data: { status: 1 },
+                success: function (data) {
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/ChangeInterviewernotificationStatus",
+                data: { status: 0 },
+                success: function (data) {
+                }
+            });
+        }
+    }
+    function closeInterviewerNotificationModel() {
+        var model = document.getElementById("InterviewerNotificationModel");
+        model.style.display = "none";
+    }
+    function openInterviewerNotificationModel() {
+        var model = document.getElementById("InterviewerNotificationModel");
+        model.style.display = "block";
     }
 </script>
 @*<script>
@@ -1854,3 +1909,9 @@
             marqueeContent.appendChild(marqueeContent.children[i].cloneNode(true));
         }
     </script>*@
+@if (!ViewBag.isNotificationAccepted)
+{
+    <script>
+        openInterviewerNotificationModel();
+    </script>
+}

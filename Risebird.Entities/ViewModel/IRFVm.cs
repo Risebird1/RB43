@@ -161,6 +161,7 @@ namespace Risebird.Entities.ViewModel
 
         public IRFRecommendations IRFRecommendations { get; set; }
         public bool UseAsCloneTemplate { get; set; }
+        public IList<SkillComment> QuesionList { get; set; }
     }
     public class InterviewerIds
     {
@@ -273,5 +274,9 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public string IRFId { get; set; }
         public string AssessmentGroup { get; set; }
+        public int AssessmentGroupId { get; set; }
+        public int CompetencyLevelId { get; set; }
+        public int CountryType { get; set; }
+        public int SeniorityLevelId { get; set; }
     }
 }

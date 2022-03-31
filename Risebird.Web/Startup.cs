@@ -358,6 +358,8 @@ namespace Risebird.Web
             services.AddScoped<IInterviewSchedulerRepository, InterviewSchedulerRepository>();
             services.AddScoped<IRisebirdMeetingsRepository, RisebirdMeetingsRepository>();
             services.AddScoped<IZoomHelper, ZoomHelper>();
+            services.AddScoped<IRecommendedIRFService, RecommendedIRFService>();
+            services.AddScoped<IRecommendedIRFRepository, RecommendedIRFRepository>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts
