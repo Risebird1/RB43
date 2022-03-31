@@ -477,7 +477,7 @@ namespace Risebird.Business
                 IEnumerable<TransInterviewer> transInterviewer = new List<TransInterviewer>();
                 if (useAsCloneTemplate)
                 {
-                    if(IRF !=null && !string.IsNullOrEmpty(IRF.AssessmentGroupId))
+                    if (IRF != null && !string.IsNullOrEmpty(IRF.AssessmentGroupId))
                     {
                         transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(Convert.ToInt16(IRF.AssessmentGroupId));
                     }
@@ -2554,8 +2554,5 @@ namespace Risebird.Business
                 return null;
             }
         }
-
-    }
-
     }
 }
