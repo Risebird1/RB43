@@ -2007,7 +2007,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var model = await _irfService.GetEditIRF(id, isClone);
+                    var model = await _irfService.GetEditIRF(id, isClone, useAsCloneTemplate);
                     int abc;
                     if (!int.TryParse(model.JobCountry, out abc))
                     {
@@ -2029,6 +2029,11 @@ namespace Risebird.Web.Controllers
                     model.OldCompanyDetails = model.CompanyDetails;
                     ViewBag.clonevalue = clonevalue;
                     model.clonevalue = clonevalue;
+                    if(model.UseAsCloneTemplate)
+                    {
+                        model.IsJoinabilitySelectabilityRequired = true;
+                        model.IsGeneralSkillRequired = true;
+                    }
                     return View(model);
                 }
                 else
@@ -2088,10 +2093,44 @@ namespace Risebird.Web.Controllers
                         if (isDuplicate)
                         {
                             model.isDuplicateEntries = isDuplicate;
+                            
                             SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
-                        if (!model.IsClone)
+                        if(model.UseAsCloneTemplate)
+                        {
+                            bool isTemplateInvalid = false;
+                            if(!model.InterviewerCollection.Any(x=> x.IsActive))
+                            {
+                                isTemplateInvalid = true;
+                                ModelState.AddModelError("", "Please select atleast one Interviewer from the list.");
+                            }
+                            if (!model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
+                            {
+                                isTemplateInvalid = true;
+                                ModelState.AddModelError("", "Please select atleast one Question from the list.");
+                            }
+                            if(isTemplateInvalid)
+                            {
+                                if (!string.IsNullOrEmpty(model.AssessmentGroupId))
+                                {
+                                    model.InterviewerCollection = (IList<TransInterviewer>)_irfService.GetInterviewersByAssessmentGroupId(Convert.ToInt32(model.AssessmentGroupId));
+                                }
+                                else
+                                {
+                                    model.InterviewerCollection = new List<TransInterviewer>();
+                                }
+                                if (model.UseAsCloneTemplate)
+                                {
+                                    model.IsJoinabilitySelectabilityRequired = true;
+                                    model.IsGeneralSkillRequired = true;
+                                }
+                                SetEditIRFProperties(model);
+                                //return RedirectToAction("EditIRF", new { id = model.id, useAsCloneTemplate = model.UseAsCloneTemplate})
+                                return View("EditIRF", model);
+                            }
+                        }
+                        if (!model.IsClone && !model.UseAsCloneTemplate)
                         {
                             model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                         }
@@ -2099,7 +2138,7 @@ namespace Risebird.Web.Controllers
                         //{
                         //    model.id = 0;
                         //}
-                        if ((model.JDFile != null))
+                        if ((model.JDFile != null) && !model.UseAsCloneTemplate)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -2118,11 +2157,11 @@ namespace Risebird.Web.Controllers
                                 model.JDLink = uploadedFileURL;
                             }
                         }
-                        else if (model.JDLink == null || model.JDLink == "")
+                        else if ((model.JDLink == null || model.JDLink == "") && !model.UseAsCloneTemplate)
                         {
                             model.JDLink = model.OldJDLink;
                         }
-                        if ((model.CompanyDetailFile != null))
+                        if ((model.CompanyDetailFile != null) && !model.UseAsCloneTemplate)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CompanyDetailFile);
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -2141,7 +2180,7 @@ namespace Risebird.Web.Controllers
                                 model.CompanyDetails = uploadedFileURL;
                             }
                         }
-                        else if (model.CompanyDetails == null || model.CompanyDetails == "")
+                        else if ((model.CompanyDetails == null || model.CompanyDetails == "") && !model.UseAsCloneTemplate)
                         {
                             model.CompanyDetails = model.OldCompanyDetails;
                         }
@@ -2236,12 +2275,17 @@ namespace Risebird.Web.Controllers
                 {
                     if (item.PerSuccessRate == 0)
                     {
-                        item.PerSuccessRate = Convert.ToInt32(model.PerMintuteRate);
+                        item.PerSuccessRate = model.PerMintuteRate != 0.0 ? Convert.ToInt32(model.PerMintuteRate) : 1000;
                     }
+
                 }
             }
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-            var interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            IEnumerable<Interviewer> interviewers = new List<Interviewer>();
+            if (!model.UseAsCloneTemplate)
+            {
+                interviewers = _irfService.GetInterviewersForIRF(model.AssessmentGroupId);
+            }
             var _assessmentid = Convert.ToInt32(model.AssessmentGroupId);
             var _listassessment = AssessmentsGroups.Where(x => x.id == _assessmentid).ToList();
             AssessmentsGroups = AssessmentsGroups.Where(x => x.IsRelevant == true).ToList();
@@ -2249,7 +2293,11 @@ namespace Risebird.Web.Controllers
             {
                 AssessmentsGroups = AssessmentsGroups.Union(_listassessment);
             }
-            ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+            if(!model.UseAsCloneTemplate)
+            {
+                ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+
+            }
             ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
 
@@ -2259,7 +2307,7 @@ namespace Risebird.Web.Controllers
                 Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
             }
             ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-            if (!model.IsClone)
+            if (!model.IsClone && !model.UseAsCloneTemplate)
             {
                 ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
 
@@ -2269,16 +2317,21 @@ namespace Risebird.Web.Controllers
                 model.ClientCollection = null;
                 model.ClientId = 0;
             }
-            ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-            ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
-            ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
-            ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+            
+            if (!model.UseAsCloneTemplate)
+            {
+                ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+                ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
+                ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
+                ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+            }
+
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
-            ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
-            ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
-            ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
             var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                             select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
@@ -2300,6 +2353,7 @@ namespace Risebird.Web.Controllers
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
             model.LoggedEmail = emailid;
+            model.UserId = _irfService.GetUserId(emailid);
             if (string.IsNullOrEmpty(model.Type))
             {
                 model.Type = "B2B";
@@ -2322,14 +2376,20 @@ namespace Risebird.Web.Controllers
             {
 
                 model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
-                if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                
+                if(!string.IsNullOrEmpty(model.AssessmentGroupId))
                 {
-                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                    model.IRFRecommendations.AssessmentGroupId =  Convert.ToInt32(model.AssessmentGroupId);
+                    model.IRFRecommendations.CategoryId = _skillService.GetAssessmentGroupCategory(model.IRFRecommendations.AssessmentGroupId.Value).Result;
+                    if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                    {
+                        model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                        model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => x.Value == model.AssessmentGroupId).FirstOrDefault().Text;
+                    }
                 }
+                model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(_irfService.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value).Result);
             }
-
-
-
+            
             //TempData["EditIRFId"] = model.IRFId;
             //model.IsClone = isClone;
             return;
@@ -6770,6 +6830,22 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsClonableTemplateNameInUse(string name)
+        {
+            bool inUse = await _irfService.IsClonableTemplateNameInUse(name.Replace("\r", "").Replace("\n", ""));
+
+            if (!inUse)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Template Name '{name}' is already in use.");
             }
         }
     }

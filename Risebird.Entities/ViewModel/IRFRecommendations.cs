@@ -36,6 +36,8 @@ namespace Risebird.Entities.ViewModel
 
         public SelectList AssessmentGroupsList { get; set; }
 
+        public string AssessmentGroupName { get; set; }
+
 
     }
 }

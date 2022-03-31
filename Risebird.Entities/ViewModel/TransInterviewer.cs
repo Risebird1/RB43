@@ -11,5 +11,8 @@
         public int PerSuccessRate { get; set; }
         public bool IsActive { get; set; }
         public bool IsAvailable { get; set; }
+
+        public string ResumeLink { get; set; }
+        public string CodedResumeLink { get; set; }
     }
 }

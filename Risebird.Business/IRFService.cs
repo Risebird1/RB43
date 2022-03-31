@@ -461,7 +461,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IRFVm> GetEditIRF(int id, bool isClone = false)
+        public async Task<IRFVm> GetEditIRF(int id, bool isClone = false, bool useAsCloneTemplate = false)
         {
             try
             {
@@ -473,7 +473,20 @@ namespace Risebird.Business
                 var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
                 var transJoinability = _irfRepository.GetTransJoinability(id);
                 //var transClientUser = _irfRepository.GetTransClientUser(id);
-                var transInterviewer = _irfRepository.GetTransInterviewer(id);
+
+                IEnumerable<TransInterviewer> transInterviewer = new List<TransInterviewer>();
+                if (useAsCloneTemplate)
+                {
+                    if(IRF !=null && !string.IsNullOrEmpty(IRF.AssessmentGroupId))
+                    {
+                        transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(Convert.ToInt16(IRF.AssessmentGroupId));
+                    }
+                }
+                else
+                {
+                    transInterviewer = _irfRepository.GetTransInterviewer(id);
+                }
+                //var transInterviewer = _irfRepository.GetTransInterviewer(id);
                 var transQualityController = _irfRepository.GetTransQualityController(id);
                 var transSelectability = _irfRepository.GetTransSelectability(id);
                 var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
@@ -732,12 +745,14 @@ namespace Risebird.Business
                 {
                     model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
                 }
+                model.InterviewerCollection = model.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
+                model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection?.Where(x => x.IsSelected)?.ToList();
                 var result = await _irfRepository.CreateClonableSkillChannel(model);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.CreateClonableSkillChannel;
-                    activityTrackerModel.Particulars = model.IRFId;
+                    activityTrackerModel.Particulars = model.TemplateName;
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = ActivityTypes.CreateClonableSkillChannel.GetDescription();
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
@@ -2413,6 +2428,134 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IRFVm> GetClonableSkillChannel(int id)
+        {
+            try
+            {
+                var model = new IRFVm();
+
+                //get all values from database
+                model = await _irfRepository.GetClonableSkillChannelById(id);
+                var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
+                var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
+                var transJoinability = _irfRepository.GetTransJoinability(id);
+                //var transClientUser = _irfRepository.GetTransClientUser(id);
+                var transInterviewer = _irfRepository.GetTransInterviewer(id);
+                var transQualityController = _irfRepository.GetTransQualityController(id);
+                var transSelectability = _irfRepository.GetTransSelectability(id);
+                var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
+                var transResumeEvaluator = _irfRepository.GetTransResumeEvaluator(id);
+                var transHR = _irfRepository.GetTransHR(id);
+                var transRecruiter = _irfRepository.GetTransRecruiter(id);
+
+                //assign values retrieved to the model
+                //model.id = IRF.id;
+                //model.ClientCompName = IRF.ClientCompName;
+                //model.IRFId = IRF.IRFId;
+                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                model.EmergencyInterviewerCollection = (IList<TransEmergencyInterviewer>)(transEmergencyInterviewer);
+                //model.JDLink = IRF.JDLink;
+                //model.JDTiltle = IRF.JDTiltle;
+                //model.JobCountry = IRF.JobCountry;
+                model.Joinability = (IList<TransJoinability>)(transJoinability);
+                //model.NoOfIntterview = IRF.NoOfIntterview;
+                //model.NoOfPosition = IRF.NoOfPosition;
+                //model.PerMintuteRate = IRF.PerMintuteRate;
+                model.QualityController = (IList<TransQualityController>)(transQualityController);
+                //model.RisebirdHr = IRF.RisebirdHr;
+                //model.CompanyDetails = IRF.CompanyDetails;
+                model.SkillCollection = (IList<TransSkill>)(transTechSkills);
+                model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
+                model.Selectability = (IList<TransSelectability>)(transSelectability);
+                //model.StartDate = IRF.StartDate;
+                //if (!isClone)
+                //{
+                //    var transClientUser = _irfRepository.GetTransClientUser(id);
+                //    model.ClientCollection = (IList<TransClientUser>)(transClientUser);
+                //}
+                model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
+                model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
+                model.HRCollection = (IList<TransHR>)(transHR);
+                //model.ClientId = IRF.ClientId;
+                //model.ClientName = IRF.ClientName;
+                //model.CompanyType = IRF.CompanyType;
+                //model.EndDate = IRF.EndDate;
+                //model.JobLevel = IRF.JobLevel;
+                //model.CalendlyLink = IRF.CalendlyLink;
+                //model.TotalInvites = IRF.TotalInvites;
+                //model.TotalBudget = IRF.TotalBudget;
+                //model.IsBiometricEnabled = IRF.IsBiometricEnabled;
+                //model.PriorityLevel = IRF.PriorityLevel;
+                //model.Heuristicsscore = IRF.Heuristicsscore;
+                //model.Type = IRF.BussinessType;
+                //model.PrimarySkillInvite = IRF.PrimarySkillInvite;
+                //model.AssessmentGroupId = IRF.AssessmentGroupId;
+                //model.BillingOwner = IRF.BillingOwner;
+                //var skillCount = transTechSkills.Count();
+                //model.OldAssessmentGroupId = model.AssessmentGroupId;
+                //model.OldCalendlyLink = model.CalendlyLink;
+                //model.OldJDLink = model.JDLink;
+                //model.OldInterviewerCollection = model.InterviewerCollection;
+                //model.OldEmergencyInterviewerCollection = model.EmergencyInterviewerCollection;
+                //model.OldSkillCollection = model.SkillCollection;
+                //model.IsQCRequired = IRF.IsQCRequired;
+                //model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
+                //model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
+                //if (model.IRFRecommendations != null)
+                //{
+                //    model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
+                //}
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<ClonableTemplateQuestion>> GetQuestionsForAssessmentGroup(int assessmentGroupId)
+        {
+            try
+            {
+                return await _irfRepository.GetQuestionsForAssessmentGroup(assessmentGroupId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> IsClonableTemplateNameInUse(string name)
+        {
+            try
+            {
+                return await _irfRepository.IsClonableTemplateNameInUse(name);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public IEnumerable<TransInterviewer> GetInterviewersByAssessmentGroupId(int assessmentGroupId)
+        {
+            try
+            {
+                return _irfRepository.GetInterviewersByAssessmentGroup(assessmentGroupId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+    }
 
     }
 }

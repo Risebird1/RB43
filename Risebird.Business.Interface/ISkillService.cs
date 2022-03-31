@@ -21,6 +21,7 @@ namespace Risebird.Business.Interface
         List<Skill> GetAssessmentGroupCategory();
 
         Task<IEnumerable<AssignmentVM>> GetAssessmentGroupsByCategory(int categoryId);
+        Task<int?> GetAssessmentGroupCategory(int assessmentGroupId);
 
     }
 }
