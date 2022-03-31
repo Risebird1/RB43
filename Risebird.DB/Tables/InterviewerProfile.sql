@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[IsApproved] [bit] NOT NULL,
 	[Isinstaavailable] [bit] NOT NULL,
 	[Isavailable] [int] NULL DEFAULT 0,
+    [IsNotificationAccepted] [bit] NOT NULL,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -224,6 +225,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add Isavailable int DEFAULT 0
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsNotificationAccepted')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add IsNotificationAccepted bit
 END
 
 

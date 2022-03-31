@@ -1,0 +1,298 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.SkillCahnnelDetailsVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Recommendation Skill Channel";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "Recommendation Skill Channel";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Recommendation Skill Channel</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <span class="interview_3">
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='/RecommendedIRF/Index'" data-original-title="Created Clone Templates"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content interview client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+
+                                    <div id="tableID" class="second instainterview">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="disabled-sorting" style="text-align:left">Skill Channel ID</th>
+                                                    <th>Assessment Group</th>
+                                                    <th>Added Skills</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th class="disabled-sorting">Skill Channel ID</th>
+                                                    <th>Assessment Group</th>
+                                                    <th>Added Skills</th>
+                                                    <th>Action</th>
+
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                    <tr id=@item.id>
+                                                        <td>@item.IRFId</td>
+                                                        <td>@item.AssessmentGroup</td>
+                                                        <td>
+                                                            <button type="button" class="clickhere_btn pull-left">
+                                                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.id)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                            </button>
+                                                            <input id="skill_id_@item.id" type="hidden" value="@item.IRFId" />
+                                                        </td>
+                                                        <td>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel">
+                                                                <span onclick="location.href='@Url.Action("CreateRecommendationIRF", "RecommendedIRF", new { recommirfid = item.id, isClone = true,emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:14px!important;" class="fa fa-clone"></i>
+                                                                </span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
+
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeIRFSkillModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body">
+                <div style="padding:10px" id="divcandidatefeedback">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+
+        }
+    </script>
+}
+
+<script>
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+
+    });
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+    }
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    function openSkillpopup(id) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/FetchSkillDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("IRFSkillModel");
+                var skill_id_pop = $("#skill_id_" + id).val();
+                $("#skill_id_pop").text(skill_id_pop);
+                modal.style.display = "block";
+                bindSkillData(data);
+            }
+        });
+    }
+    function closeIRFSkillModel() {
+        var model = document.getElementById("IRFSkillModel");
+        model.style.display = "none";
+    }
+    function bindSkillData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
+        html += '  <th width="70%" class="table_heading">Skill Name<span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].levelName + '</td>';
+            html += '    <td>' + data[i].skillName + '</td>';
+            html += '  <td>' + data[i].weightage + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divcandidatefeedback").empty().html(html);
+    }
+
+</script>
