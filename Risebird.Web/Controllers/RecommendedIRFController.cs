@@ -149,7 +149,6 @@ namespace Risebird.Web.Controllers
                 {
                     item.UserId = client.UserId;
                 }
-                model.AssessmentGroupId = "1";
                 model.ClientId = ClientId;
                 model.ClientName = client.ClientName;
                 model.ClientCompName = client.ClientName;
