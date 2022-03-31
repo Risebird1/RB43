@@ -40,7 +40,7 @@ AS
 Begin      
 declare      
 @ProfileId int = (select id from [Profile] where [Name]='Candidate')      
-IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)      
+IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId and idProfile = @ProfileId)      
 Begin      
 INSERT INTO [dbo].[UserList]      
            (      
