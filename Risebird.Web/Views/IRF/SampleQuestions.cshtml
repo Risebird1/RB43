@@ -273,13 +273,10 @@
 
 
     function AddRow() {
-
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
-
         //var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillTable tr").length - 1;
-
         $tr.find("textarea,select,hidden").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
@@ -291,17 +288,13 @@
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
-
         // reset fields in the new row
         $tr.find("select").val("");
         $tr.find("textarea[type=text]").val("");
         //$tr.find("textarea[type=text]").removeProp("readonly");
         $tr.find("input[type=hidden]").val(@Model.UserId);
-
         var rowCount = $('#SkillTable tr').length;
-
         var finalIndex = rowCount-1;
-
         $tr.find("input[type=hidden]").prop('id', 'SkillCollection_' + finalIndex + '__UserId');
         $tr.find("input[type=hidden]").prop('name', 'SkillCollection[' + finalIndex + '].UserId');
         $tr.find('span:last').prop('style', 'display:block');
@@ -310,45 +303,29 @@
         $tr.prop('style', 'visibility : visible');
         //$tr.find('td:last').find('span:first').prop('id', 'btnPlus_' + finalIndex);
 
-
-
-
-
         // add cloned row as last row
         $("#SkillTable").find("tbody tr:last").after($tr);
-
         var $ttlast = $("#SkillTable").find("tbody tr:last");
         $ttlast.find("textarea").val("");
         $ttlast.find("textarea").removeProp("readonly");
-
         // Find the affected form
         var $form = $tr.closest("FORM");
-
         // Unbind existing validation
         $form.unbind();
         $form.data("validator", null);
 
         var options = '@Model.SkillsOptionsData';
         optionsData = JSON.parse(options.replace(/&quot;/g, '"'));
-
         $("#SkillCollection_" + finalIndex + "__Skill" + " option").remove();
-
         $(optionsData).each(function () {
             var option = $("<option />");
-
             //Set Text part.
             option.html(this.Name);
-
             //Set Value part.
             option.val(this.id);
-
             //Add the Option element to DropDownList.
-
             $("#SkillCollection_" + finalIndex + "__Skill").append(option);
         });
-        //// Check document for changes
-        //$.validator.unobtrusive.parse(document);
-
     }
 
 

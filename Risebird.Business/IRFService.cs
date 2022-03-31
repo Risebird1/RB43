@@ -477,7 +477,7 @@ namespace Risebird.Business
                 IEnumerable<TransInterviewer> transInterviewer = new List<TransInterviewer>();
                 if (useAsCloneTemplate)
                 {
-                    if(IRF !=null && !string.IsNullOrEmpty(IRF.AssessmentGroupId))
+                    if (IRF != null && !string.IsNullOrEmpty(IRF.AssessmentGroupId))
                     {
                         transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(Convert.ToInt16(IRF.AssessmentGroupId));
                     }
@@ -547,14 +547,12 @@ namespace Risebird.Business
                 model.IsQCRequired = IRF.IsQCRequired;
                 model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
-                if(model.IRFRecommendations != null)
+                if (model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
                 }
                 return model;
-
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -681,7 +679,7 @@ namespace Risebird.Business
                     }
                 }
 
-                if(model.UseAsCloneTemplate && model.IRFRecommendations != null)
+                if (model.UseAsCloneTemplate && model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
                 }
@@ -2556,8 +2554,5 @@ namespace Risebird.Business
                 return null;
             }
         }
-
     }
-
-
 }
