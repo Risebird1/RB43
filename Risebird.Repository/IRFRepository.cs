@@ -5413,12 +5413,12 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IRFRecommendations> GetIRFRecommendation(int irfId)
+        public async Task<IRFRecommendations> GetIRFRecommendation(int cloneIRFId)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@cloneIRFId", cloneIRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryAsync<IRFRecommendations>(con, "usp_GetIRFRecommendation", dynamicParameters,
@@ -5546,7 +5546,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<ClonableSkillChannelVM> GetClonableSkillChannelById(int id)
+        public async Task<IRFVm> GetClonableSkillChannelById(int id)
         {
             try
             {
@@ -5554,7 +5554,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetClonableSkillChannelById", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetClonableSkillChannelById", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
@@ -5670,6 +5670,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public IEnumerable<ClonableTemplateQuestion> GetClonableTemplateQuestions(int id)
+        {
+            try
+            {
+                var query = "select * from ClonableTemplateQuestions where ClonableIRFId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ClonableTemplateQuestion>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<TransEmergencyInterviewer> GetClonableIRFTransEmergencyInterviewer(int id)
         {
             try

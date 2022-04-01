@@ -2001,39 +2001,53 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false, bool useAsCloneTemplate = false)
+        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false, bool useAsCloneTemplate = false, int? clonableSkillChannelId = 0)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var model = await _irfService.GetEditIRF(id, isClone, useAsCloneTemplate);
-                    int abc;
-                    if (!int.TryParse(model.JobCountry, out abc))
-                    {
-                        if (model.JobCountry?.ToUpper() == "INDIA")
-                        {
-                            model.JobCountry = "1";
-                        }
-                        else 
-                        { 
-                            model.JobCountry = "2"; 
-                        }
-                    }
+                    IRFVm model = new IRFVm();
                     model.IsClone = isClone;
                     model.UseAsCloneTemplate = useAsCloneTemplate;
-                    SetEditIRFProperties(model);
-                    //TempData["JDLink"] = model.JDLink;
-                    model.OldJDLink = model.JDLink;
-                    //TempData["ComapanyDetails"] = model.CompanyDetails;
-                    model.OldCompanyDetails = model.CompanyDetails;
-                    ViewBag.clonevalue = clonevalue;
-                    model.clonevalue = clonevalue;
-                    if(model.UseAsCloneTemplate)
+                    if(clonableSkillChannelId == null || clonableSkillChannelId.Value == 0)
+                    {
+                        model = await _irfService.GetEditIRF(id, isClone, useAsCloneTemplate);
+
+                    }
+                    else
+                    {
+                        model = await _irfService.GetClonableSkillChannel(clonableSkillChannelId.Value);
+                    }
+                    if (model.UseAsCloneTemplate)
                     {
                         model.IsJoinabilitySelectabilityRequired = true;
                         model.IsGeneralSkillRequired = true;
                     }
+                    else
+                    {
+                        int abc;
+                        if (!int.TryParse(model.JobCountry, out abc))
+                        {
+                            if (model.JobCountry?.ToUpper() == "INDIA")
+                            {
+                                model.JobCountry = "1";
+                            }
+                            else
+                            {
+                                model.JobCountry = "2";
+                            }
+                        }
+                        model.OldJDLink = model.JDLink;
+                        model.OldCompanyDetails = model.CompanyDetails;
+                    }
+                    
+                    
+                    SetEditIRFProperties(model);
+                    
+                    ViewBag.clonevalue = clonevalue;
+                    model.clonevalue = clonevalue;
+                    
                     return View(model);
                 }
                 else
@@ -2328,6 +2342,9 @@ namespace Risebird.Web.Controllers
                 ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
                 ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
                 ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+                var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
             }
 
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
@@ -2346,9 +2363,7 @@ namespace Risebird.Web.Controllers
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
             model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-            var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-            model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
+            
 
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
@@ -2360,7 +2375,10 @@ namespace Risebird.Web.Controllers
             }
             if (String.IsNullOrEmpty(model.AssessmentGroupId))
             {
-                model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(model.id).Result;
+                if(!model.UseAsCloneTemplate)
+                {
+                    model.InterviewerMembers = _irfService.GetIRFInterviewerMembers(model.id).Result;
+                }
                 model.InterviewerCollection = new List<TransInterviewer>();
                 model.EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
                 model.QualityController = new List<TransQualityController>();
@@ -2372,7 +2390,7 @@ namespace Risebird.Web.Controllers
 
             model.IRFRecommendations = new IRFRecommendations();
 
-            if (model.UseAsCloneTemplate)
+            if (model.UseAsCloneTemplate && (!model.ClonableSkillChannelId.HasValue || model.ClonableSkillChannelId == 0))
             {
 
                 model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");

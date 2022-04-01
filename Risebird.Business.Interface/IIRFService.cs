@@ -112,5 +112,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<ClonableTemplateQuestion>> GetQuestionsForAssessmentGroup(int assessmentGroupId);
         Task<bool> IsClonableTemplateNameInUse(string name);
         IEnumerable<TransInterviewer> GetInterviewersByAssessmentGroupId(int assessmentGroupId);
+        Task<IRFVm> GetClonableSkillChannel(int id);
     }
 }
