@@ -22,5 +22,6 @@ namespace Risebird.Entities.Data
         public int IdProfile { get; set; }
         public string AssessmentGroupId { get; set; }
         public bool IsLeadInterviewer { get; set; }
+        public string NickName { get; set; }
     }
 }
