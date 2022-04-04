@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Create Interviewing Channel";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 <script>
     var Header = "<a href='/RecommendedIRF/Index'>Recommendation IRF</a>&nbsp;/&nbsp;Create Interviewing Channel";
@@ -16,7 +16,7 @@
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
-<div class="main-panel" id="main-panel">
+<div id="main-panel">
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -429,7 +429,7 @@
                                 <div class="row  mc-button-area pull-right">
                                     <div class="col-md-12">
                                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                            <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Choose Template</font></span>
+                                            <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Back To List</font></span>
                                         </button>
                                         @*@Html.ActionLink("Back to List", "Index", "RecommendedIRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })*@
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
