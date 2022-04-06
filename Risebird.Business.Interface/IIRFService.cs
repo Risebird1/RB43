@@ -106,8 +106,6 @@ namespace Risebird.Business.Interface
         string FetchIRFAudioLink(int irfid);
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
-
-        Task<bool> CreateClonableSkillChannel(IRFVm model, string loggedInUser);
         Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
         Task<IEnumerable<ClonableTemplateQuestion>> GetQuestionsForAssessmentGroup(int assessmentGroupId);
         Task<bool> IsClonableTemplateNameInUse(string name);

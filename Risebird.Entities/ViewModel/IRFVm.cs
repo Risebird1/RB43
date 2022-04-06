@@ -162,7 +162,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneralSkillRequired { get; set; }
 
         public IRFRecommendations IRFRecommendations { get; set; }
-        public bool UseAsCloneTemplate { get; set; }
 
         [DisplayName("Template Name")]
         //[Remote(action: "IsClonableTemplateNameInUse", controller: "IRF")]
