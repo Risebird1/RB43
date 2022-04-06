@@ -169,7 +169,7 @@ namespace Risebird.Entities.ViewModel
         public string TemplateName { get; set; }
 
         public int UserId { get; set; }
-        public int? ClonableSkillChannelId { get; set; }
+        //public int? ClonableSkillChannelId { get; set; }
         public int TemplateCreatedFromIRFId { get; set; }
     }
     public class InterviewerIds
@@ -283,5 +283,7 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public string IRFId { get; set; }
         public string AssessmentGroup { get; set; }
+
+        public int AssessmentGroupId { get; set; }
     }
 }

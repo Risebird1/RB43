@@ -2001,48 +2001,33 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false, bool useAsCloneTemplate = false, int? clonableSkillChannelId = 0)
+        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     IRFVm model = new IRFVm();
+                    //model.UseAsCloneTemplate = useAsCloneTemplate;
+                    model = await _irfService.GetEditIRF(id, isClone);
                     model.IsClone = isClone;
-                    model.UseAsCloneTemplate = useAsCloneTemplate;
-                    if(clonableSkillChannelId == null || clonableSkillChannelId.Value == 0)
-                    {
-                        model = await _irfService.GetEditIRF(id, isClone, useAsCloneTemplate);
 
-                    }
-                    else
+                    int abc;
+                    if (!int.TryParse(model.JobCountry, out abc))
                     {
-                        model = await _irfService.GetClonableSkillChannel(clonableSkillChannelId.Value);
-                    }
-                    if (model.UseAsCloneTemplate)
-                    {
-                        model.IsJoinabilitySelectabilityRequired = true;
-                        model.IsGeneralSkillRequired = true;
-                    }
-                    else
-                    {
-                        int abc;
-                        if (!int.TryParse(model.JobCountry, out abc))
+                        if (model.JobCountry?.ToUpper() == "INDIA")
                         {
-                            if (model.JobCountry?.ToUpper() == "INDIA")
-                            {
-                                model.JobCountry = "1";
-                            }
-                            else
-                            {
-                                model.JobCountry = "2";
-                            }
+                            model.JobCountry = "1";
                         }
-                        model.OldJDLink = model.JDLink;
-                        model.OldCompanyDetails = model.CompanyDetails;
+                        else
+                        {
+                            model.JobCountry = "2";
+                        }
                     }
-                    
-                    
+                    model.OldJDLink = model.JDLink;
+                    model.OldCompanyDetails = model.CompanyDetails;
+
+
                     SetEditIRFProperties(model);
                     
                     ViewBag.clonevalue = clonevalue;
@@ -2390,7 +2375,7 @@ namespace Risebird.Web.Controllers
 
             model.IRFRecommendations = new IRFRecommendations();
 
-            if (model.UseAsCloneTemplate && (!model.ClonableSkillChannelId.HasValue || model.ClonableSkillChannelId == 0))
+            if (model.UseAsCloneTemplate /*&& (!model.ClonableSkillChannelId.HasValue || model.ClonableSkillChannelId == 0)*/)
             {
 
                 model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");

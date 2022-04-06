@@ -463,7 +463,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IRFVm> GetEditIRF(int id, bool isClone = false, bool useAsCloneTemplate = false)
+        public async Task<IRFVm> GetEditIRF(int id, bool isClone = false)
         {
             try
             {
@@ -476,19 +476,7 @@ namespace Risebird.Business
                 var transJoinability = _irfRepository.GetTransJoinability(id);
                 //var transClientUser = _irfRepository.GetTransClientUser(id);
 
-                IEnumerable<TransInterviewer> transInterviewer = new List<TransInterviewer>();
-                if (useAsCloneTemplate)
-                {
-                    if(IRF !=null && !string.IsNullOrEmpty(IRF.AssessmentGroupId))
-                    {
-                        transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(Convert.ToInt16(IRF.AssessmentGroupId));
-                    }
-                }
-                else
-                {
-                    transInterviewer = _irfRepository.GetTransInterviewer(id);
-                }
-                //var transInterviewer = _irfRepository.GetTransInterviewer(id);
+                var transInterviewer = _irfRepository.GetTransInterviewer(id);
                 var transQualityController = _irfRepository.GetTransQualityController(id);
                 var transSelectability = _irfRepository.GetTransSelectability(id);
                 var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
@@ -548,13 +536,7 @@ namespace Risebird.Business
                 model.OldSkillCollection = model.SkillCollection;
                 model.IsQCRequired = IRF.IsQCRequired;
                 model.IsJoinabilitySelectabilityRequired = IRF.IsJoinabilitySelectabilityRequired;
-                //model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
-                //if(model.IRFRecommendations != null)
-                //{
-                //    model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
-                //}
                 return model;
-
             }
 
             catch (Exception e)
