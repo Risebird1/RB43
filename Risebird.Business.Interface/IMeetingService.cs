@@ -175,5 +175,7 @@ namespace Risebird.Business.Interface
         string SetInterviewerAvailability(int transid, int isavailable);
         Task<List<InterviewerRating>> FetchFeedbackDetails();
         Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);
+        bool ChangeInterviewerNotificationStatus(string emailID, int status);
+        bool FetchInterviewerNotificationStatus(string emailID);
     }
 }

@@ -637,7 +637,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@value", value);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    if(!isCloneTemplate)
+                    if (!isCloneTemplate)
                     {
                         var result = await SqlMapper.QueryAsync<string>(con, "usp_GetIRFISCUniqueness", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
@@ -655,7 +655,7 @@ namespace Risebird.Repository
                         else
                             return true;
                     }
-                    
+
                 }
 
             }
@@ -1930,7 +1930,7 @@ namespace Risebird.Repository
                     //commandType: CommandType.StoredProcedure);
 
 
-                    if (joinabilityDt != null && joinabilityDt.Rows.Count>0)
+                    if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
@@ -2226,7 +2226,6 @@ namespace Risebird.Repository
             }
             return null;
         }
-
         public IEnumerable<TransSelectability> GetTransSelectability(int id)
         {
             try
@@ -5646,4 +5645,4 @@ namespace Risebird.Repository
 
     }
 }
-           
+

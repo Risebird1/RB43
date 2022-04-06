@@ -539,7 +539,6 @@ namespace Risebird.Business
                 model.IsGeneralSkillRequired = IRF.IsGeneralSkillRequired;
                 return model;
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
@@ -2485,8 +2484,5 @@ namespace Risebird.Business
                 return null;
             }
         }
-
     }
-
-
 }
