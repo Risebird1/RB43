@@ -173,13 +173,7 @@ namespace Risebird.Entities.ViewModel
         //public int? ClonableSkillChannelId { get; set; }
         public int TemplateCreatedFromIRFId { get; set; }
         public bool UseAsCloneTemplate { get; set; }
-
-        [DisplayName("Template Name")]
-        //[Remote(action: "IsClonableTemplateNameInUse", controller: "IRF")]
-        public string TemplateName { get; set; }
-
-        public int UserId { get; set; }
-
+   
     }
     public class InterviewerIds
     {
