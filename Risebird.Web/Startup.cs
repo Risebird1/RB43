@@ -360,6 +360,8 @@ namespace Risebird.Web
             services.AddScoped<IZoomHelper, ZoomHelper>();
             services.AddScoped<IRecommendedIRFService, RecommendedIRFService>();
             services.AddScoped<IRecommendedIRFRepository, RecommendedIRFRepository>();
+            services.AddScoped<IClonableSkillChannelTemplateService, ClonableSkillChannelTemplateService>();
+            services.AddScoped<IClonableSkillChannelTemplateRepository, ClonableSkillChannelTemplateRepository>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

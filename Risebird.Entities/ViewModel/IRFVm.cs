@@ -162,7 +162,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneralSkillRequired { get; set; }
 
         public IRFRecommendations IRFRecommendations { get; set; }
-        public bool UseAsCloneTemplate { get; set; }
 
         [DisplayName("Template Name")]
         //[Remote(action: "IsClonableTemplateNameInUse", controller: "IRF")]
@@ -171,8 +170,9 @@ namespace Risebird.Entities.ViewModel
         public int UserId { get; set; }
 
         public IList<SkillComment> QuesionList { get; set; }
-
-
+        //public int? ClonableSkillChannelId { get; set; }
+        public int TemplateCreatedFromIRFId { get; set; }
+        public bool UseAsCloneTemplate { get; set; }
     }
     public class InterviewerIds
     {
@@ -289,5 +289,6 @@ namespace Risebird.Entities.ViewModel
         public int CompetencyLevelId { get; set; }
         public int CountryType { get; set; }
         public int SeniorityLevelId { get; set; }
+
     }
 }

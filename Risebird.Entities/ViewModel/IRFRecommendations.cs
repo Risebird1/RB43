@@ -23,6 +23,10 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Country Type")]
         public int? CountryType { get; set; }
+
+        [DisplayName("Company Type")]
+        public int? CompanyType { get; set; }
+
         public DateTime? CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public bool Status { get; set; }
