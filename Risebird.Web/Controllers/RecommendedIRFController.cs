@@ -359,7 +359,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Skill = new SelectList(Skillset, "id", "Name");
             ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+            ViewBag.Interviewers = new SelectList(interviewers, "UserId", "NickName");
             ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
             ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
             var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))

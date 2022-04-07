@@ -8,7 +8,7 @@
 @{
     ViewData["Title"] = "Candidates Status";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
@@ -106,7 +106,7 @@
 <input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
-<div class="main-panel" id="main-panel">
+<div id="main-panel">
     <div class="jumbotron">
         <div class="pt30 videocon">
             <div class="col-md-12 nopad">
@@ -123,8 +123,8 @@
                         <div>
                             @if (ViewBag.emailid == "interview7@risebird.io")
                             {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                    <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Recommended IRF</font></span>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                    <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Choose Template</font></span>
                                 </button>
                             }
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">

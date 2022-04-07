@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "Recommended Skills Channel";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 <style>
     body {
@@ -40,7 +40,7 @@
 
 
 @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/v6.0/css/font-awesome.min.css">*@
-<div class="main-panel" id="main-panel">
+<div id="main-panel">
 
     <!--  <div class="panel-header panel-header-sm"></div>-->
     <div class="jumbotron">
@@ -189,6 +189,9 @@
                                                             }
                                                         </div>
                                                         <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10 pull-left">
+                                                            @*<button class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
+                                                                <span onclick="location.href='@Url.Action("GetCandidates", "RecommendedIRF", new {irfid=item.id,IRFId=item.IRFId, emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid })'" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                            </button>*@
                                                         </div>
                                                     </div>
                                                 </div>
