@@ -3364,6 +3364,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool ChangeInterviewerNotificationStatus(string emailID, int status)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.ChangeInterviewerNotificationStatus(emailID, status);
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public bool FetchInterviewerNotificationStatus(string emailID)
+        {
+            try
+            {
+                return _meetingRespository.FetchInterviewerNotificationStatus(emailID);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

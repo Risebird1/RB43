@@ -1,0 +1,132 @@
+﻿@model Risebird.Entities.ViewModel.IRFRecommendations
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.Enum;
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Recommendation Skill Channel";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "Recommendation Skill Channel";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Recommendation Skill Channel</h4></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content interview client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <form action="@Url.Action("FetchRecommendedIRF", "RecommendedIRF",new { emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid})" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
+                                <div class="row" id="recommendationFields">
+                                    <div class="col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.CategoryId, Model.CategoryList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "AssessmentGroupCategoryChanged(this.value)" })@*(SelectList)ViewBag.CategoryList*@
+                                            @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @{
+                                                var newList = new List<SelectListItem>();
+                                                newList.Add(new SelectListItem() { Value = "", Text = "Please select Assessment Group Category" });
+                                            }
+                                            @Html.DropDownListFor(model => model.AssessmentGroupId, newList, new { @class = "select-css form-control text-box single-line" })
+                                            @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.CompetencyLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.CompetencyLevelId, (SelectList)ViewBag.Heuristicsscorelist, "Select", new { @class = "select-css form-control text-box single-line" })
+                                            @Html.ValidationMessageFor(model => model.CompetencyLevelId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
+                                            @Html.ValidationMessageFor(model => model.CountryType, "", new { @class = "text -danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.SeniorityLevelId, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
+                                            @Html.ValidationMessageFor(model => model.SeniorityLevelId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-12">
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                        <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Back To List</font></span>
+                                    </button>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnUpload" value="Submit">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    function AssessmentGroupCategoryChanged(categoryId) {
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetAssessmentGroupsByCategory",
+            data: { 'categoryId': categoryId },
+            success: function (data) {
+                var drpdwnId = $("#AssessmentGroupId");
+                if (data.length > 0) {
+                    $("#AssessmentGroupId option").remove();
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpdwnId.append(option);
+                    });
+                }
+            }
+        });
+    }
+</script>

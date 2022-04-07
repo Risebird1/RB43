@@ -162,6 +162,16 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneralSkillRequired { get; set; }
 
         public IRFRecommendations IRFRecommendations { get; set; }
+
+        [DisplayName("Template Name")]
+        //[Remote(action: "IsClonableTemplateNameInUse", controller: "IRF")]
+        public string TemplateName { get; set; }
+
+        public int UserId { get; set; }
+
+        public IList<SkillComment> QuesionList { get; set; }
+        //public int? ClonableSkillChannelId { get; set; }
+        public int TemplateCreatedFromIRFId { get; set; }
         public bool UseAsCloneTemplate { get; set; }
 
         [DisplayName("Template Name")]
@@ -282,5 +292,10 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public string IRFId { get; set; }
         public string AssessmentGroup { get; set; }
+        public int AssessmentGroupId { get; set; }
+        public int CompetencyLevelId { get; set; }
+        public int CountryType { get; set; }
+        public int SeniorityLevelId { get; set; }
+
     }
 }

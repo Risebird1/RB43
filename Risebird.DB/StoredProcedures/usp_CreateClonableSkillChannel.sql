@@ -20,14 +20,13 @@ GO
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
 @InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
---@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
---@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 @QuestionsBulkData AS [dbo].[ClonableTemplateQuestions_TableType] READONLY,
 @RecommendationStatus bit,
 @RecommendationCategoryId int = null,
 @RecommendationCompetencyLevelId int = null,
 @RecommendationSeniorityLevelId int = null,
 @RecommendationCountryType int = null,
+@RecommendationCompanyType int = null,
 @RecommendationCreatedOn datetime
             
 AS            
@@ -140,6 +139,7 @@ begin try
 			CompetencyLevelId,
 			SeniorityLevelId,
 			CountryType,
+			CompanyType,
 			CreatedOn
 		)
 
@@ -151,6 +151,7 @@ begin try
 			@RecommendationCompetencyLevelId,
 			@RecommendationSeniorityLevelId,
 			@RecommendationCountryType,
+			@RecommendationCompanyType,
 			@RecommendationCreatedOn
 		)
 
