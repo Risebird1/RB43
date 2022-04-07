@@ -10,11 +10,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 Create PROCEDURE [dbo].[usp_GetIRFRecommendation] 
-@IRFId int
+@cloneIRFId int
 
 AS      
 Begin      
-	select * from IRFRecommendations where IRFId = @IRFId   
+	select * from IRFRecommendations where CloneIRFId = @cloneIRFId   
 END   
    
 

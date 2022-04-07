@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_GetAllClonableSkillChannels]
 AS  
 Begin
 
-	select csc.* from ClonableSkillChannel csc join IRFRecommendations ir on ir.CloneIRFId = csc.id
+	select csc.id as ClonableSkillChannelId, csc.Name, csc.CreatedFromIRFId from ClonableSkillChannel csc join IRFRecommendations ir on ir.CloneIRFId = csc.id
 	where ir.[Status] = 1
 
 End
