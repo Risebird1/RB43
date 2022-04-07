@@ -289,6 +289,5 @@ namespace Risebird.Entities.ViewModel
         public int CountryType { get; set; }
         public int SeniorityLevelId { get; set; }
 
-        public int AssessmentGroupId { get; set; }
     }
 }
