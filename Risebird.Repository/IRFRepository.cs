@@ -5324,50 +5324,6 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    //DynamicParameters parameters = new DynamicParameters();
-                    //parameters.Add("@startDate", startDate);
-                    //parameters.Add("@endDate", endDate);
-                    return await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannels", commandType: CommandType.StoredProcedure);
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-
-        public async Task<IRFVm> GetClonableSkillChannelById(int id)
-        {
-            try
-            {
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetClonableSkillChannelById", dynamicParameters,
-                       commandType: CommandType.StoredProcedure);
-                    return results.FirstOrDefault();
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
         public IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id)
         {
             try
@@ -5477,7 +5433,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from ClonableTemplateQuestions where ClonableIRFId = @id";
+                var query = "select ClonableIRFId, Skill as SkillId, Question, UserId from ClonableTemplateQuestions where ClonableIRFId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

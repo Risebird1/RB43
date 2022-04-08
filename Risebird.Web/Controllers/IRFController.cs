@@ -6730,32 +6730,6 @@ namespace Risebird.Web.Controllers
             return new SelectList(list, "Value", "Text");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetCloneSkillChannelTemplates()
-        {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
-                {
-                    var list = await _irfService.GetAllClonableSkillChannels();
-
-                    return View(list);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
-
         [AcceptVerbs("Get", "Post")]
         [AllowAnonymous]
         public async Task<IActionResult> IsClonableTemplateNameInUse(string name)
