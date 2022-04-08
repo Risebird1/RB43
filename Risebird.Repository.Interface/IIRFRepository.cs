@@ -164,8 +164,6 @@ namespace Risebird.Repository.Interface
         string FetchIRFAudioLink(int irfid);
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
-        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
-        Task<IRFVm> GetClonableSkillChannelById(int id);
         IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id);
         IEnumerable<TransSkillGeneral> GetClonableIRFSkillsGeneralbyId(int id);
         IEnumerable<TransJoinability> GetClonableIRFTransJoinability(int id);
