@@ -226,7 +226,7 @@ namespace Risebird.Business
 
                 IEnumerable<ClonableTemplateQuestion> transQuestions = new List<ClonableTemplateQuestion>();
                 transQuestions = _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value).Result;
-
+                //transQuestions = (IEnumerable<ClonableTemplateQuestion>)transQuestions?.Select(x => ( x.Question, x.SkillId, x.SkillName, x.IsSelected ))?.Distinct();
                 foreach (var question in templateQuestions)
                 {
                     transQuestions.Where(x => x.Question?.Replace("\t", "").Replace("\n", "").Replace("\r", "") == question.Question?.Replace("\t", "").Replace("\n", "").Replace("\r", "") && x.SkillId == question.SkillId).ToList().ForEach(c => c.IsSelected = true);
@@ -245,12 +245,12 @@ namespace Risebird.Business
 
                 //assign values retrieved to the model
 
-                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderBy(x => x.IsActive));
+                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
                 model.Joinability = (IList<TransJoinability>)(transJoinability);
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
                 model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
                 model.Selectability = (IList<TransSelectability>)(transSelectability);
-                model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)transQuestions?.OrderBy(x => x.IsSelected);
+                model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(transQuestions?.OrderByDescending(x => x.IsSelected).ToList());
                 if (model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";

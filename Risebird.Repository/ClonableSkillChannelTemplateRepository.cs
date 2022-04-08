@@ -383,7 +383,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@CreatedFromIRFId"].Value = templateDetails.ClonableSkillChannelId;
+                    cmdUpdateIRF.Parameters["@id"].Value = templateDetails.ClonableSkillChannelId;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar));
                     //cmdUpdateIRF.Parameters["@Name"].Value = templateDetails.TemplateName;
