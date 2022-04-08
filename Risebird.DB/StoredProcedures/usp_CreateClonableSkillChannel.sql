@@ -22,6 +22,7 @@ GO
 @InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
 @QuestionsBulkData AS [dbo].[ClonableTemplateQuestions_TableType] READONLY,
 @RecommendationStatus bit,
+@RecommendationAssessmentGroupId int = null,
 @RecommendationCategoryId int = null,
 @RecommendationCompetencyLevelId int = null,
 @RecommendationSeniorityLevelId int = null,
@@ -135,6 +136,7 @@ begin try
 		(
 			[CloneIRFId],
 			[Status],
+			[AssessmentGroupId],
 			CategoryId,
 			CompetencyLevelId,
 			SeniorityLevelId,
@@ -147,6 +149,7 @@ begin try
 		(
 			@idClonableIrf,
 			@RecommendationStatus,
+			@RecommendationAssessmentGroupId,
 			@RecommendationCategoryId,
 			@RecommendationCompetencyLevelId,
 			@RecommendationSeniorityLevelId,

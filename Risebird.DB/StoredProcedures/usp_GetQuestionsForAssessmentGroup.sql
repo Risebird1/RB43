@@ -19,12 +19,13 @@ Create PROCEDURE [dbo].[usp_GetQuestionsForAssessmentGroup]
 AS
 Begin
 
-Select IRF.IRFId, sk.id as SkillId, sk.Name as SkillName, ts.Comment as Question From TechSkillComments ts 
+Select distinct sk.id as SkillId, sk.Name as SkillName, ts.Comment as Question From TechSkillComments ts 
 join IRF on IRF.id=ts.IRFId join Skill sk on sk.id=ts.Skill 
-where AssessmentGroupId = @assessmentGroupId order by IRF.IRFId
+where AssessmentGroupId = @assessmentGroupId 
 End
 
 
 GO
+
 
 

@@ -32,3 +32,8 @@ INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (7, N'QC Passed
 SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON 
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (8, N'QC Failed')
 SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
+
+SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON 
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (9, N'Create ClonableSkillChannel')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (10, N'Update ClonableSkillChannel')
+SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF

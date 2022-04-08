@@ -29,7 +29,10 @@ namespace Risebird.Entities.Enum
         QCFailed = 8,
         
         [Description("Create ClonableSkillChannel")]
-        CreateClonableSkillChannel = 9
+        CreateClonableSkillChannel = 9,
+
+        [Description("Update ClonableSkillChannel")]
+        UpdateClonableSkillChannel = 10
 
 
     }

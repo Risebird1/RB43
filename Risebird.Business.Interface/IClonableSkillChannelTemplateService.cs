@@ -10,6 +10,9 @@ namespace Risebird.Business.Interface
     {
         Task<ClonableSkillChannelVM> GetTemplateDataFromSourceSkillChannel(int irfId, int assessmentGroupId);
         Task<bool> CreateClonableSkillChannel(ClonableSkillChannelVM model, string loggedInUser);
-        ClonableSkillChannelVM PopulateDropDowns(ClonableSkillChannelVM model);
+        ClonableSkillChannelVM PopulateDropDowns(ClonableSkillChannelVM model, bool isEdit = false);
+        Task<ClonableSkillChannelVM> GetClonableSkillChannel(int id);
+        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
+        Task<bool> UpdateClonableSkillChannel(ClonableSkillChannelVM model, string loggedInUser);
     }
 }
