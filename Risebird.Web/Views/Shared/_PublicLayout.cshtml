@@ -1,0 +1,417 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>@ViewData["Title"] - Risebird</title>
+    @Html.Raw(JavaScriptSnippet.FullScript)
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    @*<link href="~/Newassets/css/bootstrap.min.css?v=9" rel="stylesheet" />*@
+    <link href="~/Newassets/css/chat.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/now-ui-dashboard.css?v=765432" rel="stylesheet" />
+    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|300italic,400italic,600italic,700italic,400,300,500,600,700&subset=latin,latin-ext" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link href="https:/cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css?v=7" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css?v=6" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
+    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
+    {
+        <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/blue-theme.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" type="text/css" id="theme" href="@HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")" />
+    }
+    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+
+    @*<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>*@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="~/Newassets/js/core/popper.min.js?v=7"></script>
+    @*<script src="~/Newassets/js/core/bootstrap.min.js?v=7"></script>*@
+
+    <script src="~/Newassets/js/plugins/perfect-scrollbar.jquery.min.js?v=7"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.4.6/jquery.perfect-scrollbar.js"></script>*@
+
+    <script src="~/Newassets/js/plugins/moment.min.js?v=6"></script>
+
+    <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js?v=7"></script>
+    <script src="~/assets/Validations/jquery.validate.min.js?v=7"></script>
+    <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js?v=7"></script>
+
+    <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js?v=7"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js?v=7" type="text/javascript"></script>
+    @*<script src="https://code.jquery.com/jquery-1.11.3.min.js?v=7"></script>*@
+    <script src="~/js/canvasjs.min.js?v=3"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js?v=7"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    @*<script src="https://code.jquery.com/jquery-1.12.4.js?v=7"></script>*@
+    @*<script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous"></script>*@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js?v=7"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js?v=7"></script>
+
+    <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=7"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js?v=7" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" defer rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
+    <style>
+        .swal2-popup .swal2-styled {
+            box-shadow: none !important
+        }
+
+            .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+                font-size: 14px !important;
+                min-width: 105px;
+                height: 40px;
+                padding: 0px 20px !important;
+                border: 0px !important;
+            }
+
+        .sweet-alert h2 {
+            margin-bottom: 10px !important;
+        }
+
+        .swal2-popup .swal2-content {
+            font-size: 1.1em;
+        }
+
+        .swal2-popup .swal2-title {
+            font-size: 1.8em !important;
+            text-transform: capitalize !important;
+            font-weight: 400 !important;
+        }
+
+        .swal2-icon {
+            margin: 0em auto 1em !important;
+        }
+
+        .swal2-popup .swal2-styled {
+            padding: .425em 1em !important;
+        }
+
+            .swal2-popup .swal2-styled.swal2-cancel {
+                background-color: rgb(221, 51, 51) !important;
+            }
+
+        [data-tooltip]:before {
+            background: #908f8f !important;
+            color: #fff !important;
+            border: 1px #fff solid !important;
+        }
+
+        .confirm.btn, .multiselect.btn {
+            line-height: normal !important
+        }
+    </style>
+</head>
+<body class="sidebar-mini" style="padding-right:0px!important;">
+
+    <audio id="chatAudio" controls="controls" hidden>
+        <source src="~/audio/done-for-you.ogg" type="audio/ogg" />
+    </audio>
+
+    <div class="wrapper">
+        @Html.AntiForgeryToken()
+
+
+        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
+            <div class="pull-left">
+                <div class="navbar-wrapper w-full">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <div id="txtpageHeader" class="navbar-brand" style=" line-height:50px!important;">@ViewBag.PageHeader</div>
+                </div>
+
+            </div>
+
+            <div class="mob_h">
+
+
+                <div class="pull-right">
+
+
+                    
+                </div>
+            </div>
+
+
+        </nav>
+
+
+
+
+        <!-- Navigation -->
+        @*@Html.Partial("_Navigation")*@
+        <!-- Navigation end -->
+
+        @RenderBody()
+    </div>
+    <!--   Core JS Files   -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+    <!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
+    <script src="~/Newassets/js/plugins/bootstrap-switch.js"></script>
+    <!--  Plugin for Sweet Alert -->
+    <script src="~/Newassets/js/plugins/sweetalert2.min.js"></script>
+    <!-- Forms Validations Plugin -->
+    <script src="~/Newassets/js/plugins/jquery.validate.min.js"></script>
+    <!--  Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+    <script src="~/Newassets/js/plugins/jquery.bootstrap-wizard.js"></script>
+    <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+    <script src="~/Newassets/js/plugins/bootstrap-selectpicker.js"></script>
+    <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
+    <script src="~/Newassets/js/plugins/bootstrap-datetimepicker.js"></script>
+    <!--  DataTables.net Plugin, full documentation here: https://datatables.net/ -->
+    <script src="~/Newassets/js/plugins/jquery.dataTables.min.js"></script>
+    <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+    <script src="~/Newassets/js/plugins/bootstrap-tagsinput.js"></script>
+    <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
+    <script src="~/Newassets/js/plugins/jasny-bootstrap.min.js"></script>
+    <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
+    <script src="~/Newassets/js/plugins/fullcalendar.min.js"></script>
+    <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
+    <script src="~/Newassets/js/plugins/jquery-jvectormap.js"></script>
+    <!-- Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+    <!--Google Maps Plugin-->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> -->
+    <!-- Chart JS -->
+    <script src="~/Newassets/js/plugins/chartjs.min.js"></script>
+    <!--  Notifications Plugin    -->
+    <script src="~/Newassets/js/plugins/bootstrap-notify.js"></script>
+    <script src="~/js/BsMultiSelect.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+        var $selectMultiSelects = $("#edit-StatesPp-id, select[multiple='multiple']");
+        var $jsonMultiSelects = $(" #bsMultiSelectJson, #bsMultiSelectJson2");
+        var $multiSelects = $selectMultiSelects.add($jsonMultiSelects);
+        function install() {
+            $selectMultiSelects.bsMultiSelect(
+                {
+                    cssPatch: window.cssPatch,
+                    setSelected: function (o, v) {
+                        o.selected = v;
+                        if (!isIE11)
+                            $('.toast').toast('show').find('.toast-body').css('text-decoration', v ? 'none' : 'line-through').text(o.text);
+                    },
+                }
+            );
+            $jsonMultiSelects.bsMultiSelect({
+                cssPatch: window.cssPatch,
+                setSelected: function (o, i) {
+                    o.selected = i;
+                    if (!isIE11)
+                        $('.toast').toast('show').find('.toast-body').css('text-decoration', i ? 'none' : 'line-through').text(o.text);
+                },
+                placeholder: "Placeholder from config object",
+                getDisabled: function () {
+                    return $('#optionDisable').prop("checked");
+                },
+                buildConfiguration: function (element, configuration) {
+                    configuration.label = $('#' + element.id + 'Label').get(0);
+                    configuration.getSize = function () {
+                        var v = $("#bs-size-name-id").val();
+                        return v == "LG" ? "lg" : (v == "SM" ? "sm" : null);
+                    }
+                }
+            });
+        }
+        install();
+    </script>
+
+
+
+
+
+
+    <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
+
+
+    <script type="text/javascript" src="~/js/settings.js"></script>
+    <script src="~/Newassets/js/now-ui-dashboard.js?v=1.4.1" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            var location = window.location.href;
+            $('ul li  a').removeClass("active-menu");
+            var loopvalue = $("ul li a").length;
+            for (var i = 0; i < loopvalue; i++) {
+                if ($("ul li a")[i].getAttribute("href") != null && $("ul li a")[i].getAttribute("href") != "#" && $("ul li a")[i].getAttribute("href").toUpperCase() == "/" + location.split("/")[3].toUpperCase() + "/" + (location.split("/")[4] != null ? location.split("/")[4].toUpperCase().split("?")[0] : "")) {
+                    if ($('ul li a')[i].getAttribute("class") != null && $('ul li a')[i].getAttribute("class") == "admin-submenu") {
+                        $('.dropmenu label.admin-active').addClass("active-menu");
+                        $('.dropmenu label.admin-active').append('<span class="shape1"></span><span class="shape2"></span>');
+                        $('.dropmenu label.interviewer-active').removeClass("active-menu");
+                        $('.drop-wrap ul li a').removeClass("active-menu");
+                    }
+                    if ($('ul li a')[i].getAttribute("class") != null && $('ul li a')[i].getAttribute("class") == "interviewer-submenu") {
+                        $('.dropmenu label.interviewer-active').addClass("active-menu");
+                        $('.dropmenu label.interviewer-active').append('<span class="shape1"></span><span class="shape2"></span>');
+                        $('.dropmenu label.admin-active').removeClass("active-menu");
+                        $('.drop-wrap ul li a').removeClass("active-menu");
+                    }
+                    $("ul li a")[i].setAttribute("class", "active-menu");
+                    $('.drop-wrap ul li  a').removeClass("active-menu");
+                    $('ul li a.active-menu').append('<span class="shape1"></span><span class="shape2"></span>');
+                    break;
+                }
+            }
+        });
+    </script>
+
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+<script>
+
+    $(document).ready(function () {
+        // Show hide popover
+        $(".user").click(function () {
+            $(this).find(".menu-container").fadeToggle("slow");
+        });
+    });
+    $(document).on("click", function (event) {
+        var $trigger = $(".user");
+        if ($trigger !== event.target && !$trigger.has(event.target).length) {
+            $(".menu-container").slideUp("fast");
+        }
+    });
+
+</script>
+@if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+{
+    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    profileName = profileName.Trim('"');
+    @if (profileName == "Client" || profileName == "Interviewer")
+    {
+        <script>
+            function initFreshChat() {
+                window.fcWidget.init({
+                    token: "19f76482-d0ae-4b69-b6b8-1c2ef5b93dd8",
+                    host: "https://wchat.freshchat.com"
+                });
+            }
+            function initialize(i, t) { var e; i.getElementById(t) ? initFreshChat() : ((e = i.createElement("script")).id = t, e.async = !0, e.src = "https://wchat.freshchat.com/js/widget.js", e.onload = initFreshChat, i.head.appendChild(e)) } function initiateCall() { initialize(document, "Freshdesk Messaging-js-sdk") } window.addEventListener ? window.addEventListener("load", initiateCall, !1) : window.attachEvent("load", initiateCall, !1);
+        </script>
+
+    }
+
+}
+
+@if (ViewBag.PageStatus == "Public" && ViewBag.Profile == "Client")
+{
+    <script>
+        function initFreshChat() {
+            window.fcWidget.init({
+                token: "19f76482-d0ae-4b69-b6b8-1c2ef5b93dd8",
+                host: "https://wchat.freshchat.com"
+            });
+        }
+        function initialize(i, t) { var e; i.getElementById(t) ? initFreshChat() : ((e = i.createElement("script")).id = t, e.async = !0, e.src = "https://wchat.freshchat.com/js/widget.js", e.onload = initFreshChat, i.head.appendChild(e)) } function initiateCall() { initialize(document, "Freshdesk Messaging-js-sdk") } window.addEventListener ? window.addEventListener("load", initiateCall, !1) : window.attachEvent("load", initiateCall, !1);
+    </script>
+
+}
+@if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
+{
+    var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    profileName = profileName.Trim('"');
+    @if (profileName != "Admin")
+    {
+        <script>
+            var closeStatusList = document.getElementById("supportModalPopUp");
+            closeStatusList.onclick = function () {
+                var modal = document.getElementById("supportModal");
+                modal.style.display = "none";
+            }
+            var closeStatusmailList = document.getElementById("supportmailModalPopUp");
+            closeStatusmailList.onclick = function () {
+                var modal = document.getElementById("supportmailModal");
+                modal.style.display = "none";
+            }
+            function GetSupportModal() {
+                $.ajax({
+                    url: '/Support/SuportIndex',
+                    success: function (data) {
+                        var modal = document.getElementById("supportModal");
+                        modal.style.display = "block";
+                        $('#supportTableBody').html('');
+                        $('#supportTableBody').html(data);
+                    }
+                });
+            }
+            function GetSupportmailModal() {
+                var modal = document.getElementById("supportmailModal");
+                modal.style.display = "block";
+                $("#txtsupportmailTo").val('');
+                $("#txtsupportmailSubject").val('');
+                $("#txtsupportmailBody").val('');
+            }
+
+            function SendSupportMail() {
+                var To = $("#txtsupportmailTo").val();
+                var Subject = $("#txtsupportmailSubject").val();
+                var Body = $("#txtsupportmailBody").val();
+                if (To.trim() != '' && Subject.trim() != '' && Body.trim() != '') {
+                    $.ajax({
+                        url: '/Mail/SuportMail',
+                        type: 'POST',
+                        data: { To: To, Subject: Subject, Body: Body },
+                        success: function (data) {
+                            if (data == "Success") {
+                                swal.fire({
+                                    title: 'Risebird Notification', text: 'Mail sent successfully', type: 'success',
+                                    showConfirmButton: true
+                                });
+                                var modal = document.getElementById("supportmailModal");
+                                modal.style.display = "none";
+                            } else {
+                                swal.fire({
+                                    title: 'Risebird Notification', text: 'Fail to send the email, please try again.', showConfirmButton: true
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    swal.fire("All fields are required fields");
+                }
+            }
+
+        </script>
+    }
+}
+

@@ -263,7 +263,7 @@ namespace Risebird.Repository
                 {
                     DynamicParameters dp = new DynamicParameters();
                     dp.Add("@assessmentgroupid", assessmentgroupid);
-                    return con.Query<Interviewer>(";With CTE AS(Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId  From CTE join Userlist ul on CTE.Userid=ul.id where CTE.value=@assessmentgroupid", dp);
+                    return con.Query<Interviewer>(";With CTE AS(Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid", dp);
                 }
             }
             catch (SqlException ex)
