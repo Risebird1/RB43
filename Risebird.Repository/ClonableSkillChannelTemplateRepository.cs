@@ -169,6 +169,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedBy", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@CreatedBy"].Value = templateDetails.CreatedBy;
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationStatus", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@RecommendationStatus"].Value = templateDetails.IRFRecommendations.Status;
 
@@ -393,6 +396,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@ModifiedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@ModifiedOn"].Value = DateTime.Now;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ModifiedBy", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@ModifiedBy"].Value = templateDetails.ModifiedBy;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationStatus", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@RecommendationStatus"].Value = templateDetails.IRFRecommendations.Status;
