@@ -141,8 +141,9 @@
         @Html.AntiForgeryToken()
 
 
-        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
-            <div class="pull-left">
+        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute" style="height:53px;margin-bottom:0px;padding-left:2px">
+            <img style="position:relative;top:0px;width:8%" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+            <div class="pull-left" style="padding-left:1vw">
                 <div class="navbar-wrapper w-full">
                     <div class="navbar-toggle">
                         <button type="button" class="navbar-toggler">
@@ -157,16 +158,29 @@
             </div>
 
             <div class="mob_h">
-
-
                 <div class="pull-right">
-
-
-                    
+                    <div class="pull-left">
+                        <div class="user user-r pull-left">
+                            <h6 class="main-notification-title">
+                                @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                {
+                                    var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                    var email = emailid.Trim('"');
+                                    <span>
+                                        @email
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>
+                                        "Logged In User";
+                                    </span>
+                                }
+                            </h6>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
         </nav>
 
 
