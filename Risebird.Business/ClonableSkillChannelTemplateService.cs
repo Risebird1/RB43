@@ -173,6 +173,7 @@ namespace Risebird.Business
         {
             try
             {
+                model.CreatedBy = loggedInUser;
                 if (model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
@@ -273,6 +274,7 @@ namespace Risebird.Business
         {
             try
             {
+                model.ModifiedBy = loggedInUser;
                 if (model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;

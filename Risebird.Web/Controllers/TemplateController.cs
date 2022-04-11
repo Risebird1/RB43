@@ -22,121 +22,154 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private IInterviewerService _interviewerService;
         private readonly IIRFService _irfService;
+        private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
 
-
-        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService)
+        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
         {
             _templateService = templateService;
             _applicationErrorLogger = applicationErrorLogger;
             _interviewerService = interviewerService;
             _irfService = irfService;
-
+            _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
-        [Authorize]
+        //[Authorize]
+        //[HttpGet]
+        //public async Task<IActionResult> Index()
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            var emailId = HttpContext.Session.GetString("email")?.Trim();
+        //            emailId = emailId.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR")
+        //            {
+        //                var model = new TemplatesListVM();
+        //                model.TemplateList = (await _templateService.GetAllTemplates(emailId/*, DateTime.Now.AddDays(-30), DateTime.Now*/)).ToList();
+        //                model.Profile = profileName;
+
+        //                if (HttpContext.Session.GetString("TemplateFilters") != null)
+        //                {
+        //                    var filter = JsonConvert.DeserializeObject<TemplateFilter>(HttpContext.Session.GetString("TemplateFilters"));
+
+        //                    filter.AssessmentGroup = filter.AssessmentGroup == null ? model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
+        //                    model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
+        //                }
+
+        //                foreach (var item in model.TemplateList)
+        //                {
+        //                    if (item.IsDeleted)
+        //                    {
+        //                        item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+        //                        item.Status = "Archived";
+        //                    }
+        //                    else
+        //                    {
+        //                        item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+        //                        item.Status = "Active";
+        //                    }
+        //                }
+        //                if (TempData["SuccessErrorMessageTemplate"] != null)
+        //                {
+        //                    model.Message = TempData["SuccessErrorMessageTemplate"].ToString();
+        //                    TempData.Remove("SuccessErrorMessageTemplate");
+        //                }
+        //                return View(model);
+
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("SignOut", "Session");
+        //    }
+        //}
+
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<IActionResult> Index(TemplateFilter filter)
+        //{
+        //    if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //    {
+        //        if (filter != null)
+        //        {
+        //            HttpContext.Session.SetString("TemplateFilters", JsonConvert.SerializeObject(filter));
+
+        //        }
+        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //        profileName = profileName.Replace("\"", "");
+        //        var emailId = HttpContext.Session.GetString("email")?.Trim();
+        //        emailId = emailId.Replace("\"", "");
+        //        if (profileName == "Admin" || profileName == "HR")
+        //        {
+
+        //            var model = new TemplatesListVM();
+        //            model.TemplateList = (await _templateService.GetAllTemplates(emailId)).ToList();
+        //            model.Profile = profileName;
+
+        //            filter.AssessmentGroup = filter.AssessmentGroup == null ?  model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
+        //            model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
+        //            foreach (var item in model.TemplateList)
+        //            {
+        //                if (item.IsDeleted)
+        //                {
+        //                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+        //                    item.Status = "Archived";
+        //                }
+        //                else
+        //                {
+        //                    item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+        //                    item.Status = "Active";
+        //                }
+        //            }
+
+        //            return View(model);
+
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("SignOut", "Session");
+        //    }
+        //}
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
-                    emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
-                    {
-                        var model = new TemplatesListVM();
-                        model.TemplateList = (await _templateService.GetAllTemplates(emailId/*, DateTime.Now.AddDays(-30), DateTime.Now*/)).ToList();
-                        model.Profile = profileName;
-
-                        if (HttpContext.Session.GetString("TemplateFilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<TemplateFilter>(HttpContext.Session.GetString("TemplateFilters"));
-
-                            filter.AssessmentGroup = filter.AssessmentGroup == null ? model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
-                            model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
-                        }
-
-                        foreach (var item in model.TemplateList)
-                        {
-                            if (item.IsDeleted)
-                            {
-                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                                item.Status = "Archived";
-                            }
-                            else
-                            {
-                                item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                                item.Status = "Active";
-                            }
-                        }
-                        if (TempData["SuccessErrorMessageTemplate"] != null)
-                        {
-                            model.Message = TempData["SuccessErrorMessageTemplate"].ToString();
-                            TempData.Remove("SuccessErrorMessageTemplate");
-                        }
-                        return View(model);
-
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
-        
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Index(TemplateFilter filter)
-        {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                if (filter != null)
-                {
-                    HttpContext.Session.SetString("TemplateFilters", JsonConvert.SerializeObject(filter));
-
-                }
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                var emailId = HttpContext.Session.GetString("email")?.Trim();
-                emailId = emailId.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                //var emailid = HttpContext.Session.GetString("email")?.Trim();
+                //emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
-
-                    var model = new TemplatesListVM();
-                    model.TemplateList = (await _templateService.GetAllTemplates(emailId)).ToList();
-                    model.Profile = profileName;
-                   
-                    filter.AssessmentGroup = filter.AssessmentGroup == null ?  model.TemplateList.Select(x => x.AssessmentGroupName).ToArray() : filter.AssessmentGroup;
-                    model.TemplateList = model.TemplateList.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName)).ToList();
-                    foreach (var item in model.TemplateList)
+                    ClonableTemplateListVM model = new ClonableTemplateListVM();
+                    model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
+                    //model.ClonableTemplates = list;
+                    if (TempData["SuccessErrorCloneTemplateMessage"] != null)
                     {
-                        if (item.IsDeleted)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.Status = "Archived";
-                        }
-                        else
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                            item.Status = "Active";
-                        }
+                        model.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
+                        TempData.Remove("SuccessErrorCloneTemplateMessage");
                     }
-
+                    model.Profile = profileName;
                     return View(model);
-
                 }
                 else
                 {

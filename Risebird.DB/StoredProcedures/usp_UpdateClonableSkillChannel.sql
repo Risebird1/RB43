@@ -14,7 +14,8 @@ GO
   
 --@Name varchar(200),
 @id int,                      
-@ModifiedOn date,            
+@ModifiedOn date,   
+@ModifiedBy varchar(50),
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -38,7 +39,7 @@ begin try
 
   if exists (select 1 from ClonableSkillChannel where id=@id)     
   Begin   
-		update ClonableSkillChannel set ModifiedOn = @ModifiedOn where id =@id
+		update ClonableSkillChannel set ModifiedOn = @ModifiedOn, ModifiedBy = @ModifiedBy where id =@id
   End
 
   if(@id != 0)
