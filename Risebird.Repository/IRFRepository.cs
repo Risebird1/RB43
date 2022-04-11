@@ -1839,7 +1839,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@EndDate"].Value = irfDetails.EndDate;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDLink", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@JDLink"].Value = irfDetails.JDLink;
+                    cmdUpdateIRF.Parameters["@JDLink"].Value = irfDetails.JDLink ?? string.Empty;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfPosition", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@NoOfPosition"].Value = irfDetails.NoOfPosition;
@@ -2094,203 +2094,6 @@ namespace Risebird.Repository
                             }
                         }
                     }
-
-                    return true;
-                }
-
-            }
-
-            catch (SqlException e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-
-        public async Task<bool> CreateClonableSkillChannel(IRFVm irfDetails)
-        {
-            try
-            {
-
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    DataTable joinabilityDt = new DataTable();
-                    if (irfDetails.Joinability != null && irfDetails.Joinability.Count() > 0 /*&& irfDetails.IsJoinabilitySelectabilityRequired*/)
-                    {
-                        //DataTable joinabilityDt = new DataTable();
-                        joinabilityDt.Columns.Add("IRFId", typeof(int));
-                        joinabilityDt.Columns.Add("LevelId", typeof(int));
-                        joinabilityDt.Columns.Add("Type", typeof(string));
-                        joinabilityDt.Columns.Add("Value", typeof(string));
-                        joinabilityDt.Columns.Add("Weightage", typeof(int));
-
-
-                        foreach (var item in irfDetails.Joinability)
-                        {
-                            joinabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
-                        }
-
-                    }
-
-                    DataTable selectabilityDt = new DataTable();
-                    if (irfDetails.Selectability != null && irfDetails.Selectability.Count() > 0 /*&& irfDetails.IsJoinabilitySelectabilityRequired*/)
-                    {
-                        selectabilityDt.Columns.Add("IRFId", typeof(int));
-                        selectabilityDt.Columns.Add("LevelId", typeof(int));
-                        selectabilityDt.Columns.Add("Type", typeof(string));
-                        selectabilityDt.Columns.Add("Value", typeof(string));
-                        selectabilityDt.Columns.Add("Weightage", typeof(int));
-
-                        foreach (var item in irfDetails.Selectability)
-                        {
-                            selectabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
-                        }
-
-                    }
-
-                    DataTable skillGeneralDt = new DataTable();
-                    if (irfDetails.SkillGeneral != null && irfDetails.SkillGeneral.Count() > 0 /*&& irfDetails.IsGeneralSkillRequired*/)
-                    {
-                        skillGeneralDt.Columns.Add("IRFId", typeof(int));
-                        skillGeneralDt.Columns.Add("LevelId", typeof(int));
-                        skillGeneralDt.Columns.Add("Type", typeof(string));
-                        skillGeneralDt.Columns.Add("Value", typeof(string));
-                        skillGeneralDt.Columns.Add("Weightage", typeof(int));
-
-                        foreach (var item in irfDetails.SkillGeneral)
-                        {
-                            skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
-                        }
-
-                    }
-
-                    DataTable techSkillDt = new DataTable();
-                    techSkillDt.Columns.Add("IRFId", typeof(int));
-                    techSkillDt.Columns.Add("LevelId", typeof(int));
-                    techSkillDt.Columns.Add("SkillId", typeof(int));
-                    techSkillDt.Columns.Add("Weightage", typeof(int));
-                    techSkillDt.Columns.Add("Concepts", typeof(string));
-                    techSkillDt.Columns.Add("Natureofquestion", typeof(string));
-                    techSkillDt.Columns.Add("Timelimit", typeof(int));
-
-                    foreach (var item in irfDetails.SkillCollection)
-                    {
-                        if (String.IsNullOrEmpty(item.Concepts))
-                        {
-                            item.Concepts = "";
-                        }
-                        if (String.IsNullOrEmpty(item.Natureofquestion))
-                        {
-                            item.Natureofquestion = "";
-                        }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
-                    }
-
-                    DataTable interviewerDt = new DataTable();
-
-                    if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
-                    {
-                        interviewerDt.Columns.Add("IRFId", typeof(int));
-                        interviewerDt.Columns.Add("UserId", typeof(int));
-                        interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        interviewerDt.Columns.Add("IsActive", typeof(bool));
-                        interviewerDt.Columns.Add("IsAvailable", typeof(bool));
-
-                        foreach (var item in irfDetails.InterviewerCollection)
-                        {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
-                        }
-                    }
-
-                    DataTable questionsDt = new DataTable();
-
-                    if (irfDetails.ClonableTemplateQuestionsCollection != null && irfDetails.ClonableTemplateQuestionsCollection.Count() != 0)
-                    {
-                        questionsDt.Columns.Add("Skill", typeof(int));
-                        questionsDt.Columns.Add("Question", typeof(string));
-                        questionsDt.Columns.Add("UserId", typeof(int));
-
-                        foreach (var item in irfDetails.ClonableTemplateQuestionsCollection)
-                        {
-                            questionsDt.Rows.Add(item.SkillId, item.Question, irfDetails.UserId);
-                        }
-                    }
-
-
-                    SqlCommand cmdUpdateIRF = new SqlCommand("usp_CreateClonableSkillChannel", con);
-                    cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@Name"].Value = irfDetails.TemplateName;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromIRFId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@CreatedFromIRFId"].Value = irfDetails.id;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
-                    cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationStatus", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@RecommendationStatus"].Value = irfDetails.IRFRecommendations.Status;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCategoryId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RecommendationCategoryId"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CategoryId : null;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCompetencyLevelId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RecommendationCompetencyLevelId"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CompetencyLevelId : null;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationSeniorityLevelId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RecommendationSeniorityLevelId"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.SeniorityLevelId : null;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCountryType", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RecommendationCountryType"].Value = irfDetails.IRFRecommendations.Status == true ? irfDetails.IRFRecommendations.CountryType : null;
-
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCreatedOn", SqlDbType.DateTime));
-                    cmdUpdateIRF.Parameters["@RecommendationCreatedOn"].Value = DateTime.Now;
-
-                    if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
-                    }
-                    if (selectabilityDt != null && selectabilityDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
-                    }
-                    if (skillGeneralDt != null && skillGeneralDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
-                    }
-                    if (techSkillDt != null && techSkillDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
-                    }
-                    if (interviewerDt != null && interviewerDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
-                    }
-                    
-                    if (questionsDt != null && questionsDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@QuestionsBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@QuestionsBulkData"].Value = questionsDt;
-                    }
-                    con.Open();
-
-                    if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
-                    {
-                        con.Close();
-                    }
-
 
                     return true;
                 }
@@ -5293,7 +5096,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRF.id,IRF.IRFId,ag.AssessmentGroup From IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId order by IRF.id desc";
+                var query = "Select IRF.id,IRF.IRFId,ag.AssessmentGroup, ag.id as AssessmentGroupId from IRF left join AssessmentGroup ag on ag.id=IRF.AssessmentGroupId order by IRF.id desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
@@ -5412,12 +5215,12 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IRFRecommendations> GetIRFRecommendation(int irfId)
+        public async Task<IRFRecommendations> GetIRFRecommendation(int cloneIRFId)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@cloneIRFId", cloneIRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryAsync<IRFRecommendations>(con, "usp_GetIRFRecommendation", dynamicParameters,
@@ -5519,50 +5322,6 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
-        }
-
-        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    //DynamicParameters parameters = new DynamicParameters();
-                    //parameters.Add("@startDate", startDate);
-                    //parameters.Add("@endDate", endDate);
-                    return await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannels", commandType: CommandType.StoredProcedure);
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-
-        public async Task<ClonableSkillChannelVM> GetClonableSkillChannelById(int id)
-        {
-            try
-            {
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetClonableSkillChannelById", dynamicParameters,
-                       commandType: CommandType.StoredProcedure);
-                    return results.FirstOrDefault();
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
         }
 
         public IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id)
@@ -5669,6 +5428,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public IEnumerable<ClonableTemplateQuestion> GetClonableTemplateQuestions(int id)
+        {
+            try
+            {
+                var query = "select ClonableIRFId, Skill as SkillId, Question, UserId from ClonableTemplateQuestions where ClonableIRFId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ClonableTemplateQuestion>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<TransEmergencyInterviewer> GetClonableIRFTransEmergencyInterviewer(int id)
         {
             try

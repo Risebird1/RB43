@@ -15,11 +15,11 @@
 }
 
 @*@if (HttpContextAccessor.HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
-{
-    filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContextAccessor.HttpContext.Session.GetString("SkillChannelDetailsFilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-}*@
+    {
+        filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContextAccessor.HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+        strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+        endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    }*@
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -41,7 +41,7 @@
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
-                        
+
                     </div>
                 </div>
             </div>
@@ -60,79 +60,79 @@
                             <div class="toolbar">
 
                                 @*<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="filheader">
-                                                <div class="filavatar">
-                                                    <span class="fa fa-filter"></span>
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="filheader">
+                                                    <div class="filavatar">
+                                                        <span class="fa fa-filter"></span>
+                                                    </div>
+                                                    <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                                 </div>
-                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                            </div>
-                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                            <form action="@Url.Action("SkillChannelDetails","IRF")" method="post" id="form">
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <form action="@Url.Action("SkillChannelDetails","IRF")" method="post" id="form">
 
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                    Start Date
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                        Start Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                    </div>
+                                                                </div>
+
+
+
+
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                        End Date
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                    </div>
                                                                 </div>
                                                             </div>
 
+                                                            <div class="col-md-12 col-sm-12">
 
 
 
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                    End Date
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    <div>
+                                                                        <div class="col-md-12 col-sm-12 pull-right">
 
 
-
-                                                            <div class="form-group">
-                                                                <div>
-                                                                    <div class="col-md-12 col-sm-12 pull-right">
-
-
-                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                            <font style="font-size:12px;"> Reset Filter</font>
-                                                                        </button>
+                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                                            </button>
 
 
-                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                            <font style="font-size:12px;"> Apply Filter</font>
-                                                                        </button>
+                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                                            </button>
 
+
+                                                                        </div>
 
                                                                     </div>
-
                                                                 </div>
+
                                                             </div>
-
                                                         </div>
+
                                                     </div>
-
-                                                </div>
-                                            </form>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                </div>*@
+                                    </div>*@
                                 <div>
 
                                     <div id="tableID" class="second" style="overflow-x:scroll">
@@ -141,14 +141,14 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Actions</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Actions</th>
-                                                    
+
 
                                                 </tr>
                                             </tfoot>
@@ -169,28 +169,28 @@
                                                                 <td></td>
                                                             }
 
-                                                        <td>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel Template">
-                                                                <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id,clonevalue=1, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:14px!important;" class="fa fa-clone"></i>
-                                                                </span>
-                                                            </button>
-                                                        </td>
+                                                            <td>
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel Template">
+                                                                    <span onclick="location.href='@Url.Action("Edit", "ClonableSkillChannelTemplate", new { @*id = item.CreatedFromIRFId,*@ id = item.ClonableSkillChannelId})'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
+                                                                        <i style="font-size:14px!important;" class="fa fa-clone"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </td>
                                                             @*@if (!string.IsNullOrEmpty(item.JobCountry))
-                                                            {
-                                                                @if (item.JobCountry == "1" || item.JobCountry.ToUpper() == "INDIA")
                                                                 {
-                                                                    <td>India</td>
+                                                                    @if (item.JobCountry == "1" || item.JobCountry.ToUpper() == "INDIA")
+                                                                    {
+                                                                        <td>India</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>OutSide India</td>
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td>OutSide India</td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }*@
+                                                                    <td></td>
+                                                                }*@
 
 
 
@@ -210,7 +210,7 @@
 
                                     </div>
                                 </div>
-                                
+
 
                             </div>
                             <!-- end content-->
@@ -232,7 +232,26 @@
     </div>
 </div>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
 
+        }
+
+        //window.onload = my_code();
+    </script>
+}
 
 
 

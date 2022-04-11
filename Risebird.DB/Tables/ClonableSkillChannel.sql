@@ -7,6 +7,7 @@ CREATE TABLE [dbo].[ClonableSkillChannel](
 			[Name] [VARCHAR](200) NOT NULL,
 			[CreatedOn][DATETIME] NULL,
 			[ModifiedOn][DATETIME] NULL,
+			[IsJoinSelectGenskillsRequired][bit] NULL,
  CONSTRAINT UC_ClonableSkillChannel_Name UNIQUE ([Name]),
  CONSTRAINT [PK_ClonableSkillChannel] PRIMARY KEY CLUSTERED 					
 (					
@@ -16,4 +17,18 @@ CREATE TABLE [dbo].[ClonableSkillChannel](
 
 END
 
+ELSE
+BEGIN
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsJoinSelectGenskillsRequired')
+      AND Object_ID = Object_ID(N'ClonableSkillChannel'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsJoinSelectGenskillsRequired BIT NULL
+END
+
+END
 GO

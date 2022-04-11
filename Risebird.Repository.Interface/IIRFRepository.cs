@@ -32,7 +32,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id, string emailId = null);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails, List<InterviewerSuccessRateChangeData> interviewerRateChangesList = null, List<RemovedInterviewersFromSkillsChannelData> removedInterviewers = null, List<AddedNewInterviewersInSkillsChannelData> addedNewInterviewers = null, List<RemovedTechSkillsFromIRF> removedTechSkills = null);
-        Task<bool> CreateClonableSkillChannel(IRFVm irfDetails);
         IEnumerable<SkillComment> GetTechSkillComments(int id, string emailId = null);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
@@ -160,18 +159,17 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateCancellationSource(int interviewid, string emailId);
         Task<IEnumerable<IRF>> GetAllIRFDetailsByIRFId(int IRFId);
         Task<IEnumerable<IRFInterviewerMembers>> GetAssessmentGroupInterviewerMembers(int Assessmentid);
-        Task<IRFRecommendations> GetIRFRecommendation(int irfId);
+        Task<IRFRecommendations> GetIRFRecommendation(int cloneIRFId);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
         string FetchIRFAudioLink(int irfid);
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
-        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
-        Task<ClonableSkillChannelVM> GetClonableSkillChannelById(int id);
         IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id);
         IEnumerable<TransSkillGeneral> GetClonableIRFSkillsGeneralbyId(int id);
         IEnumerable<TransJoinability> GetClonableIRFTransJoinability(int id);
         IEnumerable<TransSelectability> GetClonableIRFTransSelectability(int id);
         IEnumerable<TransInterviewer> GetClonableIRFTransInterviewer(int id);
+        IEnumerable<ClonableTemplateQuestion> GetClonableTemplateQuestions(int id);
         IEnumerable<TransEmergencyInterviewer> GetClonableIRFTransEmergencyInterviewer(int id);
         IEnumerable<TransHR> GetTransClonableIRFHR(int id);
         IEnumerable<TransQualityController> GetTransClonableIRFQualityController(int id);

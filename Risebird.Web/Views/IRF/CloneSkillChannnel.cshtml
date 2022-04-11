@@ -47,7 +47,7 @@
                                 <div class="mdc-button__ripple"></div>
                             </button>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Created Clone Templates" onclick="location.href='/IRF/GetCloneSkillChannelTemplates'" data-original-title="Created Clone Templates"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Created Clone Templates</font></span>
+                                <span data-toggle="tooltip" data-placement="top" title="Created Clone Templates" onclick="location.href='/ClonableSkillChannelTemplate/GetAllTemplates'" data-original-title="Created Clone Templates"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Created Clone Templates</font></span>
                             </button>
                         </span>
                     </div>
@@ -190,17 +190,21 @@
                                                    
 
                                                         <td>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Derive template from this Skills Channel for cloning">
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Derive template from this Skills Channel for cloning">
                                                                 <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, useAsCloneTemplate = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
                                                                     <i style="font-size:14px!important;" class="fa fa-files-o"></i>
                                                                 </span>
+                                                            </button>*@
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Create template from this Skills Channel for cloning">
+                                                                <span onclick="location.href='@Url.Action("Create", "ClonableSkillChannelTemplate", new { irfId = item.id, assessmentGroupId = item.AssessmentGroupId })'" title="Create template from this Skills Channel for cloning" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:14px!important;" class="fa fa-files-o"></i>
+                                                                </span>
                                                             </button>
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel">
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel">
                                                                 <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id,clonevalue=1, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
                                                                     <i style="font-size:14px!important;" class="fa fa-clone"></i>
                                                                 </span>
-                                                            </button>
+                                                            </button>*@
                                                         </td>
                                                     </tr>
                                                 }
