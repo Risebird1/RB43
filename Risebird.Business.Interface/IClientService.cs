@@ -25,5 +25,6 @@ namespace Risebird.Business.Interface
         Task<int> GetUniqueClientRoleByEmailId(string emailId, string id);
         Task<string> PublicClientUrlSave(string emailId, string uniqueid);
         Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid);
+        Task<string> Fetchlogoforclient(string emailId, string id);
     }
 }

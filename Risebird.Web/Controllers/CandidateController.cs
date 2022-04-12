@@ -3565,6 +3565,13 @@ namespace Risebird.Web.Controllers
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                 }
+                var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
+                if (String.IsNullOrEmpty(logovalue))
+                {
+                    HttpContext.Session.SetString("Logo", "");
+                }
+                else
+                    HttpContext.Session.SetString("Logo", logovalue);
                 var model = new List<CandidateTimelineVM>();
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
@@ -3850,6 +3857,13 @@ namespace Risebird.Web.Controllers
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
             var role = await _clientService.GetUniqueClientRoleByEmailId(Emailid, id);
+            var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
+            if (String.IsNullOrEmpty(logovalue))
+            {
+                HttpContext.Session.SetString("Logo", "");
+            }
+            else
+                HttpContext.Session.SetString("Logo", logovalue);
             if (role > 0)
             {
                 return Json("success");
