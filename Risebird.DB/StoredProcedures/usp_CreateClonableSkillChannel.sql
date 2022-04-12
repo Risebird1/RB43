@@ -14,7 +14,8 @@ GO
   
 @Name varchar(200),
 @CreatedFromIRFId int,                        
-@CreatedOn date,            
+@CreatedOn date,  
+@CreatedBy varchar(50),
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -45,11 +46,14 @@ begin try
 		INSERT INTO [dbo].[ClonableSkillChannel]            
 		   ([Name]            
 		   ,[CreatedOn]            
-		   ,[CreatedFromIRFId])            
+		   ,[CreatedFromIRFId]
+		   ,[CreatedBy]) 
+		   
 		VALUES            
 		  (@Name,            
 		   @CreatedOn,            
-		   @CreatedFromIRFId)      
+		   @CreatedFromIRFId, 
+		   @CreatedBy)      
        
 		select @idClonableIrf = SCOPE_IDENTITY()    
   End
