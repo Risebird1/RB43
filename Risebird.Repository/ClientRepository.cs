@@ -583,5 +583,30 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public async Task<string> Fetchlogoforclient(string emailId, string id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "[usp_FetchlogoforclientByEmailId]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }
