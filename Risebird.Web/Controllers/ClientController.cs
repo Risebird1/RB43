@@ -86,6 +86,8 @@ namespace Risebird.Web.Controllers
                 try
                 {
                     var model = new Client();
+                    model.IsMeetingNotificationSend = true;
+                    model.IsCandidateavailability = true;
                     return View("ClientAdd", model);
                 }
                 catch (Exception ex)
