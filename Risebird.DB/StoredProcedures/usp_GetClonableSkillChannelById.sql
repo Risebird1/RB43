@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_GetClonableSkillChannelById]
 AS  
 Begin
 
-	select csc.id as ClonableSkillChannelId, csc.[Name] as TemplateName, csc.CreatedFromIRFId  
+	select csc.id as ClonableSkillChannelId, csc.[Name] as TemplateName, csc.CreatedFromIRFId, csc.IsJoinSelectGenskillsRequired as IsTemplateJoinSelectGenskillsRequired   
 	from ClonableSkillChannel csc where id = @id
 
 End

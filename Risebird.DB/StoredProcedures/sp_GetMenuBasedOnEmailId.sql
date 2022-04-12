@@ -21,16 +21,16 @@ IF NOT EXISTS (SELECT 1  FROM  UserSessions usn inner join UserList us on us.id 
 	 ([UserId],
 	[SessionId],
 	[IsActive])	
-	select id,@SessionId,1 from [dbo].[UserList] us WHERE EmailId like @EmailId 
+	select id,@SessionId,1 from [dbo].[UserList] us WHERE EmailId = @EmailId 
 END
 
 
 	DECLARE @lastLogin AS varchar(200), @profile varchar(50), @roleId int;    
-	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId LIKE @EmailId  
+	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId = @EmailId  
 	set @roleId =0
 	
 
-	set @profile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id=ul.idProfile where EmailId like @EmailId and ul.IsActive=1)
+	set @profile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id=ul.idProfile where EmailId = @EmailId and ul.IsActive=1)
 	
 
 	if(@profile = 'Client')
@@ -38,7 +38,7 @@ END
 		select @roleId=cu.RoleId from UserList ul join ClientUser cu on cu.UserId =ul.id where ul.EmailId=@EmailId
 	end
 
-	update [dbo].[UserList] set LastLogin= getdate(),isonline=1 where EmailId LIKE @EmailId    
+	update [dbo].[UserList] set LastLogin= getdate(),isonline=1 where EmailId = @EmailId    
 	
 		
 	if(@EmailId!='ExternalUser')  
@@ -48,7 +48,7 @@ END
 			Begin
 			
 				declare @userId int;
-				set @userId = (select id from UserList where EmailId like @EmailId and IsActive=1)
+				set @userId = (select id from UserList where EmailId = @EmailId and IsActive=1)
 				
 				IF Exists(select 1 from InterviewerProfile where UserId=@userId and IsLeadInterviewer=1)
 					Begin
@@ -59,7 +59,7 @@ END
 						join [dbo].[UserList] ul on pl.id = ul.idprofile 
 						left join ClientUser cu on cu.UserId=ul.id
 						left join Client c on c.id=cu.ClientId
-						where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and (fn.IsUnapproved is null or fn.IsUnapproved=0) order by idisplayorder
+						where ul.EmailId = @EmailId AND ul.IsActive=1 and (fn.IsUnapproved is null or fn.IsUnapproved=0) order by idisplayorder
 					End
 				ELSE IF Exists(select 1 from InterviewerProfile where UserId=@userId and IsApproved=0)
 					Begin
@@ -70,7 +70,7 @@ END
 						join [dbo].[UserList] ul on pl.id = ul.idprofile 
 						left join ClientUser cu on cu.UserId=ul.id
 						left join Client c on c.id=cu.ClientId
-						where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and (fn.IsUnapproved = 1 or fn.IsCommon=1)order by idisplayorder
+						where ul.EmailId = @EmailId AND ul.IsActive=1 and (fn.IsUnapproved = 1 or fn.IsCommon=1)order by idisplayorder
 					End
 				ELSE
 					Begin
@@ -81,7 +81,7 @@ END
 						join [dbo].[UserList] ul on pl.id = ul.idprofile 
 						left join ClientUser cu on cu.UserId=ul.id
 						left join Client c on c.id=cu.ClientId
-						where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and (fn.IsUnapproved is null or fn.IsUnapproved=0) and (fn.IsLead is null or fn.IsLead=0) order by idisplayorder
+						where ul.EmailId = @EmailId AND ul.IsActive=1 and (fn.IsUnapproved is null or fn.IsUnapproved=0) and (fn.IsLead is null or fn.IsLead=0) order by idisplayorder
 					End
 			End
 			else if (@profile = 'Client' and @roleId = 4)--staffing agency
@@ -93,7 +93,7 @@ END
 					join [dbo].[UserList] ul on pl.id = ul.idprofile 
 					left join ClientUser cu on cu.UserId=ul.id
 					left join Client c on c.id=cu.ClientId
-					where ul.EmailId LIKE @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 order by idisplayorder
+					where ul.EmailId = @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 order by idisplayorder
 			end
 			else
 				begin
@@ -104,7 +104,7 @@ END
 					join [dbo].[UserList] ul on pl.id = ul.idprofile 
 					left join ClientUser cu on cu.UserId=ul.id
 					left join Client c on c.id=cu.ClientId
-					where ul.EmailId LIKE @EmailId AND ul.IsActive=1 order by idisplayorder
+					where ul.EmailId = @EmailId AND ul.IsActive=1 order by idisplayorder
 				end
 			      
 		end  

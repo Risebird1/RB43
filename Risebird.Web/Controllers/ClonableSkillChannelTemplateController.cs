@@ -34,10 +34,34 @@ namespace Risebird.Web.Controllers
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
-
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> GetAllTemplates()
         {
-            return View();
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                {
+                    var list = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
+                    if (TempData["SuccessErrorCloneTemplateMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
+                        TempData.Remove("SuccessErrorCloneTemplateMessage");
+                    }
+                    return View(list);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
 
         public async Task<IActionResult> Create(int irfId, int assessmentGroupId)
@@ -123,12 +147,12 @@ namespace Risebird.Web.Controllers
                         }
                         if (await _clonableSkillChannelTemplateService.CreateClonableSkillChannel(model, emailId))
                         {
-                            TempData["SuccessErrorCloneSkillChannnelMessage"] = "Clonable Skill Channel created Successfully!";
+                            TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Clonable Skill Channel Template '{model.TemplateName}' created Successfully!";
                             return RedirectToAction("CloneSkillChannnel", "IRF");
                         }
                         else
                         {
-                            TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed! Clonable Skill Channel could not be created!";
+                            TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed! Clonable Skill Channel Template could not be created!";
                             return RedirectToAction("CloneSkillChannnel", "IRF");
                         }
                     }
@@ -151,5 +175,123 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+                        ClonableSkillChannelVM model = new ClonableSkillChannelVM();
+                        model = await _clonableSkillChannelTemplateService.GetClonableSkillChannel(id);
+                        model.UserId = _irfService.GetUserId(emailid);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed to redirect to Create Clone Template.";
+                return RedirectToAction("CloneSkillChannnel", "IRF");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ClonableSkillChannelVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+
+                        bool isTemplateInvalid = false;
+                        if (!model.InterviewerCollection.Any(x => x.IsActive))
+                        {
+                            isTemplateInvalid = true;
+                            ModelState.AddModelError("", "Please select atleast one Interviewer from the list.");
+                        }
+                        if (!model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
+                        {
+                            isTemplateInvalid = true;
+                            ModelState.AddModelError("", "Please select atleast one Question from the list.");
+                        }
+
+                        if(model.IsTemplateJoinSelectGenskillsRequired)
+                        {
+                            if (model.Selectability.Any(x => string.IsNullOrEmpty(x.Value)))
+                            {
+                                isTemplateInvalid = true;
+                                ModelState.AddModelError("", "Please fill all the columns in the Selectability Matrix.");
+                            }
+                            if (model.Joinability.Any(x => string.IsNullOrEmpty(x.Value)))
+                            {
+                                isTemplateInvalid = true;
+                                ModelState.AddModelError("", "Please fill all the columns in the Joinability Matrix.");
+                            }
+                            if (model.SkillGeneral.Any(x => string.IsNullOrEmpty(x.Value)))
+                            {
+                                isTemplateInvalid = true;
+                                ModelState.AddModelError("", "Please fill all the columns in the General Skills' Matrix.");
+                            }
+                        }
+                        
+                        if (isTemplateInvalid)
+                        {
+                            _clonableSkillChannelTemplateService.PopulateDropDowns(model, true);
+                            return View(model);
+                        }
+                        if (await _clonableSkillChannelTemplateService.UpdateClonableSkillChannel(model, emailId))
+                        {
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Clonable Skill Channel Template '{model.TemplateName}' updated successfully!";
+                            //return RedirectToAction("GetAllTemplates");
+                            return RedirectToAction("Index", "Template");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Failed! Clonable Skill Channel '{model.TemplateName}' could not be updated!";
+                            //return RedirectToAction("GetAllTemplates");
+                            return RedirectToAction("Index", "Template");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCloneTemplateMessage"] = $"Failed! Clonable Skill Channel '{model.TemplateName}' could not be updated!";
+                //return RedirectToAction("GetAllTemplates");
+                return RedirectToAction("Index", "Template");
+            }
+        }
     }
 }

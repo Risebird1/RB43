@@ -34,7 +34,18 @@ namespace Risebird.Business
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
             _activityTrackerRepository = activityTrackerRepository;
         }
-
+        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
+        {
+            try
+            {
+                return await _clonableSkillChannelTemplateRepository.GetAllClonableSkillChannels();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<ClonableSkillChannelVM> GetTemplateDataFromSourceSkillChannel(int irfId, int assessmentGroupId)
         {
             try
@@ -106,20 +117,22 @@ namespace Risebird.Business
             }
         }
 
-        public ClonableSkillChannelVM PopulateDropDowns(ClonableSkillChannelVM model)
+        public ClonableSkillChannelVM PopulateDropDowns(ClonableSkillChannelVM model, bool isEdit = false)
         {
-            model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
-
-            model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
-
-            model.IRFRecommendations.CategoryId = _skillService.GetAssessmentGroupCategory(model.IRFRecommendations.AssessmentGroupId.Value).Result;
-            if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+            if(!isEdit)
             {
-                model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
-                model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt16(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
+                model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
+
+                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+
+                model.IRFRecommendations.CategoryId = _skillService.GetAssessmentGroupCategory(model.IRFRecommendations.AssessmentGroupId.Value).Result;
+                if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                {
+                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                    model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt16(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
+                }
             }
-
-
+            
             //populate the dropdowns for levels, types etc.
             model.JoinabilityTypeList = new SelectList(_irfRepository.GetJoinabilityMatrix(), "id", "Name");
             model.SkillGeneralTypeList = new SelectList(_irfRepository.GetGeneralSkillMatrix(), "id", "Name");
@@ -160,6 +173,7 @@ namespace Risebird.Business
         {
             try
             {
+                model.CreatedBy = loggedInUser;
                 if (model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
@@ -174,6 +188,107 @@ namespace Risebird.Business
                     activityTrackerModel.Particulars = model.TemplateName;
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = ActivityTypes.CreateClonableSkillChannel.GetDescription();
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<ClonableSkillChannelVM> GetClonableSkillChannel(int id)
+        {
+            try
+            {
+                var model = new ClonableSkillChannelVM();
+                //get all values from database
+                model = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelById(id);
+                var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
+                var transSkillsGeneral = _irfRepository.GetClonableIRFSkillsGeneralbyId(id);
+                var transJoinability = _irfRepository.GetClonableIRFTransJoinability(id);
+                //var transQualityController = _irfRepository.GetTransQualityController(id);
+                var transSelectability = _irfRepository.GetClonableIRFTransSelectability(id);
+                var templateQuestions = _irfRepository.GetClonableTemplateQuestions(id);
+                //var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
+                model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
+
+
+                model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                {
+                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
+                    model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt16(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
+                }
+
+                IEnumerable<ClonableTemplateQuestion> transQuestions = new List<ClonableTemplateQuestion>();
+                transQuestions = _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value).Result;
+                //transQuestions = (IEnumerable<ClonableTemplateQuestion>)transQuestions?.Select(x => ( x.Question, x.SkillId, x.SkillName, x.IsSelected ))?.Distinct();
+                foreach (var question in templateQuestions)
+                {
+                    transQuestions.Where(x => x.Question?.Replace("\t", "").Replace("\n", "").Replace("\r", "") == question.Question?.Replace("\t", "").Replace("\n", "").Replace("\r", "") && x.SkillId == question.SkillId).ToList().ForEach(c => c.IsSelected = true);
+                }
+
+                IEnumerable<TransInterviewer> transInterviewer = new List<TransInterviewer>();
+                if (model.IRFRecommendations != null && model.IRFRecommendations.AssessmentGroupId > 0)
+                {
+                    transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
+                }
+                var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
+                foreach (var interviewer in templateInterviewers)
+                {
+                    transInterviewer.Where(x => x.UserId == interviewer.UserId).ToList().ForEach(c => c.IsActive = true);
+                }
+
+                //assign values retrieved to the model
+
+                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
+                model.Joinability = (IList<TransJoinability>)(transJoinability);
+                model.SkillCollection = (IList<TransSkill>)(transTechSkills);
+                model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
+                model.Selectability = (IList<TransSelectability>)(transSelectability);
+                model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(transQuestions?.OrderByDescending(x => x.IsSelected).ToList());
+                if (model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
+                }
+
+                PopulateDropDowns(model, true);
+
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateClonableSkillChannel(ClonableSkillChannelVM model, string loggedInUser)
+        {
+            try
+            {
+                model.ModifiedBy = loggedInUser;
+                if (model.IRFRecommendations != null)
+                {
+                    model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+                }
+                model.InterviewerCollection = model.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
+                model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection?.Where(x => x.IsSelected)?.ToList();
+                var result = await _clonableSkillChannelTemplateRepository.UpdateClonableSkillChannel(model);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateClonableSkillChannel;
+                    activityTrackerModel.Particulars = model.TemplateName;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = ActivityTypes.UpdateClonableSkillChannel.GetDescription();
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
 
