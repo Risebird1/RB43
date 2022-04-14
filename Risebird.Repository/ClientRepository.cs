@@ -608,5 +608,29 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public async Task<IEnumerable<IRF>> GetRecruiterReportByClient(string emailID, DateTime st, DateTime se)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailID);
+                    parameters.Add("@st", st);
+                    parameters.Add("@se", se);
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetClientIRFCountDetails", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
