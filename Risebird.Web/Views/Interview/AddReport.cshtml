@@ -281,7 +281,7 @@
                                                             <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })</strong>
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
-                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar", @spellcheck = "true", @onpaste = "return false" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters" })
+                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true", @onpaste = "return false" })
                                                                     <div id="words"></div>
                                                                 </div>
                                                             </div>
@@ -732,7 +732,7 @@
                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                     <div class="talktext">
 
-                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @class = "form-control text-box single-line scrollbar", @spellcheck = "true", @onpaste = "return false" }, @style = "width:100%" })
+                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @class = "form-control text-box single-line scrollbar" }, @style = "width:100%", @spellcheck = "true", @onpaste = "return false" })
                                                         <div id="words"></div>
                                                     </div>
                                                 </div>
