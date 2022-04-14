@@ -503,7 +503,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         /// <summary>
         /// Add New Candidate For JD
         /// </summary>
@@ -4572,6 +4572,102 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> RecruiterReport()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    DateTime st = DateTime.Now.AddDays(-7);
+                    DateTime se = DateTime.Now;
+                    if (HttpContext.Session.GetString("RecruiterReportfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RecruiterReportfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            st = filter.StartDate.Value;
+                            se = filter.EndDate.Value.AddDays(1);
+                        }
+                    }
+
+                    var model = _clientService.GetRecruiterReportByClient(emailid, st, se);
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RecruiterReport(InterviewFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("RecruiterReportfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    DateTime st = DateTime.Now.AddDays(-7);
+                    DateTime se = DateTime.Now;
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        st = filter.StartDate.Value;
+                        se = filter.EndDate.Value.AddDays(1);
+                    }
+                    var model = _clientService.GetRecruiterReportByClient(emailid, st, se);
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetRecruiterReportFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("RecruiterReportfilters");
+                    return RedirectToAction("RecruiterReport");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("RecruiterReport");
+            }
+
         }
     }
 }
