@@ -4585,7 +4585,7 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    DateTime st = DateTime.Now.AddYears(-3);
+                    DateTime st = DateTime.Now.AddDays(-7);
                     DateTime se = DateTime.Now;
                     var model = _clientService.GetRecruiterReportByClient(emailid, st, se);
                     return View(model);
