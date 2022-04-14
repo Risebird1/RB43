@@ -284,5 +284,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public IEnumerable<IRF> GetRecruiterReportByClient(string emailId, DateTime st, DateTime se)
+        {
+            try
+            {
+                var irfList = _clientRepository.GetRecruiterReportByClient(emailId, st, se).Result.ToList();
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
