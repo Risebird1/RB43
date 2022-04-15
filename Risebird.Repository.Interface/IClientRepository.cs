@@ -1,5 +1,6 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -26,5 +27,7 @@ namespace Risebird.Repository.Interface
         Task<int> GetUniqueClientRoleByEmailId(string emailId, string id);
         Task<string> PublicClientUrlSave(string emailId, string uniqueid);
         Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid);
+        Task<string> Fetchlogoforclient(string emailId, string id);
+        Task<IEnumerable<IRF>> GetRecruiterReportByClient(string emailID, DateTime st, DateTime se);
     }
 }

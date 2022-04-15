@@ -271,5 +271,31 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<string> Fetchlogoforclient(string emailId, string id)
+        {
+            try
+            {
+                return await _clientRepository.Fetchlogoforclient(emailId, id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public IEnumerable<IRF> GetRecruiterReportByClient(string emailId, DateTime st, DateTime se)
+        {
+            try
+            {
+                var irfList = _clientRepository.GetRecruiterReportByClient(emailId, st, se).Result.ToList();
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

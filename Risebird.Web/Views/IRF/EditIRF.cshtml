@@ -1156,7 +1156,7 @@
                                                                     <tr>
                                                                         <td>
                                                                             @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                                            @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
+                                                                            @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
                                                                         </td>
                                                                         <td>
                                                                             @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
