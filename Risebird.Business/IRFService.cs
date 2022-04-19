@@ -2392,5 +2392,39 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser)
+        {
+            try
+            {
+                irfDetails.RisebirdHr = GetUserId(loggedInUser);
+                irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
+                irfDetails.CompanyDetails = string.Empty;
+                irfDetails.PerMintuteRate = 0;
+                irfDetails.TotalBudget = 0;
+                irfDetails.NoOfPosition = 0;
+                irfDetails.Type = "B2B";
+                irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
+
+                irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
+                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
+                    activityTrackerModel.Particulars = irfDetails.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Skill channel created";
+
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

@@ -178,5 +178,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ClonableTemplateQuestion>> GetQuestionsForAssessmentGroup(int assessmentGroupId);
 
         Task<bool> IsClonableTemplateNameInUse(string name);
+        Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails);
     }
 }

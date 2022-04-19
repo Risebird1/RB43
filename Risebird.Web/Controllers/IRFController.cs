@@ -47,8 +47,11 @@ namespace Risebird.Web.Controllers
         private readonly IClientService _clientService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
+        private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
 
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice)
+
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, 
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -67,6 +70,7 @@ namespace Risebird.Web.Controllers
             _clientService = clientService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _interviewSchedulerservice = interviewSchedulerservice;
+            _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
 
@@ -1092,7 +1096,7 @@ namespace Risebird.Web.Controllers
                 Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
             }
             ViewBag.Skill = new SelectList(Skillset, "id", "Name");
-            ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+            //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
             ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
             ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
@@ -6743,6 +6747,126 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json($"Template Name '{name}' is already in use.");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Create(int templateId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
+                    {
+                        var model = new IRFVm();
+                        model = await _clonableSkillChannelTemplateService.GetTemplateDataForPopulatingSkillChannel(templateId);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCloneTemplateMessage"] = "Failed to redirect! Kindly contact the Coordinator.";
+                return RedirectToAction("Index", "Template");
+            }
+        }
+        
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Create(IRFVm model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+
+                        
+                        //check duplicates for client
+                        bool isDuplicate = false;
+                        var clientCollection = model.ClientCollection.Select(x => (x.ClientUserId));
+                        if (clientCollection.Count() != clientCollection.Distinct().Count())
+                        {
+                            //duplicates exist
+                            isDuplicate = true;
+                            ModelState.AddModelError("", "Please remove duplicate entries from Client's list.");
+                        }
+
+                        if (isDuplicate)
+                        {
+                            _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model);
+                            return View(model);
+                        }
+                        string uploadedFileURL = string.Empty;
+
+                        if (model.JDFile != null)
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                model.JDLink = uploadedFileURL;
+                            }
+
+                        }
+
+                        //Start: Auto Generate Scheduling Link 
+                        model.StartDate = DateTime.Now;
+                        model.EndDate = DateTime.Now.AddMonths(3);
+                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                        model.CalendlyLink = _schedulinglink;
+                        //End: Auto Generate Scheduling Link
+                        if (await _irfService.CreateSkillChannelFromTemplate(model, emailId))
+                        {
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            return RedirectToAction("Index", "Template");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                            return RedirectToAction("Index", "Template");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Adding IRF has failed";
+                return RedirectToAction("Index");
             }
         }
     }

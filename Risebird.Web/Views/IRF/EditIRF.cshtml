@@ -1146,7 +1146,7 @@
                                                                     <th width="40%" class="table_heading">Skills</th>
                                                                     <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
                                                                     <th width="10%" class="table_heading">Active</th>
-                                                                    <th width="10%" class="table_heading">Available</th>
+                                                                    <th width="10%" class="table_heading">Availability</th>
                                                                     <th width="10%" class="table_heading text-center">Action</th>
                                                                 </tr>
                                                             </thead>
@@ -1405,9 +1405,6 @@
                                                                             @Html.CheckBox("EmergencyInterviewerCollection[0].IsActive", new { @checked = "checked" })
                                                                         </td>
 
-                                                                        <td class="text-center">
-                                                                            @Html.CheckBox("EmergencyInterviewerCollection[0].IsActive", new { @checked = "checked" })
-                                                                        </td>
                                                                         <td class="action text-center">
                                                                             <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                             @*@if (Model.IsClone)
