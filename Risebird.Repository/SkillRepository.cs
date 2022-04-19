@@ -37,7 +37,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Skill>(
-                        con, "select * from Skill", null, commandType: Text);
+                        con, "select * from Skill where Name is not null", null, commandType: Text);
                 }
             }
             catch (SqlException ex)

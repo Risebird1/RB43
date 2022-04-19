@@ -34,7 +34,7 @@ left join QCFeedbackReport qcf on qcf.InterviewId = im.id
 inner join UserList ul on ul.EmailId = im.candidateEmail           
 inner join CandidatesMaster cm on ul.id =cm.UserId          
 inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.QCStatus=1 and irf.IsQCRequired=1 --and qcf.InterviewId is not null          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)       
 group by irf.id    
 union    
 select irf.id as IRFId, count(im.id) as SelectedMeetings          

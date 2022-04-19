@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
@@ -51,9 +52,12 @@ namespace Risebird.Entities.ViewModel
         public SelectList AssessmentLevellist { get; set; }
         public SelectList AssessmentGrouplist { get; set; }
         public List<AssessmentQuestions> Questionslist { get; set; }
+        [DisplayName("Is Insta Available")]
         public bool Isinstaavailable { get; set; }
+        [DisplayName("Category Name")]
         public string CategoryName { get; set; }
         public int IrfCount { get; set; }
+        [DisplayName("Is Relevant")]
         public bool IsRelevant { get; set; }
         public int CompanyType { get; set; }
         public int ProfileType { get; set; }
@@ -81,15 +85,21 @@ namespace Risebird.Entities.ViewModel
         public string AssessmentGroupName { get; set; }
         public int id { get; set; }
         public List<SelectListItem> PrimarySkillsList { get; set; }
+        [DisplayName("Is Insta Available")]
         public bool Isinstaavailable { get; set; }
         public SelectList CategoryNameList { get; set; }
         public int Category { get; set; }
+        [DisplayName("Is Relevant")]
         public bool IsRelevant { get; set; }
+        [DisplayName("Category Type")]
         public int CompanyType { get; set; }
         public SelectList CompanyTypeList { get; set; }
+        [DisplayName("Profile Type")]
         public int ProfileType { get; set; }
+        [DisplayName("Competency Level")]
         public int CompetencyLevel { get; set; }
         public int Country { get; set; }
+        [DisplayName("Per Hour Rate")]
         public int PerHourRate { get; set; }
     }
     public class AssessmentQuestions

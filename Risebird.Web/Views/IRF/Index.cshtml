@@ -2207,10 +2207,16 @@
             url: "/IRF/FetchIRFAudioLink",
             data: { 'irfid': irfid },
             success: function (data) {
-                document.getElementById('anchorAudioId').href = data;
-                splitData = data.split("/");
-                document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
-                document.getElementById('controlAudioId').src = data;
+                if (data !== null) {
+                    document.getElementById('anchorAudioId').href = data;
+                    splitData = data.split("/");
+                    document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
+                    document.getElementById('controlAudioId').src = data;
+                }
+                else {
+                    document.getElementById('anchorAudioId').innerHTML = null;
+                    document.getElementById('controlAudioId').src = null;
+                }
             }
         });
         var modalBct = document.getElementById("VoiceRecordingModal");
