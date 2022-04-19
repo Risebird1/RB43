@@ -14,7 +14,9 @@ Create PROCEDURE [dbo].[usp_GetIRFRecommendation]
 
 AS      
 Begin      
-	select * from IRFRecommendations where CloneIRFId = @cloneIRFId   
+	select ir.*, asg.AssessmentGroup as AssessmentGroupName from IRFRecommendations ir
+	left join AssessmentGroup asg on asg.id = ir.AssessmentGroupId
+	where CloneIRFId = @cloneIRFId   
 END   
    
 

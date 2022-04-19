@@ -133,7 +133,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Billing Owner")]
         [Required]
         public int BillingOwner { get; set; }
-        [Display(Name = "Assessment Group Id")]
+        [Display(Name = "Assessment Group")]
         [Required]
         public string AssessmentGroupId { get; set; }
         public SelectList AssessmentGroupList { get; set; }
@@ -150,6 +150,8 @@ namespace Risebird.Entities.ViewModel
         public string OldCompanyDetails { get; set; }
         public int TemplateId { get; set; }
         public int clonevalue { get; set; }
+
+        [DisplayName("Scheduling Link")]
         public string SchedulingLink { get; set; }
 
         [DisplayName("QC Required")]
@@ -173,7 +175,12 @@ namespace Risebird.Entities.ViewModel
         //public int? ClonableSkillChannelId { get; set; }
         public int TemplateCreatedFromIRFId { get; set; }
         public bool UseAsCloneTemplate { get; set; }
-   
+        public int CreatedFromTemplateId { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public SelectList Clients { get; set; }
+        public SelectList ClientUser { get; set; }
+        public SelectList LevelTech { get; set; }
+        public SelectList SkillsList { get; set; }
     }
     public class InterviewerIds
     {

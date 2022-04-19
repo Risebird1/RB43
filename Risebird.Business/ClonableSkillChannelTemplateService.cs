@@ -58,56 +58,14 @@ namespace Risebird.Business
                 model.Joinability = (IList<TransJoinability>)_irfRepository.GetTransJoinability(irfId);
                 model.Selectability = (IList<TransSelectability>)_irfRepository.GetTransSelectability(irfId);
 
-                //pass the assessmentGroupId to get the interviewers and questions list
                 model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(await _irfRepository.GetQuestionsForAssessmentGroup(assessmentGroupId));
 
-                //populate the dropdowns for recommendation
                 model.IRFRecommendations = new IRFRecommendations();
-
-                //model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
-
 
                 model.IRFRecommendations.AssessmentGroupId = assessmentGroupId != 0 ? assessmentGroupId : 1;
 
-                PopulateDropDowns(model);
-                //model.IRFRecommendations.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
-
-                //model.IRFRecommendations.CategoryId = _skillService.GetAssessmentGroupCategory(assessmentGroupId).Result;
-                //if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
-                //{
-                //    model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
-                //    model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt16(x.Value) == assessmentGroupId).FirstOrDefault().Text;
-                //}
-
-
-                ////populate the dropdowns for levels, types etc.
-                //model.JoinabilityTypeList = new SelectList(_irfRepository.GetJoinabilityMatrix(), "id", "Name");
-                //model.SkillGeneralTypeList = new SelectList(_irfRepository.GetGeneralSkillMatrix(), "id", "Name");
-                //model.SelectabilityTypeList = new SelectList(_irfRepository.GetSelectabilityMatrix(), "id", "Name");
-
-                //var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                //                   select new { ID = (int)s, Name = s.GetDescription() };
-                //model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-
-                //var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                //                select new { ID = (int)s, Name = s.GetDescription() };
-                //model.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
-                //var competencyLevels = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                //                 select new { ID = (int)s, Name = s.GetDescription() };
-                //model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");
-
-                //model.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-                //model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-
-                //var Skillset = _irfRepository.GetSkills();
-                //if (Skillset != null)
-                //{
-                //    Skillset = Skillset.OrderBy(x => !String.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-                //}
-                //model.Skills = new SelectList(Skillset, "id", "Name");
-
+                PopulateDropDownsForTemplate(model);
                 
-                //return
                 return model;
             }
             catch (Exception ex)
@@ -117,7 +75,7 @@ namespace Risebird.Business
             }
         }
 
-        public ClonableSkillChannelVM PopulateDropDowns(ClonableSkillChannelVM model, bool isEdit = false)
+        public ClonableSkillChannelVM PopulateDropDownsForTemplate(ClonableSkillChannelVM model, bool isEdit = false)
         {
             if(!isEdit)
             {
@@ -257,7 +215,7 @@ namespace Risebird.Business
                     model.IRFRecommendations.StatusRadioValue = model.IRFRecommendations.Status == true ? "true" : "false";
                 }
 
-                PopulateDropDowns(model, true);
+                PopulateDropDownsForTemplate(model, true);
 
                 return model;
 
@@ -300,6 +258,53 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
+        }
+
+        public async Task<IRFVm> GetTemplateDataForPopulatingSkillChannel(int id)
+        {
+            try
+            {
+                var model = new IRFVm();
+                model.CreatedFromTemplateId = id;
+                //get all values from database
+                var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
+                model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
+
+                if(model.IRFRecommendations != null)
+                {
+                    model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
+                    model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
+                    model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
+                    model.JobLevel = model.IRFRecommendations.SeniorityLevelId;
+                    model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
+                    model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore ;
+                }
+                
+                var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
+
+                model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
+                model.SkillCollection = (IList<TransSkill>)(transTechSkills);
+
+                PopulateDropDownsForSkillChannel(model);
+                
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IRFVm PopulateDropDownsForSkillChannel(IRFVm model)
+        {
+            model.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+            model.ClientUser = new SelectList(_irfRepository.GetClientUser(Convert.ToInt32(model.Clients.FirstOrDefault().Value)), "id", "EmailId");
+            model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            model.SkillsList = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+            return model;
         }
     }
 }
