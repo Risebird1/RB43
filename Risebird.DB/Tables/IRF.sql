@@ -31,6 +31,7 @@ CREATE TABLE [dbo].[IRF](
             [IsJoinabilitySelectabilityRequired][bit] NULL,
             [IsGeneralSkillRequired][bit] NULL,
             [AudioComment][VARCHAR](1000) NULL,
+            [CreatedFromTemplateId][int] NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -223,6 +224,7 @@ BEGIN
     ALTER TABLE IRF
     Add IsGeneralSkillRequired bit
 END
+
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
@@ -231,6 +233,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add AudioComment varchar(1000)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreatedFromTemplateId')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CreatedFromTemplateId int NULL
 END
 
 END
