@@ -14,7 +14,11 @@ CREATE PROCEDURE [dbo].[usp_GetAllClonableSkillChannels]
 AS  
 Begin
 
-	select csc.id as ClonableSkillChannelId, csc.Name, csc.CreatedFromIRFId from ClonableSkillChannel csc join IRFRecommendations ir on ir.CloneIRFId = csc.id
+	select csc.id as ClonableSkillChannelId, csc.Name, csc.CreatedFromIRFId, ir.CompanyType as CompanyTypeId, ir.CompetencyLevelId,
+	ir.SeniorityLevelId, ir.CountryType, asg.AssessmentGroup as AssessmentGroupName
+	from ClonableSkillChannel csc 
+	join IRFRecommendations ir on ir.CloneIRFId = csc.id
+	Join AssessmentGroup asg on asg.id = ir.AssessmentGroupId
 	where ir.[Status] = 1
 
 End

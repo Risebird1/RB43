@@ -10,16 +10,25 @@
     ViewBag.PageHeader = "Skill Channel Clone Templates";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
-    //string strtDte = String.Empty;
-    //string endDte = String.Empty;
+    string[] TemplateName = new string[] { };
+    string[] CompetencyLevel = new string[] { };
+    string[] SeniorityLevel = new string[] { };
+    string[] CountryType = new string[] { };
+    string[] CompanyType = new string[] { };
+    string[] AssessmentGroup = new string[] { };
+
 }
 
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
-    {
-        filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContextAccessor.HttpContext.Session.GetString("SkillChannelDetailsFilters"));
-        strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-        endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    }*@
+@if (HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters"));
+    TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
+    CompetencyLevel = filter.CompetencyLevel != null ? filter.CompetencyLevel : new string[] { };
+    SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : new string[] { };
+    CountryType = filter.CountryType != null ? filter.CountryType : new string[] { };
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
+    AssessmentGroup = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+}   
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -59,80 +68,148 @@
 
                             <div class="toolbar">
 
-                                @*<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="filheader">
-                                                    <div class="filavatar">
-                                                        <span class="fa fa-filter"></span>
-                                                    </div>
-                                                    <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
                                                 </div>
-                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                                <form action="@Url.Action("SkillChannelDetails","IRF")" method="post" id="form">
-
-                                                    <div class="modal-body">
-                                                        <div class="row">
-                                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                        Start Date
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                                    </div>
-                                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                            </div>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
 
 
 
+                                            <form action="@Url.Action("Index","Template")" method="post" id="formFilter">
 
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                        End Date
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                                    </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Name">Name</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="TemplateName" name="TemplateName" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
+                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.Name).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
                                                                 </div>
                                                             </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompetencyLevel">Competency Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompetencyLevel" name="CompetencyLevel" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
+                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
-                                                            <div class="col-md-12 col-sm-12">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="SeniorityLevel" name="SeniorityLevel" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
+                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType">Country Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CountryType" name="CountryType" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
+                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.CountryTypeDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompanyType" name="CompanyType" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
+                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.CompanyTypeDesc).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroup">Assessment Group</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="AssessmentGroup" name="AssessmentGroup" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
+                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.AssessmentGroupName).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
+                                                            <div class="form-group">
 
-                                                                <div class="form-group">
-                                                                    <div>
-                                                                        <div class="col-md-12 col-sm-12 pull-right">
+                                                                <div>
+                                                                    <div class="col-md-12 col-sm-12">
 
+                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 20px 0px 10px 0px;float:right;margin-left:5px;">
+                                                                            <font style="font-size:12px;"> Reset Filter</font>
+                                                                        </button>
 
-                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                                <font style="font-size:12px;"> Reset Filter</font>
-                                                                            </button>
-
-
-                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                                <font style="font-size:12px;"> Apply Filter</font>
-                                                                            </button>
-
-
-                                                                        </div>
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin:20px 0px 10px 0px;float:right">
+                                                                            <font style="font-size:12px;"> Apply Filter</font>
+                                                                        </button>
 
                                                                     </div>
+
                                                                 </div>
 
                                                             </div>
                                                         </div>
 
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
 
-                                    </div>*@
+
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
                                 <div>
 
                                     <div id="tableID" class="second" style="overflow-x:scroll">
@@ -189,7 +266,7 @@
                                                                     </span>
                                                                 </button>
                                                             </td>
-                                                    
+
 
                                                         </tr>
 
@@ -249,47 +326,6 @@
         //window.onload = my_code();
     </script>
 }
-
-
-
-<script type="text/javascript">
-
-    $(document).ready(function () {
-
-        $("#ResetFilter").click(function () {
-            ResetFilter();
-        })
-
-        if ('@filter' != "") {
-
-            ApplySessionFilter();
-        }
-
-
-    });
-
-    function ResetFilter() {
-        window.location.href = "/Template/ResetIndex";
-
-    }
-    function ApplySessionFilter() {
-
-        @*var strtDte = '@strtDte';
-        var endDte = '@endDte';
-
-
-        $('input[name=StartDate]').val(strtDte);
-        $('input[name=EndDate]').val(endDte);
-
-        var form = $("#form").serialize();*@
-
-    }
-
-
-
-
-</script>
-
 
 <script>
 
@@ -359,6 +395,49 @@
         }, 2000);
     };
     //// script for loader ends here
+</script>
+<script>
+
+    $(document).ready(function () {
+
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+
+        if ('@filter' != '') {
+            ApplySessionFilter();
+        }
+
+    });
+
+    function ResetFilter() {
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/Template/ResetClonableTemplateFilter",
+            success: function (result) {
+                location.reload(true);
+            }
+        });
+    }
+
+    function ApplySessionFilter() {
+        var templateName =  @Html.Raw(Json.Serialize(TemplateName));
+        var competencyLevel =  @Html.Raw(Json.Serialize(CompetencyLevel));
+        var seniorityLevel =  @Html.Raw(Json.Serialize(SeniorityLevel));
+        var countryType =  @Html.Raw(Json.Serialize(CountryType));
+        var companyType =  @Html.Raw(Json.Serialize(CompanyType));
+        var assessmentGroup =  @Html.Raw(Json.Serialize(AssessmentGroup));
+
+        $("#TemplateName").val(templateName);
+        $("#CompetencyLevel").val(competencyLevel);
+        $("#SeniorityLevel").val(seniorityLevel);
+        $("#CountryType").val(countryType);
+        $("#CompanyType").val(companyType);
+        $("#AssessmentGroup").val(assessmentGroup);
+    }
+
 </script>
 
 
