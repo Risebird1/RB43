@@ -319,7 +319,7 @@
                                                             }
 
                                                             @Html.DropDownListFor(model => model.JobCountry, countryTypeList, "Select", new { @class = "select-css form-control text-box single-line", @onchange = "TechSkillChanged()" })
-                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "#error_JobCountry", @class = "text -danger" })
+                                                            @Html.ValidationMessageFor(model => model.JobCountry, "", new { @id = "error_JobCountry", @class = "text-danger" })
 
                                                         </div>
                                                         <div class="form-group">
@@ -2877,7 +2877,6 @@
                         elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
                         elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
                     }
-
                     if (tdFive != null && tdFive != '') {
                         var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
                         elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
@@ -2893,6 +2892,7 @@
                         elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
                         elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
                     }
+
 
                 }
 

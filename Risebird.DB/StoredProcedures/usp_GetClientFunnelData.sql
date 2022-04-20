@@ -53,7 +53,7 @@ if(@roleId=1)
    (select count(id) from @TotalHRCompletedMeetings) as TotalCompleted,    
     
        
-   (select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.QCStatus=1) as TotalRisebirdSelection,    
+   (select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4)) as TotalRisebirdSelection,    
     
    (select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,    
     
@@ -93,7 +93,7 @@ else if(@roleId=4)
    (select count(id) from @TotalStaffingCompletedMeetings) as TotalCompleted,    
     
        
-   (select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4)and tcm.QCStatus=1) as TotalRisebirdSelection,    
+   (select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4)) as TotalRisebirdSelection,    
     
    (select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,    
     
@@ -136,7 +136,7 @@ else
     
    (select count(id) from @TotalCompletedMeetings) as TotalCompleted,    
     
-   (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4)and tcm.QCStatus=1) as TotalRisebirdSelection,    
+   (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4)) as TotalRisebirdSelection,    
     
    (select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,    
     
