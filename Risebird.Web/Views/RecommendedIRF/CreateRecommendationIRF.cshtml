@@ -2,15 +2,31 @@
 @using Risebird.Entities.Enum;
 
 @{
-    ViewData["Title"] = "Create Interviewing Channel";
+    if (Model.IsEdit)
+    {
+        ViewData["Title"] = "Edit Interviewing Channel";
+    }
+    else
+    {
+        ViewData["Title"] = "Create Interviewing Channel";
+    }
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
-<script>
-    var Header = "<a href='/RecommendedIRF/Index'>Recommendation IRF</a>&nbsp;/&nbsp;Create Interviewing Channel";
-    $('#txtpageHeader').empty().html(Header);
-</script>
-
+@if (Model.IsEdit)
+{
+    <script>
+        var Header = "<a href='/RecommendedIRF/Index'>Recommendation IRF</a>&nbsp;/&nbsp;Edit Interviewing Channel";
+        $('#txtpageHeader').empty().html(Header);
+    </script>
+}
+else
+{
+    <script>
+        var Header = "<a href='/RecommendedIRF/Index'>Recommendation IRF</a>&nbsp;/&nbsp;Create Interviewing Channel";
+        $('#txtpageHeader').empty().html(Header);
+    </script>
+}
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -37,6 +53,16 @@
                                             <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Your Company User</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection!=null?@Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
                                             <li><a href="#" id="rtab-12" class="" onclick="headerClickchange('tab-12')">Questions</a><span id="count_question" class="skillcount">@Model.QuesionList.Count()</span></li>
+                                            @if (Model.IsEdit)
+                                            {
+                                                <li><a href="#" id="rtab-13" class="text-center" onclick="headerClickchange('tab-13')">Audio Recording</a></li>
+                                                <li><a href="#" id="rtab-14" class="text-center" onclick="headerClickchange('tab-14')">Upload Candidates</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li><a href="#" id="rtab-13" class="text-center">Audio Recording</a></li>
+                                                <li><a href="#" id="rtab-14" class="text-center">Upload Candidates</a></li>
+                                            }
                                         </ul>
                                     </div>
                                     <div>
@@ -261,9 +287,15 @@
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
                                                                         <th width="40%" class="table_heading">Skills</th>
                                                                         <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
-                                                                        <th width="10%" class="table_heading">Active</th>
-                                                                        <th width="10%" class="table_heading">Available</th>
-                                                                        @*<th width="10%" class="table_heading text-center">Action</th>*@
+                                                                        @if (Model.IsEdit)
+                                                                        {
+                                                                            <th width="10%" class="table_heading">Active</th>
+                                                                            <th width="10%" class="table_heading">Available</th>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <th width="10%" class="table_heading">Select</th>
+                                                                        }
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -277,25 +309,31 @@
                                                                                 @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                }
+                                                                                @*@if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    {
+                                                                                        @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                    }*@
+                                                                                @Html.Hidden("InterviewerCollection[0].PerSuccessRate", null)
                                                                             </td>
-                                                                            <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
-                                                                            </td>
-                                                                            <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsAvailable", new { @checked = "checked" })
-                                                                            </td>
-
-                                                                            @*<td class="action text-center">
-                                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                </td>*@
+                                                                            @if (Model.IsEdit)
+                                                                            {
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsAvailable", new { @checked = "checked" })
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsSelect", new { @checked = "checked" })
+                                                                                </td>
+                                                                            }
                                                                         </tr>
                                                                     }
                                                                     else
@@ -311,33 +349,32 @@
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    @*@if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                        {
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                        }*@
+                                                                                    @if (!String.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
                                                                                     {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                        <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank">Resume</a>
                                                                                     }
-                                                                                    else
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                    }
+                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].PerSuccessRate)
                                                                                 </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
-                                                                                </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
-                                                                                </td>
-                                                                                @*<td class="action text-center">
-                                                                                        <div>
-                                                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        </div>
-                                                                                    </td>*@
+                                                                                @if (Model.IsEdit)
+                                                                                {
+                                                                                    <td class="text-center">@Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)</td>
+                                                                                    <td class="text-center">@Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td class="text-center">@Html.CheckBoxFor(m => m.InterviewerCollection[i].IsSelect)</td>
+                                                                                }
                                                                             </tr>
                                                                         }
-
                                                                     }
-
-
-
                                                                 </tbody>
                                                             </table>
                                                             <label class="text-danger" id="noInterviewer"></label>
@@ -422,6 +459,111 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <h3 class="tab_drawer_heading" rel="tab-13">Audio Recording</h3>
+                                        <div class="tab-box" id="tab-13">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="table-responsive-sm">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="multiple_row">
+                                                                        <h2>Uploaded Feedback Audio</h2>
+                                                                    </div><!--end of multiple location-->
+                                                                </div><!--end of col-md-12-->
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="row" id="divIRFaudioRecording">
+                                                                        <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+                                                                            <div class="pull-left" style="padding:10px"><button id="startRecButton" onclick="startRecording()" title="Start Recording"><i class="fa fa-play"></i></button></div>
+                                                                            <div class="pull-left" style="padding:10px"><button id="stopRecButton" type="button" onclick="stopIRFRecording('@Model.id')" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
+                                                                            <div class="pull-left" style="padding:10px"><button id="cancelRecButton" type="button" onclick="cancelRecording()" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>
+                                                                        </div>
+                                                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                                                            <div class="row">
+                                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                                                    <p style="font-size:18px" id="recordingStatus"></p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row" id="recordingRow" style="display:none">
+                                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                                                    <div id="recordingsList"></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="table-responsive-sm">
+                                                                        <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th width="30%">File</th>
+                                                                                    <th width="35%">Play</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    @if (!String.IsNullOrEmpty(Model.AudioComment))
+                                                                                    {
+                                                                                        <td>
+                                                                                            <a id="anchorAudioId" asp-append-version="true" href="@Model.AudioComment" download>
+                                                                                                @Model.AudioComment.Split("/")[Model.AudioComment.Split("/").Length - 1]
+                                                                                            </a>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <audio id="controlAudioId" asp-append-version="true" src="@Model.AudioComment" controls></audio>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>
+                                                                                            <a id="anchorAudioId" asp-append-version="true" download>
+                                                                                            </a>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <audio id="controlAudioId" asp-append-version="true" controls></audio>
+                                                                                        </td>
+                                                                                    }
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div><!--end of col-md-12-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="tab_drawer_heading" rel="tab-14">Upload Candidates</h3>
+                                        <div class="tab-box" id="tab-14">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="table-responsive-sm">
+                                                            <div class="form-group text-center">
+                                                                <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadTemplate", "Candidate")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
+                                                            </div>
+                                                            @using (Html.BeginForm("RecommendedImportQuickCandidates", "RecommendedIRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                            {
+                                                                <div class="form-group">
+                                                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile" style="margin:0px auto; display:block;">
+                                                                        <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                                                            <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idExcelFile" />
+                                                                        </div>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="">
+                                                                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Upload Candidates" onclick="RecommendedImportQuickCandidates()">
+                                                                </div>
+                                                                @*<input type="hidden" id="_IRFId" name="_IRFId" value='@Model.id'>
+                                                                    <input type="hidden" id="_IRFName" name="_IRFName" value='@Model.IRFId'>
+                                                                    <input type="hidden" id="IsSendInvite" name="IsSendInvite">*@
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -450,6 +592,8 @@
                             @Html.HiddenFor(m => m.AssessmentGroupList)
                             @Html.HiddenFor(m => m.JobCountry)
                             @Html.HiddenFor(m => m.Heuristicsscore)
+                            @Html.HiddenFor(m => m.CompanyType)
+                            @Html.HiddenFor(m => m.IsEdit)
 
 
                             @Html.HiddenFor(m => m.OldAssessmentGroupId)
@@ -458,6 +602,7 @@
                             @Html.HiddenFor(m => m.OldCompanyDetails)
                             @Html.HiddenFor(m => m.ResourceUrl)
                             @Html.HiddenFor(m => m.IsClone)
+                            @Html.HiddenFor(m => m.BillingOwner)
                             @if (Model.OldInterviewerCollection != null)
                             {
                                 for (int i = 0; i < Model.OldInterviewerCollection.Count(); i++)
@@ -484,8 +629,28 @@
         </div>
     </div>
 </div>
+<div id="importResultModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-file-import" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="importResultHeading">Import status</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="importResultPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="importResultTableBody" style=" overflow: auto; height: 300px">
+            </div>
+        </div>
+    </div>
+</div>
 
 @*<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -493,9 +658,9 @@
         var useAsCloneTemplate = '@Model.UseAsCloneTemplate';
         $("#btnPrev").click(function () {
             var activeTab = $(".active").text();
-             if (activeTab.trim() == "Client") {
+            if (activeTab.trim() == "Your Company User") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-3").addClass("active");
+                $("#rtab-1").addClass("active");
                 document.getElementById("tab-1").style.display = "block";
                 document.getElementById("tab-7").style.display = "none";
                 document.getElementById("btnPrev").style.display = "none";
@@ -508,7 +673,7 @@
             }
             else if (activeTab.trim() == "Questions") {
                 $(".tab-menu li a").removeClass("active");
-                    $("#rtab-10").addClass("active");
+                    $("#rtab-8").addClass("active");
                 document.getElementById("tab-8").style.display = "block";
                 document.getElementById("tab-12").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
@@ -516,7 +681,6 @@
             }
         });
         $("#btnNext").click(function () {
-            var isGeneralSkillRequired = document.getElementById('IsGeneralSkillRequired').checked;
             var flag = false;
             var activeTab = $(".active").text();
            if (activeTab.trim() == "Tech Skill") {
@@ -525,10 +689,11 @@
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-7").addClass("active");
                     document.getElementById("tab-7").style.display = "block";
-                    document.getElementById("tab-3").style.display = "none";
+                    document.getElementById("tab-1").style.display = "none";
+                    document.getElementById("btnPrev").style.display = "block";
                 }
             }
-           else if (activeTab.trim() == "Client") {
+           else if (activeTab.trim() == "Your Company User") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -541,7 +706,7 @@
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                        $("#rtab-10").addClass("active");
+                        $("#rtab-12").addClass("active");
                     document.getElementById("tab-12").style.display = "block";
                     document.getElementById("tab-8").style.display = "none";
                     document.getElementById("btnNext").style.display = "none";
@@ -557,7 +722,7 @@
             flag = checkWeightageTab("SkillCollection");
             return flag;
         }
-        else if (activeTab.trim() == "Client") {
+        else if (activeTab.trim() == "Your Company User") {
             flag = checkClientDetails();
             return flag;
         }
@@ -579,7 +744,7 @@
                 document.getElementById(newHeader).style.display = "block";
             }
         }
-        else if (activeTab.trim() == "Client") {
+       else if (activeTab.trim() == "Your Company User") {
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
@@ -603,6 +768,20 @@
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
         }
+       else if (activeTab.trim() == "Audio Recording") {
+           $(".tab-menu li a").removeClass("active");
+           $("#r" + newHeader).addClass("active");
+
+           document.getElementById("tab-13").style.display = "none";
+           document.getElementById(newHeader).style.display = "block";
+        }
+       else if (activeTab.trim() == "Upload Candidates") {
+           $(".tab-menu li a").removeClass("active");
+           $("#r" + newHeader).addClass("active");
+
+           document.getElementById("tab-14").style.display = "none";
+           document.getElementById(newHeader).style.display = "block";
+       }
         if (!flag) {
             if (newHeader == "tab-1") {
                 document.getElementById("btnPrev").style.display = "none";
@@ -781,7 +960,7 @@
         $("#count_ClientTable").text(rowCount - 1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#ClientCollection_" + i + "__ClientUserId").val() == "") {
-                document.getElementById("error_client").innerHTML = "Client User should not be blank";
+                document.getElementById("error_client").innerHTML = "Your Company User should not be blank";
                 return true;
             }
             else {
@@ -1907,4 +2086,35 @@
 
         }
     })
+</script>
+<script>
+    var spanImport = document.getElementById("importResultPopUp");
+    spanImport.onclick = function () {
+        var modal = document.getElementById("importResultModal");
+        modal.style.display = "none";
+    }
+    function RecommendedImportQuickCandidates() {
+            document.getElementById("btnImport").disabled = true;
+            var irfExcelId = '@Model.id';
+            var irfExcelName = '@Model.IRFId';
+            var excel_file = $("#idExcelFile")[0].files[0];
+            var formdata = new FormData();
+            formdata.append('IRFId', irfExcelId);
+            formdata.append('excel_file', excel_file);
+            formdata.append('IRFName', irfExcelName);
+
+            $.ajax({
+                type: "POST",
+                url: "/RecommendedIRF/RecommendedImportQuickCandidates",
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (data) {
+                    var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                    document.getElementById('importResultModal').style.display = "block";
+                    $('#importResultTableBody').html('');
+                    $('#importResultTableBody').html(importMsg);
+                }
+            });
+        }
 </script>
