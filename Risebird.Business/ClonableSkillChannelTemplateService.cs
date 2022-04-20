@@ -319,5 +319,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public IEnumerable<TransInterviewer> GetClonableIRFTransInterviewer(int id)
+        {
+            try
+            {
+                return _irfRepository.GetClonableIRFTransInterviewer(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

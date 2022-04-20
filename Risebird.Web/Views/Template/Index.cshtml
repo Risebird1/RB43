@@ -251,18 +251,24 @@
 
                                                             <td>
                                                                 <button type="button" class="clickhere_btn pull-left">
-                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.ClonableSkillChannelId)" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
                                                                 </button>
                                                             </td>
 
-                                                            <td></td>
+                                                            <td>
+                                                                <button type="button" class="clickhere_btn pull-left">
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                                </button>
+                                                            </td>
 
                                                             <td>
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit the Template">
-                                                                    <span onclick="location.href='@Url.Action("Edit", "ClonableSkillChannelTemplate", new { @*id = item.CreatedFromIRFId,*@ id = item.ClonableSkillChannelId})'" title="Edit the Template" class="mdc-fab__icon material-icons">
-                                                                        <i style="font-size:14px!important;" class="fa fa-clone"></i>
-                                                                    </span>
-                                                                </button>
+                                                                @if (Model.LoggedInUser == "talent@risebird.io")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Edit the Template">
+                                                                        <span onclick="location.href = '@Url.Action("Edit", "ClonableSkillChannelTemplate", new { id = item.ClonableSkillChannelId })'" title="Edit the Template" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                    </button>
+                                                                }
+
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
                                                                     <span onclick="location.href='@Url.Action("Create", "IRF", new { templateId = item.ClonableSkillChannelId })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
@@ -316,11 +322,14 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="filheader">
-                    <div class="filavatar">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
-                        </span>
-                    </div>
+                    <!--<div class="filavatar">
+                        <!--<span>-->-->
+
+                            <!--@*<img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/000000/external-technology-technology-ecommerce-flaticons-lineal-color-flat-icons.png" />*@
+                            @*<i class="fad fa-cogs" style="height:inherit; width:inherit"></i>*@
+                            @*<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>*@-->
+                        <!--</span>-->
+                    <!--</div>-->
                     <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
                 </div>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -335,6 +344,41 @@
                         <div class="col-md-12 text-right">
                             <div>
                                 <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeTemplateSkillModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="InterviewersModel" class="modal modal-bg" style="z-index:3">
+
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="22" viewBox="0 0 18 18"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg>
+                            @*<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>*@
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left">Interviewers <span class="popup-text" id="interviewers_id_pop"></span></h5>
+                </div>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span onclick="closeInterviewersModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+                </button>
+
+                <div class="modal-body">
+                    <div style="padding:10px" id="divInterviewersBody">
+
+                    </div>
+                    <div>
+                        <div class="col-md-12 text-right">
+                            <div>
+                                <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeInterviewersModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
                             </div>
                         </div>
                     </div>
@@ -480,15 +524,14 @@
 </script>
 
 <script>
-    function openSkillpopup(id) {
+    function openSkillpopup(id, templateName) {
         $.ajax({
             type: "POST",
             url: "/ClonableSkillChannelTemplate/FetchTemplateTechSkillDetails",
             data: { id: id },
             success: function (data) {
                 var modal = document.getElementById("TemplateSkillModel");
-                var skill_id_pop = $("#skill_id_" + id).val();
-                $("#skill_id_pop").text(skill_id_pop);
+                $("#skill_id_pop").text(templateName);
                 modal.style.display = "block";
                 bindSkillData(data);
             }
@@ -519,6 +562,52 @@
         html += '</tbody>';
         html += ' </table></div>';
         $("#divTechSkillBody").empty().html(html);
+    }
+
+</script>
+
+<script>
+    function openInterviewersPopup(id, templateName) {
+        $.ajax({
+            type: "POST",
+            url: "/ClonableSkillChannelTemplate/FetchTemplateInterviewersDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("InterviewersModel");
+                $("#interviewers_id_pop").text(templateName);
+                modal.style.display = "block";
+                bindInterviewersData(data);
+            }
+        });
+    }
+    function closeInterviewersModel() {
+        var model = document.getElementById("InterviewersModel");
+        model.style.display = "none";
+    }
+    function bindInterviewersData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="InterviewersTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="25%" class="table_heading">Email</th>';
+        html += '  <th width="55%" class="table_heading">Skills</th>';
+        html += '  <th width="10%" class="table_heading">Rate</th>';
+        html += '  <th width="10%" class="table_heading">Resume</th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].emailId + '</td>';
+            html += '    <td>' + data[i].primarySkill + '</td>';
+            html += '  <td>' + data[i].perSuccessRate + '</td>';
+            //html += '  <td>' + data[i].resumeLink + '</td>';
+            html += '  <td>' + '<a href="' + data[i].resumeLink + '" target="_blank" data-tooltip="' + data[i].resumeLink + '" >Resume</a>' + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divInterviewersBody").empty().html(html);
     }
 
 </script>
