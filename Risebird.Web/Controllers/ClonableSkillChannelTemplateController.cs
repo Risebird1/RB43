@@ -264,5 +264,20 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index", "Template");
             }
         }
+
+        [HttpPost]
+        public JsonResult FetchTemplateTechSkillDetails(int id)
+        {
+            try
+            {
+                var transTechSkills = _clonableSkillChannelTemplateService.GetClonableTechSkillsbyId(id);
+                return Json(transTechSkills);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

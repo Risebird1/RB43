@@ -306,5 +306,18 @@ namespace Risebird.Business
             model.SkillsList = new SelectList(_irfRepository.GetSkills(), "id", "Name");
             return model;
         }
+
+        public IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id)
+        {
+            try
+            {
+                return _irfRepository.GetClonableTechSkillsbyId(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

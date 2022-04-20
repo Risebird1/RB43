@@ -16,5 +16,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateClonableSkillChannel(ClonableSkillChannelVM model, string loggedInUser);
         Task<IRFVm> GetTemplateDataForPopulatingSkillChannel(int id);
         IRFVm PopulateDropDownsForSkillChannel(IRFVm model);
+        IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id);
     }
 }
