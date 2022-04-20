@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -152,35 +153,101 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            try
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                //var emailid = HttpContext.Session.GetString("email")?.Trim();
-                //emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    ClonableTemplateListVM model = new ClonableTemplateListVM();
-                    model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-                    //model.ClonableTemplates = list;
-                    if (TempData["SuccessErrorCloneTemplateMessage"] != null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
-                        model.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
-                        TempData.Remove("SuccessErrorCloneTemplateMessage");
+                        ClonableTemplateListVM model = new ClonableTemplateListVM();
+                        model.LoggedInUser = emailid;
+                        model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
+
+                        model.ClonableTemplates?.ToList().ForEach(x => { x.CompetencyLevelDesc = ((Heuristicsscorelevel)x.CompetencyLevelId.Value).GetDescription(); x.SeniorityLevelDesc = ((JobLevels)x.SeniorityLevelId.Value).GetDescription(); x.CountryTypeDesc = ((CountryTypeEnum)x.CountryType.Value).GetDescription(); x.CompanyTypeDesc = ((CompanyType)x.CompanyTypeId.Value).GetDescription(); });
+
+                        if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+
+                            filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
+                            filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
+                            filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
+                            filter.CompanyType = filter.CompanyType ?? model.ClonableTemplates.Select(x => x.CompanyTypeDesc).ToArray();
+                            filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
+                            filter.SeniorityLevel = filter.SeniorityLevel ?? model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).ToArray();
+
+                            model.ClonableTemplates = model.ClonableTemplates.Where(c => filter.TemplateName.Contains(c.Name)
+                            && (filter.AssessmentGroup != null ? filter.AssessmentGroup.Contains(c.AssessmentGroupName) : c.AssessmentGroupName == null)
+                            && (filter.CompetencyLevel != null ? filter.CompetencyLevel.Contains(c.CompetencyLevelDesc) : c.CompetencyLevelDesc == null)
+                            && (filter.CountryType != null ? filter.CountryType.Contains(c.CountryTypeDesc) : c.CountryTypeDesc == null)
+                            && (filter.CompanyType != null ? filter.CompanyType.Contains(c.CompanyTypeDesc) : c.CompanyTypeDesc == null)
+                            && (filter.SeniorityLevel != null ? filter.SeniorityLevel.Contains(c.SeniorityLevelDesc) : c.SeniorityLevelDesc == null)).ToList();
+                        }
+
+                        if (TempData["SuccessErrorCloneTemplateMessage"] != null)
+                        {
+                            model.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
+                            TempData.Remove("SuccessErrorCloneTemplateMessage");
+                        }
+                        model.Profile = profileName;
+                        return View(model);
                     }
-                    model.Profile = profileName;
-                    return View(model);
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            else
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(ClonableTemplatesFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("ClonableTemplatesFilters", JsonConvert.SerializeObject(filter));
+                        }
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+
 
         [HttpGet]
         public async Task<IActionResult> ResetTemplateFilter()
@@ -201,6 +268,29 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetClonableTemplateFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("ClonableTemplatesFilters");
+                    return Json(true);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
             }
 
         }
