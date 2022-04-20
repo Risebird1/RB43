@@ -5328,7 +5328,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tcits.*, Skill.[Name] as SkillName from TransClonableIRFTechSkill tcits join Skill on tcits.SkillId=Skill.id  where tcits.ClonableIRFId = @id";
+                var query = "Select tcits.*, Skill.[Name] as SkillName, lt.[Name] as LevelName from TransClonableIRFTechSkill tcits join Skill on tcits.SkillId=Skill.id join LevelTech lt on lt.id = tcits.LevelId where tcits.ClonableIRFId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -5843,7 +5843,7 @@ namespace Risebird.Repository
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, true);
                         }
                     }
 

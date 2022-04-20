@@ -6843,7 +6843,7 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelFromTemplate(model, emailId))
                         {
-                            TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
                             return RedirectToAction("Index", "Template");
                         }
                         else
