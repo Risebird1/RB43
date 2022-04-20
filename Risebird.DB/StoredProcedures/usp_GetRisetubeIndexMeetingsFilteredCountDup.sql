@@ -57,8 +57,7 @@ if @clientid = 0
       outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore    
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))     
       and cast(interviewDate as date) >= cast (@startDate as date)    
-      and cast(interviewDate as date) <= cast (@endDate as date) 
-	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)
+      and cast(interviewDate as date) <= cast (@endDate as date)
       and ulsh.EmailId=@Emailid      
       group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,          
       im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,          
@@ -84,7 +83,6 @@ if @clientid = 0
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null    
       and cast(interviewDate as date) >= cast (@startDate as date)    
       and cast(interviewDate as date) <= cast (@endDate as date)
-	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)
       and ulsh.EmailId=@Emailid      
       group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,          
       im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,          
@@ -110,7 +108,6 @@ if @clientid = 0
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))     
       and cast(interviewDate as date) >= cast (@startDate as date)    
       and cast(interviewDate as date) <= cast (@endDate as date)    
-      and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)    
       group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,          
       im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,          
       im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,          
@@ -133,7 +130,6 @@ if @clientid = 0
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null    
       and cast(interviewDate as date) >= cast (@startDate as date)    
       and cast(interviewDate as date) <= cast (@endDate as date)    
-      and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)    
       group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,          
       im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,          
       im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,          
@@ -175,7 +171,6 @@ if(@searchValue is not null)
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
-	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or (irf.IsQCRequired is null or irf.IsQCRequired=0)) 
 	  and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))    
       and irf.IsDeleted=0 and ca.ClientHRAttemptContact =@Emailid--im.ClientHrContact=@Emailid   
       and cast(interviewDate as date) >= cast (@startDate as date)    
@@ -201,7 +196,6 @@ if(@searchValue is not null)
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
-	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or (irf.IsQCRequired is null or irf.IsQCRequired=0))
 	  and (ic.MoveToCP is null or ic.MoveToCP =0)     
       and irf.IsDeleted=0 and ca.ClientHRAttemptContact =@Emailid--im.ClientHrContact=@Emailid   
       and cast(interviewDate as date) >= cast (@startDate as date)    
@@ -231,7 +225,6 @@ BEGIN
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
-	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or (irf.IsQCRequired is null or irf.IsQCRequired=0))
 	  and (ic.MoveToCP is null or ic.MoveToCP =0) and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%'))    
       --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)     
       and irf.IsDeleted=0    
@@ -259,7 +252,6 @@ BEGIN
       inner join @tblTechSkill tts on tts.InterviewId = im.id    
       left join @tblPatchCount tpc on tpc.InterviewId=ic.InterviewId    
       where ic.MeetingStatus=4 and (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid 
-	  and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or (irf.IsQCRequired is null or irf.IsQCRequired=0))
 	  and (ic.MoveToCP is null or ic.MoveToCP =0)     
       --and ((irf.IsDeleted = 1 and cast(interviewDate as date) >= cast(DATEADD(day, -30, @time) as date)) or IRF.IsDeleted=0)       
       and irf.IsDeleted=0    

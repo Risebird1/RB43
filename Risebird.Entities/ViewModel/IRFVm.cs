@@ -133,7 +133,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Billing Owner")]
         [Required]
         public int BillingOwner { get; set; }
-        [Display(Name = "Assessment Group Id")]
+        [Display(Name = "Assessment Group")]
         [Required]
         public string AssessmentGroupId { get; set; }
         public SelectList AssessmentGroupList { get; set; }
@@ -150,6 +150,8 @@ namespace Risebird.Entities.ViewModel
         public string OldCompanyDetails { get; set; }
         public int TemplateId { get; set; }
         public int clonevalue { get; set; }
+
+        [DisplayName("Scheduling Link")]
         public string SchedulingLink { get; set; }
 
         [DisplayName("QC Required")]

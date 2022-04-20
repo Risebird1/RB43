@@ -34,35 +34,6 @@ namespace Risebird.Web.Controllers
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllTemplates()
-        {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
-                {
-                    var list = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-                    if (TempData["SuccessErrorCloneTemplateMessage"] != null)
-                    {
-                        ViewBag.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
-                        TempData.Remove("SuccessErrorCloneTemplateMessage");
-                    }
-                    return View(list);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
 
         public async Task<IActionResult> Create(int irfId, int assessmentGroupId)
         {
@@ -142,7 +113,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (isTemplateInvalid)
                         {
-                            _clonableSkillChannelTemplateService.PopulateDropDowns(model);
+                            _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model);
                             return View(model);
                         }
                         if (await _clonableSkillChannelTemplateService.CreateClonableSkillChannel(model, emailId))
@@ -258,7 +229,7 @@ namespace Risebird.Web.Controllers
                         
                         if (isTemplateInvalid)
                         {
-                            _clonableSkillChannelTemplateService.PopulateDropDowns(model, true);
+                            _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model, true);
                             return View(model);
                         }
                         if (await _clonableSkillChannelTemplateService.UpdateClonableSkillChannel(model, emailId))

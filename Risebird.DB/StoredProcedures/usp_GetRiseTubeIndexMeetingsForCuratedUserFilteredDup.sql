@@ -76,7 +76,6 @@ AS
       
     and cast(interviewDate as date) >= cast (@startDate as date)  
     and cast(interviewDate as date) <= cast (@endDate as date)  
-    and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)
 	
     group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, ul.FirstName, ul.LastName, im.ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,  
@@ -127,8 +126,7 @@ AS
     where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and cgs.UserId=@id  and ccs.CuratedEmailId=@Emailid and ccs.Score>=30    
       
     and cast(interviewDate as date) >= cast (@startDate as date)  
-    and cast(interviewDate as date) <= cast (@endDate as date)  
-	and ((irf.IsQCRequired=1 and QCF.QCStatus=1) or irf.IsQCRequired=0 or irf.IsQCRequired is null)
+    and cast(interviewDate as date) <= cast (@endDate as date) 
 
     group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, ul.FirstName, ul.LastName, im.ClientHrContact,      
     im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,  

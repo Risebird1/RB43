@@ -67,7 +67,7 @@ left join QCFeedbackReport qcf on qcf.InterviewId = im.id
 inner join UserList ul on ul.EmailId = im.candidateEmail           
 inner join CandidatesMaster cm on ul.id =cm.UserId          
 inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.QCStatus=1 and irf.IsQCRequired=1 and im.confirmationStatus=1 and irf.ClientId=@ClientId
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  and irf.IsQCRequired=1 and im.confirmationStatus=1 and irf.ClientId=@ClientId
 and im.interviewDate>=@st and im.interviewDate<=@se
 group by irf.id,im.ClientHrContact
 union    

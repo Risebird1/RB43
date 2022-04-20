@@ -92,7 +92,7 @@ inner join dbo.UserList ul on ul.id = tc.ClientUserId
 inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id     
 outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount  
 outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId )Techscore  
-where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@EmailIdParam and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0) and IRF.JDTiltle LIKE ('%' +@JDPatternParam+'%')        
+where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@EmailIdParam  and (ic.MoveToCP is null or ic.MoveToCP =0) and IRF.JDTiltle LIKE ('%' +@JDPatternParam+'%')        
 and cast(im.interviewDate as date)>=cast(@startDateParam as date) and cast(im.interviewDate as date)<=cast(@endDateParam as date)  
 group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ul.EmailId, im.ClientHrContact,        
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,        
