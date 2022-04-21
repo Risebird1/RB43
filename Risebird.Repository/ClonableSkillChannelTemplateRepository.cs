@@ -67,7 +67,7 @@ namespace Risebird.Repository
 
                         foreach (var item in templateDetails.Joinability)
                         {
-                            joinabilityDt.Rows.Add(templateDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            joinabilityDt.Rows.Add(templateDetails.id, item.LevelId, item.Type ?? string.Empty, item.Value ?? string.Empty, item.Weightage);
                         }
 
                     }
@@ -83,7 +83,7 @@ namespace Risebird.Repository
 
                         foreach (var item in templateDetails.Selectability)
                         {
-                            selectabilityDt.Rows.Add(templateDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            selectabilityDt.Rows.Add(templateDetails.id, item.LevelId, item.Type ?? string.Empty, item.Value ?? string.Empty, item.Weightage);
                         }
 
                     }
@@ -99,7 +99,7 @@ namespace Risebird.Repository
 
                         foreach (var item in templateDetails.SkillGeneral)
                         {
-                            skillGeneralDt.Rows.Add(templateDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                            skillGeneralDt.Rows.Add(templateDetails.id, item.LevelId, item.Type, item.Value ?? string.Empty, item.Weightage);
                         }
 
                     }
