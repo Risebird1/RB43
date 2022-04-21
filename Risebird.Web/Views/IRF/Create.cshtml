@@ -60,19 +60,7 @@
                                             <div class="tab-main-box clearfix">
                                                 
                                                 <div class="row">
-                                                    <div class="col-md-4 col-sm-4">
-                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-
-                                                            </div>
-                                                            @*@Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })*@
-                                                            @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "uniqueMsg", @class = "text-danger" })
-
-
-                                                        </div>
-                                                    </div>
+                                                    
                                                     <div class="col-md-4 col-sm-4">
                                                         <div class="form-group" style="margin-bottom:20px;">
                                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
@@ -88,103 +76,97 @@
                                                             @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_BillingOwner", @class = "text-danger" })
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
+
+                                                        </div>
+                                                    </div>
 
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-md-4 col-sm-4">
-                                                        <div class="form-group" style="margin-bottom:20px;">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.SchedulingLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            </div>
-                                                            @Html.EditorFor(model => model.SchedulingLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto-generated." } })
-                                                        </div>
 
-                                                    </div>
-                                                    <div class="col-md-4 col-sm-4">
-                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.AssessmentGroupId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                            @Html.ValidationMessageFor(model => model.AssessmentGroupId, "", new { @id = "error_AssessmentGroupId", @class = "text-danger" })
-                                                        </div>
-                                                    </div>
+
                                                     <div class="col-md-4 col-sm-4">
                                                         <div class="form-group">
                                                             <div class="mandate">
-                                                                @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="JDTiltle">Job Profile</label>
                                                             </div>
-                                                            @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "Add Primary Skill and Role(max 40 char)" } })
                                                             @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @id = "error_JDTiltle", @class = "text-danger" })
 
                                                         </div>
                                                     </div>
 
-                                                    <div class="row">
-                                                        <div class="col-md-4 col-sm-4">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                                @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
 
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-4 col-sm-4">
-                                                            <div class="form-group">
-                                                                Upload JD <span class="red">*</span>
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            Upload JD <span class="red">*</span>
 
 
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
                                                                     </div>
+                                                                    <div class="mdc-radio__ripple"></div>
                                                                 </div>
-                                                                Provide JD Link <span class="red">*</span>
+                                                            </div>
+                                                            Provide JD Link <span class="red">*</span>
 
-                                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                                    <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
-                                                                        <div class="mdc-radio__background">
-                                                                            <div class="mdc-radio__outer-circle"></div>
-                                                                            <div class="mdc-radio__inner-circle"></div>
-                                                                        </div>
-                                                                        <div class="mdc-radio__ripple"></div>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
                                                                     </div>
+                                                                    <div class="mdc-radio__ripple"></div>
                                                                 </div>
-
                                                             </div>
-
-                                                            <div class="form-group" style="display:none" id="linkDiv">
-
-                                                                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-
-                                                            </div>
-                                                            <div class="" style="display:none" id="uploadDiv">
-
-                                                                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
-
-                                                            </div>
-                                                            @Html.ValidationMessageFor(model => model.JDLink, "", new { @id = "error_JDLink", @class = "text-danger" })
 
                                                         </div>
 
+                                                        <div class="form-group" style="display:none" id="linkDiv">
+
+                                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                        </div>
+                                                        <div class="" style="display:none" id="uploadDiv">
+
+                                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                                        </div>
+                                                        @Html.ValidationMessageFor(model => model.JDLink, "", new { @id = "error_JDLink", @class = "text-danger" })
+
+                                                    </div>
+
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group" style="margin-bottom:0px;">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+
+                                                            </div>
+                                                            @*@Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })*@
+                                                            @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @id = "uniqueMsg", @class = "text-danger" })
+
+
+                                                        </div>
                                                     </div>
 
 
 
-
-                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -375,11 +357,11 @@
                                                             <table class="table table-bordered mbn" id="InterviewerTable">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th width="20%" class="table_heading">User</th>
+                                                                        <th width="20%" class="table_heading">EmailId</th>
                                                                         <th width="50%" class="table_heading">Skills</th>
                                                                         <th width="20%" class="table_heading">Per Interviewer Rate <span style="color:red">*</span></th>
                                                                         <th width="10%" class="table_heading"> Select </th>
-                                                                        <th width="10%" class="table_heading"> Availability </th>
+                                                                        <th width="10%" class="table_heading"> Resume </th>
                                                                         @*<th width="10%" class="table_heading text-center">Action</th>*@
                                                                     </tr>
                                                                 </thead>
@@ -387,7 +369,7 @@
                                                                     @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                     {
                                                                     <tr>
-                                                                       
+
                                                                         <td>
                                                                             @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
                                                                             @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
@@ -412,44 +394,88 @@
                                                                         <td class="text-center">
                                                                             @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsActive)
                                                                         </td>
-                                                                        <td class="text-center">
-                                                                            @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsAvailable)
-                                                                        </td>
-                                                                        
+                                                                        @if (Model.InterviewerCollection[0].ResumeLink.Length > 40)
+                                                                        {
+                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a onclick="" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
+                                                                                </td>
+                                                                            }
+
+                                                                        }
+
                                                                     </tr>
                                                                     }
                                                                     else
                                                                     {
                                                                         for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                                         {
-                                                                            <tr>
-                                                                                
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                <tr>
 
-                                                                                </td>
-                                                                                <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                    }
-                                                                                </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
-                                                                                </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
-                                                                                </td>
-                                                                                
-                                                                            </tr>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                        }
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                    </td>
+                                                                    @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
+                                                                    {
+                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a onclick="" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                                                            </td>
+                                                                        }
+
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank">Resume</a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a onclick="">Resume</a>
+                                                                            </td>
+                                                                        }
+
+                                                                    }
+
+                                                                </tr>
                                                                         }
                                                                     }
 
@@ -546,6 +572,24 @@
         return CheckTotalWeightage() && checkInterviewerDetails()/*&& checkUniqueness()*/;
     }
 
+    function IsJobProfileNameInvalid() {
+        var val = document.getElementById("JDTiltle").value;
+        if (val == null || val == "") {
+            document.getElementById("JDTiltle").focus();
+            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile field is required.";
+            return true;
+        }
+        else if (val.length > 40) {
+            document.getElementById("JDTiltle").focus();
+            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            return true;
+        }
+        else {
+            document.getElementById("error_JDTiltle").innerHTML = "";
+            return false;
+        }
+        
+    }
 
     function CheckTotalWeightage() {
 
@@ -643,7 +687,6 @@
 
     }
 
-
     function ClientChanged(element) {
 
         var clientCompanyName = $(element).find("option:selected").text();
@@ -676,7 +719,6 @@
                             currentElement.append(option);
                         });
                     }
-                    console.log(firstClientUserRole);
                     $("#ClientCollection_" + i + "__ClientRoleId").val(firstClientUserRole);
                 }
 
@@ -1052,7 +1094,7 @@
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
                 //flag = !checkUniqueness();
-                
+                flag = IsJobProfileNameInvalid();
                 if ($('#BillingOwner').val() == "") {
                     $('#error_BillingOwner').text("Billing owner is required");
                     flag = true;
@@ -1062,13 +1104,13 @@
                     $('#error_BillingOwner').text("");
                 }
 
-                if ($('#JDTiltle').val() == "") {
-                    $('#error_JDTiltle').text("The JD Title field is required.");
-                    flag = true;
-                }
-                else {
-                    $('#error_JDTiltle').text("");
-                }
+                //if ($('#JDTiltle').val() == "") {
+                //    $('#error_JDTiltle').text("The JD Title field is required.");
+                //    flag = true;
+                //}
+                //else {
+                //    $('#error_JDTiltle').text("");
+                //}
 
                 if ($('#ClientName').val() == "") {
                     $('#error_ClientName').text("The End Client Name field is required.");
