@@ -272,7 +272,10 @@
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
                                                                     <span onclick="location.href='@Url.Action("Create", "IRF", new { templateId = item.ClonableSkillChannelId })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
-                                                                        <i style="font-size:14px!important;" class="fa fa-plus-circle"></i>
+                                                                        @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                            <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                        </svg>
                                                                     </span>
                                                                 </button>
                                                             </td>
@@ -322,14 +325,16 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="filheader">
-                    <!--<div class="filavatar">
-                        <!--<span>-->-->
+                    <div class="filavatar">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
+                            </svg>
+                            @*<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>*@
+                        </span>
 
-                            <!--@*<img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/000000/external-technology-technology-ecommerce-flaticons-lineal-color-flat-icons.png" />*@
-                            @*<i class="fad fa-cogs" style="height:inherit; width:inherit"></i>*@
-                            @*<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>*@-->
-                        <!--</span>-->
-                    <!--</div>-->
+                    </div>
+                    
                     <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
                 </div>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -533,7 +538,8 @@
                 var modal = document.getElementById("TemplateSkillModel");
                 $("#skill_id_pop").text(templateName);
                 modal.style.display = "block";
-                bindSkillData(data);
+                //bindSkillData(data);
+                $("#divTechSkillBody").empty().html(data);
             }
         });
     }
@@ -576,7 +582,8 @@
                 var modal = document.getElementById("InterviewersModel");
                 $("#interviewers_id_pop").text(templateName);
                 modal.style.display = "block";
-                bindInterviewersData(data);
+                //bindInterviewersData(data);
+                $("#divInterviewersBody").empty().html(data);
             }
         });
     }

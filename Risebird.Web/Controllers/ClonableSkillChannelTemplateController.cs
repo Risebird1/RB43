@@ -91,26 +91,26 @@ namespace Risebird.Web.Controllers
                             isTemplateInvalid = true;
                             ModelState.AddModelError("", "Please select atleast one Interviewer from the list.");
                         }
-                        if (!model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
+                        if (model.ClonableTemplateQuestionsCollection !=null  && model.ClonableTemplateQuestionsCollection.Count() !=0 && !model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
                         {
                             isTemplateInvalid = true;
                             ModelState.AddModelError("", "Please select atleast one Question from the list.");
                         }
-                        if (model.Selectability.Any(x => string.IsNullOrEmpty(x.Value)))
-                        {
-                            isTemplateInvalid = true;
-                            ModelState.AddModelError("", "Please fill all the columns in the Selectability Matrix.");
-                        }
-                        if (model.Joinability.Any(x => string.IsNullOrEmpty(x.Value)))
-                        {
-                            isTemplateInvalid = true;
-                            ModelState.AddModelError("", "Please fill all the columns in the Joinability Matrix.");
-                        }
-                        if (model.SkillGeneral.Any(x => string.IsNullOrEmpty(x.Value)))
-                        {
-                            isTemplateInvalid = true;
-                            ModelState.AddModelError("", "Please fill all the columns in the General Skills' Matrix.");
-                        }
+                        //if (model.Selectability.Any(x => string.IsNullOrEmpty(x.Value)))
+                        //{
+                        //    isTemplateInvalid = true;
+                        //    ModelState.AddModelError("", "Please fill all the columns in the Selectability Matrix.");
+                        //}
+                        //if (model.Joinability.Any(x => string.IsNullOrEmpty(x.Value)))
+                        //{
+                        //    isTemplateInvalid = true;
+                        //    ModelState.AddModelError("", "Please fill all the columns in the Joinability Matrix.");
+                        //}
+                        //if (model.SkillGeneral.Any(x => string.IsNullOrEmpty(x.Value)))
+                        //{
+                        //    isTemplateInvalid = true;
+                        //    ModelState.AddModelError("", "Please fill all the columns in the General Skills' Matrix.");
+                        //}
                         if (isTemplateInvalid)
                         {
                             _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model);
@@ -118,7 +118,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (await _clonableSkillChannelTemplateService.CreateClonableSkillChannel(model, emailId))
                         {
-                            TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Clonable Skill Channel Template '{model.TemplateName}' created Successfully!";
+                            TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Clonable Skill Channel Template '{model.TemplateName}' created successfully!";
                             return RedirectToAction("CloneSkillChannnel", "IRF");
                         }
                         else
@@ -266,32 +266,32 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult FetchTemplateTechSkillDetails(int id)
+        public IActionResult FetchTemplateTechSkillDetails(int id)
         {
             try
             {
                 var transTechSkills = _clonableSkillChannelTemplateService.GetClonableTechSkillsbyId(id);
-                return Json(transTechSkills);
+                return PartialView(transTechSkills);
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return Json("Sorry! Failed to retrive Data.");
             }
         }
 
         [HttpPost]
-        public JsonResult FetchTemplateInterviewersDetails(int id)
+        public IActionResult FetchTemplateInterviewersDetails(int id)
         {
             try
             {
                 var interviewers = _clonableSkillChannelTemplateService.GetClonableIRFTransInterviewer(id);
-                return Json(interviewers);
+                return PartialView(interviewers);
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return Json("Sorry! Failed to retrive Data.");
             }
         }
     }
