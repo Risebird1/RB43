@@ -175,6 +175,12 @@ namespace Risebird.Entities.ViewModel
         //public int? ClonableSkillChannelId { get; set; }
         public int TemplateCreatedFromIRFId { get; set; }
         public bool UseAsCloneTemplate { get; set; }
+        public int CreatedFromTemplateId { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public SelectList Clients { get; set; }
+        public SelectList ClientUser { get; set; }
+        public SelectList LevelTech { get; set; }
+        public SelectList SkillsList { get; set; }
         public string AudioComment { get; set; }
         public bool IsEdit { get; set; }
     }

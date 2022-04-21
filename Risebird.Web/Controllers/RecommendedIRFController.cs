@@ -31,8 +31,9 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IRecommendedIRFService _recommendedIRFService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
 
-        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger, ISkillService skillService, IConfiguration configuration, IIRFService irfService, IInterviewerService interviewerService, IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice, IUserRepository userRepository, IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger, ISkillService skillService, IConfiguration configuration, IIRFService irfService, IInterviewerService interviewerService, IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice, IUserRepository userRepository, IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _skillService = skillService;
@@ -44,6 +45,7 @@ namespace Risebird.Web.Controllers
             _userRepository = userRepository;
             _irfService = irfService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
         [HttpGet]
         public IActionResult Index(string emailid, string uniqueid)
@@ -90,20 +92,70 @@ namespace Risebird.Web.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult RecommendatedIRFFilter(string emailid, string uniqueid)
+        public async Task<IActionResult> RecommendatedIRFFilter(string emailid, string uniqueid)
         {
             ViewBag.emailid = emailid;
             ViewBag.uniqueid = uniqueid;
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
-            var model = new IRFRecommendations();
-            model.CategoryList = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
-            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                             select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+            ClonableTemplateListVM model = new ClonableTemplateListVM();
+            model.LoggedInUser = emailid;
+            model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
+
+            model.ClonableTemplates?.ToList().ForEach(x => { x.CompetencyLevelDesc = ((Heuristicsscorelevel)x.CompetencyLevelId.Value).GetDescription(); x.SeniorityLevelDesc = ((JobLevels)x.SeniorityLevelId.Value).GetDescription(); x.CountryTypeDesc = ((CountryTypeEnum)x.CountryType.Value).GetDescription(); x.CompanyTypeDesc = ((CompanyType)x.CompanyTypeId.Value).GetDescription(); });
+
+            if (HttpContext.Session.GetString("ClonableRTemplatesFilters") != null)
+            {
+                var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableRTemplatesFilters"));
+                filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
+                filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
+                filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
+                filter.CompanyType = filter.CompanyType ?? model.ClonableTemplates.Select(x => x.CompanyTypeDesc).ToArray();
+                filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
+                filter.SeniorityLevel = filter.SeniorityLevel ?? model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).ToArray();
+
+                model.ClonableTemplates = model.ClonableTemplates.Where(c => filter.TemplateName.Contains(c.Name)
+                && (filter.AssessmentGroup != null ? filter.AssessmentGroup.Contains(c.AssessmentGroupName) : c.AssessmentGroupName == null)
+                && (filter.CompetencyLevel != null ? filter.CompetencyLevel.Contains(c.CompetencyLevelDesc) : c.CompetencyLevelDesc == null)
+                && (filter.CountryType != null ? filter.CountryType.Contains(c.CountryTypeDesc) : c.CountryTypeDesc == null)
+                && (filter.CompanyType != null ? filter.CompanyType.Contains(c.CompanyTypeDesc) : c.CompanyTypeDesc == null)
+                && (filter.SeniorityLevel != null ? filter.SeniorityLevel.Contains(c.SeniorityLevelDesc) : c.SeniorityLevelDesc == null)).ToList();
+            }
+            if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
+            {
+                model.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
+                TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
+            }
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> RecommendatedIRFFilter(ClonableTemplatesFilter filter, string emailid, string uniqueid)
+        {
+            try
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("ClonableRTemplatesFilters", JsonConvert.SerializeObject(filter));
+                }
+                return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+            }
+        }
+        public async Task<IActionResult> ResetClonableTemplateFilter()
+        {
+            try
+            {
+                HttpContext.Session.Remove("ClonableRTemplatesFilters");
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
         }
         [HttpPost]
         public IActionResult FetchRecommendedIRF(IRFRecommendations model, string emailid, string uniqueid)
@@ -243,7 +295,7 @@ namespace Risebird.Web.Controllers
                     if (!(_irfService.CheckUniqueness(model.IRFId)))
                     {
                         TempData["SuccessErrorCloneSkillChannnelMessage"] = "Sorry! Skills Channel with this name already exists!";
-                        return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
                     }
                     var domain = Request.Scheme + "://" + Request.Host.Value;
                     if (String.IsNullOrEmpty(model.OldCalendlyLink))
@@ -258,12 +310,12 @@ namespace Risebird.Web.Controllers
                     if (await _recommendedIRFService.AddRecommendationIRFDetails(model, emailid, domain))
                     {
                         TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel has been saved Successfully!";
-                        return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
                     }
                     else
                     {
                         TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel were not saved.";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
                     }
                 }
                 else
