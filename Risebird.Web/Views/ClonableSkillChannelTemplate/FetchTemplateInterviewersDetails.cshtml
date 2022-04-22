@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.TransInterviewer>
+
+@if (Model != null && Model.Count() > 0)
+{
+    <div class="table-responsive scrollbar style-2" style="overflow-x:scroll">
+        <table class="table table-bordered mbn" id="InterviewersTable" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th width="25%" class="table_heading">Email Id</th>
+                    <th width="55%" class="table_heading">Skills</th>
+                    <th width="10%" class="table_heading">Rate</th>
+                    <th width="10%" class="table_heading">Resume</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.EmailId</td>
+
+                        @if (!string.IsNullOrEmpty(item.PrimarySkill))
+                        {
+                            @if (item.PrimarySkill.Trim().Length > 40)
+                            {
+                                <td title="@item.PrimarySkill.Trim()">@item.PrimarySkill.Trim().Substring(0, 40)<b> . . .</b></td>
+                            }
+                            else
+                            {
+                                <td title="@item.PrimarySkill.Trim()">@item.PrimarySkill</td>
+                            }
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>@item.PerSuccessRate</td>
+                        <td>
+                            <a href="@item.ResumeLink" target="_blank" data-tooltip="@item.ResumeLink">Resume</a>
+                        </td>
+                    </tr>
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="text-center"> No Interviewers added in this Template.</p>
+}
+
+

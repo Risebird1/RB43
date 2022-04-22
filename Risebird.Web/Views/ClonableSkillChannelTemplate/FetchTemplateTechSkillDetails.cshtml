@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.TransSkill>
+
+@if (Model != null && Model.Count() > 0)
+{
+    <div class="table-responsive scrollbar style-2" style="overflow-x:scroll">
+        <table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th width="20%" class="table_heading">Level</th>
+                    <th width="70%" class="table_heading">Skill Name</th>
+                    <th width="10%" class="table_heading">Weightage</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.LevelName</td>
+
+                        @if (!string.IsNullOrEmpty(item.SkillName))
+                        {
+                            @if (item.SkillName.Trim().Length > 50)
+                            {
+                                <td title="@item.SkillName.Trim()">@item.SkillName.Trim().Substring(0, 50)<b> . . .</b></td>
+                            }
+                            else
+                            {
+                                <td title="@item.SkillName.Trim()">@item.SkillName</td>
+                            }
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>@item.Weightage</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="text-center"> No Skills added in this Template.</p>
+}
+
+
+
