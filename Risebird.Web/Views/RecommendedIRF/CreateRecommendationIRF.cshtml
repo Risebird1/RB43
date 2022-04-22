@@ -2,15 +2,31 @@
 @using Risebird.Entities.Enum;
 
 @{
-    ViewData["Title"] = "Create Interviewing Channel";
+    if (Model.IsEdit)
+    {
+        ViewData["Title"] = "Edit Interviewing Channel";
+    }
+    else
+    {
+        ViewData["Title"] = "Create Interviewing Channel";
+    }
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
-<script>
-    var Header = "<a href='/RecommendedIRF/Index'>Recommendation IRF</a>&nbsp;/&nbsp;Create Interviewing Channel";
-    $('#txtpageHeader').empty().html(Header);
-</script>
-
+@if (Model.IsEdit)
+{
+    <script>
+        var Header = "<a href='/RecommendedIRF/Index'>Recommendation IRF</a>&nbsp;/&nbsp;Edit Interviewing Channel";
+        $('#txtpageHeader').empty().html(Header);
+    </script>
+}
+else
+{
+    <script>
+        var Header = "<a href='/RecommendedIRF/Index'>Recommendation IRF</a>&nbsp;/&nbsp;Create Interviewing Channel";
+        $('#txtpageHeader').empty().html(Header);
+    </script>
+}
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -33,15 +49,89 @@
                                 <div class="tabCon">
                                     <div class="tab-menu">
                                         <ul class="tabs">
-                                            <li><a href="#" id="rtab-1" class="active text-center" onclick="headerClickchange('tab-1')">Tech Skill </a><span id="count_SkillCollection" class="skillcount">@Model.SkillCollection.Count()</span></li>
+                                            <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1" onclick="headerClickchange('tab-1')">Event Details</a></li>
+                                            <li><a href="#" id="rtab-3" class="text-center" onclick="headerClickchange('tab-3')">Tech Skill </a><span id="count_SkillCollection" class="skillcount" style="right: 0px !important;">@Model.SkillCollection.Count()</span></li>
                                             <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Your Company User</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection!=null?@Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
                                             <li><a href="#" id="rtab-12" class="" onclick="headerClickchange('tab-12')">Questions</a><span id="count_question" class="skillcount">@Model.QuesionList.Count()</span></li>
+                                            @if (Model.IsEdit)
+                                            {
+                                                <li><a href="#" id="rtab-13" class="text-center" onclick="headerClickchange('tab-13')">Audio Recording</a></li>
+                                                <li><a href="#" id="rtab-14" class="text-center" onclick="headerClickchange('tab-14')">Upload Candidates</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li><a href="#" id="rtab-13" class="text-center">Audio Recording</a></li>
+                                                <li><a href="#" id="rtab-14" class="text-center">Upload Candidates</a></li>
+                                            }
                                         </ul>
                                     </div>
                                     <div>
-                                        <h3 class="tab_drawer_heading" rel="tab-1">Tech Skill</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-1">Event Details</h3>
                                         <div class="tab-box" id="tab-1" style="display:block;">
+                                            <div class="tab-main-box clearfix">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                            @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="JDTiltle">Job Profile</label>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "Add Primary Skill and Role(max 40 char)" } })
+                                                            @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @id = "error_JDTiltle", @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-4">
+                                                        <div class="form-group">
+                                                            Upload JD <span class="red">*</span>
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+                                                            Provide JD Link <span class="red">*</span>
+
+                                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                                <div class="mdc-radio mdc-radio--touch">
+                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                                    <div class="mdc-radio__background">
+                                                                        <div class="mdc-radio__outer-circle"></div>
+                                                                        <div class="mdc-radio__inner-circle"></div>
+                                                                    </div>
+                                                                    <div class="mdc-radio__ripple"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" style="display:none" id="linkDiv">
+                                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                        </div>
+                                                        <div class="" style="display:none" id="uploadDiv">
+                                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(model => model.JDLink, "", new { @id = "error_JDLink", @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <h3 class="tab_drawer_heading" rel="tab-3">Tech Skill</h3>
+                                        <div class="tab-box" id="tab-3">
                                             <div class="tab-main-box">
                                                 <div class="row">
 
@@ -260,10 +350,16 @@
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">User <span class="red">*</span></th>
                                                                         <th width="40%" class="table_heading">Skills</th>
-                                                                        <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
-                                                                        <th width="10%" class="table_heading">Active</th>
-                                                                        <th width="10%" class="table_heading">Available</th>
-                                                                        @*<th width="10%" class="table_heading text-center">Action</th>*@
+                                                                        <th width="10%" class="table_heading">Resume<span style="color:red">*</span></th>
+                                                                        @if (Model.IsEdit)
+                                                                        {
+                                                                            <th width="10%" class="table_heading">Active</th>
+                                                                            <th width="10%" class="table_heading">Available</th>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <th width="10%" class="table_heading">Select</th>
+                                                                        }
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -277,25 +373,31 @@
                                                                                 @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
                                                                             </td>
                                                                             <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                }
+                                                                                @*@if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    {
+                                                                                        @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                    }*@
+                                                                                @Html.Hidden("InterviewerCollection[0].PerSuccessRate", null)
                                                                             </td>
-                                                                            <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
-                                                                            </td>
-                                                                            <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsAvailable", new { @checked = "checked" })
-                                                                            </td>
-
-                                                                            @*<td class="action text-center">
-                                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                </td>*@
+                                                                            @if (Model.IsEdit)
+                                                                            {
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsAvailable", new { @checked = "checked" })
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBox("InterviewerCollection[0].IsSelect", new { @checked = "checked" })
+                                                                                </td>
+                                                                            }
                                                                         </tr>
                                                                     }
                                                                     else
@@ -311,33 +413,34 @@
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    @*@if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                        {
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                        }*@
+                                                                                    @if (!String.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
                                                                                     {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                        <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank">Resume</a>
                                                                                     }
-                                                                                    else
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                    }
+                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].PerSuccessRate)
                                                                                 </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
-                                                                                </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
-                                                                                </td>
-                                                                                @*<td class="action text-center">
-                                                                                        <div>
-                                                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        </div>
-                                                                                    </td>*@
+                                                                                @if (Model.IsEdit)
+                                                                                {
+                                                                                    <td class="text-center">@Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)</td>
+                                                                                    <td class="text-center">@Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td class="text-center">
+                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsSelect)
+                                                                                    </td>
+                                                                                }
                                                                             </tr>
                                                                         }
-
                                                                     }
-
-
-
                                                                 </tbody>
                                                             </table>
                                                             <label class="text-danger" id="noInterviewer"></label>
@@ -422,15 +525,125 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <h3 class="tab_drawer_heading" rel="tab-13">Audio Recording</h3>
+                                        <div class="tab-box" id="tab-13">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="table-responsive-sm">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="multiple_row">
+                                                                        <h2>Uploaded Feedback Audio</h2>
+                                                                    </div><!--end of multiple location-->
+                                                                </div><!--end of col-md-12-->
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="row" id="divIRFaudioRecording">
+                                                                        <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+                                                                            <div class="pull-left" style="padding:10px"><button id="startRecButton" onclick="startRecording()" title="Start Recording"><i class="fa fa-play"></i></button></div>
+                                                                            <div class="pull-left" style="padding:10px"><button id="stopRecButton" type="button" onclick="stopIRFRecording('@Model.id')" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>
+                                                                            <div class="pull-left" style="padding:10px"><button id="cancelRecButton" type="button" onclick="cancelRecording()" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>
+                                                                        </div>
+                                                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                                                            <div class="row">
+                                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                                                    <p style="font-size:18px" id="recordingStatus"></p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row" id="recordingRow" style="display:none">
+                                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                                                    <div id="recordingsList"></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="table-responsive-sm">
+                                                                        <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th width="30%">File</th>
+                                                                                    <th width="35%">Play</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    @if (!String.IsNullOrEmpty(Model.AudioComment))
+                                                                                    {
+                                                                                        <td>
+                                                                                            <a id="anchorAudioId" asp-append-version="true" href="@Model.AudioComment" download>
+                                                                                                @Model.AudioComment.Split("/")[Model.AudioComment.Split("/").Length - 1]
+                                                                                            </a>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <audio id="controlAudioId" asp-append-version="true" src="@Model.AudioComment" controls></audio>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>
+                                                                                            <a id="anchorAudioId" asp-append-version="true" download>
+                                                                                            </a>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <audio id="controlAudioId" asp-append-version="true" controls></audio>
+                                                                                        </td>
+                                                                                    }
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div><!--end of col-md-12-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="tab_drawer_heading" rel="tab-14">Upload Candidates</h3>
+                                        <div class="tab-box" id="tab-14">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="table-responsive-sm">
+                                                            <div class="form-group text-center">
+                                                                <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadTemplate", "Candidate")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile" style="margin:0px auto; display:block;">
+                                                                    <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                                                        <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idExcelFile" />
+                                                                    </div>
+                                                                </button>
+                                                            </div>
+                                                            <div class="">
+                                                                <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Upload Candidates" onclick="RecommendedImportQuickCandidates()">
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer mt-20 clearfix">
                                 <div class="row  mc-button-area pull-right">
                                     <div class="col-md-12">
-                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                            <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Back To List</font></span>
-                                        </button>
+                                        @if (Model.IsEdit)
+                                        {
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Back To List</font></span>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.uniqueid })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Back To List</font></span>
+                                            </button>
+                                        }
+
                                         @*@Html.ActionLink("Back to List", "Index", "RecommendedIRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })*@
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
                                         <button type="submit" title="Save interviewing channel" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-right" id="btnUpload" value="Save" style="display:none">Save</button>
@@ -450,6 +663,8 @@
                             @Html.HiddenFor(m => m.AssessmentGroupList)
                             @Html.HiddenFor(m => m.JobCountry)
                             @Html.HiddenFor(m => m.Heuristicsscore)
+                            @Html.HiddenFor(m => m.CompanyType)
+                            @Html.HiddenFor(m => m.IsEdit)
 
 
                             @Html.HiddenFor(m => m.OldAssessmentGroupId)
@@ -458,6 +673,7 @@
                             @Html.HiddenFor(m => m.OldCompanyDetails)
                             @Html.HiddenFor(m => m.ResourceUrl)
                             @Html.HiddenFor(m => m.IsClone)
+                            @Html.HiddenFor(m => m.BillingOwner)
                             @if (Model.OldInterviewerCollection != null)
                             {
                                 for (int i = 0; i < Model.OldInterviewerCollection.Count(); i++)
@@ -484,8 +700,28 @@
         </div>
     </div>
 </div>
+<div id="importResultModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-file-import" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="importResultHeading">Import status</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="importResultPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="importResultTableBody" style=" overflow: auto; height: 300px">
+            </div>
+        </div>
+    </div>
+</div>
 
 @*<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>*@
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -493,12 +729,18 @@
         var useAsCloneTemplate = '@Model.UseAsCloneTemplate';
         $("#btnPrev").click(function () {
             var activeTab = $(".active").text();
-             if (activeTab.trim() == "Client") {
+            if (activeTab.trim() == "Tech Skill") {
+                $(".tab-menu li a").removeClass("active");
+                $("#rtab-1").addClass("active");
+                document.getElementById("tab-1").style.display = "block";
+                document.getElementById("tab-3").style.display = "none";
+                document.getElementById("btnPrev").style.display = "none";
+            }else if (activeTab.trim() == "Your Company User") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-3").addClass("active");
-                document.getElementById("tab-1").style.display = "block";
+                document.getElementById("tab-3").style.display = "block";
                 document.getElementById("tab-7").style.display = "none";
-                document.getElementById("btnPrev").style.display = "none";
+                //document.getElementById("btnPrev").style.display = "none";
             }
             else if (activeTab.trim() == "Interviewer") {
                 $(".tab-menu li a").removeClass("active");
@@ -508,7 +750,7 @@
             }
             else if (activeTab.trim() == "Questions") {
                 $(".tab-menu li a").removeClass("active");
-                    $("#rtab-10").addClass("active");
+                    $("#rtab-8").addClass("active");
                 document.getElementById("tab-8").style.display = "block";
                 document.getElementById("tab-12").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
@@ -516,19 +758,28 @@
             }
         });
         $("#btnNext").click(function () {
-            var isGeneralSkillRequired = document.getElementById('IsGeneralSkillRequired').checked;
             var flag = false;
             var activeTab = $(".active").text();
-           if (activeTab.trim() == "Tech Skill") {
+            if (activeTab.trim() == "Event Details") {
+                flag = checkTabValidation(activeTab);
+                if (!flag) {
+                    $(".tab-menu li a").removeClass("active");
+                    $("#rtab-3").addClass("active");
+                    document.getElementById("tab-3").style.display = "block";
+                    document.getElementById("tab-1").style.display = "none";
+                    document.getElementById("btnPrev").style.display = "block";
+                }
+            }else if (activeTab.trim() == "Tech Skill") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-7").addClass("active");
                     document.getElementById("tab-7").style.display = "block";
                     document.getElementById("tab-3").style.display = "none";
+                    //document.getElementById("btnPrev").style.display = "block";
                 }
             }
-           else if (activeTab.trim() == "Client") {
+           else if (activeTab.trim() == "Your Company User") {
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -541,7 +792,7 @@
                 flag = checkTabValidation(activeTab);
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                        $("#rtab-10").addClass("active");
+                        $("#rtab-12").addClass("active");
                     document.getElementById("tab-12").style.display = "block";
                     document.getElementById("tab-8").style.display = "none";
                     document.getElementById("btnNext").style.display = "none";
@@ -557,7 +808,7 @@
             flag = checkWeightageTab("SkillCollection");
             return flag;
         }
-        else if (activeTab.trim() == "Client") {
+        else if (activeTab.trim() == "Your Company User") {
             flag = checkClientDetails();
             return flag;
         }
@@ -569,17 +820,25 @@
     function headerClickchange(newHeader) {
         var activeTab = $(".active").text();
         var flag = false;
-       if (activeTab.trim() == "Tech Skill") {
+        if (activeTab.trim() == "Event Details") {
             flag = checkTabValidation(activeTab);
             if (!flag) {
-
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
                 document.getElementById("tab-1").style.display = "none";
                 document.getElementById(newHeader).style.display = "block";
             }
+        }else if (activeTab.trim() == "Tech Skill") {
+            flag = checkTabValidation(activeTab);
+            if (!flag) {
+
+                $(".tab-menu li a").removeClass("active");
+                $("#r" + newHeader).addClass("active");
+                document.getElementById("tab-3").style.display = "none";
+                document.getElementById(newHeader).style.display = "block";
+            }
         }
-        else if (activeTab.trim() == "Client") {
+       else if (activeTab.trim() == "Your Company User") {
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
@@ -603,6 +862,20 @@
             document.getElementById("tab-12").style.display = "none";
             document.getElementById(newHeader).style.display = "block";
         }
+       else if (activeTab.trim() == "Audio Recording") {
+           $(".tab-menu li a").removeClass("active");
+           $("#r" + newHeader).addClass("active");
+
+           document.getElementById("tab-13").style.display = "none";
+           document.getElementById(newHeader).style.display = "block";
+        }
+       else if (activeTab.trim() == "Upload Candidates") {
+           $(".tab-menu li a").removeClass("active");
+           $("#r" + newHeader).addClass("active");
+
+           document.getElementById("tab-14").style.display = "none";
+           document.getElementById(newHeader).style.display = "block";
+       }
         if (!flag) {
             if (newHeader == "tab-1") {
                 document.getElementById("btnPrev").style.display = "none";
@@ -781,7 +1054,7 @@
         $("#count_ClientTable").text(rowCount - 1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#ClientCollection_" + i + "__ClientUserId").val() == "") {
-                document.getElementById("error_client").innerHTML = "Client User should not be blank";
+                document.getElementById("error_client").innerHTML = "Your Company User should not be blank";
                 return true;
             }
             else {
@@ -836,9 +1109,7 @@
         else {
             interviewerQCRate = 0;
         }
-        CheckQCRequired();
-        CheckJoinabilitySelectabilityRequired();
-        CheckGeneralSkillRequired();
+
         if (useAsCloneTemplate == 'True') {
             RecommendationStatusChanged('@Model.IRFRecommendations.StatusRadioValue');
         }
@@ -856,66 +1127,6 @@
 
 </script>
 <script>
-
-    $('#IsJoinabilitySelectabilityRequired').on('change', function () {
-        CheckJoinabilitySelectabilityRequired()
-    });
-
-    function CheckJoinabilitySelectabilityRequired() {
-        var value = document.getElementById("IsJoinabilitySelectabilityRequired").checked;
-        if (value) {
-            document.getElementById("li_joinability").style.display = "block";
-            document.getElementById("li_selectability").style.display = "block";
-            document.getElementById('rtab-4').style.display = "block";
-            document.getElementById('rtab-5').style.display = "block";
-            document.getElementById('count_Joinability').style.display = "block";
-            document.getElementById('count_Selectability').style.display = "block";
-        }
-        else {
-            document.getElementById("li_joinability").style.display = "none";
-            document.getElementById("li_selectability").style.display = "none";
-            document.getElementById('rtab-4').style.display = "none";
-            document.getElementById('rtab-5').style.display = "none";
-            document.getElementById('count_Joinability').style.display = "none";
-            document.getElementById('count_Selectability').style.display = "none";
-        }
-    }
-
-    $('#IsQCRequired').on('change', function () {
-        CheckQCRequired()
-    });
-
-    function CheckQCRequired() {
-        var value = document.getElementById("IsQCRequired").checked;
-        if (value) {
-            document.getElementById('qc').style.display = "block";
-            document.getElementById('rtab-9').style.display = "block";
-            document.getElementById('count_qc').style.display = "block";
-        }
-        else {
-            document.getElementById('qc').style.display = "none";
-            document.getElementById('rtab-9').style.display = "none";
-            document.getElementById('count_qc').style.display = "none";
-        }
-    }
-
-    $('#IsGeneralSkillRequired').on('change', function () {
-        CheckGeneralSkillRequired()
-    });
-
-    function CheckGeneralSkillRequired() {
-        var value = document.getElementById("IsGeneralSkillRequired").checked;
-        if (value) {
-            document.getElementById('li_generalSkill').style.display = "block";
-            document.getElementById('rtab-6').style.display = "block";
-            document.getElementById('count_SkillGeneral').style.display = "block";
-        }
-        else {
-            document.getElementById('li_generalSkill').style.display = "none";
-            document.getElementById('rtab-6').style.display = "none";
-            document.getElementById('count_SkillGeneral').style.display = "none";
-        }
-    }
 
     function RadioLinkChanged(val) {
         if (val == 'UploadLink') {
@@ -987,6 +1198,7 @@
     }
 
     function CheckTotalWeightage() {
+        debugger;
         var inCorrectCount = 0;
         var skillArray = ["SkillCollection"];
 
@@ -1758,92 +1970,92 @@
 </script>
 
 
-<script>
+@*<script>
 
-    document.body.className += "js";
+        document.body.className += "js";
 
-    var spinner = document.querySelector('.input');
-    //var buttonUp = document.querySelector('.up');
-    //var buttonDown = document.querySelector('.down');
+        var spinner = document.querySelector('.input');
+        //var buttonUp = document.querySelector('.up');
+        //var buttonDown = document.querySelector('.down');
 
-    //buttonUp.onclick = function () {
-    //    var value = parseInt(spinner.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value++;
-    //    spinner.value = value;
-    //};
+        //buttonUp.onclick = function () {
+        //    var value = parseInt(spinner.value, 10);
+        //    value = isNaN(value) ? 0 : value;
+        //    value++;
+        //    spinner.value = value;
+        //};
 
-    //buttonDown.onclick = function () {
-    //    var value = parseInt(spinner.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value--;
-    //    spinner.value = value;
-    //};
-
-
-
-
-    var spinner1 = document.querySelector('.input-1');
-    var buttonUp1 = document.querySelector('.up-1');
-    var buttonDown1 = document.querySelector('.down-1');
-
-    buttonUp1.onclick = function () {
-        var value = parseInt(spinner1.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value++;
-        spinner1.value = value;
-    };
-
-    buttonDown1.onclick = function () {
-        var value = parseInt(spinner1.value, 10);
-        value = isNaN(value) ? 0 : value;
-        value--;
-        spinner1.value = value;
-    };
-
-
-
-    var spinner2 = document.querySelector('.input-2');
-    //var buttonUp2 = document.querySelector('.up-2');
-    //var buttonDown2 = document.querySelector('.down-2');
-
-    //buttonUp2.onclick = function () {
-    //    var value = parseInt(spinner2.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value++;
-    //    spinner2.value = value;
-    //};
-
-    //buttonDown2.onclick = function () {
-    //    var value = parseInt(spinner2.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value--;
-    //    spinner2.value = value;
-    //};
+        //buttonDown.onclick = function () {
+        //    var value = parseInt(spinner.value, 10);
+        //    value = isNaN(value) ? 0 : value;
+        //    value--;
+        //    spinner.value = value;
+        //};
 
 
 
 
-    var spinner3 = document.querySelector('.input-3');
-    //var buttonUp3 = document.querySelector('.up-3');
-    //var buttonDown3 = document.querySelector('.down-3');
+        var spinner1 = document.querySelector('.input-1');
+        var buttonUp1 = document.querySelector('.up-1');
+        var buttonDown1 = document.querySelector('.down-1');
 
-    //buttonUp3.onclick = function () {
-    //    var value = parseInt(spinner3.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value++;
-    //    spinner3.value = value;
-    //};
+        buttonUp1.onclick = function () {
+            var value = parseInt(spinner1.value, 10);
+            value = isNaN(value) ? 0 : value;
+            value++;
+            spinner1.value = value;
+        };
 
-    //buttonDown3.onclick = function () {
-    //    var value = parseInt(spinner3.value, 10);
-    //    value = isNaN(value) ? 0 : value;
-    //    value--;
-    //    spinner3.value = value;
-    //};
+        buttonDown1.onclick = function () {
+            var value = parseInt(spinner1.value, 10);
+            value = isNaN(value) ? 0 : value;
+            value--;
+            spinner1.value = value;
+        };
 
 
-</script>
+
+        var spinner2 = document.querySelector('.input-2');
+        //var buttonUp2 = document.querySelector('.up-2');
+        //var buttonDown2 = document.querySelector('.down-2');
+
+        //buttonUp2.onclick = function () {
+        //    var value = parseInt(spinner2.value, 10);
+        //    value = isNaN(value) ? 0 : value;
+        //    value++;
+        //    spinner2.value = value;
+        //};
+
+        //buttonDown2.onclick = function () {
+        //    var value = parseInt(spinner2.value, 10);
+        //    value = isNaN(value) ? 0 : value;
+        //    value--;
+        //    spinner2.value = value;
+        //};
+
+
+
+
+        var spinner3 = document.querySelector('.input-3');
+        //var buttonUp3 = document.querySelector('.up-3');
+        //var buttonDown3 = document.querySelector('.down-3');
+
+        //buttonUp3.onclick = function () {
+        //    var value = parseInt(spinner3.value, 10);
+        //    value = isNaN(value) ? 0 : value;
+        //    value++;
+        //    spinner3.value = value;
+        //};
+
+        //buttonDown3.onclick = function () {
+        //    var value = parseInt(spinner3.value, 10);
+        //    value = isNaN(value) ? 0 : value;
+        //    value--;
+        //    spinner3.value = value;
+        //};
+
+
+    </script>*@
 
 <script>
     $('body').addClass('sidebar-mini js');
@@ -1907,4 +2119,35 @@
 
         }
     })
+</script>
+<script>
+    var spanImport = document.getElementById("importResultPopUp");
+    spanImport.onclick = function () {
+        var modal = document.getElementById("importResultModal");
+        modal.style.display = "none";
+    }
+    function RecommendedImportQuickCandidates() {
+            document.getElementById("btnImport").disabled = true;
+            var irfExcelId = '@Model.id';
+            var irfExcelName = '@Model.IRFId';
+            var excel_file = $("#idExcelFile")[0].files[0];
+            var formdata = new FormData();
+            formdata.append('IRFId', irfExcelId);
+            formdata.append('excel_file', excel_file);
+            formdata.append('IRFName', irfExcelName);
+
+            $.ajax({
+                type: "POST",
+                url: "/RecommendedIRF/RecommendedImportQuickCandidates",
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (data) {
+                    var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                    document.getElementById('importResultModal').style.display = "block";
+                    $('#importResultTableBody').html('');
+                    $('#importResultTableBody').html(importMsg);
+                }
+            });
+        }
 </script>

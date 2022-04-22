@@ -1152,7 +1152,6 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-        [Authorize]
         [HttpGet]
         public string GetInterviewerSkills(int id)
         {
@@ -1160,7 +1159,7 @@ namespace Risebird.Web.Controllers
             return name;
         }
 
-        [Authorize]
+        
         public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
         {
 
@@ -1236,7 +1235,6 @@ namespace Risebird.Web.Controllers
         }
 
         //GetClientUserRole
-        [Authorize]
         [HttpGet]
         public string GetClientUserRole(string id)
         {

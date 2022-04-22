@@ -2840,7 +2840,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet]
         public FileContentResult DownloadTemplate()
         {
