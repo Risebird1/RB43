@@ -198,7 +198,10 @@ namespace Risebird.Repository
 
                             foreach (var item in irfDetails.InterviewerCollection)
                             {
-                                interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true, irfDetails.IsClone ? item.IsAvailable : true);
+                                if (item.IsSelect)
+                                {
+                                    interviewerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, true, true);
+                                }
                             }
 
                             SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);

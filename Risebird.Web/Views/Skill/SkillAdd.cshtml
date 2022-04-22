@@ -12,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
-  
+
     <div class="mt50">
     </div>
     <div class="content client">
@@ -41,7 +41,7 @@
                                                 @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
 
-                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @maxlength = "100" } })
                                             @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
 
                                         </div>

@@ -124,7 +124,10 @@
                             @if (ViewBag.emailid == "interview7@risebird.io")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                    <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Choose Template</font></span>
+                                    <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
+                                </button>
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                    <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
                                 </button>
                             }
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
