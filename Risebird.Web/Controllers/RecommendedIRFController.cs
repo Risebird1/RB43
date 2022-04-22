@@ -637,5 +637,33 @@ namespace Risebird.Web.Controllers
             skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-");
             return skillChannelName;
         }
+        [HttpPost]
+        public IActionResult FetchTemplateInterviewersDetails(int id)
+        {
+            try
+            {
+                var interviewers = _clonableSkillChannelTemplateService.GetClonableIRFTransInterviewer(id);
+                return Json(interviewers);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Failed to retrive Data.");
+            }
+        }
+        [HttpPost]
+        public IActionResult FetchTemplateTechSkillDetails(int id)
+        {
+            try
+            {
+                var transTechSkills = _clonableSkillChannelTemplateService.GetClonableTechSkillsbyId(id);
+                return Json(transTechSkills);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Failed to retrive Data.");
+            }
+        }
     }
 }
