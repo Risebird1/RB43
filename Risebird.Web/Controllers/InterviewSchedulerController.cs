@@ -462,10 +462,10 @@ namespace Risebird.Web.Controllers
                         if (result.FirstOrDefault().BufferTime > 0)
                         {
                             int buffertimevalue = result.FirstOrDefault().BufferTime;
-                            var comdate = DateTime.Now.AddMinutes(330).AddMinutes(buffertimevalue);
+                            var comdate = DateTime.Now.AddMinutes(-offset).AddHours(buffertimevalue);
                             if (comdate.Date == DateTime.Now.Date)
                             {
-                                int offsetbuffer = DateTime.Now.AddMinutes(330).AddMinutes(buffertimevalue).Hour;
+                                int offsetbuffer = DateTime.Now.AddMinutes(-offset).AddHours(buffertimevalue).Hour;
                                 int valueset = Convert.ToInt32(item.End) - Convert.ToInt32(item.Start);
                                 for (int i = 0; i < valueset; i++)
                                 {
