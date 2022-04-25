@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
 
 
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice, 
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
         {
             _userService = userService;
@@ -1152,7 +1152,6 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-        [Authorize]
         [HttpGet]
         public string GetInterviewerSkills(int id)
         {
@@ -1160,7 +1159,7 @@ namespace Risebird.Web.Controllers
             return name;
         }
 
-        [Authorize]
+
         public async Task<int> GetInterviewerRate(int userId, int? companyType, int? countryType = null)
         {
 
@@ -1236,7 +1235,6 @@ namespace Risebird.Web.Controllers
         }
 
         //GetClientUserRole
-        [Authorize]
         [HttpGet]
         public string GetClientUserRole(string id)
         {
@@ -2093,11 +2091,11 @@ namespace Risebird.Web.Controllers
                         if (isDuplicate)
                         {
                             model.isDuplicateEntries = isDuplicate;
-                            
+
                             SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
-                        
+
                         if (!model.IsClone)
                         {
                             model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
@@ -2275,7 +2273,7 @@ namespace Risebird.Web.Controllers
             ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
             ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
             ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
-            
+
 
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
@@ -6517,6 +6515,7 @@ namespace Risebird.Web.Controllers
             model_report.SkillChannel = SkillChannel;
             model_report.duration = 60;
             model_report.Concurrency = 10;
+            model_report.BufferTime = 12;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -6786,7 +6785,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index", "Template");
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(IRFVm model)
@@ -6802,7 +6801,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
 
-                        
+
                         //check duplicates for client
                         bool isDuplicate = false;
                         var clientCollection = model.ClientCollection.Select(x => (x.ClientUserId));
