@@ -494,6 +494,7 @@ namespace Risebird.Web.Controllers
             model_report.SkillChannel = SkillChannel;
             model_report.duration = 60;
             model_report.Concurrency = 10;
+            model_report.BufferTime = 12;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -510,15 +511,29 @@ namespace Risebird.Web.Controllers
         }
         public string GenerateRandomstring()
         {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var stringChars = new char[5];
-            var random = new Random();
-            for (int i = 0; i < stringChars.Length; i++)
+            //4char date or month and 1char secondUnique
+            DateTime _dt = DateTime.Now;
+            var month = _dt.Month.ToString();
+            if (month.Length == 1)
             {
-                stringChars[i] = chars[random.Next(chars.Length)];
+                month = "0" + month;
             }
-            var finalString = new String(stringChars);
-            return finalString;
+            var _date = _dt.Day.ToString();
+            if (_date.Length == 1)
+            {
+                _date = "0" + _date;
+            }
+            var sec = digSum(_dt.Second);
+            return _date + month + sec.ToString();
+            //var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            //var stringChars = new char[5];
+            //var random = new Random();
+            //for (int i = 0; i < stringChars.Length; i++)
+            //{
+            //    stringChars[i] = chars[random.Next(chars.Length)];
+            //}
+            //var finalString = new String(stringChars);
+            //return finalString;
         }
         [HttpPost]
         public string RecommendedImportQuickCandidates(IFormCollection formCollection)
@@ -664,6 +679,21 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Sorry! Failed to retrive Data.");
             }
+        }
+        public int digSum(int n)
+        {
+            int sum = 0;
+            while (n > 0 || sum > 9)
+            {
+                if (n == 0)
+                {
+                    n = sum;
+                    sum = 0;
+                }
+                sum += n % 10;
+                n /= 10;
+            }
+            return sum;
         }
     }
 }
