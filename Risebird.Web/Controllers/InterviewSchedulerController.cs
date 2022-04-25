@@ -457,6 +457,85 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
+                    else
+                    {
+                        if (result.FirstOrDefault().BufferTime > 0)
+                        {
+                            int buffertimevalue = result.FirstOrDefault().BufferTime;
+                            var comdate = DateTime.Now.AddMinutes(330).AddMinutes(buffertimevalue);
+                            if (comdate.Date == DateTime.Now.Date)
+                            {
+                                int offsetbuffer = DateTime.Now.AddMinutes(330).AddMinutes(buffertimevalue).Hour;
+                                int valueset = Convert.ToInt32(item.End) - Convert.ToInt32(item.Start);
+                                for (int i = 0; i < valueset; i++)
+                                {
+                                    if (addontime == 0)
+                                    {
+                                        var slots = Convert.ToInt32(item.Start) + i;
+                                        DateTime value1 = new DateTime(year, month, day, slots, 0, 0);
+                                        if (result.FirstOrDefault().StartDate <= value1)
+                                        {
+                                            if (slots > offsetbuffer)
+                                            {
+                                                model.Add(slots.ToString() + ":00");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var slots = Convert.ToInt32(item.Start) * 60 + (i * 60) - addontime;
+                                        if (offset > 0 && (slots / 60) < 0)
+                                        {
+                                            var newslot = 24 + (slots / 60);
+                                            foreach (var item2 in result1)
+                                            {
+                                                if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                                {
+                                                    DateTime value1 = new DateTime(year, month, (day - 1), newslot, 0, 0);
+                                                    if (result.FirstOrDefault().StartDate <= value1)
+                                                    {
+                                                        if (slots > offsetbuffer)
+                                                        {
+                                                            model.Add(((slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (offset < 0 && (slots / 60) > 24)
+                                        {
+                                            var newslot = (slots + addontime) / 60;
+                                            foreach (var item2 in result2)
+                                            {
+                                                if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                                {
+                                                    DateTime value1 = new DateTime(year, month, (day + 1), newslot, 0, 0);
+                                                    if (result.FirstOrDefault().StartDate <= value1)
+                                                    {
+                                                        if (slots > offsetbuffer)
+                                                        {
+                                                            model.Add(((slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            DateTime value1 = new DateTime(year, month, day, (Convert.ToInt32(item.Start) + i), 0, 0);
+                                            if (result.FirstOrDefault().StartDate <= value1)
+                                            {
+                                                if (slots > offsetbuffer)
+                                                {
+                                                    model.Add((slots / 60).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     //else
                     //{
                     //    if (Convert.ToInt32(item.Start) <= Convert.ToInt32(DateTime.Now.Hour) && Convert.ToInt32(item.End) > Convert.ToInt32(DateTime.Now.Hour))

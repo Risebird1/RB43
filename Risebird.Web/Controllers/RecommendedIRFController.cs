@@ -494,6 +494,7 @@ namespace Risebird.Web.Controllers
             model_report.SkillChannel = SkillChannel;
             model_report.duration = 60;
             model_report.Concurrency = 10;
+            model_report.BufferTime = 12;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -533,106 +534,6 @@ namespace Risebird.Web.Controllers
             //}
             //var finalString = new String(stringChars);
             //return finalString;
-        }
-        [HttpPost]
-        public string RecommendedImportQuickCandidates(IFormCollection formCollection)
-        {
-            var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
-            var isSendInvite = true;
-            var IRFName = formCollection["IRFName"].ToString();
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (Request != null && formCollection.Files.Count > 0)
-                    {
-                        var file = formCollection.Files[0];
-
-                        if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
-                        {
-                            FileInfo fi = new FileInfo(file.FileName);
-                            if (fi.Extension == ".xls" || fi.Extension == ".xlsx")
-                            {
-                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
-                                if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                    || fileMimeType == "application/vnd.ms-excel")
-                                {
-                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
-                                    string fileName = file.FileName;
-                                    string fileContentType = file.ContentType;
-                                    byte[] fileBytes = new byte[file.Length];
-                                    var data = file.OpenReadStream();
-                                    var candidateList = new List<CandidateQuickAddModel>();
-                                    using (var package = new ExcelPackage(file.OpenReadStream()))
-                                    {
-                                        var currentSheet = package.Workbook.Worksheets;
-                                        var workSheet = currentSheet.First();
-                                        var noOfCol = workSheet.Dimension.End.Column;
-                                        var noOfRow = workSheet.Dimension.End.Row;
-                                        for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
-                                        {
-                                            if (workSheet.Cells[rowIterator, 2].Value != null)
-                                            {
-                                                var candidate = new CandidateQuickAddModel
-                                                {
-                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                                    EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
-                                                    ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
-                                                        ? workSheet.Cells[rowIterator, 3].Value.ToString()
-                                                        : string.Empty,
-                                                    Phone = (workSheet.Cells[rowIterator, 4].Value != null)
-                                                        ? ("+" + workSheet.Cells[rowIterator, 4].Value)
-                                                        : string.Empty,
-                                                    WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                                        ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                                        : string.Empty,
-                                                    ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
-                                                    ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
-                                                    IRFId = IRFId
-                                                };
-                                                candidateList.Add(candidate);
-                                            }
-                                        }
-                                    }
-                                    StringBuilder result = new StringBuilder();
-                                    if (candidateList != null && candidateList.Any())
-                                    {
-                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
-                                    }
-                                    else
-                                    {
-                                        result.Append("No candidates to add!");
-                                    }
-                                    return result.ToString();
-                                }
-                                else
-                                {
-                                    return "Please select valid file for import(.xls, .xslx)!";
-                                }
-                            }
-                            else
-                            {
-                                return "Please select valid file for import(.xls, .xslx)!";
-                            }
-                        }
-                        else
-                        {
-                            return "Failed to import candidates!";
-                        }
-                    }
-                    return "Please select valid file for import!";
-                }
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to import candidates!"; ;
-            }
-            return null;
         }
         [HttpPost]
         public string RecommendedImportQuickCandidates(IFormCollection formCollection)
