@@ -341,6 +341,7 @@ namespace Risebird.Web.Controllers
                             if (timeZone.DisplayName.Contains(offsetvalue))
                             {
                                 timezonevalue = timeZone.DisplayName;
+                                break;
                             }
                         }
                         if (zoomLink.accountemail == "me")
@@ -354,7 +355,7 @@ namespace Risebird.Web.Controllers
                             CC = zoomLink.accountemail,
                             Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
                         };
-                        var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue, model.ClientName);
+                        var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
                         return View(model);
