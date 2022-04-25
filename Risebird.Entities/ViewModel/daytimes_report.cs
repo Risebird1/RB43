@@ -49,6 +49,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList IntervalList { get; set; }
         public int Eventtype { get; set; }
         public int Concurrency { get; set; }
+        [Display(Name = "BufferTime(in Hr.)")]
         public int BufferTime { get; set; }
     }
     public class ScheculeInterview
