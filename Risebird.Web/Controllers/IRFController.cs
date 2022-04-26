@@ -6858,7 +6858,7 @@ namespace Risebird.Web.Controllers
                         var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
-                        if (await _irfService.CreateSkillChannelFromTemplate(model, emailId))
+                        if (await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName))
                         {
                             TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
                             return RedirectToAction("Index");
