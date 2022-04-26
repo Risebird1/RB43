@@ -2392,11 +2392,23 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser)
+        public async Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile)
         {
             try
             {
-                irfDetails.RisebirdHr = GetUserId(loggedInUser);
+                if(profile == ProfileEnum.Client.GetDescription())
+                {
+                    var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
+                    eligibleHrs.RemoveAt(0);
+                    var random = new Random();
+                    int index = random.Next(eligibleHrs.Count);
+                    irfDetails.RisebirdHr = eligibleHrs[index].id;
+                }
+                else
+                {
+                    irfDetails.RisebirdHr = GetUserId(loggedInUser);
+                }
+                
                 irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
                 irfDetails.CompanyDetails = string.Empty;
                 irfDetails.PerMintuteRate = 0;

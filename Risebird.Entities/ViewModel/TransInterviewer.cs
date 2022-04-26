@@ -16,5 +16,6 @@
         public string CodedResumeLink { get; set; }
         public string NickName { get; set; }
         public bool IsSelect { get; set; }
+        //public string CodedName { get; set; }
     }
 }
