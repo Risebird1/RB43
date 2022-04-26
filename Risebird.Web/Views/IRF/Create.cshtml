@@ -405,7 +405,7 @@
                                                                             <td>
                                                                                 @if (Model.Profile == "Client")
                                                                                 {
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[0].CodedName, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[0].NickName, new { @class = "form-control", @readonly = "readonly" })
                                                                                 }
                                                                                 else
                                                                                 {
@@ -479,7 +479,7 @@
                                                                                 <td>
                                                                                     @if (Model.Profile == "Client")
                                                                                     {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].CodedName, new { @class = "form-control", @readonly = "readonly" })
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].NickName, new { @class = "form-control", @readonly = "readonly" })
                                                                                     }
                                                                                     else
                                                                                     {
