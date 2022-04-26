@@ -1706,49 +1706,49 @@
 
     }
 
-    function validateName() {
-        var letterNumber = /^[0-9a-zA-Z]+$/;
+    //function validateName() {
+    //    var letterNumber = /^[0-9a-zA-Z]+$/;
 
-        var val = document.getElementById("TemplateName").value;
+    //    var val = document.getElementById("TemplateName").value;
 
-        if (val == "") {
-            document.getElementById("TemplateName").focus();
-            document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
-            return false;
-        }
-        else if (val.length != 10) {
-            document.getElementById("TemplateName").focus();
-            document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
-            return false;
-        }
-        else if (!(val.match(letterNumber))) {
-            document.getElementById("TemplateName").focus();
-            document.getElementById("error_TemplateName").innerHTML = "Only Letters and Numbers are allowed.";
-            return false;
-        }
-        else {
+    //    if (val == "") {
+    //        document.getElementById("TemplateName").focus();
+    //        document.getElementById("error_TemplateName").innerHTML = "The Template Name is required.";
+    //        return false;
+    //    }
+    //    //else if (val.length != 10) {
+    //    //    document.getElementById("TemplateName").focus();
+    //    //    document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
+    //    //    return false;
+    //    //}
+    //    else if (!(val.match(letterNumber))) {
+    //        document.getElementById("TemplateName").focus();
+    //        document.getElementById("error_TemplateName").innerHTML = "Only Letters and Numbers are allowed.";
+    //        return false;
+    //    }
+    //    else {
 
-            $.ajax({
-                type: "GET",
-                url: "/IRF/CheckUniqueness",
-                data: { 'value': val, 'isCloneTemplate': true },
-                success: function (response) {
-                    if (response == false) {
-                        document.getElementById("error_TemplateName").innerHTML = "This Clone Template Name already exists. Kindly enter a different Name.";
-                        document.getElementById("TemplateName").focus();
-                        return false;
-                    }
-                    else {
-                        document.getElementById("error_TemplateName").innerHTML = "";
-                        return true;
-                    }
+    //        $.ajax({
+    //            type: "GET",
+    //            url: "/IRF/CheckUniqueness",
+    //            data: { 'value': val, 'isCloneTemplate': true },
+    //            success: function (response) {
+    //                if (response == false) {
+    //                    document.getElementById("error_TemplateName").innerHTML = "This Template Name already exists. Kindly enter a different Name.";
+    //                    document.getElementById("TemplateName").focus();
+    //                    return false;
+    //                }
+    //                else {
+    //                    document.getElementById("error_TemplateName").innerHTML = "";
+    //                    return true;
+    //                }
 
-                }
-            });
-            return true;
-        }
+    //            }
+    //        });
+    //        return true;
+    //    }
 
-    }
+    //}
 
 
 </script>
