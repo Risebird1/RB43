@@ -441,7 +441,7 @@
     });
     function setvalues() {
         var slotdays = $("#txthiddenSlotdays").val();
-        for (var i = 1; i < parseInt(slotdays); i++) {
+        for (var i = 0; i < parseInt(slotdays); i++) {
             const now1 = new Date();
             const todayDay1 = now1.getDate(),
                 todayMonth1 = now1.getMonth(),
@@ -457,7 +457,7 @@
                 var compareyear = new Date().getFullYear();
                 if (relativemonth == comparemonth && relativeyear == compareyear)
                     document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;font-weight: bold;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
-                document.getElementById("current-day").setAttribute("style", "background-color:#ffffff!important;font-weight:normal;color:black!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;padding:0px 5px;");
+                //document.getElementById("current-day").setAttribute("style", "background-color:#ffffff!important;font-weight:normal;color:black!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;padding:0px 5px;");
             }
         }
     }
@@ -500,7 +500,7 @@
     function fetchTimeslots(selectdate) {
         var slotdays = $("#txthiddenSlotdays").val();
         var flag = true;
-        for (var i = 1; i < parseInt(slotdays); i++) {
+        for (var i = 0; i < parseInt(slotdays); i++) {
             //var offset = (new Date()).getTimezoneOffset();
             var valuesutc = $("#ddlselecttimezone").val();
             var offset = -(parseFloat(valuesutc) * 60);

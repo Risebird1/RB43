@@ -25,6 +25,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime EndDate { get; set; }
         public string SkillChannelRelation { get; set; }
         public int Concurrency { get; set; }
+        public int BufferTime { get; set; }
     }
     public class daytimes_report
     {
@@ -48,6 +49,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList IntervalList { get; set; }
         public int Eventtype { get; set; }
         public int Concurrency { get; set; }
+        [Display(Name = "BufferTime(in Hr.)")]
+        public int BufferTime { get; set; }
     }
     public class ScheculeInterview
     {
@@ -59,7 +62,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Client HR Coordinator")]
         public string HRCoordinator { get; set; }
         public string InterviewDate { get; set; }
-        [Display(Name = "Upload Your Resume")]
+        [Display(Name = "Upload Your Resume*")]
         public IFormFile ResumeFile { get; set; }
         public string Resume { get; set; }
         [Display(Name = "Staffing Agiencies")]

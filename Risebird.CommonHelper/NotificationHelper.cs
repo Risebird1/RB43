@@ -8,6 +8,7 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -1913,7 +1914,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName)
+        public string SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountemail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset)
         {
             try
             {
@@ -1936,6 +1937,30 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
+                //Start: Attachment
+                StringBuilder str = new StringBuilder();
+                str.AppendLine("BEGIN:VCALENDAR");
+                str.AppendLine("PRODID:-//Schedule a Meeting");
+                str.AppendLine("VERSION:2.0");
+                str.AppendLine("METHOD:REQUEST");
+                str.AppendLine("BEGIN:VEVENT");
+                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset)));
+                str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
+                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
+                str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
+                str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
+                str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", toMails[0], toMails[0]));
+                str.AppendLine("BEGIN:VALARM");
+                str.AppendLine("TRIGGER:-PT15M");
+                str.AppendLine("ACTION:DISPLAY");
+                str.AppendLine("DESCRIPTION:Reminder");
+                str.AppendLine("END:VALARM");
+                str.AppendLine("END:VEVENT");
+                str.AppendLine("END:VCALENDAR");
+                byte[] byteArray = Encoding.ASCII.GetBytes(str.ToString());
+                MemoryStream stream = new MemoryStream(byteArray);
+                msg.AddAttachmentAsync("invite.ics", stream);
+                //End: Attachment
                 return SendMail(msg).Result;
             }
             catch (Exception)
@@ -2042,7 +2067,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton,string cleritybutton,string nodropbutton)
+        public string SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton)
         {
             try
             {

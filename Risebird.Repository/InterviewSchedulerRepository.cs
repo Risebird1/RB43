@@ -53,6 +53,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@duration", model.duration);
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
                 dynamicParameters.Add("@Concurrency", model.Concurrency);
+                dynamicParameters.Add("@BufferTime", model.BufferTime);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
@@ -301,6 +302,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@duration", model.duration);
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
                 dynamicParameters.Add("@Concurrency", model.Concurrency);
+                dynamicParameters.Add("@BufferTime", model.BufferTime);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,
