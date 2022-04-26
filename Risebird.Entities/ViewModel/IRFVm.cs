@@ -181,6 +181,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList ClientUser { get; set; }
         public SelectList LevelTech { get; set; }
         public SelectList SkillsList { get; set; }
+        public string Profile { get; set; }
     }
     public class InterviewerIds
     {

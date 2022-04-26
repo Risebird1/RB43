@@ -459,21 +459,21 @@ namespace Risebird.Web.Controllers
             return finalString;
         }
 
-        public string GenerateSkillChannelName(string assessmentGroupId, string clientCompanyName)
-        {
-            bool flag = false;
-            string skillChannelName = string.Empty;
-            while (!flag)
-            {
-                if (!string.IsNullOrEmpty(clientCompanyName))
-                {
-                    skillChannelName = clientCompanyName.Substring(0, 3);
-                    skillChannelName = skillChannelName + assessmentGroupId.Substring(0, 2) + GenerateRandomstring();
-                }
-                flag = CheckUniqueness(skillChannelName, false);
-            }
-            skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-");
-            return skillChannelName;
-        }
+        //public string GenerateSkillChannelName(string assessmentGroupName, string clientCompanyName)
+        //{
+        //    bool flag = false;
+        //    string skillChannelName = string.Empty;
+        //    while (!flag)
+        //    {
+        //        if (!string.IsNullOrEmpty(clientCompanyName))
+        //        {
+        //            skillChannelName = clientCompanyName.Substring(0, 3);
+        //            skillChannelName = skillChannelName + assessmentGroupName.Substring(0, 2) + GenerateRandomstring();
+        //        }
+        //        flag = CheckUniqueness(skillChannelName, false);
+        //    }
+        //    skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-");
+        //    return skillChannelName;
+        //}
     }
 }

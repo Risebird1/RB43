@@ -933,7 +933,7 @@
             }
             
             if ($('#TemplateName').val() == "") {
-                $('#error_TemplateName').text("Template Name is required");
+                $('#error_TemplateName').text("The Template Name is required.");
                 flag = true;
             }
             else {
@@ -1687,14 +1687,14 @@
 
         if (val == "") {
             document.getElementById("TemplateName").focus();
-            document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
+            document.getElementById("error_TemplateName").innerHTML = "The Template Name is required.";
             return false;
         }
-        else if (val.length != 10) {
-            document.getElementById("TemplateName").focus();
-            document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
-            return false;
-        }
+        //else if (val.length != 10) {
+        //    document.getElementById("TemplateName").focus();
+        //    document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
+        //    return false;
+        //}
         else if (!(val.match(letterNumber))) {
             document.getElementById("TemplateName").focus();
             document.getElementById("error_TemplateName").innerHTML = "Only Letters and Numbers are allowed.";
@@ -1708,7 +1708,7 @@
                 data: { 'value': val, 'isCloneTemplate': true },
                 success: function (response) {
                     if (response == false) {
-                        document.getElementById("error_TemplateName").innerHTML = "This Clone Template Name already exists. Kindly enter a different Name.";
+                        document.getElementById("error_TemplateName").innerHTML = "This Template Name already exists. Kindly enter a different Name.";
                         document.getElementById("TemplateName").focus();
                         return false;
                     }

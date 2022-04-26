@@ -18,7 +18,7 @@ Create PROCEDURE [dbo].[usp_GetClonableIRFTransInterviewer]
 AS
 Begin
 
-select ti.*, c.PrimarySkill, ul.EmailId, ipr.ResumeLink from  (SELECT  UserId, PrimarySkill = 
+select ti.*, c.PrimarySkill, ul.EmailId, ipr.ResumeLink, ipr.CodedResumeLink, ipr.NickName as CodedName from  (SELECT  UserId, PrimarySkill = 
     STUFF((SELECT ', ' + SkillName
            FROM (select ipr.*,sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) b 
            WHERE b.Id = a.Id
