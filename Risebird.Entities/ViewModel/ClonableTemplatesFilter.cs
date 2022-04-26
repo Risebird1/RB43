@@ -6,7 +6,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class ClonableTemplatesFilter
     {
-        public string[] TemplateName { get; set; }
+        //public string[] TemplateName { get; set; }
         public string[] CompetencyLevel { get; set; }
         public string[] SeniorityLevel { get; set; }
         public string[] CountryType { get; set; }

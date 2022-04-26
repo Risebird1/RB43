@@ -48,7 +48,7 @@
                                         <ul class="tabs">
                                             <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1">Event Details</a></li>
                                             <li><a href="#" rel="tab-2" class="" id="rtab-2">Tech Skill</a><span id="count_SkillCollection" class="skillcount">@(Model.SkillCollection != null ? Model.SkillCollection.Count() : 0)</span></li>
-                                            <li><a href="#" rel="tab-3" class="text-center" id="rtab-3">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-3" class="text-center" id="rtab-3">Client User</a><span id="count_ClientTable" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-4" class="" id="rtab-4">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
                                         </ul>
 
@@ -64,7 +64,16 @@
                                                     <div class="col-md-4 col-sm-4">
                                                         <div class="form-group" style="margin-bottom:20px;">
                                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                                            @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this)" })
+                                                            @if (Model.Profile == "Client")
+                                                            {
+                                                                @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @disabled = "disabled"})
+                                                                @Html.HiddenFor(m => m.ClientId)
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this)" })
+
+                                                            }
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 col-sm-4">
@@ -278,7 +287,7 @@
                                             </div>
                                         </div>
 
-                                        <h3 class="tab_drawer_heading" rel="tab-3">Client</h3>
+                                        <h3 class="tab_drawer_heading" rel="tab-3">Client User</h3>
                                         <div class="tab-box" id="tab-3">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -288,7 +297,7 @@
                                                             <table class="table table-bordered mbn" id="ClientTable">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th class="table_heading">User <span class="red">*</span></th>
+                                                                        <th class="table_heading">EmailId <span class="red">*</span></th>
                                                                         <th class="table_heading">Role</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
@@ -346,6 +355,14 @@
                                             </div>
                                         </div>
                                         <h3 class="tab_drawer_heading" rel="tab-4">Interviewer</h3>
+                                        @{ 
+                                            string displayStatus = string.Empty;//"block";
+
+                                            if(Model.Profile == "Client")
+                                            {
+                                                displayStatus = "none";
+                                            }
+                                        }
                                         <div class="tab-box" id="tab-4">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -357,125 +374,169 @@
                                                             <table class="table table-bordered mbn" id="InterviewerTable">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th width="20%" class="table_heading">EmailId</th>
+                                                                        @if (Model.Profile == "Client")
+                                                                        {
+                                                                            <th width="20%" class="table_heading">Pseudonym</th>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <th width="20%" class="table_heading">EmailId</th>
+                                                                        }
                                                                         <th width="50%" class="table_heading">Skills</th>
-                                                                        <th width="20%" class="table_heading">Per Interviewer Rate <span style="color:red">*</span></th>
+                                                                        
+                                                                        <th width="20%" class="table_heading" style="display:@displayStatus">Per Interviewer Rate <span style="color:red">*</span></th>
+
                                                                         <th width="10%" class="table_heading"> Select </th>
-                                                                        <th width="10%" class="table_heading"> Resume </th>
-                                                                        @*<th width="10%" class="table_heading text-center">Action</th>*@
+                                                                        @if (Model.Profile == "Client")
+                                                                        {
+                                                                            <th width="30%" class="table_heading"> Coded Resume </th>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <th width="10%" class="table_heading"> Resume </th>
+                                                                        }
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                     {
-                                                                    <tr>
+                                                                        <tr>
 
-                                                                        <td>
-                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                            @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
-                                                                        </td>
-                                                                        <td>
+                                                                            <td>
+                                                                                @if (Model.Profile == "Client")
+                                                                                {
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[0].NickName, new { @class = "form-control", @readonly = "readonly" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                                }
+                                                                                @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
+                                                                            </td>
+                                                                            <td>
 
-                                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                        </td>
-                                                                        <td>
-                                                                            @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                            </td>
+                                                                            <td style="display:@displayStatus">
+                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                {
+                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                                                                                }
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsActive)
+                                                                            </td>
+                                                                            @if (Model.Profile == "Client")
                                                                             {
-                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].CodedResumeLink))
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a href="@Model.InterviewerCollection[0].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].CodedResumeLink">Resume</a>
+                                                                                    </td>
+
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                                                    </td>
+                                                                                }
 
                                                                             }
                                                                             else
                                                                             {
-                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
+                                                                                    </td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="" data-tooltip="">No Resume</a>
+                                                                                    </td>
+                                                                                }
 
                                                                             }
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            @Html.CheckBoxFor(m => m.InterviewerCollection[0].IsActive)
-                                                                        </td>
-                                                                        @if (Model.InterviewerCollection[0].ResumeLink.Length > 40)
-                                                                        {
-                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
-                                                                            {
-                                                                                <td class="cadName">
-                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
-                                                                                </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td class="cadName">
-                                                                                    <a onclick="" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
-                                                                                </td>
-                                                                            }
 
-                                                                        }
-
-                                                                    </tr>
+                                                                        </tr>
                                                                     }
                                                                     else
                                                                     {
                                                                         for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                                         {
-                                                                <tr>
+                                                                            <tr>
 
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                                <td>
+                                                                                    @if (Model.Profile == "Client")
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].NickName, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    }
+                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                    </td>
-                                                                    <td>
-                                                                        @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
-                                                                        {
-                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                        }
-                                                                    </td>
-                                                                    <td class="text-center">
-                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
-                                                                    </td>
-                                                                    @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
-                                                                    {
-                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
-                                                                            </td>
-                                                                        }
+                                                                                </td>
+                                                                                <td style="display:@displayStatus">
+                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                    }
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                                </td>
+                                                                                @if (Model.Profile == "Client")
+                                                                                {
+                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink))
+                                                                                    {
+                                                                                        <td class="cadName">
+                                                                                            <a href="@Model.InterviewerCollection[i].CodedResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].CodedResumeLink">Resume</a>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td class="cadName">
+                                                                                            <a onclick="" data-tooltip="">No Resume</a>
+                                                                                        </td>
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                    {
+                                                                                        <td class="cadName">
+                                                                                            <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td class="cadName">
+                                                                                            <a onclick="" data-tooltip="">No Resume</a>
+                                                                                        </td>
+                                                                                    }
+                                                                                }
+                                                                    
 
-                                                                    }
-
-
-                                                                    else
-                                                                    {
-                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank">Resume</a>
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td class="cadName">
-                                                                                <a onclick="">Resume</a>
-                                                                            </td>
-                                                                        }
-
-                                                                    }
-
-                                                                </tr>
+                                                                            </tr>
                                                                         }
                                                                     }
 
@@ -497,6 +558,7 @@
                                     @Html.HiddenFor(m => m.JobLevel)
                                     @Html.HiddenFor(m => m.CompanyType)
                                     @Html.HiddenFor(m => m.Heuristicsscore)
+                                    @Html.HiddenFor(m => m.Profile)
 
 
                                     <div class="card-footer mt-20 clearfix">
@@ -569,7 +631,7 @@
     }
 
     function CheckConditions() {
-        return CheckTotalWeightage() && checkInterviewerDetails()/*&& checkUniqueness()*/;
+        return (CheckTotalWeightage() && checkInterviewerDetails())/*&& checkUniqueness()*/;
     }
 
     function IsJobProfileNameInvalid() {
@@ -657,14 +719,14 @@
                 if (interviewId == '') {
                     //noInterviewer
                     document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
-                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
+                    //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
 
                     return false;
                 }
             }
             document.getElementById("noInterviewer").innerHTML = "";
-            document.getElementById("noInterviewerDown").innerHTML = "";
-            $("#btnUpload").attr("disabled", "disabled");
+            //document.getElementById("noInterviewerDown").innerHTML = "";
+            //$("#btnUpload").attr("disabled", "disabled");
             return true;
         }
         else {
@@ -675,12 +737,12 @@
                 if (interviewId == '') {
                     //noInterviewer
                     document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all Interviewer entries.";
-                    document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
+                    //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
                     break;
 
                 }
                 document.getElementById("noInterviewer").innerHTML = "";
-                document.getElementById("noInterviewerDown").innerHTML = "";
+                //document.getElementById("noInterviewerDown").innerHTML = "";
             }
             return false;
         }
@@ -757,11 +819,12 @@
     }
 
     function GenerateSkillChannelName(clientCompanyName) {
+        debugger;
         var assessmentGroupName = '@Model.AssessmentGroupName';
         $.ajax({
             type: "GET",
-            url: "/RecommendedIRF/GenerateSkillChannelName",
-            data: { 'assessmentGroupId': assessmentGroupName, 'clientCompanyName': clientCompanyName },
+            url: "/IRF/GenerateSkillChannelName",
+            data: { 'assessmentGroupName': assessmentGroupName, 'clientCompanyName': clientCompanyName },
             success: function (data) {
                 if (data != null && data != '') {
                     document.getElementById('IRFId').value = data;
@@ -769,7 +832,6 @@
             }
         });
     }
-
 
     function AddRow() {
         //document.getElementById("btnUpload").disabled = false;
@@ -1073,7 +1135,7 @@
                 document.getElementById("btnPrev").style.display = "none";
             }
             
-            else if (activeTab.trim() == "Client") {
+            else if (activeTab.trim() == "Client User") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-2").addClass("active");
                 document.getElementById("tab-2").style.display = "block";
@@ -1148,7 +1210,7 @@
                 }
             }
 
-            else if (activeTab.trim() == "Client") {
+            else if (activeTab.trim() == "Client User") {
                 flag = checkClientDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
@@ -1243,14 +1305,13 @@
         return false;
     }
     function checkInterviewerDetails() {
-
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
         $("#count_Interviewer").text(rowCount - 1);
         for (var i = 0; i < rowCount; i++) {
             if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";
-                return true;
+                return false;
             }
             else {
                 document.getElementById("noInterviewer").innerHTML = "";
@@ -1258,16 +1319,16 @@
             }
         }
 
-        var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
-        for (i = 0; i < drpdowns.length; i++) {
-            var interviewId = $("#" + drpdowns[i].id).val();
-            if (interviewId == '' || interviewId == null) {
-                document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
-                return true;
-            }
-        }
+        //var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+        //for (i = 0; i < drpdowns.length; i++) {
+        //    var interviewId = $("#" + drpdowns[i].id).val();
+        //    if (interviewId == '' || interviewId == null) {
+        //        document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
+        //        return false;
+        //    }
+        //}
         document.getElementById("noInterviewer").innerHTML = "";
-        return false;
+        return true;
     }
     
 </script>

@@ -34,7 +34,6 @@ namespace Risebird.Web.Controllers
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
-
         public async Task<IActionResult> Create(int irfId, int assessmentGroupId)
         {
             try
@@ -84,18 +83,17 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
-
                         bool isTemplateInvalid = false;
                         if (!model.InterviewerCollection.Any(x => x.IsActive))
                         {
                             isTemplateInvalid = true;
                             ModelState.AddModelError("", "Please select atleast one Interviewer from the list.");
                         }
-                        if (model.ClonableTemplateQuestionsCollection !=null  && model.ClonableTemplateQuestionsCollection.Count() !=0 && !model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
-                        {
-                            isTemplateInvalid = true;
-                            ModelState.AddModelError("", "Please select atleast one Question from the list.");
-                        }
+                        //if (model.ClonableTemplateQuestionsCollection !=null  && model.ClonableTemplateQuestionsCollection.Count() !=0 && !model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
+                        //{
+                        //    isTemplateInvalid = true;
+                        //    ModelState.AddModelError("", "Please select atleast one Question from the list.");
+                        //}
                         //if (model.Selectability.Any(x => string.IsNullOrEmpty(x.Value)))
                         //{
                         //    isTemplateInvalid = true;
@@ -202,30 +200,30 @@ namespace Risebird.Web.Controllers
                             isTemplateInvalid = true;
                             ModelState.AddModelError("", "Please select atleast one Interviewer from the list.");
                         }
-                        if (!model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
-                        {
-                            isTemplateInvalid = true;
-                            ModelState.AddModelError("", "Please select atleast one Question from the list.");
-                        }
+                        //if (!model.ClonableTemplateQuestionsCollection.Any(x => x.IsSelected))
+                        //{
+                        //    isTemplateInvalid = true;
+                        //    ModelState.AddModelError("", "Please select atleast one Question from the list.");
+                        //}
 
-                        if(model.IsTemplateJoinSelectGenskillsRequired)
-                        {
-                            if (model.Selectability.Any(x => string.IsNullOrEmpty(x.Value)))
-                            {
-                                isTemplateInvalid = true;
-                                ModelState.AddModelError("", "Please fill all the columns in the Selectability Matrix.");
-                            }
-                            if (model.Joinability.Any(x => string.IsNullOrEmpty(x.Value)))
-                            {
-                                isTemplateInvalid = true;
-                                ModelState.AddModelError("", "Please fill all the columns in the Joinability Matrix.");
-                            }
-                            if (model.SkillGeneral.Any(x => string.IsNullOrEmpty(x.Value)))
-                            {
-                                isTemplateInvalid = true;
-                                ModelState.AddModelError("", "Please fill all the columns in the General Skills' Matrix.");
-                            }
-                        }
+                        //if(model.IsTemplateJoinSelectGenskillsRequired)
+                        //{
+                        //    if (model.Selectability.Any(x => string.IsNullOrEmpty(x.Value)))
+                        //    {
+                        //        isTemplateInvalid = true;
+                        //        ModelState.AddModelError("", "Please fill all the columns in the Selectability Matrix.");
+                        //    }
+                        //    if (model.Joinability.Any(x => string.IsNullOrEmpty(x.Value)))
+                        //    {
+                        //        isTemplateInvalid = true;
+                        //        ModelState.AddModelError("", "Please fill all the columns in the Joinability Matrix.");
+                        //    }
+                        //    if (model.SkillGeneral.Any(x => string.IsNullOrEmpty(x.Value)))
+                        //    {
+                        //        isTemplateInvalid = true;
+                        //        ModelState.AddModelError("", "Please fill all the columns in the General Skills' Matrix.");
+                        //    }
+                        //}
                         
                         if (isTemplateInvalid)
                         {
@@ -235,13 +233,11 @@ namespace Risebird.Web.Controllers
                         if (await _clonableSkillChannelTemplateService.UpdateClonableSkillChannel(model, emailId))
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Clonable Skill Channel Template '{model.TemplateName}' updated successfully!";
-                            //return RedirectToAction("GetAllTemplates");
                             return RedirectToAction("Index", "Template");
                         }
                         else
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Failed! Clonable Skill Channel '{model.TemplateName}' could not be updated!";
-                            //return RedirectToAction("GetAllTemplates");
                             return RedirectToAction("Index", "Template");
                         }
                     }
@@ -285,8 +281,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var interviewers = _clonableSkillChannelTemplateService.GetClonableIRFTransInterviewer(id);
-                return PartialView(interviewers);
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var interviewers = _clonableSkillChannelTemplateService.GetClonableIRFTransInterviewer(id);
+                    ViewBag.Profile = profileName;
+                    return PartialView(interviewers);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                
             }
             catch (Exception ex)
             {

@@ -6307,7 +6307,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
-                    var irfList = _irfService.GetAllSkillChannelDetails();
+                    var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrEmpty(x.AssessmentGroup));
                     if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("CloneSkillChannelfilters"));
@@ -6347,7 +6347,7 @@ namespace Risebird.Web.Controllers
                     {
                         HttpContext.Session.SetString("CloneSkillChannelfilters", JsonConvert.SerializeObject(filter));
                     }
-                    var irfList = _irfService.GetAllSkillChannelDetails();
+                    var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrEmpty(x.AssessmentGroup));
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.AssessmentGroup).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     irfList = irfList.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)).ToList();
                     return View(irfList);
@@ -6764,7 +6764,16 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                     {
                         var model = new IRFVm();
-                        model = await _clonableSkillChannelTemplateService.GetTemplateDataForPopulatingSkillChannel(templateId);
+                        if(profileName == "Client")
+                        {
+                            model = await _clonableSkillChannelTemplateService.GetTemplateDataForPopulatingSkillChannel(templateId, emailid);
+                            model.IRFId = GenerateSkillChannelName(model.AssessmentGroupName, model.Clients.Where(x => x.Value == model.ClientId.ToString())?.FirstOrDefault()?.Text);
+                        }
+                        else
+                        {
+                            model = await _clonableSkillChannelTemplateService.GetTemplateDataForPopulatingSkillChannel(templateId);
+                        }
+                        model.Profile = profileName;
                         return View(model);
                     }
                     else
@@ -6798,7 +6807,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                     {
 
 
@@ -6814,7 +6823,16 @@ namespace Risebird.Web.Controllers
 
                         if (isDuplicate)
                         {
-                            _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model);
+                            if(profileName == "Client")
+                            {
+                                _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailId);
+
+                            }
+                            else
+                            {
+                                _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model);
+
+                            }
                             return View(model);
                         }
                         string uploadedFileURL = string.Empty;
@@ -6840,10 +6858,10 @@ namespace Risebird.Web.Controllers
                         var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
-                        if (await _irfService.CreateSkillChannelFromTemplate(model, emailId))
+                        if (await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName))
                         {
-                            TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
-                            return RedirectToAction("Index", "Template");
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                            return RedirectToAction("Index");
                         }
                         else
                         {
@@ -6864,9 +6882,73 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Adding IRF has failed";
-                return RedirectToAction("Index");
+                TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                return RedirectToAction("Index", "Template");
             }
+        }
+
+
+        public string GenerateRandomstring()
+        {
+            //4char date or month and 1char secondUnique
+            DateTime _dt = DateTime.Now;
+            var month = _dt.Month.ToString();
+            if (month.Length == 1)
+            {
+                month = "0" + month;
+            }
+            var _date = _dt.Day.ToString();
+            if (_date.Length == 1)
+            {
+                _date = "0" + _date;
+            }
+            var sec = digSum(_dt.Second);
+            return _date + month + sec.ToString();
+        }
+
+        public int digSum(int n)
+        {
+            int sum = 0;
+            while (n > 0 || sum > 9)
+            {
+                if (n == 0)
+                {
+                    n = sum;
+                    sum = 0;
+                }
+                sum += n % 10;
+                n /= 10;
+            }
+            return sum;
+        }
+        //public string GenerateRandomstring()
+        //{
+        //    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        //    var stringChars = new char[5];
+        //    var random = new Random();
+        //    for (int i = 0; i < stringChars.Length; i++)
+        //    {
+        //        stringChars[i] = chars[random.Next(chars.Length)];
+        //    }
+        //    var finalString = new String(stringChars);
+        //    return finalString;
+        //}
+        public string GenerateSkillChannelName(string assessmentGroupName, string clientCompanyName)
+        {
+            bool flag = false;
+            string skillChannelName = string.Empty;
+            while (!flag)
+            {
+                if (!string.IsNullOrEmpty(clientCompanyName))
+                {
+                    skillChannelName = clientCompanyName.Substring(0, 3);
+                    skillChannelName = skillChannelName + assessmentGroupName.Replace(" ", "").Substring(0, 2) + GenerateRandomstring();
+                }
+                //flag = CheckUniqueness(skillChannelName, false);
+                flag = _irfService.CheckUniqueness(skillChannelName, false);
+            }
+            skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-");
+            return skillChannelName;
         }
     }
 }
