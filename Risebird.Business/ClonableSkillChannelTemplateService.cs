@@ -66,6 +66,11 @@ namespace Risebird.Business
 
                 model.IRFRecommendations.AssessmentGroupId = assessmentGroupId != 0 ? assessmentGroupId : 1;
 
+                var assessmentGroupData = await _irfRepository.GetAssessmentGroupDetails(model.IRFRecommendations.AssessmentGroupId.Value);
+                model.IRFRecommendations.CompanyType = assessmentGroupData.CompanyType;
+                model.IRFRecommendations.CompetencyLevelId = assessmentGroupData.CompetencyLevel;
+                model.IRFRecommendations.CountryType = assessmentGroupData.Country;
+                //model.IRFRecommendations.SeniorityLevelId = assessmentGroupData.ProfileType;
                 PopulateDropDownsForTemplate(model);
                 
                 return model;
@@ -105,9 +110,9 @@ namespace Risebird.Business
             var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                   select new { ID = (int)s, Name = s.GetDescription() };
             model.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
-            var competencyLevels = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+            var competencyLevels = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                                    select new { ID = (int)s, Name = s.GetDescription() };
-            model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");
+            model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");//Heuristicsscorelevel
 
             model.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
