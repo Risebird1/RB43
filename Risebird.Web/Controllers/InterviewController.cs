@@ -2016,6 +2016,10 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            if (Page == null)
+                            {
+                                Page = 1;
+                            }
                             a = a + 1;
                             if (a == Page)
                             {
