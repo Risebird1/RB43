@@ -56,7 +56,7 @@
                                                 <h5>Template Details</h5>
                                                 <div class="form-group col-md-6 col-sm-6 pr-1">
                                                     @Html.LabelFor(model => model.TemplateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.EditorFor(m => m.TemplateName, new { htmlAttributes = new { @class = "form-control text-box single-line", @*@onblur = "validateName()",*@@readonly = "readonly" } })
+                                                    @Html.EditorFor(m => m.TemplateName, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "validateName()" } })
                                                     <div style="position:relative">
                                                         @Html.ValidationMessageFor(model => model.TemplateName, "", new { @id = "error_TemplateName", @class = "text-danger", @style = "position:absolute" })
                                                     </div>
@@ -954,13 +954,13 @@
                 }
             }
 
-            //if ($('#TemplateName').val() == "") {
-            //    $('#error_TemplateName').text("Template Name is required");
-            //    flag = true;
-            //}
-            //else {
-            //    $('#error_TemplateName').text("");
-            //}
+            if ($('#TemplateName').val() == "") {
+                $('#error_TemplateName').text("Template Name is required");
+                flag = true;
+            }
+            else {
+                $('#error_TemplateName').text("");
+            }
 
             return flag;
         }
@@ -1706,19 +1706,19 @@
 
     }
 
-    function validateName() {
-        var letterNumber = /^[0-9a-zA-Z]+$/;
+    //function validateName() {
+    //    var letterNumber = /^[0-9a-zA-Z]+$/;
 
-        var val = document.getElementById("TemplateName").value;
+    //    var val = document.getElementById("TemplateName").value;
 
         if (val == "") {
             document.getElementById("TemplateName").focus();
-            document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
+            document.getElementById("error_TemplateName").innerHTML = "The Template Name is required.(max 100 characters)";
             return false;
         }
-        else if (val.length != 10) {
+        else if (val.length > 100) {
             document.getElementById("TemplateName").focus();
-            document.getElementById("error_TemplateName").innerHTML = "The Clone Template Name should be an exact 10 characters long.";
+            document.getElementById("error_TemplateName").innerHTML = "The Template Name should not be greated than 100 characters long.";
             return false;
         }
         else if (!(val.match(letterNumber))) {
@@ -1734,7 +1734,7 @@
                 data: { 'value': val, 'isCloneTemplate': true },
                 success: function (response) {
                     if (response == false) {
-                        document.getElementById("error_TemplateName").innerHTML = "This Clone Template Name already exists. Kindly enter a different Name.";
+                        document.getElementById("error_TemplateName").innerHTML = "This Template Name already exists. Kindly enter a different Name.";
                         document.getElementById("TemplateName").focus();
                         return false;
                     }
@@ -1743,12 +1743,12 @@
                         return true;
                     }
 
-                }
-            });
-            return true;
-        }
+    //            }
+    //        });
+    //        return true;
+    //    }
 
-    }
+    //}
 
 
 </script>

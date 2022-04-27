@@ -183,6 +183,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList SkillsList { get; set; }
         public string AudioComment { get; set; }
         public bool IsEdit { get; set; }
+        public string Profile { get; set; }
     }
     public class InterviewerIds
     {

@@ -23,9 +23,10 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IConfiguration _configuration;
         private readonly ISkillService _skillService;
+        private readonly IClientRepository _clientRepository;
 
         public ClonableSkillChannelTemplateService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,IConfiguration configuration, ISkillService skillService, 
-            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IActivityTrackerRepository activityTrackerRepository)
+            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IActivityTrackerRepository activityTrackerRepository, IClientRepository clientRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,6 +34,7 @@ namespace Risebird.Business
             _skillService = skillService;
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
             _activityTrackerRepository = activityTrackerRepository;
+            _clientRepository = clientRepository;
         }
         public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
         {
@@ -64,6 +66,11 @@ namespace Risebird.Business
 
                 model.IRFRecommendations.AssessmentGroupId = assessmentGroupId != 0 ? assessmentGroupId : 1;
 
+                var assessmentGroupData = await _irfRepository.GetAssessmentGroupDetails(model.IRFRecommendations.AssessmentGroupId.Value);
+                model.IRFRecommendations.CompanyType = assessmentGroupData.CompanyType;
+                model.IRFRecommendations.CompetencyLevelId = assessmentGroupData.CompetencyLevel;
+                model.IRFRecommendations.CountryType = assessmentGroupData.Country;
+                //model.IRFRecommendations.SeniorityLevelId = assessmentGroupData.ProfileType;
                 PopulateDropDownsForTemplate(model);
                 
                 return model;
@@ -103,9 +110,9 @@ namespace Risebird.Business
             var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                   select new { ID = (int)s, Name = s.GetDescription() };
             model.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
-            var competencyLevels = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+            var competencyLevels = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                                    select new { ID = (int)s, Name = s.GetDescription() };
-            model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");
+            model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");//Heuristicsscorelevel
 
             model.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -260,7 +267,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IRFVm> GetTemplateDataForPopulatingSkillChannel(int id)
+        public async Task<IRFVm> GetTemplateDataForPopulatingSkillChannel(int id, string clientEmailId = null)
         {
             try
             {
@@ -280,12 +287,12 @@ namespace Risebird.Business
                     model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore ;
                 }
                 
-                var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
+                //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
 
-                PopulateDropDownsForSkillChannel(model);
+                PopulateDropDownsForSkillChannel(model, clientEmailId);
                 
                 return model;
 
@@ -298,13 +305,30 @@ namespace Risebird.Business
             }
         }
 
-        public IRFVm PopulateDropDownsForSkillChannel(IRFVm model)
+        public IRFVm PopulateDropDownsForSkillChannel(IRFVm model, string clientEmailId = null)
         {
-            model.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-            model.ClientUser = new SelectList(_irfRepository.GetClientUser(Convert.ToInt32(model.Clients.FirstOrDefault().Value)), "id", "EmailId");
-            model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-            model.SkillsList = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-            return model;
+            try
+            {
+                model.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+
+                if (string.IsNullOrEmpty(clientEmailId))
+                {
+                    model.ClientUser = new SelectList(_irfRepository.GetClientUser(Convert.ToInt32(model.Clients.FirstOrDefault().Value)), "id", "EmailId");
+                }
+                else
+                {
+                    model.ClientId = _clientRepository.GetClientByEmailId(clientEmailId).Result;
+                    model.ClientUser = new SelectList(_irfRepository.GetClientUser(model.ClientId), "id", "EmailId");
+                }
+                model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                model.SkillsList = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
 
         public IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id)
