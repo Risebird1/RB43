@@ -682,7 +682,7 @@
         </div>
     </div>
 </div>
-<div id="InterviewerNotificationModel" class="modal modal-bg" style="z-index:3">
+<div id="InterviewerNotificationModel" class="modal modal-bg" style="z-index:5">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
@@ -728,6 +728,29 @@
                     <li>We reserve the right to recover damages including but not limited to reputation, contractual fines, legal charges etc.</li>
                 </ul>
                 <input type="checkbox" id="chk_interviewernotifcation" onchange="changeinterviewnotificationstatus()" />I have acknowledged
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="CodedResumeNotificationModel" class="modal modal-bg" style="z-index:3;padding-top:5vw !important">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Coded Resume Upload Notification <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCodedResumeNotificationModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body">
+                In order to ensure your privacy please add your <b>Coded Resume</b> in My Profile section. We recommend you to remove your Email ID, Contact Details, Current Company details , Name and add your coded name (provided by Risebird) in your <b>Coded Resume</b>. Also add one paragraph about your Interviewing Experience.
             </div>
 
         </div>
@@ -1897,6 +1920,14 @@
         var model = document.getElementById("InterviewerNotificationModel");
         model.style.display = "block";
     }
+    function closeCodedResumeNotificationModel() {
+        var model = document.getElementById("CodedResumeNotificationModel");
+        model.style.display = "none";
+    }
+    function openCodedResumeNotificationModel() {
+        var model = document.getElementById("CodedResumeNotificationModel");
+        model.style.display = "block";
+    }
 </script>
 @*<script>
         const root = document.documentElement;
@@ -1913,5 +1944,11 @@
 {
     <script>
         openInterviewerNotificationModel();
+    </script>
+}
+@if (!ViewBag.isCodedResumePresent)
+{
+    <script>
+        openCodedResumeNotificationModel();
     </script>
 }

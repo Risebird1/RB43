@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[ClientUser](
 			[RoleId] [int] NOT NULL,
 			[Description] [int] NOT NULL,
 			[IsPasswordReset][bit] NULL,
+			[IsActive][bit] default 1,
 			CONSTRAINT [FK_CLUser_User] FOREIGN KEY (UserId) REFERENCES UserList(id),
 			CONSTRAINT [FK_CLUser_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
  CONSTRAINT [PK_ClientUser] PRIMARY KEY CLUSTERED 					
@@ -25,5 +26,14 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE ClientUser
     Add [IsPasswordReset] [bit] NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsActive')
+      AND Object_ID = Object_ID(N'ClientUser'))
+BEGIN
+    ALTER TABLE ClientUser
+    Add [IsActive] [bit] default 1
 END
 GO

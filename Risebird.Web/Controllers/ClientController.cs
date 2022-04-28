@@ -4585,7 +4585,13 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    DateTime st = DateTime.Now.AddDays(-7);
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    ViewBag.ButtonAccess = false;
+                    if (client.Role == "Multiple IRF owner")
+                    {
+                        ViewBag.ButtonAccess = true;
+                    }
+                    DateTime st = DateTime.Now.AddMonths(-1);
                     DateTime se = DateTime.Now;
                     if (HttpContext.Session.GetString("RecruiterReportfilters") != null)
                     {
@@ -4596,8 +4602,13 @@ namespace Risebird.Web.Controllers
                             se = filter.EndDate.Value.AddDays(1);
                         }
                     }
-
                     var model = _clientService.GetRecruiterReportByClient(emailid, st, se);
+                    model = model.Where(x => x.ClientHrContact != null && x.ClientHrContact != "").ToList();
+                    if (TempData["RecruiterSuccessErrorMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["RecruiterSuccessErrorMessage"].ToString();
+                        TempData.Remove("RecruiterSuccessErrorMessage");
+                    }
                     return View(model);
                 }
                 else
@@ -4624,17 +4635,7 @@ namespace Risebird.Web.Controllers
                     {
                         HttpContext.Session.SetString("RecruiterReportfilters", JsonConvert.SerializeObject(filter));
                     }
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    DateTime st = DateTime.Now.AddDays(-7);
-                    DateTime se = DateTime.Now;
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        st = filter.StartDate.Value;
-                        se = filter.EndDate.Value.AddDays(1);
-                    }
-                    var model = _clientService.GetRecruiterReportByClient(emailid, st, se);
-                    return View(model);
+                    return RedirectToAction("RecruiterReport");
                 }
                 else
                 {
@@ -4668,6 +4669,86 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("RecruiterReport");
             }
 
+        }
+        [Authorize]
+        [HttpGet]
+        public JsonResult DisableRecruiter(int userid, int clientid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        if (_clientService.UpdateRecruiterStatus(userid, clientid, false))
+                        {
+                            TempData["RecruiterSuccessErrorMessage"] = "Recruiter has been disabled Successfully!";
+                            return Json("success");
+                        }
+                        else
+                        {
+                            TempData["RecruiterSuccessErrorMessage"] = "Failed to disable Recruiter!";
+                            return Json("Failed");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Failed");
+                    }
+                }
+                else
+                {
+                    return Json("Failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["RecruiterSuccessErrorMessage"] = "Recruiter disable Failed";
+                return Json("Failed");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public JsonResult ActiveRecruiter(int userid, int clientid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        if (_clientService.UpdateRecruiterStatus(userid, clientid, true))
+                        {
+                            TempData["RecruiterSuccessErrorMessage"] = "Recruiter has been actived Successfully!";
+                            return Json("success");
+                        }
+                        else
+                        {
+                            TempData["RecruiterSuccessErrorMessage"] = "Failed to active Recruiter!";
+                            return Json("Failed");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Failed");
+                    }
+                }
+                else
+                {
+                    return Json("Failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["RecruiterSuccessErrorMessage"] = "Recruiter active Failed";
+                return Json("Failed");
+            }
         }
     }
 }
