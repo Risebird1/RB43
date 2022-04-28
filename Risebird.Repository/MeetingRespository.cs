@@ -5562,5 +5562,35 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public bool CheckInterviewerCodedResume(string emailID)
+        {
+            try
+            {
+                var query = "Select CodedResumeLink from InterviewerProfile ip join UserList ul on ip.UserId=ul.id where ul.EmailId=@Emailid";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@Emailid", emailID);
+                    var results = con.Query<string>(query, dp);
+                    if (String.IsNullOrEmpty(results.FirstOrDefault()))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

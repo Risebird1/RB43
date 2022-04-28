@@ -3389,6 +3389,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool CheckInterviewerCodedResume(string emailID)
+        {
+            try
+            {
+                return _meetingRespository.CheckInterviewerCodedResume(emailID);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 
