@@ -28,5 +28,6 @@ namespace Risebird.Business.Interface
         Task<string> PublicInterviewerUrlSave(string emailId, string uniqueid);
         Task<string> Fetchlogoforclient(string emailId, string id);
         IEnumerable<IRF> GetRecruiterReportByClient(string emailId, DateTime st, DateTime se);
+        bool UpdateRecruiterStatus(int userid, int clientid, bool status);
     }
 }

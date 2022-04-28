@@ -297,5 +297,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool UpdateRecruiterStatus(int userid, int clientid, bool status)
+        {
+            try
+            {
+                return _clientRepository.UpdateRecruiterStatus(userid, clientid, status);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
