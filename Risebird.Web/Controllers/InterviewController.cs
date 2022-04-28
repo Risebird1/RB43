@@ -1926,9 +1926,11 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
                         var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
                         var isNotificationAccepted = _meetingService.FetchInterviewerNotificationStatus(emailid);
                         ViewBag.isNotificationAccepted = isNotificationAccepted;
                         ViewBag.CodedName = codedname;
+                        ViewBag.isCodedResumePresent = isCodedResumePresent;
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
