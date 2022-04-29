@@ -484,32 +484,32 @@ namespace Risebird.Business
                 var transHR = _irfRepository.GetTransHR(id);
                 var transRecruiter = _irfRepository.GetTransRecruiter(id);
 
-                IList<TransInterviewer> templateInterviewers; 
-                if (templateId.HasValue && templateId.Value > 0)
-                {
-                    templateInterviewers = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(templateId.Value);
+                //IList<TransInterviewer> templateInterviewers; 
+                //if (templateId.HasValue && templateId.Value > 0)
+                //{
+                //    templateInterviewers = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(templateId.Value);
 
-                    foreach (var interviewer in templateInterviewers)
-                    {
+                //    foreach (var interviewer in templateInterviewers)
+                //    {
 
-                        if(!transInterviewer.Any(x=>x.UserId == interviewer.UserId))
-                        {
-                            interviewer.IsActive = false;
-                        }
-                    }
-                    model.InterviewerCollection = (IList<TransInterviewer>)(templateInterviewers?.OrderByDescending(x => x.IsActive).ToList());
-                }
-                else
-                {
-                    model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
-                }
+                //        if(!transInterviewer.Any(x=>x.UserId == interviewer.UserId))
+                //        {
+                //            interviewer.IsActive = false;
+                //        }
+                //    }
+                //    model.InterviewerCollection = (IList<TransInterviewer>)(templateInterviewers?.OrderByDescending(x => x.IsActive).ToList());
+                //}
+                //else
+                //{
+                //    model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                //}
 
 
                 //assign values retrieved to the model
                 model.id = IRF.id;
                 model.ClientCompName = IRF.ClientCompName;
                 model.IRFId = IRF.IRFId;
-               
+                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
                 model.EmergencyInterviewerCollection = (IList<TransEmergencyInterviewer>)(transEmergencyInterviewer);
                 model.JDLink = IRF.JDLink;
                 model.JDTiltle = IRF.JDTiltle;
@@ -2438,7 +2438,7 @@ namespace Risebird.Business
                 irfDetails.Type = "B2B";
                 irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
 
-                irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
+                //irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails);
                 if (result)
                 {
@@ -2478,7 +2478,7 @@ namespace Risebird.Business
                 //irfDetails.Type = "B2B";
                 //irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
 
-                irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
+                //irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 var result = await _irfRepository.EditSkillChannelCreatedFromTemplate(irfDetails);
                 if (result)
                 {
