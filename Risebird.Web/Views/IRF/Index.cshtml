@@ -382,7 +382,7 @@
                                                         </div>
 
                                                         <div class="w40 card-header-buttons action">
-                                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser")
+                                                            @if ((!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser") || (Model.Profile== "Client" && item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0))
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute notification" aria-label="StatsFlag">
                                                                     @if (item.flagcount > 0)
@@ -397,7 +397,7 @@
 
                                                                 </button>
                                                                 <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                    <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                    <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                 </button>
                                                                 @*<button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
                                                                         <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
@@ -451,7 +451,7 @@
                                                                     </button>
                                                                 }
                                                             }
-                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR")
+                                                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" )
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style="top:-2px;">
                                                                     <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
@@ -1648,19 +1648,27 @@
         var url = '/Candidate/GetCandidates?id=' + id + '&irfName=' + IRFid;
         window.location.href = url;
     };
-    function EditIRF(id) {
-        $.ajax({
-            url: '/IRF/CheckEditCondition?IRFId=' + id,
-            type: 'POST',
-            success: function (result) {
-                if (result == "Success") {
-                    var url = '/IRF/EditIRF?id=' + id;
-                    window.location.href = url;
-                } else {
-                    swal.fire("You are not authorize to edit this skill channel, Please contact Admin or Channel Owner.");
+    function EditIRF(id, templateId) {
+        if ('@Model.Profile' == 'Client' && templateId != null && templateId > 0) {
+            var url = '/IRF/EditIRF?id=' + id + '&templateId=' + templateId;
+            window.location.href = url;
+        }
+        else {
+            $.ajax({
+                url: '/IRF/CheckEditCondition?IRFId=' + id,
+                type: 'POST',
+                success: function (result) {
+                    if (result == "Success") {
+                        var url = '/IRF/EditIRF?id=' + id;
+                        window.location.href = url;
+                    }
+                    else {
+                        swal.fire("You are not authorize to edit this skill channel, Please contact Admin or Channel Owner.");
+                    }
                 }
-            }
-        });
+            });
+        }
+        
     };
     function CandidateCuratedScore(id) {
 

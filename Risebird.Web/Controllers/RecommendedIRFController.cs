@@ -353,7 +353,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.uniqueid = uniqueid;
                 //var client = await _userRepository.GetClientUserDetails(emailid);
                 //int ClientId = client.ClientId;
-                var model = await _irfService.GetEditIRF(irfid, isClone);
+                var model = await _irfService.GetEditIRF(irfid, null, isClone);
                 var result = _irfService.GetTechSkillComments(irfid, null);
                 var audiofilelink = _irfService.FetchIRFAudioLink(irfid);
                 model.QuesionList = result;

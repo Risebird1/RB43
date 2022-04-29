@@ -317,7 +317,10 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    model.ClientId = _clientRepository.GetClientByEmailId(clientEmailId).Result;
+                    if(model.ClientId == 0)
+                    {
+                        model.ClientId = _clientRepository.GetClientByEmailId(clientEmailId).Result;
+                    }
                     model.ClientUser = new SelectList(_irfRepository.GetClientUser(model.ClientId), "id", "EmailId");
                 }
                 model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
