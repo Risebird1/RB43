@@ -177,5 +177,6 @@ namespace Risebird.Business.Interface
         Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);
         bool ChangeInterviewerNotificationStatus(string emailID, int status);
         bool FetchInterviewerNotificationStatus(string emailID);
+        bool CheckInterviewerCodedResume(string emailID);
     }
 }
