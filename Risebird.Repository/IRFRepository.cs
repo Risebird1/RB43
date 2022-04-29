@@ -6022,31 +6022,6 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<AssignmentVM> GetAssessmentGroupDetails(int assessmentGroupId)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@assessmentGroupId", assessmentGroupId);
-                    var result = await SqlMapper.QueryAsync<AssignmentVM>(con, "usp_GetAssessmentGroupDetails", parameters,
-                         commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-
-
     }
 }
 
