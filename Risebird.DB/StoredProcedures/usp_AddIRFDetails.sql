@@ -29,7 +29,7 @@ GO
 @JobLevel int,            
 @CalendlyLink varchar(500),            
 @TotalBudget int,            
-@CreatedOn date,            
+@CreatedOn datetime,            
 @IsBiometricEnabled bit,            
 @PriorityLevel int,            
 @CompanyDetails varchar(1000),           
