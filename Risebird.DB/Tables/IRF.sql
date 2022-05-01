@@ -32,6 +32,7 @@ CREATE TABLE [dbo].[IRF](
             [IsGeneralSkillRequired][bit] NULL,
             [AudioComment][VARCHAR](1000) NULL,
             [CreatedFromTemplateId][int] NULL,
+            [ModifiedOn][Datetime] NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -82,7 +83,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'IRF'))
 BEGIN
     ALTER TABLE IRF
-    Add CreatedOn Date
+    Add CreatedOn datetime
 END
 IF NOT EXISTS(
     SELECT *
@@ -243,6 +244,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add CreatedFromTemplateId int NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedOn')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    Alter table IRF 
+    add ModifiedOn datetime NULL
 END
 
 END

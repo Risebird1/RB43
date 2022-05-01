@@ -43,6 +43,7 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IIRFRepository _irfRepository;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
+        private readonly IUserRepository _userRepository;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger,
@@ -50,7 +51,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository,
             INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService,
-            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, IInterviewSchedulerRepository interviewSchedulerRepository)
+            ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -68,6 +69,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _irfRepository = irfRepository;
             _interviewSchedulerRepository = interviewSchedulerRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -1071,7 +1073,15 @@ namespace Risebird.Web.Controllers
                             var userId = _irfService.GetUserId(emailid, profileName);
                             candidateList = candidateList.Where(x => x.AddedByUserId == userId).ToList();
                         }
-
+                        ViewBag.ButtonAccess = true;
+                        if (profileName == "Client")
+                        {
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            if (!client.IsRecruiterActive)
+                            {
+                                ViewBag.ButtonAccess = false;
+                            }
+                        }
                         if (candidateList != null && candidateList.Count > 0)
                         {
 
