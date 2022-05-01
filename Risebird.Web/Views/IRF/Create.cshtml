@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Create Skills Channel";
-    ViewBag.PageHeader = "Skills Channel / Create Skills Channel";
+    ViewBag.PageHeader = "Skills Channels / Create Skills Channel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -48,7 +48,7 @@
                                         <ul class="tabs">
                                             <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1">Event Details</a></li>
                                             <li><a href="#" rel="tab-2" class="" id="rtab-2">Tech Skill</a><span id="count_SkillCollection" class="skillcount">@(Model.SkillCollection != null ? Model.SkillCollection.Count() : 0)</span></li>
-                                            <li><a href="#" rel="tab-3" class="text-center" id="rtab-3">Client User</a><span id="count_ClientTable" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-3" class="text-center" id="rtab-3">Client User</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection != null ? Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" rel="tab-4" class="" id="rtab-4">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
                                         </ul>
 
@@ -311,13 +311,13 @@
                                                                             </td>
                                                                             <td>
 
-                                                                                @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBoxFor(m => m.ClientCollection[0].Role, new { @class = "form-control", @readonly = "readonly" })
 
                                                                             </td>
 
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                             </td>
                                                                         </tr>
                                                                     }
@@ -327,17 +327,16 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, Model.ClientUser, new { @class = "form-control select-css ", @onchange = "ClientUserChanged(this)" })
+                                                                                    @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, Model.ClientUser, new { @class = "form-control select-css ", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.TextBox("ClientCollection[" + @i + "].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                                    @*@Html.TextBoxF(m => m.ClientCollection[i].ClientRoleId, new { @class = "form-control", @readonly = "readonly" })*@
+                                                                                    @Html.TextBoxFor(m => m.ClientCollection[i].Role, new { @class = "form-control", @readonly = "readonly" })
                                                                                 </td>
 
                                                                                 <td class="action text-center">
                                                                                     <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                                 </td>
                                                                             </tr>
@@ -759,7 +758,7 @@
             data: { 'clientId': clientId },
             success: function (data) {
                 var clientUserDrpDowns = $('[id^="ClientCollection"][id$="ClientUserId"]');
-                ClientUserChanged(data[0].value, "ClientCollection_0__ClientRoleId");
+                ClientUserChanged(data[0].value, "ClientCollection_0__Role");
 
                 for (i = 0; i < clientUserDrpDowns.length; i++) {
                     var currentElement = $("#" + clientUserDrpDowns[i].id);
@@ -781,7 +780,7 @@
                             currentElement.append(option);
                         });
                     }
-                    $("#ClientCollection_" + i + "__ClientRoleId").val(firstClientUserRole);
+                    $("#ClientCollection_" + i + "__Role").val(firstClientUserRole);
                 }
 
 
@@ -979,9 +978,10 @@
 
     var firstClientUserRole = '';
     function ClientUserChanged(val, id) {
+        debugger;
         var index = id.split('_')[1];
         //var index = id.charAt(17);
-        var roleElementid = 'ClientCollection_' + index + '__ClientRoleId';
+        var roleElementid = 'ClientCollection_' + index + '__Role';
         $.ajax({
             type: "GET",
             async: false,

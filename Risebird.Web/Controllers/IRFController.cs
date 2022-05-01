@@ -2003,15 +2003,20 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> EditIRF(int id, int clonevalue, bool isClone = false)
+        public async Task<IActionResult> EditIRF(int id, int clonevalue, int? templateId, bool isClone = false)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+
                     IRFVm model = new IRFVm();
                     //model.UseAsCloneTemplate = useAsCloneTemplate;
-                    model = await _irfService.GetEditIRF(id, isClone);
+                    model = await _irfService.GetEditIRF(id, templateId, isClone);
                     model.IsClone = isClone;
 
                     int abc;
@@ -2029,10 +2034,21 @@ namespace Risebird.Web.Controllers
 
                     model.OldJDLink = model.JDLink;
                     model.OldCompanyDetails = model.CompanyDetails;
-                    SetEditIRFProperties(model);
+                    model.OldJDTitle = model.JDTiltle;
                     ViewBag.clonevalue = clonevalue;
                     model.clonevalue = clonevalue;
-                    return View(model);
+                    if (profileName == "Client" && templateId != null)
+                    {
+                        _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailid);
+                        return View("Edit", model);
+                    }
+                    else
+                    {
+                        SetEditIRFProperties(model);
+                        return View(model);
+                    }
+                    
+                    
                 }
                 else
                 {
@@ -6812,16 +6828,21 @@ namespace Risebird.Web.Controllers
 
 
                         //check duplicates for client
-                        bool isDuplicate = false;
+                        bool isValid = true;
                         var clientCollection = model.ClientCollection.Select(x => (x.ClientUserId));
                         if (clientCollection.Count() != clientCollection.Distinct().Count())
                         {
                             //duplicates exist
-                            isDuplicate = true;
+                            isValid = false;
                             ModelState.AddModelError("", "Please remove duplicate entries from Client's list.");
                         }
+                        if (!model.InterviewerCollection.Any(x => x.IsActive))
+                        {
+                            isValid = false;
+                            ModelState.AddModelError("", "Please select atleast one Interviewer from the list.");
+                        }
 
-                        if (isDuplicate)
+                        if (!isValid)
                         {
                             if(profileName == "Client")
                             {
@@ -6949,6 +6970,106 @@ namespace Risebird.Web.Controllers
             }
             skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-");
             return skillChannelName;
+        }
+
+        /// <summary>
+        /// Edit Skill Channel created from Template exclusively for Client.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit(IRFVm model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+
+
+                        //check duplicates for client
+                        bool isValid = true;
+                        var clientCollection = model.ClientCollection.Select(x => (x.ClientUserId));
+                        if (clientCollection.Count() != clientCollection.Distinct().Count())
+                        {
+                            //duplicates exist
+                            isValid = false;
+                            ModelState.AddModelError("", "Please remove duplicate entries from Client's list.");
+                        }
+                        if (!model.InterviewerCollection.Any(x => x.IsActive))
+                        {
+                            isValid = false;
+                            ModelState.AddModelError("", "Please select atleast one Interviewer from the list.");
+                        }
+                        if (!isValid)
+                        {
+                            _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailId);
+                            return View(model);
+                        }
+                        string uploadedFileURL = string.Empty;
+
+                        if (model.JDFile != null)
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                            {
+                                await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                model.JDLink = uploadedFileURL;
+                            }
+
+                        }
+
+                        if(string.IsNullOrEmpty(model.JDLink))
+                        {
+                            model.JDLink = model.OldJDLink;
+                        }
+
+                        //Start: Auto Generate Scheduling Link 
+
+                        if(model.JDTiltle != model.OldJDTitle)
+                        {
+                            var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                            model.CalendlyLink = _schedulinglink;
+                        }
+                        
+                        //End: Auto Generate Scheduling Link
+                        if (await _irfService.EditSkillChannelCreatedFromTemplate(model, emailId))
+                        {
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' updated Successfully! Scheduling Link : {model.CalendlyLink} ";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = $"Failed to update Skills Channel '{model.IRFId}'!";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = $"Failed to update Skills Channel '{model.IRFId}'!";
+                return RedirectToAction("Index");
+            }
         }
     }
 }
