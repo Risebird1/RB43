@@ -184,6 +184,7 @@ namespace Risebird.Entities.ViewModel
         public string AudioComment { get; set; }
         public bool IsEdit { get; set; }
         public string Profile { get; set; }
+        public string OldJDTitle { get; set; }
     }
     public class InterviewerIds
     {
@@ -291,6 +292,7 @@ namespace Risebird.Entities.ViewModel
         public int flagcount { get; set; }
         public bool IsRecruiterActive { get; set; }
         public bool UserId { get; set; }
+        public int? CreatedFromTemplateId { get; set; }
 
     }
     public class SkillCahnnelDetailsVM

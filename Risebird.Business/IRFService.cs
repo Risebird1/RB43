@@ -463,7 +463,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IRFVm> GetEditIRF(int id, bool isClone = false)
+        public async Task<IRFVm> GetEditIRF(int id, int? templateId, bool isClone = false)
         {
             try
             {
@@ -484,11 +484,32 @@ namespace Risebird.Business
                 var transHR = _irfRepository.GetTransHR(id);
                 var transRecruiter = _irfRepository.GetTransRecruiter(id);
 
+                //IList<TransInterviewer> templateInterviewers; 
+                //if (templateId.HasValue && templateId.Value > 0)
+                //{
+                //    templateInterviewers = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(templateId.Value);
+
+                //    foreach (var interviewer in templateInterviewers)
+                //    {
+
+                //        if(!transInterviewer.Any(x=>x.UserId == interviewer.UserId))
+                //        {
+                //            interviewer.IsActive = false;
+                //        }
+                //    }
+                //    model.InterviewerCollection = (IList<TransInterviewer>)(templateInterviewers?.OrderByDescending(x => x.IsActive).ToList());
+                //}
+                //else
+                //{
+                //    model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                //}
+
+
                 //assign values retrieved to the model
                 model.id = IRF.id;
                 model.ClientCompName = IRF.ClientCompName;
                 model.IRFId = IRF.IRFId;
-                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer?.OrderByDescending(x => x.IsActive).ToList());
                 model.EmergencyInterviewerCollection = (IList<TransEmergencyInterviewer>)(transEmergencyInterviewer);
                 model.JDLink = IRF.JDLink;
                 model.JDTiltle = IRF.JDTiltle;
@@ -2417,7 +2438,7 @@ namespace Risebird.Business
                 irfDetails.Type = "B2B";
                 irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
 
-                irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
+                //irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails);
                 if (result)
                 {
@@ -2426,6 +2447,46 @@ namespace Risebird.Business
                     activityTrackerModel.Particulars = irfDetails.IRFId;
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = "Skill channel created";
+
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Edit Skill Channel created from Template exclusively for Client.
+        /// </summary>
+        /// <param name="irfDetails"></param>
+        /// <param name="loggedInUser"></param>
+        /// <returns></returns>
+        public async Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails, string loggedInUser)
+        {
+            try
+            {
+                irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
+                //irfDetails.CompanyDetails = string.Empty;
+                //irfDetails.PerMintuteRate = 0;
+                //irfDetails.TotalBudget = 0;
+                //irfDetails.NoOfPosition = 0;
+                //irfDetails.Type = "B2B";
+                //irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
+
+                //irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
+                var result = await _irfRepository.EditSkillChannelCreatedFromTemplate(irfDetails);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
+                    activityTrackerModel.Particulars = irfDetails.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Skill channel Updated";
 
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
