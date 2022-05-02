@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_GetClientIRFCountDetails]                   
+CREATE PROCEDURE [dbo].[usp_GetClientIRFCountDetails] 
 @EmailId varchar(200),  
 @st datetime,  
 @se datetime  
@@ -99,19 +99,22 @@ group by irf.id,im.ClientHrContact
     
    select irf.id, irf.IRFId, irf.JDTiltle,            
    Client.[Name] as ClientCompName, tcm.RejectedMeetings,tsm.SelectedMeetings,          
-   tschm.ScheduledMeetings,tschm.ClientHrContect as ClientHrContact,irf.IsPaused,cu.IsActive as IsRecruiterActive,cu.ClientId,cu.UserId  
-   from irf left join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id left join [dbo].[UserList] ul on ul.id = tc.ClientUserId            
-   left join ClientUser cu on tc.ClientUserId = cu.UserId            
-   left join InterviewMeetings im on irf.IRFId = im.IRFId left join Client on IRF.ClientId = Client.id   
+   tschm.ScheduledMeetings,tschm.ClientHrContect as ClientHrContact,irf.IsPaused,tc.IsActive as IsRecruiterActive,cu.ClientId,ultm.id as UserId
+   from irf join InterviewMeetings im on irf.IRFId = im.IRFId
+   left join [dbo].[UserList] ul on ul.EmailId = im.ClientHrContact 
+   left join Client on IRF.ClientId = Client.id   
+   left join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id and tc.ClientUserId=ul.id           
+   left join ClientUser cu on tc.ClientUserId = cu.UserId 
    left join @tbl_RejectedMeetings tcm on irf.id = tcm.IRFId and tcm.ClientHrContect=Isnull(im.ClientHrContact,'')           
    left join @tbl_SelectedMeetings tsm on irf.id=tsm.IRFId and tsm.ClientHrContect=Isnull(im.ClientHrContact,'')           
-   left join @tbl_CompletedMeetings tschm on irf.id= tschm.IRFId and tschm.ClientHrContect=Isnull(im.ClientHrContact,'')           
+   left join @tbl_CompletedMeetings tschm on irf.id= tschm.IRFId and tschm.ClientHrContect=Isnull(im.ClientHrContact,'') 
+   left join UserList ultm on ultm.Emailid=tschm.ClientHrContect
    left join UserList ulh on ulh.id = irf.RisebirdHr          
    where cu.ClientId=@ClientId  and (tcm.RejectedMeetings !=0 or tsm.SelectedMeetings!= 0 or tschm.ScheduledMeetings!=0)   
-   and im.interviewDate>=@st and im.interviewDate<=@se  
+   and im.interviewDate>=@st and im.interviewDate<=@se
    group by irf.id, irf.IRFId, irf.JDTiltle,            
    Client.[Name], tcm.RejectedMeetings, tsm.SelectedMeetings,          
-   tschm.ScheduledMeetings, tschm.ClientHrContect,irf.IsPaused,cu.IsActive,cu.ClientId,cu.UserId       
+   tschm.ScheduledMeetings, tschm.ClientHrContect,irf.IsPaused,tc.IsActive,cu.ClientId,ultm.id
     order by tschm.ClientHrContect         
  End
 GO    

@@ -657,15 +657,15 @@ namespace Risebird.Repository
                 return 0;
             }
         }
-        public bool UpdateRecruiterStatus(int userid, int clientid, bool status)
+        public bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status)
         {
             try
             {
-                var query = "update ClientUser set isActive=@Status where userid=@Userid and ClientId=@Clientid";
+                var query = "update tc set tc.isActive=@Status from TransClientUser tc where tc.ClientUserId=@Userid and tc.IRFId=@IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Userid", userid);
-                dynamicParameters.Add("@Clientid", clientid);
                 dynamicParameters.Add("@Status", status);
+                dynamicParameters.Add("@IRFId", Irfid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<int>(query, dynamicParameters);

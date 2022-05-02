@@ -24,7 +24,7 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy)
+            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy,string ClientHrContact)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -50,7 +50,7 @@ namespace Risebird.Repository
             //string interviewer = string.Empty;
             //string eventGeneratedOn = string.Empty;
             //string eventGeneratedBy = string.Empty;
-            string ClientHrContact = string.Empty;
+            //string ClientHrContact = string.Empty;
             //string isReschedule = string.Empty;
 
             //string IRFID = string.Empty;
