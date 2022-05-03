@@ -308,7 +308,7 @@ namespace Risebird.Repository
                     //log.Error($"Failed to send mail. Please check all filled and try again.");
                 }
             }
-
+            RecruiterStatusCheck(interviewId, candidateEmail, IRFID, interviewDate);
             return true;
         }
 
@@ -393,7 +393,7 @@ namespace Risebird.Repository
                     var masg = new SendGridMessage();
                     masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(result.candidateEmail, null));
                     masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
-                    
+
                     StringBuilder msgBody = new StringBuilder("Dear " + result.CandidateName + ",");
                     msgBody.Append("\n");
                     msgBody.Append("\n");
@@ -402,7 +402,7 @@ namespace Risebird.Repository
                     msgBody.Append("\n");
                     msgBody.Append("\n");
                     msgBody.AppendLine("Thank You, Team Risebird");
-                    
+
                     masg.PlainTextContent = msgBody.ToString();
                     CommonSendMail _common = new CommonSendMail();
                     _common.SendMail(masg);

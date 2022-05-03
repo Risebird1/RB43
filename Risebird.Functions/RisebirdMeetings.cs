@@ -21,10 +21,10 @@ using System.Threading.Tasks;
 
 namespace Risebird.Functions
 {
-    public static class RisebirdMeetings
+    public class RisebirdMeetings
     {
         [FunctionName("RisebirdMeeting")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req, TraceWriter log)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req, TraceWriter log)
         {
             log.Info("C# HTTP trigger function processed a request.");
 
@@ -490,6 +490,7 @@ namespace Risebird.Functions
                 //}
             }
             //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
+            RecruiterStatusCheck(interviewId, candidateEmail, IRFID, interviewDate);
             return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
         }
         public static string GetBlobData(string containerName, string fileName)
@@ -536,6 +537,84 @@ namespace Risebird.Functions
             StorageCredentials creds = new StorageCredentials("risebirdportal", "2AKmR4SJlNvtr0BY5h7gVJANY7vBcCqph7KWywH9cqLcel/cxT0fKLXyGUVrSj3Xj89HUf2Z0QuWmQ8Zd5SqeQ==");
             CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
             return account;
+        }
+        public void RecruiterStatusCheck(int interviewid, string CandidateEmailid, string IRFName, DateTime interviewDate)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
+            bool flag;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@interviewid", interviewid);
+                var result = SqlMapper.Query<bool>(
+                    con, "Select tc.IsActive from interviewmeetings im join IRF on IRF.IRFId=im.IRFId Left join UserList ul on ul.EmailId=im.ClientHrContact left join TransClientUser tc on tc.ClientUserId=ul.id and tc.IRFId=IRF.id where im.id=@interviewid", dp, commandType: Text);
+                flag = result.FirstOrDefault();
+            }
+            if (!flag)
+            {
+                var query = "update [dbo].[InterviewMeetings] set confirmationStatus=@value where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", interviewid);
+                dynamicParameters.Add("@value", 2);
+                var query1 = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Recruiter Disabled' where id=@meetingid and confirmationStatus=2";
+                var dynamicParameters1 = new DynamicParameters();
+                dynamicParameters1.Add("@meetingid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var resultset = con.Query(query, dynamicParameters);
+                    var results = con.Query(query1, dynamicParameters1);
+                }
+                var candidateId = 0;
+                var dynamicParameterscm = new DynamicParameters();
+                dynamicParameterscm.Add("@emailId", CandidateEmailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var resultid = SqlMapper.Query<int>(con, "usp_GetCandidateIdByEmail", dynamicParameterscm,
+                       commandType: CommandType.StoredProcedure);
+                    candidateId = resultid.FirstOrDefault();
+                }
+                var irfid = 0;
+                var queryirf = "Select id from IRF where IRFId=@IRFId";
+                var dynamicParametersirf = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", IRFName);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(queryirf, dynamicParametersirf);
+                    irfid = results.FirstOrDefault();
+                }
+                //Start:add Candidte Status
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", irfid); // Normal parametersmeters           
+                parameters.Add("@CandidateId", candidateId);
+                parameters.Add("@Comments", "Recruiter Disabled");
+                parameters.Add("@Date", DateTime.Now);
+                parameters.Add("@AudioFileLink", "");
+                parameters.Add("@Status", 18);
+                parameters.Add("@PerformedBy", "System");
+                parameters.Add("@InterviewId", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_AddCandidateStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+                //End:add Candidte Status
+                var masg = new SendGridMessage();
+                masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(CandidateEmailid, null));
+                masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+
+                StringBuilder msgBody = new StringBuilder("Dear Candidate,");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
+                msgBody.AppendLine("Please contact to your HR contact or Recruiter to schedule the interview.");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                masg.PlainTextContent = msgBody.ToString();
+                CommonSendMail _common = new CommonSendMail();
+                _common.SendMail(masg);
+            }
         }
     }
 }
