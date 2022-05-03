@@ -334,7 +334,7 @@
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })<span class="red">*</span>
                                                         </div>
-                                                        @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                        @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "Add Primary Skill and Role(max 40 char)" } })
                                                         @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @id = "error_JDTiltle", @class = "text-danger" })
                                                     </div>
                                                     <div class="form-group">
@@ -1888,7 +1888,24 @@
 
         });
     });
+    function IsJobProfileNameInvalid() {
+        var val = document.getElementById("JDTiltle").value;
+        if (val == null || val == "") {
+            document.getElementById("JDTiltle").focus();
+            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile field is required.";
+            return true;
+        }
+        else if (val.length > 40) {
+            document.getElementById("JDTiltle").focus();
+            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            return true;
+        }
+        else {
+            document.getElementById("error_JDTiltle").innerHTML = "";
+            return false;
+        }
 
+    }
     function checkTabValidation(activeTab) {
         var flag = false;
         if (activeTab.trim() == "Event Details") {
@@ -1945,13 +1962,14 @@
             return flag;
         }
         else if (activeTab.trim() == "Job Details") {
-            if ($('#JDTiltle').val() == "") {
-                $('#error_JDTiltle').text("The JD Title field is required.");
-                flag = true;
-            }
-            else {
-                $('#error_JDTiltle').text("");
-            }
+            //if ($('#JDTiltle').val() == "") {
+            //    $('#error_JDTiltle').text("The JD Title field is required.");
+            //    flag = true;
+            //}
+            //else {
+            //    $('#error_JDTiltle').text("");
+            //}
+            flag = IsJobProfileNameInvalid(); //Check JDTitle;
             if ($('#ClientName').val() == "") {
                 $('#error_ClientName').text("The End Client Name field is required.");
                 flag = true;
