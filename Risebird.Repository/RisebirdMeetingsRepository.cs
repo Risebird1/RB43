@@ -1,16 +1,23 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Dapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -18,13 +25,22 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        public RisebirdMeetingsRepository(IConfiguration configuration)
+        private readonly INotificationHelper _notificationHelper;
+        private readonly IIRFRepository _irfRepository;
+        private readonly IMeetingRespository _meetingRespository;
+        private readonly ICandidateRepository _candidateRepository;
+
+        public RisebirdMeetingsRepository(IConfiguration configuration, INotificationHelper notificationHelper, IIRFRepository irfRepository, IMeetingRespository meetingRespository, ICandidateRepository candidateRepository)
         {
             _configuration = configuration;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            _notificationHelper = notificationHelper;
+            _irfRepository = irfRepository;
+            _meetingRespository = meetingRespository;
+            _candidateRepository = candidateRepository;
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy,string ClientHrContact)
+            string zoomLink, string IRFID, long zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -292,6 +308,7 @@ namespace Risebird.Repository
                     //log.Error($"Failed to send mail. Please check all filled and try again.");
                 }
             }
+
             return true;
         }
 
@@ -339,6 +356,58 @@ namespace Risebird.Repository
             StorageCredentials creds = new StorageCredentials("risebirdportal", "2AKmR4SJlNvtr0BY5h7gVJANY7vBcCqph7KWywH9cqLcel/cxT0fKLXyGUVrSj3Xj89HUf2Z0QuWmQ8Zd5SqeQ==");
             CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
             return account;
+        }
+        public void RecruiterStatusCheck(int interviewid, string CandidateEmailid, string IRFName, DateTime interviewDate)
+        {
+            bool flag;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@interviewid", interviewid);
+                var result = SqlMapper.Query<bool>(
+                    con, "Select tc.IsActive from interviewmeetings im join IRF on IRF.IRFId=im.IRFId Left join UserList ul on ul.EmailId=im.ClientHrContact left join TransClientUser tc on tc.ClientUserId=ul.id and tc.IRFId=IRF.id where im.id=@interviewid", dp, commandType: Text);
+                flag = result.FirstOrDefault();
+            }
+            if (!flag)
+            {
+                if (_meetingRespository.CancelInterview(interviewid))
+                {
+                    var setvalue = _meetingRespository.UpdateCancelRecruiterInterviewDetails(interviewid);
+                    var candidateId = _irfRepository.GetCandidateIdByEmail(CandidateEmailid).Result;
+                    var irfid = _irfRepository.GetIRFIdByIRFName(IRFName);
+                    var model = new CandidateStatus();
+                    model.CandidateId = candidateId;
+                    model.IRFId = irfid;
+                    model.AudioFileLink = null;
+                    model.Comments = "Recruiter Disabled";
+                    model.Status = (int)CandidateStatusOptions.Cancelled;
+                    model.PerformedBy = "System";
+                    var result1 = _irfRepository.AddCandidateStatus(model);
+                    var result = _candidateRepository.FetchChannelOwnerandInterviewer(interviewid).Result;
+                    //List<string> interviewers = new List<string>();
+                    //if (!String.IsNullOrEmpty(result.interviewer))
+                    //{
+                    //    interviewers.Add(result.interviewer);
+                    //}
+                    //var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                    var masg = new SendGridMessage();
+                    masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(result.candidateEmail, null));
+                    masg.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                    
+                    StringBuilder msgBody = new StringBuilder("Dear " + result.CandidateName + ",");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
+                    msgBody.AppendLine("Please contact to your HR contact or Recruiter to schedule the interview.");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("Thank You, Team Risebird");
+                    
+                    masg.PlainTextContent = msgBody.ToString();
+                    CommonSendMail _common = new CommonSendMail();
+                    _common.SendMail(masg);
+                }
+            }
         }
     }
     public class CommonSendMail

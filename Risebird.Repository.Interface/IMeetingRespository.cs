@@ -214,5 +214,6 @@ namespace Risebird.Repository.Interface
         bool FetchInterviewerNotificationStatus(string emailID);
         bool CheckInterviewerCodedResume(string emailID);
         Task<bool> ApplyLateReportPenalty();
+        bool UpdateCancelRecruiterInterviewDetails(int meetingid);
     }
 }
