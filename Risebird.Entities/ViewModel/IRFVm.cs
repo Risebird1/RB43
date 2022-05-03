@@ -28,8 +28,8 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string ClientName { get; set; }
 
-        [DisplayName("JD Title")]
-        [Required(ErrorMessage = "This field is required.")]
+        [DisplayName("Job Profile")]
+        [Required(ErrorMessage = "This Job Profile is required.")]
         public string JDTiltle { get; set; }
 
         [DisplayName("Company Type")]

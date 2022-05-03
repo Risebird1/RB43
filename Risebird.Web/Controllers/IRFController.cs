@@ -2037,6 +2037,7 @@ namespace Risebird.Web.Controllers
                     model.OldJDTitle = model.JDTiltle;
                     ViewBag.clonevalue = clonevalue;
                     model.clonevalue = clonevalue;
+                    model.Profile = profileName;
                     if (profileName == "Client" && templateId != null)
                     {
                         _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailid);
