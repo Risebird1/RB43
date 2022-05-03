@@ -18,13 +18,14 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Functions
 {
-    public class RisebirdMeetings
+    public static class RisebirdMeetings
     {
         [FunctionName("RisebirdMeeting")]
-        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req, TraceWriter log)
         {
             log.Info("C# HTTP trigger function processed a request.");
 
@@ -538,7 +539,7 @@ namespace Risebird.Functions
             CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
             return account;
         }
-        public void RecruiterStatusCheck(int interviewid, string CandidateEmailid, string IRFName, DateTime interviewDate)
+        public static void RecruiterStatusCheck(int interviewid, string CandidateEmailid, string IRFName, DateTime interviewDate)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
             bool flag;
