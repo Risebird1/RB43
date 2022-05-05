@@ -5614,5 +5614,24 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public bool UpdateCancelRecruiterInterviewDetails(int meetingid)
+        {
+            try
+            {
+                var query = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Recruiter Disabled' where id=@meetingid and confirmationStatus=2";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

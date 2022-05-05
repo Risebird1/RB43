@@ -134,7 +134,7 @@
                                 <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
                             </button>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Scheduling Links</font></span>
+                                <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
                             </button>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Interviewer Communicator</font></span>
@@ -556,7 +556,7 @@
                 <div class="filavatar">
                     <span class="fa fa-link"></span>
                 </div>
-                <h5 class="modal-title pull-left" id="filterModalLabel"> Scheduling Links</h5>
+                <h5 class="modal-title pull-left" id="filterModalLabel">Candidate Submission Form</h5>
             </div>
 
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closemySchedulingLinkpopup()">
@@ -571,7 +571,7 @@
                                     <tr>
                                         <th>Skill Channel ID</th>
                                         <th>JD Title</th>
-                                        <th>Scheduling Link</th>
+                                        <th>Link</th>
                                     </tr>
                                 </thead>
                                 <tbody id="divschedulinglink">

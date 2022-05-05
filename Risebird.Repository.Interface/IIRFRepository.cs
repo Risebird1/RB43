@@ -181,5 +181,6 @@ namespace Risebird.Repository.Interface
         Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails);
         Task<AssignmentVM> GetAssessmentGroupDetails(int assessmentGroupId);
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails);
+        int GetIRFIdByIRFName(string IRFId);
     }
 }

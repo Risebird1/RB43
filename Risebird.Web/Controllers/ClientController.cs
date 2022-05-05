@@ -4672,7 +4672,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public JsonResult DisableRecruiter(int userid, int clientid)
+        public JsonResult DisableRecruiter(int userid, int clientid, int Irfid)
         {
             try
             {
@@ -4682,7 +4682,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        if (_clientService.UpdateRecruiterStatus(userid, clientid, false))
+                        if (_clientService.UpdateRecruiterStatus(userid, clientid, Irfid, false))
                         {
                             TempData["RecruiterSuccessErrorMessage"] = "Recruiter has been disabled Successfully!";
                             return Json("success");
@@ -4712,7 +4712,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public JsonResult ActiveRecruiter(int userid, int clientid)
+        public JsonResult ActiveRecruiter(int userid, int clientid, int Irfid)
         {
             try
             {
@@ -4722,7 +4722,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        if (_clientService.UpdateRecruiterStatus(userid, clientid, true))
+                        if (_clientService.UpdateRecruiterStatus(userid, clientid, Irfid, true))
                         {
                             TempData["RecruiterSuccessErrorMessage"] = "Recruiter has been actived Successfully!";
                             return Json("success");
