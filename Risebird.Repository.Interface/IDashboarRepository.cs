@@ -45,5 +45,6 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting();
         Task<List<ZoomMeetingHistoryDetails>> FetchZoomMeetingHistory(string meetingid);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement(string Emailid);
+        Task<InterviewerDashboardVM> GetInterviewDetailsCount(string emailId);
     }
 }

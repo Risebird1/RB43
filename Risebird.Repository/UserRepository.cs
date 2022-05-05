@@ -265,7 +265,6 @@ namespace Risebird.Repository
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
-
             }
             catch (SqlException ex)
             {
@@ -1582,7 +1581,29 @@ namespace Risebird.Repository
                 return (int)BooleanResultsEnum.Failed;
             }
         }
-
-
+        public async Task<ClientUserVM> GetClientUserDetailsByIRF(string emailID, int irfid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Email", emailID);
+                    parameters.Add("@Irfid", irfid);
+                    var result = await SqlMapper.QueryAsync<ClientUserVM>(con, "usp_ClientUserDetailByIRF", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
