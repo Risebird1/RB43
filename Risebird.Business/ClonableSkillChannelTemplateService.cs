@@ -322,6 +322,10 @@ namespace Risebird.Business
                         model.ClientId = _clientRepository.GetClientByEmailId(clientEmailId).Result;
                     }
                     model.ClientUser = new SelectList(_irfRepository.GetClientUser(model.ClientId), "id", "EmailId");
+                    int clientUserId = _irfRepository.GetUserId(clientEmailId);
+                    model.ClientCollection = new List<TransClientUser>();
+                    model.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = clientEmailId, Role = _irfRepository.GetClientUserRole(clientUserId)});
+                    model.BillingOwner = clientUserId;
                 }
                 model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 model.SkillsList = new SelectList(_irfRepository.GetSkills(), "id", "Name");
