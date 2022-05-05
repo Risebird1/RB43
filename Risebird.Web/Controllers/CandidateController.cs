@@ -1076,7 +1076,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.ButtonAccess = true;
                         if (profileName == "Client")
                         {
-                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            var client = await _userRepository.GetClientUserDetailsByIRF(emailid, id);
                             if (!client.IsRecruiterActive)
                             {
                                 ViewBag.ButtonAccess = false;

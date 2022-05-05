@@ -291,7 +291,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneralSkillRequired { get; set; }
         public int flagcount { get; set; }
         public bool IsRecruiterActive { get; set; }
-        public bool UserId { get; set; }
+        public int UserId { get; set; }
         public int? CreatedFromTemplateId { get; set; }
 
     }

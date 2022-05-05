@@ -30,6 +30,6 @@ namespace Risebird.Repository.Interface
         Task<string> Fetchlogoforclient(string emailId, string id);
         Task<IEnumerable<IRF>> GetRecruiterReportByClient(string emailID, DateTime st, DateTime se);
         Task<int> GetClientByEmailId(string emailId);
-        bool UpdateRecruiterStatus(int userid, int clientid, bool status);
+        bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status);
     }
 }
