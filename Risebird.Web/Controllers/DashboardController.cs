@@ -1354,14 +1354,12 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> InterviewerCandidateRatingDetails()
         {
             var candidaterating = 0.0;
-            var clientrating = 0.0;
             if (HttpContext.Session.GetString("email") != null)
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 int interviewerid = 0;
                 var Candidatemodel = new List<InterviewerRating>();
-                var Clientmodel = new List<InterviewerRating>();
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                 interviewerid = _userRepository.GetInterviewerid(emailid);
@@ -1382,19 +1380,11 @@ namespace Risebird.Web.Controllers
                 {
                     candidaterating = Math.Round(Candidatemodel.Select(x => x.StarRating).Average(), 2);
                 }
-                var results = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid);
-                if (results != null)
-                    Clientmodel = results;
-
-                if (Clientmodel.Count() != 0)
-                {
-                    clientrating = Math.Round(Clientmodel.Select(x => x.StarRating).Average(), 2);
-                }
-                return Json(new { candidateRating = candidaterating, clientRating = clientrating });
+                return Json(new { candidateRating = candidaterating });
             }
             else
             {
-                return Json(new { candidateRating = candidaterating, clientRating = clientrating });
+                return Json(new { candidateRating = candidaterating });
             }
         }
         [Authorize]
