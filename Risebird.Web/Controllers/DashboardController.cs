@@ -9,6 +9,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -28,8 +29,10 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private readonly IMeetingService _meetingService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IUserRepository _userRepository;
+        private readonly IInterviewerService _interviewerService;
 
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService, IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -39,6 +42,8 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _meetingService = meetingService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _userRepository = userRepository;
+            _interviewerService = interviewerService;
         }
 
         [Authorize]
@@ -121,7 +126,7 @@ namespace Risebird.Web.Controllers
             else
                 expandoDict.Add(propertyName, propertyValue);
         }
-        
+
         [Authorize]
         [HttpGet]
         public DashboardVM GetDateWiseInterviews(DateTime date)
@@ -162,7 +167,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult GetDateWiseInterviewStatus(DateTime date)
@@ -186,7 +191,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult GetDateWiseMeetingsSlots(DateTime date)
@@ -211,7 +216,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateIRFProgress(DashboardVM model)
@@ -227,7 +232,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetDateWiseIRFProgress(DateTime date)
@@ -253,7 +258,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ClientIndex()
@@ -295,7 +300,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public ClientDashboardVM GetDateWiseClientInterviews(DateTime date, string emailId)
@@ -330,7 +335,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
@@ -347,7 +352,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public JsonResult FetchActivityDetails(int id, int idprogess)
@@ -387,7 +392,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public ActionResult AddRequirement()
@@ -413,7 +418,7 @@ namespace Risebird.Web.Controllers
             model.isEditable = false;
             return View(model);
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<ActionResult> AddRequirement(ChannelVM model)
@@ -447,7 +452,7 @@ namespace Risebird.Web.Controllers
                     var blob = containerRef.GetBlockBlobReference(model.Jdfile.FileName);
                     model.JdLink = blob.Uri.ToString();
                 }
-                
+
             }
 
             if (model.isEditable)
@@ -643,7 +648,7 @@ namespace Risebird.Web.Controllers
                             var blob = containerRef.GetBlockBlobReference(model.CV.FileName);
                             model.CVLink = blob.Uri.ToString();
                         }
-                        
+
                     }
                     if (model.CodedCV != null)
                     {
@@ -657,7 +662,7 @@ namespace Risebird.Web.Controllers
                             var blob = containerRef.GetBlockBlobReference(model.CodedCV.FileName);
                             model.CodedCVLink = blob.Uri.ToString();
                         }
-                        
+
                     }
                     var result = await _dashboardService.AddChannelInterviewer(model);
                     if (result == "Success")
@@ -709,7 +714,7 @@ namespace Risebird.Web.Controllers
                 return Json("fail");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<ActionResult> EditInterviewer(int id, int channelid)
@@ -731,14 +736,14 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> FetchHR(string term)
         {
             var model = await _dashboardService.FetchHRList(term);
             return Json(model);
         }
-        
+
         [HttpGet]
         public IActionResult AddInterviewerList(int id, string channelname)
         {
@@ -786,7 +791,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpGet]
         public IActionResult SelectChannelInterviewers(int cmId, string cmTitle)
         {
@@ -813,7 +818,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> SelectChannelInterviewers(AddChannelInterviewersVM model)
         {
@@ -898,7 +903,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpGet]
         public IActionResult ChannelInterviewerAction(int id, string channelName, int channelid, string status)
         {
@@ -1073,7 +1078,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> UnassignedInterviews(UnassignedInterviewsFilter filter, string actionstatus, int actiontype)
@@ -1245,7 +1250,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpGet]
         public async Task<JsonResult> FetchRibbonValues(int section)
         {
@@ -1290,20 +1295,154 @@ namespace Risebird.Web.Controllers
                 return Json(Ribbonmodel);
             }
         }
-        
+
         [HttpPost]
         public JsonResult SendNotoificationForParticipantWaiting()
         {
             //Send mail only one time no duplicate mail
             return Json("Success");
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> FetchZoomMeetingHistory(string meetingid)
         {
             var modelList = await _dashboardService.FetchZoomMeetingHistory(meetingid);
             return Json(modelList);
         }
+        #region Interviewer Dashboard
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerIndex()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var model = new InterviewerDashboardVM();
+                        model = await _dashboardService.GetInterviewDetailsCount(emailid);
+                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
+                        model.CodedName = codedname;
+                        //var isCodedResumePresent = _meetingService.CheckInterviewerCodedResume(emailid);
+                        ViewBag.isCodedResumePresent = false;
+                        //Boradcastmessage
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> InterviewerCandidateRatingDetails()
+        {
+            var candidaterating = 0.0;
+            var clientrating = 0.0;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                int interviewerid = 0;
+                var Candidatemodel = new List<InterviewerRating>();
+                var Clientmodel = new List<InterviewerRating>();
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+                interviewerid = _userRepository.GetInterviewerid(emailid);
+                result = result.Where(x => x.Interviewerid == interviewerid).ToList();
+                foreach (var item in result)
+                {
+                    if (Candidatemodel.Where(x => x.Interviewid == item.interviewid).Count() == 0)
+                    {
+                        var rating = !String.IsNullOrEmpty(item.Question2) ? item.Question2 : "0";
+                        Candidatemodel.Add(new InterviewerRating
+                        {
+                            Interviewid = item.interviewid,
+                            StarRating = Convert.ToInt32(rating),
+                        });
+                    }
+                }
+                if (Candidatemodel.Count() != 0)
+                {
+                    candidaterating = Math.Round(Candidatemodel.Select(x => x.StarRating).Average(), 2);
+                }
+                var results = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid);
+                if (results != null)
+                    Clientmodel = results;
 
+                if (Clientmodel.Count() != 0)
+                {
+                    clientrating = Math.Round(Clientmodel.Select(x => x.StarRating).Average(), 2);
+                }
+                return Json(new { candidateRating = candidaterating, clientRating = clientrating });
+            }
+            else
+            {
+                return Json(new { candidateRating = candidaterating, clientRating = clientrating });
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> InterviewerClientRatingDetails()
+        {
+            var clientrating = 0.0;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var Clientmodel = new List<InterviewerRating>();
+                var results = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid);
+                if (results != null)
+                    Clientmodel = results;
+
+                if (Clientmodel.Count() != 0)
+                {
+                    clientrating = Math.Round(Clientmodel.Select(x => x.StarRating).Average(), 2);
+                }
+                return Json(new { clientRating = clientrating });
+            }
+            else
+            {
+                return Json(new { clientRating = clientrating });
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> InterviewerPendingPaymentDetails()
+        {
+            var Payment = 0;
+            var PaidPayment = 0;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var model = await _meetingService.RBDetails(emailid);
+                model = model.Select(x => { x.InterviewStatusDetails = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusDetails = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                Payment = model.Where(x => x.Status == "Submitted" || x.Status == "Pending").Sum(x => x.Points) - model.Where(x => x.Status == "Advance").Sum(x => x.Points);
+                PaidPayment = model.Where(x => x.Status == "Paid").Sum(x => x.Points);
+                return Json(new { payment = Payment, paidpayment = PaidPayment });
+            }
+            else
+            {
+                return Json(new { payment = Payment, paidpayment = PaidPayment });
+            }
+        }
+        #endregion
     }
 }
