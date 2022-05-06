@@ -309,5 +309,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<int> GetClientByEmailId(string emailId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientByEmailId(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
     }
 }

@@ -111,5 +111,6 @@ namespace Risebird.Business.Interface
         //Task<IRFVm> GetClonableSkillChannel(int id);
         Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile = null);
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails, string loggedInUser);
+        Task<bool> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile);
     }
 }
