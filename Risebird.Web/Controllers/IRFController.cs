@@ -6909,7 +6909,73 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> CreateInterviewLink(IRFVm model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Client" /*|| profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR"*/)
+                    {
 
+                        string uploadedFileURL = string.Empty;
+
+                        if (model.JDFile != null)
+                        {
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
+                            {
+                                await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                model.JDLink = uploadedFileURL;
+                            }
+
+                        }
+
+                        //Start: Auto Generate Scheduling Link 
+                        model.StartDate = DateTime.Now;
+                        model.EndDate = DateTime.Now.AddMonths(3);
+                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                        model.CalendlyLink = _schedulinglink;
+                        //End: Auto Generate Scheduling Link
+                        if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName))
+                        {
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                            return RedirectToAction("Index", "Template");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                return RedirectToAction("Index", "Template");
+            }
+        }
         public string GenerateRandomstring()
         {
             //4char date or month and 1char secondUnique
