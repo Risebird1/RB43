@@ -15,7 +15,7 @@ AS
 Begin
 
 	select csc.id as ClonableSkillChannelId, csc.Name, csc.CreatedFromIRFId, ir.CompanyType as CompanyTypeId, ir.CompetencyLevelId,
-	ir.SeniorityLevelId, ir.CountryType, asg.AssessmentGroup as AssessmentGroupName
+	ir.SeniorityLevelId, ir.CountryType, asg.AssessmentGroup as AssessmentGroupName, asg.id as AssessmentGroupId
 	from ClonableSkillChannel csc 
 	join IRFRecommendations ir on ir.CloneIRFId = csc.id
 	Join AssessmentGroup asg on asg.id = ir.AssessmentGroupId

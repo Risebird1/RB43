@@ -1187,12 +1187,12 @@
         }
         flag = checkWeightageTab("SkillCollection");
         if (flag) {
-            swal.fire("Oops!", "Kindly check the details on the Tech Skills Tab", "error");
+            swal.fire("Oops!", "Kindly check the details on the Tech Skills Tab.", "error");
             return;
         }
         flag = checkClientDetails();
         if (flag) {
-            swal.fire("Oops!", "Kindly check the details on the Client User Tab", "error");
+            swal.fire("Oops!", "Kindly check the details on the Client User Tab.", "error");
             return;
         }
         if (flag == false) {
@@ -1286,7 +1286,7 @@
             if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";
                 if ('@Model.Profile' == "Client") {
-                    swal.fire("Oops!", "Kindly check the details on the Interviewers' Tab", "error");
+                    swal.fire("Oops!", "Kindly check the details on the Interviewers' Tab.", "error");
                 }
                 return false;
             }

@@ -66,7 +66,7 @@
                                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
                                                             @if (Model.Profile == "Client")
                                                             {
-                                                                @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @disabled = "disabled"})
+                                                                @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @disabled = "disabled" })
                                                                 @Html.HiddenFor(m => m.ClientId)
                                                             }
                                                             else
@@ -74,6 +74,8 @@
                                                                 @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this)" })
 
                                                             }
+                                                            @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_ClientId", @class = "text-danger" })
+
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 col-sm-4">
@@ -1157,7 +1159,7 @@
                 if ('@Model.Profile' != "Client") {
                     document.getElementById("btnUpload").style.display = "none";
                 }
-                
+
             }
 
         });
@@ -1166,7 +1168,17 @@
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
                 //flag = !checkUniqueness();
-                flag = IsJobProfileNameInvalid();
+                flag = IsJobProfileNameInvalid(); //Check JD Title
+
+                if ($('#ClientId').val() == null || $('#ClientId').val() == "") {
+                    $('#error_ClientId').text("Please select a Client");
+                    flag = true;
+
+                }
+                else {
+                    $('#error_ClientId').text("");
+                }
+
                 if ($('#BillingOwner').val() == "") {
                     $('#error_BillingOwner').text("Billing owner is required");
                     flag = true;
@@ -1231,7 +1243,7 @@
                     if ('@Model.Profile' != "Client") {
                         document.getElementById("btnUpload").style.display = "block";
                     }
-                    
+
                 }
             }
 
@@ -1241,6 +1253,14 @@
     function CheckConditionsOnClientFormSubmit() {
         var flag = false;
         flag = IsJobProfileNameInvalid();
+        if ($('#ClientId').val() == null || $('#ClientId').val() == "" ) {
+            $('#error_ClientId').text("Please select a Client");
+            flag = true;
+
+        }
+        else {
+            $('#error_ClientId').text("");
+        }
         if ($('#BillingOwner').val() == "") {
             $('#error_BillingOwner').text("Billing owner is required");
             flag = true;
@@ -1273,12 +1293,12 @@
 
         flag = checkWeightageTab("SkillCollection");
         if (flag) {
-            swal.fire("Oops!", "Kindly check the details on the Tech Skills Tab", "error");
+            swal.fire("Oops!", "Kindly check the details on the Tech Skills Tab.", "error");
             return;
         }
         flag = checkClientDetails();
         if (flag) {
-            swal.fire("Oops!", "Kindly check the details on the Client User Tab" , "error");
+            swal.fire("Oops!", "Kindly check the details on the Client User Tab." , "error");
             return;
         }
         if (flag == false) {
@@ -1372,7 +1392,7 @@
             if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";
                 if ('@Model.Profile' == "Client") {
-                    swal.fire("Oops!", "Kindly check the details on the Interviewers' Tab", "error");
+                    swal.fire("Oops!", "Kindly check the details on the Interviewers.' Tab", "error");
                 }
                 return false;
             }
