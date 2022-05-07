@@ -488,7 +488,7 @@
                                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" style="margin-right:5px" id="btnUpload" value="Save" onclick="CheckConditionsOnClientFormSubmit()">Save</button>
 
                                                 }
-                                                @Html.ActionLink("Back to List", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                                @Html.ActionLink("Back", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
 
                                                 <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
@@ -745,6 +745,7 @@
     }
 
     function GenerateSkillChannelName(clientCompanyName) {
+        debugger;
         var assessmentGroupName = '@Model.AssessmentGroupName';
         $.ajax({
             type: "GET",
@@ -904,6 +905,7 @@
 
     var firstClientUserRole = '';
     function ClientUserChanged(val, id) {
+        debugger;
         var index = id.split('_')[1];
         //var index = id.charAt(17);
         var roleElementid = 'ClientCollection_' + index + '__Role';

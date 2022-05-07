@@ -189,15 +189,15 @@
                                         @if (Model.Profile == "Interviewer")
                                         {
 
-                                            <button type="button" onclick="location.href='@Url.Action("MyInterview", "Interview")'" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</button>
+                                            <button type="button" onclick="location.href='@Url.Action("MyInterview", "Interview")'" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</button>
 
-                                            @*@Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
+                                            @*@Html.ActionLink("Back", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
                                         }
                                         else
                                         {
                                             <button type="button" onclick="location.href='@Url.Action("Index", "IRF")'" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</button>
 
-                                            @*@Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
+                                            @*@Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
 
                                         }
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>

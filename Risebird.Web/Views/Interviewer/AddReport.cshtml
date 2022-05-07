@@ -1505,12 +1505,12 @@
                                             @if (!string.IsNullOrEmpty(Model.BackUrl))
                                             {
 
-                                                <a href="@Model.BackUrl" class="mdc-button mdc-button--raised mdc-ripple-upgraded" role="button">Back to List</a>
+                                                <a href="@Model.BackUrl" class="mdc-button mdc-button--raised mdc-ripple-upgraded" role="button">Back</a>
 
                                             }
                                             else
                                             {
-                                                @Html.ActionLink("Back to List", "MyInterviewerAssessment", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @Html.ActionLink("Back", "MyInterviewerAssessment", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
                                             }
 

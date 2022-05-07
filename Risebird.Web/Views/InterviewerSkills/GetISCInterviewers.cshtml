@@ -23,7 +23,7 @@
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to select Interviewers." onclick="location.href='@Url.Action("SelectUnApprovedInterviewers", "InterviewerSkills", new { iscId = ViewBag.ISCId, iscName = ViewBag.ISCName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Select Interviewers</font></span>
                     </button>
 
-                    @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button",@style="margin-right:10px;"})
+                    @Html.ActionLink("Back", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button",@style="margin-right:10px;"})
                 </div>
             </div>
         </div>

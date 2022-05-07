@@ -125,7 +125,7 @@
                                         <div class="col-md-12 mc-button-area text-right">
                                             @if (Model.CandidateAudios == null || Model.CandidateAudios.Count() == 0)
                                             {
-                                                @Html.ActionLink("Back to List", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @Html.ActionLink("Back", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
                                             }
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
@@ -247,7 +247,7 @@
                                         <div class="row">
                                             <div class="col-md-12 mc-button-area text-right">
 
-                                                @Html.ActionLink("Back to List", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @Html.ActionLink("Back", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                 @if (Model.ContainsUnEnrolled)
                                                 {
                                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Enroll">Enroll</button>

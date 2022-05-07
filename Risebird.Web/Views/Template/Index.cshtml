@@ -505,7 +505,7 @@
 
 <script>
     let clientCompanyName = '@Model.ClientCompanyName';
-    let clientId = '@Model.ClientId.Value';
+    let clientId = '@Model.ClientId';
     let isBillingOwnerPopulated = false;
     let isModalOpened = false;
     var closeMember = document.getElementById("interviewLinkModalClose");
@@ -540,9 +540,9 @@
             PopulateBillingOwner();
         }
         GenerateSkillChannelName(assessmentGroupName);
-        if (!isModalOpened) {
+        if (!isModalOpened && clientId !== undefined) {
             isModalOpened = true;
-            $('#ClientId').val(clientId);
+            $('#ClientId').val(clientId.value);
         }
     }
 

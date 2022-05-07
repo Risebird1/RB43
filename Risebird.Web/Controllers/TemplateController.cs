@@ -174,6 +174,10 @@ namespace Risebird.Web.Controllers
                             {
                                 model.ClientCompanyName = _clientService.GetClient(model.ClientId.Value).Name;
                             }
+                            else
+                            {
+                                model.ClientId = null;
+                            }
                         }
                         model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
 

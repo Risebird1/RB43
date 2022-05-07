@@ -97,11 +97,11 @@
 
                             @if (ViewBag.actionstatus == "SkillChannel")
                             {
-                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</a>
+                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</a>
                             }
                             else
                             {
-                                @Html.ActionLink("Back to List", "Index", "CommonPool", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                @Html.ActionLink("Back", "Index", "CommonPool", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                             }
                         }
 

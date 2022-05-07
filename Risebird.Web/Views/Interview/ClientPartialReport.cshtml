@@ -1187,11 +1187,11 @@
                                                 <div class="col-md-12 mc-button-area">
                                                     @if (ViewBag.actiontype == "IRFCandidate")
                                                     {
-                                                        @Html.ActionLink("Back to List", "GetCandidateStatus", "IRF", new { id = ViewBag.IRFID }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                        @Html.ActionLink("Back", "GetCandidateStatus", "IRF", new { id = ViewBag.IRFID }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                     }
                                                     else if (ViewBag.actiontype == "Candidate")
                                                     {
-                                                        @Html.ActionLink("Back to List", "CandidateTimeline", "Candidate", null, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                        @Html.ActionLink("Back", "CandidateTimeline", "Candidate", null, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                     }
                                                 </div>
                                             </div>

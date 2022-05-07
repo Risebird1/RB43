@@ -192,9 +192,9 @@
                                     <div class="col-md-12 mc-button-area">
                                         @if (ViewBag.Status == "Public")
                                         {
-                                            <a href="/Candidate/PublicCandidateStatus?emailid=@ViewBag.emailid&id=@ViewBag.id" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</a>
+                                            <a href="/Candidate/PublicCandidateStatus?emailid=@ViewBag.emailid&id=@ViewBag.id" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</a>
                                         }
-                                        @*@Html.ActionLink("Back to List", "PublicCandidateStatus", "Candidate", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
+                                        @*@Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Add Interview">
                                             Submit Request
                                         </button>

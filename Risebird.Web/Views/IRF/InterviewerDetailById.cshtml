@@ -85,19 +85,19 @@
                                         <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
                                         @if (ViewBag.actionstatus == "SkillChannel")
                                         {
-                                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>
+                                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back</a>
                                         }
                                         else
                                         {
                                             @if (Model.VideoLink != null && Model.VideoLink != "")
                                             {
-                                                @Html.ActionLink("Back to List", "InterviewerDetailById", "IRF", new { Id = Model.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                                @Html.ActionLink("Back", "InterviewerDetailById", "IRF", new { Id = Model.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
 
                                             }
                                             else
                                             {
-                                                @*@Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })*@
-                                                @Html.ActionLink("Back to List", "InterviewerEntitle", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                                @*@Html.ActionLink("Back", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })*@
+                                                @Html.ActionLink("Back", "InterviewerEntitle", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
                                         }
                                     </div>
