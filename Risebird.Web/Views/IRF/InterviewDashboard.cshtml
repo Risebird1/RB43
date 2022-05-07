@@ -42,7 +42,7 @@
                         <div class="form-group">
                             @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control select-box card-title-space", onchange = "FilterInterviewDashboard(this.value);" })
 
-                            @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                            @Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                         </div>
 
 

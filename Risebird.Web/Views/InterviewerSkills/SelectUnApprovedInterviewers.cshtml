@@ -42,7 +42,7 @@
 
                 </div>
                 <div class="pull-right">
-                    @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                    @Html.ActionLink("Back", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                              
                             </div>
 
@@ -140,7 +140,7 @@
                                                     <div class="col-md-12 mc-button-area">
 
 
-                                                        @Html.ActionLink("Back to List", "GetISCInterviewers", "InterviewerSkills", new { id = Model.ISCId, InterviewerSkillidName = Model.ISCName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                        @Html.ActionLink("Back", "GetISCInterviewers", "InterviewerSkills", new { id = Model.ISCId, InterviewerSkillidName = Model.ISCName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
                                                         <input type="submit" value="Submit" id="btnSubmit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
 

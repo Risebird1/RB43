@@ -1399,19 +1399,19 @@
                                             @if (Model.IsInterviewer)
                                             {
 
-                                                @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @Html.ActionLink("Back", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                             }
                                             else if (ViewBag.IsClient)
                                             {
-                                                //@Html.ActionLink("Back to List", "ClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                //@Html.ActionLink("Back", "ClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                             }
                                             else if (ViewBag.IsClientSelected)
                                             {
-                                                // @Html.ActionLink("Back to List", "ClientSelectedMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                // @Html.ActionLink("Back", "ClientSelectedMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                             }
                                             else
                                             {
-                                                @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @Html.ActionLink("Back", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                             }
                                             @if (!(ViewBag.IsClient || ViewBag.IsClientSelected))
                                             {
