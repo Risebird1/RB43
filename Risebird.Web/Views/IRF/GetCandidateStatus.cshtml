@@ -51,7 +51,7 @@
                 <div class="pull-right">
                     <div>
                         <span id="getstatus_10">
-                            @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                            @Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
                         </span>
                         <span id="getstatus_2">
                             <i type="submit" class="far fa-file-excel excel-file   pull-left" data-toggle="tooltip" data-placement="bottom"  data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("GetCandidateStatusExportToExcel", "IRF", new { id = ViewBag.id })'"></i>

@@ -368,11 +368,11 @@
                                             {
                                                 @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
                                                 {
-                                                    @Html.ActionLink("Back to List", "Index", "InstaInterview", new { id = Model.RequestId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                    @Html.ActionLink("Back", "Index", "InstaInterview", new { id = Model.RequestId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Back to List", "MyInterview", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                    @Html.ActionLink("Back", "MyInterview", "InstaInterview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                 }
 
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>

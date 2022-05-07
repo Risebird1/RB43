@@ -156,20 +156,20 @@
                                 @*@Html.ActionLink("Video Detail View", "VideoDetailView", "Risetube", new { interviewid = Model.imid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;margin-right:3px;" })*@
                                 @if (ViewBag.actionstatus == "SkillChannelDetails")
                                 {
-                                    <a href="/Client/CreateJd" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</a>
+                                    <a href="/Client/CreateJd" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</a>
                                 }
                                 else if (ViewBag.actionstatus == "SkillChannel" && ViewBag.CuratedGroupId != null)
                                 {
-                                    <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back to List</a>
+                                    <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</a>
                                 }
                                 else if (ViewBag.actionstatus == "SkillChannel")
                                 {
-                                    <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple  -upgraded">Back to List</a>
+                                    <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple  -upgraded">Back</a>
                                 }
 
                                 else
                                 {
-                                    @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                    @Html.ActionLink("Back", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                 }
                                 @*<a href="/RiseTube/VideoDetailView" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Video Detail View</a>*@
 

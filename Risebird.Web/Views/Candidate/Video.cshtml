@@ -84,7 +84,7 @@
                         <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
                         @if (ViewBag.VideoStatus != "Public")
                         {
-                            @Html.ActionLink("Back to List", "Interviews", "Candidate", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                            @Html.ActionLink("Back", "Interviews", "Candidate", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                         }
 
                     </div>
