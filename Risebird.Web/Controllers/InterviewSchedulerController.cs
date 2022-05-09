@@ -319,7 +319,7 @@ namespace Risebird.Web.Controllers
                     var zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                     string textreminder = string.Empty;
                     textreminder = model.CountryCode + model.MobileNumber;
-                    var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies);
+                    var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
                     if (result)
                     {
                         var updatelinkDetails = _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);

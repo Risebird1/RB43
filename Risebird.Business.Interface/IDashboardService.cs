@@ -8,10 +8,10 @@ namespace Risebird.Business.Interface
 {
     public interface IDashboardService
     {
-        Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date,string Emailid);
-        Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date,string Emailid);
+        Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date, string Emailid);
+        Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date, string Emailid);
         Task<DashboardInterviewerCount> GetInterviewerCount();
-        Task<IEnumerable<IRF>> GetIRFProgress(DateTime date,string Emailid);
+        Task<IEnumerable<IRF>> GetIRFProgress(DateTime date, string Emailid);
         IEnumerable<IrfProgress> GetProgressOptions();
         Task<bool> UpdateIRFProgress(IList<IRF> irfProgressList);
         Task<MeetingResultCount> GetMeetingResultCount(string Emailid);
@@ -38,11 +38,12 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteChannelInterviewer(int id);
         Task<bool> ChannelInterviewerAction(int id, string action);
         Task<CandidateCurrentStatusCount> GetClientCandidatesCurrentStatusCount(string emailId);
-        Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype,string profileName);
-        Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype,string profileName);
+        Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype, string profileName);
+        Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName);
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid);
         Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting();
         Task<List<ZoomMeetingHistoryDetails>> FetchZoomMeetingHistory(string meetingid);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement(string Emailid);
+        Task<InterviewerDashboardVM> GetInterviewDetailsCount(string emailId);
     }
 }

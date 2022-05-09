@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[TransClientUser](
 			[IRFId] [int] NOT NULL,
 			[ClientUserId] [int] NOT NULL,	
 			[ClientRoleId] [int] NOT NULL,							
+			[IsActive] [bit] default 1,							
 			CONSTRAINT [FK_TCUIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_TCU_CUserId] FOREIGN KEY (ClientUserId) REFERENCES ClientUser(id),
 			CONSTRAINT [FK_TCU_CRoleId] FOREIGN KEY (ClientRoleId) REFERENCES ClientRole(id),
@@ -16,5 +17,13 @@ CREATE TABLE [dbo].[TransClientUser](
 )					
 
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsActive')
+      AND Object_ID = Object_ID(N'TransClientUser'))
+BEGIN
+    ALTER TABLE TransClientUser
+    Add [IsActive] [bit] default 1
+END
 GO

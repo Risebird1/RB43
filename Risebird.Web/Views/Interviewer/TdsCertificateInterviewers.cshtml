@@ -135,11 +135,11 @@
                                     <div class="col-md-12 mc-button-area">
                                         @if (ViewBag.Profile == "Interviewer")
                                         {
-                                            <input type="button" value="Back to List" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="backtolist()" />
+                                            <input type="button" value="Back" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="backtolist()" />
                                         }
                                         else
                                         {
-                                            @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            @Html.ActionLink("Back", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                         }
                                     </div>
                                 </div>

@@ -25,9 +25,21 @@ namespace Risebird.MicroService
         {
             log.LogInformation("C# HTTP trigger MCQCandiadteScore function processed a request.");
             string emailid = req.Query["Emailid"];
-            string mcqid = req.Query["Mcqid"];
+            //string mcqid = req.Query["Mcqid"];
+            string mcqid = string.Empty;
+            string mcqtitle = req.Query["McqTitle"];
+            if (!string.IsNullOrEmpty(mcqtitle))
+            {
+                mcqtitle = mcqtitle.Trim().ToUpper();
+            }
             var candidateset = new List<CandidateDetailsForTestDuplicate>();
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var _mcqsets = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
+            _mcqsets = _mcqsets.Where(x => x.Title.ToUpper() == mcqtitle);
+            if (_mcqsets.Count() > 0)
+            {
+                mcqid = _mcqsets.FirstOrDefault().PartitionKey;
+            }
             var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
             var candidate = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
             var Questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQCandidateQuestions");

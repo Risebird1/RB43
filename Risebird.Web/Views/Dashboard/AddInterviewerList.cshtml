@@ -24,7 +24,7 @@
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to select Interviewers." onclick="location.href='@Url.Action("SelectChannelInterviewers", "DashBoard", new { cmId = ViewBag.ISCId, cmTitle = ViewBag.ChannelName })'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Select Interviewers</font></span>
                         </button>
                     }
-                    @Html.ActionLink("Back to List", "RequirementManagement", "DashBoard", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                    @Html.ActionLink("Back", "RequirementManagement", "DashBoard", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                 </div>
             </div>
         </div>

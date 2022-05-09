@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Create Skills Channel";
-    ViewBag.PageHeader = "Skills Channel / Create Skills Channel";
+    ViewBag.PageHeader = "Skills Channels / Create Skills Channel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -48,7 +48,7 @@
                                         <ul class="tabs">
                                             <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1">Event Details</a></li>
                                             <li><a href="#" rel="tab-2" class="" id="rtab-2">Tech Skill</a><span id="count_SkillCollection" class="skillcount">@(Model.SkillCollection != null ? Model.SkillCollection.Count() : 0)</span></li>
-                                            <li><a href="#" rel="tab-3" class="text-center" id="rtab-3">Client User</a><span id="count_ClientTable" class="skillcount">0</span></li>
+                                            <li><a href="#" rel="tab-3" class="text-center" id="rtab-3">Client User</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection != null ? Model.ClientCollection.Count() : 0)</span></li>
                                             <li><a href="#" rel="tab-4" class="" id="rtab-4">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
                                         </ul>
 
@@ -66,7 +66,7 @@
                                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
                                                             @if (Model.Profile == "Client")
                                                             {
-                                                                @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @disabled = "disabled"})
+                                                                @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @disabled = "disabled" })
                                                                 @Html.HiddenFor(m => m.ClientId)
                                                             }
                                                             else
@@ -74,6 +74,8 @@
                                                                 @Html.DropDownList("ClientId", Model.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this)" })
 
                                                             }
+                                                            @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_ClientId", @class = "text-danger" })
+
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 col-sm-4">
@@ -311,13 +313,13 @@
                                                                             </td>
                                                                             <td>
 
-                                                                                @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBoxFor(m => m.ClientCollection[0].Role, new { @class = "form-control", @readonly = "readonly" })
 
                                                                             </td>
 
                                                                             <td class="action text-center">
                                                                                 <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                             </td>
                                                                         </tr>
                                                                     }
@@ -327,17 +329,16 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, Model.ClientUser, new { @class = "form-control select-css ", @onchange = "ClientUserChanged(this)" })
+                                                                                    @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, Model.ClientUser, new { @class = "form-control select-css ", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.TextBox("ClientCollection[" + @i + "].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
 
-                                                                                    @*@Html.TextBoxF(m => m.ClientCollection[i].ClientRoleId, new { @class = "form-control", @readonly = "readonly" })*@
+                                                                                    @Html.TextBoxFor(m => m.ClientCollection[i].Role, new { @class = "form-control", @readonly = "readonly" })
                                                                                 </td>
 
                                                                                 <td class="action text-center">
                                                                                     <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                                 </td>
                                                                             </tr>
@@ -564,14 +565,23 @@
                                     <div class="card-footer mt-20 clearfix">
                                         <div class="row  mc-button-area pull-right">
                                             <div class="col-md-12">
-                                                
-                                                @Html.ActionLink("Back to List", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                                @if (Model.Profile == "Client")
+                                                {
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" style="margin-right:5px" id="btnUpload" value="Save" onclick="CheckConditionsOnClientFormSubmit()">Save</button>
+                                                }
+
+                                                @Html.ActionLink("Back", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
 
                                                 <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
                                                 <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next">
 
-                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnUpload" value="Save" style="display:none">Save</button>
+
+                                                @if (Model.Profile != "Client")
+                                                {
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" id="btnUpload" value="Save" style="display:none">Save</button>
+
+                                                }
 
                                             </div>
                                         </div>
@@ -631,7 +641,7 @@
     }
 
     function CheckConditions() {
-        return (CheckTotalWeightage() && checkInterviewerDetails())/*&& checkUniqueness()*/;
+        return (/*CheckTotalWeightage() && */checkInterviewerDetails())/*&& checkUniqueness()*/;
     }
 
     function IsJobProfileNameInvalid() {
@@ -759,7 +769,7 @@
             data: { 'clientId': clientId },
             success: function (data) {
                 var clientUserDrpDowns = $('[id^="ClientCollection"][id$="ClientUserId"]');
-                ClientUserChanged(data[0].value, "ClientCollection_0__ClientRoleId");
+                ClientUserChanged(data[0].value, "ClientCollection_0__Role");
 
                 for (i = 0; i < clientUserDrpDowns.length; i++) {
                     var currentElement = $("#" + clientUserDrpDowns[i].id);
@@ -781,7 +791,7 @@
                             currentElement.append(option);
                         });
                     }
-                    $("#ClientCollection_" + i + "__ClientRoleId").val(firstClientUserRole);
+                    $("#ClientCollection_" + i + "__Role").val(firstClientUserRole);
                 }
 
 
@@ -819,7 +829,6 @@
     }
 
     function GenerateSkillChannelName(clientCompanyName) {
-        debugger;
         var assessmentGroupName = '@Model.AssessmentGroupName';
         $.ajax({
             type: "GET",
@@ -979,9 +988,10 @@
 
     var firstClientUserRole = '';
     function ClientUserChanged(val, id) {
+        debugger;
         var index = id.split('_')[1];
         //var index = id.charAt(17);
-        var roleElementid = 'ClientCollection_' + index + '__ClientRoleId';
+        var roleElementid = 'ClientCollection_' + index + '__Role';
         $.ajax({
             type: "GET",
             async: false,
@@ -1126,7 +1136,7 @@
 
         $("#btnPrev").click(function () {
             var activeTab = $(".active").text();
-            
+
             if (activeTab.trim() == "Tech Skill") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-1").addClass("active");
@@ -1134,7 +1144,7 @@
                 document.getElementById("tab-2").style.display = "none";
                 document.getElementById("btnPrev").style.display = "none";
             }
-            
+
             else if (activeTab.trim() == "Client User") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-2").addClass("active");
@@ -1147,16 +1157,29 @@
                 document.getElementById("tab-3").style.display = "block";
                 document.getElementById("tab-4").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
-                document.getElementById("btnUpload").style.display = "none";
+                if ('@Model.Profile' != "Client") {
+                    document.getElementById("btnUpload").style.display = "none";
+                }
+
             }
-            
+
         });
         $("#btnNext").click(function () {
             var flag = false;
             var activeTab = $(".active").text();
             if (activeTab.trim() == "Event Details") {
                 //flag = !checkUniqueness();
-                flag = IsJobProfileNameInvalid();
+                flag = IsJobProfileNameInvalid(); //Check JD Title
+
+                if ($('#ClientId').val() == null || $('#ClientId').val() == "") {
+                    $('#error_ClientId').text("Please select a Client");
+                    flag = true;
+
+                }
+                else {
+                    $('#error_ClientId').text("");
+                }
+
                 if ($('#BillingOwner').val() == "") {
                     $('#error_BillingOwner').text("Billing owner is required");
                     flag = true;
@@ -1189,7 +1212,7 @@
                 else {
                     $('#error_JDLink').text("");
                 }
-                
+
                 if (!flag) {
                     document.getElementById("btnPrev").style.display = "block";
                     $(".tab-menu li a").removeClass("active");
@@ -1198,7 +1221,7 @@
                     document.getElementById("tab-1").style.display = "none";
                 }
             }
-            
+
             else if (activeTab.trim() == "Tech Skill") {
                 flag = checkWeightageTab("SkillCollection");
                 if (!flag) {
@@ -1218,13 +1241,71 @@
                     document.getElementById("tab-4").style.display = "block";
                     document.getElementById("tab-3").style.display = "none";
                     document.getElementById("btnNext").style.display = "none";
-                    document.getElementById("btnUpload").style.display = "block";
+                    if ('@Model.Profile' != "Client") {
+                        document.getElementById("btnUpload").style.display = "block";
+                    }
+
                 }
             }
-            
+
         });
     });
 
+    function CheckConditionsOnClientFormSubmit() {
+        var flag = false;
+        flag = IsJobProfileNameInvalid();
+        if ($('#ClientId').val() == null || $('#ClientId').val() == "" ) {
+            $('#error_ClientId').text("Please select a Client");
+            flag = true;
+
+        }
+        else {
+            $('#error_ClientId').text("");
+        }
+        if ($('#BillingOwner').val() == "") {
+            $('#error_BillingOwner').text("Billing owner is required");
+            flag = true;
+
+        }
+        else {
+            $('#error_BillingOwner').text("");
+        }
+
+        if ($('#ClientName').val() == "") {
+            $('#error_ClientName').text("The End Client Name field is required.");
+            flag = true;
+        }
+        else {
+            $('#error_ClientName').text("");
+        }
+
+        if ($('#JDLink').val() == "" && $('#JDFile').val() == "") {
+            $('#error_JDLink').text("JD field is required.");
+            flag = true;
+        }
+        else {
+            $('#error_JDLink').text("");
+        }
+
+        if (flag) {
+            //swal.fire("Oops!", "Kindly check the details on the Client User Tab", "error");
+            return;
+        }
+
+        flag = checkWeightageTab("SkillCollection");
+        if (flag) {
+            swal.fire("Oops!", "Kindly check the details on the Tech Skills Tab.", "error");
+            return;
+        }
+        flag = checkClientDetails();
+        if (flag) {
+            swal.fire("Oops!", "Kindly check the details on the Client User Tab." , "error");
+            return;
+        }
+        if (flag == false) {
+            $("#irfForm").submit();
+        }
+    }
 
     function checkClientDetails() {
         var table = document.getElementById("ClientTable");
@@ -1256,7 +1337,7 @@
             // Label should be populated here
             document.getElementById(tab_skill + "_WeightageError").innerHTML = "Weightage total should be equal to 100.";
             var labelName = "Tech Skills";
-            
+
             document.getElementById(tab_skill + "_WeightageErrorDown").innerHTML = "Weightage total for " + labelName + " should be equal to 100.";
             return true;
         }
@@ -1311,6 +1392,9 @@
         for (var i = 0; i < rowCount; i++) {
             if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "" || $("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "0") {
                 document.getElementById("noInterviewer").innerHTML = "Per Interviewer Rate should not be blank";
+                if ('@Model.Profile' == "Client") {
+                    swal.fire("Oops!", "Kindly check the details on the Interviewers.' Tab", "error");
+                }
                 return false;
             }
             else {
@@ -1330,5 +1414,5 @@
         document.getElementById("noInterviewer").innerHTML = "";
         return true;
     }
-    
+
 </script>

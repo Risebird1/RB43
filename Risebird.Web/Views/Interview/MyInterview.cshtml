@@ -75,7 +75,7 @@
 
                         <div class="marquees">
                             <ul class="marquees-content">
-                                <li style="border: 0px; padding: 0px;  line-height: 30px;">In order to ensure your privacy please add your <b>Coded Resume</b> in My Profile section. We recommend you to remove your Email ID, Contact Details, Current Company details , Name and add your coded name (provided by Risebird) in your <b>Coded Resume</b>. Also add one paragraph about your Interviewing Experience.</li>
+                                <li style="border: 0px; padding: 0px;  line-height: 30px;">As per updated SLA from customer, we will deduct 200 INR(India) and 350 INR(Outside India) interview in case fail to update Report within 8 hrs. In order to ensure your privacy please add your <b>Coded Resume</b> in My Profile section. We recommend you to remove your Email ID, Contact Details, Current Company details , Name and add your coded name (provided by Risebird) in your <b>Coded Resume</b>. Also add one paragraph about your Interviewing Experience.</li>
                             </ul>
                         </div>
 
@@ -93,6 +93,7 @@
 
                             </div>
                             <div class="pull-left">
+
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Update your availability" onclick="location.href='@Url.Action("IRFInterviewerMapping", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update your availability</font></span>
                                 </button>
@@ -682,7 +683,7 @@
         </div>
     </div>
 </div>
-<div id="InterviewerNotificationModel" class="modal modal-bg" style="z-index:3">
+<div id="InterviewerNotificationModel" class="modal modal-bg" style="z-index:5">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
@@ -733,6 +734,29 @@
         </div>
     </div>
 </div>
+@*<div id="CodedResumeNotificationModel" class="modal modal-bg" style="z-index:3;padding-top:5vw !important">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Coded Resume Upload Notification <span class="popup-text" id="skill_id_pop"></span></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCodedResumeNotificationModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body">
+                In order to ensure your privacy please add your <b>Coded Resume</b> in My Profile section. We recommend you to remove your Email ID, Contact Details, Current Company details , Name and add your coded name (provided by Risebird) in your <b>Coded Resume</b>. Also add one paragraph about your Interviewing Experience.
+            </div>
+
+        </div>
+    </div>
+</div>*@
 <script>
     var interviewUnassignedMinutes;
     $(document).ready(function () {
@@ -1897,6 +1921,14 @@
         var model = document.getElementById("InterviewerNotificationModel");
         model.style.display = "block";
     }
+    //function closeCodedResumeNotificationModel() {
+    //    var model = document.getElementById("CodedResumeNotificationModel");
+    //    model.style.display = "none";
+    //}
+    //function openCodedResumeNotificationModel() {
+    //    var model = document.getElementById("CodedResumeNotificationModel");
+    //    model.style.display = "block";
+    //}
 </script>
 @*<script>
         const root = document.documentElement;
@@ -1913,5 +1945,11 @@
 {
     <script>
         openInterviewerNotificationModel();
+    </script>
+}
+@if (!ViewBag.isCodedResumePresent)
+{
+    <script>
+        openCodedResumeNotificationModel();
     </script>
 }

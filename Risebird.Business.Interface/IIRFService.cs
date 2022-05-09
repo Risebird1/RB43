@@ -20,7 +20,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetIRFInterviewMeetings(int id, string profileName, string email);
         string GetQCSkills(int id);
         SelectList GetQualityController();
-        Task<IRFVm> GetEditIRF(int id, bool isClone = false);
+        Task<IRFVm> GetEditIRF(int id, int? templateId, bool isClone = false);
         Task<bool> UpdateIRF(IRFVm model, string loggedInUser);
         IList<SkillComment> GetTechSkillComments(int id, string emailId = null);
         bool CheckUniqueness(string value, bool isCloneTemplate = false);
@@ -110,5 +110,7 @@ namespace Risebird.Business.Interface
         IEnumerable<TransInterviewer> GetInterviewersByAssessmentGroupId(int assessmentGroupId);
         //Task<IRFVm> GetClonableSkillChannel(int id);
         Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile = null);
+        Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails, string loggedInUser);
+        Task<bool> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile);
     }
 }

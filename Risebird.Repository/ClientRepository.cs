@@ -589,7 +589,7 @@ namespace Risebird.Repository
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@emailId", emailId);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<string>(con, "[usp_FetchlogoforclientByEmailId]", parameters,
@@ -655,6 +655,27 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return 0;
+            }
+        }
+        public bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status)
+        {
+            try
+            {
+                var query = "update tc set tc.isActive=@Status from TransClientUser tc where tc.ClientUserId=@Userid and tc.IRFId=@IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Userid", userid);
+                dynamicParameters.Add("@Status", status);
+                dynamicParameters.Add("@IRFId", Irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

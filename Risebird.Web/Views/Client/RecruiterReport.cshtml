@@ -118,6 +118,10 @@
                                         <th>Selected</th>
                                         <th>Rejected</th>
                                         <th>Selection Rate</th>
+                                        @if (ViewBag.ButtonAccess)
+                                        {
+                                            <th>Action</th>
+                                        }
                                     </tr>
                                 </thead>
                                 <tfoot>
@@ -129,6 +133,10 @@
                                         <th>Selected</th>
                                         <th>Rejected</th>
                                         <th>Selection Rate</th>
+                                        @if (ViewBag.ButtonAccess)
+                                        {
+                                            <th>Action</th>
+                                        }
                                     </tr>
                                 </tfoot>
                                 <tbody>
@@ -147,17 +155,12 @@
                                                                 <p style="margin-bottom:0px;">
                                                                     @item.JDTiltle.Substring(0, 24)...
                                                                 </p>
-                                                                @*<p class="moretext_@item.id moretext">
-                                                                        @item.JDTiltle.Substring(24, @item.JDTiltle.Length - 24)
-                                                                    </p>*@
-                                                            </div> @*<a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>*@
+                                                            </div>
                                                         }
                                                         else
                                                         {
                                                             <div class="article">
-                                                                <p>
-                                                                    @item.JDTiltle
-                                                                </p>
+                                                                <p>@item.JDTiltle</p>
                                                             </div>
                                                         }}
                                                     else
@@ -176,13 +179,40 @@
                                             {
                                                 <td>0</td>
                                             }
+                                            @if (ViewBag.ButtonAccess)
+                                            {
+                                                <td>
+                                                    @*@if (item.IsPaused)
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Play Skill Channel">
+                                                                <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play Skill Channel" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause Skill Channel">
+                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause Skill Channel" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                            </button>
+                                                        }*@
+                                                    @if (!item.IsRecruiterActive)
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Active the Recruiter">
+                                                            <span onclick="ActiveRecruiter('@item.UserId', '@item.ClientId', '@item.id');" title="Active the Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" /></svg></span>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Disable the Recruiter">
+                                                            <span onclick="DisableRecruiter('@item.UserId', '@item.ClientId', '@item.id');" title="Disable the Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M2.23 4.35A6.004 6.004 0 0 0 2 6c0 1.691.7 3.22 1.826 4.31.203.196.359.4.453.619l.762 1.769A.5.5 0 0 0 5.5 13a.5.5 0 0 0 0 1 .5.5 0 0 0 0 1l.224.447a1 1 0 0 0 .894.553h2.764a1 1 0 0 0 .894-.553L10.5 15a.5.5 0 0 0 0-1 .5.5 0 0 0 0-1 .5.5 0 0 0 .288-.091L9.878 12H5.83l-.632-1.467a2.954 2.954 0 0 0-.676-.941 4.984 4.984 0 0 1-1.455-4.405l-.837-.836zm1.588-2.653.708.707a5 5 0 0 1 7.07 7.07l.707.707a6 6 0 0 0-8.484-8.484zm-2.172-.051a.5.5 0 0 1 .708 0l12 12a.5.5 0 0 1-.708.708l-12-12a.5.5 0 0 1 0-.708z" /></svg></span>
+                                                        </button>
+                                                    }
+                                                </td>
+                                            }
                                         </tr>
                                     }
                                 </tbody>
                             </table>
                         </div>
-
-
                     </div>
                     <!-- end content-->
                 </div>
@@ -337,5 +367,175 @@
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         var form = $("#form").serialize();
+    }
+    function PauseIRF(irfId, irfName) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Skill Channel will be paused, all the feture interviews of this channel will be cancelled!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, pause it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error pausing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Paused!',
+                    type: 'success',
+                    html: '<p>IRF has been paused.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been paused!',
+                    'error'
+                )
+            }
+        })
+        changeColor('red');
+    }
+
+    function PlayIRF(irfId, irfName) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Skill Channel will be enabled!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, play it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error playing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Played!',
+                    type: 'success',
+                    html: '<p>IRF has been enabled.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been enabled! :)',
+                    'error'
+                )
+            }
+        })
+        changeColor("yellow");
+    }
+    function DisableRecruiter(userid, clientid, Irfid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "Recruiter will not be able to upload candidates!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, disabled it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Client/DisableRecruiter?userid=' + userid + '&clientid=' + clientid + '&Irfid=' + Irfid,
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error pausing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                window.location = "/Client/RecruiterReport";
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Recruiter has not been disabled!',
+                    'error'
+                )
+            }
+        })
+        changeColor('red');
+    }
+
+    function ActiveRecruiter(userid, clientid,Irfid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "Recruiter will be active!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, active it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Client/ActiveRecruiter?userid=' + userid + '&clientid=' + clientid + '&Irfid=' + Irfid,
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error playing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                window.location = "/Client/RecruiterReport";
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Recruiter has not been actived! :)',
+                    'error'
+                )
+            }
+        })
+        changeColor("yellow");
     }
 </script>

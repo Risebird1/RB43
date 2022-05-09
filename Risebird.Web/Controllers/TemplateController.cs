@@ -23,15 +23,17 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private IInterviewerService _interviewerService;
         private readonly IIRFService _irfService;
+        private readonly IClientService _clientService;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
 
-        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
+        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, IClientService clientService)
         {
             _templateService = templateService;
             _applicationErrorLogger = applicationErrorLogger;
             _interviewerService = interviewerService;
             _irfService = irfService;
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
+            _clientService = clientService;
         }
 
         //[Authorize]
@@ -165,6 +167,18 @@ namespace Risebird.Web.Controllers
                     {
                         ClonableTemplateListVM model = new ClonableTemplateListVM();
                         model.LoggedInUser = emailid;
+                        if(profileName == "Client")
+                        {
+                            model.ClientId = await _clientService.GetClientByEmailId(emailid);
+                            if(model.ClientId.HasValue)
+                            {
+                                model.ClientCompanyName = _clientService.GetClient(model.ClientId.Value).Name;
+                            }
+                            else
+                            {
+                                model.ClientId = null;
+                            }
+                        }
                         model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
 
                         model.ClonableTemplates?.ToList().ForEach(x => { x.CompetencyLevelDesc = ((Heuristicsscorelevel)x.CompetencyLevelId.Value).GetDescription(); x.SeniorityLevelDesc = ((JobLevels)x.SeniorityLevelId.Value).GetDescription(); x.CountryTypeDesc = ((CountryTypeEnum)x.CountryType.Value).GetDescription(); x.CompanyTypeDesc = ((CompanyType)x.CompanyTypeId.Value).GetDescription(); });

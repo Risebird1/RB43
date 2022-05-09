@@ -84,7 +84,7 @@
                         @if (ViewBag.PageName == "IRF")
                         {
                             <input type="hidden" value="@ViewBag.IRFId" id="_hidIRF" />
-                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;">Back to List</a>
+                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;">Back</a>
                             <i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>
                         }
                         else

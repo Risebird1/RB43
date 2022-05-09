@@ -71,5 +71,6 @@ namespace Risebird.Repository.Interface
         Task<bool> GetClientPasswordResetEnableStatus(int clientId);
         Task<int> DisableInactiveUser();
         string GetUserProfileBasedOnEmailId(string emailId);
+        Task<ClientUserVM> GetClientUserDetailsByIRF(string emailID, int irfid);
     }
 }

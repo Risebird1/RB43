@@ -69,7 +69,7 @@ BEGIN
 	set @isCalendlyChanged=0
 	select @oldCalendlyLink = CalendlyLink from IRF where id =@id
 
-	if(@oldCalendlyLink ! = @CalendlyLink)
+	if(@oldCalendlyLink != @CalendlyLink)
 	begin
 		set @isCalendlyChanged = 1
 	end

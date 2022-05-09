@@ -297,5 +297,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status)
+        {
+            try
+            {
+                return _clientRepository.UpdateRecruiterStatus(userid, clientid, Irfid, status);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<int> GetClientByEmailId(string emailId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientByEmailId(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
     }
 }

@@ -90,19 +90,19 @@
 
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             @*<div class="form-group">
-            <label class="control-label col-md-12 col-sm-12 desp-label" for="Name">Name</label>
-            <div class="col-md-12 col-sm-12">
-                <select id="TemplateName" name="TemplateName" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
-                    @foreach (var item in Model.ClonableTemplates.Select(x => x.Name).Distinct().ToList())
-                    {
-                        @if (item != null && item != "")
-                        {
-                            <option value="@item">@item</option>
-                        }
-                    }
-                </select>
-            </div>
-        </div>*@
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="Name">Name</label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="TemplateName" name="TemplateName" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
+                                                                            @foreach (var item in Model.ClonableTemplates.Select(x => x.Name).Distinct().ToList())
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>*@
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="CompetencyLevel">Competency Level</label>
@@ -151,7 +151,7 @@
 
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
-                                                            
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
                                                                 <div class="col-md-12 col-sm-12">
@@ -221,7 +221,10 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Tech Skills</th>
-                                                    <th>Interviewers</th>
+                                                    @if (Model.Profile != "Client")
+                                                    {
+                                                        <th>Interviewers</th>
+                                                    }
                                                     <th>Actions</th>
 
                                                 </tr>
@@ -230,7 +233,10 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Tech Skills</th>
-                                                    <th>Interviewers</th>
+                                                    @if (Model.Profile != "Client")
+                                                    {
+                                                        <th>Interviewers</th>
+                                                    }
                                                     <th>Actions</th>
 
                                                 </tr>
@@ -258,11 +264,15 @@
                                                                 </button>
                                                             </td>
 
-                                                            <td>
-                                                                <button type="button" class="clickhere_btn pull-left">
-                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
-                                                                </button>
-                                                            </td>
+                                                            @if (Model.Profile != "Client")
+                                                            {
+                                                                <td>
+                                                                    <button type="button" class="clickhere_btn pull-left">
+                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                                    </button>
+                                                                </td>
+                                                            }
+                                                    
 
                                                             <td>
                                                                 @if (Model.LoggedInUser == "talent@risebird.io")
@@ -272,15 +282,29 @@
                                                                     </button>
                                                                 }
 
+                                                                @if (Model.Profile != "Client")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
+                                                                        <span onclick="location.href='@Url.Action("Create", "IRF", new { templateId = item.ClonableSkillChannelId })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
+                                                                            @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+                                                                @if (Model.Profile == "Client")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
+                                                                        <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.Name', '@item.AssessmentGroupName', '@item.AssessmentGroupId')" title="Create Interview Link" class="mdc-fab__icon material-icons">
+                                                                            @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
-                                                                    <span onclick="location.href='@Url.Action("Create", "IRF", new { templateId = item.ClonableSkillChannelId })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
-                                                                        @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
-                                                                            <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
                                                             </td>
 
 
@@ -321,6 +345,67 @@
 
     </div>
 
+    <div id="interviewLinkModal" class="modal modal-bg">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+
+                <div class="filheader">
+                    @*<div class="filavatar">
+                        <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
+                    </div>*@
+                    <div class="filavatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                            <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                        </svg>
+                    </div>
+                    <h5 class="modal-title pull-left" id="interviewLinkModalHeading"></h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="interviewLinkModalClose" style="cursor:pointer;">&times;</span>
+                </button>
+
+                <div class="modal-body" id="interviewLinkModalBody">
+                    <form action="@Url.Action("CreateInterviewLink","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3 mt-3">
+                            <label for="JDTiltle" class="form-label">Job Profile:</label>
+                            <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
+                            <label id="error_JDTiltle" class="text-danger"></label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="JDFile" class="form-label">Job Description:</label>
+                            <input type="file" for="JDFile" accept=".pdf,.txt" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
+                            <label id="error_JDFile" class="text-danger"></label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="BillingOwner" class="form-label">Billing Owner:</label>
+                            @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
+                            <label id="error_BillingOwner" class="text-danger"></label>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label for="ClientName" class="form-label">End Client Name:</label>
+                            <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
+                            <label id="error_ClientName" class="text-danger"></label>
+                        </div>
+
+                        <input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
+                        <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
+                        <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
+                        <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
+
+                        <button type="submit" class="btn btn-primary">Generate Interview Link</button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
 
     <div id="TemplateSkillModel" class="modal modal-bg" style="z-index:3">
 
@@ -337,7 +422,7 @@
                         </span>
 
                     </div>
-                    
+
                     <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
                 </div>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -418,6 +503,127 @@
     </script>
 }
 
+<script>
+    let clientCompanyName = '@Model.ClientCompanyName';
+    let clientId = '@Model.ClientId';
+    let isBillingOwnerPopulated = false;
+    let isModalOpened = false;
+    var closeMember = document.getElementById("interviewLinkModalClose");
+    closeMember.onclick = function () {
+        var modal = document.getElementById("interviewLinkModal");
+        modal.style.display = "none";
+    }
+    function OpenModalForCreatingInterviewLink(templateId, templateName, assessmentGroupName, assessmentGroupId) {
+        var modal = document.getElementById("interviewLinkModal");
+        modal.style.display = "block";
+        var modalHeading = '';
+
+        if (templateName != null && templateName != '') {
+            modalHeading = 'Create Interview Link from: "' + templateName  + '"';
+        }
+        else {
+            modalHeading = 'Create Interview Link';
+        }
+        if (isModalOpened) {
+            $('#JDTiltle').val('');
+            $('#JDFile').val('');
+            $('#error_JDTiltle').text('');
+            $('#error_JDFile').text('');
+            $('#error_BillingOwner').text('');
+        }
+
+        $('#interviewLinkModalHeading').text(modalHeading);
+        $('#CreatedFromTemplateId').val(templateId);
+        $('#AssessmentGroupId').val(assessmentGroupId);
+
+        if (!isBillingOwnerPopulated) {
+            PopulateBillingOwner();
+        }
+        GenerateSkillChannelName(assessmentGroupName);
+        if (!isModalOpened && clientId !== undefined) {
+            isModalOpened = true;
+            $('#ClientId').val(clientId.value);
+        }
+    }
+
+    function ValidateCreateInterviewLinkForm() {
+
+        var jobProfile = $('#JDTiltle').val();
+        var jdFile = $('#JDFile').val();
+        var billingOwner = $('#BillingOwner').val();
+
+        var flag = true;
+
+        
+        if (jobProfile == null || jobProfile == '') {
+            document.getElementById('error_JDTiltle').innerHTML = "Job Profile is required.";
+            flag = false;
+        }
+        else if (jobProfile.length > 40) {
+            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_JDTiltle').innerHTML = "";
+        }
+        if (jdFile == null || jdFile == '') {
+            document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_JDFile').innerHTML = "";
+        }
+        if (billingOwner == null || billingOwner == '') {
+            document.getElementById('error_BillingOwner').innerHTML = "Billing owner is required.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_BillingOwner').innerHTML = "";
+        }
+
+        return flag;
+
+    }
+
+    function PopulateBillingOwner() {
+
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetClientUser",
+            data: { 'clientId': clientId },
+            success: function (data) {
+
+                var drpbilling = $("#BillingOwner");
+                $("#BillingOwner option").remove();
+                if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpbilling.append(option);
+                    });
+                }
+                isBillingOwnerPopulated = true;
+            }
+        });
+    }
+
+    function GenerateSkillChannelName(assessmentGroupName) {
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GenerateSkillChannelName",
+            data: { 'assessmentGroupName': assessmentGroupName, 'clientCompanyName': clientCompanyName },
+            success: function (data) {
+                if (data != null && data != '') {
+                    document.getElementById('IRFId').value = data;
+                }
+            }
+        });
+    }
+</script>
 <script>
 
     function searchResult() {

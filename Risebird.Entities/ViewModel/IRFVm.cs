@@ -28,8 +28,8 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string ClientName { get; set; }
 
-        [DisplayName("JD Title")]
-        [Required(ErrorMessage = "This field is required.")]
+        [DisplayName("Job Profile")]
+        [Required(ErrorMessage = "This Job Profile is required.")]
         public string JDTiltle { get; set; }
 
         [DisplayName("Company Type")]
@@ -184,6 +184,7 @@ namespace Risebird.Entities.ViewModel
         public string AudioComment { get; set; }
         public bool IsEdit { get; set; }
         public string Profile { get; set; }
+        public string OldJDTitle { get; set; }
     }
     public class InterviewerIds
     {
@@ -289,6 +290,9 @@ namespace Risebird.Entities.ViewModel
         public int MissingVideoLink { get; set; }
         public bool IsGeneralSkillRequired { get; set; }
         public int flagcount { get; set; }
+        public bool IsRecruiterActive { get; set; }
+        public int UserId { get; set; }
+        public int? CreatedFromTemplateId { get; set; }
 
     }
     public class SkillCahnnelDetailsVM
