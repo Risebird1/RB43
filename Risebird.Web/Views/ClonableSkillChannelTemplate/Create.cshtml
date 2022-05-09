@@ -362,7 +362,7 @@
                                                                                     }
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                                    @Html.CheckBox("InterviewerCollection[" + i + "].IsActive", new { @checked = "checked" })
                                                                                 </td>
                                                                                 @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
                                                                                 {
@@ -450,7 +450,9 @@
                                                                                     @Html.EditorFor(m => m.ClonableTemplateQuestionsCollection[i].Question, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.ClonableTemplateQuestionsCollection[i].IsSelected)
+                                                                                    @*@Html.CheckBoxFor(m => m.ClonableTemplateQuestionsCollection[i].IsSelected, new { @checked = "checked" })*@
+                                                                                    @Html.CheckBox("ClonableTemplateQuestionsCollection[" + i + "].IsSelected", new { @checked = "checked" })
+
                                                                                 </td>
                                                                             </tr>
 
