@@ -23,7 +23,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Resume Link")]
 
         public string ResumeLink { get; set; }
-        [Display(Name = "EncodedResume Link")]
+
+        [Display(Name = "Encoded Resume Link")]
 
         public string EncodedResumeLink { get; set; }
         public string IRFName { get; set; }
@@ -121,5 +122,7 @@ namespace Risebird.Entities.ViewModel
         public int CompletionStatus { get; set; }
         [Display(Name = "Is Proctor")]
         public bool IsProctor { get; set; }
+
+        public string ProfileName { get; set; }
     }
 }
