@@ -1244,6 +1244,7 @@ namespace Risebird.Web.Controllers
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
                         model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                        model.ProfileName = profileName;
                         return View(model);
                     }
                     else
@@ -1283,10 +1284,10 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
-                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
-                        {
-                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
-                        }
+                        //if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
+                        //{
+                        //    model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
+                        //}
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
@@ -1328,9 +1329,10 @@ namespace Risebird.Web.Controllers
                     {
                         var model = await _irfService.GetCandidate(id, Convert.ToInt32(irfId));
                         model.IRFName = irfName;
-                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-                        model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                        //var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                        //                 select new { ID = (int)s, Name = s.GetDescription() };
+                        //model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                        model.ProfileName = profileName;
                         return View(model);
                     }
                     else
@@ -1371,10 +1373,10 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
-                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
-                        {
-                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
-                        }
+                        //if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
+                        //{
+                        //    model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
+                        //}
                         if (await _irfService.UpdateCandidate(model, emailid))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate has been updated Successfully!";

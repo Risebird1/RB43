@@ -1300,8 +1300,7 @@
             searchResult();
         });
 
-
-
+        ModalButtonClick(true);
 
     });
     function CallButtonClickjson(item) {
@@ -1759,7 +1758,6 @@
     });
 
     function callCandidate(phoneNumber) {
-        debugger;
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
     }
