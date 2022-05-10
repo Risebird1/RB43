@@ -19,6 +19,7 @@ namespace Risebird.Entities.ViewModel
         public string EmailId { get; set; }
         public int Total { get; set; }
         public string uniqueid { get; set; }
-
+        public string IRFId { get; set; }
+        public string PrimarySkill { get; set; }
     }
 }

@@ -2181,5 +2181,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllStaffingAgencyAndClientHRwithTime(DateTime stdt, DateTime etdt)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@stdate", stdt);
+                    parameters.Add("@etdate", etdt);
+                    var results = await SqlMapper.QueryAsync<CommonInterviewDetailsVM>(con, "usp_GetCandidateStaffingAgencyAndClientHRByTime", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return (List<CommonInterviewDetailsVM>)results;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }
