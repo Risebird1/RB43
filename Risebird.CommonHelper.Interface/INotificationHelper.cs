@@ -2,6 +2,7 @@
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace Risebird.CommonHelper.Interface
@@ -78,5 +79,6 @@ namespace Risebird.CommonHelper.Interface
         string SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string yesbutton, string nobutton);
         string SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, string IRFName);
         string SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
+        string SendClientCommonInterviewNotification(Mail model, DataTable dt);
     }
 }
