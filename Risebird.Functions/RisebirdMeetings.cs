@@ -348,51 +348,51 @@ namespace Risebird.Functions
                 //{
                 //    log.Error($"Failed to send mail. Please check all filled and try again.");
                 //}
-                try
-                {
-                    var masg = new SendGridMessage();
-                    using (SqlConnection conn = new SqlConnection(str))
-                    {
-                        conn.Open();
-                        //SqlCommand cmd = new SqlCommand("usp_ListOfIRFClients", conn);
-                        SqlCommand cmd = new SqlCommand("usp_GetCandidateStaffingAgencyAndClientHRByInterviewId", conn);
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        //cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
-                        cmd.Parameters.Add(new SqlParameter("@interviewId", interviewId));
-                        var reader = cmd.ExecuteReader();
-                        //masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
-                        while (reader.Read())
-                        {
-                            masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
-                        }
+                //try
+                //{
+                //    var masg = new SendGridMessage();
+                //    using (SqlConnection conn = new SqlConnection(str))
+                //    {
+                //        conn.Open();
+                //        //SqlCommand cmd = new SqlCommand("usp_ListOfIRFClients", conn);
+                //        SqlCommand cmd = new SqlCommand("usp_GetCandidateStaffingAgencyAndClientHRByInterviewId", conn);
+                //        cmd.CommandType = CommandType.StoredProcedure;
+                //        //cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                //        cmd.Parameters.Add(new SqlParameter("@interviewId", interviewId));
+                //        var reader = cmd.ExecuteReader();
+                //        //masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
+                //        while (reader.Read())
+                //        {
+                //            masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
+                //        }
 
-                        string jdTitle = string.Empty;
-                        SqlCommand cmdJD = new SqlCommand("usp_GetIRFJobDescription", conn);
-                        cmdJD.CommandType = CommandType.StoredProcedure;
-                        cmdJD.Parameters.Add(new SqlParameter("@irfId", IRFID));
-                        var readerJD = cmdJD.ExecuteReader();
-                        while (readerJD.Read())
-                        {
-                            jdTitle = readerJD.GetString(0);
-                        }
-                        jdTitle = jdTitle?.Split('|')[0];
-                        masg.Subject = "New Interview Scheduled for the date : " + interviewDate;
+                //        string jdTitle = string.Empty;
+                //        SqlCommand cmdJD = new SqlCommand("usp_GetIRFJobDescription", conn);
+                //        cmdJD.CommandType = CommandType.StoredProcedure;
+                //        cmdJD.Parameters.Add(new SqlParameter("@irfId", IRFID));
+                //        var readerJD = cmdJD.ExecuteReader();
+                //        while (readerJD.Read())
+                //        {
+                //            jdTitle = readerJD.GetString(0);
+                //        }
+                //        jdTitle = jdTitle?.Split('|')[0];
+                //        masg.Subject = "New Interview Scheduled for the date : " + interviewDate;
 
-                        object[] parameters = new object[] { interviewDate, candidateName, candidateEmail, jdTitle };
-                        string rawEmail = GetBlobData("mailtemplate", "InterviewScheduledNotificationToClientsTemplate.html");
-                        string msgBody = string.Format(rawEmail, parameters);
+                //        object[] parameters = new object[] { interviewDate, candidateName, candidateEmail, jdTitle };
+                //        string rawEmail = GetBlobData("mailtemplate", "InterviewScheduledNotificationToClientsTemplate.html");
+                //        string msgBody = string.Format(rawEmail, parameters);
 
-                        masg.HtmlContent = msgBody;
+                //        masg.HtmlContent = msgBody;
 
-                        CommonSendMail _common = new CommonSendMail();
-                        _common.SendMail(masg);
-                        log.Info("Interview scheduled mail sent to clients (ClientHR and staffing agency).");
-                    }
-                }
-                catch (Exception)
-                {
-                    log.Error($"Failed to send mail. Please check all filled and try again.");
-                }
+                //        CommonSendMail _common = new CommonSendMail();
+                //        _common.SendMail(masg);
+                //        log.Info("Interview scheduled mail sent to clients (ClientHR and staffing agency).");
+                //    }
+                //}
+                //catch (Exception)
+                //{
+                //    log.Error($"Failed to send mail. Please check all filled and try again.");
+                //}
             }
             else if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "2")
             {

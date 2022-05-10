@@ -985,5 +985,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<List<CommonInterviewDetailsVM>> FetchAllStaffingAgencyAndClientHRwithTime(DateTime stdt, DateTime etdt)
+        {
+            try
+            {
+                var result = await _interviewerRepository.FetchAllStaffingAgencyAndClientHRwithTime(stdt, etdt);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

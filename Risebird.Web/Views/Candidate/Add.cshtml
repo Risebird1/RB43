@@ -52,9 +52,48 @@
                                         @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
                                     </div>
+                                    @if (Model.ProfileName != "Client")
+                                    {
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
+                                            @Html.CheckBoxFor(m => m.IsProctor, new { @style = "position:relative;top:-24px;" })
+                                        </div>
+                                    }
+                                    @*<div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+
+        </div>*@
+                                    @*<div class="form-group">
+            @Html.LabelFor(model => model.AvailableFreeLancing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:5px;" })
+            @Html.CheckBoxFor(m => m.AvailableFreeLancing, new { @style = "position:relative;top:-24px;" })
+
+        </div>*@
+                                </div>
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    @*<div class="form-group">
+            @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.CurrentLocation, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Skill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.Skill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.Skill, "", new { @class = "text-danger" })
+
+        </div>*@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Please enter Whatsapp no. without country code.Ex: 999999999" })
+                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Enter Whatsapp no. without country code.Ex: 999999999" })
                                         @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -63,51 +102,38 @@
                                         @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
 
                                     </div>
+                                    
+                                    @*<div class="form-group">
+            @Html.LabelFor(model => model.WorkAuth, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.WorkAuth, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.WorkAuth, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.TotalExperience, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.TotalExperience, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.DropDownListFor(m => m.Heuristicsscore, new SelectList(Model.Heuristicsscorelist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+        </div>*@
+
+                                    @*<div class="form-group">
+            @Html.LabelFor(model => model.AvailableFullTime, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
+            @Html.CheckBoxFor(m => m.AvailableFullTime, new { @style = "position:relative;top:-24px;" })
+
+        </div>*@
+                                    
+
+                                </div>
+                                <div class="col-md-4 col-sm-4 pl-1">
+
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.EncodedResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.EncodedResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.EncodedResumeLink, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.AvailableFreeLancing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:5px;" })
-                                        @Html.CheckBoxFor(m => m.AvailableFreeLancing, new { @style = "position:relative;top:-24px;" })
-                                        @*<div class="mdc-checkbox__background">
-                                                <svg class="mdc-checkbox__checkmark"
-                                                     viewBox="0 0 24 24">
-                                                    <path class="mdc-checkbox__checkmark-path"
-                                                          fill="none"
-                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                </svg>
-                                                <div class="mdc-checkbox__mixedmark"></div>
-                                            </div>
-                                            <div class="mdc-checkbox__ripple"></div>*@
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 px-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CurrentLocation, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger" })
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Skill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Skill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Skill, "", new { @class = "text-danger" })
 
                                     </div>
                                     <div class="form-group">
@@ -116,87 +142,50 @@
                                         @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
 
                                     </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.WorkAuth, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.WorkAuth, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.WorkAuth, "", new { @class = "text-danger" })
+                                    @*<div class="form-group">
+            @Html.LabelFor(model => model.CurrentEmployer, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.CurrentEmployer, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.CurrentEmployer, "", new { @class = "text-danger" })
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.TotalExperience, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.TotalExperience, "", new { @class = "text-danger" })
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(m => m.Heuristicsscore, new SelectList(Model.Heuristicsscorelist, "Value", "Text"), new { @id = "select", @class = "form-control" })
-                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.AvailableFullTime, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
-                                        @Html.CheckBoxFor(m => m.AvailableFullTime, new { @style = "position:relative;top:-24px;" })
-                                        @*<div class="mdc-checkbox__background">
-                                                <svg class="mdc-checkbox__checkmark"
-                                                     viewBox="0 0 24 24">
-                                                    <path class="mdc-checkbox__checkmark-path"
-                                                          fill="none"
-                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                </svg>
-                                                <div class="mdc-checkbox__mixedmark"></div>
-                                            </div>
-                                            <div class="mdc-checkbox__ripple"></div>*@
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
-                                        @Html.CheckBoxFor(m => m.IsProctor, new { @style = "position:relative;top:-24px;" })
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 pl-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CurrentEmployer, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CurrentEmployer, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CurrentEmployer, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CurrentSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CurrentSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CurrentSalary, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CurrentSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.CurrentSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.CurrentSalary, "", new { @class = "text-danger" })
 
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ExpectedSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ExpectedSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.ExpectedSalary, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ExpectedSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.ExpectedSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.ExpectedSalary, "", new { @class = "text-danger" })
 
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Notice, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Notice, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Notice, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Notice, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.Notice, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.Notice, "", new { @class = "text-danger" })
 
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CostEstimate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CostEstimate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CostEstimate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.CostEstimate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ClientHRAttemptContact, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ClientHRAttemptContact, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.ClientHRAttemptContact, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ClientHRAttemptContact, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.ClientHRAttemptContact, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.ClientHRAttemptContact, "", new { @class = "text-danger" })
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ProfileSource, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ProfileSource, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.ProfileSource, "", new { @class = "text-danger" })
-                                    </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProfileSource, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            @Html.EditorFor(model => model.ProfileSource, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.ProfileSource, "", new { @class = "text-danger" })
+        </div>*@
 
 
 
