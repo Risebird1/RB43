@@ -41,7 +41,7 @@ namespace Risebird.CommonHelper
         public void DumpExistingIRFResourceURIs()
         {
             //get the list of all the irfs along with calendly links
-            irfList = _irfRepository.GetAllIRFs("talent@risebird.io", "Admin").Result.ToList();
+            irfList = _irfRepository.GetAllIRFs("talent@risebird.io", "Admin", null, null).Result.ToList();
 
             GetEventListAndDumpData();
 

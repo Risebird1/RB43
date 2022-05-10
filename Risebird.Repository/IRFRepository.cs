@@ -414,7 +414,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName)
+        public async Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName, int? pageNumber, string searchValue = null)
         {
             try
             {
@@ -423,6 +423,10 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@EmailId", emailID);
                     parameters.Add("@Profile", profileName);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@pageNumber", pageNumber.HasValue ? pageNumber.Value : 1);
+                    parameters.Add("@pageSize", 15);
+                    parameters.Add("@searchValue", searchValue);
                     parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandType: CommandType.StoredProcedure);
                 }

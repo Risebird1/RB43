@@ -130,13 +130,13 @@
                         <div class="mc-button-area text-left">
 
 
-                            <div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier<br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>' data-position='left' class="pull-left" style="margin-right: 5px;">
+                            @*<div id="skill_2" data-intro='Filter based on available attributes or reset filter if applied earlier<br/><a href="/Client/AllMeetings" class="btn btn-primary skillnext-btn">NEXT</a>' data-position='left' class="pull-left" style="margin-right: 5px;">
                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-bs-toggle="modal" data-bs-target="#filterModal">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
-                            </div>
+                            </div>*@
                             <div class="pull-left">
                                 @if (Model.Profile != "CuratedUser")
                                 {
@@ -173,7 +173,7 @@
                                 }
                                 <div class="searchbox">
                                     <div class="irf-search">
-                                        <input type="text" id="idtxtSearch" name="searchValue" value="@searchValue" class="form-control txtsearch1" placeholder="Please enter Skill Channel Name" @*AutoCompleteType="Disabled"*@>
+                                        <input type="text" id="idtxtSearch" name="searchValue" value="@searchValue" class="form-control txtsearch1" placeholder="Please enter Skill Channel Name" maxlength="50" @*AutoCompleteType="Disabled"*@>
                                         <span class="input-group-btn">
                                             <button class="btn btn3" id="btnSearch" type="button" onclick="SearchSkillChannels()"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
                                         </span>
@@ -194,7 +194,7 @@
                         <div class="mdc-card-wrapper__text-section">
 
 
-                            <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                            @*<div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="filheader">
@@ -368,7 +368,7 @@
                                     </div>
                                 </div>
 
-                            </div>
+                            </div>*@
 
                             <!-- end content-->
                             <!--  end card  -->
