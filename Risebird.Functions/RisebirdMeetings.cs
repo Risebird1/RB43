@@ -268,46 +268,46 @@ namespace Risebird.Functions
             }
             if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "1")
             {
-                try
-                {
-                    var masg = new SendGridMessage();
-                    using (SqlConnection conn = new SqlConnection(str))
-                    {
-                        conn.Open();
-                        SqlCommand cmd = new SqlCommand(
-                            "usp_ListOfIRFInterviwer", conn);
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
-                        var reader = cmd.ExecuteReader();
-                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
-                        while (reader.Read())
-                        {
-                            masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
-                        }
-                        masg.Subject = "New Interview has been scheduled on date: " + interviewDate;
+                //try
+                //{
+                //    var masg = new SendGridMessage();
+                //    using (SqlConnection conn = new SqlConnection(str))
+                //    {
+                //        conn.Open();
+                //        SqlCommand cmd = new SqlCommand(
+                //            "usp_ListOfIRFInterviwer", conn);
+                //        cmd.CommandType = CommandType.StoredProcedure;
+                //        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                //        var reader = cmd.ExecuteReader();
+                //        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
+                //        while (reader.Read())
+                //        {
+                //            masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(reader.GetString(0), null));
+                //        }
+                //        masg.Subject = "New Interview has been scheduled on date: " + interviewDate;
 
-                        StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
-                        msgBody.Append("\n");
-                        msgBody.Append("\n");
-                        msgBody.AppendLine("You have received this communication as an interview has been scheduled based on your matching skills on date: " + interviewDate + " .");
-                        msgBody.AppendLine(
-                            "Kindly login over risebird portal and click on Open Interview menu and assign yourself.");
-                        msgBody.Append("\n");
-                        msgBody.AppendLine("Note: It is first come first assign.");
-                        msgBody.Append("\n");
-                        msgBody.Append("\n");
-                        msgBody.AppendLine("Thank You, Team Risebird");
+                //        StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                //        msgBody.Append("\n");
+                //        msgBody.Append("\n");
+                //        msgBody.AppendLine("You have received this communication as an interview has been scheduled based on your matching skills on date: " + interviewDate + " .");
+                //        msgBody.AppendLine(
+                //            "Kindly login over risebird portal and click on Open Interview menu and assign yourself.");
+                //        msgBody.Append("\n");
+                //        msgBody.AppendLine("Note: It is first come first assign.");
+                //        msgBody.Append("\n");
+                //        msgBody.Append("\n");
+                //        msgBody.AppendLine("Thank You, Team Risebird");
 
-                        masg.PlainTextContent = msgBody.ToString();
-                        CommonSendMail _common = new CommonSendMail();
-                        _common.SendMail(masg);
-                        log.Info("Interview scheduled mail sent to interviewer.");
-                    }
-                }
-                catch (Exception)
-                {
-                    log.Error($"Failed to send mail. Please check all filled and try again.");
-                }
+                //        masg.PlainTextContent = msgBody.ToString();
+                //        CommonSendMail _common = new CommonSendMail();
+                //        _common.SendMail(masg);
+                //        log.Info("Interview scheduled mail sent to interviewer.");
+                //    }
+                //}
+                //catch (Exception)
+                //{
+                //    log.Error($"Failed to send mail. Please check all filled and try again.");
+                //}
                 //try
                 //{
                 //    var masg = new SendGridMessage();
