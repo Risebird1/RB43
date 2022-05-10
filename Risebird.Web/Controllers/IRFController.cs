@@ -87,7 +87,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                 {
                     var model = new IRFViewModel();
-                    var irfList = _irfService.GetAllIRFs(emailid, profileName);
+                    var irfList = _irfService.GetAllIRFs(emailid, profileName, null, searchValue);
                     irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
                     model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
                     foreach (var item in model.IRFList)
@@ -176,33 +176,36 @@ namespace Risebird.Web.Controllers
                         }
                         model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
-                    if (!string.IsNullOrEmpty(searchValue))
-                    {
-                        model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
-                    }
+                    //if (!string.IsNullOrEmpty(searchValue))
+                    //{
+                    //    model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
+                    //}
 
                     HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
 
+
+                    //write new code for maxpagecount i.e. make a database call for the irf count
                     if (model.IRFList != null)
                     {
-                        model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
+                        //model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
+                        model.MaxPageCount = (335 % 15 == 0) ? (335 / 15) : (335 / 15 + 1);
                     }
-                    model.IRFFilterList = model.IRFList;
-                    if (model.IRFList != null && model.IRFList.Count() >= 0)
-                    {
-                        try
-                        {
-                            model.IRFList = model.IRFList.ToList().GetRange(0, 15);
-                        }
-                        catch (ArgumentException)
-                        {
-                            int maxIndex = model.IRFList.Count() - 1;
-                            int count = (maxIndex + 1);
-                            model.IRFList = model.IRFList.ToList().GetRange(0, count);
+                    //model.IRFFilterList = model.IRFList;
+                    //if (model.IRFList != null && model.IRFList.Count() >= 0)
+                    //{
+                    //    try
+                    //    {
+                    //        model.IRFList = model.IRFList.ToList().GetRange(0, 15);
+                    //    }
+                    //    catch (ArgumentException)
+                    //    {
+                    //        int maxIndex = model.IRFList.Count() - 1;
+                    //        int count = (maxIndex + 1);
+                    //        model.IRFList = model.IRFList.ToList().GetRange(0, count);
 
-                        }
+                    //    }
 
-                    }
+                    //}
 
                     model.Profile = profileName;
                     return View(model);
@@ -238,7 +241,7 @@ namespace Risebird.Web.Controllers
                 {
 
                     var model = new IRFViewModel();
-                    var irfList = _irfService.GetAllIRFs(emailid, profileName);
+                    var irfList = _irfService.GetAllIRFs(emailid, profileName, null);
 
                     irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
 
@@ -273,7 +276,7 @@ namespace Risebird.Web.Controllers
 
                     if (irfList?.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
-                        irfList = _irfService.GetAllIRFs(emailid, profileName).Where(x => x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
+                        irfList = _irfService.GetAllIRFs(emailid, profileName, null).Where(x => x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
                         irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
 
                     }
@@ -314,23 +317,23 @@ namespace Risebird.Web.Controllers
                     {
                         model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
                     }
-                    model.IRFFilterList = model.IRFList;
+                    //model.IRFFilterList = model.IRFList;
                     model.Profile = profileName;
-                    if (model.IRFList != null && model.IRFList.Count() >= 0)
-                    {
-                        try
-                        {
-                            model.IRFList = model.IRFList.ToList().GetRange(0, 15);
-                        }
-                        catch (ArgumentException)
-                        {
-                            int maxIndex = model.IRFList.Count() - 1;
-                            int count = (maxIndex + 1);
-                            model.IRFList = model.IRFList.ToList().GetRange(0, count);
+                    //if (model.IRFList != null && model.IRFList.Count() >= 0)
+                    //{
+                    //    try
+                    //    {
+                    //        model.IRFList = model.IRFList.ToList().GetRange(0, 15);
+                    //    }
+                    //    catch (ArgumentException)
+                    //    {
+                    //        int maxIndex = model.IRFList.Count() - 1;
+                    //        int count = (maxIndex + 1);
+                    //        model.IRFList = model.IRFList.ToList().GetRange(0, count);
 
-                        }
+                    //    }
 
-                    }
+                    //}
 
                     return View(model);
 
@@ -359,7 +362,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                 {
                     var model = new IRFViewModel();
-                    var irfList = _irfService.GetAllIRFs(emailid, profileName);
+                    var irfList = _irfService.GetAllIRFs(emailid, profileName, pageNumber, searchValue);
                     irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
                     model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
                     foreach (var item in model.IRFList)
@@ -448,49 +451,49 @@ namespace Risebird.Web.Controllers
                         }
                         model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
-                    if (!string.IsNullOrEmpty(searchValue))
-                    {
-                        model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
-                    }
-                    if (pageNumber.HasValue)
-                    {
-                        if (model.IRFList != null && (model.IRFList.Count() >= (pageNumber.Value - 1) * 15))
-                        {
-                            try
-                            {
-                                model.IRFList = model.IRFList?.ToList().GetRange((pageNumber.Value - 1) * 15, 15);
-                            }
-                            catch (ArgumentException)
-                            {
-                                int maxIndex = model.IRFList.Count() - 1;
-                                int count = (maxIndex - ((pageNumber.Value - 1) * 15) + 1);
-                                model.IRFList = model.IRFList.ToList().GetRange((pageNumber.Value - 1) * 15, count);
-                            }
-                        }
-                        else
-                        {
-                            model.IRFList = null;
+                    //if (!string.IsNullOrEmpty(searchValue))
+                    //{
+                    //    model.IRFList = model.IRFList.Where(x => x.IRFId.ToUpper().Contains(searchValue.ToUpper()));
+                    //}
+                    //if (pageNumber.HasValue)
+                    //{
+                    //    if (model.IRFList != null && (model.IRFList.Count() >= (pageNumber.Value - 1) * 15))
+                    //    {
+                    //        try
+                    //        {
+                    //            model.IRFList = model.IRFList?.ToList().GetRange((pageNumber.Value - 1) * 15, 15);
+                    //        }
+                    //        catch (ArgumentException)
+                    //        {
+                    //            int maxIndex = model.IRFList.Count() - 1;
+                    //            int count = (maxIndex - ((pageNumber.Value - 1) * 15) + 1);
+                    //            model.IRFList = model.IRFList.ToList().GetRange((pageNumber.Value - 1) * 15, count);
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        model.IRFList = null;
 
-                        }
-                    }
-                    else
-                    {
-                        if (model.IRFList != null && model.IRFList.Count() >= 0)
-                        {
-                            try
-                            {
-                                model.IRFList = model.IRFList.ToList().GetRange(0, 15);
-                            }
-                            catch (ArgumentException)
-                            {
-                                int maxIndex = model.IRFList.Count() - 1;
-                                int count = (maxIndex + 1);
-                                model.IRFList = model.IRFList.ToList().GetRange(0, count);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (model.IRFList != null && model.IRFList.Count() >= 0)
+                    //    {
+                    //        try
+                    //        {
+                    //            model.IRFList = model.IRFList.ToList().GetRange(0, 15);
+                    //        }
+                    //        catch (ArgumentException)
+                    //        {
+                    //            int maxIndex = model.IRFList.Count() - 1;
+                    //            int count = (maxIndex + 1);
+                    //            model.IRFList = model.IRFList.ToList().GetRange(0, count);
 
-                            }
-                        }
+                    //        }
+                    //    }
 
-                    }
+                    //}
                     model.Profile = profileName;
 
                     if (model.IRFList == null || model.IRFList.Count() == 0)
