@@ -1,5 +1,6 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -73,5 +74,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRFInterviewerMappingVM>> IRFInterviewerMappingByInterviewerid(string emailid);
         Task<IEnumerable<IRFInterviewerMembers>> GetAllInterviewerMembers();
         bool UpdateAllIntervieweravailbilityStatus(int status, string uniqueid);
+        Task<List<CommonInterviewDetailsVM>> FetchAllStaffingAgencyAndClientHRwithTime(DateTime stdt, DateTime etdt);
     }
 }
