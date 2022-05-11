@@ -1,4 +1,8 @@
 using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +11,8 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
+using SendGrid.Helpers.Mail;
 
 namespace Risebird.MicroService
 {
@@ -29,7 +35,7 @@ namespace Risebird.MicroService
             _clientService = clientService;
         }
 
-        [FunctionName("InterviewerCommonInterviewNotification")]       
+        [FunctionName("InterviewerCommonInterviewNotification")]
         public async void Run([TimerTrigger("0 0 8,16,21 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
@@ -79,11 +85,77 @@ namespace Risebird.MicroService
                         }
                     }
                 }
+                //Start: Send Email to Clients
+                log.LogInformation($"Send Emails To Clients");
+                SendMailtoClient();
+                //End: Send Email to Clients
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+        }
+        public async void SendMailtoClient()
+        {
+            //Start : create time with previous run and current
+            DateTime _stdt = new DateTime();
+            DateTime _sedt = DateTime.Now;
+            if (_sedt.Hour == 8)
+            {
+                //DIfference b/w 8 to previous run 21
+                _stdt = _sedt.AddHours(-11);
+            }
+            else if (_sedt.Hour == 16)
+            {
+                //Difference b/w 16 to previous run 8
+                _stdt = _sedt.AddHours(-8);
+            }
+            else if (_sedt.Hour == 21)
+            {
+                //Difference b/w 21 to previous run 16
+                _stdt = _sedt.AddHours(-5);
+            }
+            //End : create time with previous run and current
+            //Start : Get All Clients Details
+            var _AllClientAndStaffingAgency = await _interviewerService.FetchAllStaffingAgencyAndClientHRwithTime(_stdt, _sedt);
+            //End : Get All Clients Details
+            //Start: Filter the Data According to Emailids
+            var _clientemailids = _AllClientAndStaffingAgency.Select(x => x.EmailId).Distinct().ToList();
+            //End: Filter the Data According to Emailids
+            //Start: Send email
+            foreach (var item in _clientemailids)
+            {
+                if (!String.IsNullOrEmpty(item))
+                {
+                    try
+                    {
+                        if (!String.IsNullOrEmpty(item) && item.Contains("@"))
+                        {
+                            var details = _AllClientAndStaffingAgency.Where(x => x.EmailId == item).ToList();
+                            DataTable dt = new DataTable();
+                            dt.Columns.AddRange(new DataColumn[3] { new DataColumn("IRF Name", typeof(string)),
+                            new DataColumn("Primary Skill", typeof(string)),
+                            new DataColumn("Interview Count",typeof(int))});
+                            foreach (var _interview in details)
+                            {
+                                dt.Rows.Add(_interview.IRFId, _interview.PrimarySkill, _interview.Total);
+                            }
+                            Mail _mail1 = new Mail
+                            {
+                                TO = item,
+                                CC = "talent@risebird.io",
+                                Subject = "New Interview Scheduled"
+                            };
+                            var emailsend1 = _notificationHelper.SendClientCommonInterviewNotification(_mail1, dt);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            //End: Send email
         }
     }
 }
