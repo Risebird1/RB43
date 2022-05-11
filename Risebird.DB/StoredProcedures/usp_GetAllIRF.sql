@@ -165,6 +165,7 @@ IF (@Profile = 'Client')
 	left join [dbo].[UserList] ul on ul.id = tc.ClientUserId 
 	left join ClientUser cu on tc.ClientUserId = cu.UserId 
 	where ul.EmailId=@EmailId and cu.ClientId=@ClientId 
+	and cast(irf.EndDate as date) > cast(@timeNow as date)
 	and (irf.IRFId like '%' + @searchValue +'%'
 	or @searchValue IS NULL or @searchValue = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)
     
@@ -204,6 +205,7 @@ IF (@Profile = 'Client')
 	left join [dbo].[UserList] ul on ul.id = tc.ClientUserId 
 	left join ClientUser cu on tc.ClientUserId = cu.UserId 
 	where ul.EmailId=@EmailId and cu.ClientId=@ClientId
+	and cast(irf.EndDate as date) > cast(@timeNow as date)
 	and (irf.IRFId like '%' + @searchValue +'%'
 	or @searchValue IS NULL or @searchValue = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)
     
@@ -244,6 +246,7 @@ Else if(@Profile='Recruiter')
 	left join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id 
     left join [dbo].[UserList] ul on ul.id = tr.UserId     
 	where ul.EmailId=@EmailId
+	and cast(irf.EndDate as date) > cast(@timeNow as date)
 	and (irf.IRFId like '%' + @searchValue +'%'
 	or @searchValue IS NULL or @searchValue = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)
     
@@ -279,6 +282,7 @@ Else if(@Profile='CuratedUser')
 	left join Client on IRF.ClientId = Client.id
 	left join UserList ulh on ulh.id = irf.RisebirdHr      
 	where Client.CuratedLink=1
+	and cast(irf.EndDate as date) > cast(@timeNow as date)
 	and (irf.IRFId like '%' + @searchValue +'%'
 	or @searchValue IS NULL or @searchValue = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)
     
@@ -310,6 +314,7 @@ Else if(@Profile='HR')
 	join UserList ulh on ulh.id = HR.UserId       
 	left join Userlist ul on ul.id=irf.RisebirdHr    
 	where ulh.EmailId=@EmailId
+	and cast(irf.EndDate as date) > cast(@timeNow as date)
 	and (irf.IRFId like '%' + @searchValue +'%'
 	or @searchValue IS NULL or @searchValue = '')
 	union
@@ -319,6 +324,7 @@ Else if(@Profile='HR')
 	join UserList ulh on ulh.id = HR.UserId       
 	left join Userlist ul on ul.id=irf.RisebirdHr    
 	where ulh.EmailId=@EmailId 
+	and cast(irf.EndDate as date) > cast(@timeNow as date)
 	and (irf.IRFId like '%' + @searchValue +'%'
 	or @searchValue IS NULL or @searchValue = '')) filteredIRF) modifiedIRF 
 	where modifiedIRF.rowNum <= (@pageNumber*@pageSize) 
@@ -379,6 +385,7 @@ Else if(@Profile='SeniorHR')
 	join SeniorHR sh on sh.Clientid=Client.id  
 	left join Userlist ul on ul.id=sh.Userid     
 	where ul.EmailId=@EmailId
+	and cast(irf.EndDate as date) > cast(@timeNow as date)
 	and (irf.IRFId like '%' + @searchValue +'%'
 	or @searchValue IS NULL or @searchValue = '')) modifiedIRF 
 	where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)
@@ -416,7 +423,8 @@ begin
 	select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,
 	irf.id from IRF 
 	where (irf.IRFId like '%' + @searchValue +'%'
-	or @searchValue IS NULL or @searchValue = '')) modifiedIRF 
+	or @searchValue IS NULL or @searchValue = '')
+	and cast(irf.EndDate as date) > cast(@timeNow as date)) modifiedIRF 
 	where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)
     
 	select ROW_NUMBER() over (order by irf.id desc) as rowNum,

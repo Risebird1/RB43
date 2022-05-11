@@ -89,7 +89,7 @@ namespace Risebird.Web.Controllers
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName, null, searchValue);
                     irfList?.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
-                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now);//.OrderByDescending(y => y.EndDate);
+                    model.IRFList = irfList;//.Where(x => x.EndDate.Date > DateTime.Now);//.OrderByDescending(y => y.EndDate);
                     foreach (var item in model.IRFList)
                     {
                         if (item.IsPaused)
@@ -125,10 +125,10 @@ namespace Risebird.Web.Controllers
                         {
                             model.IRFList = irfList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
                         }
-                        else
-                        {
-                            model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
-                        }
+                        //else
+                        //{
+                        //    model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
+                        //}
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle?.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray());
@@ -249,10 +249,10 @@ namespace Risebird.Web.Controllers
                     {
                         irfList = irfList?.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                     }
-                    else
-                    {
-                        irfList = irfList?.Where(x => x.EndDate.Date > DateTime.Now);
-                    }
+                    //else
+                    //{
+                    //    irfList = irfList?.Where(x => x.EndDate.Date > DateTime.Now);
+                    //}
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         model.IsClientUser = true;
@@ -313,10 +313,10 @@ namespace Risebird.Web.Controllers
                     }
 
                     //ViewBag.searchValue = filter.searchValue != null ? filter.searchValue : string.Empty;
-                    if (model.IRFList != null)
-                    {
-                        model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
-                    }
+                    //if (model.IRFList != null)
+                    //{
+                    //    model.MaxPageCount = (model.IRFList.Count() % 15 == 0) ? (model.IRFList.Count() / 15) : (model.IRFList.Count() / 15 + 1);
+                    //}
                     //model.IRFFilterList = model.IRFList;
                     model.Profile = profileName;
                     //if (model.IRFList != null && model.IRFList.Count() >= 0)
@@ -366,7 +366,7 @@ namespace Risebird.Web.Controllers
                         var model = new IRFViewModel();
                         var irfList = _irfService.GetAllIRFs(emailid, profileName, pageNumber, searchValue);
                         irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
-                        model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now);//.OrderByDescending(y => y.EndDate);
+                        model.IRFList = irfList;//.Where(x => x.EndDate.Date > DateTime.Now);//.OrderByDescending(y => y.EndDate);
                         foreach (var item in model.IRFList)
                         {
                             if (item.IsPaused)
@@ -402,10 +402,10 @@ namespace Risebird.Web.Controllers
                             {
                                 model.IRFList = irfList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
                             }
-                            else
-                            {
-                                model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
-                            }
+                            //else
+                            //{
+                            //    model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
+                            //}
                             filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                             filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                             filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray());
