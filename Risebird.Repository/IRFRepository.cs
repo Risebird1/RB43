@@ -3093,8 +3093,8 @@ namespace Risebird.Repository
                 parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
-                //parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
-                //parameters.Add("@ProfileSource", obj.ProfileSource);
+                parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
+                parameters.Add("@ProfileSource", obj.ProfileSource);
                 parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                 parameters.Add("@IsProctor", obj.IsProctor);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -3261,8 +3261,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 dynamicParameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
-                //dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
-                //dynamicParameters.Add("@ProfileSource", obj.ProfileSource);
+                dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
+                dynamicParameters.Add("@ProfileSource", obj.ProfileSource);
                 dynamicParameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                 dynamicParameters.Add("@IsProctor", obj.IsProctor);
                 using (SqlConnection con = new SqlConnection(connectionString))
