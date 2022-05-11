@@ -1193,11 +1193,12 @@
 <script>
 
     var currentPageNumber = 1;
-    var maxPageCount = parseInt('@Model.MaxPageCount');
+    @*var maxPageCount = parseInt('@Model.MaxPageCount');*@
+    var allFetched = false;
     $(document).ready(function () {
 
         $(window).scroll(function () {
-            if (maxPageCount > currentPageNumber) {
+            if (!allFetched) {//maxPageCount > currentPageNumber
                 if ($(window).scrollTop() == $(document).height() - $(window).height()) {
                     currentPageNumber += 1;
                     loadPageData(currentPageNumber);
@@ -1219,14 +1220,20 @@
             data: { 'pageNumber': (currentPageNumber), 'searchValue': searchValue},
             method: 'GET',
             success: function (response) {
-                if (response != null && response != '' && response!=false) {
+                if (response != null && response != '' && response != false) {
                     var irfTable = $('#irfTilesBody');
                     loader.style.display = 'none';
                     irfTable.append(response);
                 }
-                else {
+                else if (response == null) {
+                    allFetched = true;
                     loader.style.display = 'none';
 
+                }
+                else if (response == false) {
+                    allFetched = true;
+                    loader.style.display = 'none';
+                    //$('#irfTilesBody').append("Error loading!");
                 }
 
             }
@@ -1301,7 +1308,6 @@
     //        data: { 'modelData': JSON.stringify(data) },
     //        method:'POST',
     //        success: function (response) {
-    //            debugger;
     //            return response;
 
 

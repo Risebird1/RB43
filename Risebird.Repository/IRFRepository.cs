@@ -425,7 +425,7 @@ namespace Risebird.Repository
                     parameters.Add("@Profile", profileName);
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@pageNumber", pageNumber.HasValue ? pageNumber.Value : 1);
-                    parameters.Add("@pageSize", 15);
+                    parameters.Add("@pageSize", 9);
                     parameters.Add("@searchValue", searchValue);
                     parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandType: CommandType.StoredProcedure);
