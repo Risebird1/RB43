@@ -10,180 +10,242 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure [dbo].[usp_InterviewAddPoints]                       
-@interviewId int,                             
-@Type varchar(30),                          
-@Points float                          
-AS                          
-BEGIN                       
- Declare @Userid int                      
- Declare @AddPoint int                          
- Declare @Candidate varchar(200)                          
- Declare @Count int=0                          
- Declare @Irfid int                    
- Declare @IsEmergency bit        
- Declare @meetingStatus int      
- Declare @IsProctor bit        
- select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId                  
- Select @Irfid=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId                   
- Select @meetingStatus=MeetingStatus from InterviewComments where InterviewId=@interviewId   
- Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Userlist ul on im.candidateEmail=ul.EmailId   
- join CandidatesMaster cm on ul.id=cm.UserId join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id  where im.id=@interviewId                   
-  
-if(@Type='Interview')                          
- BEGIN                      
- Select @Userid=id from UserList where EmailId=(select interviewer from InterviewMeetings where id=@interviewId)                     
- Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                     
- Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId      
-   
- if(@Count=0)                    
-    Begin                  
-                  
-                  
-     if(@IsEmergency=1)                  
-     Begin                  
-      If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-      begin                          
-       Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                          
-      End              
-   else If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-       Begin                          
-        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                          
-       End             
-     END                  
-                  
-     Else                  
-     BEGIN                  
-      If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-       Begin                          
-        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                          
-       End                  
-                  
-      Else If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-       begin                          
-        Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                          
-       End                  
-     END                  
-                  
-                      
-                      
-    --Select @Count=Count(*) from TransInterviewer ti join IRF on irf.id=ti.IRFId join InterviewMeetings im on irf.IRFId=im.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid and im.IsEmergency=0                        
-                       
-    --if(@Count>0)                          
-    -- Begin                          
-    -- Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                          
-    -- End                          
-    --Else                          
-    -- begin                          
-    -- Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                          
-    -- End                   
-    set @AddPoint=Round(((ISNULL(@AddPoint,0)*ISNULL(@Points,0))/100),0)                  
-           
- if(@meetingStatus=5)                       
-  BEGIN          
-  set @Candidate='Penalty '+@Candidate          
-  Declare @JobCountry varchar(50)          
-  Select @JobCountry=IRF.JobCountry from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewId          
-  if(@JobCountry='India' or @JobCountry=1)          
-  BEGIN          
-  set @AddPoint=-200          
-  END          
-  Else          
-  BEGIN          
-  set @AddPoint=-350          
-  END          
-  END          
-  if(@IsProctor=1)  
-  BEGIN  
-  set @AddPoint=0  
-  set @Candidate=REPLACE(@Candidate,'Penalty','')  
-  END  
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                     
-    END                    
-   Else                    
-    BEGIN                    
-                  
-     if(@IsEmergency=1)                  
-     Begin                  
-      If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-      begin                          
-       Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                          
-      End             
-   else If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-       Begin                          
-        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                          
-       End             
-     END                  
-                  
-     Else                  
-     BEGIN                  
-      If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-       Begin                          
-        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                          
-       End                  
-                  
-      Else If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                  
-       begin                          
-        Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                          
-       End                  
-END                  
-                  
-                      
-    --Select @Count=Count(*) from TransInterviewer ti join IRF on irf.id=ti.IRFId join InterviewMeetings im on irf.IRFId=im.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid and im.IsEmergency=0                        
-    --if(@Count>0)                          
-    -- Begin                          
-    -- Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                          
-    -- End                          
-    --Else                          
-    -- begin                          
-    -- Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                          
-    -- End                   
-                       
-                  
-    set @AddPoint= Round(((ISNULL(@AddPoint,0)*ISNULL(@Points,0))/100), 0)    
- if(@meetingStatus=5)                       
-  BEGIN          
-  set @Candidate='Penalty '+@Candidate          
-  Declare @JobCountry1 varchar(50)          
-  Select @JobCountry1=IRF.JobCountry from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewId          
-  if(@JobCountry1='India' or @JobCountry1=1)          
-  BEGIN          
-  set @AddPoint=-200          
-  END          
-  Else          
-  BEGIN          
-  set @AddPoint=-350          
-END          
-  END  
-  if(@IsProctor=1)  
-  BEGIN  
-  set @AddPoint=0  
-  set @Candidate=REPLACE(@Candidate,'Penalty','')  
-  END  
-    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@Candidate where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'                     
-    END                    
+Create Procedure [dbo].[usp_InterviewAddPoints]                         
+@interviewId int,                               
+@Type varchar(30),                            
+@Points float                            
+AS                            
+BEGIN                         
+ Declare @Userid int                        
+ Declare @AddPoint int                            
+ Declare @Candidate varchar(200)                            
+ Declare @Count int=0                            
+ Declare @Irfid int                      
+ Declare @IsEmergency bit          
+ Declare @meetingStatus int        
+ Declare @IsProctor bit  
+ Declare @VideoDuration int
+ select @IsEmergency =IsEmergency from InterviewMeetings where id =@interviewId                    
+ Select @Irfid=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewId                     
+ Select @meetingStatus=MeetingStatus from InterviewComments where InterviewId=@interviewId 
+ Select @VideoDuration=VideoDuration from InterviewComments where InterviewId=@interviewId 
+ Select @IsProctor=ISNULL(ca.IsProctor,0) from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Userlist ul on im.candidateEmail=ul.EmailId     
+ join CandidatesMaster cm on ul.id=cm.UserId join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id  where im.id=@interviewId                     
+    
+if(@Type='Interview')                            
+ BEGIN                        
+ Select @Userid=id from UserList where EmailId=(select interviewer from InterviewMeetings where id=@interviewId)                       
+ Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                       
+ Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId        
+     
+ if(@Count=0)                      
+    Begin                    
                     
- END                          
-else if(@Type='Quality Controller')                  
- Begin                  
-  Select @Userid=id from UserList where EmailId=(select QCInterviewer from InterviewMeetings where id=@interviewId)                     
-  Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                     
-  if(@Count=0)                    
-   Begin                    
-    Select @AddPoint=PerSuccessRate from TransQualityController where Userid=@Userid and IRFId=@Irfid                     
-    set @AddPoint= Round((ISNULL(@AddPoint,0)*ISNULL(@Points,0)/100),0)                         
-     Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId                          
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                      
-   END                          
-   else                
-   Begin                
-      if Not EXISTS(Select 1 from QCFeedbackReport where interviewid=@interviewId and QCStatus=1)                
-   Begin         
-   Delete from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                     
-   END                
-   END                
- END                          
-END        
+                    
+     if(@IsEmergency=1)                    
+     Begin                    
+      If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+      begin                            
+       Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                            
+      End                
+   else If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+       Begin                            
+        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                            
+       End               
+     END                    
+                    
+     Else                    
+     BEGIN                    
+      If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+       Begin                            
+        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                            
+       End                    
+                    
+      Else If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+       begin                            
+        Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                            
+       End                    
+     END                    
+                    
+                        
+                        
+    --Select @Count=Count(*) from TransInterviewer ti join IRF on irf.id=ti.IRFId join InterviewMeetings im on irf.IRFId=im.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid and im.IsEmergency=0                          
+                         
+    --if(@Count>0)                            
+    -- Begin                            
+    -- Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                            
+    -- End                       
+    --Else                            
+    -- begin                            
+    -- Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                            
+    -- End                     
+    set @AddPoint=Round(((ISNULL(@AddPoint,0)*ISNULL(@Points,0))/100),0)                    
+             
+ if(@meetingStatus=5)                         
+  BEGIN            
+  set @Candidate='Penalty '+@Candidate            
+  Declare @JobCountry varchar(50)            
+  Select @JobCountry=IRF.JobCountry from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewId            
+  if(@JobCountry='India' or @JobCountry=1)            
+  BEGIN            
+  set @AddPoint=-200            
+  END            
+  Else            
+  BEGIN            
+  set @AddPoint=-350            
+  END            
+  END            
+  if(@IsProctor=1)    
+  BEGIN    
+	if(@meetingStatus=4)
+	BEGIN
+		-- set for Selected or Rejected status with time check
+		if(@VideoDuration<=90)
+		BEGIN
+		set @AddPoint=150  
+		END
+		else
+		BEGIN
+		set @AddPoint=250  
+		END
+	END
+	else if(@meetingStatus=1)
+	BEGIN
+	set @AddPoint=50
+	END
+	else if(@meetingStatus=3)
+	BEGIN
+		if(@VideoDuration<=30)
+		BEGIN
+		set @AddPoint=75  
+		END
+		else if(@VideoDuration<=90 and @VideoDuration>30)
+		BEGIN
+		set @AddPoint=150  
+		END
+		else 
+		BEGIN
+		set @AddPoint=250  
+		END
+	END
+  set @Candidate=REPLACE(@Candidate,'Penalty','')    
+  END    
+    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                       
+    END                      
+   Else                      
+    BEGIN                      
+                    
+     if(@IsEmergency=1)                    
+     Begin                    
+      If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+      begin                            
+       Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                            
+      End               
+   else If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+       Begin                            
+        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                            
+       End               
+     END                    
+                    
+     Else                    
+     BEGIN                    
+      If EXISTS(select top 1 ti.id from TransInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+       Begin                            
+        Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                            
+       End                    
+                    
+      Else If EXISTS(select top 1 ti.id from TransEmergencyInterviewer ti join IRF on irf.id=ti.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid)                    
+       begin                            
+        Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                            
+       End                    
+END                    
+                    
+                        
+    --Select @Count=Count(*) from TransInterviewer ti join IRF on irf.id=ti.IRFId join InterviewMeetings im on irf.IRFId=im.IRFId where ti.Userid=@Userid and ti.IRFId=@Irfid and im.IsEmergency=0                          
+    --if(@Count>0)                            
+    -- Begin                            
+    -- Select @AddPoint=PerSuccessRate from TransInterviewer where Userid=@Userid and IRFId=@Irfid                            
+    -- End                            
+    --Else                            
+    -- begin                            
+    -- Select @AddPoint=PerSuccessRate from TransEmergencyInterviewer where Userid=@Userid and IRFId=@Irfid                            
+    -- End                     
+                         
+                    
+    set @AddPoint= Round(((ISNULL(@AddPoint,0)*ISNULL(@Points,0))/100), 0)      
+ if(@meetingStatus=5)                         
+  BEGIN            
+  set @Candidate='Penalty '+@Candidate            
+  Declare @JobCountry1 varchar(50)            
+  Select @JobCountry1=IRF.JobCountry from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@interviewId            
+  if(@JobCountry1='India' or @JobCountry1=1)            
+  BEGIN            
+  set @AddPoint=-200            
+  END            
+  Else            
+  BEGIN            
+  set @AddPoint=-350            
+END            
+  END    
+  if(@IsProctor=1)    
+  BEGIN    
+  if(@meetingStatus=4)
+	BEGIN
+		-- set for Selected or Rejected status with time check
+		if(@VideoDuration<=90)
+		BEGIN
+		set @AddPoint=150  
+		END
+		else
+		BEGIN
+		set @AddPoint=250  
+		END
+	END
+	else if(@meetingStatus=1)
+	BEGIN
+	set @AddPoint=50
+	END
+	else if(@meetingStatus=3)
+	BEGIN
+		if(@VideoDuration<=30)
+		BEGIN
+		set @AddPoint=75  
+		END
+		else if(@VideoDuration<=90 and @VideoDuration>30)
+		BEGIN
+		set @AddPoint=150  
+		END
+		else 
+		BEGIN
+		set @AddPoint=250  
+		END
+	END
+  set @Candidate=REPLACE(@Candidate,'Penalty','')    
+  END    
+    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@Candidate where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'                       
+    END                      
+                      
+ END                            
+else if(@Type='Quality Controller')                    
+ Begin                    
+  Select @Userid=id from UserList where EmailId=(select QCInterviewer from InterviewMeetings where id=@interviewId)                       
+  Select @Count=count(*) from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                       
+  if(@Count=0)                      
+   Begin                      
+    Select @AddPoint=PerSuccessRate from TransQualityController where Userid=@Userid and IRFId=@Irfid                       
+    set @AddPoint= Round((ISNULL(@AddPoint,0)*ISNULL(@Points,0)/100),0)                           
+     Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId                            
+    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                        
+   END                            
+   else                  
+   Begin                  
+      if Not EXISTS(Select 1 from QCFeedbackReport where interviewid=@interviewId and QCStatus=1)                  
+   Begin           
+   Delete from InterviewPoints where Interviewid=@interviewId and userid=@Userid and InterviewPoints.Type=@Type                       
+   END                  
+   END                  
+ END                            
+END
 GO
 
 

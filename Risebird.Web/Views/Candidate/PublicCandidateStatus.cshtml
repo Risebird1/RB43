@@ -189,14 +189,14 @@
                                                             <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @checked = "checked", @style = "position:relative;top:4px;" }) Added Date <span style="font-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
+                                                                        @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @style = "position:relative;top:4px;" }) Added Date <span style="font-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Added date)</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
-                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2", @style = "position:relative;top:4px;" }) Interview Date <span style="font-size:14px; font-weight:600;color: #0f6121;">(Filter based on Interview date)</span>
+                                                                        @Html.RadioButton("DateType", "2", new { @id = "Datetype_2", @checked = "checked", @style = "position:relative;top:4px;" }) Interview Date <span style="font-size:14px; font-weight:600;color: #0f6121;">(Filter based on Interview date)</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -304,7 +304,7 @@
                                                         <table id="candidateTable" class="table table-striped table-bordered dataTable journey" cellspacing="0" width="100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="text-left">Candidate Name</th>
+                                                                    <th class="text-left">Candidate</th>
                                                                     <th class="text-left">Interview Date</th>
                                                                     <th id="status_4" class="text-left">JD Title</th>
                                                                     <th id="status_8">Current Status</th>
@@ -317,7 +317,7 @@
                                                             </thead>
                                                             <tfoot>
                                                                 <tr>
-                                                                    <th class="text-left">Candidate Name</th>
+                                                                    <th class="text-left">Candidate</th>
                                                                     <th class="text-left">Interview Date</th>
                                                                     <th class="text-left">JD Title</th>
                                                                     <th>Current Status</th>
@@ -334,27 +334,31 @@
                                                                 @foreach (var item in Model)
                                                                 {
                                                                     <tr>
-
-                                                                        @if (item.CandidateName != null && item.CandidateName != "")
-                                                                        {
-                                                                            @if (item.CandidateName.Length > 20)
+                                                                        <td class="cadName text-left pl15">
+                                                                            @if (item.CandidateName != null && item.CandidateName != "")
                                                                             {
-                                                                                <td class="cadName text-left pl15">
-                                                                                    <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName</a>
-                                                                                </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td class="text-left pl15">
-                                                                                    <a onclick=""> @item.CandidateName </a>
-                                                                                </td>
-                                                                            }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
+                                                                                @if (item.CandidateName.Length > 20)
+                                                                                {
 
+                                                                                    <p style="font-size:11px" title="@item.CandidateName"> @item.CandidateName.Substring(0, 19) ...</p>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <p style="font-size:11px"> @item.CandidateName </p>
+                                                                                }
+                                                                            }
+                                                                            @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
+                                                                            {
+                                                                                @if (item.CandidateEmailId.Length > 20)
+                                                                                {
+                                                                                    <p style="font-size:11px" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 19) ...</p>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <p style="font-size:11px"> @item.CandidateEmailId </p>
+                                                                                }
+                                                                            }
+                                                                        </td>
                                                                         @if (item.interviewDate != null && item.interviewDate != "")
                                                                         {
                                                                             <td class="cadEmail text-left pl15">
@@ -979,7 +983,7 @@
         for (var i = 0; i < data.length; i++) {
             html += '<tr><td>' + data[i].irfId + '</td>';
             html += '<td>' + data[i].jdTiltle + '</td>';
-            html += '<td><a class="schedule-linktxt" id="calendlyLink_' + i + '" target="_blank" title="Scheduling Link" href="' + data[i].calendlyLink + '">Scheculing Link</a>';
+            html += '<td><a class="schedule-linktxt" id="calendlyLink_' + i + '" target="_blank" title="Candidate Submission Form Link" href="' + data[i].calendlyLink + '">CSF Link</a>';
             html += '<button class="copy-btn schedule-linkbtn" onclick="copyToClipboard(' + i + ')">';
             html += ' <p class="special-text">';
             html += '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>';
