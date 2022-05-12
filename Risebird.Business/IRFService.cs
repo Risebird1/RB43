@@ -1398,11 +1398,11 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<IRF> GetAllIRFs(string emailId, string profileName)
+        public IEnumerable<IRF> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null)
         {
             try
             {
-                var irfList = _irfRepository.GetAllIRFs(emailId, profileName).Result.ToList();
+                var irfList = _irfRepository.GetAllIRFs(emailId, profileName, pageNumber, searchValue).Result.ToList();
                 foreach (var irf in irfList ?? new List<IRF>())
                 {
                     if (irf.TotalBudget != 0)
