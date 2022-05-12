@@ -32,29 +32,29 @@ Create PROCEDURE [dbo].[usp_AddCandidate]
 @Heuristicsscore int,    
 @AvailableFullTime  bit,    
 @AvailableFreeLancing bit,    
---@ClientHRAttemptContact varchar(100),    
---@ProfileSource varchar(200),  
+@ClientHRAttemptContact varchar(100),    
+@ProfileSource varchar(200),  
 @WhatsappNumber varchar(15),
 @IsProctor bit
 AS      
 Begin      
-declare  @ProfileId int, @addedByProfile varchar(30), @clientHR varchar(30) , @staffingAgency varchar(30)     
+declare  @ProfileId int--, @addedByProfile varchar(30), @clientHR varchar(30) , @staffingAgency varchar(30)     
 set @ProfileId  = (select id from [Profile] where [Name]='Candidate')  
 
-set @addedByProfile = (select pr.Name from UserList ul join Profile pr on pr.id = ul.idProfile where ul.id = @AddedByUserId)
-if(@addedByProfile = 'Client')
-begin
-	declare @roleId int
-	set @roleId = (select RoleId from ClientUser cu where UserId = @AddedByUserId)
-	if(@roleId = 1)
-	begin
-		set @clientHR = (select EmailId from UserList where id = @AddedByUserId)
-	end
-	Else if(@roleId = 4)
-	begin
-		set @staffingAgency = (select EmailId from UserList where id = @AddedByUserId)
-	end
-end
+--set @addedByProfile = (select pr.Name from UserList ul join Profile pr on pr.id = ul.idProfile where ul.id = @AddedByUserId)
+--if(@addedByProfile = 'Client')
+--begin
+--	declare @roleId int
+--	set @roleId = (select RoleId from ClientUser cu where UserId = @AddedByUserId)
+--	if(@roleId = 1)
+--	begin
+--		set @clientHR = (select EmailId from UserList where id = @AddedByUserId)
+--	end
+--	Else if(@roleId = 4)
+--	begin
+--		set @staffingAgency = (select EmailId from UserList where id = @AddedByUserId)
+--	end
+--end
 IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId and idProfile = @ProfileId)      
 Begin      
 INSERT INTO [dbo].[UserList]      
@@ -135,10 +135,10 @@ values(@IRFId,
 @Heuristicsscore,    
 @AvailableFullTime,    
 @AvailableFreeLancing,    
---@ClientHRAttemptContact,    
---@ProfileSource,
-@clientHR,
-@staffingAgency,
+@ClientHRAttemptContact,    
+@ProfileSource,
+--@clientHR,
+--@staffingAgency,
 @IsProctor
 )      
       
@@ -205,10 +205,10 @@ values(@IRFId,
 @Heuristicsscore,    
 @AvailableFullTime,    
 @AvailableFreeLancing,    
---@ClientHRAttemptContact,    
---@ProfileSource,
-@clientHR,
-@staffingAgency,
+@ClientHRAttemptContact,    
+@ProfileSource,
+--@clientHR,
+--@staffingAgency,
 @IsProctor)      
       
       

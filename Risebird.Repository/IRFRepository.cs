@@ -414,7 +414,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName)
+        public async Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName, int? pageNumber, string searchValue = null)
         {
             try
             {
@@ -423,6 +423,10 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@EmailId", emailID);
                     parameters.Add("@Profile", profileName);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@pageNumber", pageNumber.HasValue ? pageNumber.Value : 1);
+                    parameters.Add("@pageSize", 9);
+                    parameters.Add("@searchValue", searchValue);
                     parameters.Add("@timeNow", DateTime.Now);
                     return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandType: CommandType.StoredProcedure);
                 }
@@ -3089,8 +3093,8 @@ namespace Risebird.Repository
                 parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
-                //parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
-                //parameters.Add("@ProfileSource", obj.ProfileSource);
+                parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
+                parameters.Add("@ProfileSource", obj.ProfileSource);
                 parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                 parameters.Add("@IsProctor", obj.IsProctor);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -3257,8 +3261,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 dynamicParameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
-                //dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
-                //dynamicParameters.Add("@ProfileSource", obj.ProfileSource);
+                dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
+                dynamicParameters.Add("@ProfileSource", obj.ProfileSource);
                 dynamicParameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                 dynamicParameters.Add("@IsProctor", obj.IsProctor);
                 using (SqlConnection con = new SqlConnection(connectionString))
