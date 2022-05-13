@@ -85,7 +85,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<Interviewer> GetIRFInterviewerSkills(string assessmentgroupid);
         Skill GetSkillById(int id);
         IEnumerable<TransClientUser> GetTransClientUserRole();
-        Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName, int? pageNumber, string searchValue = null);
+        Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null);
         Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
         Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         IEnumerable<string> GetCuratedUserMailId(int irfId);
@@ -182,5 +182,6 @@ namespace Risebird.Repository.Interface
         Task<AssignmentVM> GetAssessmentGroupDetails(int assessmentGroupId);
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails);
         int GetIRFIdByIRFName(string IRFId);
+        Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailID, string profileName, IRFFilter filterModel = null);
     }
 }
