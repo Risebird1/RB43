@@ -15,6 +15,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsClientUser { get; set; }
         public List<string> RoleList { get; set; }
         public int MaxPageCount { get; set; }
+        public IEnumerable<IRFFilterViewModel> IRFFilterData { get; set; }
 
     }
 }
