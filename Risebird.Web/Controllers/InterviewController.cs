@@ -2207,6 +2207,7 @@ namespace Risebird.Web.Controllers
                         var codedname = _meetingService.FetchInterviewerCodedName(emailid);
                         ViewBag.CodedName = codedname;
                         ViewBag.isNotificationAccepted = true;
+                        ViewBag.isCodedResumePresent = true;
                         // myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -2219,7 +2220,6 @@ namespace Risebird.Web.Controllers
                             if (item.MeetingStatus.HasValue)
                             {
                                 item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-
                             }
                         }
                         if (filter.StartDate != null && filter.EndDate != null)
@@ -2229,16 +2229,12 @@ namespace Risebird.Web.Controllers
                         else if (filter.StartDate != null && filter.EndDate == null)
                         {
                             //filter.EndDate = filter.StartDate;
-
                             myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate /*&& t.interviewDate.Date <= filter.EndDate*/).ToList();
-
                         }
                         else if (filter.StartDate == null && filter.EndDate != null)
                         {
                             //filter.StartDate = filter.EndDate;
-
                             myInterview = myInterview.Where(t => /*t.interviewDate.Date >= filter.StartDate &&*/ t.interviewDate.Date <= filter.EndDate).ToList();
-
                         }
                         //filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
                         filter.InterviewSlot = filter.InterviewSlot == null ? filter.InterviewSlot = myInterview.Select(x => x.interviewSlot).ToArray() : filter.InterviewSlot = filter.InterviewSlot;
@@ -2253,22 +2249,18 @@ namespace Risebird.Web.Controllers
                        && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                        && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
-
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
                             TempData.Remove("SuccessErrorMessage");
                             //TempData.Clear();
                         }
-
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.Contains(searchValue) : x.MeetingStatusDesc == "")
                             || (!String.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
-
                         }
                         ViewBag.TotalCount = myInterview.Count;
-
                         ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
                         int a = myInterview.Count / 10;
                         if (myInterview.Count % 10 == 0)
@@ -2285,9 +2277,7 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
                             }
-
                         }
                         if (myInterview.Count == 0)
                         {
@@ -2305,13 +2295,9 @@ namespace Risebird.Web.Controllers
                             if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
                             {
                                 item.Timer = Convert.ToInt32(timediff.TotalMinutes);
-
                             }
-
                         }
-
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
-
                     }
                     else
                     {

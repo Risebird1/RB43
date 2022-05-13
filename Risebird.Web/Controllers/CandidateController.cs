@@ -3590,7 +3590,8 @@ namespace Risebird.Web.Controllers
                 HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                 HttpContext.Session.Remove("PublicCandidateStatusfilters");
                 var candidateData = new List<CandidateTimelineData>();
-                candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                //candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, 2, emailid)).ToList();
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -3611,7 +3612,7 @@ namespace Risebird.Web.Controllers
                         firstData = data.Where(x => x.InterviewId == lastvalue.InterviewId).FirstOrDefault();
                     }
                     var candidateTimeline = new CandidateTimelineVM();
-
+                    
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3716,7 +3717,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("PublicCandidateStatusfilters", JsonConvert.SerializeObject(filter));
                 }
                 var candidateData = new List<CandidateTimelineData>();
-                int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 1;
+                int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 2;
                 if (filter.StartDate != null && filter.EndDate != null)
                 {
                     candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
@@ -3898,7 +3899,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("PublicCandidateStatusfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PublicCandidateStatusfilters"));
-                    int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 1;
+                    int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 2;
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
@@ -3910,7 +3911,8 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                    //candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-7), DateTime.Now, 2, emailid)).ToList();
                 }
 
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
