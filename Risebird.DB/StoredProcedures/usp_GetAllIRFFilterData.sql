@@ -1,7 +1,4 @@
 
-
-/****** Object:  StoredProcedure [dbo].[usp_GetAllIRF]    Script Date: 20-03-2020 12.16.55 PM ******/
-
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetAllIRFFilterData'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetAllIRFFilterData
