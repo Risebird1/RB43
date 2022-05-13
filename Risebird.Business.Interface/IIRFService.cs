@@ -52,7 +52,7 @@ namespace Risebird.Business.Interface
         List<IRFVm> GetUpComingIRFList();
         bool PauseIRF(int irfId, string irfName);
         bool PlayIRF(int irfId, string irfName);
-        IEnumerable<IRF> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null);
+        IEnumerable<IRF> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null);
         Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
         Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         bool SaveCandidateStatus(int candidateId, int status);
@@ -112,5 +112,6 @@ namespace Risebird.Business.Interface
         Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile = null);
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails, string loggedInUser);
         Task<bool> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile);
+        Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailId, string profileName, IRFFilter filterModel = null);
     }
 }

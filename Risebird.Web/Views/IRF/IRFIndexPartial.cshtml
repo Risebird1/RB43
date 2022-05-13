@@ -28,24 +28,41 @@
                                 }
                             }
                             else
-                            {<h6></h6>}
+                            {
+                                <h6></h6>
+                            }
 
 
                             @if (item.JDTiltle != null && item.JDTiltle != "")
                             {
-                                @if (item.JDTiltle.Length > 40)
+                                @if (!string.IsNullOrEmpty(item.JDTiltle.Split("|")[0]))
+                                {
+                                    @if (item.JDTiltle.Split("|")[0].Length > 40)
+                                    {
+                                        <a href="#" data-tooltip="@item.JDTiltle">
+                                            <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0].Substring(0, 40))</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span>
+                                    }
+                                }
+                                else if (item.JDTiltle.Length > 40)
                                 {
                                     <a href="#" data-tooltip="@item.JDTiltle">
-                                        <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0].Substring(0, 40))</span>
+                                        <span class="pskill" title="@item.JDTiltle">(@item.JDTiltle.Substring(0, 40))</span>
                                     </a>
                                 }
                                 else
                                 {
-                                    <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span>
+                                    <span class="pskill" title="@item.JDTiltle">(@item.JDTiltle)</span>
                                 }
                             }
                             else
-                            {<span></span>}
+                            {
+                                <span></span>
+                            }
 
                         </div>
 
