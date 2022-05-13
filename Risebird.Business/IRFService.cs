@@ -1398,11 +1398,11 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<IRF> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null)
+        public IEnumerable<IRF> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null)
         {
             try
             {
-                var irfList = _irfRepository.GetAllIRFs(emailId, profileName, pageNumber, searchValue).Result.ToList();
+                var irfList = _irfRepository.GetAllIRFs(emailId, profileName, pageNumber, searchValue, filterModel).Result.ToList();
                 foreach (var irf in irfList ?? new List<IRF>())
                 {
                     if (irf.TotalBudget != 0)
@@ -2571,6 +2571,20 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailId, string profileName, IRFFilter filterModel = null)
+        {
+            try
+            {
+                return await _irfRepository.GetIRFFilterData(emailId, profileName, filterModel);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

@@ -414,7 +414,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName, int? pageNumber, string searchValue = null)
+        public async Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null)
         {
             try
             {
@@ -427,8 +427,46 @@ namespace Risebird.Repository
                     parameters.Add("@pageNumber", pageNumber.HasValue ? pageNumber.Value : 1);
                     parameters.Add("@pageSize", 9);
                     parameters.Add("@searchValue", searchValue);
-                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@isFilterApplied", filterModel != null ? true : false);
+                    parameters.Add("@startDate", filterModel != null ? filterModel.StartDate : null);
+                    parameters.Add("@endDate", filterModel != null ? filterModel.EndDate : null);
+                    parameters.Add("@IRFIdList", filterModel != null && filterModel.RFID != null ? string.Join(",", filterModel.RFID) : null);
+                    parameters.Add("@ClientCompanyList", filterModel != null && filterModel.ClientName != null ? string.Join(",", filterModel.ClientName) : null);
+                    parameters.Add("@EndCLientNameList", filterModel != null && filterModel.EndClientName != null ? string.Join(",", filterModel.EndClientName) : null);
+                    parameters.Add("@PrimarySkillList", filterModel != null && filterModel.PrimarySkill != null ? string.Join(",", filterModel.PrimarySkill) : null);
                     return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters, commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailID, string profileName, IRFFilter filterModel = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailID);
+                    parameters.Add("@Profile", profileName);
+                    //parameters.Add("@timeNow", DateTime.Now);
+                    //parameters.Add("@isFilterApplied", filterModel != null ? true : false);
+                    parameters.Add("@startDate", filterModel != null ? filterModel.StartDate : null);
+                    parameters.Add("@endDate", filterModel != null ? filterModel.EndDate : null);
+                    parameters.Add("@IRFIdList", filterModel != null && filterModel.RFID != null ? string.Join(",", filterModel.RFID) : null);
+                    parameters.Add("@ClientCompanyList", filterModel != null && filterModel.ClientName != null ? string.Join(",", filterModel.ClientName) : null);
+                    parameters.Add("@EndCLientNameList", filterModel != null && filterModel.EndClientName != null ? string.Join(",", filterModel.EndClientName) : null);
+                    parameters.Add("@PrimarySkillList", filterModel != null && filterModel.PrimarySkill != null ? string.Join(",", filterModel.PrimarySkill) : null);
+                    return await SqlMapper.QueryAsync<IRFFilterViewModel>(con, "usp_GetAllIRFFilterData", parameters, commandType: CommandType.StoredProcedure);
                 }
 
             }
