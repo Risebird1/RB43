@@ -105,5 +105,6 @@ namespace Risebird.Entities.Data
         public int Timer { get; set; }
         public bool IsProctor { get; set; }
         public string AudioComment { get; set; }
+        public string JobCountry { get; set; }
     }
 }
