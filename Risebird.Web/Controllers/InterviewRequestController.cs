@@ -30,8 +30,11 @@ namespace Risebird.Web.Controllers
         private readonly IUserService _userService;
         private readonly IIRFService _irfService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IClientService _clientService;
+        private readonly ISkillService _skillService;
+        private readonly IInterviewSchedulerService _interviewSchedulerservice;
 
-        public InterviewRequestController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInterviewRequestService interviewRequestService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public InterviewRequestController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInterviewRequestService interviewRequestService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ISkillService skillService, IInterviewSchedulerService interviewSchedulerservice)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -44,6 +47,9 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _irfService = irfService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _clientService = clientService;
+            _skillService = skillService;
+            _interviewSchedulerservice = interviewSchedulerservice;
         }
 
         [HttpGet]
@@ -413,8 +419,16 @@ namespace Risebird.Web.Controllers
             var _country = from InterviewRequestCountry s in Enum.GetValues(typeof(InterviewRequestCountry))
                            select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.CountryList = new SelectList(_country, "ID", "Name");
+            ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            var competencyLevels = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");
+            var skills = _irfRepository.GetSkills();
+            ViewBag.Skill = new SelectList(skills, "id", "Name");
         }
-
         [HttpPost]
         public JsonResult FetchCoordinators()
         {
@@ -493,8 +507,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
                 var model = new InterviewRequestVM();
-                // model.RequestedBy = emailid;
                 model.uniqueid = id;
+                model.RequestedBy = emailid;
                 var skills = _irfRepository.GetSkills();
                 await SetInterviewRequestSelectLists();
                 var Skillset = skills;
@@ -503,6 +517,13 @@ namespace Risebird.Web.Controllers
                     Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
                 }
                 ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+                int clientId = await _clientService.GetClientByEmailId(emailid);
+                model.ClientId = clientId;
+                if (clientId > 0)
+                {
+                    model.ClientCompanyName = _clientService.GetClient(clientId).Name;
+                }
+                await SetBillingOwnerList(clientId);
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -536,12 +557,14 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.emailid = meeting.RequestedBy;
                 ViewBag.id = meeting.uniqueid;
+                var emailId = meeting.RequestedBy;
                 if (!String.IsNullOrEmpty(meeting.uniqueid))
                 {
                     ViewBag.Status = "Public";
                 }
                 if (ModelState.IsValid)
                 {
+                    var model = new IRFVm();
                     if (meeting.JDFile != null)
                     {
                         var fileName = meeting.JDFile.FileName.Replace(" ", "_");
@@ -561,6 +584,7 @@ namespace Risebird.Web.Controllers
                             {
                                 ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                 await SetInterviewRequestSelectLists();
+                                await SetBillingOwnerList(meeting.ClientId);
                                 return View(meeting);
                             }
                         }
@@ -568,6 +592,7 @@ namespace Risebird.Web.Controllers
                         {
                             ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                             await SetInterviewRequestSelectLists();
+                            await SetBillingOwnerList(meeting.ClientId);
                             return View(meeting);
                         }
                     }
@@ -575,36 +600,44 @@ namespace Risebird.Web.Controllers
                     {
                         ModelState.AddModelError("JDFile", "Jd File is required.");
                         await SetInterviewRequestSelectLists();
+                        await SetBillingOwnerList(meeting.ClientId);
                         return View(meeting);
                     }
-                    if (meeting.TechSkill.Count() < 2)
+                    if (meeting.TechSkills.Count() < 2)
                     {
                         ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
+                        await SetInterviewRequestSelectLists();
+                        await SetBillingOwnerList(meeting.ClientId);
                         return View(meeting);
                     }
-                    if (_interviewRequestService.CreateInerviewRequest(meeting))
+                    var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(meeting.Categoryid);
+                    var assessmentName = assessmentGroups.Where(x => x.id == meeting.AssessmentGroupId).Select(x => x.AssessmentGroup).FirstOrDefault();
+                    var irfid = GenerateSkillChannelName(assessmentName, meeting.ClientCompanyName);
+                    model.IRFId = irfid;
+                    model.JDLink = meeting.JDLink;
+                    model.AssessmentGroupId = meeting.AssessmentGroupId.ToString();
+                    model.ClientId = meeting.ClientId;
+                    model.ClientName = meeting.ClientName;
+                    model.JDTiltle = meeting.JdTitle;
+                    model.BillingOwner = meeting.BillingOwner;
+                    model.JobCountry = meeting.Country.ToString();
+                    model.JobLevel = meeting.JobLevel;
+                    model.CompanyType = meeting.CompanyTypes.ToString();
+                    model.Heuristicsscore = meeting.CompetencyLevel;
+                    model.SkillCollection = meeting.TechSkills;
+                    model.StartDate = DateTime.Now;
+                    model.EndDate = DateTime.Now.AddMonths(3);
+                    var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                    model.CalendlyLink = _schedulinglink;
+                    if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailId, "Client"))
                     {
-                        //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
-                        Mail _mail = new Mail
-                        {
-                            TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io; talent@risebird.io;parvathi_sg@risebird.io",
-                            Subject = "New Interview Request: " + meeting.JdTitle
-                        };
-                        var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
-                        //Send a mail to Client
-                        Mail _mail1 = new Mail
-                        {
-                            TO = meeting.RequestedBy,
-                            Subject = "New Interview Request: " + meeting.JdTitle
-                        };
-                        var emailsend1 = _notificationHelper.InterviewRequestAddClientNotification(_mail1, meeting.JdTitle, meeting.PrimarySkill);
-                        TempData["SuccessErrorMessageInterview"] = "Request has been created Successfully!";
-                        return RedirectToAction("PublicCreateInterviewRequest", new { emailid = meeting.RequestedBy, id = meeting.uniqueid });
+                        TempData["SuccessErrorMessageInterview"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                        return RedirectToAction("PublicCreateInterviewRequest", new { emailid = emailId, id = meeting.uniqueid });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageInterview"] = "Failed to create Request!";
-                        return RedirectToAction("PublicCreateInterviewRequest", new { emailid = meeting.RequestedBy, id = meeting.uniqueid });
+                        TempData["SuccessErrorMessageInterview"] = "Failed to create Skills Channel!";
+                        return RedirectToAction("PublicCreateInterviewRequest", new { emailid = emailId, id = meeting.uniqueid });
                     }
                 }
                 else
@@ -619,6 +652,104 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageInterview"] = "Failed to Create request!";
                 return RedirectToAction("PublicCreateInterviewRequest", new { emailid = meeting.RequestedBy, id = meeting.uniqueid });
             }
+        }
+        public async Task SetBillingOwnerList(int ClientId)
+        {
+            var clientUsers = _irfService.GetClientUser(ClientId);
+            if (clientUsers != null && clientUsers.Count() > 0)
+            {
+                ViewBag.BillingOwner = new SelectList(clientUsers, "id", "EmailId");
+            }
+            else
+            {
+                var list = new List<SelectListItem>();
+                list.Add(new SelectListItem { Text = "No Client User", Value = "0" });
+                ViewBag.BillingOwner = new SelectList(list, "Value", "Text");
+            }
+        }
+        public string GenerateSkillChannelName(string assessmentGroupId, string clientCompanyName)
+        {
+            bool flag = false;
+            string skillChannelName = string.Empty;
+            while (!flag)
+            {
+                if (!string.IsNullOrEmpty(clientCompanyName))
+                {
+                    skillChannelName = clientCompanyName.Substring(0, 3);
+                    skillChannelName = skillChannelName + assessmentGroupId.Substring(0, 2) + GenerateRandomstring();
+                }
+                flag = CheckUniqueness(skillChannelName, false);
+            }
+            skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-");
+            return skillChannelName;
+        }
+        public string GenerateRandomstring()
+        {
+            DateTime _dt = DateTime.Now;
+            var month = _dt.Month.ToString();
+            if (month.Length == 1)
+            {
+                month = "0" + month;
+            }
+            var _date = _dt.Day.ToString();
+            if (_date.Length == 1)
+            {
+                _date = "0" + _date;
+            }
+            var sec = digSum(_dt.Second);
+            return _date + month + sec.ToString();
+        }
+        public int digSum(int n)
+        {
+            int sum = 0;
+            while (n > 0 || sum > 9)
+            {
+                if (n == 0)
+                {
+                    n = sum;
+                    sum = 0;
+                }
+                sum += n % 10;
+                n /= 10;
+            }
+            return sum;
+        }
+        public bool CheckUniqueness(string value, bool isCloneTemplate = false)
+        {
+            return _irfService.CheckUniqueness(value, isCloneTemplate);
+        }
+        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
+        {
+            var model_Second = new List<daytimes_second>();
+            var sun = new List<perdaytime>();
+            var mon = new List<perdaytime>();
+            sun.Add(new perdaytime { Start = "8", End = "23" });
+            mon.Add(new perdaytime { Start = "6", End = "9" });
+            mon.Add(new perdaytime { Start = "19", End = "24" });
+            model_Second.Add(new daytimes_second { Daytype = "sunday", dayCheck = true, dayvalue = sun });
+            model_Second.Add(new daytimes_second { Daytype = "monday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "tuesday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "wednesday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "thursday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "friday", dayCheck = true, dayvalue = mon });
+            model_Second.Add(new daytimes_second { Daytype = "saturday", dayCheck = true, dayvalue = sun });
+            var model_report = new daytimes_report();
+            model_report.setvalue = model_Second;
+            model_report.StartDate = eventStartdate.AddHours(16);
+            model_report.EndDate = eventStartdate.AddDays(60);
+            model_report.EventName = EventName;
+            model_report.SkillChannel = SkillChannel;
+            model_report.duration = 60;
+            model_report.Concurrency = 10;
+            model_report.BufferTime = 12;
+            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
+            var model = _interviewSchedulerservice.FetchEventById(eventid);
+            if (model != null)
+            {
+                var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;
+                return eventurl;
+            }
+            return "";
         }
     }
 }
