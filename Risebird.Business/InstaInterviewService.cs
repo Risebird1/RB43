@@ -88,7 +88,7 @@ namespace Risebird.Business
                     foreach (var item in model.Result.TechSkill)
                     {
                         if (String.IsNullOrEmpty(RequiredSkill))
-                            RequiredSkill = item.SkillId;
+                            RequiredSkill = item.SkillId.ToString();
                         else
                             RequiredSkill = RequiredSkill + "," + item.SkillId;
                     }

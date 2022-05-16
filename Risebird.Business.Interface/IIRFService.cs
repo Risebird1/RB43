@@ -113,5 +113,6 @@ namespace Risebird.Business.Interface
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails, string loggedInUser);
         Task<bool> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile);
         Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailId, string profileName, IRFFilter filterModel = null);
+        Task<bool> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile);
     }
 }

@@ -372,57 +372,10 @@
                 <!--Start channel Management-->
                 <div class="row" style="padding-bottom:5px">
 
-                    <div class="col-md-4">
-
-                        <!-- START INTERVIEW BLOCK -->
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3>Channel Request</h3>
-
-                                </div>
-                            </div>
-
-                            <div id="channelrequestTableId">
-                                <div class="panel-body panel-body-table">
-                                    @if (Model.ChannelRequest != null && Model.ChannelRequest.Count() != 0)
-                                    {
-                                        <div class="scrollbox">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="70%">Channel Request</th>
-                                                            <th width="30%">Status</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-
-                                                        @foreach (var item in Model.ChannelRequest)
-                                                        {
-                                                            <tr>
-                                                                <td title="@item.CreatedDate.ToString("dd_MM")_@item.Client _@item.PrimarySkill"><strong>@item.CreatedDate.ToString("dd_MM")_@item.Client _@item.PrimarySkill</strong></td>
-                                                                <td onclick="location.href='@Url.Action("RequirementManagement","DashBoard")'" style="cursor: pointer;">@item.Status</td>
-                                                            </tr>
-                                                        }
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    }
-
-                                </div>
-                            </div>
+                    
 
 
-                        </div>
-                        <!-- END INTERVIEW BLOCK -->
-
-                    </div>
-
-
-                    <div class="daily-interview col-md-8">
+                    <div class="daily-interview col-md-12">
 
                         <!-- START IRF BLOCK -->
                         <div class="panel panel-default" style="margin-bottom:0px;">
