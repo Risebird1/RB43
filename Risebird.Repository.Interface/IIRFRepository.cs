@@ -183,5 +183,6 @@ namespace Risebird.Repository.Interface
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails);
         int GetIRFIdByIRFName(string IRFId);
         Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailID, string profileName, IRFFilter filterModel = null);
+        IEnumerable<TransInterviewer> GetIRFInterviewerSkillsByAssessmentGroup(string assessmentgroupid);
     }
 }

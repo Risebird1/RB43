@@ -2417,7 +2417,7 @@ namespace Risebird.Business
         {
             try
             {
-                if(profile == ProfileEnum.Client.GetDescription())
+                if (profile == ProfileEnum.Client.GetDescription())
                 {
                     var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
                     eligibleHrs.RemoveAt(0);
@@ -2429,7 +2429,7 @@ namespace Risebird.Business
                 {
                     irfDetails.RisebirdHr = GetUserId(loggedInUser);
                 }
-                
+
                 irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
                 irfDetails.CompanyDetails = string.Empty;
                 irfDetails.PerMintuteRate = 0;
@@ -2585,6 +2585,54 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<bool> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile)
+        {
+            try
+            {
+                if (profile == ProfileEnum.Client.GetDescription())
+                {
+                    var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
+                    eligibleHrs.RemoveAt(0);
+                    var random = new Random();
+                    int index = random.Next(eligibleHrs.Count);
+                    irfDetails.RisebirdHr = eligibleHrs[index].id;
+                }
+                else
+                {
+                    irfDetails.RisebirdHr = GetUserId(loggedInUser);
+                }
+                irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
+                irfDetails.CompanyDetails = string.Empty;
+                irfDetails.PerMintuteRate = 0;
+                irfDetails.TotalBudget = 0;
+                irfDetails.NoOfPosition = 0;
+                irfDetails.Type = "B2B";
+                irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
+                irfDetails.InterviewerCollection = (List<TransInterviewer>)_irfRepository.GetIRFInterviewerSkillsByAssessmentGroup(irfDetails.AssessmentGroupId);
+
+                int clientUserId = _irfRepository.GetUserId(loggedInUser);
+                irfDetails.ClientCollection = new List<TransClientUser>();
+                irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
+
+                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
+                    activityTrackerModel.Particulars = irfDetails.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Skill channel created";
+
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }
