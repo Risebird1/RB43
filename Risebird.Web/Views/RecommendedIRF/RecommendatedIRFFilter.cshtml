@@ -411,7 +411,7 @@
                     <input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
                     <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
                     <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
-                    <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
+                    <input type="hidden" for="ClientId" name="ClientId" id="ClientId" value="@Model.ClientId" />
                     <button type="submit" class="btn btn-primary">Generate Interview Link</button>
                 </form>
             </div>
@@ -680,7 +680,7 @@
         GenerateSkillChannelName(assessmentGroupName);
         if (!isModalOpened && clientId !== undefined) {
             isModalOpened = true;
-            $('#ClientId').val(clientId.value);
+            $('#ClientId').val(clientId);
         }
     }
     function PopulateBillingOwner() {
