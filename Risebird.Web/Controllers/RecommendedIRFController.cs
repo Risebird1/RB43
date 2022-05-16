@@ -32,8 +32,10 @@ namespace Risebird.Web.Controllers
         private readonly IRecommendedIRFService _recommendedIRFService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
+        private readonly IClientService _clientService;
+        private readonly IAzureStorageHelper _azureStorageHelper;
 
-        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger, ISkillService skillService, IConfiguration configuration, IIRFService irfService, IInterviewerService interviewerService, IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice, IUserRepository userRepository, IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
+        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger, ISkillService skillService, IConfiguration configuration, IIRFService irfService, IInterviewerService interviewerService, IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice, IUserRepository userRepository, IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, IClientService clientService, IAzureStorageHelper azureStorageHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _skillService = skillService;
@@ -46,51 +48,10 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
+            _clientService = clientService;
+            _azureStorageHelper = azureStorageHelper;
         }
-        [HttpGet]
-        public IActionResult Index(string emailid, string uniqueid)
-        {
-            var Emailid = String.Empty;
-            if (HttpContext.Session.GetString("email") != null)
-            {
-                Emailid = HttpContext.Session.GetString("email")?.Trim();
-                Emailid = Emailid.Replace("\"", "");
-            }
-            ViewBag.emailid = emailid;
-            ViewBag.uniqueid = uniqueid;
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
-            var model = new IRFViewModel();
-            var irfList = _recommendedIRFService.GetAllRecommendedIRFs(emailid);
-            model.IRFList = irfList;
-            foreach (var item in model.IRFList)
-            {
-                if (item.IsPaused)
-                {
-                    item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
-                    item.IRFStatus = "Paused";
-                }
-                else if (item.IsDeleted)
-                {
-                    item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                    item.IRFStatus = "Archived";
-                }
-                else
-                {
-                    item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                    item.IRFStatus = "Active";
-                }
-            }
-            if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
-            {
-                ViewBag.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
-                TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
-            }
-            if (Emailid != emailid)
-            {
-                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
-            }
-            return View(model);
-        }
+        
         [HttpGet]
         public async Task<IActionResult> RecommendatedIRFFilter(string emailid, string uniqueid)
         {
@@ -98,6 +59,15 @@ namespace Risebird.Web.Controllers
             ViewBag.uniqueid = uniqueid;
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
             ClonableTemplateListVM model = new ClonableTemplateListVM();
+            model.ClientId = await _clientService.GetClientByEmailId(emailid);
+            if (model.ClientId.HasValue)
+            {
+                model.ClientCompanyName = _clientService.GetClient(model.ClientId.Value).Name;
+            }
+            else
+            {
+                model.ClientId = null;
+            }
             model.LoggedInUser = emailid;
             model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
 
@@ -155,227 +125,274 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
-        [HttpPost]
-        public IActionResult FetchRecommendedIRF(IRFRecommendations model, string emailid, string uniqueid)
-        {
-            ViewBag.emailid = emailid;
-            ViewBag.uniqueid = uniqueid;
-            var irfList = _recommendedIRFService.GetFetchRecommendedIRF();
-            if (model.AssessmentGroupId != 0 && model.AssessmentGroupId != null)
-            {
-                irfList = irfList.Where(x => x.AssessmentGroupId == model.AssessmentGroupId).ToList();
-            }
-            if (model.CompetencyLevelId != 0 && model.CompetencyLevelId != null)
-            {
-                irfList = irfList.Where(x => x.CompetencyLevelId == model.CompetencyLevelId).ToList();
-            }
-            if (model.CountryType != 0 && model.CountryType != null)
-            {
-                irfList = irfList.Where(x => x.CountryType == model.CountryType).ToList();
-            }
-            if (model.SeniorityLevelId != 0 && model.SeniorityLevelId != null)
-            {
-                irfList = irfList.Where(x => x.SeniorityLevelId == model.SeniorityLevelId).ToList();
-            }
-            if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
-            {
-                ViewBag.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
-                TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
-            }
-            return View(irfList);
-        }
-        [HttpGet]
-        public async Task<IActionResult> CreateRecommendationIRF(int recommirfid, string emailid, string uniqueid, bool isClone = false, bool useAsCloneTemplate = false)
-        {
-            try
-            {
-                var Emailid = String.Empty;
-                if (HttpContext.Session.GetString("email") != null)
-                {
-                    Emailid = HttpContext.Session.GetString("email")?.Trim();
-                    Emailid = Emailid.Replace("\"", "");
-                }
-                ViewBag.emailid = emailid;
-                ViewBag.uniqueid = uniqueid;
+        #region Create Code Commented
+        //[HttpGet]
+        //public IActionResult Index(string emailid, string uniqueid)
+        //{
+        //    var Emailid = String.Empty;
+        //    if (HttpContext.Session.GetString("email") != null)
+        //    {
+        //        Emailid = HttpContext.Session.GetString("email")?.Trim();
+        //        Emailid = Emailid.Replace("\"", "");
+        //    }
+        //    ViewBag.emailid = emailid;
+        //    ViewBag.uniqueid = uniqueid;
+        //    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+        //    var model = new IRFViewModel();
+        //    var irfList = _recommendedIRFService.GetAllRecommendedIRFs(emailid);
+        //    model.IRFList = irfList;
+        //    foreach (var item in model.IRFList)
+        //    {
+        //        if (item.IsPaused)
+        //        {
+        //            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+        //            item.IRFStatus = "Paused";
+        //        }
+        //        else if (item.IsDeleted)
+        //        {
+        //            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+        //            item.IRFStatus = "Archived";
+        //        }
+        //        else
+        //        {
+        //            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+        //            item.IRFStatus = "Active";
+        //        }
+        //    }
+        //    if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
+        //    {
+        //        ViewBag.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
+        //        TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
+        //    }
+        //    if (Emailid != emailid)
+        //    {
+        //        return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+        //    }
+        //    return View(model);
+        //}
 
-                var client = await _userRepository.GetClientUserDetails(emailid);
-                int ClientId = client.ClientId;
-                var model = await _recommendedIRFService.GetRecommendationIRFByIRFid(recommirfid, isClone);
-                foreach (var item in model.QuesionList)
-                {
-                    item.UserId = client.UserId;
-                }
-                model.IsEdit = false;
-                model.ClientId = ClientId;
-                model.ClientName = client.ClientName;
-                model.ClientCompName = client.ClientName;
-                model.IsClone = isClone;
-                model.UseAsCloneTemplate = useAsCloneTemplate;
-                SetEditIRFProperties(model);
-                model.OldJDLink = model.JDLink;
-                model.OldCompanyDetails = model.CompanyDetails;
-                if (Emailid != emailid)
-                {
-                    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
-                }
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> CreateRecommendationIRF(IRFVm model, string emailid, string uniqueid)
-        {
-            try
-            {
-                ViewBag.emailid = emailid;
-                ViewBag.uniqueid = uniqueid;
-                int billingowner = 0;
-                if (model.id == 0)
-                {
-                    var irfflag = false;
-                    var IRFId = string.Empty;
-                    if (String.IsNullOrEmpty(model.IRFId))
-                    {
-                        while (!irfflag)
-                        {
-                            if (!String.IsNullOrEmpty(model.ClientName))
-                            {
-                                IRFId = model.ClientName.Substring(0, 3);
-                                var _irfassessment = model.OldAssessmentGroupId;
-                                IRFId = IRFId + _irfassessment.Substring(0, 2) + GenerateRandomstring();
-                            }
-                            irfflag = CheckUniqueness(IRFId, false);
-                        }
-                        model.IRFId = IRFId.Replace(".", "a");
-                        var client = await _userRepository.GetClientUserDetails(emailid);
-                        billingowner = client.UserId;
-                        foreach (var item in model.QuesionList)
-                        {
-                            item.UserId = client.UserId;
-                        }
-                    }
-                    model.StartDate = DateTime.Now.AddDays(1);
-                    model.EndDate = DateTime.Now.AddDays(120);
-                    model.PriorityLevel = 0;
-                    model.RisebirdHr = 381;
-                    model.BillingOwner = billingowner;
+        //[HttpPost]
+        //public IActionResult FetchRecommendedIRF(IRFRecommendations model, string emailid, string uniqueid)
+        //{
+        //    ViewBag.emailid = emailid;
+        //    ViewBag.uniqueid = uniqueid;
+        //    var irfList = _recommendedIRFService.GetFetchRecommendedIRF();
+        //    if (model.AssessmentGroupId != 0 && model.AssessmentGroupId != null)
+        //    {
+        //        irfList = irfList.Where(x => x.AssessmentGroupId == model.AssessmentGroupId).ToList();
+        //    }
+        //    if (model.CompetencyLevelId != 0 && model.CompetencyLevelId != null)
+        //    {
+        //        irfList = irfList.Where(x => x.CompetencyLevelId == model.CompetencyLevelId).ToList();
+        //    }
+        //    if (model.CountryType != 0 && model.CountryType != null)
+        //    {
+        //        irfList = irfList.Where(x => x.CountryType == model.CountryType).ToList();
+        //    }
+        //    if (model.SeniorityLevelId != 0 && model.SeniorityLevelId != null)
+        //    {
+        //        irfList = irfList.Where(x => x.SeniorityLevelId == model.SeniorityLevelId).ToList();
+        //    }
+        //    if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
+        //    {
+        //        ViewBag.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
+        //        TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
+        //    }
+        //    return View(irfList);
+        //}
+        //[HttpGet]
+        //public async Task<IActionResult> CreateRecommendationIRF(int recommirfid, string emailid, string uniqueid, bool isClone = false, bool useAsCloneTemplate = false)
+        //{
+        //    try
+        //    {
+        //        var Emailid = String.Empty;
+        //        if (HttpContext.Session.GetString("email") != null)
+        //        {
+        //            Emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            Emailid = Emailid.Replace("\"", "");
+        //        }
+        //        ViewBag.emailid = emailid;
+        //        ViewBag.uniqueid = uniqueid;
 
-                }
-                bool isDuplicate = false;
-                var interviewerCollection = model.InterviewerCollection.Select(x => (x.UserId));
-                if (interviewerCollection.Count() != interviewerCollection.Distinct().Count())
-                {
-                    isDuplicate = true;
-                    ModelState.AddModelError("", "Please remove duplicate entries from Interviewers' list.");
-                }
-                var questionsCollection = model.QuesionList.Select(x => (x.Comment, x.Skill, x.UserId));
-                if (questionsCollection.Count() != questionsCollection.Distinct().Count())
-                {
-                    isDuplicate = true;
-                    ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
-                }
-                if (isDuplicate)
-                {
-                    model.isDuplicateEntries = isDuplicate;
-                    SetEditIRFProperties(model);
-                    return View(model);
-                }
-                if (!model.IsClone)
-                {
-                    model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                }
-                if (model.id == 0)
-                {
-                    if (!(_irfService.CheckUniqueness(model.IRFId)))
-                    {
-                        TempData["SuccessErrorCloneSkillChannnelMessage"] = "Sorry! Skills Channel with this name already exists!";
-                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-                    }
-                    var domain = Request.Scheme + "://" + Request.Host.Value;
-                    if (String.IsNullOrEmpty(model.OldCalendlyLink))
-                    {
-                        //Start: Auto Generate Scheduling Link 
-                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
-                        model.CalendlyLink = _schedulinglink;
-                        //End: Auto Generate Scheduling Link
-                    }
+        //        var client = await _userRepository.GetClientUserDetails(emailid);
+        //        int ClientId = client.ClientId;
+        //        var model = await _recommendedIRFService.GetRecommendationIRFByIRFid(recommirfid, isClone);
+        //        foreach (var item in model.QuesionList)
+        //        {
+        //            item.UserId = client.UserId;
+        //        }
+        //        model.IsEdit = false;
+        //        model.ClientId = ClientId;
+        //        model.ClientName = client.ClientName;
+        //        model.ClientCompName = client.ClientName;
+        //        model.IsClone = isClone;
+        //        model.UseAsCloneTemplate = useAsCloneTemplate;
+        //        SetEditIRFProperties(model);
+        //        model.OldJDLink = model.JDLink;
+        //        model.OldCompanyDetails = model.CompanyDetails;
+        //        if (Emailid != emailid)
+        //        {
+        //            return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+        //        }
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //    }
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> CreateRecommendationIRF(IRFVm model, string emailid, string uniqueid)
+        //{
+        //    try
+        //    {
+        //        ViewBag.emailid = emailid;
+        //        ViewBag.uniqueid = uniqueid;
+        //        int billingowner = 0;
+        //        if (model.id == 0)
+        //        {
+        //            var irfflag = false;
+        //            var IRFId = string.Empty;
+        //            if (String.IsNullOrEmpty(model.IRFId))
+        //            {
+        //                while (!irfflag)
+        //                {
+        //                    if (!String.IsNullOrEmpty(model.ClientName))
+        //                    {
+        //                        IRFId = model.ClientName.Substring(0, 3);
+        //                        var _irfassessment = model.OldAssessmentGroupId;
+        //                        IRFId = IRFId + _irfassessment.Substring(0, 2) + GenerateRandomstring();
+        //                    }
+        //                    irfflag = CheckUniqueness(IRFId, false);
+        //                }
+        //                model.IRFId = IRFId.Replace(".", "a");
+        //                var client = await _userRepository.GetClientUserDetails(emailid);
+        //                billingowner = client.UserId;
+        //                foreach (var item in model.QuesionList)
+        //                {
+        //                    item.UserId = client.UserId;
+        //                }
+        //            }
+        //            model.StartDate = DateTime.Now.AddDays(1);
+        //            model.EndDate = DateTime.Now.AddDays(120);
+        //            model.PriorityLevel = 0;
+        //            model.RisebirdHr = 381;
+        //            model.BillingOwner = billingowner;
 
-                    model.id = 0;
-                    if (await _recommendedIRFService.AddRecommendationIRFDetails(model, emailid, domain))
-                    {
-                        TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel has been saved Successfully! \n Skill Channel: " + model.IRFId + "\n " + model.CalendlyLink;
-                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel were not saved.";
-                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-                    }
-                }
-                else
-                {
-                    //Create update function
-                    if (await _recommendedIRFService.UpdateRecommendationIRFDetails(model, emailid))
-                    {
-                        TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel has been saved Successfully!\n Skill Channel: " + model.IRFId + "\n " + model.CalendlyLink;
-                        return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel edits were not saved.";
-                        return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel were not saved";
-                return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-            }
-        }
-        [HttpGet]
-        public async Task<IActionResult> EditRecommendationIRF(int irfid, string emailid, string uniqueid, bool isClone = false, bool useAsCloneTemplate = false)
-        {
-            try
-            {
-                var Emailid = String.Empty;
-                if (HttpContext.Session.GetString("email") != null)
-                {
-                    Emailid = HttpContext.Session.GetString("email")?.Trim();
-                    Emailid = Emailid.Replace("\"", "");
-                }
-                ViewBag.emailid = emailid;
-                ViewBag.uniqueid = uniqueid;
-                //var client = await _userRepository.GetClientUserDetails(emailid);
-                //int ClientId = client.ClientId;
-                var model = await _irfService.GetEditIRF(irfid, null, isClone);
-                var result = _irfService.GetTechSkillComments(irfid, null);
-                var audiofilelink = _irfService.FetchIRFAudioLink(irfid);
-                model.QuesionList = result;
-                model.IsClone = isClone;
-                model.UseAsCloneTemplate = useAsCloneTemplate;
-                SetEditIRFProperties(model);
-                model.OldJDLink = model.JDLink;
-                model.OldCompanyDetails = model.CompanyDetails;
-                model.AudioComment = audiofilelink;
-                model.IsEdit = true;
-                //if (Emailid != emailid)
-                //{
-                //    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = id });
-                //}
-                return View("CreateRecommendationIRF", model);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
-            }
-        }
+        //        }
+        //        bool isDuplicate = false;
+        //        var interviewerCollection = model.InterviewerCollection.Select(x => (x.UserId));
+        //        if (interviewerCollection.Count() != interviewerCollection.Distinct().Count())
+        //        {
+        //            isDuplicate = true;
+        //            ModelState.AddModelError("", "Please remove duplicate entries from Interviewers' list.");
+        //        }
+        //        var questionsCollection = model.QuesionList.Select(x => (x.Comment, x.Skill, x.UserId));
+        //        if (questionsCollection.Count() != questionsCollection.Distinct().Count())
+        //        {
+        //            isDuplicate = true;
+        //            ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
+        //        }
+        //        if (isDuplicate)
+        //        {
+        //            model.isDuplicateEntries = isDuplicate;
+        //            SetEditIRFProperties(model);
+        //            return View(model);
+        //        }
+        //        if (!model.IsClone)
+        //        {
+        //            model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+        //        }
+        //        if (model.id == 0)
+        //        {
+        //            if (!(_irfService.CheckUniqueness(model.IRFId)))
+        //            {
+        //                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Sorry! Skills Channel with this name already exists!";
+        //                return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //            }
+        //            var domain = Request.Scheme + "://" + Request.Host.Value;
+        //            if (String.IsNullOrEmpty(model.OldCalendlyLink))
+        //            {
+        //                //Start: Auto Generate Scheduling Link 
+        //                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+        //                model.CalendlyLink = _schedulinglink;
+        //                //End: Auto Generate Scheduling Link
+        //            }
+
+        //            model.id = 0;
+        //            if (await _recommendedIRFService.AddRecommendationIRFDetails(model, emailid, domain))
+        //            {
+        //                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel has been saved Successfully! \n Skill Channel: " + model.IRFId + "\n " + model.CalendlyLink;
+        //                return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //            }
+        //            else
+        //            {
+        //                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel were not saved.";
+        //                return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //Create update function
+        //            if (await _recommendedIRFService.UpdateRecommendationIRFDetails(model, emailid))
+        //            {
+        //                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel has been saved Successfully!\n Skill Channel: " + model.IRFId + "\n " + model.CalendlyLink;
+        //                return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //            }
+        //            else
+        //            {
+        //                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel edits were not saved.";
+        //                return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorCloneSkillChannnelMessage"] = "Skills Channel were not saved";
+        //        return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //    }
+        //}
+        //[HttpGet]
+        //public async Task<IActionResult> EditRecommendationIRF(int irfid, string emailid, string uniqueid, bool isClone = false, bool useAsCloneTemplate = false)
+        //{
+        //    try
+        //    {
+        //        var Emailid = String.Empty;
+        //        if (HttpContext.Session.GetString("email") != null)
+        //        {
+        //            Emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            Emailid = Emailid.Replace("\"", "");
+        //        }
+        //        ViewBag.emailid = emailid;
+        //        ViewBag.uniqueid = uniqueid;
+        //        //var client = await _userRepository.GetClientUserDetails(emailid);
+        //        //int ClientId = client.ClientId;
+        //        var model = await _irfService.GetEditIRF(irfid, null, isClone);
+        //        var result = _irfService.GetTechSkillComments(irfid, null);
+        //        var audiofilelink = _irfService.FetchIRFAudioLink(irfid);
+        //        model.QuesionList = result;
+        //        model.IsClone = isClone;
+        //        model.UseAsCloneTemplate = useAsCloneTemplate;
+        //        SetEditIRFProperties(model);
+        //        model.OldJDLink = model.JDLink;
+        //        model.OldCompanyDetails = model.CompanyDetails;
+        //        model.AudioComment = audiofilelink;
+        //        model.IsEdit = true;
+        //        //if (Emailid != emailid)
+        //        //{
+        //        //    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = id });
+        //        //}
+        //        return View("CreateRecommendationIRF", model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Index", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+        //    }
+        //}
+        #endregion
         [HttpGet]
         private void SetEditIRFProperties(IRFVm model)
         {
@@ -694,6 +711,52 @@ namespace Risebird.Web.Controllers
                 n /= 10;
             }
             return sum;
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> CreateInterviewLink(IRFVm model, string emailid, string uniqueid)
+        {
+            try
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                string uploadedFileURL = string.Empty;
+                if (model.JDFile != null)
+                {
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
+                    {
+                        await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        model.JDLink = uploadedFileURL;
+                    }
+                }
+                //Start: Auto Generate Scheduling Link 
+                model.StartDate = DateTime.Now;
+                model.EndDate = DateTime.Now.AddMonths(3);
+                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                model.CalendlyLink = _schedulinglink;
+                //End: Auto Generate Scheduling Link
+                if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client"))
+                {
+                    TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                    return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                }
+                else
+                {
+                    TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed to create Skills Channel!";
+                    return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed to create Skills Channel!";
+                return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+            }
         }
     }
 }
