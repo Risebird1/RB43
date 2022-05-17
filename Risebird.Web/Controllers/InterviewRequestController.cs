@@ -115,10 +115,12 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.Profile = profileName;
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new InterviewRequestVM();
+                        model.RequestedBy = emailid;
                         var skills = _irfRepository.GetSkills();
                         await SetInterviewRequestSelectLists();
                         var Skillset = skills;
@@ -127,6 +129,18 @@ namespace Risebird.Web.Controllers
                             Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
                         }
                         ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+                        int clientId = await _clientService.GetClientByEmailId(emailid);
+                        model.ClientId = clientId;
+                        if (clientId > 0)
+                        {
+                            model.ClientCompanyName = _clientService.GetClient(clientId).Name;
+                        }
+                        await SetBillingOwnerList(clientId);
+                        if (TempData["SuccessMessageInterviewCreation"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessMessageInterviewCreation"].ToString();
+                            TempData.Remove("SuccessMessageInterviewCreation");
+                        }
                         return View(model);
                     }
                     else
@@ -161,12 +175,9 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        if (profileName == "Client")
-                        {
-                            meeting.RequestedBy = emailid;
-                        }
                         if (ModelState.IsValid)
                         {
+                            var model = new IRFVm();
                             if (meeting.JDFile != null)
                             {
                                 var fileName = meeting.JDFile.FileName.Replace(" ", "_");
@@ -175,7 +186,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(meeting.JDFile);
                                     if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                               || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                                      || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                                     {
                                         await _azureStorageHelper.InsertBlob(fileName, "resumes", meeting.JDFile);
                                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -186,6 +197,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                         await SetInterviewRequestSelectLists();
+                                        await SetBillingOwnerList(meeting.ClientId);
                                         return View(meeting);
                                     }
                                 }
@@ -193,6 +205,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
                                     await SetInterviewRequestSelectLists();
+                                    await SetBillingOwnerList(meeting.ClientId);
                                     return View(meeting);
                                 }
                             }
@@ -200,42 +213,50 @@ namespace Risebird.Web.Controllers
                             {
                                 ModelState.AddModelError("JDFile", "Jd File is required.");
                                 await SetInterviewRequestSelectLists();
+                                await SetBillingOwnerList(meeting.ClientId);
                                 return View(meeting);
                             }
-                            if (meeting.TechSkill.Count() < 2)
+                            if (meeting.TechSkills.Count() < 2)
                             {
                                 ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
+                                await SetInterviewRequestSelectLists();
+                                await SetBillingOwnerList(meeting.ClientId);
                                 return View(meeting);
                             }
-                            if (_interviewRequestService.CreateInerviewRequest(meeting))
+                            var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(meeting.Categoryid);
+                            var assessmentName = assessmentGroups.Where(x => x.id == meeting.AssessmentGroupId).Select(x => x.AssessmentGroup).FirstOrDefault();
+                            var irfid = GenerateSkillChannelName(assessmentName, meeting.ClientCompanyName);
+                            model.IRFId = irfid;
+                            model.JDLink = meeting.JDLink;
+                            model.AssessmentGroupId = meeting.AssessmentGroupId.ToString();
+                            model.ClientId = meeting.ClientId;
+                            model.ClientName = meeting.ClientName;
+                            model.JDTiltle = meeting.JdTitle;
+                            model.BillingOwner = meeting.BillingOwner;
+                            model.JobCountry = meeting.Country.ToString();
+                            model.JobLevel = meeting.JobLevel;
+                            model.CompanyType = meeting.CompanyTypes.ToString();
+                            model.Heuristicsscore = meeting.CompetencyLevel;
+                            model.SkillCollection = meeting.TechSkills;
+                            model.StartDate = DateTime.Now;
+                            model.EndDate = DateTime.Now.AddMonths(3);
+                            var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                            model.CalendlyLink = _schedulinglink;
+                            if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailid, "Client"))
                             {
-                                //send mail to ashutosh@risebird.io;vaibhaw_sachan@risebird.io;talent@risebird.io
-                                Mail _mail = new Mail
-                                {
-                                    TO = "ashutosh@risebird.io; vaibhaw_sachan@risebird.io;shahkar_alam@risebird.io; talent@risebird.io;parvathi_sg@risebird.io",
-                                    Subject = "New Interview Request: " + meeting.JdTitle
-                                };
-                                var emailsend = _notificationHelper.InterviewRequestAddNotification(_mail, meeting.JdTitle, meeting.PrimarySkill, meeting.RequestedBy);
-                                //Send a mail to Client
-                                Mail _mail1 = new Mail
-                                {
-                                    TO = meeting.RequestedBy,
-                                    Subject = "New Interview Request: " + meeting.JdTitle
-                                };
-                                var emailsend1 = _notificationHelper.InterviewRequestAddClientNotification(_mail1, meeting.JdTitle, meeting.PrimarySkill);
-                                TempData["SuccessErrorMessageInterview"] = "Request has been created Successfully!";
-                                return RedirectToAction("Index");
+                                TempData["SuccessMessageInterviewCreation"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                                return RedirectToAction("CreateInterviewRequest");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Failed to create Request!";
-                                return RedirectToAction("Index");
+                                TempData["SuccessMessageInterviewCreation"] = "Failed to create Skills Channel!";
+                                return RedirectToAction("CreateInterviewRequest");
                             }
-
                         }
                         else
                         {
-                            return View(meeting);
+                            TempData["SuccessMessageInterviewCreation"] = "Failed to Create request.";
+                            return RedirectToAction("CreateInterviewRequest");
                         }
                     }
                     else
@@ -251,7 +272,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Failed to Create request!";
+                TempData["SuccessMessageInterviewCreation"] = "Failed to Create request!";
                 return RedirectToAction("Index");
             }
         }
