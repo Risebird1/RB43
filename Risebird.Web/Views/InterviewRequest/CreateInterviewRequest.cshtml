@@ -402,6 +402,10 @@
                 var drpdwnId = $("#AssessmentGroupId");
                 if (data.length > 0) {
                     $("#AssessmentGroupId option").remove();
+                    var option = $("<option />");
+                    option.html("Select");
+                    option.val();
+                    drpdwnId.append(option);
                     $(data).each(function () {
                         var option = $("<option />");
                         option.html(this.text);
