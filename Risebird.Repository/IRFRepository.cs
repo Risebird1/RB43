@@ -5755,7 +5755,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, "", "", 0);
                     }
 
                     DataTable clientUserDt = new DataTable();
@@ -5794,7 +5794,14 @@ namespace Risebird.Repository
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, true);
+                            if (irfDetails.JobCountry == "2")
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, true);
+                            }
+                            else
+                            {
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, true);
+                            }
                         }
                     }
 
@@ -6081,6 +6088,23 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
+        }
+        public IEnumerable<TransInterviewer> GetIRFInterviewerSkillsByAssessmentGroup(string assessmentgroupid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters dp = new DynamicParameters();
+                    dp.Add("@assessmentgroupid", assessmentgroupid);
+                    return con.Query<TransInterviewer>(";With CTE AS(Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,',')) Select Distinct CTE.UserId,CTE.AssessmentGroupId, ul.EmailId,CTE.NickName  From CTE join Userlist ul on CTE.Userid=ul.id  where CTE.value=@assessmentgroupid", dp);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

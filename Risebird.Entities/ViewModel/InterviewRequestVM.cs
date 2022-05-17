@@ -13,11 +13,11 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Primary Skill")]
         public string PrimarySkill { get; set; }
         public SelectList PrimarySkillsList { get; set; }
-        [Display(Name = "JD Title")]
+        [Display(Name = "Job Profile")]
         public string JdTitle { get; set; }
         [Display(Name = "Requested By")]
         public string RequestedBy { get; set; }
-        [Display(Name = "JD File")]
+        [Display(Name = "Job Description")]
         public IFormFile JDFile { get; set; }
         public string JDLink { get; set; }
         public int JobLevel { get; set; }
@@ -25,6 +25,7 @@ namespace Risebird.Entities.ViewModel
         public int ExpectedInterviews { get; set; }
         public int Country { get; set; }
         public IList<InstaTechSkill> TechSkill { get; set; }
+        public IList<TransSkill> TechSkills { get; set; }
         public string RequiredSkills { get; set; }
         public DateTime CreatedOn { get; set; }
         public string JobLevelName { get; set; }
@@ -35,5 +36,17 @@ namespace Risebird.Entities.ViewModel
         public string IRFId { get; set; }
         public string CalendlyLink { get; set; }
         public string uniqueid { get; set; }
+
+        [Display(Name = "End Client Name")]
+        public string ClientName { get; set; }
+        public int BillingOwner { get; set; }
+        [Display(Name = "Assessment Group")]
+        public int AssessmentGroupId { get; set; }
+        public int ClientId { get; set; }
+        public int Categoryid { get; set; }
+        public SelectList AssessmentGroupsList { get; set; }
+        public string ClientCompanyName { get; set; }
+        public int CompanyTypes { get; set; }
+        public int CompetencyLevel { get; set; }
     }
 }
