@@ -354,7 +354,7 @@
                                             <input id="interviewTrackingDate" name="interviewTrackingDate" type="date" class="form-control">
                                         </div>
                                     </li>
-                                    <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-eye"></span></button></li>
+                                    <li><button onclick="updateInterviewTracking()" class="panel-fullscreen"><span class="fa fa-eye"></span></button></li>
 
                                 </ul>
                             </div>
@@ -1054,11 +1054,12 @@
 <script>
     $(document).ready(function () {
         setDatatable();
-        var meetingsData = '@Model.MeetingsData';
-        meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
-        var meetingsDataLabels = '@Model.MeetingsDataLabels';
-        meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
-        UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
+        @*//var meetingsData = '@Model.MeetingsData';*@
+        //meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
+        @*//var meetingsDataLabels = '@Model.MeetingsDataLabels';*@
+        //meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
+        //UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
+
 
         var interviewerCountObj = [{y : @Model.InterviewerCountObj.ApprovedCount, label:"Approved"},
         {y : @Model.InterviewerCountObj.UnapprovedCount, label:"Unapproved"}]
@@ -1148,9 +1149,26 @@
 
 </script>
 <script>
-    function changeInterviewTracking() {
+    function updateInterviewTracking() {
         document.getElementById('area-chart').innerHTML = '';
         var date = document.getElementById('interviewTrackingDate').value;
+        if (date == null || date == '') {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+
+            today = yyyy + '-' + mm + '-' + dd;
+            date = today;
+        }
         $.ajax({
             url: '/Dashboard/GetDateWiseInterviews',
             data: { 'date': date },
@@ -1238,6 +1256,11 @@
         });
     }
 </script>
+<script>
+    window.onload = function () {
+        updateInterviewTracking();
+    };
+</script>
 
 <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js?v=1"></script>
@@ -1314,7 +1337,7 @@
         });
     });
 </script>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+@*<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>*@
 <script>
     const root = document.documentElement;
     const marqueeElementsDisplayed = getComputedStyle(root).getPropertyValue("--marquee-elements-displayed");
