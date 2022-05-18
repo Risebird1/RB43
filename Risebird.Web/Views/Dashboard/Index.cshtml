@@ -398,7 +398,7 @@
                                 </ul>
                             </div>
                             <div id="slotsId">
-                                <div class="panel-body panel-body-table">
+                                @*<div class="panel-body panel-body-table">
                                     @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
                                     {
                                         <div class="sb-container scroller">
@@ -478,7 +478,7 @@
                                     {
                                         <div>No interviews for this day!</div>
                                     }
-                                </div>
+                                </div>*@
                             </div>
 
 
@@ -829,7 +829,7 @@
 
                             <div class="card mob_canvas-height">
                                 <div class="card-body">
-                                    <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                    <p class="card-text">Total Meetings : <span ><strong id="id_totalMeetingsCount"></strong></span></p>@*@Model.MeetingResultCountObj.TotalMeetingsCount*@
                                     <div>
                                         <div id="meetingsCountId" class="PieId"></div>
                                     </div>
@@ -921,7 +921,67 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
+<script>
 
+    $(document).ready(function () {
+        function RenderMeetingsResultsBreakdownChart() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: '/Dashboard/GetMeetingResultCount',
+                    method: 'Get',
+                    async: 'true',
+                    success: function (data) {
+                        resolve(data)
+                    },
+                    error: function (error) {
+                        reject(error)
+                    }
+                });
+            })
+        }
+        
+        RenderMeetingsResultsBreakdownChart()
+            .then((data) => {
+                document.getElementById('id_totalMeetingsCount').innerHTML = data.totalMeetingsCount;
+                var meetingsCountObj = [{ y: data.proxyCount, label: "Proxy" },
+                { y: data.selectedCount, label: "Selected" },
+                { y: data.rejectedCount, label: "Rejected" },
+                { y: data.borderLineCount, label: "Border Line" },
+                { y: data.noShowCount, label: "No Show" },
+                { y: data.scheduledCount, label: "Scheduled" },
+                { y: data.droppedCount, label: "Dropped" }];
+
+                var chart = new CanvasJS.Chart("meetingsCountId", {
+                    theme: "light2",
+                    width: 350,//in pixels
+                    height: 200,//in pixels
+                    animationEnabled: true,
+                    title: null,
+                    data: [{
+                        type: "pie",
+                        startAngle: 60,
+                        innerRadius: 55,
+                        indexLabelFontSize: 15,
+                        indexLabelFontColor: "#9a9a9a",
+                        indexLabel: "{label}  {y}",
+                        toolTipContent: "<b>{label} </b>({y})",
+
+                        dataPoints: meetingsCountObj
+                    }]
+                });
+                chart.render();
+      
+            })
+            .catch((error) => {
+                
+            })
+
+        getDate();
+
+        getInterviewSlots();
+
+    });
+</script>
 <script>
     var closeStatus = document.getElementById("statusPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -992,10 +1052,7 @@
 
 </script>
 <script>
-
-
-    window.onload = function () {
-        getDate();
+    $(document).ready(function () {
         setDatatable();
         var meetingsData = '@Model.MeetingsData';
         meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
@@ -1027,45 +1084,45 @@
         chart.render();
 
         //meetingsCountId
-        var meetingsCountObj = [{ y: @Model.MeetingResultCountObj.ProxyCount, label: "Proxy" },
+        @*var meetingsCountObj = [{ y: @Model.MeetingResultCountObj.ProxyCount, label: "Proxy" },
             { y: @Model.MeetingResultCountObj.SelectedCount, label: "Selected" },
             { y: @Model.MeetingResultCountObj.RejectedCount, label: "Rejected" },
             { y: @Model.MeetingResultCountObj.BorderLineCount, label:"Border Line"},
             { y: @Model.MeetingResultCountObj.NoShowCount, label:"No Show"},
             { y: @Model.MeetingResultCountObj.ScheduledCount, label:"Scheduled"},
-            { y: @Model.MeetingResultCountObj.DroppedCount, label:"Dropped"},
+            { y: @Model.MeetingResultCountObj.DroppedCount, label:"Dropped"},*@
             @*{ y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}*@
-            @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}*@]
+            @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}]*@
 
-        var chart = new CanvasJS.Chart("meetingsCountId", {
-           theme: "light2",
-            width: 350,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: null,
-            data: [{
-                type: "pie",
-                startAngle: 60,
-                innerRadius: 55,
-                indexLabelFontSize: 15,
-                indexLabelFontColor: "#9a9a9a",
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
+        //var chart = new CanvasJS.Chart("meetingsCountId", {
+        //   theme: "light2",
+        //    width: 350,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: null,
+        //    data: [{
+        //        type: "pie",
+        //        startAngle: 60,
+        //        innerRadius: 55,
+        //        indexLabelFontSize: 15,
+        //        indexLabelFontColor: "#9a9a9a",
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
 
-                dataPoints: meetingsCountObj
-            }]
-        });
-        chart.render();
+        //        dataPoints: meetingsCountObj
+        //    }]
+        //});
+        //chart.render();
 
         //candidatesPieId
-        var candidateCountObj = [{ y: @Model.CandidatesCountObj.Proxy, label: "Proxy" },
+        @*var candidateCountObj = [{ y: @Model.CandidatesCountObj.Proxy, label: "Proxy" },
             { y: @Model.CandidatesCountObj.Selected, label: "Selected" },
             { y: @Model.CandidatesCountObj.Rejected, label: "Rejected" },
             { y: @Model.CandidatesCountObj.BorderLine, label:"Border Line"},
             { y: @Model.CandidatesCountObj.NoShowCount, label:"No Show"},
             { y: @Model.CandidatesCountObj.ScheduledCount, label:"Scheduled"},
             { y: @Model.CandidatesCountObj.DroppedCount, label:"Dropped"},
-            { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]
+            { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]*@
 
 
         //var chart = new CanvasJS.Chart("candidatesPieId", {
@@ -1087,11 +1144,7 @@
         //    }]
         //});
        // chart.render();
-    }
-
-
-
-
+    });
 
 </script>
 <script>
