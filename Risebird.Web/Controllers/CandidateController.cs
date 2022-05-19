@@ -3607,12 +3607,12 @@ namespace Risebird.Web.Controllers
                     {
                         firstData = data.FirstOrDefault();
                     }
-                    if (data.Select(x => x.interviewDate).Count() > 1)
-                    {
-                        firstData = data.Where(x => x.InterviewId == lastvalue.InterviewId).FirstOrDefault();
-                    }
+                    //if (data.Select(x => x.interviewDate).Count() > 1)
+                    //{
+                    //    firstData = data.Where(x => x.InterviewId == lastvalue.InterviewId).FirstOrDefault();
+                    //}
                     var candidateTimeline = new CandidateTimelineVM();
-                    
+
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3682,10 +3682,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CurrentStatus = "Cancelled";
                     }
                     //add candidate to final model
-                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
-                    {
-                        model.Add(candidateTimeline);
-                    }
+                    model.Add(candidateTimeline);
                 }
                 var role = await _clientService.GetClientRoleByEmailId(emailid);
                 ViewBag.ClientRole = role != 0 ? ((ClientRoleEnum)Convert.ToInt16(role)).GetDescription() : string.Empty;
@@ -3741,10 +3738,11 @@ namespace Risebird.Web.Controllers
                     {
                         firstData = data.FirstOrDefault();
                     }
-                    if (data.Select(x => x.interviewDate).Count() > 1)
-                    {
-                        firstData = data.Where(x => x.InterviewId == lastvalue.InterviewId).FirstOrDefault();
-                    }
+                    //if (data.Select(x => x.interviewDate).Count() > 1)
+                    //{
+                    //    firstData = data.Where(x => x.InterviewId == lastvalue.InterviewId).FirstOrDefault();
+                    //}
+
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
@@ -3815,10 +3813,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CurrentStatus = "Cancelled";
                     }
                     //add candidate to final model
-                    if (!string.IsNullOrEmpty(candidateTimeline.CurrentStatus))
-                    {
-                        model.Add(candidateTimeline);
-                    }
+                    model.Add(candidateTimeline);
                 }
                 filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.PrimarySkill).ToArray() : filter.HREmail = filter.HREmail;
                 filter.ProfileSource = filter.ProfileSource == null ? filter.ProfileSource = model.Select(x => x.ProfileSource).ToArray() : filter.ProfileSource = filter.ProfileSource;
