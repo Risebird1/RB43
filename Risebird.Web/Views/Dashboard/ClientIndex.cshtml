@@ -621,12 +621,34 @@
 
             })
 
-        getDate();
+        setDate();
         getInterviewSlots();
     });
     
 </script>
 <script>
+    function setDate() {
+        //var today = new Date();
+        //var dd = today.getDate();
+        //var mm = today.getMonth() + 1; //January is 0!
+        //var yyyy = today.getFullYear();
+
+        //if (dd < 10) {
+        //    dd = '0' + dd
+        //}
+
+        //if (mm < 10) {
+        //    mm = '0' + mm
+        //}
+
+        //today = yyyy + '-' + mm + '-' + dd;
+        today = getDate();
+        document.getElementById('interviewTrackingDate').value = today;
+        //document.getElementById('statusTrackingDate').value = today;
+        document.getElementById('interviewSlotsDate').value = today;
+        //document.getElementById('progressTrackingDate').value = today;
+    }
+
     function getDate() {
         var today = new Date();
         var dd = today.getDate();
@@ -642,12 +664,8 @@
         }
 
         today = yyyy + '-' + mm + '-' + dd;
-        document.getElementById('interviewTrackingDate').value = today;
-        //document.getElementById('statusTrackingDate').value = today;
-        document.getElementById('interviewSlotsDate').value = today;
-        //document.getElementById('progressTrackingDate').value = today;
+        return today;
     }
-
 </script>
 <script>
     $(document).ready(function () {
@@ -696,6 +714,9 @@
     function changeInterviewTracking() {
         document.getElementById('area-chart').innerHTML = '';
         var dateValue = document.getElementById('interviewTrackingDate').value;
+        if (dateValue == null || dateValue == '') {
+            dateValue = getDate();
+        }
         $.ajax({
             url: '/Dashboard/GetDateWiseClientInterviews',
             data: { 'dateValue': dateValue, 'emailId': '@Model.EmailId' },
@@ -731,6 +752,9 @@
 
     function getInterviewSlots() {
         var dateValue = document.getElementById('interviewSlotsDate').value;
+        if (dateValue == null || dateValue == '') {
+            dateValue = getDate();
+        }
         $.ajax({
             url: '/Dashboard/GetDateWiseClientMeetingsSlots',
             data: { 'dateValue': dateValue , 'emailId': '@Model.EmailId'},
