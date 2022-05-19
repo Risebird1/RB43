@@ -105,7 +105,7 @@ if @EmailId is not null
      when ul.LastName is null then ul.FirstName                      
      else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))                      
     end as [Name],                      
-    ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,im.id as InterviewId,
+    ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,im.id as InterviewId,IRF.id as IRFId,
 	cs.Comments as ScheduleStatusComments,Max(cs.Date) as ScheduleStatusDate,csm.StatusValue as ScheduleStatusValue,
     ic.InterviewStatus as CurrentInterviewStatus,                       
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                    
@@ -122,7 +122,7 @@ join InterviewComments ic on ic.Interviewid=im.id
 where ulsh.EmailId=@EmailId and im.interviewDate>=@startDate and im.interviewDate<=@endDate 
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                      
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                      
-    ca.ClientHRAttemptContact, ca.ProfileSource,im.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
+    ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
 	(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName
 
   End                    
@@ -137,7 +137,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     end as [Name],                      
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource, 
 	cs.Comments as ScheduleStatusComments,Max(cs.Date) as ScheduleStatusDate,csm.StatusValue as ScheduleStatusValue,
-    ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,                       
+    ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,IRF.id as IRFId,                       
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                    
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId
@@ -153,7 +153,7 @@ where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and ca.Clien
 and im.interviewDate>=@startDate and im.interviewDate<=@endDate 
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                      
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                      
-    ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,im.id,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
+    ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,im.id,IRF.id,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
 	(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName
       
    End                       
@@ -166,7 +166,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     end as [Name],                      
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource, 
 	cs.Comments as ScheduleStatusComments,Max(cs.Date) as ScheduleStatusDate,csm.StatusValue as ScheduleStatusValue,
-    ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,                       
+    ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,IRF.id as IRFId,                       
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                    
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId
@@ -182,7 +182,7 @@ where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and (ca.Prof
 and im.interviewDate>=@startDate and im.interviewDate<=@endDate 
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                      
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                      
-    ca.ClientHRAttemptContact, ca.ProfileSource,im.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
+    ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
 	(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName        
                       
   End                      
@@ -195,7 +195,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     end as [Name],                      
     ca.ClientHRAttemptContact as HREmail, ca.ProfileSource, 
 	cs.Comments as ScheduleStatusComments,Max(cs.Date) as ScheduleStatusDate,csm.StatusValue as ScheduleStatusValue,
-    ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,                       
+    ic.InterviewStatus as CurrentInterviewStatus,im.id as InterviewId,IRF.id as IRFId,                       
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                    
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId
 join UserList ul on ul.EmailId=im.candidateEmail 
@@ -210,7 +210,7 @@ where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0
 and im.interviewDate>=@startDate and im.interviewDate<=@endDate 
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                      
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                      
-    ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus,im.id, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 
+    ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus,im.id,IRF.id, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName
          
    End                        
@@ -222,7 +222,7 @@ Else
      when ul.LastName is null then ul.FirstName                      
      else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))                      
     end as [Name],                      
-    ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,im.id as InterviewId, 
+    ca.ClientHRAttemptContact as HREmail, ca.ProfileSource,im.id as InterviewId,IRF.id as IRFId, 
 	cs.Comments as ScheduleStatusComments,Max(cs.Date) as ScheduleStatusDate,csm.StatusValue as ScheduleStatusValue,
     ic.InterviewStatus as CurrentInterviewStatus,                       
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                    
@@ -239,11 +239,14 @@ join InterviewComments ic on ic.Interviewid=im.id
 where im.interviewDate>=@startDate and im.interviewDate<=@endDate 
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                      
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                      
-    ca.ClientHRAttemptContact, ca.ProfileSource,im.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
+    ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate, 	
 	(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName
 
  End               
 END              
                          
 End 
+
+
+
 Go

@@ -3642,7 +3642,7 @@ namespace Risebird.Web.Controllers
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
-                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        var lastStatus = scheduleStatusData.Where(x => x.InterviewId == firstData.InterviewId).LastOrDefault();
                         if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                         {
                             candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
@@ -3773,7 +3773,7 @@ namespace Risebird.Web.Controllers
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
-                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        var lastStatus = scheduleStatusData.Where(x => x.InterviewId == firstData.InterviewId).LastOrDefault();
                         if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                         {
                             candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
