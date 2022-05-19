@@ -65,7 +65,7 @@ namespace Risebird.Web.Controllers
                         //daily interview tracking first chart
                         model = GetDateWiseInterviews(DateTime.Now);
                         //daily interview tracking slots
-                        model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now, Emailid);
+                        //model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now, Emailid);
                         model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
                         model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
                         var progressDate = TempData.Peek("ProgressDate")?.ToString();
@@ -78,8 +78,8 @@ namespace Risebird.Web.Controllers
                         {
                             model.ProgressDate = DateTime.Now;
                         }
-                        model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
-                        model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
+                        //model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
+                        //model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
                         model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                         model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
@@ -87,8 +87,8 @@ namespace Risebird.Web.Controllers
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
                         //need to Update
-                        var channelrequest = await _dashboardService.FetchChannelRequests();
-                        model.ChannelRequest = channelrequest;
+                        //var channelrequest = await _dashboardService.FetchChannelRequests();
+                        //model.ChannelRequest = channelrequest;
                         var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
                         interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
@@ -107,6 +107,29 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetMeetingResultCount()
+        {
+            try
+            {
+                var emailId = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                }
+                var model = new MeetingResultCount();
+                model = await _dashboardService.GetMeetingResultCount(emailId);
+                return Json(model);
             }
             catch (Exception ex)
             {
@@ -274,13 +297,13 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var model = new ClientDashboardVM();
-                        var funnelData = await _dashboardService.GetClientFunnelData(emailid);
-                        var slotsDetails = await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now.Date, emailid);
+                        //var funnelData = await _dashboardService.GetClientFunnelData(emailid);
+                        //var slotsDetails = await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now.Date, emailid);
                         model = GetDateWiseClientInterviews(DateTime.Now.Date, emailid);
                         model.CandidatesCountObj = await _dashboardService.GetClientCandidatesCurrentStatusCount(emailid);
                         model.EmailId = emailid;
-                        model.FunnelData = JsonConvert.SerializeObject(funnelData);
-                        model.DailyMeetingResultsSlots = slotsDetails;
+                        //model.FunnelData = JsonConvert.SerializeObject(funnelData);
+                        //model.DailyMeetingResultsSlots = slotsDetails;
                         return View(model);
                     }
                     else
@@ -302,13 +325,39 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        public async Task<string> GetClientFunnelData()
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    var funnelData = await _dashboardService.GetClientFunnelData(emailid);
+                    return JsonConvert.SerializeObject(funnelData);
+
+                }
+                else
+                    return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
         [HttpGet]
-        public ClientDashboardVM GetDateWiseClientInterviews(DateTime date, string emailId)
+        public ClientDashboardVM GetDateWiseClientInterviews(DateTime dateValue, string emailId)
         {
             try
             {
                 var model = new ClientDashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseClientMeetings(date, emailId).Result;
+                model.Meetings = _dashboardService.GetDateWiseClientMeetings(dateValue, emailId).Result;
                 var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
 
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();

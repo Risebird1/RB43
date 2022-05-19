@@ -147,7 +147,7 @@
                                         </ul>
                                     </div>
                                     <div id="slotsId">
-                                        <div class="panel-body panel-body-table">
+                                        @*<div class="panel-body panel-body-table">
                                             <div class="min-h">
                                                 @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
                                                 {
@@ -207,7 +207,7 @@
                                                     <div>No interviews for this day!</div>
                                                 }
                                             </div>
-                                        </div>
+                                        </div>*@
                                     </div>
 
 
@@ -557,48 +557,98 @@
 
 
 <script>
+    var chData;
+    $(document).ready(function () {
+        function RenderClientFunnelData() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: '/Dashboard/GetClientFunnelData',
+                    method: 'POST',
+                    async: 'false',
+                    success: function (data) {
+                        resolve(data);
+                    },
+                    error: function (error) {
+                        reject(error)
+                    }
+                });
+            })
+        }
 
-    var chData= JSON.parse(('@Model.FunnelData').replace(/&quot;/g, '"'));
-    am4core.ready(function () {
+        RenderClientFunnelData()
+            .then((data) => {
+                chData = JSON.parse((data).replace(/&quot;/g, '"'));
+                am4core.ready(function () {
 
-        // Themes begin
-        am4core.useTheme(am4themes_animated);
-        // Themes end
+                    // Themes begin
+                    am4core.useTheme(am4themes_animated);
+                    // Themes end
 
-        let chart = am4core.create("myFunnelChart", am4charts.SlicedChart);
-        chart.data = [{
-            "name": "Risebird Selections",
-            "value": chData.TotalRisebirdSelection
-        }, {
-            "name": "Completed",
-            "value": chData.TotalCompleted
-        }, {
-            "name": "Candidates",
-            "value": chData.TotalCandidates
-        }];
-
-
-        chart.logo.disabled = true;
-        let series = chart.series.push(new am4charts.FunnelSeries());
-        series.dataFields.value = "value";
-        series.dataFields.category = "name";
-        series.labels.template.disabled = false;
-
-        series.colors.step = 16;
-        var fillModifier = new am4core.LinearGradientModifier();
-        fillModifier.brightnesses = [-0.1, -0.1, -0.1];
-        fillModifier.offsets = [0, 0.5, 1];
+                    let chart = am4core.create("myFunnelChart", am4charts.SlicedChart);
+                    chart.data = [{
+                        "name": "Risebird Selections",
+                        "value": chData.TotalRisebirdSelection
+                    }, {
+                        "name": "Completed",
+                        "value": chData.TotalCompleted
+                    }, {
+                        "name": "Candidates",
+                        "value": chData.TotalCandidates
+                    }];
 
 
-        series.slices.template.fillModifier = fillModifier;
-        series.alignLabels = true;
-    series.labels.template.fill = am4core.color("#828080");
-        chart.fontSize = 13;
-        series.labels.template.text = "{category}: [bold]{value}[/]";
+                    chart.logo.disabled = true;
+                    let series = chart.series.push(new am4charts.FunnelSeries());
+                    series.dataFields.value = "value";
+                    series.dataFields.category = "name";
+                    series.labels.template.disabled = false;
 
+                    series.colors.step = 16;
+                    var fillModifier = new am4core.LinearGradientModifier();
+                    fillModifier.brightnesses = [-0.1, -0.1, -0.1];
+                    fillModifier.offsets = [0, 0.5, 1];
+
+
+                    series.slices.template.fillModifier = fillModifier;
+                    series.alignLabels = true;
+                    series.labels.template.fill = am4core.color("#828080");
+                    chart.fontSize = 13;
+                    series.labels.template.text = "{category}: [bold]{value}[/]";
+
+                });
+            })
+            .catch((error) => {
+
+            })
+
+        setDate();
+        getInterviewSlots();
     });
+    
 </script>
 <script>
+    function setDate() {
+        //var today = new Date();
+        //var dd = today.getDate();
+        //var mm = today.getMonth() + 1; //January is 0!
+        //var yyyy = today.getFullYear();
+
+        //if (dd < 10) {
+        //    dd = '0' + dd
+        //}
+
+        //if (mm < 10) {
+        //    mm = '0' + mm
+        //}
+
+        //today = yyyy + '-' + mm + '-' + dd;
+        today = getDate();
+        document.getElementById('interviewTrackingDate').value = today;
+        //document.getElementById('statusTrackingDate').value = today;
+        document.getElementById('interviewSlotsDate').value = today;
+        //document.getElementById('progressTrackingDate').value = today;
+    }
+
     function getDate() {
         var today = new Date();
         var dd = today.getDate();
@@ -614,17 +664,11 @@
         }
 
         today = yyyy + '-' + mm + '-' + dd;
-        document.getElementById('interviewTrackingDate').value = today;
-        //document.getElementById('statusTrackingDate').value = today;
-        document.getElementById('interviewSlotsDate').value = today;
-        //document.getElementById('progressTrackingDate').value = today;
+        return today;
     }
-
 </script>
 <script>
-
-    window.onload = function () {
-        getDate();
+    $(document).ready(function () {
         var meetingsData = '@Model.MeetingsData';
         meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
         var meetingsDataLabels = '@Model.MeetingsDataLabels';
@@ -634,18 +678,16 @@
         @*if (@Model.CandidatesCountObj.TotalCount!= 0) {
 
         }*@
-        var candidateCountObj = [{ y: @Model.CandidatesCountObj.Selected, label: "Selected" },
-            { y: @Model.CandidatesCountObj.Rejected, label: "Rejected" },
-            { y: @Model.CandidatesCountObj.BorderLine, label: "BorderLine" },
-            { y: @Model.CandidatesCountObj.Proxy, label:"Proxy"},
-            { y: @Model.CandidatesCountObj.NoShow, label:"No Show"},
-            { y: @Model.CandidatesCountObj.Dropped, label:"Dropped"},
-            { y: @Model.CandidatesCountObj.Completed, label:"Completed"},
-            { y: @Model.CandidatesCountObj.Scheduled, label: "Scheduled" },
-            { y: @Model.CandidatesCountObj.QCPending, label: "QC Pending" },
-            { y: @Model.CandidatesCountObj.NotYetScheduled, label: "Not Yet Scheduled" }
-
-        ]
+        @*var candidateCountObj = [{ y: @Model.CandidatesCountObj.Selected, label: "Selected" },
+        { y: @Model.CandidatesCountObj.Rejected, label: "Rejected" },
+        { y: @Model.CandidatesCountObj.BorderLine, label: "BorderLine" },
+        { y: @Model.CandidatesCountObj.Proxy, label: "Proxy" },
+        { y: @Model.CandidatesCountObj.NoShow, label: "No Show" },
+        { y: @Model.CandidatesCountObj.Dropped, label: "Dropped" },
+        { y: @Model.CandidatesCountObj.Completed, label: "Completed" },
+        { y: @Model.CandidatesCountObj.Scheduled, label: "Scheduled" },
+        { y: @Model.CandidatesCountObj.QCPending, label: "QC Pending" },
+        { y: @Model.CandidatesCountObj.NotYetScheduled, label: "Not Yet Scheduled" }];*@
 
             //var chart = new CanvasJS.Chart("candidatesPieId", {
             //    theme: "light2",
@@ -665,20 +707,19 @@
             //    }]
             //});
             //chart.render();
-
-
-
-
-    }
-
+    });
+    
 </script>
 <script>
     function changeInterviewTracking() {
         document.getElementById('area-chart').innerHTML = '';
-        var date = document.getElementById('interviewTrackingDate').value;
+        var dateValue = document.getElementById('interviewTrackingDate').value;
+        if (dateValue == null || dateValue == '') {
+            dateValue = getDate();
+        }
         $.ajax({
             url: '/Dashboard/GetDateWiseClientInterviews',
-            data: { 'date': date, 'emailId': '@Model.EmailId' },
+            data: { 'dateValue': dateValue, 'emailId': '@Model.EmailId' },
             success: function (data) {
                 UpdateInterviewTrackingGraph(JSON.parse(data.meetingsData), JSON.parse(data.meetingsDataLabels));
             }
@@ -710,10 +751,13 @@
 <script>
 
     function getInterviewSlots() {
-        var date = document.getElementById('interviewSlotsDate').value;
+        var dateValue = document.getElementById('interviewSlotsDate').value;
+        if (dateValue == null || dateValue == '') {
+            dateValue = getDate();
+        }
         $.ajax({
             url: '/Dashboard/GetDateWiseClientMeetingsSlots',
-            data: { 'date': date , 'emailId': '@Model.EmailId'},
+            data: { 'dateValue': dateValue , 'emailId': '@Model.EmailId'},
             success: function (data) {
                 $('#slotsId').html('');
                 $('#slotsId').html(data);
@@ -773,5 +817,5 @@
         });
     });
 </script>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+@*<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>*@
 

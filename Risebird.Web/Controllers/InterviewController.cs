@@ -1545,19 +1545,21 @@ namespace Risebird.Web.Controllers
                         {
                             meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
                         }
-
+                        string zoomMeetingId = string.Empty;
                         if (!string.IsNullOrEmpty(meetingUpdated.zoomLink))
                         {
                             try
                             {
-                                meetingUpdated.ZoomMeetingId = Convert.ToInt64(meetingUpdated.zoomLink.Split('/').Last());
+                                zoomMeetingId = meetingUpdated.zoomLink.Split('/').Last();
+                                meetingUpdated.ZoomMeetingId = Convert.ToInt64(zoomMeetingId);
                             }
                             catch (Exception)
                             {
                                 try
                                 {
                                     var link = meetingUpdated.zoomLink.Split('?').First();
-                                    meetingUpdated.ZoomMeetingId = Convert.ToInt64(link.Split('/').Last());
+                                    zoomMeetingId = link.Split('/').Last();
+                                    meetingUpdated.ZoomMeetingId = Convert.ToInt64(zoomMeetingId);
                                 }
                                 catch (Exception)
                                 {
@@ -1607,6 +1609,11 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
+                                if(!string.IsNullOrEmpty(zoomMeetingId))
+                                {
+                                    DeleteMeetingLink(zoomMeetingId);
+                                }
+
                                 TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated Successfully!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                             }

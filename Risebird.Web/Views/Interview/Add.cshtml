@@ -121,6 +121,9 @@
                                         @Html.LabelFor(model => model.confirmationStatus, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        
+                                        <label class="text-danger"> Note : Cancelled meetings cannot be Confirmed back.</label>
+
                                         @Html.ValidationMessageFor(model => model.confirmationStatus, "", new { @class = "text-danger" })
                                     </div>
 
