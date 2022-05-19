@@ -78,7 +78,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.ProgressDate = DateTime.Now;
                         }
-                        model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
+                        //model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
                         //model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
                         model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
@@ -87,8 +87,8 @@ namespace Risebird.Web.Controllers
                                             select new { ID = (int)s, Name = s.GetDescription() };
                         model.AssassinationList = new SelectList(Assassination, "ID", "Name");
                         //need to Update
-                        var channelrequest = await _dashboardService.FetchChannelRequests();
-                        model.ChannelRequest = channelrequest;
+                        //var channelrequest = await _dashboardService.FetchChannelRequests();
+                        //model.ChannelRequest = channelrequest;
                         var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
                         interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
