@@ -1,4 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.AddUpdateMeetingVM
+@using Risebird.Entities.Enum
 
 @{
     ViewData["Title"] = "Edit Interview";
@@ -111,7 +112,16 @@
                                     <div class="form-group">
                                         @Html.LabelFor(Model => Model.ConfirmationStatusList, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @if (Model.confirmationStatus == ((int)ReceiveMeetingStatus.Cancelled).ToString())
+                                        {
+                                            @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "diabled" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        }
+                                        <label class="text-danger">Note : Cancelled meetings cannot be Confirmed back.</label>
+
                                         @Html.ValidationMessageFor(model => model.confirmationStatus, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
