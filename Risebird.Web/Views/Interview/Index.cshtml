@@ -517,10 +517,12 @@
                                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                 </button>
                                                             </span>
-                                                            @if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                            @*@if (item.MeetingStatusStatusDesc == "Scheduled")
                                                             {
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId')" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
-                                                            }
+                                                                <span class="call" id = @(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+                                                            }*@
+                                                            <span class="call" id = @(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid, '@item.interviewDate', '@item.candidateEmail', '@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+
                                                             @if (item.IsBiometricEnabled == true)
                                                             {
 
@@ -1597,16 +1599,79 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-    function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
-        $.ajax({
-            url: '/Candidate/PublicCancelInterview',
-            type: 'POST',
-            data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
-            success: function (data) {
-                swal.fire(data);
-                window.location.href = "/Interview/Index";
+    //function Cancelinvite(id, interviewdate, CandidateEmail, IRFid) {
+    //    $.ajax({
+    //        url: '/Candidate/PublicCancelInterview',
+    //        type: 'POST',
+    //        data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid },
+    //        success: function (data) {
+    //            swal.fire(data);
+    //            window.location.href = "/Interview/Index";
+    //        }
+    //    });
+    //}
+
+
+    function Cancelinvite(id, interviewdate, CandidateEmail, IRFid, skillChannelName, zoomMeetingId, elementId) {
+        
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Interview for " + CandidateEmail + " under skill channel " + skillChannelName + " dated " + interviewdate +  " will be cancelled! Cancelled meetings cannot be confirmed back.",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText : "Don't",
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/PublicCancelInterview',
+                        type: 'POST',
+                        data: { 'id': id, 'interviewDate': interviewdate, 'candidateEmail': CandidateEmail, 'emailId': $("#hidtxtemailid").val(), 'IRFId': IRFid, 'zoomMeetingId': zoomMeetingId },
+                        success: function (data) {
+                            if (data != null && data.toLowerCase().includes('success')) {
+                                resolve(data);
+
+                            }
+                            else {
+                                swal.fire("Error cancelling!", "Please try again", "error");
+
+                            }
+                            
+                        }
+                    });
+
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Cancelled!',
+                    type: 'success',
+                    html: '<p>Meeting cancelled.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    //window.location = "/IRF/Index";
+                    //location.reload(true);
+                    document.getElementById(elementId).style.display = "none";
+                })
+
             }
-        });
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Aborted!',
+                    'Meeting remains confirmed! :)',
+                    'error'
+                )
+            }
+        })
+
+
     }
 
 </script>
