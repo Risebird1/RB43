@@ -4172,7 +4172,7 @@ namespace Risebird.Web.Controllers
                 {
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
                     var updatedStatus = await _irfRepository.UpdateCancellationSource(id, emailId);
-                    var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result1 = await _irfService.AddCandidateStatus(emailId, candidateId, IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, id);
                     var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                     var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                     List<string> interviewers = new List<string>();
