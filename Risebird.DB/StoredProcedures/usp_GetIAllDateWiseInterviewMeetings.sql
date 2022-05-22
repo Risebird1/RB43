@@ -38,7 +38,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,                
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource      
-  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor  
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId  
   from  InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
@@ -72,7 +72,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,            
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
-  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor  
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId  
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
@@ -107,7 +107,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,                
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
-  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor     
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId    
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId        
   join SeniorHR sh on sh.Clientid=IRF.ClientId      
@@ -141,7 +141,7 @@ else
   im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client,                
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed  ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                  
-  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor     
+  , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId      
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        

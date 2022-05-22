@@ -89,7 +89,7 @@
                                                 <input id="interviewTrackingDate" name="interviewTrackingDate" type="date" class="form-control">
                                             </div>
                                         </li>
-                                        <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><i class="fa fa-eye" style="font-size:12px"></i></button></li>
+                                        <li><button onclick="updateInterviewTracking()" class="panel-fullscreen"><i class="fa fa-eye" style="font-size:12px"></i></button></li>
 
                                     </ul>
                                 </div>
@@ -669,11 +669,11 @@
 </script>
 <script>
     $(document).ready(function () {
-        var meetingsData = '@Model.MeetingsData';
+        @*var meetingsData = '@Model.MeetingsData';
         meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
         var meetingsDataLabels = '@Model.MeetingsDataLabels';
         meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
-        UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
+        UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);*@
         //candidatesPieId
         @*if (@Model.CandidatesCountObj.TotalCount!= 0) {
 
@@ -711,7 +711,7 @@
     
 </script>
 <script>
-    function changeInterviewTracking() {
+    function updateInterviewTracking() {
         document.getElementById('area-chart').innerHTML = '';
         var dateValue = document.getElementById('interviewTrackingDate').value;
         if (dateValue == null || dateValue == '') {
@@ -807,15 +807,46 @@
 </script>
 <script>
     $(document).ready(function () {
-        $.ajax({
-            url: '/Survey/FetchCandidateFeedBackDetails',
-            success: function (data) {
+        function RenderCandidateFeedBackDetails() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: '/Survey/FetchCandidateFeedBackDetails',
+                    success: function (data) {
+                        resolve(data);
+                    },
+                    error: function (error) {
+                        reject(error);
+                    }
+                });
+            })
+        }
+
+        RenderCandidateFeedBackDetails()
+            .then((data) => {
                 $("#canfeedInterviewrating").text(data.avgQ1 + " Out of 5");
                 $("#canfeedInterviewerrating").text(data.avgQ2 + " Out of 5");
                 $("#canfeedschedulerating").text(data.avgQ6 + " Out of 5");
-            }
-        });
+            })
+            .catch((error) => {
+                
+            })
+
+
+
+        //$.ajax({
+        //    url: '/Survey/FetchCandidateFeedBackDetails',
+        //    success: function (data) {
+        //        $("#canfeedInterviewrating").text(data.avgQ1 + " Out of 5");
+        //        $("#canfeedInterviewerrating").text(data.avgQ2 + " Out of 5");
+        //        $("#canfeedschedulerating").text(data.avgQ6 + " Out of 5");
+        //    }
+        //});
     });
+</script>
+<script>
+    window.onload = function () {
+        updateInterviewTracking();
+    };
 </script>
 @*<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>*@
 
