@@ -1670,7 +1670,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null)
+        public async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null)
         {
             try
             {
@@ -1681,6 +1681,7 @@ namespace Risebird.Business
                 model.Comments = comments;
                 model.Status = status;
                 model.PerformedBy = performedBy;
+                model.InterviewId = interviewid;
                 return await _irfRepository.AddCandidateStatus(model);
             }
 
