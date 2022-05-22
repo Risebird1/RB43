@@ -1239,23 +1239,23 @@
     //        }
     //    });
     //}
-    function ChangeAssignvalues(id, index) {
-        $.ajax({
-            url: '/Dashboard/FetchActivityDetails',
-            data: { id: id, idprogess: $("#IrfProgressList_" + index + "__idProgress").val() },
-            success: function (data) {
-                if (data != null) {
-                    $("#IrfProgressList_" + index + "__AssignTo").val(data.assignTo);
-                    $("#IrfProgressList_" + index + "__AssignStatus").val(data.assignStatus);
-                    $("#IrfProgressList_" + index + "__Comment").val(data.comment);
-                } else {
-                    $("#IrfProgressList_" + index + "__AssignTo").val('');
-                    $("#IrfProgressList_" + index + "__AssignStatus").val('');
-                    $("#IrfProgressList_" + index + "__Comment").val('');
-                }
-            }
-        });
-    }
+    //function ChangeAssignvalues(id, index) {
+    //    $.ajax({
+    //        url: '/Dashboard/FetchActivityDetails',
+    //        data: { id: id, idprogess: $("#IrfProgressList_" + index + "__idProgress").val() },
+    //        success: function (data) {
+    //            if (data != null) {
+    //                $("#IrfProgressList_" + index + "__AssignTo").val(data.assignTo);
+    //                $("#IrfProgressList_" + index + "__AssignStatus").val(data.assignStatus);
+    //                $("#IrfProgressList_" + index + "__Comment").val(data.comment);
+    //            } else {
+    //                $("#IrfProgressList_" + index + "__AssignTo").val('');
+    //                $("#IrfProgressList_" + index + "__AssignStatus").val('');
+    //                $("#IrfProgressList_" + index + "__Comment").val('');
+    //            }
+    //        }
+    //    });
+    //}
 </script>
 <script>
     window.onload = function () {

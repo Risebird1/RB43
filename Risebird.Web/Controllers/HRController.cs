@@ -1179,5 +1179,127 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult CallCatalogueExporttoExcel()
+        {
+
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("CallCatalogue");
+            string fileName = "Risebird_" + DateTime.Now.ToString("dd/MM/yyyy") + "_CallCatalogue" + ".xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
+                        if (HttpContext.Session.GetString("CallCataloguefilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
+                            }
+                            else if (filter.StartDate != null && filter.EndDate == null)
+                            {
+                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate).ToList();
+                            }
+                            else if (filter.StartDate == null && filter.EndDate != null)
+                            {
+                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                                meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
+                            }
+                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHr).ToArray() : filter.ClientHR = filter.ClientHR;
+                            filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+                            meetings = meetings.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                                                    && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHr) : c.ClientHr == null)
+                                                    && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                                                    && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)).ToList();
+                        }
+                        else
+                        {
+                            DateTime StartDate = DateTime.Now.Date;
+                            DateTime EndDate = DateTime.Now.Date.AddDays(1);
+                            meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
+                        }
+
+                        if( meetings != null && meetings.Count() > 0)
+                        {
+                            Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                            Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                            Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                            //Sheet.Column(1).Width = 30;
+                            //Sheet.Column(2).Width = 30;
+                            int startColumn = 1; int endColumn = 12;
+                            for (int a = startColumn; a <= endColumn; a++)
+                            {
+                                Sheet.Column(a).Width = 40;
+                            }
+                            Sheet.Cells[1, 1].Value = "Skill Channel";
+                            Sheet.Cells[1, 2].Value = "Candidate Name";
+                            Sheet.Cells[1, 3].Value = "Candidate Email";
+                            Sheet.Cells[1, 4].Value = "JD Title";
+                            Sheet.Cells[1, 5].Value = "Client";
+                            Sheet.Cells[1, 6].Value = "Last Called At";
+                            Sheet.Cells[1, 7].Value = "Last Called By";
+
+                            //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
+                            int i = 2;
+
+                            foreach (var item in meetings)
+                            {
+                                Sheet.Cells[i, 1].Value = item.IRFId;
+                                Sheet.Cells[i, 2].Value = item.CandidateName;
+                                Sheet.Cells[i, 3].Value = item.CandidateEmail;
+                                Sheet.Cells[i, 4].Value = item.JDTiltle;
+                                Sheet.Cells[i, 5].Value = item.ClientName;
+                                Sheet.Cells[i, 6].Value = item.CalledOn.ToString("dddd, dd MMMM yyyy HH:mm:ss");
+                                Sheet.Cells[i, 7].Value = item.WhoCalled;
+
+                                i++;
+                            }
+
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        
+
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
     }
 }
