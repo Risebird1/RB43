@@ -299,7 +299,7 @@ namespace Risebird.Web.Controllers
                         var model = new ClientDashboardVM();
                         //var funnelData = await _dashboardService.GetClientFunnelData(emailid);
                         //var slotsDetails = await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now.Date, emailid);
-                        model = GetDateWiseClientInterviews(DateTime.Now.Date, emailid);
+                        //model = GetDateWiseClientInterviews(DateTime.Now.Date, emailid);
                         model.CandidatesCountObj = await _dashboardService.GetClientCandidatesCurrentStatusCount(emailid);
                         model.EmailId = emailid;
                         //model.FunnelData = JsonConvert.SerializeObject(funnelData);
@@ -387,12 +387,12 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
+        public IActionResult GetDateWiseClientMeetingsSlots(DateTime dateValue, string emailId)
         {
             try
             {
                 var model = new ClientDashboardVM();
-                model.DailyMeetingResultsSlots = _dashboardService.GetDateWiseClientMeetingsSlots(date, emailId).Result;
+                model.DailyMeetingResultsSlots = _dashboardService.GetDateWiseClientMeetingsSlots(dateValue, emailId).Result;
                 return PartialView("ClientSlotsStatusPartial", model);
             }
             catch (Exception ex)
