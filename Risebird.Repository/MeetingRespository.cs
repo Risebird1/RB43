@@ -827,9 +827,9 @@ namespace Risebird.Repository
                 parameters.Add("@interviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetMeetingById", parameters,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMeetingById", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return result;
+                    return result.FirstOrDefault();
                 }
 
             }
