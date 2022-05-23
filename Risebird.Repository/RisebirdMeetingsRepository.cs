@@ -237,7 +237,7 @@ namespace Risebird.Repository
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@interviewid", interviewid);
                 var result = SqlMapper.Query<bool>(
-                    con, "Select tc.IsActive from interviewmeetings im join IRF on IRF.IRFId=im.IRFId Left join UserList ul on ul.EmailId=im.ClientHrContact left join TransClientUser tc on tc.ClientUserId=ul.id and tc.IRFId=IRF.id where im.id=@interviewid", dp, commandType: Text);
+                    con, "Select IsNull(tc.IsActive,1) as IsActive from interviewmeetings im join IRF on IRF.IRFId=im.IRFId Left join UserList ul on ul.EmailId=im.ClientHrContact left join TransClientUser tc on tc.ClientUserId=ul.id and tc.IRFId=IRF.id where im.id=@interviewid", dp, commandType: Text);
                 flag = result.FirstOrDefault();
             }
             if (!flag)
