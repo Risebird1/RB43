@@ -904,18 +904,18 @@ namespace Risebird.Business
         {
             try
             {
-                var meeting = _meetingRespository.GetInterviewMeetingById(meetingid);
+                var meeting = _meetingRespository.GetInterviewMeetingById(meetingid).Result;
 
-                if (meeting != null && meeting.Result != null)
+                if (meeting != null)
                 {
                     _meetingRespository.UnassignYourself(meetingid);
                     //TimeSpan timeSpan = meeting.Result.interviewDate - DateTime.Now;
-                    if (meeting.Result.interviewtimedifference >= 0 && meeting.Result.interviewtimedifference <= 60)
+                    if (meeting.interviewtimedifference >= 0 && meeting.interviewtimedifference <= 60)
                     {
-                        if (meeting.Result.interviewtimedifference <= 30)
+                        if (meeting.interviewtimedifference <= 30)
                         {
                             //for 1/2 hr before apply penality on interviewer according to india and outside india
-                            _meetingRespository.ApplyInterviewPenalty(meetingid, meeting.Result.JobCountry, meeting.Result.interviewer);
+                            _meetingRespository.ApplyInterviewPenalty(meetingid, meeting.JobCountry, meeting.interviewer);
                         }
                     }
                     else
@@ -924,18 +924,20 @@ namespace Risebird.Business
                         if (isPenalty)
                         {
                             //update flag for Emergency Interview
-                            _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.Result.interviewDate);
-                            interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
+                            _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.interviewDate);
+                            //interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
+                            interviwers = _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId).Result.ToList();
                         }
                         else
                         {
-                            interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                            //interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                            interviwers = _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId).Result.ToList();
                         }
 
                         if (interviwers != null)
                         {
                             interviwers.Remove(email);
-                            _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
+                            _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
 
                         }
                         //var hrs = _userService.GetAllHrsEmailld()?.ToList();
