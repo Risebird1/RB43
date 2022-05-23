@@ -1609,7 +1609,7 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                if(!string.IsNullOrEmpty(zoomMeetingId))
+                                if (!string.IsNullOrEmpty(zoomMeetingId))
                                 {
                                     DeleteMeetingLink(zoomMeetingId);
                                 }
@@ -6578,7 +6578,7 @@ namespace Risebird.Web.Controllers
                 if (status == 2)
                 {
                     //send mail scheduling link
-                    var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                    var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
                     var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
                     var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingid);
                     List<string> interviewers = new List<string>();
