@@ -63,7 +63,7 @@ namespace Risebird.Web.Controllers
                         var model = new DashboardVM();
 
                         //daily interview tracking first chart
-                        model = GetDateWiseInterviews(DateTime.Now);
+                        //model = GetDateWiseInterviews(DateTime.Now);
                         //daily interview tracking slots
                         //model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now, Emailid);
                         model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
@@ -80,7 +80,7 @@ namespace Risebird.Web.Controllers
                         }
                         //model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
                         //model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
-                        model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
+                        //CandidatesCountObj model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                         model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
