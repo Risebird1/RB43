@@ -46,7 +46,7 @@ namespace Risebird.MicroService
                         {
                             var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
                             var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);
-                            var result1 = await _irfService.AddCandidateStatus("System", candidateId, item.Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled);
+                            var result1 = await _irfService.AddCandidateStatus("System", candidateId, item.Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, item.Interviewid);
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
                             var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
                             List<string> interviewers = new List<string>();
