@@ -113,7 +113,7 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { meetingDate };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewMailTemplate.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotification.html");//"InterviewMailTemplate.html"
                 string msgBody = string.Format(rawEmail, parameters);
 
                 msg.HtmlContent = msgBody;
