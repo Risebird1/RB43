@@ -130,4 +130,16 @@ namespace Risebird.Entities.ViewModel
         public string FeedbackComment { get; set; }
         public List<MCQVM> QuestionDetails { get; set; }
     }
+    public class ShareMCQRisebirdMeeting
+    {
+        public string agentname { get; set; }
+        public string visitorName { get; set; }
+        public string datetime { get; set; }
+    }
+    public class ShareMCQRisebirdMeetingResponse
+    {
+        public string roomId { get; set; }
+        public string meetingAgent { get; set; }
+        public string meetingAttendee { get; set; }
+    }
 }
