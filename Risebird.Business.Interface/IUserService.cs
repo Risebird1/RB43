@@ -64,5 +64,6 @@ namespace Risebird.Business.Interface
         string GetCurrentUsername(string emailId);
         Task<bool> CheckMultiSession(string emailId);
         Task<bool> ClearSessionForOthersUsers(string emailId);
+        AssignmentVM GetInterviewerEntitleById(int assessmentid);
     }
 }

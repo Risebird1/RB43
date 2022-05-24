@@ -1605,5 +1605,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public AssignmentVM GetInterviewerEntitleById(int assessmentid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "select ag.id,AssessmentGroup,PrimarySkills,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate,(Select count(*) from InterviewerProfile cross Apply string_split(AssessmentGroupId,',') where value =ag.id ) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName,Count(IRF.id) as IrfCount from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid left join IRF on IRF.AssessmentGroupId=ag.id where ag.id=@assessmentid group by ag.id,AssessmentGroup,PrimarySkills,ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@assessmentid", assessmentid);
+                    var results = con.Query<AssignmentVM>(query, parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

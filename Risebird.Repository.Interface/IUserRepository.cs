@@ -72,5 +72,6 @@ namespace Risebird.Repository.Interface
         Task<int> DisableInactiveUser();
         string GetUserProfileBasedOnEmailId(string emailId);
         Task<ClientUserVM> GetClientUserDetailsByIRF(string emailID, int irfid);
+        AssignmentVM GetInterviewerEntitleById(int assessmentid);
     }
 }
