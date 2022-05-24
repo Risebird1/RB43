@@ -924,7 +924,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SharedTestLink(Mail model, string title, string timeduration, string url, string ClientName)
+        public string SharedTestLink(Mail model, string title, string timeduration, string url, string ClientName, string meetingurl, DateTime interviewdatetime, int offset)
         {
             try
             {
@@ -937,11 +937,35 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
 
-                object[] parameters = new object[] { title, timeduration, url, ClientName };
+                object[] parameters = new object[] { title, timeduration, url, ClientName, meetingurl };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateInvitationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-
+                //Start: Attachment
+                StringBuilder str = new StringBuilder();
+                str.AppendLine("BEGIN:VCALENDAR");
+                str.AppendLine("PRODID:-//Schedule a Meeting");
+                str.AppendLine("VERSION:2.0");
+                str.AppendLine("METHOD:REQUEST");
+                str.AppendLine("BEGIN:VEVENT");
+                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset)));
+                str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
+                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
+                str.AppendLine("LOCATION:" + meetingurl);
+                str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
+                str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
+                str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", toMails[0], toMails[0]));
+                str.AppendLine("BEGIN:VALARM");
+                str.AppendLine("TRIGGER:-PT15M");
+                str.AppendLine("ACTION:DISPLAY");
+                str.AppendLine("DESCRIPTION:Reminder");
+                str.AppendLine("END:VALARM");
+                str.AppendLine("END:VEVENT");
+                str.AppendLine("END:VCALENDAR");
+                byte[] byteArray = Encoding.ASCII.GetBytes(str.ToString());
+                MemoryStream stream = new MemoryStream(byteArray);
+                msg.AddAttachmentAsync("invite.ics", stream);
+                //End: Attachment
                 return SendMail(msg).Result;
             }
             catch (Exception)
@@ -2129,6 +2153,55 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientCommonInterviewNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SharedTestLinkClient(Mail model, string title, string timeduration, string url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, int offset)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+
+                object[] parameters = new object[] { title, timeduration, url, CandidateEmail, meetingurl };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInvitationTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                //Start: Attachment
+                StringBuilder str = new StringBuilder();
+                str.AppendLine("BEGIN:VCALENDAR");
+                str.AppendLine("PRODID:-//Schedule a Meeting");
+                str.AppendLine("VERSION:2.0");
+                str.AppendLine("METHOD:REQUEST");
+                str.AppendLine("BEGIN:VEVENT");
+                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset)));
+                str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
+                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
+                str.AppendLine("LOCATION:" + meetingurl);
+                str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
+                str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
+                str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", toMails[0], toMails[0]));
+                str.AppendLine("BEGIN:VALARM");
+                str.AppendLine("TRIGGER:-PT15M");
+                str.AppendLine("ACTION:DISPLAY");
+                str.AppendLine("DESCRIPTION:Reminder");
+                str.AppendLine("END:VALARM");
+                str.AppendLine("END:VEVENT");
+                str.AppendLine("END:VCALENDAR");
+                byte[] byteArray = Encoding.ASCII.GetBytes(str.ToString());
+                MemoryStream stream = new MemoryStream(byteArray);
+                msg.AddAttachmentAsync("invite.ics", stream);
+                //End: Attachment
                 return SendMail(msg).Result;
             }
             catch (Exception)

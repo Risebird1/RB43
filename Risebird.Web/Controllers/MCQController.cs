@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -1014,35 +1015,46 @@ namespace Risebird.Web.Controllers
                 var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
                 var timmer = details.Timer + " min";
                 string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Id;
-                Mail _mail = new Mail
+
+                MCQVMShare _list = new MCQVMShare();
+                _list.status = "0";
+                _list.MCQSet = details.Title;
+                _list.ClientHR = ClientEmail;
+                _list.ApplyingCompany = ClientName;
+                _list.Videorecording = videoRecording;
+                foreach (var item in Emailids.Split(";"))
                 {
-                    TO = Emailids,
-                    Subject = "Invitation for " + details.Title + " : " + ClientName
-                };
-                var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName);
-                if (result.Contains("Mail sent successfully"))
-                {
-                    MCQVMShare _list = new MCQVMShare();
-                    _list.status = "0";
-                    _list.MCQSet = details.Title;
-                    _list.ClientHR = ClientEmail;
-                    _list.ApplyingCompany = ClientName;
-                    _list.Videorecording = videoRecording;
-                    foreach (var item in Emailids.Split(";"))
+                    try
                     {
-                        var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                        _list.PartitionKey = date;
-                        _list.RowKey = Guid.NewGuid().ToString();
-                        _list.Id = Id;
-                        _list.EmailAddress = item;
-                        await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", _list);
+                        var _meetinglinks = ShareRisebirdMeeting("Risebird", "Prashant Singh", DateTime.Now.AddHours(6));
+                        Mail _mail = new Mail
+                        {
+                            TO = item,
+                            Subject = "Invitation for " + details.Title + " : " + ClientName
+                        };
+                        var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, DateTime.Now.AddHours(6), -330);
+                        Mail _mail1 = new Mail
+                        {
+                            TO = ClientEmail,
+                            Subject = "Invitation for " + details.Title + " : " + item
+                        };
+                        _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, DateTime.Now.AddHours(6), -330);
+                        if (result.Contains("Mail sent successfully"))
+                        {
+                            var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                            _list.PartitionKey = date;
+                            _list.RowKey = Guid.NewGuid().ToString();
+                            _list.Id = Id;
+                            _list.EmailAddress = item;
+                            await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", _list);
+                        }
                     }
-                    return Json("success");
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
-                else
-                {
-                    return Json("Fail");
-                }
+                return Json("success");
             }
             catch (Exception ex)
             {
@@ -1050,6 +1062,24 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
+        public ShareMCQRisebirdMeetingResponse ShareRisebirdMeeting(string agentname, string visitorName, DateTime datetime)
+        {
+            var _model = new ShareMCQRisebirdMeeting();
+            _model.agentname = agentname;
+            _model.visitorName = visitorName;
+            _model.datetime = datetime.ToString();
+            var _meeting = new RestClient("https://meet.risebird.io/api/v1/room");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+            request.AddBody(_model);
+            IRestResponse response = _meeting.Execute(request);
+            var content = response.Content;
+            var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+            if (convertedResponse != null)
+            {
+                return convertedResponse;
+            }
+            return new ShareMCQRisebirdMeetingResponse();
+        }
     }
 }
