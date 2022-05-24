@@ -43,7 +43,7 @@ namespace Risebird.CommonHelper.Interface
         string FeedbackSubmitNotification(Mail model, string candidate);
         string InsuficientBalancNotifiaction(Mail model);
         string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
-        string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
+        string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName, string meetingurl, DateTime interviewdatetime, int offset);
         string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany, int score);
         string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null, string staffingAgency = null);
         string RBPayNotification(Mail model, string emailid);
@@ -80,5 +80,6 @@ namespace Risebird.CommonHelper.Interface
         string SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, string IRFName);
         string SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
         string SendClientCommonInterviewNotification(Mail model, DataTable dt);
+        string SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, int offset);
     }
 }
