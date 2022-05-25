@@ -3403,18 +3403,6 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewesToShare()
-        {
-            try
-            {
-                return await _meetingRespository.FetchAllUnassignedInterviewesToShare();
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
     }
 }
 
