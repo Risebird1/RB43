@@ -20,6 +20,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Job Description")]
         public IFormFile JDFile { get; set; }
         public string JDLink { get; set; }
+        [Display(Name = "Seniority Level")]
         public int JobLevel { get; set; }
         [Display(Name = "Expected No of Interviews")]
         public int ExpectedInterviews { get; set; }
@@ -43,10 +44,13 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Assessment Group")]
         public int AssessmentGroupId { get; set; }
         public int ClientId { get; set; }
+        [Display(Name = "Category")]
         public int Categoryid { get; set; }
         public SelectList AssessmentGroupsList { get; set; }
         public string ClientCompanyName { get; set; }
+        [Display(Name = "Company Types")]
         public int CompanyTypes { get; set; }
+        [Display(Name = "Competency Level")]
         public int CompetencyLevel { get; set; }
     }
 }

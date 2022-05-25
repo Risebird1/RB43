@@ -117,6 +117,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new InterviewRequestVM();
@@ -449,6 +450,8 @@ namespace Risebird.Web.Controllers
             ViewBag.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");
             var skills = _irfRepository.GetSkills();
             ViewBag.Skill = new SelectList(skills, "id", "Name");
+            var clients = _irfRepository.GetClients();
+            ViewBag.Clients = new SelectList(clients, "id", "Name");
         }
         [HttpPost]
         public JsonResult FetchCoordinators()
@@ -771,6 +774,70 @@ namespace Risebird.Web.Controllers
                 return eventurl;
             }
             return "";
+        }
+        [HttpGet]
+        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int competencyid)
+        {
+            var list = new List<SelectListItem>();
+            var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
+            if (assessmentGroups != null && assessmentGroups.Count() > 0)
+            {
+                if (companytype != 0)
+                {
+                    assessmentGroups = assessmentGroups.Where(x => x.CompanyType == companytype).ToList();
+                }
+                if (countryid != 0)
+                {
+                    assessmentGroups = assessmentGroups.Where(x => x.Country == countryid).ToList();
+                }
+                if (jobLevelid != 0)
+                {
+                    assessmentGroups = assessmentGroups.Where(x => x.ProfileType == jobLevelid).ToList();
+                }
+                if (competencyid != 0)
+                {
+                    assessmentGroups = assessmentGroups.Where(x => x.CompetencyLevel == competencyid).ToList();
+                }
+                if (assessmentGroups.Count() == 0)
+                {
+                    list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
+                    return new SelectList(list, "Value", "Text");
+                }
+                return new SelectList(assessmentGroups, "id", "AssessmentGroup");
+            }
+            else
+            {
+                list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
+            }
+            return new SelectList(list, "Value", "Text");
+        }
+        [HttpGet]
+        public async Task<SelectList> GetSkillsByAssessmentGroups(int assessmentgroupid)
+        {
+            var list = new List<SelectListItem>();
+            var modellist = _userService.GetInterviewerEntitleById(assessmentgroupid);
+            var skillset = _skillService.GetSkills();
+            var primaryskilllist = new List<SelectListItem>();
+            foreach (var item in skillset)
+            {
+                if (modellist != null)
+                {
+                    if (modellist.PrimarySkills != null && modellist.PrimarySkills.Contains(item.Name))
+                    {
+                        var selectItem = new SelectListItem(item.Name, item.id.ToString());
+                        primaryskilllist.Add(selectItem);
+                    }
+                }
+            }
+            if (primaryskilllist != null && primaryskilllist.Count() > 0)
+            {
+                return new SelectList(primaryskilllist, "Value", "Text");
+            }
+            else
+            {
+                list.Add(new SelectListItem { Text = "No Skills for selected Assessment Group", Value = "" });
+            }
+            return new SelectList(list, "Value", "Text");
         }
     }
 }

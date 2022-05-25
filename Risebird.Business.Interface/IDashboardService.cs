@@ -30,7 +30,7 @@ namespace Risebird.Business.Interface
         Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id);
         Task<string> DeleteChannelInterviewerByid(int id, int channelid);
         Task<ChannelInterviewerVM> FecthInterviewerById(int id);
-        Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount(string Emailid);
+        Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount(string Emailid, bool getDeletedZoomMeetingsCount = false);
         Task<List<string>> FetchHRList(string searchterm);
         bool AddChannelApprovedInterviewer(IEnumerable<ChannelApprovedInterviewer> model, int channelid);
         IEnumerable<ChannelApprovedInterviewer> GetChannelApprovedInterviewer(int id);
@@ -40,10 +40,11 @@ namespace Risebird.Business.Interface
         Task<CandidateCurrentStatusCount> GetClientCandidatesCurrentStatusCount(string emailId);
         Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype, string profileName);
         Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName);
-        Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid);
+        Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid, bool getDeletedZoomMeetingsCount = false);
         Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting();
         Task<List<ZoomMeetingHistoryDetails>> FetchZoomMeetingHistory(string meetingid);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagement(string Emailid);
         Task<InterviewerDashboardVM> GetInterviewDetailsCount(string emailId);
+        Task<List<MeetingVM>> GetUpcomingMeetingsDeletedFromZoom(string emailId);
     }
 }

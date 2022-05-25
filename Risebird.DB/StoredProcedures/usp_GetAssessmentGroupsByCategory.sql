@@ -15,7 +15,7 @@ CREATE PROCEDURE [dbo].[usp_GetAssessmentGroupsByCategory]
 AS
 Begin
 
-select id, AssessmentGroup from AssessmentGroup where Categoryid=@categoryId
+select * from AssessmentGroup where Categoryid=@categoryId
 
 End
 GO

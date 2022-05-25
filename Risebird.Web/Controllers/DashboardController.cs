@@ -63,7 +63,7 @@ namespace Risebird.Web.Controllers
                         var model = new DashboardVM();
 
                         //daily interview tracking first chart
-                        model = GetDateWiseInterviews(DateTime.Now);
+                        //model = GetDateWiseInterviews(DateTime.Now);
                         //daily interview tracking slots
                         //model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now, Emailid);
                         model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
@@ -80,7 +80,7 @@ namespace Risebird.Web.Controllers
                         }
                         //model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate, Emailid));
                         //model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount(Emailid);
-                        model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
+                        //CandidatesCountObj model.CandidatesCountObj = await _dashboardService.GetCandidatesCount(Emailid);
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                         model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
                         var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
@@ -1029,6 +1029,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                             HttpContext.Session.Remove("UnassignedInterviewsFilters");
+                        if (actionstatus == "DeletedZoomMeetings")
+                        {
+                            return RedirectToAction("DeletedZoomMeetings", new { /*actionStatus = actionstatus, */actionType = actiontype });
+                        }
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == "UnAssignedCoordianter")
                         {
@@ -1301,7 +1305,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> FetchRibbonValues(int section)
+        public async Task<JsonResult> FetchRibbonValues(int section, bool getDeletedZoomMeetingsCount = false)
         {
             if (section == 1)
             {
@@ -1314,7 +1318,7 @@ namespace Risebird.Web.Controllers
                     email = HttpContext.Session.GetString("email")?.Trim();
                     email = email.Replace("\"", "");
                 }
-                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCountbyHr(email);
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCountbyHr(email, getDeletedZoomMeetingsCount);
                 var myInterview = _meetingService.GetHRAssignedInterviews(email);
                 var WeekDate = DateTime.Now.AddDays(-7);
                 var interviewerids = myInterview.Where(x => x.interviewDate >= WeekDate).Select(x => x.id).Distinct().ToList();
@@ -1340,7 +1344,7 @@ namespace Risebird.Web.Controllers
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                 }
-                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
+                var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid, getDeletedZoomMeetingsCount);
                 return Json(Ribbonmodel);
             }
         }
@@ -1357,6 +1361,33 @@ namespace Risebird.Web.Controllers
         {
             var modelList = await _dashboardService.FetchZoomMeetingHistory(meetingid);
             return Json(modelList);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DeletedZoomMeetings(int actionType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var model = await _dashboardService.GetUpcomingMeetingsDeletedFromZoom(emailId);
+                    ViewBag.Actiontype = actionType;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
         }
         #region Interviewer Dashboard
         [Authorize]
