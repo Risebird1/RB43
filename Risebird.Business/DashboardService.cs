@@ -8,6 +8,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -16,10 +17,14 @@ namespace Risebird.Business
     {
         private readonly IDashboarRepository _dashboardRespository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IMeetingRespository _meetingRepository;
+        private readonly IZoomHelper _zoomHelper;
+        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRepository, IZoomHelper zoomHelper)
         {
             _dashboardRespository = dashboardRespository;
             _applicationErrorLogger = applicationErrorLogger;
+            _meetingRepository = meetingRepository;
+            _zoomHelper = zoomHelper;
         }
 
         public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date, string Emailid)
@@ -340,11 +345,32 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount(string Emailid)
+        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCount(string Emailid, bool getDeletedZoomMeetingsCount = false)
         {
             try
             {
-                return await _dashboardRespository.GetNotUpdatedMeetingsCount(Emailid);
+                var model = new NotUpdatedMeetings();
+                model = await _dashboardRespository.GetNotUpdatedMeetingsCount(Emailid);
+                if (getDeletedZoomMeetingsCount)
+                {
+                    var upcomingMeetings = await _meetingRepository.GetInterviewsScheduledWithinNextTwoHours(Emailid);
+                    int deletedZoomMeetingsCount = 0;
+
+                    if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
+                    {
+                        var zoomToken = _zoomHelper.ZoomToken();
+                        foreach (var meeting in upcomingMeetings)
+                        {
+                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
+                            if (responseStatusCode != HttpStatusCode.OK)
+                            {
+                                deletedZoomMeetingsCount = deletedZoomMeetingsCount + 1;
+                            }
+                        }
+                    }
+                    model.UpcomingMeetingsDeletedFromZoom = deletedZoomMeetingsCount;
+                }
+                return model;
             }
             catch (Exception ex)
             {
@@ -453,11 +479,33 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid)
+        public async Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid, bool getDeletedZoomMeetingsCount = false)
         {
             try
             {
-                return await _dashboardRespository.GetNotUpdatedMeetingsCountbyHr(Emailid);
+                var model = new NotUpdatedMeetings();
+                model = await _dashboardRespository.GetNotUpdatedMeetingsCountbyHr(Emailid);
+                if(getDeletedZoomMeetingsCount)
+                {
+                    var upcomingMeetings = await _meetingRepository.GetInterviewsScheduledWithinNextTwoHours(Emailid);
+                    int deletedZoomMeetingsCount = 0;
+
+                    if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
+                    {
+                        var zoomToken = _zoomHelper.ZoomToken();
+                        foreach (var meeting in upcomingMeetings)
+                        {
+                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
+                            if (responseStatusCode != HttpStatusCode.OK)
+                            {
+                                deletedZoomMeetingsCount = deletedZoomMeetingsCount + 1;
+                            }
+                        }
+                    }
+                    model.UpcomingMeetingsDeletedFromZoom = deletedZoomMeetingsCount;
+                }
+                
+                return model;
             }
             catch (Exception ex)
             {
@@ -513,5 +561,33 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<MeetingVM>> GetUpcomingMeetingsDeletedFromZoom(string emailId)
+        {
+            try
+            {
+                var upcomingMeetings = (await _meetingRepository.GetInterviewsScheduledWithinNextTwoHours(emailId)).ToList();
+                var deletedZoomMeetingList = new List<MeetingVM>();
+                if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
+                {
+                    var zoomToken = _zoomHelper.ZoomToken();
+                    foreach (var meeting in upcomingMeetings)
+                    {
+                        var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
+                        if (responseStatusCode != HttpStatusCode.OK)
+                        {
+                            deletedZoomMeetingList.Add(meeting);
+                            //upcomingMeetings.Remove(meeting);
+                        }
+                    }
+                }
+                return deletedZoomMeetingList;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
