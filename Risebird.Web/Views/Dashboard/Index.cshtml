@@ -337,13 +337,13 @@
                                             <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
-                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount" class="card-title">@Model.NotUpdatedMeetingsObj.MissingVideoLink</span>
+                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount" class="card-title">@*@Model.NotUpdatedMeetingsObj.UpcomingMeetingsDeletedFromZoom*@!</span>
                                                 </div>
                                             </div>
                                             <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
-                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.MissingVideoLink</span>
+                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount_1" class="card-title">@*@Model.NotUpdatedMeetingsObj.UpcomingMeetingsDeletedFromZoom*@!</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1336,7 +1336,12 @@
                 $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
-                $("#ribbonDeletedZoomMeetingCount").text(data.upcomingMeetingsDeletedFromZoom);
+
+                if (getDeletedZoomMeetingsCount) {
+                    $("#ribbonDeletedZoomMeetingCount").text(data.upcomingMeetingsDeletedFromZoom);
+                    $("#ribbonDeletedZoomMeetingCount_1").text(data.upcomingMeetingsDeletedFromZoom);
+
+                }
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -1345,7 +1350,6 @@
                 $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
-                $("#ribbonDeletedZoomMeetingCount_1").text(data.upcomingMeetingsDeletedFromZoom);
 
                 if (parseInt(data.unAttendedZoomLink) > 0) {
                     var bipsoundcount = localStorage.getItem("bipsoundcount");

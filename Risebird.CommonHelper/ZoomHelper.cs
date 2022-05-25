@@ -70,9 +70,9 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<HttpStatusCode> CheckMeetingbyId(string meetingId)
+        public async Task<HttpStatusCode> CheckMeetingbyId(string meetingId, string token)
         {
-            string token = ZoomToken();
+            //string token = ZoomToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingId));
             var request = new RestRequest(Method.GET);
             request.AddHeader("content-type", "application/json");

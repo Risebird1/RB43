@@ -358,9 +358,10 @@ namespace Risebird.Business
 
                     if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
                     {
+                        var zoomToken = _zoomHelper.ZoomToken();
                         foreach (var meeting in upcomingMeetings)
                         {
-                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString());
+                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
                             if (responseStatusCode != HttpStatusCode.OK)
                             {
                                 deletedZoomMeetingsCount = deletedZoomMeetingsCount + 1;
@@ -491,9 +492,10 @@ namespace Risebird.Business
 
                     if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
                     {
+                        var zoomToken = _zoomHelper.ZoomToken();
                         foreach (var meeting in upcomingMeetings)
                         {
-                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString());
+                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
                             if (responseStatusCode != HttpStatusCode.OK)
                             {
                                 deletedZoomMeetingsCount = deletedZoomMeetingsCount + 1;
@@ -567,9 +569,10 @@ namespace Risebird.Business
                 var deletedZoomMeetingList = new List<MeetingVM>();
                 if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
                 {
+                    var zoomToken = _zoomHelper.ZoomToken();
                     foreach (var meeting in upcomingMeetings)
                     {
-                        var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString());
+                        var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
                         if (responseStatusCode != HttpStatusCode.OK)
                         {
                             deletedZoomMeetingList.Add(meeting);
