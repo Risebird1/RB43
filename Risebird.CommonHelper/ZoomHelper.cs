@@ -1,11 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using RestSharp;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
@@ -63,6 +68,19 @@ namespace Risebird.CommonHelper
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public async Task<HttpStatusCode> CheckMeetingbyId(string meetingId)
+        {
+            string token = ZoomToken();
+            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingId));
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("content-type", "application/json");
+            request.AddHeader("authorization", "Bearer " + token);
+            IRestResponse response = await client.ExecuteAsync(request);
+            //var content = response.Content;
+            return response.StatusCode;
+            
         }
     }
 }
