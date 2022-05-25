@@ -59,7 +59,7 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
-        }       
+        }
 
         #region User Service Functions
 
@@ -803,6 +803,18 @@ namespace Risebird.Business
             try
             {
                 return _userRepository.GetCurrentUsername(emailId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public AssignmentVM GetInterviewerEntitleById(int assessmentid)
+        {
+            try
+            {
+                return _userRepository.GetInterviewerEntitleById(assessmentid);
             }
             catch (Exception e)
             {
