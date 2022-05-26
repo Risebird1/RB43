@@ -49,7 +49,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new ProjectViewModel();
                     var projectList = _projectService.GetProjects(emailid, profileName).ToList();
-                    projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
+                    projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription());
 
                     model.ProjectList = projectList;
 
@@ -122,7 +122,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new ProjectViewModel();
                     var projectList = _projectService.GetProjects(emailid, profileName).ToList();
-                    projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
+                    projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription());
                     model.ProjectList = projectList;
 
                     if (TempData["SuccessErrorMessage"] != null)
@@ -325,7 +325,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        if (_projectService.DeleteProject(Convert.ToInt16(id)).Result)
+                        if (_projectService.DeleteProject(Convert.ToInt32(id)).Result)
                         {
                             //TempData["SuccessErrorMessage"] = "Project deleted Successfully";
                             return RedirectToAction("Index");
@@ -1089,7 +1089,7 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-                        //var clientUserList = _irfRepository.GetTransClientUser(Convert.ToInt16(id));
+                        //var clientUserList = _irfRepository.GetTransClientUser(Convert.ToInt32(id));
 
                         foreach (var item in clientList)
                         {
@@ -1246,7 +1246,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
 
-                        var chartData = _projectService.GetFunnelData(Convert.ToInt16(id));
+                        var chartData = _projectService.GetFunnelData(Convert.ToInt32(id));
                         return Json(chartData);
                     }
                     else

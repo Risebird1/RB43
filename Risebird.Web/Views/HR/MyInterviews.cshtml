@@ -249,6 +249,33 @@
                                     </tr>
                                 </table>
                             </li>
+                            <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                                <table width="100%">
+                                    <tr>
+                                        <td class="un-right">
+
+                                            <div class="flipper">
+                                                <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
+                                                    <div class="card-image">
+                                                        <div class="header-front"></div>
+                                                        <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount" class="spinner-grow text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
+                                                    <div class="card-image">
+                                                        <div class="header-back"></div>
+                                                        <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount_1" class="spinner-grow text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </td>
+                                        <td class="text-left un-left"><strong>Deleted Zoom Meetings</strong></td>
+
+                                    </tr>
+                                </table>
+                            </li>
                         </ul>
                     </div>
 
@@ -2025,6 +2052,8 @@
     }
 </script>
 <script>
+    var setRibbonCalledCount = 0;
+    var getDeletedZoomMeetingsCount = false;
     $(document).ready(function () {
         setRibbon();
         $('[data-toggle="tooltip"]').tooltip();
@@ -2032,9 +2061,15 @@
 </script>
 <script>
     function setRibbon() {
+        if (setRibbonCalledCount == 0) {
+            getDeletedZoomMeetingsCount = true;
+        }
+        else {
+            getDeletedZoomMeetingsCount = false;
+        }
         $.ajax({
             url: '/Dashboard/FetchRibbonValues',
-            data: { section: 1 },
+            data: { 'section' : 1, 'getDeletedZoomMeetingsCount': getDeletedZoomMeetingsCount},
             success: function (data) {
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
@@ -2043,6 +2078,20 @@
                 $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
+
+                if (getDeletedZoomMeetingsCount) {
+                    var classList = $("#ribbonDeletedZoomMeetingCount").attr("class");
+                    if (classList != null && classList.includes("spinner")) {
+                        $("#ribbonDeletedZoomMeetingCount").removeClass("spinner-grow text-danger");
+                        $("#ribbonDeletedZoomMeetingCount_1").removeClass("spinner-grow text-danger");
+                        $("#ribbonDeletedZoomMeetingCount").addClass("card-title");
+                        $("#ribbonDeletedZoomMeetingCount_1").addClass("card-title");
+                    }
+
+                    $("#ribbonDeletedZoomMeetingCount").text(data.upcomingMeetingsDeletedFromZoom);
+                    $("#ribbonDeletedZoomMeetingCount_1").text(data.upcomingMeetingsDeletedFromZoom);
+
+                }
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -2060,6 +2109,13 @@
                     }
                 }
                 localStorage.setItem("bipsoundcount", data.unAttendedZoomLink);
+                if (setRibbonCalledCount != 30) {
+                    setRibbonCalledCount = setRibbonCalledCount + 1;
+
+                }
+                else {
+                    setRibbonCalledCount = 0;
+                }
             }
         });
         $(".flipper").toggleClass("flip");
