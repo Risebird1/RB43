@@ -302,7 +302,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var model = _iInterviewerSkillsService.GetEditInterviewerSkills(Convert.ToInt16(id)).Result;
+                    var model = _iInterviewerSkillsService.GetEditInterviewerSkills(Convert.ToInt32(id)).Result;
                     var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     //string skills = string.Empty;
                     //skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
@@ -1615,7 +1615,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        var meetings = await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt16(id));
+                        var meetings = await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt32(id));
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -1742,7 +1742,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = (await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt16(id)));
+                        var meetings = (await _iInterviewerSkillsService.GetInterviewerSkillInterviewMeetings(Convert.ToInt32(id)));
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;

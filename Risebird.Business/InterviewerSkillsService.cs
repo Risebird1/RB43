@@ -135,7 +135,7 @@ namespace Risebird.Business
                     {
                         continue;
                     }
-                    var skillName = _interviewerSkillsRepository.GetSkillById(Convert.ToInt16(skill)).Name;
+                    var skillName = _interviewerSkillsRepository.GetSkillById(Convert.ToInt32(skill)).Name;
                     skillNameList.Add(skillName);
                 }
                 //skillList.RemoveAt()
@@ -148,7 +148,7 @@ namespace Risebird.Business
                     {
                         //if (skill == "")
                         //    continue;
-                        //var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
+                        //var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt32(skill)).FirstOrDefault().Name;
                         if (item.PrimarySkill.Contains(skillName))
                         {
                             list.Add(item);

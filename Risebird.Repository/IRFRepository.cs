@@ -2545,7 +2545,7 @@ namespace Risebird.Repository
 
                     foreach (var item in obj.SkillCollection)
                     {
-                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt16(item.Skill), item.Comment, item.UserId);
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt32(item.Skill), item.Comment, item.UserId);
                     }
 
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);

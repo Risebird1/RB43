@@ -527,7 +527,7 @@ namespace Risebird.Web.Controllers
 
                     if (HttpContext.Session.GetString("CurrentQuestion") != null)
                     {
-                        model.CurrentQuestionIndex = Convert.ToInt16(HttpContext.Session.GetString("CurrentQuestion"));
+                        model.CurrentQuestionIndex = Convert.ToInt32(HttpContext.Session.GetString("CurrentQuestion"));
                     }
                     //HttpContext.Session.Remove("CurrentQuestion");
                     model.VMName = vmName;

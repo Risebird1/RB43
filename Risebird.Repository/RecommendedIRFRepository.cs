@@ -263,7 +263,7 @@ namespace Risebird.Repository
 
                         foreach (var item in irfDetails.QuesionList)
                         {
-                            techSkillCommentsDt.Rows.Add(irfID, Convert.ToInt16(item.Skill), item.Comment, item.UserId);
+                            techSkillCommentsDt.Rows.Add(irfID, Convert.ToInt32(item.Skill), item.Comment, item.UserId);
                         }
 
                         SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);
@@ -402,7 +402,7 @@ namespace Risebird.Repository
 
                     foreach (var item in irfDetails.QuesionList)
                     {
-                        techSkillCommentsDt.Rows.Add(irfID, Convert.ToInt16(item.Skill), item.Comment, item.UserId);
+                        techSkillCommentsDt.Rows.Add(irfID, Convert.ToInt32(item.Skill), item.Comment, item.UserId);
                     }
 
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);

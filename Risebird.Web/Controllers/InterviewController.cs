@@ -1609,7 +1609,7 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                if (!string.IsNullOrEmpty(zoomMeetingId))
+                                if (!string.IsNullOrEmpty(zoomMeetingId) && meetingUpdated.confirmationStatus == "2")
                                 {
                                     DeleteMeetingLink(zoomMeetingId);
                                 }
@@ -5252,7 +5252,7 @@ namespace Risebird.Web.Controllers
             int candidateType = 0;
             if (!string.IsNullOrEmpty(nvc["candidateType"]))
             {
-                candidateType = Convert.ToInt16(nvc["candidateType"]);
+                candidateType = Convert.ToInt32(nvc["candidateType"]);
             }
 
             var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
