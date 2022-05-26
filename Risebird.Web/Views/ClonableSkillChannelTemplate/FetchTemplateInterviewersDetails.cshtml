@@ -36,62 +36,72 @@
 
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        @if (ViewBag.Profile == "Client")
-                        {
-                            <td>@item.NickName</td>
+                <tr>
+                    @if (ViewBag.Profile == "Client")
+                    {
+                        <td>@item.NickName</td>
 
+                    }
+                    else
+                    {
+                        <td>@item.EmailId</td>
+                    }
+
+                    @if (!string.IsNullOrEmpty(item.PrimarySkill))
+                    {
+                        @if (item.PrimarySkill.Trim().Length > 40)
+                        {
+                            <td title="@item.PrimarySkill.Trim()">@item.PrimarySkill.Trim().Substring(0, 40)<b> . . .</b></td>
                         }
                         else
                         {
-                            <td>@item.EmailId</td>
+                            <td title="@item.PrimarySkill.Trim()">@item.PrimarySkill</td>
                         }
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    @if (ViewBag.Profile != "Client")
+                    {
+                        <td>@item.PerSuccessRate</td>
 
-                        @if (!string.IsNullOrEmpty(item.PrimarySkill))
+                    }
+                    @if (ViewBag.Profile == "Client")
+                    {
+                        @if (!string.IsNullOrEmpty(item.CodedResumeLink))
                         {
-                            @if (item.PrimarySkill.Trim().Length > 40)
-                            {
-                                <td title="@item.PrimarySkill.Trim()">@item.PrimarySkill.Trim().Substring(0, 40)<b> . . .</b></td>
-                            }
-                            else
-                            {
-                                <td title="@item.PrimarySkill.Trim()">@item.PrimarySkill</td>
-                            }
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-                        @if (ViewBag.Profile != "Client")
-                        {
-                            <td>@item.PerSuccessRate</td>
-
-                        }
-                        @if (ViewBag.Profile == "Client")
-                        {
-                            @if (!string.IsNullOrEmpty(item.CodedResumeLink))
-                            {
-                                <td>
-                                    <a href="@item.CodedResumeLink" target="_blank" data-tooltip="@item.CodedResumeLink">Resume</a>
-                                </td>
-                            }
-                            else
-                            {
-                                <td>
-                                    No Resume
-                                </td>
-                            }
-
+                            <td>
+                                <a href="@item.CodedResumeLink" target="_blank" data-tooltip="@item.CodedResumeLink">Resume</a>
+                            </td>
                         }
                         else
                         {
                             <td>
-                                <a href="@item.ResumeLink" target="_blank" data-tooltip="@item.ResumeLink">Resume</a>
+                                No Resume
                             </td>
-
                         }
 
-                    </tr>
+                    }
+                    else
+                    {
+                        @if (!string.IsNullOrEmpty(item.ResumeLink))
+                        {
+                            <td>
+                                <a href="@item.ResumeLink" target="_blank" data-tooltip="@item.ResumeLink">Resume</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                No Resume
+                            </td>
+                        }
+                        
+
+                    }
+
+                </tr>
                 }
 
 
