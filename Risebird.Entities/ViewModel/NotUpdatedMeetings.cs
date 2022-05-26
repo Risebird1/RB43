@@ -11,6 +11,7 @@ namespace Risebird.Entities.ViewModel
         public int MissingZoomLink { get; set; }
         public int UnAttendedZoomLink { get; set; }
         public int MissingVideoLink { get; set; }
+        public int UpcomingMeetingsDeletedFromZoom { get; set; }
     }
     public class MeetingDetailsForParticipant
     {
