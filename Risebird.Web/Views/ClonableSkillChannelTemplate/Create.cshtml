@@ -279,65 +279,54 @@
                                                                 <tbody>
                                                                     @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                     {
-                                                                        <tr>
-                                                                            <td>
-                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
-                                                                            </td>
-                                                                            <td>
-                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
-                                                                            </td>
-                                                                            <td>
-                                                                                @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                }
-                                                                            </td>
-                                                                            <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
-                                                                            </td>
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                            @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
+                                                                        </td>
+                                                                        <td>
+                                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                        </td>
+                                                                        <td>
+                                                                            @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                            {
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                            }
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                        </td>
+
+                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
+                                                                        {
                                                                             @if (Model.InterviewerCollection[0].ResumeLink.Length > 40)
                                                                             {
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
-                                                                                    </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
-                                                                                    </td>
-                                                                                }
+                                                                                <td class="cadName">
+                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
+                                                                                </td>
 
                                                                             }
-
 
                                                                             else
                                                                             {
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank">Resume</a>
-                                                                                    </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="">Resume</a>
-                                                                                    </td>
-                                                                                }
+                                                                                <td class="cadName">
+                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank">Resume</a>
+                                                                                </td>
 
                                                                             }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a onclick="">No Resume</a>
+                                                                            </td>
+                                                                        }
 
-
-
-                                                                        </tr>
+                                                                    </tr>
                                                                     }
                                                                     else
                                                                     {
@@ -364,41 +353,31 @@
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBox("InterviewerCollection[" + i + "].IsActive", new { @checked = "checked" })
                                                                                 </td>
-                                                                                @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
+                                                                                
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                 {
-                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                    @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
                                                                                     {
                                                                                         <td class="cadName">
                                                                                             <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
                                                                                         </td>
+
                                                                                     }
+
                                                                                     else
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a onclick="" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
-                                                                                        </td>
-                                                                                    }
-
-                                                                                }
-
-
-                                                                                else
-                                                                                {
-                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                     {
                                                                                         <td class="cadName">
                                                                                             <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank">Resume</a>
                                                                                         </td>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a onclick="">Resume</a>
-                                                                                        </td>
-                                                                                    }
 
+                                                                                    }
                                                                                 }
-
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="">No Resume</a>
+                                                                                    </td>
+                                                                                }
                                                                             </tr>
                                                                         }
 
