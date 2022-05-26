@@ -185,7 +185,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.IsClientUser = true;
                     }
-                    
+
                     foreach (var item in irfList)
                     {
                         if (item.IsPaused)
@@ -212,7 +212,7 @@ namespace Risebird.Web.Controllers
                     }
 
                     model.IRFList = irfList;
-                    
+
                     model.Profile = profileName;
 
                     return View(model);
@@ -249,7 +249,7 @@ namespace Risebird.Web.Controllers
                         {
                             filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
                         }
-                       
+
                         var irfList = _irfService.GetAllIRFs(emailid, profileName, pageNumber, searchValue, filter);
                         irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
                         model.IRFList = irfList;
@@ -287,7 +287,7 @@ namespace Risebird.Web.Controllers
                             model.Message = TempData["SuccessErrorMessage"].ToString();
                             TempData.Remove("SuccessErrorMessage");
                         }
-                        
+
                         model.Profile = profileName;
 
                         if (model.IRFList == null || model.IRFList.Count() == 0)
@@ -1850,8 +1850,8 @@ namespace Risebird.Web.Controllers
                         SetEditIRFProperties(model);
                         return View(model);
                     }
-                    
-                    
+
+
                 }
                 else
                 {
@@ -4388,13 +4388,14 @@ namespace Risebird.Web.Controllers
         public ActionResult EditAssessment(int assessmentid)
         {
             var model = new Assessment();
-            var modellist = _userService.GetInterviewerEntitle();
+            var modellist = _userService.GetInterviewerEntitleById(assessmentid);
             if (modellist == null)
             {
-                modellist = new List<AssignmentVM>();
+                modellist = new AssignmentVM();
             }
-            var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
-            model._assessment = modellist.Where(x => x.id == assessmentid).ToList();
+            //var modeldata = modellist.Where(x => x.id == assessmentid).FirstOrDefault();
+            var modeldata = modellist;
+            //model._assessment = modellist.Where(x => x.id == assessmentid).ToList();
             var _Category = _skillService.GetAssessmentGroupCategory().OrderBy(x => x.Name);
             model._skilldetails.CategoryNameList = new SelectList(_Category, "id", "Name");
 
@@ -6583,7 +6584,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                     {
                         var model = new IRFVm();
-                        if(profileName == "Client")
+                        if (profileName == "Client")
                         {
                             model = await _clonableSkillChannelTemplateService.GetTemplateDataForPopulatingSkillChannel(templateId, emailid);
                             model.IRFId = GenerateSkillChannelName(model.AssessmentGroupName, model.Clients.Where(x => x.Value == model.ClientId.ToString())?.FirstOrDefault()?.Text);
@@ -6647,7 +6648,7 @@ namespace Risebird.Web.Controllers
 
                         if (!isValid)
                         {
-                            if(profileName == "Client")
+                            if (profileName == "Client")
                             {
                                 _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailId);
 
@@ -6898,19 +6899,19 @@ namespace Risebird.Web.Controllers
 
                         }
 
-                        if(string.IsNullOrEmpty(model.JDLink))
+                        if (string.IsNullOrEmpty(model.JDLink))
                         {
                             model.JDLink = model.OldJDLink;
                         }
 
                         //Start: Auto Generate Scheduling Link 
 
-                        if(model.JDTiltle != model.OldJDTitle)
+                        if (model.JDTiltle != model.OldJDTitle)
                         {
                             var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                             model.CalendlyLink = _schedulinglink;
                         }
-                        
+
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.EditSkillChannelCreatedFromTemplate(model, emailId))
                         {

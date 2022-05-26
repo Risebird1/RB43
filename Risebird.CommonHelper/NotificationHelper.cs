@@ -2209,5 +2209,29 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public string SendUnassignedInterviewsNotifications(List<string> interviwers, string meetingDate)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Urgent");
+                msg.Subject = "Assign : Interview has been scheduled on date: " + meetingDate;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                foreach (var mails in interviwers)
+                {
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mails, null));
+                }
+                object[] parameters = new object[] { meetingDate };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "UnassignedInterviewNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }

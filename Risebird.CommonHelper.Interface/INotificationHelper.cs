@@ -81,5 +81,6 @@ namespace Risebird.CommonHelper.Interface
         string SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
         string SendClientCommonInterviewNotification(Mail model, DataTable dt);
         string SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, int offset);
+        string SendUnassignedInterviewsNotifications(List<string> interviwers, string meetingDate);
     }
 }
