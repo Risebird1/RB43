@@ -1609,7 +1609,7 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                if (!string.IsNullOrEmpty(zoomMeetingId))
+                                if (!string.IsNullOrEmpty(zoomMeetingId) && meetingUpdated.confirmationStatus == "2")
                                 {
                                     DeleteMeetingLink(zoomMeetingId);
                                 }
