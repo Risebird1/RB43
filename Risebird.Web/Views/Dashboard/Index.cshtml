@@ -337,13 +337,13 @@
                                             <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
-                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount" class="card-title">@*@Model.NotUpdatedMeetingsObj.UpcomingMeetingsDeletedFromZoom*@!</span>
+                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount" class="spinner-grow text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('DeletedZoomMeetings')">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
-                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount_1" class="card-title">@*@Model.NotUpdatedMeetingsObj.UpcomingMeetingsDeletedFromZoom*@!</span>
+                                                    <span style="cursor:pointer" id="ribbonDeletedZoomMeetingCount_1" class="spinner-grow text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1338,6 +1338,14 @@
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
 
                 if (getDeletedZoomMeetingsCount) {
+                    var classList = $("#ribbonDeletedZoomMeetingCount").attr("class");
+                    if (classList != null && classList.includes("spinner")) {
+                        $("#ribbonDeletedZoomMeetingCount").removeClass("spinner-grow text-danger");
+                        $("#ribbonDeletedZoomMeetingCount_1").removeClass("spinner-grow text-danger");
+                        $("#ribbonDeletedZoomMeetingCount").addClass("card-title");
+                        $("#ribbonDeletedZoomMeetingCount_1").addClass("card-title");
+                    }
+
                     $("#ribbonDeletedZoomMeetingCount").text(data.upcomingMeetingsDeletedFromZoom);
                     $("#ribbonDeletedZoomMeetingCount_1").text(data.upcomingMeetingsDeletedFromZoom);
 

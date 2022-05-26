@@ -5252,7 +5252,7 @@ namespace Risebird.Web.Controllers
             int candidateType = 0;
             if (!string.IsNullOrEmpty(nvc["candidateType"]))
             {
-                candidateType = Convert.ToInt16(nvc["candidateType"]);
+                candidateType = Convert.ToInt32(nvc["candidateType"]);
             }
 
             var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
