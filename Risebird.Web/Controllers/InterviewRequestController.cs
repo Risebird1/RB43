@@ -165,6 +165,7 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateInterviewRequest(InterviewRequestVM meeting)
         {
+            string emailid = string.Empty;
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -174,7 +175,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         if (ModelState.IsValid)
                         {
@@ -272,7 +273,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {emailid}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessMessageInterviewCreation"] = "Failed to Create request!";
                 return RedirectToAction("Index");
             }
@@ -672,7 +674,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {meeting.RequestedBy}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Failed to Create request!";
                 return RedirectToAction("PublicCreateInterviewRequest", new { emailid = meeting.RequestedBy, id = meeting.uniqueid });
             }
