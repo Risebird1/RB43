@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -545,6 +546,13 @@ namespace Risebird.Business
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
                 if (result)
                 {
+                    if(meetingToUpdate.confirmationStatus== "2")
+                    {
+                        var updatedStatus = await _irfRepository.UpdateCancellationSource(meetingToUpdate.imid, meetingToUpdate.LoggedInUser);
+
+                    }
+                    //var result1 = await _irfService.AddCandidateStatus(meetingToUpdate.LoggedInUser, meetingToUpdate.ca, meetingToUpdate.irfIntId, "Meeting Cancelled", (int)CandidateStatusOptions.Cancelled, meetingToUpdate.imid);
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateMeeting;
                     activityTrackerModel.Particulars = "Meeting with: " + meetingToUpdate.candidateEmail;
@@ -3196,12 +3204,19 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool PublicCancelInterview(int meetingid)
+        public bool PublicCancelInterview(int meetingid, string loggedInUser = null)
         {
             try
             {
                 if (_meetingRespository.CancelInterview(meetingid))
                 {
+                    var meetingDetails = _meetingRespository.GetMeetingDetails(meetingid).Result;
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.MeetingCancelled;
+                    activityTrackerModel.Particulars = "Meeting with: " + meetingDetails.candidateEmail ;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Meeting with: " + meetingDetails.candidateEmail + "scheduled for :" + meetingDetails.interviewDate.ToString();
+                    _ = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
                     return true;
                 }
                 return false;
