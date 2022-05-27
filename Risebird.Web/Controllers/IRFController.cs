@@ -6619,13 +6619,14 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IRFVm model)
         {
+            string emailId = string.Empty;
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                     {
@@ -6690,7 +6691,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
                             return RedirectToAction("Index", "Template");
                         }
                     }
@@ -6706,7 +6707,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
                 return RedirectToAction("Index", "Template");
             }
@@ -6717,13 +6718,14 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateInterviewLink(IRFVm model)
         {
+            string emailId = string.Empty;
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Client" /*|| profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR"*/)
                     {
@@ -6758,7 +6760,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
                             return RedirectToAction("Index", "Template");
                         }
                     }
@@ -6774,7 +6776,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
                 return RedirectToAction("Index", "Template");
             }
