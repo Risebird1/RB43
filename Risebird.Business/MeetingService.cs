@@ -546,7 +546,11 @@ namespace Risebird.Business
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
                 if (result)
                 {
-                    var updatedStatus = await _irfRepository.UpdateCancellationSource(meetingToUpdate.imid, meetingToUpdate.LoggedInUser);
+                    if(meetingToUpdate.confirmationStatus== "2")
+                    {
+                        var updatedStatus = await _irfRepository.UpdateCancellationSource(meetingToUpdate.imid, meetingToUpdate.LoggedInUser);
+
+                    }
                     //var result1 = await _irfService.AddCandidateStatus(meetingToUpdate.LoggedInUser, meetingToUpdate.ca, meetingToUpdate.irfIntId, "Meeting Cancelled", (int)CandidateStatusOptions.Cancelled, meetingToUpdate.imid);
 
                     var activityTrackerModel = new ActivityTrackerVM();
