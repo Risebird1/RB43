@@ -39,7 +39,7 @@ Begin
   join Candidate ca on ca.IRFId = irf.id and  ca.CandidateMasterId = cm.id
   join Client cl on cl.id = irf.ClientId
   left join UserList ulhr on ulhr.id = irf.RisebirdHr
-  where im.interviewDate >= @timeNow and im.interviewDate <= DATEADD(HOUR, 2, @timeNow)
+  where im.interviewDate >= @timeNow and im.interviewDate <= DATEADD(HOUR, 2, @timeNow)  and im.confirmationStatus = 1
   --and (((im.HRCoordinatorEmailId = @emailId or irf.RisebirdHr = @userid) and @profileName != 'Admin') or  @profileName = 'Admin')
 End  
 

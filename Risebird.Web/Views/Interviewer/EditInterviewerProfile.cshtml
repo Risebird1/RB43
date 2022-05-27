@@ -374,7 +374,7 @@
                                                 }
                                             </tbody>
                                         </table>
-                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
+                                        <label class="text-danger" id="SkillCollection_Error" style="color:red; margin-left:815px"></label>
                                     </div>
                                 </div>
                             </div>
@@ -459,7 +459,7 @@
 
                                             </tbody>
                                         </table>
-                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
+                                        <label class="text-danger" id="Certification_Error" style="color:red; margin-left:815px"></label>
                                     </div>
                                 </div>
                             </div>
@@ -586,7 +586,7 @@
                                             </tbody>
                                         </table>
 
-                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
+                                        <label class="text-danger" id="Education_Error" style="color:red; margin-left:815px"></label>
 
                                     </div>
                                 </div>
@@ -798,7 +798,7 @@
                                             </tbody>
                                         </table>
 
-                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
+                                        <label class="text-danger" id="ProjectDetails_Error" style="color:red; margin-left:815px"></label>
 
                                     </div>
                                 </div>
@@ -892,7 +892,7 @@
 
                                             </tbody>
                                         </table>
-                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
+                                        <label class="text-danger" id="Availability_Error" style="color:red; margin-left:815px"></label>
 
                                     </div>
                                 </div>
@@ -945,7 +945,8 @@
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                         @*<input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />*@
-                                        <input type="submit" value="Submit" id="btnUpload" onclick="return CheckvalidationforProfile();" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+                                        @*<input type="submit" value="Submit" id="btnUpload" onclick="return CheckvalidationforProfile();" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />*@
+                                        <button type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Submit</button>
 
                                     </div>
                                 </div>
@@ -1470,25 +1471,39 @@
 
         }
         function Checkvalidation() {
+            var techSkillItems = $('[id^="InterviewerSkill"]');
+            //var oldVal = $("#QuestionsCollection_0__Timing").val();
+            for (i = 0; i < techSkillItems.length; i++) {
+                //var temp = $("#QuestionsCollection_" + i + "__Timing").val();
+                var temp = $("#" + techSkillItems[i].id).val();
+                if (temp == null || temp == '') {
+                    document.getElementById('SkillCollection_Error').innerHTML = "Please fill all the details under the Interviewer Skills Details section.";
+                    $("#" + techSkillItems[i].id).focus();
+                    return false;
+                }
+
+            }
+            document.getElementById('SkillCollection_Error').innerHTML = "";
+
             //if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
             //    return true;
             //}
             //return false;
         }
-        function CheckvalidationforProfile() {
-            //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
-            //    $("#err_assessmentgroup").text("");
-            //    return true;
-            //}
-            //$(".multiselect-selected-text").focus();
-            //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-            //return false;
-            if ($(".badge").length > 0) {
-                $("#err_assessmentgroup").text("");
-                return true;
-            }
-            $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-            return false;
-        }
+        //function CheckvalidationforProfile() {
+        //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+        //    //    $("#err_assessmentgroup").text("");
+        //    //    return true;
+        //    //}
+        //    //$(".multiselect-selected-text").focus();
+        //    //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+        //    //return false;
+        //    if ($(".badge").length > 0) {
+        //        $("#err_assessmentgroup").text("");
+        //        return true;
+        //    }
+        //    $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+        //    return false;
+        //}
     </script>
 

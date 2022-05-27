@@ -32,7 +32,10 @@ namespace Risebird.Entities.Enum
         CreateClonableSkillChannel = 9,
 
         [Description("Update ClonableSkillChannel")]
-        UpdateClonableSkillChannel = 10
+        UpdateClonableSkillChannel = 10,
+
+        [Description("Meeting Cancelled")]
+        MeetingCancelled = 11
 
 
     }
