@@ -2440,7 +2440,7 @@ namespace Risebird.Business
                 irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
 
                 //irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
-                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails);
+                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -2454,9 +2454,10 @@ namespace Risebird.Business
                 return result;
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -2554,7 +2555,7 @@ namespace Risebird.Business
                 irfDetails.ClientCollection = new List<TransClientUser>();
                 irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
 
-                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails);
+                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -2568,9 +2569,10 @@ namespace Risebird.Business
                 return result;
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -2617,7 +2619,7 @@ namespace Risebird.Business
                 irfDetails.ClientCollection = new List<TransClientUser>();
                 irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
 
-                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails);
+                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -2630,9 +2632,10 @@ namespace Risebird.Business
                 }
                 return result;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
