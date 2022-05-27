@@ -4175,7 +4175,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_meetingService.PublicCancelInterview(id))
+                if (_meetingService.PublicCancelInterview(id, emailId))
                 {
                     var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
                     var updatedStatus = await _irfRepository.UpdateCancellationSource(id, emailId);
