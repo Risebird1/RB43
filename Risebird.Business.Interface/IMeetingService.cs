@@ -162,7 +162,7 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
         Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid);
-        bool PublicCancelInterview(int meetingid);
+        bool PublicCancelInterview(int meetingid, string loggedInUser = null);
         Task<int> GetUniqueInterviewerByEmailId(string emailId, string id);
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);

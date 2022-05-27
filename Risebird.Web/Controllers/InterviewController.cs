@@ -1613,7 +1613,6 @@ namespace Risebird.Web.Controllers
                                 {
                                     DeleteMeetingLink(zoomMeetingId);
                                 }
-
                                 TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated Successfully!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                             }
@@ -4878,7 +4877,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Candidate")
                     {
                         //if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
-                        if (_meetingService.PublicCancelInterview(id))
+                        if (_meetingService.PublicCancelInterview(id, email))
                         {
                             var updatedStatus = await _iRFRepository.UpdateCancellationSource(id, email);
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(id);

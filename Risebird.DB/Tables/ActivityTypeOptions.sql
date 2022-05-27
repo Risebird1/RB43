@@ -16,24 +16,19 @@ End
 GO
 
 
+
 SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON 
 
-INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (1, N'HR Comment')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (1, N'Interview Management')
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (2, N'Add Skills Channel')
-SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
-
-
-insert into ActivityTypeOptions values (3,'Update Meeting')
-insert into ActivityTypeOptions values (4,'Update Skills Channel')
-
-insert into ActivityTypeOptions values (5,'Create Candidate Feedback')
-insert into ActivityTypeOptions values (6,'Update Candidate Feedback')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (3, N'Update Meeting')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (4, N'Update Skills Channel')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (5, N'Create Candidate Feedback')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (6, N'Update Candidate Feedback')
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (7, N'QC Passed')
-SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON 
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (8, N'QC Failed')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (9, N'Update ClonableSkillChannel')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (10, N'Create ClonableSkillChannel')
+INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (11, N'Meeting Cancelled')
 SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
-
-SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON 
-INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (9, N'Create ClonableSkillChannel')
-INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (10, N'Update ClonableSkillChannel')
-SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
+GO
