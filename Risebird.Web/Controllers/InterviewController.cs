@@ -1609,11 +1609,10 @@ namespace Risebird.Web.Controllers
 
                             if (await _meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                if (!string.IsNullOrEmpty(zoomMeetingId))
+                                if (!string.IsNullOrEmpty(zoomMeetingId) && meetingUpdated.confirmationStatus == "2")
                                 {
                                     DeleteMeetingLink(zoomMeetingId);
                                 }
-
                                 TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated Successfully!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
                             }
@@ -4878,7 +4877,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Candidate")
                     {
                         //if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
-                        if (_meetingService.PublicCancelInterview(id))
+                        if (_meetingService.PublicCancelInterview(id, email))
                         {
                             var updatedStatus = await _iRFRepository.UpdateCancellationSource(id, email);
                             var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
@@ -5252,7 +5251,7 @@ namespace Risebird.Web.Controllers
             int candidateType = 0;
             if (!string.IsNullOrEmpty(nvc["candidateType"]))
             {
-                candidateType = Convert.ToInt16(nvc["candidateType"]);
+                candidateType = Convert.ToInt32(nvc["candidateType"]);
             }
 
             var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');

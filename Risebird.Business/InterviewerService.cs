@@ -75,8 +75,8 @@ namespace Risebird.Business
                     }
                     interviewerProfile.NickName = NickName;
                 }
-                interviewerProfile.IndiaProductRate = Convert.ToInt16(interviewerProfile.IndiaServiceRate * 1.5);
-                interviewerProfile.OutsideIndiaProductRate = Convert.ToInt16(interviewerProfile.OutsideIndiaServiceRate * 1.5);
+                interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
+                interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
@@ -93,8 +93,8 @@ namespace Risebird.Business
                 interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
                 interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
-                interviewerProfile.IndiaProductRate = Convert.ToInt16(interviewerProfile.IndiaServiceRate * 1.5);
-                interviewerProfile.OutsideIndiaProductRate = Convert.ToInt16(interviewerProfile.OutsideIndiaServiceRate * 1.5);
+                interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
+                interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
@@ -812,12 +812,12 @@ namespace Risebird.Business
                 }
                 if (!string.IsNullOrEmpty(reportModel.PerHourRateIndia))
                 {
-                    reportModel.IndiaProductRate = Convert.ToInt32((Convert.ToInt16(reportModel.PerHourRateIndia) * 1.5));
+                    reportModel.IndiaProductRate = Convert.ToInt32((Convert.ToInt32(reportModel.PerHourRateIndia) * 1.5));
 
                 }
                 if (!string.IsNullOrEmpty(reportModel.PerHourRateOutside))
                 {
-                    reportModel.OutsideIndiaProductRate = Convert.ToInt32((Convert.ToInt16(reportModel.PerHourRateOutside) * 1.5));
+                    reportModel.OutsideIndiaProductRate = Convert.ToInt32((Convert.ToInt32(reportModel.PerHourRateOutside) * 1.5));
 
                 }
                 var result = await _interviewerRepository.InterviewerRecommendation(reportModel);

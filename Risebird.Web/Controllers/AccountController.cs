@@ -51,7 +51,7 @@ namespace Risebird.Web.Controllers
                 {
                     var accountModel = new AccountViewModel();
                     var accountList = _accountService.GetAccounts(emailid, profileName).ToList();
-                    accountList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
+                    accountList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription());
                     accountModel.AccountList = accountList;
 
                     if (TempData["SuccessErrorMessageAccount"] != null)
@@ -123,7 +123,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new AccountViewModel();
                     var accountList = _accountService.GetAccounts(emailid, profileName).ToList();
-                    accountList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
+                    accountList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription());
                     model.AccountList = accountList;
 
                     if (TempData["SuccessErrorMessage"] != null)

@@ -20,10 +20,10 @@ Begin
 
 select ti.*, c.PrimarySkill, ul.EmailId, ipr.ResumeLink, ipr.CodedResumeLink, ipr.NickName, 1 as IsSelect from  (SELECT  UserId, PrimarySkill = 
     STUFF((SELECT ', ' + SkillName
-           FROM (select ipr.*,sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) b 
+           FROM (select ipr.*,sk.[Name] as SkillName from InterviewerProfile ipr left join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) b 
            WHERE b.Id = a.Id
            FOR XML PATH('')), 1, 2, '')
-	FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) a
+	FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr left join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) a
 	GROUP BY Id, UserId) c 
 join  TransClonableIRFInterviewer ti on ti.UserId=c.UserId
 join InterviewerProfile ipr on ipr.UserId = ti.UserId

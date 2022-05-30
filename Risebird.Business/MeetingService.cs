@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -483,7 +484,7 @@ namespace Risebird.Business
         {
             if (!string.IsNullOrEmpty(qcStatus) && !string.IsNullOrEmpty(imid))
             {
-                var status = Convert.ToInt16(qcStatus);
+                var status = Convert.ToInt32(qcStatus);
                 var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), status, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
 
                 if (result && status == (int)QCStatus.Failed)
@@ -499,8 +500,8 @@ namespace Risebird.Business
 
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
-                //var oldStatus = Convert.ToInt16(oldQcStatus);
-                if (result && status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt16(oldQcStatus) != (int)QCStatus.Passed))
+                //var oldStatus = Convert.ToInt32(oldQcStatus);
+                if (result && status == (int)QCStatus.Passed && (oldQcStatus == null || Convert.ToInt32(oldQcStatus) != (int)QCStatus.Passed))
                 {
                     var meetingDetails = _meetingRespository.GetMeetingDetails(Convert.ToInt32(imid)).Result;
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -545,6 +546,13 @@ namespace Risebird.Business
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
                 if (result)
                 {
+                    if(meetingToUpdate.confirmationStatus== "2")
+                    {
+                        var updatedStatus = await _irfRepository.UpdateCancellationSource(meetingToUpdate.imid, meetingToUpdate.LoggedInUser);
+
+                    }
+                    //var result1 = await _irfService.AddCandidateStatus(meetingToUpdate.LoggedInUser, meetingToUpdate.ca, meetingToUpdate.irfIntId, "Meeting Cancelled", (int)CandidateStatusOptions.Cancelled, meetingToUpdate.imid);
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateMeeting;
                     activityTrackerModel.Particulars = "Meeting with: " + meetingToUpdate.candidateEmail;
@@ -2445,14 +2453,14 @@ namespace Risebird.Business
                 var percentObj = new SentimentPercentage();
                 var data = await _meetingRespository.GetSentimentAnalysis(imid);
                 var total = data.Select(x => x.Value).Sum();
-                percentObj.Anger = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Anger)).Select(x => x.Value).Sum()) * 100) / (total);
-                percentObj.Contempt = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Contempt)).Select(x => x.Value).Sum()) * 100) / (total);
-                percentObj.Disgust = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Disgust)).Select(x => x.Value).Sum()) * 100) / (total);
-                percentObj.Fear = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Fear)).Select(x => x.Value).Sum()) * 100) / (total);
-                percentObj.Happiness = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Happiness)).Select(x => x.Value).Sum()) * 100) / (total);
-                percentObj.Neutral = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Neutral)).Select(x => x.Value).Sum()) * 100) / (total);
-                percentObj.Sadness = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Sadness)).Select(x => x.Value).Sum()) * 100) / (total);
-                percentObj.Surprise = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Surprise)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Anger = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Anger)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Contempt = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Contempt)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Disgust = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Disgust)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Fear = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Fear)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Happiness = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Happiness)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Neutral = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Neutral)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Sadness = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Sadness)).Select(x => x.Value).Sum()) * 100) / (total);
+                percentObj.Surprise = ((data.Where(x => x.EmotionType == Convert.ToInt32(SentimentType.Surprise)).Select(x => x.Value).Sum()) * 100) / (total);
                 return percentObj;
             }
             catch (Exception ex)
@@ -3196,12 +3204,19 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool PublicCancelInterview(int meetingid)
+        public bool PublicCancelInterview(int meetingid, string loggedInUser = null)
         {
             try
             {
                 if (_meetingRespository.CancelInterview(meetingid))
                 {
+                    var meetingDetails = _meetingRespository.GetMeetingDetails(meetingid).Result;
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.MeetingCancelled;
+                    activityTrackerModel.Particulars = "Meeting with: " + meetingDetails.candidateEmail ;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Meeting with: " + meetingDetails.candidateEmail + "scheduled for :" + meetingDetails.interviewDate.ToString();
+                    _ = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
                     return true;
                 }
                 return false;

@@ -20,10 +20,10 @@ AS
 Begin  
 	--declare @hrId int                
 	--set @hrId = (select HR.id from UserList ul join HR on HR.UserId=ul.id where EmailId=@EmailId and idProfile=2)     
-	declare @userid int                    
-	set @userid = (select id from UserList where EmailId=@EmailId) 
-	declare @profileName varchar(30)
-	set @profileName = (select pr.[Name] from UserList ul join [Profile] pr on pr.id =ul.idProfile where ul.id = @userid)
+	--declare @userid int                    
+	--set @userid = (select id from UserList where EmailId=@EmailId) 
+	--declare @profileName varchar(30)
+	--set @profileName = (select pr.[Name] from UserList ul join [Profile] pr on pr.id =ul.idProfile where ul.id = @userid)
 
 
   select im.id as imid, im.interviewDate, im.candidateEmail, im.IRFId, im.confirmationStatus, im.interviewer, ulhr.EmailId as ChannelOwner,
@@ -39,8 +39,8 @@ Begin
   join Candidate ca on ca.IRFId = irf.id and  ca.CandidateMasterId = cm.id
   join Client cl on cl.id = irf.ClientId
   left join UserList ulhr on ulhr.id = irf.RisebirdHr
-  where im.interviewDate >= @timeNow and im.interviewDate <= DATEADD(HOUR, 2, @timeNow)
-  and (((im.HRCoordinatorEmailId = @emailId or irf.RisebirdHr = @userid) and @profileName != 'Admin') or  @profileName = 'Admin')
+  where im.interviewDate >= @timeNow and im.interviewDate <= DATEADD(HOUR, 2, @timeNow)  and im.confirmationStatus = 1
+  --and (((im.HRCoordinatorEmailId = @emailId or irf.RisebirdHr = @userid) and @profileName != 'Admin') or  @profileName = 'Admin')
 End  
 
 

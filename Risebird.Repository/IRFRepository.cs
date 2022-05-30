@@ -2545,7 +2545,7 @@ namespace Risebird.Repository
 
                     foreach (var item in obj.SkillCollection)
                     {
-                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt16(item.Skill), item.Comment, item.UserId);
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt32(item.Skill), item.Comment, item.UserId);
                     }
 
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddTechSkillComments", con);
@@ -5639,7 +5639,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails)
+        public async Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser = null)
         {
             try
             {
@@ -5832,15 +5832,19 @@ namespace Risebird.Repository
                 }
             }
 
-            catch (SqlException e)
+            catch (SqlException ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }

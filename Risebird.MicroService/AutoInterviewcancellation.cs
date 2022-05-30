@@ -42,7 +42,7 @@ namespace Risebird.MicroService
                 {
                     try
                     {
-                        if (_meetingService.PublicCancelInterview(item.Interviewid))
+                        if (_meetingService.PublicCancelInterview(item.Interviewid, "Auto cancelled by System"))
                         {
                             var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
                             var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);
