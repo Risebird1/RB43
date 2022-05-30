@@ -68,6 +68,7 @@ SELECT [InterviewMeetings].id as imid
   ,ca.IsProctor
   ,ipr.NickName
   ,ti.ClientAction
+  ,ca.CandidateMasterId
 FROM [dbo].[InterviewMeetings]  
 inner join   
 IRF on [InterviewMeetings].IRFId = IRF.IRFId  
