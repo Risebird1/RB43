@@ -45,9 +45,11 @@ namespace Risebird.MicroService
             var Questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQCandidateQuestions");
             if (candidateDetails != null && candidate != null)
             {
-                candidate = candidate.Where(x => x.Id == mcqid).ToList();
+                //candidate = candidate.Where(x => x.Id == mcqid).ToList();
+                candidate = candidate.Where(x => x.MCQId == mcqid).ToList();
                 candidate = candidate.Where(x => x.EmailAddress == emailid).ToList();
-                candidateDetails = candidateDetails.Where(x => x.Id == mcqid).ToList();
+                //candidateDetails = candidateDetails.Where(x => x.Id == mcqid).ToList();
+                candidateDetails = candidateDetails.Where(x => x.MCQId == mcqid).ToList();
                 candidateDetails = candidateDetails.Where(x => x.CandidateEmail == emailid).ToList();
                 string candidateid = candidateDetails.FirstOrDefault().PartitionKey;
                 //Questions = Questions.Where(x => x.CandidateID == candidateid).ToList();
@@ -68,7 +70,7 @@ namespace Risebird.MicroService
                                     TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                     PartitionKey = o.PartitionKey,
                                     Sharetime = o.Timestamp.DateTime,
-                                    SameID = o.Id,
+                                    SameID = o.MCQId,
                                     VideoLink = a == null ? "" : a.VideoLink,
                                     Feedbackreating = a == null ? 0 : a.Feedbackreating,
                                     FeedbackComment = a == null ? "" : a.FeedbackComment,
