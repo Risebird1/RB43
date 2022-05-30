@@ -143,5 +143,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Channel Owner")]
         public string ChannelOwner { get; set; }
         public string Message { get; set; }
+        public int CandidateMasterId { get; set; }
     }
 }
