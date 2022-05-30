@@ -210,8 +210,8 @@ namespace Risebird.Web.Controllers
             var CompentencyLevel = Convert.ToInt32(Request.Form["CompentencyLevel"].ToString());
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
-            //Change
-            _lstset.PartitionKey = Guid.NewGuid().ToString();
+            var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+            _lstset.PartitionKey = date;
             _lstset.Title = value;
             _lstset.Timer = time;
             _lstset.ProfileType = ProfileType;
@@ -274,11 +274,10 @@ namespace Risebird.Web.Controllers
                                 {
                                     try
                                     {
-                                        var date1 = Guid.NewGuid().ToString();
+                                        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                                         _lstMCQ.Add(new MCQVM
                                         {
-                                            //Change
-                                            PartitionKey = Guid.NewGuid().ToString(),
+                                            PartitionKey = date1,
                                             QuestionType = reader.GetValue(1).ToString(),
                                             Question = reader.GetValue(2).ToString().Replace("\n", "<br/>"),
                                             Option1 = reader.GetValue(3).ToString(),
@@ -582,9 +581,8 @@ namespace Risebird.Web.Controllers
 
                 var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
                 var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
-                var _id = Guid.NewGuid().ToString();
                 var _list = new CandidateDetailsForTest();
-                //Change
+                var _id = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                 _list.PartitionKey = _id;
                 //_list.RowKey = Guid.NewGuid().ToString();
                 _list.MCQId = values.MCQId;
@@ -616,8 +614,8 @@ namespace Risebird.Web.Controllers
                 _mCQService.AddMCQCandidates(_list);
                 foreach (var item in resultset)
                 {
-                    //Change
-                    item.PartitionKey = Guid.NewGuid().ToString();
+                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                    item.PartitionKey = date1;
                     item.CandidateID = _id;
                 }
                 _mCQService.AddMCQCandidateQuestions(resultset);
@@ -808,7 +806,8 @@ namespace Risebird.Web.Controllers
                         _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, DateTime.Now.AddHours(6), -330);
                         if (result.Contains("Mail sent successfully"))
                         {
-                            _list.PartitionKey = Guid.NewGuid().ToString();
+                            var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                            _list.PartitionKey = date1;
                             _list.MCQId = Id;
                             _list.EmailAddress = item;
                             _list.roomId = _meetinglinks.roomId;
