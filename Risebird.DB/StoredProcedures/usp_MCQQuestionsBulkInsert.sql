@@ -33,4 +33,4 @@ MCQId,
 QuestionNumber)      
 SELECT * FROM @MCQQuestionsBulkData      
 END 
-Fo
+Go
