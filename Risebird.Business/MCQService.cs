@@ -186,5 +186,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQTitle(string MCQtitle)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQCandidateDetailsByMCQTitle(MCQtitle).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
