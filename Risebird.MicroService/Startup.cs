@@ -107,6 +107,8 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IRisebirdMeetingsRepository, RisebirdMeetingsRepository>();
             builder.Services.AddScoped<IZoomHelper, ZoomHelper>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IMCQService, MCQService>();
+            builder.Services.AddScoped<IMCQRepository, MCQRepository>();
         }
 
 
