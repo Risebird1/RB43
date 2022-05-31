@@ -172,6 +172,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedBy", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@CreatedBy"].Value = templateDetails.CreatedBy;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = templateDetails.MeetingPlatform;
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationStatus", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@RecommendationStatus"].Value = templateDetails.IRFRecommendations.Status;
 

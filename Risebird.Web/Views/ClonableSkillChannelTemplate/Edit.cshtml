@@ -62,11 +62,27 @@
                                                     </div>
                                                 </div>
                                                 <br />
+                                                <h5>Meeting Platform</h5>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        @foreach (var platform in Model.MeetingPlatformOptions)
+                                                        {
+                                                            <label class="radio-inline">
+                                                                <input type="radio" asp-for="MeetingPlatform" value="@platform" style="position: relative; top: 3px; margin: 0px 5px;" disabled />@platform<br />
+                                                            </label>
+                                                        }
+
+                                                    </div>
+                                                </div>
                                                 <h5>Recommendation Details</h5>
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
-                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
+                                                        </label>
 
                                                     </div>
                                                 </div>
@@ -301,42 +317,31 @@
                                                                             <td class="text-center">
                                                                                 @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
                                                                             </td>
-                                                                            @if (Model.InterviewerCollection[0].ResumeLink.Length > 40)
+
+                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
                                                                             {
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
+                                                                                @if (Model.InterviewerCollection[0].ResumeLink.Length > 40)
                                                                                 {
                                                                                     <td class="cadName">
                                                                                         <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
                                                                                     </td>
+
                                                                                 }
+
                                                                                 else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
-                                                                                    </td>
-                                                                                }
-
-                                                                            }
-
-
-                                                                            else
-                                                                            {
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
                                                                                 {
                                                                                     <td class="cadName">
                                                                                         <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank">Resume</a>
                                                                                     </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="">Resume</a>
-                                                                                    </td>
-                                                                                }
 
+                                                                                }
                                                                             }
-
-
+                                                                            else
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a onclick="">No Resume</a>
+                                                                                </td>
+                                                                            }
 
                                                                         </tr>
                                                                     }
@@ -365,40 +370,32 @@
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
-                                                                                @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
+
+                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                 {
-                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                    @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
                                                                                     {
                                                                                         <td class="cadName">
                                                                                             <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
                                                                                         </td>
+
                                                                                     }
+
                                                                                     else
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a onclick="" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
-                                                                                        </td>
-                                                                                    }
-
-                                                                                }
-
-
-                                                                                else
-                                                                                {
-                                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                     {
                                                                                         <td class="cadName">
                                                                                             <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank">Resume</a>
                                                                                         </td>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a onclick="">Resume</a>
-                                                                                        </td>
-                                                                                    }
 
+                                                                                    }
                                                                                 }
+                                                                                else
+                                                                                {
+                                                                                    <td class="cadName">
+                                                                                        <a onclick="">No Resume</a>
+                                                                                    </td>
+                                                                                }
+                                                                    
 
                                                                             </tr>
                                                                         }

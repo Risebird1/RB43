@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,5 +30,11 @@ namespace Risebird.Entities.ViewModel
         public int? SeniorityLevelId { get; set; }
         public int? CountryType { get; set; }
 
+        [BindProperty]
+        public string MeetingPlatform { get; set; } = MeetingPlatforms.Zoom;
+
+        public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.RisebirdMeet };
     }
+
 }
+
