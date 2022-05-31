@@ -847,5 +847,24 @@ namespace Risebird.Web.Controllers
             }
             return new ShareMCQRisebirdMeetingResponse();
         }
+        public async Task<IActionResult> CandidateMCQReport(string MCQId, string EmailId)
+        {
+            ViewBag.PublicLayout = false;
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                ViewBag.PublicLayout = true;
+            }
+            else
+            {
+                HttpContext.Session.SetString("Logo", "");
+            }
+            var candidateset = _mCQService.GetMCQCandidateDetailsByMCQId(MCQId);
+            EmailId = EmailId.ToUpper();
+            var _candidate = candidateset.Where(x => x.CandidateEmail.ToUpper() == EmailId).FirstOrDefault();
+            var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
+            _candidate.QuestionDetails = (List<MCQVM>)questions;
+            _candidate.VideoLink = "https://risebirdvideos.blob.core.windows.net/meet-videos/" + _candidate.roomId + ".mp4";
+            return View(_candidate);
+        }
     }
 }

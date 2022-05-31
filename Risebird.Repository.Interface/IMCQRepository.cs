@@ -23,5 +23,6 @@ namespace Risebird.Repository.Interface
         Task<string> DeleteMCQSet(string MCQPId);
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQId(string MCQPId);
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
+        Task<IEnumerable<MCQVM>> GetMCQCandidateQuestions(string CandidateId);
     }
 }

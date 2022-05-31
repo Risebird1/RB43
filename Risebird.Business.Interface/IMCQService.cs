@@ -22,5 +22,6 @@ namespace Risebird.Business.Interface
         string DeleteMCQSet(string MCQPId);
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId);
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
+        IEnumerable<MCQVM> GetMCQCandidateQuestions(string CandidateId);
     }
 }

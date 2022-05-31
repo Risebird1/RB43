@@ -453,5 +453,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<MCQVM>> GetMCQCandidateQuestions(string CandidateId)
+        {
+            try
+            {
+                var query = "Select * From MCQCandidateQuestionAnswer where CandidateId=@CandidateId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CandidateId", CandidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<MCQVM>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

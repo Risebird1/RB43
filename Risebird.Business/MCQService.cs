@@ -198,5 +198,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<MCQVM> GetMCQCandidateQuestions(string CandidateId)
+        {
+            try
+            {
+                return _mCQRepository.GetMCQCandidateQuestions(CandidateId).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
