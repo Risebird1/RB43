@@ -77,7 +77,7 @@ namespace Risebird.Repository
                     mcqQuestions.Columns.Add("QuestionNumber", typeof(int));
                     foreach (var item in _lstMCQ)
                     {
-                        mcqQuestions.Rows.Add(item.PartitionKey, item.QuestionType, item.Question, item.Option1, item.Option2, item.Option3, item.Option4, item.Answer, item.Explanation, MCQId, item.QuestionNumber);
+                        mcqQuestions.Rows.Add(item.PartitionKey, item.QuestionType, item.Question, item.Option1, item.Option2, item.Option3, item.Option4, item.Answer, item.Explanation, item.MCQId, item.QuestionNumber);
                     }
                     SqlCommand cmd = new SqlCommand("usp_MCQQuestionsBulkInsert", con);
                     cmd.CommandType = CommandType.StoredProcedure;

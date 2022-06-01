@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class MCQVM : TableEntity
+    public class MCQVM
     {
         public string QuestionType { get; set; }
         public string Question { get; set; }
@@ -31,7 +30,7 @@ namespace Risebird.Entities.ViewModel
         public string PartitionKey { get; set; }
         public int id { get; set; }
     }
-    public class MCQVMset : TableEntity
+    public class MCQVMset
     {
         public string Title { get; set; }
         public int QuestionCount { get; set; }
@@ -42,7 +41,7 @@ namespace Risebird.Entities.ViewModel
         public string SecondarySkill { get; set; }
         public int CompentencyLevel { get; set; }
         public string CompentencyLevelName { get; set; }
-        //public string PartitionKey { get; set; }
+        public string PartitionKey { get; set; }
         public int id { get; set; }
     }
     public class QuestionList
@@ -60,7 +59,7 @@ namespace Risebird.Entities.ViewModel
         public MCQVM _question { get; set; }
         public MCQVMset _timmerdetails { get; set; }
     }
-    public class CandidateDetailsForTest : TableEntity
+    public class CandidateDetailsForTest
     {
         [Required]
         [EmailAddress]
@@ -82,7 +81,7 @@ namespace Risebird.Entities.ViewModel
         public string PartitionKey { get; set; }
         public int id { get; set; }
     }
-    public class MCQVMShare : TableEntity
+    public class MCQVMShare 
     {
         public string EmailAddress { get; set; }
         public string MCQId { get; set; }
