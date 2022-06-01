@@ -9,12 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE Procedure usp_FetchFNAllGeneratedInvoiceDetails
-@st datetime,
-@se datetime
-AS
-BEGIN
-  
 CREATE Procedure usp_FetchFNAllGeneratedInvoiceDetails  
 @st datetime,  
 @se datetime  
@@ -53,6 +47,4 @@ where ip.Interviewerid=0 and ip.Interviewid=0 and (ip.Status='Submitted' or ip.S
 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)  
 END  
   
-END
-
 GO
