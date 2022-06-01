@@ -776,50 +776,72 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var resultset = _mCQService.FetchMCQSetById(Id);
-                var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
-                var timmer = details.Timer + " min";
-                string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Id;
-
-                MCQVMShare _list = new MCQVMShare();
-                _list.status = 0;
-                _list.MCQSet = details.Title;
-                _list.ClientHR = ClientEmail;
-                _list.ApplyingCompany = ClientName;
-                _list.Videorecording = videoRecording;
-                foreach (var item in Emailids.Split(";"))
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    try
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var resultset = _mCQService.FetchMCQSetById(Id);
+                    var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
+                    var timmer = details.Timer + " min";
+                    string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Id;
+                    if (profileName == "Client")
                     {
-                        var _meetinglinks = ShareRisebirdMeeting("Risebird", "", DateTime.Now.AddHours(6));
-                        Mail _mail = new Mail
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var client = _userRepository.GetClientUserDetails(emailid);
+                        if (client != null)
                         {
-                            TO = item,
-                            Subject = "Invitation for " + details.Title + " : " + ClientName
-                        };
-                        var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, DateTime.Now.AddHours(6), -330);
-                        Mail _mail1 = new Mail
-                        {
-                            TO = ClientEmail,
-                            Subject = "Invitation for " + details.Title + " : " + item
-                        };
-                        _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, DateTime.Now.AddHours(6), -330);
-                        if (result.Contains("Mail sent successfully"))
-                        {
-                            var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                            _list.PartitionKey = date1;
-                            _list.MCQId = Id;
-                            _list.EmailAddress = item;
-                            _list.roomId = _meetinglinks.roomId;
-                            _mCQService.AddMCQSetShareList(_list);
+                            ClientName = client.Result.ClientName.ToUpper();
                         }
                     }
-                    catch (Exception ex)
+                    if (!String.IsNullOrEmpty(ClientName))
                     {
-
+                        ClientName = "";
                     }
+                    MCQVMShare _list = new MCQVMShare();
+                    _list.status = 0;
+                    _list.MCQSet = details.Title;
+                    _list.ClientHR = ClientEmail;
+                    _list.ApplyingCompany = ClientName;
+                    _list.Videorecording = videoRecording;
+                    foreach (var item in Emailids.Split(";"))
+                    {
+                        try
+                        {
+                            var _meetinglinks = ShareRisebirdMeeting("Risebird", "", DateTime.Now.AddHours(6));
+                            Mail _mail = new Mail
+                            {
+                                TO = item,
+                                Subject = "Invitation for " + details.Title + " : " + ClientName
+                            };
+                            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, DateTime.Now.AddHours(6), -330);
+                            Mail _mail1 = new Mail
+                            {
+                                TO = ClientEmail,
+                                Subject = "Invitation for " + details.Title + " : " + item
+                            };
+                            _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, DateTime.Now.AddHours(6), -330);
+                            if (result.Contains("Mail sent successfully"))
+                            {
+                                var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                                _list.PartitionKey = date1;
+                                _list.MCQId = Id;
+                                _list.EmailAddress = item;
+                                _list.roomId = _meetinglinks.roomId;
+                                _mCQService.AddMCQSetShareList(_list);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                    return Json("success");
                 }
-                return Json("success");
+                else
+                {
+                    return Json("success");
+                }
             }
             catch (Exception ex)
             {
