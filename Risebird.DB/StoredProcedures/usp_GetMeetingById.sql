@@ -13,7 +13,8 @@ GO
   
 CREATE PROCEDURE [dbo].[usp_GetMeetingById]  
   
-@interviewId int  
+@interviewId int,
+@timeNow datetime
   
 AS  
 Begin  
@@ -21,7 +22,8 @@ Begin
 SELECT [InterviewMeetings].id as imid  
      ,[InterviewMeetings].IRFId  
   ,interviewDate
-  ,DATEDIFF(minute,DATEADD(minute, 330, Getdate()),interviewDate) as interviewtimedifference
+  --,DATEDIFF(minute,DATEADD(minute, 330, Getdate()),interviewDate) as interviewtimedifference
+  ,DATEDIFF(minute, @timeNow, interviewDate) as interviewtimedifference
   ,IRF.JobCountry
   ,interviewSlot  
   ,interviewDuration  
