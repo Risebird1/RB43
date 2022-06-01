@@ -370,7 +370,7 @@
                     <form action="@Url.Action("CreateInterviewLink","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
                         @Html.AntiForgeryToken()
                         <div class="mb-3 mt-3">
-                            <label for="JDTiltle" class="form-label">Job Profile:</label>
+                            <label for="JDTiltle" class="form-label">Job Title:</label>
                             <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
                             <label id="error_JDTiltle" class="text-danger"></label>
                         </div>
@@ -387,7 +387,7 @@
                         </div>
 
                         <div class="mb-3 mt-3">
-                            <label for="ClientName" class="form-label">End Client Name:</label>
+                            <label for="ClientName" class="form-label">Project Name:</label>
                             <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
                             <label id="error_ClientName" class="text-danger"></label>
                         </div>
@@ -556,11 +556,11 @@
 
         
         if (jobProfile == null || jobProfile == '') {
-            document.getElementById('error_JDTiltle').innerHTML = "Job Profile is required.";
+            document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
             flag = false;
         }
         else if (jobProfile.length > 40) {
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            document.getElementById("error_JDTiltle").innerHTML = "The Job Title should not be more than 40 characters long.";
             flag = false;
         }
         else {
