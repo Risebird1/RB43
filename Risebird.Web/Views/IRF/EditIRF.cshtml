@@ -1892,12 +1892,12 @@
         var val = document.getElementById("JDTiltle").value;
         if (val == null || val == "") {
             document.getElementById("JDTiltle").focus();
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile field is required.";
+            document.getElementById("error_JDTiltle").innerHTML = "Job Title field is required.";
             return true;
         }
         else if (val.length > 40) {
             document.getElementById("JDTiltle").focus();
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            document.getElementById("error_JDTiltle").innerHTML = "Job Title should not be more than 40 characters long.";
             return true;
         }
         else {
@@ -1971,7 +1971,7 @@
             //}
             flag = IsJobProfileNameInvalid(); //Check JDTitle;
             if ($('#ClientName').val() == "") {
-                $('#error_ClientName').text("The End Client Name field is required.");
+                $('#error_ClientName').text("Project Name field is required.");
                 flag = true;
             }
             else {
