@@ -44,23 +44,26 @@ namespace Risebird.MicroService
                     {
                         if (_meetingService.PublicCancelInterview(item.Interviewid, "Auto cancelled by System"))
                         {
-                            var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
-                            var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);
-                            var result1 = await _irfService.AddCandidateStatus("System", candidateId, item.Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, item.Interviewid);
-                            var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
-                            var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
-                            List<string> interviewers = new List<string>();
-                            if (!String.IsNullOrEmpty(result.interviewer))
-                            {
-                                interviewers.Add(result.interviewer);
-                            }
-                            //if (!String.IsNullOrEmpty(result.EmailId))
+                            _ = await _meetingService.SendsMailsAfterCancellingInterview(item.Interviewid, item.Irfid, item.CandidateEmail);
+
+
+                            //var setvalue = _meetingService.UpdateCancelInterviewDetails(item.Interviewid);
+                            //var candidateId = await _irfRepository.GetCandidateIdByEmail(item.CandidateEmail);
+                            //var result1 = await _irfService.AddCandidateStatus("System", candidateId, item.Irfid, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, item.Interviewid);
+                            //var result = await _candidateService.FetchChannelOwnerandInterviewer(item.Interviewid);
+                            //var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(item.Interviewid);
+                            //List<string> interviewers = new List<string>();
+                            //if (!String.IsNullOrEmpty(result.interviewer))
                             //{
-                            //    interviewers.Add(result.EmailId);
+                            //    interviewers.Add(result.interviewer);
                             //}
-                            var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
-                            var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                            ////if (!String.IsNullOrEmpty(result.EmailId))
+                            ////{
+                            ////    interviewers.Add(result.EmailId);
+                            ////}
+                            //var emailresult = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                            //var emailresult1 = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                            //var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
                         }
                     }
                     catch (Exception ex)
