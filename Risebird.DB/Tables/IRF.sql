@@ -33,6 +33,7 @@ CREATE TABLE [dbo].[IRF](
             [AudioComment][VARCHAR](1000) NULL,
             [CreatedFromTemplateId][int] NULL,
             [ModifiedOn][Datetime] NULL,
+            [MeetingPlatform][varchar](25) NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -254,6 +255,16 @@ IF NOT EXISTS(
 BEGIN
     Alter table IRF 
     add ModifiedOn datetime NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MeetingPlatform')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add MeetingPlatform VARCHAR(25)
 END
 
 END
