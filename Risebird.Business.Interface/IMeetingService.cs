@@ -178,5 +178,6 @@ namespace Risebird.Business.Interface
         bool ChangeInterviewerNotificationStatus(string emailID, int status);
         bool FetchInterviewerNotificationStatus(string emailID);
         bool CheckInterviewerCodedResume(string emailID);
+        Task<bool> SendsMailsAfterCancellingInterview(int meetingId, int irfId, string candidateEmail);
     }
 }

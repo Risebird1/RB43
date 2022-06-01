@@ -48,6 +48,15 @@ namespace Risebird.Web.Controllers
                     {
                         ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                         model = await _clonableSkillChannelTemplateService.GetTemplateDataFromSourceSkillChannel(irfId, assessmentGroupId);
+                        if (profileName == "Admin" && model.ClonableTemplateQuestionsCollection != null && model.ClonableTemplateQuestionsCollection.Count() > 500)
+                        {
+                            model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection.Take(500).ToList();
+
+                        }
+                        if (profileName == "Admin" && model.InterviewerCollection != null && model.InterviewerCollection.Count() > 100)
+                        {
+                            model.InterviewerCollection = model.InterviewerCollection.Take(100).ToList();
+                        }
                         model.UserId = _irfService.GetUserId(emailid);
                         return View(model);
                     }
@@ -158,6 +167,16 @@ namespace Risebird.Web.Controllers
                     {
                         ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                         model = await _clonableSkillChannelTemplateService.GetClonableSkillChannel(id);
+                        if(profileName == "Admin" && model.ClonableTemplateQuestionsCollection !=null && model.ClonableTemplateQuestionsCollection.Count() > 500)
+                        {
+                            model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection.Take(500).ToList();
+
+                        }
+                        if (profileName == "Admin" && model.InterviewerCollection != null && model.InterviewerCollection.Count() > 100)
+                        {
+                            model.InterviewerCollection = model.InterviewerCollection.Take(100).ToList();
+                        }
+
                         model.UserId = _irfService.GetUserId(emailid);
                         return View(model);
                     }
