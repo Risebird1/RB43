@@ -476,5 +476,29 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model)
+        {
+            try
+            {
+                var query = "Update MCQCandidates set VideoLink=@VideoLink where PartitionKey=@PartitionKey";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@PartitionKey", model.Id);
+                dynamicParameters.Add("@VideoLink", model.VideoLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync(query, dynamicParameters);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -24,5 +24,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQId(string MCQPId);
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
         Task<IEnumerable<MCQVM>> GetMCQCandidateQuestions(string CandidateId);
+        Task<string> UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model);
     }
 }
