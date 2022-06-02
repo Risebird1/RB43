@@ -5735,7 +5735,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;
 
 
