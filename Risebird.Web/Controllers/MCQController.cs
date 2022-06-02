@@ -884,17 +884,20 @@ namespace Risebird.Web.Controllers
             EmailId = EmailId.ToUpper();
             var _candidate = candidateset.Where(x => x.CandidateEmail.ToUpper() == EmailId).FirstOrDefault();
             var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
-            _candidate.QuestionDetails = (List<MCQVM>)questions;
+            _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
             if (String.IsNullOrEmpty(_candidate.VideoLink))
             {
-                var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
-                IRestResponse response = _meeting.Execute(request);
-                var content = response.Content;
-                var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
-                _candidate.VideoLink = convertedResponse.videoUrl;
-                _mCQService.UpdateVideoURLForCandidate(_candidate);
+                if (!String.IsNullOrEmpty(_candidate.roomId))
+                {
+                    var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
+                    var request = new RestRequest(Method.GET);
+                    request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                    IRestResponse response = _meeting.Execute(request);
+                    var content = response.Content;
+                    var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+                    _candidate.VideoLink = convertedResponse.videoUrl;
+                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                }
             }
             return View(_candidate);
         }
