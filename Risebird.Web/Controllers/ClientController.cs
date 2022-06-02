@@ -1534,7 +1534,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Meeting Status";
                 if (roleId != (int)ClientRoleEnum.RestrictedIRFowner)
                 {
-                    Sheet.Cells[1, 7].Value = "End Client Name";
+                    Sheet.Cells[1, 7].Value = "Project Name";
                     Sheet.Cells[1, 8].Value = "Primary Skill";
                     Sheet.Cells[1, 9].Value = "Interview Status";
                     Sheet.Cells[1, 10].Value = "Video Link";
@@ -2878,7 +2878,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Candidate Name";
                 Sheet.Cells[1, 3].Value = "Candidate Email";
                 Sheet.Cells[1, 4].Value = "Client HR";
-                Sheet.Cells[1, 5].Value = "End Client Name";
+                Sheet.Cells[1, 5].Value = "Project Name";
                 Sheet.Cells[1, 6].Value = "Primary Skill";
                 Sheet.Cells[1, 7].Value = "Video";
                 //Sheet.Cells[1, 8].Value = "Report Link";
@@ -3621,7 +3621,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Candidate Name";
                 Sheet.Cells[1, 3].Value = "Candidate Email";
                 Sheet.Cells[1, 4].Value = "Client HR";
-                Sheet.Cells[1, 5].Value = "End Client Name";
+                Sheet.Cells[1, 5].Value = "Project Name";
                 Sheet.Cells[1, 6].Value = "Primary Skill";
                 Sheet.Cells[1, 7].Value = "Video";
                 Sheet.Cells[1, 8].Value = "Interviewer Comment";

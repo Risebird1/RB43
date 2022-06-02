@@ -6127,7 +6127,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
-                    var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrEmpty(x.AssessmentGroup));
+                    var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrWhiteSpace(x.AssessmentGroup));
                     if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("CloneSkillChannelfilters"));
@@ -6731,7 +6731,8 @@ namespace Risebird.Web.Controllers
                     {
 
                         string uploadedFileURL = string.Empty;
-
+                        if (model.ClientId == 0)
+                            model.ClientId = await _clientService.GetClientByEmailId(emailId);
                         if (model.JDFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);

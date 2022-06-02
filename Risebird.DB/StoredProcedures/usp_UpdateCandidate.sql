@@ -31,8 +31,8 @@ Create PROCEDURE [dbo].[usp_UpdateCandidate]
 @Heuristicsscore int,  
 @AvailableFullTime  bit,  
 @AvailableFreeLancing bit,  
-@ClientHRAttemptContact varchar(100),  
-@ProfileSource varchar(200),
+--@ClientHRAttemptContact varchar(100),  
+--@ProfileSource varchar(200),
 @WhatsappNumber varchar(15),
 @IsProctor bit
     
@@ -62,8 +62,8 @@ EncodedResumeLink=@EncodedResumeLink,
 Heuristicsscore=@Heuristicsscore,  
 AvailableFullTime=@AvailableFullTime,  
 AvailableFreeLancing=@AvailableFreeLancing,  
-ClientHRAttemptContact = @ClientHRAttemptContact,  
-ProfileSource=@ProfileSource,
+--ClientHRAttemptContact = @ClientHRAttemptContact,  
+--ProfileSource=@ProfileSource,
 IsProctor=@IsProctor
 where id=@id    
     
