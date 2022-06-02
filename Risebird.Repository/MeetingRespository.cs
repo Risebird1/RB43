@@ -825,6 +825,7 @@ namespace Risebird.Repository
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@interviewId", id);
+                parameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMeetingById", parameters,

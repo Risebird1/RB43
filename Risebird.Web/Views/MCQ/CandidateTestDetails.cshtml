@@ -30,7 +30,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
-    
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -236,6 +236,17 @@
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
                                                                 <span onclick="javascript:DeleteCandidateFromTest('@item.PartitionKey','@item.Id','@item.SameID');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                             </button>
+                                                            @if (!String.IsNullOrEmpty(item.TotalExprience))
+                                                            {
+                                                                <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.SameID, EmailId = item.CandidateEmail })'>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                        <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                    </button>
+                                                                </a>
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
+                                                                    <span onclick="javascript:GeneratePublicUrl('@item.SameID','@item.CandidateEmail');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                </button>
+                                                            }
                                                         </td>
                                                     }
                                                 </tr>
@@ -281,7 +292,41 @@
         </div>
     </div>
 </div>
-
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Questions Report Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Report Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @if (ViewBag.Message != null)
 {
@@ -336,7 +381,7 @@
     function searchResult() {
         $('#skillLevel').DataTable();
     }
-    
+
         function RefreshSearch() {
         $('#skillLevel').DataTable().destroy();
 
@@ -450,7 +495,7 @@
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
-                    window.location = "/MCQ/CandidateTestDetails/" + sameid;
+                    window.location = "/MCQ/CandidateTestDetails?id=" + sameid;
                 })
             }
             else if (result.dismiss === 'cancel') {
@@ -498,5 +543,26 @@
             $('input[name=EndDate]').val(endDte);
             $("#SelectionStatus").val(levelset);
             $("#ClientHR").val(skillsset);
+    }
+    function GeneratePublicUrl(mcqid,candidateemail) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        urlcurrent = urlcurrent.replace("CandidateTestDetails", "CandidateMCQReport");
+        urlcurrent = urlcurrent.replace("?id", "?MCQId");
+        urlcurrent = urlcurrent + "&EmailId=" + candidateemail;
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
     }
 </script>

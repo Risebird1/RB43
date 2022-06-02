@@ -268,7 +268,7 @@ namespace Risebird.Business
                     // Get all the List from DB
                     profileModel.InterviewerAvailabilityDetails = _interviewerRepository.GetAvailabilityList(profileModel.id).Result.ToList();
                     profileModel.InterviewerAccDetails = _interviewerRepository.GetAccDetailsList(profileModel.id).Result;
-
+                    profileModel.InterviewerAccDetails.AccountNumber = String.IsNullOrEmpty(profileModel.InterviewerAccDetails.AccountNumber) ? "" : profileModel.InterviewerAccDetails.AccountNumber.Trim();
                     return profileModel;
                 }
                 else return new InterviewerProfileVM { EmailId = emailId };

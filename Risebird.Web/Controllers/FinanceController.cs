@@ -890,19 +890,17 @@ namespace Risebird.Web.Controllers
                                             Sheet.Cells[i, 13].Value = "Video";
                                             Sheet.Cells[i, 13].Style.Font.UnderLine = true;
                                             Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                                            Sheet.Cells[i, 14].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
                                         }
                                         catch (Exception)
                                         {
                                             Sheet.Cells[i, 13].Value = "No Video";
-                                            Sheet.Cells[i, 14].Value = "NA";
                                         }
                                     }
                                     else
                                     {
                                         Sheet.Cells[i, 13].Value = "No Video";
-                                        Sheet.Cells[i, 14].Value = "NA";
                                     }
+                                    Sheet.Cells[i, 14].Value = (item.VideoDuration.HasValue && item.VideoDuration.Value > 0) ? item.VideoDuration.Value.ToString() : string.Empty;
                                     Sheet.Cells[i, 15].Value = item.Rate;
                                     Sheet.Cells[i, 16].Value = item.Points;
                                     if (item.Points == 0)

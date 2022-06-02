@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class MCQVM : TableEntity
+    public class MCQVM
     {
         public string QuestionType { get; set; }
         public string Question { get; set; }
@@ -15,7 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string Option3 { get; set; }
         public string Option4 { get; set; }
         public string Answer { get; set; }
-        public string Id { get; set; }
+        public string MCQId { get; set; }
         public int QuestionNumber { get; set; }
         public string SingleAnswer { get; set; }
         public bool MultiAnswerOption1 { get; set; }
@@ -28,8 +27,10 @@ namespace Risebird.Entities.ViewModel
         public string QuestionId { get; set; }
         public string CandidateID { get; set; }
         public string Explanation { get; set; }
+        public string PartitionKey { get; set; }
+        public int id { get; set; }
     }
-    public class MCQVMset : TableEntity
+    public class MCQVMset
     {
         public string Title { get; set; }
         public int QuestionCount { get; set; }
@@ -40,7 +41,8 @@ namespace Risebird.Entities.ViewModel
         public string SecondarySkill { get; set; }
         public int CompentencyLevel { get; set; }
         public string CompentencyLevelName { get; set; }
-
+        public string PartitionKey { get; set; }
+        public int id { get; set; }
     }
     public class QuestionList
     {
@@ -57,7 +59,7 @@ namespace Risebird.Entities.ViewModel
         public MCQVM _question { get; set; }
         public MCQVMset _timmerdetails { get; set; }
     }
-    public class CandidateDetailsForTest : TableEntity
+    public class CandidateDetailsForTest
     {
         [Required]
         [EmailAddress]
@@ -70,22 +72,27 @@ namespace Risebird.Entities.ViewModel
         public string TotalExprience { get; set; }
         [Required]
         public string Skills { get; set; }
-        public string Id { get; set; }
+        public string MCQId { get; set; }
         public int CandidateScore { get; set; }
         public int TotalQuestions { get; set; }
         public string VideoLink { get; set; }
         public int Feedbackreating { get; set; }
         public string FeedbackComment { get; set; }
+        public string PartitionKey { get; set; }
+        public int id { get; set; }
     }
-    public class MCQVMShare : TableEntity
+    public class MCQVMShare 
     {
         public string EmailAddress { get; set; }
-        public string Id { get; set; }
-        public string status { get; set; }
+        public string MCQId { get; set; }
+        public int status { get; set; }
         public string MCQSet { get; set; }
         public string ApplyingCompany { get; set; }
         public string ClientHR { get; set; }
-        public string Videorecording { get; set; }
+        public int Videorecording { get; set; }
+        public string PartitionKey { get; set; }
+        public int id { get; set; }
+        public string roomId { get; set; }
     }
     public class ProfileTypeSkills
     {
@@ -129,6 +136,7 @@ namespace Risebird.Entities.ViewModel
         public int Feedbackreating { get; set; }
         public string FeedbackComment { get; set; }
         public List<MCQVM> QuestionDetails { get; set; }
+        public string roomId { get; set; }
     }
     public class ShareMCQRisebirdMeeting
     {

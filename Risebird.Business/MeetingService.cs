@@ -29,8 +29,9 @@ namespace Risebird.Business
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly IInterviewerRepository _interviewerRepository;
         private readonly ICandidateRepository _candidateRepository;
+        private readonly ICandidateService _candidateService;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,6 +46,7 @@ namespace Risebird.Business
             _whatsAppHelper = whatsAppHelper;
             _interviewerRepository = interviewerRepository;
             _candidateRepository = candidateRepository;
+            _candidateService = candidateService;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -917,34 +919,26 @@ namespace Risebird.Business
                 {
                     _meetingRespository.UnassignYourself(meetingid);
                     //TimeSpan timeSpan = meeting.Result.interviewDate - DateTime.Now;
-                    if (meeting.interviewtimedifference >= 0 && meeting.interviewtimedifference <= 60)
+                    if (meeting.interviewtimedifference >= 0 && meeting.interviewtimedifference <= 30)
                     {
-                        if (meeting.interviewtimedifference <= 30)
+                        _meetingRespository.ApplyInterviewPenalty(meetingid, meeting.JobCountry, meeting.interviewer);
+
+                        //cancel meeting here
+                        if (PublicCancelInterview(meetingid, $"Auto cancelled by System(Interviewer '{email}' unassigned within 30 mins from scheduled time.)"))
                         {
-                            //for 1/2 hr before apply penality on interviewer according to india and outside india
-                            _meetingRespository.ApplyInterviewPenalty(meetingid, meeting.JobCountry, meeting.interviewer);
+                            _ = SendsMailsAfterCancellingInterview(meetingid, meeting.irfIntId, meeting.candidateEmail).Result;
                         }
+
                     }
                     else
                     {
-                        var interviwers = new List<string>();
-                        if (isPenalty)
-                        {
-                            //update flag for Emergency Interview
-                            _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.interviewDate);
-                            //interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
-                            interviwers = _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId).Result.ToList();
-                        }
-                        else
-                        {
-                            //interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
-                            interviwers = _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId).Result.ToList();
-                        }
+                        var interviewers = new List<string>();
+                        interviewers = _irfRepository.GetIRFInterviewersAndEmergencyInterviewersEmail(meeting.irfIntId).Result.ToList();
 
-                        if (interviwers != null)
+                        if (interviewers != null)
                         {
-                            interviwers.Remove(email);
-                            _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
+                            interviewers.Remove(email);
+                            _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString());
 
                         }
                         //var hrs = _userService.GetAllHrsEmailld()?.ToList();
@@ -3223,6 +3217,33 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> SendsMailsAfterCancellingInterview(int meetingId, int irfId, string candidateEmail)
+        {
+            try
+            {
+                var setvalue = UpdateCancelInterviewDetails(meetingId);
+                var candidateId = await _irfRepository.GetCandidateIdByEmail(candidateEmail);
+                var result1 = await _irfService.AddCandidateStatus("System", candidateId, irfId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingId);
+                var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingId);
+                var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(meetingId);
+                List<string> interviewers = new List<string>();
+                if (!String.IsNullOrEmpty(result.interviewer))
+                {
+                    interviewers.Add(result.interviewer);
+                }
+
+                _ = _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList());
+                _ = _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
+                _ = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
