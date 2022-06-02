@@ -6315,7 +6315,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
+        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string meetingPlatform = null)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -6339,6 +6339,7 @@ namespace Risebird.Web.Controllers
             model_report.duration = 60;
             model_report.Concurrency = 10;
             model_report.BufferTime = 12;
+            model_report.MeetingPlatform = meetingPlatform;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -6684,16 +6685,9 @@ namespace Risebird.Web.Controllers
                         //Start: Auto Generate Scheduling Link 
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
-                        string _schedulinglink = string.Empty;
-                        if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
-                        {
-                            _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
-                        }
-                        else if(model.MeetingPlatform == MeetingPlatforms.Zoom)
-                        {
-                            //_schedulinglink = //create scheduling link from calendly
-                            //_schedulinglink = await _calendlyHelper.GenerateOneTimeSchedulingLink(irfId).Result;
-                        }
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName))
@@ -6762,7 +6756,11 @@ namespace Risebird.Web.Controllers
                         //Start: Auto Generate Scheduling Link 
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
-                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+
+                        model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName))

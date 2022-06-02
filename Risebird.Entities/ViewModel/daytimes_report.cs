@@ -51,6 +51,7 @@ namespace Risebird.Entities.ViewModel
         public int Concurrency { get; set; }
         [Display(Name = "BufferTime(in Hr.)")]
         public int BufferTime { get; set; }
+        public string MeetingPlatform { get; set; }
     }
     public class ScheculeInterview
     {

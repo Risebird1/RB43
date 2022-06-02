@@ -42,7 +42,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [IsCandidateResponsed][bit] NULL,
     [CandidateResponse][bit] NULL,
     [ProctorReport][varchar](1000),
-    [Cancellationsource][varchar](100)
+    [Cancellationsource][varchar](100),
+    [RoomId][varchar](35) null
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -267,6 +268,16 @@ BEGIN
     ALTER TABLE InterviewMeetings
     Add Cancellationsource varchar(100)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RoomId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add RoomId varchar(35)
+END
+
 END
 GO
 

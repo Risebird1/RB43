@@ -14,11 +14,13 @@ Create PROCEDURE [dbo].[usp_GetIRFInterviewersAndEmergencyInterviewersEmail]
 @IRFId int  
 AS  
 Begin  
-  
-  select distinct ul.EmailId from TransInterviewer ti 
-  join UserList ul on ul.id = ti.UserId
-  where ti.IRFId = @IRFId and ti.IsActive = 1 and ti.IsAvailable=1 and ul.IsActive = 1 
-  Union
+   
+   --interviewers have been removed for now
+
+  --select distinct ul.EmailId from TransInterviewer ti 
+  --join UserList ul on ul.id = ti.UserId
+  --where ti.IRFId = @IRFId and ti.IsActive = 1 and ti.IsAvailable=1 and ul.IsActive = 1 
+  --Union
   select distinct ul.EmailId from TransEmergencyInterviewer tei 
   join UserList ul on ul.id = tei.UserId
   where tei.IRFId = @IRFId and tei.IsActive = 1 and ul.IsActive = 1 

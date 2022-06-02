@@ -369,5 +369,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<string> GetClonableSkillChannelMeetingPlatformById(int id)
+        {
+            try
+            {
+                return await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
