@@ -210,5 +210,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model)
+        {
+            try
+            {
+                return _mCQRepository.UpdateVideoURLForCandidate(model).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
