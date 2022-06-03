@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[dtCreatedOn] [DateTime] NOT NULL CONSTRAINT [DF_InterviewMeetings_dtCreatedOn] DEFAULT ('NA'),	
 	[sModifiedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sModifiedBy]  DEFAULT ('NA'),	
 	[dtModifiedOn] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_dtModifiedOn]  DEFAULT ('NA'),	
-    [ZoomMeetingId][bigint] NULL,
+    [ZoomMeetingId][varchar] (200),
     [IsMeetingNotificationSent][bit] NULL,
 	[NotificationSentDate] [DateTime] NULL,	
     [IsNotificationSentToEI][bit] NULL,
@@ -42,8 +42,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [IsCandidateResponsed][bit] NULL,
     [CandidateResponse][bit] NULL,
     [ProctorReport][varchar](1000),
-    [Cancellationsource][varchar](100),
-    [RoomId][varchar](35) null
+    [Cancellationsource][varchar](100)
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -165,8 +164,9 @@ IF NOT EXISTS(
     WHERE Name IN (N'ZoomMeetingId')
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
+
     ALTER TABLE InterviewMeetings
-    Add ZoomMeetingId BIGINT
+    ADD ZoomMeetingId varchar(200)
 END
 
 IF NOT EXISTS(
@@ -276,6 +276,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add RoomId varchar(35)
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ZoomMeetingId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    alter column ZoomMeetingId varchar(200)
 END
 
 END

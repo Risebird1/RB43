@@ -26,6 +26,8 @@ namespace Risebird.Entities.ViewModel
         public string SkillChannelRelation { get; set; }
         public int Concurrency { get; set; }
         public int BufferTime { get; set; }
+        public string MeetingPlatform { get; set; }
+
     }
     public class daytimes_report
     {
@@ -87,6 +89,7 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public string CountryCode { get; set; }
         public string ClientName { get; set; }
+        public string MeetingPlatform { get; set; }
     }
     public class TimeslotsVM
     {

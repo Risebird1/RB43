@@ -4563,7 +4563,8 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@meetingid", Convert.ToInt64(id));
+                    //parameters.Add("@meetingid", Convert.ToInt64(id));
+                    parameters.Add("@meetingid", id);
                     return await SqlMapper.QueryAsync<Meeting>(con, "usp_FetchOpenMeetingById", parameters,
                          commandType: CommandType.StoredProcedure);
                 }

@@ -61,7 +61,8 @@ namespace Risebird.Functions
             string interviewOnDevice = string.Empty;
             string currentEmployerName = string.Empty;
             string textreminder = string.Empty;
-            long zoommeetingId = 0;
+            //long zoommeetingId = 0;
+            string zoommeetingId = null;
             int interviewId = 0;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
@@ -125,18 +126,21 @@ namespace Risebird.Functions
                                 {
                                     try
                                     {
-                                        zoommeetingId = Convert.ToInt64(zoomLink.Split('/').Last());
+                                        //zoommeetingId = Convert.ToInt64(zoomLink.Split('/').Last());
+                                        zoommeetingId = zoomLink.Split('/').Last();
                                     }
                                     catch (Exception)
                                     {
                                         try
                                         {
                                             var link = zoomLink.Split('?').First();
-                                            zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                            //zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                            zoommeetingId = link.Split('/').Last();
                                         }
                                         catch (Exception)
                                         {
-                                            zoommeetingId = 0;
+                                            //zoommeetingId = 0;
+                                            zoommeetingId = null;
                                         }
 
                                     }

@@ -35,7 +35,7 @@ CREATE PROCEDURE [dbo].[usp_AddMeeting]
 @currentEmployerName varchar(200),  
 @MobileNumber nvarchar(200),  
 @QCInterviewer varchar(200),  
-@zoomMeetingId bigint 
+@zoomMeetingId varchar(200) 
 AS  
 Begin  
   

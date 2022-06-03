@@ -63,24 +63,28 @@ namespace Risebird.MicroService
 
                     try
                     {
-                        long zoommeetingId = 0;
+                        //long zoommeetingId = 0;
+                        string zoommeetingId;//= string.Empty;
                         try
                         {
-                            zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                            //zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                            zoommeetingId = meeting.zoomLink.Split('/').Last();
                         }
                         catch (Exception)
                         {
                             try
                             {
                                 var link = meeting.zoomLink.Split('?').First();
-                                zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                //zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                zoommeetingId = link.Split('/').Last();
                             }
                             catch (Exception)
                             {
-                                zoommeetingId = 0;
+                                //zoommeetingId = 0;
+                                zoommeetingId = null;
                             }
                         }
-                        meeting.ZoomMeetingId = zoommeetingId.ToString();
+                        meeting.ZoomMeetingId = zoommeetingId;
 
                         
 

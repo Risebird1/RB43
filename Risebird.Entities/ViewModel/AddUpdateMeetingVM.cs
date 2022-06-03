@@ -125,7 +125,8 @@ namespace Risebird.Entities.ViewModel
         public string HRCoordinatorEmailId { get; set; }
 
 
-        public long ZoomMeetingId { get; set; }
+        //public long ZoomMeetingId { get; set; }
+        public string ZoomMeetingId { get; set; }
 
         public string OldInterviewer { get; set; }
         public string OldQCInterviewer { get; set; }
