@@ -248,15 +248,21 @@
         function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("Successful",'@ViewBag.Message', "success");
+                //swal.fire("Successful",'@ViewBag.Message', "success");
+                 Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'info',
+                    html:
+                        '@ViewBag.Message' +
+                        '<br/> Scheduling Link : <a target="_blank" href="@ViewBag.Message2">Scheduling Link</a> ',
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
             }
-
         }
-
-        //window.onload = my_code();
     </script>
 }
 
