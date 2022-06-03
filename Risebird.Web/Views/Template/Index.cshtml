@@ -351,17 +351,17 @@
             <div class="modal-content">
 
 
-                <div class="filheader">
+                <!--<div class="filheader">-->
                     @*<div class="filavatar">
                         <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
                     </div>*@
-                    <div class="filavatar">
+                    <!--<div class="filavatar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
                             <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
                         </svg>
                     </div>
                     <h5 class="modal-title pull-left" id="interviewLinkModalHeading"></h5>
-                </div>
+                </div>-->
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" id="interviewLinkModalClose" style="cursor:pointer;">&times;</span>
                 </button>
@@ -370,7 +370,7 @@
                     <form action="@Url.Action("CreateInterviewLink","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
                         @Html.AntiForgeryToken()
                         <div class="mb-3 mt-3">
-                            <label for="JDTiltle" class="form-label">Job Profile:</label>
+                            <label for="JDTiltle" class="form-label">Job Title:</label>
                             <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
                             <label id="error_JDTiltle" class="text-danger"></label>
                         </div>
@@ -387,7 +387,7 @@
                         </div>
 
                         <div class="mb-3 mt-3">
-                            <label for="ClientName" class="form-label">End Client Name:</label>
+                            <label for="ClientName" class="form-label">Project Name:</label>
                             <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
                             <label id="error_ClientName" class="text-danger"></label>
                         </div>
@@ -542,7 +542,7 @@
         GenerateSkillChannelName(assessmentGroupName);
         if (!isModalOpened && clientId !== undefined) {
             isModalOpened = true;
-            $('#ClientId').val(clientId.value);
+            $('#ClientId').val(clientId);
         }
     }
 
@@ -556,11 +556,11 @@
 
         
         if (jobProfile == null || jobProfile == '') {
-            document.getElementById('error_JDTiltle').innerHTML = "Job Profile is required.";
+            document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
             flag = false;
         }
         else if (jobProfile.length > 40) {
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            document.getElementById("error_JDTiltle").innerHTML = "The Job Title should not be more than 40 characters long.";
             flag = false;
         }
         else {

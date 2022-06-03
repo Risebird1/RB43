@@ -1291,10 +1291,10 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
-                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
-                        {
-                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
-                        }
+                        //if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
+                        //{
+                        //    model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
+                        //}
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
