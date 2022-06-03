@@ -553,6 +553,7 @@ namespace Risebird.Web.Controllers
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                    ViewBag.Message2 = "";
                     if (TempData["SuccessErrorMessageInterview2"] != null)
                     {
                         ViewBag.Message2 = TempData["SuccessErrorMessageInterview2"].ToString();
