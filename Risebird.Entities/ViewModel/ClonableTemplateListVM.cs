@@ -16,5 +16,6 @@ namespace Risebird.Entities.ViewModel
         public string LoggedInUser{ get; set; }
         public int? ClientId{ get; set; }
         public string ClientCompanyName{ get; set; }
+        public string Message2 { get; set; }
     }
 }
