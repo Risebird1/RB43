@@ -365,7 +365,7 @@
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>
-                                                                                @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
+                                                                                @if (Model.InterviewerCollection[i].ResumeLink?.Length > 40)
                                                                                 {
                                                                                     @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                     {
