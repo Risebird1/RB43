@@ -51,7 +51,7 @@ namespace Risebird.Web.Controllers
             _clientService = clientService;
             _azureStorageHelper = azureStorageHelper;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> RecommendatedIRFFilter(string emailid, string uniqueid)
         {
@@ -91,6 +91,11 @@ namespace Risebird.Web.Controllers
             if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
             {
                 model.Message = TempData["SuccessErrorCloneSkillChannnelMessage"].ToString();
+                if (TempData["SuccessErrorCloneSkillChannnelMessage2"] != null)
+                {
+                    model.Message2 = TempData["SuccessErrorCloneSkillChannnelMessage2"].ToString();
+                    TempData.Remove("SuccessErrorCloneSkillChannnelMessage2");
+                }
                 TempData.Remove("SuccessErrorCloneSkillChannnelMessage");
             }
             return View(model);
@@ -742,7 +747,8 @@ namespace Risebird.Web.Controllers
                 //End: Auto Generate Scheduling Link
                 if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client"))
                 {
-                    TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                    TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                    TempData["SuccessErrorCloneSkillChannnelMessage2"] = model.CalendlyLink;
                     return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
                 }
                 else

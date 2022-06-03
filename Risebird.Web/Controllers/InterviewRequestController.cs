@@ -553,6 +553,12 @@ namespace Risebird.Web.Controllers
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                    ViewBag.Message2 = "";
+                    if (TempData["SuccessErrorMessageInterview2"] != null)
+                    {
+                        ViewBag.Message2 = TempData["SuccessErrorMessageInterview2"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterview2");
+                    }
                     TempData.Remove("SuccessErrorMessageInterview");
                 }
                 if (!String.IsNullOrEmpty(emailid))
@@ -658,6 +664,7 @@ namespace Risebird.Web.Controllers
                     if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailId, "Client"))
                     {
                         TempData["SuccessErrorMessageInterview"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                        TempData["SuccessErrorMessageInterview2"] = model.CalendlyLink;
                         return RedirectToAction("PublicCreateInterviewRequest", new { emailid = emailId, id = meeting.uniqueid });
                     }
                     else
