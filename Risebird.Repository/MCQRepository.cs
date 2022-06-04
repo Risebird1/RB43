@@ -159,7 +159,7 @@ namespace Risebird.Repository
                     parameters.Add("@EmailAddress", _list.EmailAddress);
                     parameters.Add("@MCQId", _list.MCQId);
                     parameters.Add("@MCQSet", _list.MCQSet);
-                    parameters.Add("@Videorecording", _list.Videorecording);
+                    parameters.Add("@Videorecording", 0);
                     parameters.Add("@status", _list.status);
                     parameters.Add("@roomId", _list.roomId);
 
