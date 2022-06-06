@@ -772,7 +772,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, int videoRecording)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate)
         {
             try
             {
@@ -803,12 +803,12 @@ namespace Risebird.Web.Controllers
                     _list.MCQSet = details.Title;
                     _list.ClientHR = ClientEmail;
                     _list.ApplyingCompany = ClientName;
-                    _list.Videorecording = videoRecording;
+
                     foreach (var item in Emailids.Split(";"))
                     {
                         try
                         {
-                            var _meetinglinks = ShareRisebirdMeeting("Risebird", "", DateTime.Now.AddHours(6));
+                            var _meetinglinks = ShareRisebirdMeeting("Risebird", item, MeetingDate);
                             Mail _mail = new Mail
                             {
                                 TO = item,

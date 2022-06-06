@@ -2184,9 +2184,9 @@ namespace Risebird.CommonHelper
                 str.AppendLine("VERSION:2.0");
                 str.AppendLine("METHOD:REQUEST");
                 str.AppendLine("BEGIN:VEVENT");
-                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset)));
+                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow.AddMinutes(offset)));
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
+                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow.AddMinutes(offset+60)));
                 str.AppendLine("LOCATION:" + meetingurl);
                 str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
                 str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));

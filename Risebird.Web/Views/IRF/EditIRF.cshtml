@@ -59,22 +59,21 @@
                                             <li><a href="#" id="rtab-2" class="text-center" onclick="headerClickchange('tab-2')">Job Details</a></li>
 
                                             <li><a href="#" id="rtab-3" class="" onclick="headerClickchange('tab-3')">Tech Skill </a><span id="count_SkillCollection" class="skillcount">@Model.SkillCollection.Count()</span></li>
-                                            <li id="li_joinability"><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
-                                            <li id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
-                                            <li id="li_generalSkill"><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
+
                                             <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection!=null?@Model.ClientCollection.Count() : 0)</span></li>
                                             @if (Model.Profile != "Client")
                                             {
+                                                <li id="li_joinability"><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
+                                                <li id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
+                                                <li id="li_generalSkill"><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
                                                 <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
-                                            }
-                                            @*<li><a href="#" rel="tab-11" id="rtab-11" class="">Resume Evaluator</a></li>*@
-                                            <li id="qc"><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
-                                            @if (Model.Profile != "Client")
-                                            {
+
+                                                <li id="qc"><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>
+
                                                 <li><a href="#" id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>
+
+                                                <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@Model.HRCollection.Count()</span></li>
                                             }
-                                            <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@Model.HRCollection.Count()</span></li>
-                                            @*<li><a href="#" rel="tab-13" id="rtab-13" class="">Recruiter</a></li>*@
 
                                         </ul>
                                     </div>
