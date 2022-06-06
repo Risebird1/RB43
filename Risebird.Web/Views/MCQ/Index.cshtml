@@ -396,13 +396,17 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     @*<div class="sharing">
-                        <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Please Select Video Recording Option</label>
-                        <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
-                            <option value="0">None</option>
-                            <option value="1">Recording Only</option>
-                            <option value="2">Recording and Uploading</option>
-                        </select>
-                    </div>*@
+                            <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Please Select Video Recording Option</label>
+                            <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
+                                <option value="0">None</option>
+                                <option value="1">Recording Only</option>
+                                <option value="2">Recording and Uploading</option>
+                            </select>
+                        </div>*@
+                    <div class="sharing">
+                        <label class="label-field desp-label" for="Please enter Meeting Date Time" style="font-weight:normal;"> Meeting Date Time</label>
+                        <input type="datetime-local" placeholder="Meeting Date Time" id="txtmeetingdatetime" class="form-control " style="margin-bottom:10px;" />
+                    </div>
                     @if (ViewBag.Profile != "Client")
                     {
                         <div class="sharing">
@@ -631,13 +635,31 @@
         var modal = document.getElementById("MyShareModel");
         modal.style.display = "block";
         $("#txtsharePartialid").val(id);
+        mindatefield();
+    }
+    function mindatefield() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("txtmeetingdatetime").setAttribute("min", today);
     }
     function shareTestLink() {
         if ($("#txtsharetext").val().trim() != "" && $("#txtclientshareEmail").val().trim() != "") {
+            var date1 = new Date($("#txtmeetingdatetime").val());
+            var date2 = new Date();
+            if (date1 > date2) {
             $.ajax({
                 type: "POST",
                 url: "/MCQ/ShareTestLink",
-                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val() },
+                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val() },
                 success: function (data) {
                     if (data == "success") {
                         alert("Successfully share the MCQ set.");
@@ -648,6 +670,10 @@
                     }
                 }
             });
+            }
+            else {
+                alert("Please enter future meeting date.");
+            }
         } else {
             alert("Please enter the emailids.");
         }
