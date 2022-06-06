@@ -150,5 +150,6 @@ namespace Risebird.Entities.ViewModel
         //public string roomId { get; set; }
         //public string meetingAgent { get; set; }
         //public string meetingAttendee { get; set; }
+        //public string videoUrl { get; set; }
     }
 }

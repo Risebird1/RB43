@@ -11,5 +11,6 @@ namespace Risebird.Entities.Data
         //public string VideoLink { get; set; }
         public DateTime interviewDate { get; set; }
         public DateTime RequestedDate { get; set; }
+        public string MeetingPlatform { get; set; }
     }
 }

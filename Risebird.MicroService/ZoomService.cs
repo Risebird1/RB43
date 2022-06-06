@@ -53,12 +53,15 @@ namespace Risebird.MicroService
                 //get all the completed meetings where video upload is pending
 
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
+                
+                var pendingZoomMeetings = pendingVideoMeetings?.Where(x=>x.MeetingPlatform == null || x.MeetingPlatform == MeetingPlatforms.Zoom);
+                var pendingRBMeetings = pendingVideoMeetings?.Where(x=>x.MeetingPlatform == MeetingPlatforms.RisebirdMeet);
 
                 //get jwt authentication token 
                 //string token = ZoomToken();
                 string token = _zoomHelper.ZoomToken();
-
-                Parallel.ForEach(pendingVideoMeetings, meeting =>
+                // zoom : upload video and dump video link in db
+                Parallel.ForEach(pendingZoomMeetings, meeting =>
                 {
 
                     try
@@ -177,6 +180,33 @@ namespace Risebird.MicroService
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                        return;
+                    }
+                });
+
+
+                // RBMeet : fetch video link and dump in db
+                Parallel.ForEach(pendingRBMeetings, meeting =>
+                {
+                    try
+                    {
+                        var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + meeting.ZoomMeetingId);
+                        var request = new RestRequest(Method.GET);
+                        request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);//"v7sy3J8cAFdEJp5S");
+                        IRestResponse response = _meeting.Execute(request);
+                        var content = response.Content;
+                        var convertedResponse = JsonConvert.DeserializeObject<RBMeetCreateMeetingResponse>(content);
+                        
+                        string rbMeetVideoLink = convertedResponse.videoUrl;
+                        int rbMeetVideoDuration = convertedResponse.videoDuration;
+
+                        _ = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, rbMeetVideoLink, rbMeetVideoDuration).Result;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
                         return;
                     }
                 });
