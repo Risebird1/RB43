@@ -395,14 +395,14 @@
             </button>
             <div class="modal-body">
                 <div class="col-md-12">
-                    <div class="sharing">
+                    @*<div class="sharing">
                         <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Please Select Video Recording Option</label>
                         <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
                             <option value="0">None</option>
                             <option value="1">Recording Only</option>
                             <option value="2">Recording and Uploading</option>
                         </select>
-                    </div>
+                    </div>*@
                     @if (ViewBag.Profile != "Client")
                     {
                         <div class="sharing">
@@ -637,7 +637,7 @@
             $.ajax({
                 type: "POST",
                 url: "/MCQ/ShareTestLink",
-                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), videoRecording: $("#txtvideorecording").val() },
+                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val() },
                 success: function (data) {
                     if (data == "success") {
                         alert("Successfully share the MCQ set.");
