@@ -15,7 +15,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Assessment Group Category")]
         public int? CategoryId { get; set; }
 
-        [DisplayName("Competency Level")]
+        [DisplayName("Difficulty Level")]
         public int? CompetencyLevelId { get; set; }
 
         [DisplayName("Seniority Level")]

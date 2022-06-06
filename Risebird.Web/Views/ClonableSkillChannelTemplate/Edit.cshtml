@@ -760,7 +760,7 @@
                                 <div class="row  mc-button-area pull-right">
                                     <div class="col-md-12">
 
-                                        @Html.ActionLink("Back", "CloneSkillChannnel", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                        @Html.ActionLink("Back", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
 
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
@@ -773,7 +773,7 @@
 
                             @Html.HiddenFor(m => m.UserId)
                             @*@Html.HiddenFor(m => m.IRFRecommendations.AssessmentGroupId)
-                            @Html.HiddenFor(m => m.IRFRecommendations.CategoryId)*@
+                                @Html.HiddenFor(m => m.IRFRecommendations.CategoryId)*@
                             @Html.HiddenFor(m => m.ClonableSkillChannelId)
                             @*@Html.HiddenFor(m => m.CreatedFromIRFId)*@
                             @Html.HiddenFor(m => m.IsTemplateJoinSelectGenskillsRequired)
