@@ -91,12 +91,12 @@ namespace Risebird.Entities.ViewModel
         public int Category { get; set; }
         [DisplayName("Is Relevant")]
         public bool IsRelevant { get; set; }
-        [DisplayName("Category Type")]
+        [DisplayName("Company Type")]
         public int CompanyType { get; set; }
         public SelectList CompanyTypeList { get; set; }
-        [DisplayName("Profile Type")]
+        [DisplayName("Difficulty Level")]
         public int ProfileType { get; set; }
-        [DisplayName("Competency Level")]
+        [DisplayName("Seniority Level")]
         public int CompetencyLevel { get; set; }
         public int Country { get; set; }
         [DisplayName("Per Hour Rate")]
