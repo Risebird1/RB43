@@ -22,6 +22,14 @@
     CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
 
 }
+<style>
+    [type="datetime-local"] {
+        background: #ececee !important;
+    }
+    .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
+        background: #ececee !important;
+    }
+</style>
 <script>
     var Header = "MCQ";
     $('#txtpageHeader').empty().html(Header);
