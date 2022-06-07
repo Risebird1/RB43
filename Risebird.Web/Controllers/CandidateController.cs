@@ -3415,6 +3415,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new ResumeListViewModel();
                         model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
+                        model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
                         model.IRFName = irfName;
                         model.IRFId = irfId;
                         model.Profile = profileName;
@@ -4302,6 +4303,37 @@ namespace Risebird.Web.Controllers
             var handler = new JwtSecurityTokenHandler();
             var tokenString = handler.WriteToken(secToken);
             return tokenString;
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ProcessingResume(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    {
+                        var result = await _candidateService.ProcessCandidateResume(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
         }
     }
 }

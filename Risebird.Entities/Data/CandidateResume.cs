@@ -10,5 +10,6 @@ namespace Risebird.Entities.Data
         public int AddedBy { get; set; }
         public string AddedByEmailId { get; set; }
         public DateTime AddedOn { get; set; }
+        public bool IsProcessed { get; set; }
     }
 }

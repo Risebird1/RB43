@@ -517,7 +517,29 @@ namespace Risebird.Repository
             }
             return null;
         }
-
-
+        public async Task<bool> ProcessCandidateResume(int id)
+        {
+            try
+            {
+                var query = "Update CandidateResume set IsProcessed=1 where id=@id  ";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

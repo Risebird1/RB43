@@ -216,5 +216,9 @@ namespace Risebird.Repository.Interface
         Task<bool> ApplyLateReportPenalty();
         bool UpdateCancelRecruiterInterviewDetails(int meetingid);
         Task<IEnumerable<MeetingVM>> GetInterviewsScheduledWithinNextTwoHours(string emailId);
+        Task<IEnumerable<MeetingVM>> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
+        Task<QCFormVM> FetchQCFormDetailsById(int interviewid);
+        Task<bool> AddorUpdateQCFormReport(QCFormVM model);
+
     }
 }
