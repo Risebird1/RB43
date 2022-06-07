@@ -1414,31 +1414,10 @@ namespace Risebird.Business
 
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
-                                    if (!reportModel.IsQCRequired)
-                                    {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                    }
-                                    else
-                                    {
-                                        if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                        }
-                                        else
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
-
-                                        }
-                                    }
-
+                                    await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
                                 }
-
                             }
-
                         }
-
                         activityTrackerModel.ActivityType = (int)ActivityTypes.CreateCandidateFeedback;
                         activityTrackerModel.Particulars = "Feedback for: " + reportModel.CandidateEmail;
                         activityTrackerModel.PerformedBy = emailId;
@@ -1475,29 +1454,10 @@ namespace Risebird.Business
 
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
-                                    if (!reportModel.IsQCRequired)
-                                    {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                    }
-                                    else
-                                    {
-                                        if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                        }
-                                        else
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
-                                        }
-                                    }
-
+                                    await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
                                 }
-
                             }
                         }
-
                         activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateCandidateFeedback;
                         activityTrackerModel.Particulars = "Feedback for: " + reportModel.CandidateEmail;
                         activityTrackerModel.PerformedBy = emailId;
