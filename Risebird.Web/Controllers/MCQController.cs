@@ -814,13 +814,13 @@ namespace Risebird.Web.Controllers
                                 TO = item,
                                 Subject = "Invitation for " + details.Title + " : " + ClientName
                             };
-                            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, DateTime.Now.AddHours(6), -330);
+                            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, 0);
                             Mail _mail1 = new Mail
                             {
                                 TO = ClientEmail,
                                 Subject = "Invitation for " + details.Title + " : " + item
                             };
-                            _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, DateTime.Now.AddHours(6), -330);
+                            _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, 0);
                             if (result.Contains("Mail sent successfully"))
                             {
                                 var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");

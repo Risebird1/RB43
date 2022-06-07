@@ -9,17 +9,18 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[sp_Risebirdusers]   
-    
-AS  
-BEGIN  
-select ul.id as Id,ul.idprofile,ul.FirstName,ul.LastName  
-,ul.EmailId,ul.MobileNumber,ul.isactive, pf.[Name] as ProfileName,ul.UserPassword    
-from [dbo].[UserList] ul  
-join [dbo].[Profile] pf on ul.idprofile = pf.id  
-where pf.Name in('Admin','HR','Finance','InterviewerManagement','SeniorInterviewerManagement','SeniorHR') order by pf.Name  
   
-END  
+CREATE PROCEDURE [dbo].[sp_Risebirdusers]     
+      
+AS    
+BEGIN    
+select ul.id as Id,ul.idprofile,ul.FirstName,ul.LastName    
+,ul.EmailId,ul.MobileNumber,ul.isactive, pf.[Name] as ProfileName,ul.UserPassword      
+from [dbo].[UserList] ul    
+join [dbo].[Profile] pf on ul.idprofile = pf.id    
+where pf.Name in('Admin','HR','Finance','InterviewerManagement','SeniorInterviewerManagement','SeniorHR','Quality Controller') order by pf.Name    
+    
+END    
 GO 
 
 
