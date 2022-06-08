@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.SchedulingLinkVM>
 @using Microsoft.AspNetCore.Http
 @{
-    ViewData["Title"] = "Interviewer Communicator";
+    ViewData["Title"] = "Communicator";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 <script>
-    var Header = "<div id='myinterview_1'>Interviewer Communicator</div>";
+    var Header = "<div id='myinterview_1'>Communicator</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <style>
@@ -33,7 +33,7 @@
             <div class="row card-header bg-w clearfix">
                 <div class="col-md-8 pull-left">
                     <div class="pull-left myinterview">
-                        <div class="mobile-view"> <h4 class="card-title"> Interviewer Communicator</h4></div>
+                        <div class="mobile-view"> <h4 class="card-title"> Communicator</h4></div>
                     </div>
                 </div>
                 <div class="col-md-4 pull-left">
@@ -129,6 +129,13 @@
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Audio Recording">
                                                                         <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Upload Resumes">
+                                                                        <span onclick="javascript:OpenuploadResumesModal('@item.id', '@item.IRFId');" title="Upload Resumes" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up-fill" viewBox="0 0 16 16">
+                                                                                <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z" />
+                                                                            </svg>
                                                                         </span>
                                                                     </button>
                                                                 </td>
@@ -280,6 +287,43 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div id="uploadResumesModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Upload Resume(s)</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;" onclick="closeuploadResumesModal()">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 col-sm-12">
+                    <input type="hidden" id="txtIRFId" />
+                    <input type="hidden" id="txtIRFName" />
+                    <div class="form-group">
+                        <label class="form-label"></label>
+                        <div class="col-sm-12">
+                            <div class="custom-file">
+                                <input type="file" class="choose-file" multiple accept=".pdf, .docx, .doc" id="ResumeFiles" style="margin-bottom: 10px;" />
+                                @*<input asp-for="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc">*@
+                                <label class="custom-file-label">Choose File(s)...</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 text-right">
+                    <button type="button" onclick="UploadCandidateResume()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Upload</button>
+                    <button type="button" onclick="closeuploadResumesModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -440,6 +484,44 @@
         html += '</div>';
         html += '</div>';
         $("#divIRFaudioRecording").empty().html(html);
+    }
+    function closeuploadResumesModal() {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "none";
+    }
+    function OpenuploadResumesModal(irfid, Irfname) {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "block";
+        $("#txtIRFId").val(irfid);
+        $("#txtIRFName").val(Irfname);
+    }
+    function UploadCandidateResume() {
+        if ($("#txtIRFId").val().trim() != "" && $("#txtIRFName").val().trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
+            $(".loader").show();
+            var files = $("#ResumeFiles").prop("files");
+            var form_data = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                form_data.append(files[i].name, files[i]);
+            }
+            form_data.append("IRFId", $("#txtIRFId").val());
+            form_data.append("IRFName", $("#txtIRFName").val());
+
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/UploadResumesPublicly",
+                data: form_data,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                processData: false,
+                success: function (data) {
+                    $(".loader").hide();
+                    alert(data);
+                    closeuploadResumesModal();
+                }
+            });
+        } else {
+            alert("Please fill all the fields.");
+        }
     }
 </script>
 <script>
