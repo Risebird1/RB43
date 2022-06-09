@@ -6,7 +6,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int UnassignedInterviewsCount { get; set; }
         public int UnfilledMeetingStatusCount { get; set; }
-        public int UnfilledInterviewStatusCount { get; set; }//Need TO remove
+        //public int UnfilledInterviewStatusCount { get; set; }
         public int UnfilledCommentsCount { get; set; }
         public int MissingZoomLink { get; set; }
         public int UnAttendedZoomLink { get; set; }

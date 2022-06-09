@@ -26,6 +26,7 @@
     [type="datetime-local"] {
         background: #ececee !important;
     }
+
     .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
         background: #ececee !important;
     }
@@ -415,6 +416,10 @@
                         <label class="label-field desp-label" for="Please enter Meeting Date Time" style="font-weight:normal;"> Meeting Date Time</label>
                         <input type="datetime-local" placeholder="Meeting Date Time" id="txtmeetingdatetime" class="form-control " style="margin-bottom:10px;" />
                     </div>
+                    <div class="sharing">
+                        <label class="label-field desp-label" style="font-weight:normal;">Link Validation(Hours)</label>
+                        <input type="number" placeholder="Link validation time(in hours) 1 to 48" id="txtExpireTime" min="1" max="48" class="form-control " style="margin-bottom:10px;" />
+                    </div>
                     @if (ViewBag.Profile != "Client")
                     {
                         <div class="sharing">
@@ -661,26 +666,30 @@
     }
     function shareTestLink() {
         if ($("#txtsharetext").val().trim() != "" && $("#txtclientshareEmail").val().trim() != "") {
-            var date1 = new Date($("#txtmeetingdatetime").val());
-            var date2 = new Date();
-            if (date1 > date2) {
-            $.ajax({
-                type: "POST",
-                url: "/MCQ/ShareTestLink",
-                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val() },
-                success: function (data) {
-                    if (data == "success") {
-                        alert("Successfully share the Phone Screen+ set.");
-                        closeSharePopUp();
+            if ($("#txtExpireTime").val().trim() != "" && parseInt($("#txtExpireTime").val()) >= 1 && parseInt($("#txtExpireTime").val()) <= 48) {
+                var date1 = new Date($("#txtmeetingdatetime").val());
+                var date2 = new Date();
+                if (date1 > date2) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/MCQ/ShareTestLink",
+                        data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val() },
+                        success: function (data) {
+                            if (data == "success") {
+                                alert("Successfully share the Phone Screen+ set.");
+                                closeSharePopUp();
 
-                    } else {
-                        alert("Error to share the test");
-                    }
+                            } else {
+                                alert("Error to share the test");
+                            }
+                        }
+                    });
                 }
-            });
-            }
-            else {
-                alert("Please enter future meeting date.");
+                else {
+                    alert("Please enter future meeting date.");
+                }
+            } else {
+                alert("Please enter link validation time in hours between 1 to 48.");
             }
         } else {
             alert("Please enter the emailids.");

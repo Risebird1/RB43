@@ -380,6 +380,7 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("TestComplete", new { status = "Unauthorized" });
             }
+
             var itemshareupdate = candidateShare.FirstOrDefault();
             _mCQService.UpdateShareMCQEmailStatusByid(itemshareupdate.id, 1);
 
@@ -389,6 +390,15 @@ namespace Risebird.Web.Controllers
             if (candidateDetails.Where(x => x.MCQId == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
             {
                 return RedirectToAction("TestComplete", new { status = "TestCompleted" });
+            }
+            //Check Time Validation
+            var _candidate = candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.MCQId == Id).FirstOrDefault();
+            if (_candidate.Expiretime > 0)
+            {
+                if (_candidate.ShareDate.AddHours(_candidate.Expiretime) <= DateTime.Now)
+                {
+                    return RedirectToAction("TestComplete", new { status = "TimeExpired" });
+                }
             }
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
             var questions = _mCQService.GetMCQquestionsByMCQId(Id);
@@ -772,7 +782,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, DateTime MeetingDate, int Expiretime)
         {
             try
             {
@@ -828,6 +838,7 @@ namespace Risebird.Web.Controllers
                                 _list.MCQId = Id;
                                 _list.EmailAddress = item;
                                 _list.roomId = _meetinglinks.roomId;
+                                _list.Expiretime = Expiretime;
                                 _mCQService.AddMCQSetShareList(_list);
                             }
                         }

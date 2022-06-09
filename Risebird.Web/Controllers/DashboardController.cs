@@ -1514,5 +1514,47 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UnProcessedResume(int actiontype)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+                        var modelList = new List<MeetingVM>();
+                        modelList = await _dashboardService.FetchRibbonDetailsValues("UnProcessedResume", emailid, actiontype, profileName);
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
+                        ViewBag.PageHeader = "";
+                        ViewBag.Actiontype = actiontype;
+                        ViewBag.PageHeader = "911 Dashboard / Unprocessed Resume";
+                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

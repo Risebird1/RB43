@@ -183,27 +183,20 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('QcPending')"><strong title="Unassigned Interview Count: 0"><span id="ribbonunfilledinterviewstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</span></strong></span>*@
-
-
                                         <div class="flipper">
-                                            @*<div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QcPending')">*@
-                                            <div class="front-card countdown__timer" style="cursor:pointer">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
                                                     <span style="cursor:pointer" id="ribbonnotprocessedcandidateresume" class="card-title">@Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span>
                                                 </div>
                                             </div>
-                                            @*<div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QcPending')">*@
-                                            <div class="back-card countdown__timer" style="cursor:pointer">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
                                                     <span style="cursor:pointer" id="ribbonnotprocessedcandidateresume_1" class="card-title">@Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span>
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </td>
                                     <td class="text-left un-left"><strong>Not Processed Resume</strong></td>
 
@@ -1382,6 +1375,9 @@
     }
     function OpenRibbonDetails(actionstatus) {
         window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus;
+    }
+    function OpenRibbonDetailsUnProcessedResume(actionstatus) {
+        window.location.href = "/Dashboard/UnProcessedResume";
     }
 </script>
 <script>

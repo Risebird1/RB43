@@ -3401,7 +3401,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Resumes(int irfId, string irfName)
+        public async Task<IActionResult> Resumes(int irfId, string irfName, int actiontype)
         {
             try
             {
@@ -3423,6 +3423,14 @@ namespace Risebird.Web.Controllers
                         {
                             model.Message = TempData["SuccessErrorMessageCandidateResume"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidateResume");
+                        }
+                        if (actiontype == 1)
+                        {
+                            ViewBag.backbutton = false;
+                        }
+                        else
+                        {
+                            ViewBag.backbutton = true;
                         }
                         return View(model);
                     }
