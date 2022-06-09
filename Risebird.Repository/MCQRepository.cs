@@ -162,6 +162,7 @@ namespace Risebird.Repository
                     parameters.Add("@Videorecording", 0);
                     parameters.Add("@status", _list.status);
                     parameters.Add("@roomId", _list.roomId);
+                    parameters.Add("@Expiretime", _list.Expiretime);
 
                     await SqlMapper.QueryAsync(con, "usp_AddMCQSetShareCandidate", parameters,
                          commandType: CommandType.StoredProcedure);

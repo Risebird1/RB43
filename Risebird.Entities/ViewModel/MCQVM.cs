@@ -93,6 +93,8 @@ namespace Risebird.Entities.ViewModel
         public string PartitionKey { get; set; }
         public int id { get; set; }
         public string roomId { get; set; }
+        public DateTime ShareDate { get; set; }
+        public int Expiretime { get; set; }
     }
     public class ProfileTypeSkills
     {

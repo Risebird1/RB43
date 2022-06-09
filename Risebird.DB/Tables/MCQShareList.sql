@@ -13,10 +13,20 @@ CREATE TABLE [dbo].[MCQShareList](
 	[status] [int] NULL,
 	[ShareDate] [datetime] NULL,
 	[roomId] [varchar](50) NULL,
+	[Expiretime] [int] NULL,
  CONSTRAINT [PK_MCQShareList] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Expiretime')
+      AND Object_ID = Object_ID(N'MCQShareList'))
+BEGIN
+    ALTER TABLE MCQShareList
+    Add Expiretime int
 END
 GO
