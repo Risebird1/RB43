@@ -2,7 +2,6 @@
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
@@ -24,6 +23,6 @@ namespace Risebird.Business.Interface
         int AutoCreateEvent(daytimes_report model);
         int FetchEventidByUniqueid(string _uniqueid);
         bool UpdateSchedulingLinkDetails(string _uniqueid);
-        Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId,string Uniqueid);
+        Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
     }
 }

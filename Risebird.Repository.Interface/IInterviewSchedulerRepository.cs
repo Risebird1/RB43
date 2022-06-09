@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Risebird.Entities.ViewModel;
+﻿using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
@@ -25,6 +23,6 @@ namespace Risebird.Repository.Interface
         int FetchEventidByUniqueid(string _uniqueid);
         bool UpdateSchedulingLinkDetails(string _uniqueid);
         string GenerateOneTimeEvent(string olduniqueid);
-        Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId,string Uniqueid);
+        Task<bool> CheckInterviewConcurrency(DateTime interviewdate, string IRFId, string Uniqueid);
     }
 }

@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
@@ -167,10 +166,10 @@ namespace Risebird.Web.Controllers
                     {
                         ClonableTemplateListVM model = new ClonableTemplateListVM();
                         model.LoggedInUser = emailid;
-                        if(profileName == "Client")
+                        if (profileName == "Client")
                         {
                             model.ClientId = await _clientService.GetClientByEmailId(emailid);
-                            if(model.ClientId.HasValue)
+                            if (model.ClientId.HasValue)
                             {
                                 model.ClientCompanyName = _clientService.GetClient(model.ClientId.Value).Name;
                             }
@@ -352,7 +351,7 @@ namespace Risebird.Web.Controllers
             model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
             model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
         }
-        
+
         [HttpGet]
         private void SetEditTemplateParameters(EditSkillChannelTemplateVM model)
         {
@@ -362,7 +361,7 @@ namespace Risebird.Web.Controllers
             model.InterviewerList = new SelectList(_irfService.GetInterviewers(model.AssessmentGroupId?.ToString()), "UserId", "EmailId");
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public SelectList GetInterviewers(string assessmentgroupid)
@@ -380,7 +379,7 @@ namespace Risebird.Web.Controllers
             //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
             return new SelectList(list, "Value", "Text");
         }
-        
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -337,9 +337,9 @@ namespace Risebird.Repository
                 parameters.Add("@SessionId", sessionId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                     SqlMapper.Query<string>(con, "[dbo].[sp_UpdateSingoutDetails]", parameters,
-                        commandType: StoredProcedure);
-                   
+                    SqlMapper.Query<string>(con, "[dbo].[sp_UpdateSingoutDetails]", parameters,
+                       commandType: StoredProcedure);
+
                 }
             }
             catch (SqlException ex)

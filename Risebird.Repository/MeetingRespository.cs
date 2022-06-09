@@ -5726,7 +5726,7 @@ namespace Risebird.Repository
                     parameters.Add("@IsCommentfilled", model.IsCommentfilled);
                     parameters.Add("@IsMeetingStatusfilled", model.IsMeetingStatusfilled);
                     parameters.Add("@IsRelevancequestions", model.IsRelevancequestions);
-                    
+
                     parameters.Add("@IsDelayresuminginterview", model.IsDelayresuminginterview);
                     parameters.Add("@IsBackgroundnoise", model.IsBackgroundnoise);
                     parameters.Add("@IsPoorinterviewerinfrastructure", model.IsPoorinterviewerinfrastructure);

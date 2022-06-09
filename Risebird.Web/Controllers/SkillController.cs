@@ -49,7 +49,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> AddSkill()
         {
