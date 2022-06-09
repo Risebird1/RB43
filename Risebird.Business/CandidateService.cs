@@ -380,7 +380,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _candidateRepository.DeleteCandidateResume(id);
+                return await _candidateRepository.ProcessCandidateResume(id);
             }
             catch (Exception e)
             {

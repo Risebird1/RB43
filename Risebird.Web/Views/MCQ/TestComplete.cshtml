@@ -30,6 +30,10 @@
         {
             <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">You are not authorized to take this test.</h1></div>
         }
+        else if (ViewBag.Action == "TimeExpired")
+        {
+            <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">Your link is expired, please contact to HR for further information.</h1></div>
+        }
         else
         {
             <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">You have already attempted this test.</h1></div>
