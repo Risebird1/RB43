@@ -22,22 +22,19 @@
 
                 <div class="pull-right">
                     <div>
-
-                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
+                        @if (ViewBag.backbutton)
                         {
-                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
-
-                            @*@Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { irfId = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
-
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#uploadResumesModal">
-
-                                <span class="mdc-button__label"><span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Upload Resume(s)" data-original-title="Upload Resume(s)"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Upload Resume(s)</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
+                            @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
+                            {
+                                <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateResumesExporttoExcel", "Candidate",  new { irfId = Model.IRFId, irfName = Model.IRFName })'" style=" position: relative; top: 10px; }"></i></span>
+                                @*@Html.ActionLink("Upload Resume(s)", "UploadResumes", "Candidate", new { irfId = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#uploadResumesModal">
+                                    <span class="mdc-button__label"><span class="fa fa-file" data-toggle="tooltip" data-placement="top" title="Upload Resume(s)" data-original-title="Upload Resume(s)"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Upload Resume(s)</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            }
+                            @Html.ActionLink("Back", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                         }
-
-
-                        @Html.ActionLink("Back", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                     </div>
                 </div>
             </div>
@@ -194,9 +191,12 @@
                                                             </button>
                                                             @if (!item.IsProcessed)
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Processed">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Processed">
                                                                     <span onclick="javascript:Processed('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
+                                                                            <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+                                                                            <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
+                                                                        </svg>
                                                                     </span>
                                                                 </button>
                                                             }
