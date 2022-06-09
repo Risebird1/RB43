@@ -908,25 +908,25 @@ namespace Risebird.Repository
                         query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID union select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId= im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.Emailid =@emailID";
                     }
                 }
-                else if (actionstatus == "QcPending")
-                {
-                    // query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
-                    if (actiontype == 0)
-                    {
-                        if (profileName == "SeniorHR")
-                        {
-                            query = "select distinct * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id join IRF on irf.IRFId = im.IRFId join Client cl on cl.id=irf.ClientId join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ulsh.Emailid= @Emailid";
-                        }
-                        else
-                        {
-                            query = "select distinct * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id join IRF on irf.IRFId = im.IRFId join Client cl on cl.id=irf.ClientId left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7";
-                        }
-                    }
-                    else
-                    {
-                        query = "select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on cl.id=irf.ClientId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID union select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on cl.id=irf.ClientId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID";
-                    }
-                }
+                //else if (actionstatus == "QcPending")
+                //{
+                //    // query = "select * from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewer is not null and ic.MeetingStatus=4 and ic.QCStatus is null and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                //    if (actiontype == 0)
+                //    {
+                //        if (profileName == "SeniorHR")
+                //        {
+                //            query = "select distinct * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id join IRF on irf.IRFId = im.IRFId join Client cl on cl.id=irf.ClientId join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ulsh.Emailid= @Emailid";
+                //        }
+                //        else
+                //        {
+                //            query = "select distinct * from InterviewMeetings im inner join InterviewComments ic on ic.InterviewId= im.id join IRF on irf.IRFId = im.IRFId join Client cl on cl.id=irf.ClientId left join QCFeedbackReport qc on qc.InterviewId = im.id where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7";
+                //        }
+                //    }
+                //    else
+                //    {
+                //        query = "select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on cl.id=irf.ClientId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID union select distinct im.*,irf.*,ic.*, cl.[Name] from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on cl.id=irf.ClientId inner join InterviewComments ic on ic.InterviewId= im.id left join QCFeedbackReport qc on qc.InterviewId = im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and (ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null or qc.QCStatus=2) and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ul.EmailId=@emailID";
+                //    }
+                //}
                 else if (actionstatus == "UnAssignedCoordianter")
                 {
                     if (profileName == "SeniorHR")
@@ -990,6 +990,24 @@ namespace Risebird.Repository
                     else
                     {
                         query = "select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and ul.EmailId=@emailID and DATEDIFF(DAY, im.interviewDate, GETDATE())<7 union select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and ul.EmailId=@emailID and DATEDIFF(DAY, im.interviewDate, GETDATE())<7";
+                    }
+                }
+                else if (actionstatus == "UnProcessedResume")
+                {
+                    if (actiontype == 0)
+                    {
+                        if (profileName == "SeniorHR")
+                        {
+                            query = "Select IRF.Id as irfIntId,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite as PrimarySkill,cl.Name as Client,count(cr.id) as TotalView from IRF join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join CandidateResume cr on cr.IRFId=IRF.id where ulsh.Emailid= @Emailid and ISNULL(cr.IsProcessed,0)=0 group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name";
+                        }
+                        else
+                        {
+                            query = "select IRF.Id as irfIntId,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite as PrimarySkill,cl.Name as Client,count(cr.id) as TotalView from IRF join Client cl on cl.id=irf.ClientId join CandidateResume cr on cr.IRFId=IRF.id Where ISNULL(cr.IsProcessed,0)=0 group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name";
+                        }
+                    }
+                    else
+                    {
+                        query = "Select CR.id as irfIntId,CR.IRFId,CR.JDTiltle,CR.Name as Client,Cr.PrimarySkillInvite as PrimarySkill,Count(CR.Candidateid) as TotalView from (select IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,cr.id as Candidateid from  IRF join Client cl on irf.ClientId=cl.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId join CandidateResume cr on cr.IRFId=IRF.id where ul.EmailId=@emailID and ISNULL(cr.IsProcessed,0)=0 union select IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,cr.id as Candidateid from IRF join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr join CandidateResume cr on cr.IRFId=IRF.id where ul.EmailId=@emailID and ISNULL(cr.IsProcessed,0)=0 ) as Cr Group By CR.id,CR.IRFId,CR.JDTiltle,CR.Name,Cr.PrimarySkillInvite";
                     }
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))

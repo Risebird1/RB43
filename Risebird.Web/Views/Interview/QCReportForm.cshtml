@@ -1,0 +1,322 @@
+﻿@model Risebird.Entities.ViewModel.QCFormVM
+
+@{
+    ViewData["Title"] = "QC Form";
+    ViewBag.PageHeader = "QC Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<script>
+    var Header = "<div>QC Form</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+@*<script>
+        document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
+    </script>*@
+<div class="main-panel" id="main-panel">
+    <div class="mt50 col-md-12">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> QC Form</h4></div>
+                </div>
+                <div class="pull-right">
+                    <div>
+                        @*<a href="/MCQ/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content dataloading client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/Interview/QCReportForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+                            @Html.HiddenFor(m => m.Interviewid)
+                            <div class="canvas_div_pdf">
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Video Quality Check</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsCodingPresent, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsCodingPresent, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsCodingPresent, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsVideoClearQuality, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsVideoClearQuality, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsVideoClearQuality, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsInterviewerCommunicationClear, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsInterviewerCommunicationClear, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsInterviewerCommunicationClear, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsSufficientVideoDuration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsSufficientVideoDuration, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsSufficientVideoDuration, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsInterviewStructured, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsInterviewStructured, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsInterviewStructured, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Feedback Report Quality Check</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsScoringrubriccorrect, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsScoringrubriccorrect, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsScoringrubriccorrect, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsQuestionswithtime, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsQuestionswithtime, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsQuestionswithtime, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsCommentfilled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsCommentfilled, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsCommentfilled, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsMeetingStatusfilled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsMeetingStatusfilled, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsMeetingStatusfilled, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsRelevancequestions, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsRelevancequestions, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsRelevancequestions, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Hygiene</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsDelayresuminginterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsDelayresuminginterview, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsDelayresuminginterview, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsBackgroundnoise, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsBackgroundnoise, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsBackgroundnoise, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsPoorinterviewerinfrastructure, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsPoorinterviewerinfrastructure, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsPoorinterviewerinfrastructure, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Candidate Handling</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsPoorhandlingcandidatequery, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsPoorhandlingcandidatequery, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsPoorhandlingcandidatequery, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsPersonalquestions, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsPersonalquestions, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsPersonalquestions, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsAugmenting, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsAugmenting, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsAugmenting, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsBiasedView, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsBiasedView, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsBiasedView, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsLettingcandidatespeak, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsLettingcandidatespeak, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsLettingcandidatespeak, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Proctoring</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsSuspiciousappfound, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsSuspiciousappfound, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsSuspiciousappfound, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.IsLipsyncissue, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    <div style="padding-left:15px">
+                                                        @Html.RadioButtonFor(model => model.IsLipsyncissue, true) Yes
+                                                        @Html.RadioButtonFor(model => model.IsLipsyncissue, false) No
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.Profile != "Interviewer")
+                            {
+                                <div class="card-footer ">
+                                    <div class="row">
+                                        <div class="col-md-12 mc-button-area">
+                                            <a href="/Interview/CompletedInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

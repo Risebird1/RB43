@@ -5,7 +5,6 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.Entities.Enum;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -37,7 +36,7 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-                
+
                 var sessionId = HttpContext.Session.Id;
                 await _userService.ClearSessionForOthersUsers(emailId);
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId, sessionId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
@@ -102,9 +101,9 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("SignOut", "Session");
                     }
                     var menuslink = menuAccess.sUrl.Split('/');
-                   
-                        return RedirectToAction(menuslink.Last(), menuslink.GetValue(1).ToString());
-                    
+
+                    return RedirectToAction(menuslink.Last(), menuslink.GetValue(1).ToString());
+
                 }
                 else
                 {
@@ -112,7 +111,7 @@ namespace Risebird.Web.Controllers
                 }
             }
             return RedirectToAction("SignOut", "Session");
-           
+
         }
     }
 }

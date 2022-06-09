@@ -305,7 +305,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Add()
@@ -345,7 +345,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -428,7 +428,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -553,7 +553,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ResetUnapprovedInterviewsFilter()

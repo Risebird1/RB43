@@ -350,7 +350,7 @@ namespace Risebird.Repository
                 {
                     var results = await SqlMapper.QueryAsync<AssignmentVM>(con, "[usp_GetAssessmentGroupsByCategory]", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return results ;
+                    return results;
                 }
             }
 

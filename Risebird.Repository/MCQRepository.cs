@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -162,6 +161,7 @@ namespace Risebird.Repository
                     parameters.Add("@Videorecording", 0);
                     parameters.Add("@status", _list.status);
                     parameters.Add("@roomId", _list.roomId);
+                    parameters.Add("@Expiretime", _list.Expiretime);
 
                     await SqlMapper.QueryAsync(con, "usp_AddMCQSetShareCandidate", parameters,
                          commandType: CommandType.StoredProcedure);

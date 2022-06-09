@@ -1,5 +1,4 @@
-﻿using FileTypeInterrogator;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -3402,7 +3401,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Resumes(int irfId, string irfName)
+        public async Task<IActionResult> Resumes(int irfId, string irfName, int actiontype)
         {
             try
             {
@@ -3415,6 +3414,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new ResumeListViewModel();
                         model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
+                        model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
                         model.IRFName = irfName;
                         model.IRFId = irfId;
                         model.Profile = profileName;
@@ -3423,6 +3423,14 @@ namespace Risebird.Web.Controllers
                         {
                             model.Message = TempData["SuccessErrorMessageCandidateResume"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidateResume");
+                        }
+                        if (actiontype == 1)
+                        {
+                            ViewBag.backbutton = false;
+                        }
+                        else
+                        {
+                            ViewBag.backbutton = true;
                         }
                         return View(model);
                     }
@@ -4302,6 +4310,117 @@ namespace Risebird.Web.Controllers
             var handler = new JwtSecurityTokenHandler();
             var tokenString = handler.WriteToken(secToken);
             return tokenString;
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ProcessingResume(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    {
+                        var result = await _candidateService.ProcessCandidateResume(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadResumesPublicly(UploadCandidateResumesViewModel model)
+        {
+            try
+            {
+                model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
+                model.IRFName = Request.Form["IRFName"].ToString();
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (Request.Form.Files.Count() > 0)
+                {
+                    var addedByUserId = _irfService.GetUserId(emailId);
+                    if (addedByUserId > 0)
+                    {
+                        var resumeList = new List<CandidateResume>();
+                        foreach (var file in Request.Form.Files)
+                        {
+                            var fileName = file.FileName.Replace(" ", "_");
+                            FileInfo fi = new FileInfo(fileName);
+                            if (fi.Extension.ToLower() == ".docx" || fi.Extension.ToLower() == ".doc" || fi.Extension.ToLower() == ".pdf")
+                            {
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+
+                                    await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(fileName);
+                                    string uploadedaudioFileURL = blob.Uri.ToString();
+                                    string sasUrl = string.Empty;
+                                    if (uploadedaudioFileURL == null)
+                                    {
+                                        return Json("Resume upload has failed.");
+                                    }
+                                    else
+                                    {
+                                        var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                        sasUrl = uploadedaudioFileURL + "?" + sas;
+                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                    }
+                                }
+                                else
+                                {
+                                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
+                            }
+                            else
+                            {
+                                return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                            }
+                        }
+                        var result = await _candidateService.AddResume(resumeList);
+                        if (result)
+                        {
+                            return Json("Resume(s) has been uploaded Successfully!");
+                        }
+                        else
+                        {
+                            return Json("Failed to upload Resume(s)!");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Failed to upload Resume(s)!");
+                    }
+                }
+                else
+                {
+                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to upload Resume(s)!");
+            }
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Clients;

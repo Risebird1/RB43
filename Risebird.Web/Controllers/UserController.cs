@@ -85,7 +85,7 @@ namespace Risebird.Web.Controllers
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
-                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer", "Candidate", "ResumeEvaluator" };
+                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -169,7 +169,7 @@ namespace Risebird.Web.Controllers
                     {
                         List<Profile> profiles = _profileService.GetProfile();
 
-                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter" };
+                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -803,7 +803,7 @@ namespace Risebird.Web.Controllers
                             var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
                             uploadedFileURL = blob.Uri.ToString();
                         }
-                        
+
                         if (uploadedFileURL == null)
                         {
                             ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
@@ -1210,7 +1210,7 @@ namespace Risebird.Web.Controllers
                                 var blob = containerRef.GetBlockBlobReference(qcInterviewer.File.FileName);
                                 uploadedFileURL = blob.Uri.ToString();
                             }
-                            
+
                             if (uploadedFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
@@ -1926,7 +1926,7 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
-        
+
         [HttpGet]
         public async Task<JsonResult> makecall(string sid, int interviewid, string IRFId, string CandidateEmail)
         {
@@ -2021,14 +2021,14 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpPost]
         public JsonResult DeleteInstaZoomAccount(int Accountid)
         {
             var resultset = _userService.DeleteInstaZoomAccount(Accountid);
             return Json(resultset);
         }
-        
+
         [HttpPost]
         public JsonResult AddInstaZoomAccount(string AccountEmail)
         {

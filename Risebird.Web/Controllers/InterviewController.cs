@@ -118,10 +118,6 @@ namespace Risebird.Web.Controllers
 
                             foreach (var item in modelList)
                             {
-                                if (item.IsQCRequired)
-                                {
-                                    item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
-                                }
                                 item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                                 if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -143,30 +139,10 @@ namespace Risebird.Web.Controllers
                                 }
 
                                 //interview status
-                                if (item.IsQCRequired)
+                                if (item.InterviewStatus.HasValue)
                                 {
-                                    if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                                    {
-                                        item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                                    }
-                                    else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                                    {
-                                        item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
-                                    }
-                                    else if (item.InterviewStatus.HasValue)
-                                    {
-                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-
-                                    }
+                                    item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                                 }
-                                else
-                                {
-                                    if (item.InterviewStatus.HasValue)
-                                    {
-                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                                    }
-                                }
-
                             }
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
 
@@ -207,10 +183,6 @@ namespace Risebird.Web.Controllers
                             }).ToList();
                             foreach (var item in modelList)
                             {
-                                if (item.IsQCRequired)
-                                {
-                                    item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
-                                }
                                 item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                                 if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -231,28 +203,9 @@ namespace Risebird.Web.Controllers
 
                                 }
 
-                                if (item.IsQCRequired)
+                                if (item.InterviewStatus.HasValue)
                                 {
-                                    if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                                    {
-                                        item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                                    }
-                                    else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                                    {
-                                        item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
-                                    }
-                                    else if (item.InterviewStatus.HasValue)
-                                    {
-                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-
-                                    }
-                                }
-                                else
-                                {
-                                    if (item.InterviewStatus.HasValue)
-                                    {
-                                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                                    }
+                                    item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                                 }
                             }
                             //modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
@@ -311,10 +264,6 @@ namespace Risebird.Web.Controllers
 
                     foreach (var item in modelList)
                     {
-                        if (item.IsQCRequired)
-                        {
-                            item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
-                        }
                         item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                         if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -336,32 +285,11 @@ namespace Risebird.Web.Controllers
                         }
 
                         //interview status
-
-                        if (item.IsQCRequired)
+                        if (item.InterviewStatus.HasValue)
                         {
-                            if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                            {
-                                item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                            }
-                            else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                            {
-                                item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
-                            }
-                            else if (item.InterviewStatus.HasValue)
-                            {
-                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-
-                            }
-                        }
-                        else
-                        {
-                            if (item.InterviewStatus.HasValue)
-                            {
-                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            }
+                            item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                         }
                     }
-
 
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.RFID = filter.RFID == null ? filter.RFID = modelList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -910,10 +838,6 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in modelList)
                         {
-                            if (item.IsQCRequired)
-                            {
-                                item.QCStatusStatusDesc = item.QCStatus.HasValue ? ((QCStatus)item.QCStatus).GetDescription() : string.Empty;
-                            }
                             item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
 
                             if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
@@ -935,29 +859,9 @@ namespace Risebird.Web.Controllers
                             }
 
                             //interview status
-
-                            if (item.IsQCRequired)
+                            if (item.InterviewStatus.HasValue)
                             {
-                                if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                                {
-                                    item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                                }
-                                else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                                {
-                                    item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
-                                }
-                                else if (item.InterviewStatus.HasValue)
-                                {
-                                    item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-
-                                }
-                            }
-                            else
-                            {
-                                if (item.InterviewStatus.HasValue)
-                                {
-                                    item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                                }
+                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                             }
                         }
 
@@ -6816,5 +6720,218 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+
+        #region For QC
+        public async Task<IActionResult> CompletedInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Quality Controller")
+                    {
+                        if (TempData["SuccessErrorMessageQCForm"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                            TempData.Remove("SuccessErrorMessageQCForm");
+                        }
+                        List<MeetingVM> modelList = new List<MeetingVM>();
+                        if (HttpContext.Session.GetString("CompletedInterviewfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CompletedInterviewfilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                modelList = _meetingService.GetCompletedInterviewList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
+                            }
+                            modelList = modelList.Select(x =>
+                            {
+                                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                                return x;
+                            }).ToList();
+
+                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                            filter.RFID = filter.RFID == null ? filter.RFID = modelList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+                            filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+                            filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+                            filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                            filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
+
+                            modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                            && filter.RFID.Contains(c.IRFId)
+                            && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                            && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
+                            && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                            && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)).ToList();
+                        }
+                        else
+                        {
+                            modelList = _meetingService.GetCompletedInterviewList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                            modelList = modelList.Select(x =>
+                            {
+                                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                                return x;
+                            }).ToList();
+                        }
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> CompletedInterviews(InterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Quality Controller")
+                    {
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("CompletedInterviewfilters", JsonConvert.SerializeObject(filter));
+                        }
+                        return RedirectToAction("CompletedInterviews");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IActionResult> ResetCompletedInterviewsFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("CompletedInterviewfilters");
+                    return RedirectToAction("CompletedInterviews");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        //Create QCForm
+        public async Task<IActionResult> QCReportForm(int interviewid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Quality Controller" || profileName == "Interviewer")
+                    {
+                        var model = _meetingService.FetchQCFormDetailsById(interviewid);
+                        if (model == null)
+                        {
+                            model = new QCFormVM();
+                        }
+                        model.Profile = profileName;
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> QCReportForm(QCFormVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Quality Controller")
+                    {
+                        model.Emailid = emailId;
+                        if (_meetingService.AddorUpdateQCFormReport(model))
+                        {
+                            TempData["SuccessErrorMessageQCForm"] = "QC Form successfully saved.";
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageQCForm"] = "Fail to save QC Form.";
+                        }
+                        return RedirectToAction("CompletedInterviews");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageQCForm"] = "Fail to save QC Form.";
+                return RedirectToAction("CompletedInterviews");
+            }
+        }
+        //Save QCForm
+        #endregion
     }
 }

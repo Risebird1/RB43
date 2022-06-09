@@ -5642,7 +5642,7 @@ namespace Risebird.Repository
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@timeNow", DateTime.Now);
-                parameters.Add("@emailId",emailId);
+                parameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetInterviewsScheduledWithinNextTwoHours", parameters,
@@ -5656,6 +5656,104 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<IEnumerable<MeetingVM>> GetCompletedInterviewList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("startDate", startDate);
+                    parameters.Add("endDate", endDate);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetCompletedInterviewMeetings", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<QCFormVM> FetchQCFormDetailsById(int interviewid)
+        {
+            try
+            {
+                var query = "Select * From Trans_QCFormReport where Interviewid=@Interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var results = con.Query<QCFormVM>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> AddorUpdateQCFormReport(QCFormVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Interviewid", model.Interviewid);
+                    parameters.Add("@Emailid", model.Emailid);
+                    parameters.Add("@IsCodingPresent", model.IsCodingPresent);
+                    parameters.Add("@IsVideoClearQuality", model.IsVideoClearQuality);
+                    parameters.Add("@IsInterviewerCommunicationClear", model.IsInterviewerCommunicationClear);
+                    parameters.Add("@IsSufficientVideoDuration", model.IsSufficientVideoDuration);
+                    parameters.Add("@IsInterviewStructured", model.IsInterviewStructured);
+
+                    parameters.Add("@IsScoringrubriccorrect", model.IsScoringrubriccorrect);
+                    parameters.Add("@IsQuestionswithtime", model.IsQuestionswithtime);
+                    parameters.Add("@IsCommentfilled", model.IsCommentfilled);
+                    parameters.Add("@IsMeetingStatusfilled", model.IsMeetingStatusfilled);
+                    parameters.Add("@IsRelevancequestions", model.IsRelevancequestions);
+
+                    parameters.Add("@IsDelayresuminginterview", model.IsDelayresuminginterview);
+                    parameters.Add("@IsBackgroundnoise", model.IsBackgroundnoise);
+                    parameters.Add("@IsPoorinterviewerinfrastructure", model.IsPoorinterviewerinfrastructure);
+
+                    parameters.Add("@IsPoorhandlingcandidatequery", model.IsPoorhandlingcandidatequery);
+                    parameters.Add("@IsPersonalquestions", model.IsPersonalquestions);
+                    parameters.Add("@IsAugmenting", model.IsAugmenting);
+                    parameters.Add("@IsBiasedView", model.IsBiasedView);
+                    parameters.Add("@IsLettingcandidatespeak", model.IsLettingcandidatespeak);
+
+                    parameters.Add("@IsSuspiciousappfound", model.IsSuspiciousappfound);
+                    parameters.Add("@IsLipsyncissue", model.IsLipsyncissue);
+
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_AddorUpdateQCFormReport", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

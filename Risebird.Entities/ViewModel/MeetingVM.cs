@@ -276,6 +276,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsProctor { get; set; }
         public string Cancellationsource { get; set; }
         public string ClientAction { get; set; }
+        public int QCPresent { get; set; }
     }
     public class VedioComments
     {

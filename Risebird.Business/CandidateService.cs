@@ -274,7 +274,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                   // model.IsEdited = false;
+                    // model.IsEdited = false;
 
                     var selectabilityDetails = await _evaluatorRespository.GetTransSelectability(irfId);
                     var selectabilityList = new List<SelectabilityEvaluatorReport>();
@@ -297,7 +297,7 @@ namespace Risebird.Business
                 }
                 var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(candidateId, irfId);
 
-                
+
 
                 if (joinabilityReport != null && joinabilityReport.Any())
                 {
@@ -329,7 +329,7 @@ namespace Risebird.Business
                     model.JoinabilityReportCollection = (IList<JoinabilityHRReport>)joinabilityList;
                 }
 
-                if ((joinabilityReport != null && joinabilityReport.Any()) || (selectabilityReport !=null && selectabilityReport.Any()))
+                if ((joinabilityReport != null && joinabilityReport.Any()) || (selectabilityReport != null && selectabilityReport.Any()))
                 {
                     model.IsEdited = true;
                 }
@@ -347,7 +347,7 @@ namespace Risebird.Business
                 model.IRFId = irfId;
                 model.IRFName = candidateDetails.IRFName;
                 model.CandidateEmailId = candidateDetails.EmailId;
-               
+
                 model.FitmentStatus = candidateDetails.FitmentStatus;
                 model.PriorityStatus = candidateDetails.PriorityStatus;
                 model.CompletionStatus = candidateDetails.CompletionStatus;
@@ -376,6 +376,17 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public async Task<bool> ProcessCandidateResume(int id)
+        {
+            try
+            {
+                return await _candidateRepository.ProcessCandidateResume(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
 
 namespace Risebird.MicroService
 {
@@ -52,7 +49,7 @@ namespace Risebird.MicroService
                         Mail _mail = new Mail
                         {
                             TO = item.CandidateEmail,
-                          
+
                             Subject = "Risebird: Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, yesbutton, nobutton);

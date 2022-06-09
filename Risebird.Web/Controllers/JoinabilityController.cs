@@ -47,7 +47,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddJoinability(JoinabilityMatrix model)
@@ -88,7 +88,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> AddJoinability()
         {
@@ -110,7 +110,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> EditJoinability(int id)
         {

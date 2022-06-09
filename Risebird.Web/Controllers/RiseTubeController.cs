@@ -3140,7 +3140,7 @@ namespace Risebird.Web.Controllers
                 {
                     model = new InterviewerRating();
                 }
-                if(!string.IsNullOrEmpty(model.Comment))
+                if (!string.IsNullOrEmpty(model.Comment))
                 {
                     model.Comment = System.Web.HttpUtility.HtmlDecode(model.Comment);
                 }

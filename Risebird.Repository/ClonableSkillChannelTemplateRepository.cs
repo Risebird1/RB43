@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -73,7 +72,7 @@ namespace Risebird.Repository
                     }
 
                     DataTable selectabilityDt = new DataTable();
-                    if (templateDetails.Selectability != null && templateDetails.Selectability.Count() > 0 )
+                    if (templateDetails.Selectability != null && templateDetails.Selectability.Count() > 0)
                     {
                         selectabilityDt.Columns.Add("IRFId", typeof(int));
                         selectabilityDt.Columns.Add("LevelId", typeof(int));
@@ -89,7 +88,7 @@ namespace Risebird.Repository
                     }
 
                     DataTable skillGeneralDt = new DataTable();
-                    if (templateDetails.SkillGeneral != null && templateDetails.SkillGeneral.Count() > 0 )
+                    if (templateDetails.SkillGeneral != null && templateDetails.SkillGeneral.Count() > 0)
                     {
                         skillGeneralDt.Columns.Add("IRFId", typeof(int));
                         skillGeneralDt.Columns.Add("LevelId", typeof(int));

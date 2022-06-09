@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -21,7 +20,7 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private readonly INotificationHelper _notificationHelper;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
-        
+
 
         public ClonableSkillChannelTemplateController(IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IUserService userService, ISkillService skillService, IConfiguration configuration, INotificationHelper notificationHelper, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
         {
@@ -64,7 +63,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {
@@ -167,7 +166,7 @@ namespace Risebird.Web.Controllers
                     {
                         ClonableSkillChannelVM model = new ClonableSkillChannelVM();
                         model = await _clonableSkillChannelTemplateService.GetClonableSkillChannel(id);
-                        if(profileName == "Admin" && model.ClonableTemplateQuestionsCollection !=null && model.ClonableTemplateQuestionsCollection.Count() > 500)
+                        if (profileName == "Admin" && model.ClonableTemplateQuestionsCollection != null && model.ClonableTemplateQuestionsCollection.Count() > 500)
                         {
                             model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection.Take(500).ToList();
 
@@ -243,7 +242,7 @@ namespace Risebird.Web.Controllers
                         //        ModelState.AddModelError("", "Please fill all the columns in the General Skills' Matrix.");
                         //    }
                         //}
-                        
+
                         if (isTemplateInvalid)
                         {
                             _clonableSkillChannelTemplateService.PopulateDropDownsForTemplate(model, true);
@@ -312,7 +311,7 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                
+
             }
             catch (Exception ex)
             {

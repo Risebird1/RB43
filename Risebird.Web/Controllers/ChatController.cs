@@ -94,7 +94,7 @@ namespace Risebird.Web.Controllers
                 return new List<Conversation>();
             }
         }
-        
+
         //User to add message into database
 
         [HttpGet]
@@ -198,7 +198,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         //To add users into a group
         [HttpGet]
         public JsonResult AddUser(string GroupId, string Emailid)

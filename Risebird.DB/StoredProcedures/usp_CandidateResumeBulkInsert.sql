@@ -8,33 +8,33 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+Create PROCEDURE [dbo].[usp_CandidateResumeBulkInsert]    
+(    
+      @CandidateResumeBulkData AS [dbo].[CandidateResume_TableType] READONLY    
+)    
+AS    
+BEGIN    
+   
+ begin try  
+  begin tran  
   
-CREATE PROCEDURE [dbo].[usp_CandidateResumeBulkInsert]  
-(  
-      @CandidateResumeBulkData AS [dbo].[CandidateResume_TableType] READONLY  
-)  
-AS  
-BEGIN  
- 
-	begin try
-		begin tran
-
-			INSERT INTO [dbo].[CandidateResume]( 
-			[IRFId] ,  
-			[ResumeLink],  
-			[AddedBy],  
-			[AddedOn])  
+   INSERT INTO [dbo].[CandidateResume](   
+   [IRFId] ,    
+   [ResumeLink],    
+   [AddedBy],    
+   [AddedOn],
+   [IsProcessed])    
+    
+   SELECT *,0 as IsProcessed FROM @CandidateResumeBulkData   
   
-			SELECT * FROM @CandidateResumeBulkData 
-
-		commit tran
-	end try
-	begin catch
-		rollback transaction
-		raiserror('Error adding resumes', 16, 1)
-	end catch
-
-END  
+  commit tran  
+ end try  
+ begin catch  
+  rollback transaction  
+  raiserror('Error adding resumes', 16, 1)  
+ end catch  
+  
+END    
 GO
 
 

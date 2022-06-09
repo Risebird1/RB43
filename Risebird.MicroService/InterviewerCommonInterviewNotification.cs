@@ -1,18 +1,13 @@
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using Risebird.Repository;
-using SendGrid.Helpers.Mail;
+using System;
+using System.Data;
+using System.Linq;
 
 namespace Risebird.MicroService
 {
