@@ -55,7 +55,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if(emailid == "interview@risebird.io")
+                if (emailid == "interview@risebird.io")
                 {
                     profileName = "Admin";
                 }
@@ -179,7 +179,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AddNonExistingVMs(NonExistingVMViewModel model)
         {

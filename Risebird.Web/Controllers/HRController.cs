@@ -637,7 +637,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> HRUnassignYourself(int id)
@@ -985,7 +985,7 @@ namespace Risebird.Web.Controllers
                                 return false;
                             }
                         }
-                        
+
                     }
                     else
                     {
@@ -1021,7 +1021,7 @@ namespace Risebird.Web.Controllers
 
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CallCatalogue()
@@ -1093,7 +1093,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CallCatalogue(InterviewFilter filter)
@@ -1156,7 +1156,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ResetCallCatalogueFilter()
@@ -1233,7 +1233,7 @@ namespace Risebird.Web.Controllers
                             meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
                         }
 
-                        if( meetings != null && meetings.Count() > 0)
+                        if (meetings != null && meetings.Count() > 0)
                         {
                             Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
                             Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
@@ -1278,7 +1278,7 @@ namespace Risebird.Web.Controllers
                             Rng.Value = "No data available in table !!!";
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
-                        
+
 
                     }
                     else
@@ -1286,7 +1286,7 @@ namespace Risebird.Web.Controllers
                         return null;
                     }
                 }
-                
+
                 else
                 {
                     return null;

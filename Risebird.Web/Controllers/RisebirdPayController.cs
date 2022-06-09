@@ -45,7 +45,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [HttpPost]
         public JsonResult WalletDetails(string action, int ClientId)
         {
@@ -119,7 +119,7 @@ namespace Risebird.Web.Controllers
                 return Json("SignOut");
             }
         }
-        
+
         [HttpPost]
         public JsonResult DeductWalletPoints(int points, string comment, int ClientId)
         {

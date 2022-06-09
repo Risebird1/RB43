@@ -31,7 +31,7 @@ namespace Risebird.Web
             _meetingInviteService = meetingInviteService;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        
+
         [HttpPost]
         public JsonResult FetchTimeZones()
         {
@@ -40,7 +40,7 @@ namespace Risebird.Web
             var currenttimezone = TimeZone.CurrentTimeZone;
             return Json(new { result = alltimezones, current = currenttimezone });
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> SendMeetingInvite(string Subject, string candidateEmailId, DateTime startdate, DateTime enddate, string Message, string TimeZoneDetails, string AdditionalUser, string irfId = null)
         {

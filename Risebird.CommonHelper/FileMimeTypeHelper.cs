@@ -1,14 +1,11 @@
 ﻿using FileTypeInterrogator;
 using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper.Interface;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Risebird.CommonHelper
 {
-    public class FileMimeTypeHelper: IFileMimeTypeHelper
+    public class FileMimeTypeHelper : IFileMimeTypeHelper
     {
 
         public string GetFileMimeType(IFormFile file)

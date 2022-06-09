@@ -1,15 +1,13 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Repository.Interface;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -36,9 +34,9 @@ namespace Risebird.MicroService
             string name = req.Query["name"];
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var profileName =  _userRepository.GetUserProfileBasedOnEmailId(requestBody);
+            var profileName = _userRepository.GetUserProfileBasedOnEmailId(requestBody);
 
-            
+
             return new OkObjectResult(profileName);
         }
     }

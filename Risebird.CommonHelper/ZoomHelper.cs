@@ -1,15 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using RestSharp;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
@@ -80,7 +77,7 @@ namespace Risebird.CommonHelper
             IRestResponse response = await client.ExecuteAsync(request);
             //var content = response.Content;
             return response.StatusCode;
-            
+
         }
     }
 }

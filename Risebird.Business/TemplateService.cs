@@ -1,13 +1,11 @@
 ﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -17,13 +15,13 @@ namespace Risebird.Business
 
         private readonly ITemplateRepository _templateRespository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        
+
 
         public TemplateService(ITemplateRepository templateRespository, IApplicationErrorLogger applicationErrorLogger)
         {
             _templateRespository = templateRespository;
             _applicationErrorLogger = applicationErrorLogger;
-            
+
         }
 
         public async Task<IEnumerable<SkillChannelTemplateVM>> GetAllTemplates(string emailId/*, DateTime startDate, DateTime endDate*/)

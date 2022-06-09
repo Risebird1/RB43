@@ -26,7 +26,7 @@ namespace Risebird.Web.Controllers
         }
 
         public IActionResult Index(string url = null)
-        { 
+        {
             if (User.Identity.IsAuthenticated)
             {
                 var userClaims = User.Identity as ClaimsIdentity;

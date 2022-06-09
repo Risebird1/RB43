@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -13,7 +11,7 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public string IRFName { get; set; }
 
-        [DisplayName("Candidate's Name")]        
+        [DisplayName("Candidate's Name")]
         public string CandidateName { get; set; }
 
         [DisplayName("Candidate EmailId")]
