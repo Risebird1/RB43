@@ -1251,13 +1251,6 @@ namespace Risebird.Web.Controllers
                 {
                     m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                 }
-                if (m.IsQCRequired)
-                {
-                    if (m.QCStatus.HasValue)
-                    {
-                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                    }
-                }
                 if (m.IsApproved.HasValue && m.IsApproved != -1)
                 {
                     m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
@@ -1286,28 +1279,9 @@ namespace Risebird.Web.Controllers
 
                 }
 
-                if (m.IsQCRequired)
+                if (m.InterviewStatus.HasValue)
                 {
-                    if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
-                    {
-                        m.intervieweStatusStatDesc = "QC Pending(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
-                    }
-                    else if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == 2))
-                    {
-                        m.intervieweStatusStatDesc = "QC Failed(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
-                    }
-                    else if (m.InterviewStatus.HasValue)
-                    {
-                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-
-                    }
-                }
-                else
-                {
-                    if (m.InterviewStatus.HasValue)
-                    {
-                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                    }
+                    m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                 }
 
                 if (m.intervieweStatusStatDesc == null)
@@ -2177,13 +2151,6 @@ namespace Risebird.Web.Controllers
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                             }
-                            if (m.IsQCRequired)
-                            {
-                                if (m.QCStatus.HasValue)
-                                {
-                                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                                }
-                            }
                             if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
@@ -2355,13 +2322,6 @@ namespace Risebird.Web.Controllers
                             if (m.MeetingStatus.HasValue)
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                            }
-                            if (m.IsQCRequired)
-                            {
-                                if (m.QCStatus.HasValue)
-                                {
-                                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                                }
                             }
                             if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
@@ -2817,13 +2777,6 @@ namespace Risebird.Web.Controllers
                     if (m.MeetingStatus != null && m.MeetingStatus.HasValue)
                     {
                         m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                    }
-                    if (m.IsQCRequired)
-                    {
-                        if (m.QCStatus != null && m.QCStatus.HasValue)
-                        {
-                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                        }
                     }
                     if (m.IsApproved != null && m.IsApproved.HasValue)
                     {

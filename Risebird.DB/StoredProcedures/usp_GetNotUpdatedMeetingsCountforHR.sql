@@ -13,10 +13,6 @@ CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCountforHR]
 @emailID varchar(200)               
 AS                                
 Begin        
---declare @EmailId varchar(100)    
---declare @currentdate datetime    
---set @currentdate= '2021-06-12'    
---set @EmailId ='shaheen_yasmin@risebird.io'     
     
 declare @hrId int                
 set @hrId = (select HR.id from UserList ul join HR on HR.UserId=ul.id where EmailId=@EmailId and idProfile=2)     
@@ -32,21 +28,6 @@ where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrI
 union    
 select im.id from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id join IRF on irf.irfid=im.IRFId                    
 where irf.RisebirdHr =@userid and confirmationStatus = 1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7)tb1) as UnfilledMeetingStatusCount,                              
-(Select Count(*) as Countunion from (select im.id from InterviewMeetings im                       
-inner join InterviewComments ic on ic.InterviewId= im.id                       
-left join QCFeedbackReport qc on qc.InterviewId = im.id                      
-join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id                
-where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrId and confirmationStatus=1 and                      
-(ic.InterviewStatus=2 or ic.InterviewStatus=4 )                      
-and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null)                      
-and DATEDIFF(DAY, interviewDate, @currentdate)<7    
-union    
-select im.id from InterviewMeetings im                           
-inner join InterviewComments ic on ic.InterviewId= im.id                           
-left join QCFeedbackReport qc on qc.InterviewId = im.id                          
-join IRF on irf.irfid=im.IRFId where irf.RisebirdHr =@userid and confirmationStatus = 1 and confirmationStatus=1 and                         
-(ic.InterviewStatus=2 or ic.InterviewStatus=4 ) and ic.MeetingStatus=4 and (qc.QCStatus = 0 or qc.QCStatus is null)                          
-and DATEDIFF(DAY, interviewDate, @currentdate)<7)tb1) as UnfilledInterviewStatusCount,                              
 (Select Count(*) as Countunion from (select im.id from InterviewMeetings im  join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id                
 where HRCoordinatorEmailId =@emailID and confirmationStatus = 1 and th.HRId=@hrId and confirmationStatus=1 and (zoomLink is null or zoomLink='') and interviewDate>@currentdate    
 union    
@@ -58,14 +39,13 @@ left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmissi
 where (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate()))) as UnAttendedZoomLink,        
 (Select Count(*) as Countunion from (select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on irf.irfid=im.IRFId join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId  where confirmationStatus =1 and th.HRId=@hrId and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and DATEDIFF(DAY, interviewDate, @currentdate)<7
 union    
-select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on irf.irfid=im.IRFId where irf.RisebirdHr =@userid and confirmationStatus = 1 and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and DATEDIFF(DAY, interviewDate, @currentdate)<7)tb1) as MissingVideoLink        
-End      
-    
+select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on irf.irfid=im.IRFId where irf.RisebirdHr =@userid and confirmationStatus = 1 and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and DATEDIFF(DAY, interviewDate, @currentdate)<7)tb1) as MissingVideoLink,
+(Select Count(*) as Countunion from (select cr.id from CandidateResume cr join IRF on irf.id=cr.IRFId join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId  where th.HRId=@hrId
+union    
+select cr.id from CandidateResume cr join IRF on irf.id=cr.IRFId where irf.RisebirdHr =@userid )tb1) as NotProcessedCandidateResume        
+End     
 
- 
-  
-  
-  
+
 
     GO
   
