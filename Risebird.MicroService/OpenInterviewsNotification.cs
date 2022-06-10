@@ -1,21 +1,10 @@
-using Azure.Storage.Blobs;
-using Azure.Storage.Sas;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using RestSharp;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -50,12 +39,12 @@ namespace Risebird.MicroService
                     var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.IRFId);
 
 
-                    if(irfInterviewers != null && irfInterviewers.Count()>0)
+                    if (irfInterviewers != null && irfInterviewers.Count() > 0)
                     {
                         //send mails to the active irf interviewers
                         _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString());
                     }
-                    
+
                 }
                 log.LogInformation($"C# OpenInterviewsNotification executed at: {DateTime.Now}");
             }

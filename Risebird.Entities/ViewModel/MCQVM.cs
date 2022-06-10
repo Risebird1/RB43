@@ -81,7 +81,7 @@ namespace Risebird.Entities.ViewModel
         public string PartitionKey { get; set; }
         public int id { get; set; }
     }
-    public class MCQVMShare 
+    public class MCQVMShare
     {
         public string EmailAddress { get; set; }
         public string MCQId { get; set; }

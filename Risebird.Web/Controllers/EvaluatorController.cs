@@ -107,7 +107,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenEvaluatorEvaluations");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         //[HttpPost]
@@ -779,7 +779,7 @@ namespace Risebird.Web.Controllers
                                     model.AudioFileLink = uploadedaudioFileURL;
                                 }
                             }
-                            
+
                         }
 
                         var emailid = HttpContext.Session.GetString("email")?.Trim();

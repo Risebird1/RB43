@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public class TemplateInterviewerData
     {

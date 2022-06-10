@@ -9,7 +9,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -25,7 +24,7 @@ namespace Risebird.Business
         private readonly ISkillService _skillService;
         private readonly IClientRepository _clientRepository;
 
-        public ClonableSkillChannelTemplateService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,IConfiguration configuration, ISkillService skillService, 
+        public ClonableSkillChannelTemplateService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, ISkillService skillService,
             IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IActivityTrackerRepository activityTrackerRepository, IClientRepository clientRepository)
         {
             _irfRepository = irfRepository;
@@ -72,7 +71,7 @@ namespace Risebird.Business
                 model.IRFRecommendations.CountryType = assessmentGroupData.Country;
                 //model.IRFRecommendations.SeniorityLevelId = assessmentGroupData.ProfileType;
                 PopulateDropDownsForTemplate(model);
-                
+
                 return model;
             }
             catch (Exception ex)
@@ -84,7 +83,7 @@ namespace Risebird.Business
 
         public ClonableSkillChannelVM PopulateDropDownsForTemplate(ClonableSkillChannelVM model, bool isEdit = false)
         {
-            if(!isEdit)
+            if (!isEdit)
             {
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
 
@@ -97,7 +96,7 @@ namespace Risebird.Business
                     model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
                 }
             }
-            
+
             //populate the dropdowns for levels, types etc.
             model.JoinabilityTypeList = new SelectList(_irfRepository.GetJoinabilityMatrix(), "id", "Name");
             model.SkillGeneralTypeList = new SelectList(_irfRepository.GetGeneralSkillMatrix(), "id", "Name");
@@ -277,23 +276,23 @@ namespace Risebird.Business
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
 
-                if(model.IRFRecommendations != null)
+                if (model.IRFRecommendations != null)
                 {
                     model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
                     model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
                     model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
                     model.JobLevel = model.IRFRecommendations.SeniorityLevelId;
                     model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
-                    model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore ;
+                    model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
                 }
-                
+
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
 
                 PopulateDropDownsForSkillChannel(model, clientEmailId);
-                
+
                 return model;
 
             }
@@ -317,14 +316,14 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    if(model.ClientId == 0)
+                    if (model.ClientId == 0)
                     {
                         model.ClientId = _clientRepository.GetClientByEmailId(clientEmailId).Result;
                     }
                     model.ClientUser = new SelectList(_irfRepository.GetClientUser(model.ClientId), "id", "EmailId");
                     int clientUserId = _irfRepository.GetUserId(clientEmailId);
                     model.ClientCollection = new List<TransClientUser>();
-                    model.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = clientEmailId, Role = _irfRepository.GetClientUserRole(clientUserId)});
+                    model.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = clientEmailId, Role = _irfRepository.GetClientUserRole(clientUserId) });
                     model.BillingOwner = clientUserId;
                 }
                 model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");

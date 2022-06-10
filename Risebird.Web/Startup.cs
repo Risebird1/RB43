@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -62,7 +61,7 @@ namespace Risebird.Web
                 })
                 .AddAzureAdB2C(options => Configuration.Bind("Authentication:AzureAdB2C", options))
                 .AddCookie();
-          
+
 
 
             services.Configure<BrotliCompressionProviderOptions>(options =>
@@ -85,7 +84,7 @@ namespace Risebird.Web
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
-            {               
+            {
                 options.IdleTimeout = TimeSpan.FromMinutes(90);
                 options.Cookie.Name = "Risebirdportal.Session";
                 //options.Cookie.HttpOnly = true;

@@ -40,7 +40,7 @@ namespace Risebird.Web.Controllers
             return Json(new { token });
         }
 
-        
+
         public string GenerateToken()
         {
             var scopes = new HashSet<IScope>

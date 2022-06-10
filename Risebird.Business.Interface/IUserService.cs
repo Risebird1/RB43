@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
 {
     public interface IUserService
     {
-        List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId=null);
+        List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null);
         List<UserList> GetRisebirdUsers();
         List<ClientUserVM> GetClientUsers(string EmailId);
         List<InterviewerVM> GetInterviewers();

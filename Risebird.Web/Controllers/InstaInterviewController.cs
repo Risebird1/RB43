@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OfficeOpenXml;
+using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -12,16 +16,11 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using RestSharp;
-using OfficeOpenXml;
-using Microsoft.AspNetCore.Authorization;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 
@@ -171,7 +170,7 @@ namespace Risebird.Web.Controllers
 
                                 int virusScanResult = 0;
 
-                                if(profileName == "Client")
+                                if (profileName == "Client")
                                 {
                                     if ((await _instaInterviewService.GetClientPasswordResetStatus(emailid)) == (int)BooleanResultsEnum.True)
                                     {
@@ -215,7 +214,7 @@ namespace Risebird.Web.Controllers
 
                                     }
                                 }
-                                
+
 
                                 if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
                                 {

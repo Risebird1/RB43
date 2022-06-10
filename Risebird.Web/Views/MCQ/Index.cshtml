@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Phone Screen+";
+    ViewData["Title"] = "Phone Interview";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
@@ -32,7 +32,7 @@
     }
 </style>
 <script>
-    var Header = "Phone Screen+";
+    var Header = "Phone Interview";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
@@ -49,7 +49,7 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Phone Screen+</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title"> Phone Interview</h4></div>
                 </div>
 
                 <div class="pull-right">
@@ -66,7 +66,7 @@
                             if (profileName == "Admin" || profileName == "HR")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Phone Screen+</font></span>
+                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Phone Interview</font></span>
                                 </button>
                             }
                         }
@@ -302,7 +302,7 @@
                         <i class="fa fa-file" aria-hidden="true" style="font-size:21px"></i>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Phone Screen+ Set </h5>
+                <h5 class="modal-title pull-left">Phone Interview Set </h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeCreatePopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
@@ -372,7 +372,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Screen+ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
+                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Interview Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
                     <div class="col-md-12">
                         <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     </div>
@@ -747,7 +747,7 @@
     }
     function DeleteEntityMCQ(Id) {
         swal.fire({
-            title: 'Are you sure you want to delete Phone Screen+?',
+            title: 'Are you sure you want to delete Phone Interview?',
             text: "It will be permanently deleted!",
             type: 'warning',
             showCancelButton: true,
@@ -781,7 +781,7 @@
                 swal.fire({
                     title: 'Deleted!',
                     type: 'success',
-                    html: '<p>The Phone Screen+ has been deleted.</p>',
+                    html: '<p>The Phone Interview has been deleted.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',

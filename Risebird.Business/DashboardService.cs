@@ -485,7 +485,7 @@ namespace Risebird.Business
             {
                 var model = new NotUpdatedMeetings();
                 model = await _dashboardRespository.GetNotUpdatedMeetingsCountbyHr(Emailid);
-                if(getDeletedZoomMeetingsCount)
+                if (getDeletedZoomMeetingsCount)
                 {
                     var upcomingMeetings = await _meetingRepository.GetInterviewsScheduledWithinNextTwoHours(Emailid);
                     int deletedZoomMeetingsCount = 0;
@@ -504,7 +504,7 @@ namespace Risebird.Business
                     }
                     model.UpcomingMeetingsDeletedFromZoom = deletedZoomMeetingsCount;
                 }
-                
+
                 return model;
             }
             catch (Exception ex)

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;

@@ -205,7 +205,7 @@ namespace Risebird.Entities.Enum
         [Description("Manager")]
         Manager = 4,
         [Description("Architect")]
-        Architect = 5       
+        Architect = 5
     }
 
     public enum QuestionsLevel

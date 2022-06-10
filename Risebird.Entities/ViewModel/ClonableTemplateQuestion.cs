@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class ClonableTemplateQuestion
     {
@@ -13,6 +9,6 @@ namespace Risebird.Entities.ViewModel
         public string Question { get; set; }
         public string SkillName { get; set; }
         public bool IsSelected { get; set; }
-        
+
     }
 }
