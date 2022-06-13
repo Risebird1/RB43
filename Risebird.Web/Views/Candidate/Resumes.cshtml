@@ -182,7 +182,7 @@
 
                                                     <td class="text-center action">
 
-                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client")
+                                                        @if (Model.Profile == "Admin")
                                                         {
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                 <span onclick="javascript:Delete('@item.id', '@fileName');" title="Delete" class="mdc-fab__icon material-icons">
