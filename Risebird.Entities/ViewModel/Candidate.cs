@@ -124,5 +124,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsProctor { get; set; }
 
         public string ProfileName { get; set; }
+        public int Candidateesumeid { get; set; }
     }
 }

@@ -24,5 +24,6 @@ namespace Risebird.Business.Interface
         Task<FitmentReportModel> GetFitmentReportReport(int candidateId, int irfId);
         Task<bool> AddEditFitmentReport(FitmentReportModel model);
         Task<bool> ProcessCandidateResume(int id);
+        Task<string> FetchCandidateResumeById(int id);
     }
 }

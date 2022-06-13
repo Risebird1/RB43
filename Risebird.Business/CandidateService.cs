@@ -388,5 +388,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<string> FetchCandidateResumeById(int id)
+        {
+            try
+            {
+                return await _candidateRepository.FetchCandidateResumeById(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }
