@@ -25,11 +25,14 @@ GO
 @RecommendationStatus bit,
 @RecommendationAssessmentGroupId int = null,
 @RecommendationCategoryId int = null,
-@RecommendationCompetencyLevelId int = null,
-@RecommendationSeniorityLevelId int = null,
+--@RecommendationCompetencyLevelId int = null,
+@RecommendationSeniorityLevelId varchar(50) = null,
 @RecommendationCountryType int = null,
 @RecommendationCompanyType int = null,
-@RecommendationModifiedOn datetime
+@RecommendationModifiedOn datetime,
+@RecommendationDifficultyLevel varchar(50) = null,
+@RecommendationEmploymentType varchar(20) = null,
+@RecommendationPerHourRate int = null
             
 AS            
 Begin  
@@ -138,11 +141,14 @@ begin try
 
 		update IRFRecommendations set
 		[Status]=@RecommendationStatus,
-		CompetencyLevelId = @RecommendationCompetencyLevelId,
+		--CompetencyLevelId = @RecommendationCompetencyLevelId,
 		SeniorityLevelId = @RecommendationSeniorityLevelId,
 		CountryType = @RecommendationCountryType,
 		CompanyType = @RecommendationCompanyType,
-		ModifiedOn = @RecommendationModifiedOn
+		ModifiedOn = @RecommendationModifiedOn,
+		DifficultyLevel = @RecommendationDifficultyLevel,
+		EmploymentType = @RecommendationEmploymentType,
+		PerHourRate = @RecommendationPerHourRate
 		Where CloneIRFId = @id
 	
 	End
