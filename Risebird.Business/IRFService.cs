@@ -1621,6 +1621,18 @@ namespace Risebird.Business
         {
             try
             {
+                if (_skilldetails.SeniorityLevelArray != null)
+                {
+                    _skilldetails.SeniorityLevel = string.Join(',', _skilldetails.SeniorityLevelArray);
+                }
+                if (_skilldetails.ProfileTypeArray != null)
+                {
+                    _skilldetails.ProfileType = string.Join(',', _skilldetails.ProfileTypeArray);
+                }
+                if (_skilldetails.EmploymentTypeArray != null)
+                {
+                    _skilldetails.EmploymentType = string.Join(',', _skilldetails.EmploymentTypeArray);
+                }
                 return _irfRepository.Addassignmentgroup(_skilldetails).Result;
             }
 
@@ -2549,7 +2561,8 @@ namespace Risebird.Business
                 {
                     irfDetails.AssessmentGroupName = irfRecommendations.AssessmentGroupName;
                     irfDetails.JobCountry = irfRecommendations.CountryType?.ToString();
-                    irfDetails.JobLevel = irfRecommendations.SeniorityLevelId;
+                    //irfDetails.JobLevel = irfRecommendations.SeniorityLevelId;
+                    irfDetails.JobLevel = (int)JobLevels.SE;
                     irfDetails.CompanyType = irfRecommendations.CompanyType?.ToString();
                     irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
                 }

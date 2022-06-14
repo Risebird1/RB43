@@ -7,13 +7,16 @@ CREATE TABLE [dbo].[IRFRecommendations](
 	[CloneIRFId] [int] NOT NULL,
 	[CategoryId] [int] NULL,
 	[CompetencyLevelId] [int] NULL,
-	[SeniorityLevelId] [int] NULL,
+	[SeniorityLevelId] [varchar](50) NULL,
 	[CountryType] [int] NULL,
 	[Status] [bit] NULL,
 	[CreatedOn] [datetime] NULL,
 	[ModifiedOn] [datetime] NULL,
 	[AssessmentGroupId] [int] NULL,
 	[CompanyType] [int] NULL,
+	[DifficultyLevel] [varchar](50) NULL,--saved as ProfileType in Assessment Group but the display Name even there is Difficulty Level
+	[EmploymentType] [varchar](20) NULL,
+	[PerHourRate] [int] NULL,
 	CONSTRAINT [FK_IRFRecommendations_CategoryId] FOREIGN KEY([CategoryId]) REFERENCES [dbo].[AssessmentGroupCategory] ([id]),
 	CONSTRAINT [FK_IRFRecommendations_CloneIRFId] FOREIGN KEY([CloneIRFId]) REFERENCES [dbo].[ClonableSkillChannel] ([id]),
 	constraint [FK_IRFRecommendations_AssessmentGroupId] FOREIGN KEY([AssessmentGroupId]) REFERENCES [dbo].[AssessmentGroup] ([id]),
@@ -36,6 +39,46 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRFRecommendations
     Add CompanyType INT NULL
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SeniorityLevelId')
+      AND Object_ID = Object_ID(N'IRFRecommendations'))
+BEGIN
+    ALTER TABLE IRFRecommendations
+    Alter column SeniorityLevelId [varchar](50) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DifficultyLevel')
+      AND Object_ID = Object_ID(N'IRFRecommendations'))
+BEGIN
+    ALTER TABLE IRFRecommendations
+    Add DifficultyLevel [varchar](50) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'EmploymentType')
+      AND Object_ID = Object_ID(N'IRFRecommendations'))
+BEGIN
+    ALTER TABLE IRFRecommendations
+    Add EmploymentType [varchar](20) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PerHourRate')
+      AND Object_ID = Object_ID(N'IRFRecommendations'))
+BEGIN
+    ALTER TABLE IRFRecommendations
+    Add PerHourRate INT NULL
 END
 
 END

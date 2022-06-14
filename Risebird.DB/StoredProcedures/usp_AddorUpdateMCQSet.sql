@@ -11,26 +11,36 @@ GO
 CREATE Procedure usp_AddorUpdateMCQSet  
 @PartitionKey varchar(50),  
 @Title varchar(50),  
-@CompentencyLevel int,  
+--@CompentencyLevel int,  
 @PrimarySkills varchar(100),  
-@ProfileType int,  
+@ProfileType varchar(50),  
 @SecondarySkill varchar(100),  
 @Timer varchar(5),  
 @QuestionCount int,  
-@id int,  
+@id int, 
+@SeniorityLevel varchar(50),
+@EmploymentType varchar(20),
+@CountryType int = null, 
+@CompanyType int = null, 
+@PerHourRate int, 
 @mcqid int output              
 AS  
 BEGIN  
 if(@id>0)  
 begin  
-Update MCQSets set Title=@Title,CompentencyLevel=@CompentencyLevel,PrimarySkills=@PrimarySkills,  
-ProfileType=@ProfileType,SecondarySkill=@SecondarySkill,Timer=@Timer,QuestionCount=@QuestionCount where id=@id and PartitionKey=@PartitionKey   
+Update MCQSets set Title=@Title,PrimarySkills=@PrimarySkills,  --CompentencyLevel=@CompentencyLevel,
+ProfileType=@ProfileType,SecondarySkill=@SecondarySkill,Timer=@Timer,QuestionCount=@QuestionCount,
+SeniorityLevel = @SeniorityLevel, EmploymentType =@EmploymentType,
+CompanyType = @CompanyType, CountryType = @CountryType, PerHourRate = @PerHourRate
+where id=@id and PartitionKey=@PartitionKey   
 select @mcqid = @id   
 end  
 else   
 begin  
-Insert into MCQSets (PartitionKey,Title,CompentencyLevel,PrimarySkills,ProfileType,SecondarySkill,Timer,QuestionCount,CreatedOn)   
-values(@PartitionKey,@Title,@CompentencyLevel,@PrimarySkills,@ProfileType,@SecondarySkill,@Timer,@QuestionCount,GetDate())  
+Insert into MCQSets (PartitionKey,Title,PrimarySkills,ProfileType,SecondarySkill,Timer,QuestionCount,CreatedOn,
+SeniorityLevel, EmploymentType, CompanyType, CountryType, PerHourRate)   
+values(@PartitionKey,@Title, @PrimarySkills,@ProfileType,@SecondarySkill,@Timer,@QuestionCount,GetDate(),
+@SeniorityLevel, @EmploymentType, @CompanyType, @CountryType, @PerHourRate)  
 select @mcqid = SCOPE_IDENTITY()   
 end  
 END  

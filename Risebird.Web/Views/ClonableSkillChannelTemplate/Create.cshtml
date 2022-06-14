@@ -112,16 +112,62 @@
 
                                                         </div>
                                                         <div class="form-group">
+                                                            @*<div class="mandate">
+                @Html.LabelFor(model => model.IRFRecommendations.CompetencyLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+            </div>
+            @Html.DropDownListFor(model => model.IRFRecommendations.CompetencyLevelId, Model.CompetencyLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
+
+            @Html.ValidationMessageFor(model => model.IRFRecommendations.CompetencyLevelId, "", new { @id = "error_CompetencyLevel", @class = "text-danger" })*@
+
                                                             <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.CompetencyLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                @Html.LabelFor(model => model.IRFRecommendations.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CompetencyLevelId, Model.CompetencyLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
+                                                            <select asp-for="IRFRecommendations.DifficultyLevelArray" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.IRFRecommendations.DifficultyLevelList.ToList())
+                                                                {
+                                                                    @if (item != null)
+                                                                    {
+                                                                        @if (item.Selected)
+                                                                        {
+                                                                            <option value="@item.Value" selected>@item.Text</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </select>
 
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CompetencyLevelId, "", new { @id = "error_CompetencyLevel", @class = "text-danger" })
-
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.DifficultyLevel, "", new { @class = "text-danger" })
 
                                                         </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
 
+                                                            <select asp-for="IRFRecommendations.EmploymentTypeArray" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.IRFRecommendations.EmploymentTypeList.ToList())
+                                                                {
+                                                                    @if (item != null)
+                                                                    {
+                                                                        @if (item.Selected)
+                                                                        {
+                                                                            <option value="@item.Value" selected>@item.Text</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </select>
+
+                                                            @*@Html.DropDownListFor(model => model.IRFRecommendations.SeniorityLevelId, Model.SeniorityLevelList, "Select", new { @class = "select-css form-control text-box single-line" })*@
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
+
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 pr-1">
                                                         <div class="form-group">
@@ -137,7 +183,25 @@
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.DropDownListFor(model => model.IRFRecommendations.SeniorityLevelId, Model.SeniorityLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
+
+                                                            <select asp-for="IRFRecommendations.SeniorityLevelArray" class="form-control multiselect" multiple="multiple" style="border: 1px solid black">
+                                                                @foreach (var item in Model.IRFRecommendations.SeniorityLevelList.ToList())
+                                                                {
+                                                                    @if (item != null)
+                                                                    {
+                                                                        @if (item.Selected)
+                                                                        {
+                                                                            <option value="@item.Value" selected>@item.Text</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </select>
+
+                                                            @*@Html.DropDownListFor(model => model.IRFRecommendations.SeniorityLevelId, Model.SeniorityLevelList, "Select", new { @class = "select-css form-control text-box single-line" })*@
                                                             @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
 
                                                         </div>
@@ -147,6 +211,15 @@
                                                             </div>
                                                             @Html.DropDownListFor(model => model.IRFRecommendations.CompanyType, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "select-css form-control text-box single-line" })
                                                             @Html.ValidationMessageFor(model => model.IRFRecommendations.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IRFRecommendations.PerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+
+                                                            @*@Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { @class = "form-control text-box single-line" })*@
+                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.PerHourRate, "", new { @id = "error_PerHourRatee", @class = "text-danger" })
                                                         </div>
 
                                                         @Html.HiddenFor(m => m.IRFRecommendations.id)

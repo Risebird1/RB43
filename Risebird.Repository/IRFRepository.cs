@@ -4511,6 +4511,8 @@ namespace Risebird.Repository
                     parameters.Add("@CompetencyLevel", _skilldetails.CompetencyLevel);
                     parameters.Add("@Country", _skilldetails.Country);
                     parameters.Add("@PerHourRate", _skilldetails.PerHourRate);
+                    parameters.Add("@SeniorityLevel", _skilldetails.SeniorityLevel);
+                    parameters.Add("@EmploymentType", _skilldetails.EmploymentType);
                     await SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
