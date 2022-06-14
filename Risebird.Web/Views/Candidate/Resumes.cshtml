@@ -182,7 +182,7 @@
 
                                                     <td class="text-center action">
 
-                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client")
+                                                        @if (Model.Profile == "Admin")
                                                         {
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                 <span onclick="javascript:Delete('@item.id', '@fileName');" title="Delete" class="mdc-fab__icon material-icons">
@@ -190,12 +190,12 @@
                                                                 </span>
                                                             </button>
                                                         }
-                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client"|| Model.Profile == "SeniorHR")
+                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
                                                         {
                                                             @if (!item.IsProcessed)
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Processed">
-                                                                    <span onclick="javascript:Processed('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
+                                                                    <span onclick="javascript:ProcessedResume('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
                                                                             <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
                                                                             <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
@@ -227,15 +227,33 @@
 
             <!-- end col-md-12 -->
         </div>
-
-
-
         <!-- end row -->
     </div>
-
 </div>
 
+<div id="AddCandidateModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="rgb(255, 255, 255)" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Add Candidate <label id="txtmodelheader"></label></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAddCandidateModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" style="padding-bottom:0px" id="addCandidatelist">
 
+            </div>
+        </div>
+    </div>
+</div>
 
 @if (Model.Message != null)
 {
@@ -323,11 +341,7 @@
             }
 
         });
-
     }
-
-
-
 </script>
 
 <script type="text/javascript">
@@ -356,9 +370,6 @@
     };
     //// script for loader ends here
 </script>
-
-
-
 
 <script>
     function Delete(id, fileName) {
@@ -470,6 +481,28 @@
                 )
             }
         })
+    }
+    function ProcessedResume(id, fileName) {
+        var irfId = $("#IRFId").val();
+        var irfName = $("#IRFName").val();
+        $.ajax({
+            url: '/Candidate/Add',
+            data: { 'irfId': irfId, 'irfName': irfName, 'id': id },
+            success: function (data) {
+                $("#txtmodelheader").text();
+                $('#addCandidatelist').html('');
+                $('#addCandidatelist').html(data);
+                openAddCandidateModel();
+            }
+        });
+    }
+    function openAddCandidateModel() {
+        var modal = document.getElementById("AddCandidateModel");
+        modal.style.display = "block";
+    }
+    function closeAddCandidateModel() {
+        var modal = document.getElementById("AddCandidateModel");
+        modal.style.display = "none";
     }
 </script>
 <script>

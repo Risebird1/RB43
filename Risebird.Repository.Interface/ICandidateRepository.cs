@@ -25,5 +25,6 @@ namespace Risebird.Repository.Interface
         Task<bool> AddEditFitmentReport(FitmentReportModel model);
         Task<Candidate> GetCandidateForFitmentReport(int candidateMasterId, int irfId);
         Task<bool> ProcessCandidateResume(int id);
+        Task<string> FetchCandidateResumeById(int id);
     }
 }

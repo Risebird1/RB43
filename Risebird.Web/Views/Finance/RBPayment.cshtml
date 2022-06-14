@@ -96,31 +96,31 @@
                                                     <td>@item.Comment</td>
                                                     <td>@item.Type</td>
                                                     <td>@item.Rate</td>
-                                                    @if (item.MeetingStatusDetails == "0")
+                                                    @if (item.Type != "Penalty")
                                                     {
-                                                        <td></td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>@item.MeetingStatusDetails</td>
-                                                    }
+                                                        @if (item.MeetingStatusDetails == "0")
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@item.MeetingStatusDetails</td>
+                                                        }
 
-                                                    @if (item.InterviewStatusDetails == "0")
-                                                    {
-                                                        <td></td>
+                                                        @if (item.InterviewStatusDetails == "0")
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@item.InterviewStatusDetails</td>
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        <td>@item.InterviewStatusDetails</td>
+                                                        <td>Late Report Filled</td>
+                                                        <td></td>
                                                     }
-                                                    @*@if (!String.IsNullOrEmpty(item.VideoLink))
-                            {
-                                <td><a target="_blank" href="@item.VideoLink">Video Link</a></td>
-                            }
-                            else
-                            {
-                                <td>No Video</td>
-                            }*@
                                                     <td style="width:11%; text-align: center;">@item.VideoDuration</td>
                                                     <td>@item.Points</td>
                                                     <td>@item.Status</td>

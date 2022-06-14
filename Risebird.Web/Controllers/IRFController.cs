@@ -6022,7 +6022,6 @@ namespace Risebird.Web.Controllers
                     if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
                     {
                         irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
-
                     }
                     else
                     {
@@ -6035,11 +6034,8 @@ namespace Risebird.Web.Controllers
                         {
                             irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
                         }
-
                     }
-
                     return View(irfList);
-
                 }
                 else
                 {
@@ -6262,37 +6258,29 @@ namespace Risebird.Web.Controllers
                 {
                     Sheet.Column(a).Width = 40;
                 }
-                Sheet.Cells[1, 1].Value = "JD Title";
-                Sheet.Cells[1, 2].Value = "Total Candidates";
-                Sheet.Cells[1, 3].Value = "Completed Interviews";
-                Sheet.Cells[1, 4].Value = "Selected Interviews";
-                Sheet.Cells[1, 5].Value = "Rejected Interviews";
-                Sheet.Cells[1, 6].Value = "Not Scheduled Count";
-                Sheet.Cells[1, 7].Value = "Rescheduled Count";
-                Sheet.Cells[1, 8].Value = "Future Scheduled Count";
-                Sheet.Cells[1, 9].Value = "Risebird Channel Owner";
-                Sheet.Cells[1, 10].Value = "Skill Channel";
-                Sheet.Cells[1, 11].Value = "Client";
-                Sheet.Cells[1, 12].Value = "Country";
-                Sheet.Cells[1, 13].Value = "Billing Owner";
+                Sheet.Cells[1, 1].Value = "Billing Owner";
+                Sheet.Cells[1, 2].Value = "Skill Channels";
+                Sheet.Cells[1, 3].Value = "Total Candidates";
+                Sheet.Cells[1, 4].Value = "Completed Interviews";
+                Sheet.Cells[1, 5].Value = "Selected Interviews";
+                Sheet.Cells[1, 6].Value = "Rejected Interviews";
+                Sheet.Cells[1, 7].Value = "Not Scheduled Count";
+                Sheet.Cells[1, 8].Value = "Rescheduled Count";
+                Sheet.Cells[1, 9].Value = "Future Scheduled Count";
                 int i = 2;
                 if (irfList.Count() > 0)
                 {
                     foreach (var item in irfList)
                     {
-                        Sheet.Cells[i, 1].Value = item.JDTiltle.Split('|')[0];
-                        Sheet.Cells[i, 2].Value = item.CandidateCount;
-                        Sheet.Cells[i, 3].Value = item.CompletedInterviews;
-                        Sheet.Cells[i, 4].Value = item.SelectedMeetings;
-                        Sheet.Cells[i, 5].Value = item.RejectedMeetings;
-                        Sheet.Cells[i, 6].Value = item.NotScheduledCount;
-                        Sheet.Cells[i, 7].Value = item.ReScheduledCount;
-                        Sheet.Cells[i, 8].Value = item.FutureScheduledMeetings;
-                        Sheet.Cells[i, 9].Value = item.RisebirdHREmail;
-                        Sheet.Cells[i, 10].Value = item.IRFId;
-                        Sheet.Cells[i, 11].Value = item.ClientCompName;
-                        Sheet.Cells[i, 12].Value = item.JobCountry;
-                        Sheet.Cells[i, 13].Value = item.BillingOwnerEmailId;
+                        Sheet.Cells[i, 1].Value = item.RisebirdHREmail;
+                        Sheet.Cells[i, 2].Value = item.IRFId;
+                        Sheet.Cells[i, 3].Value = item.CandidateCount;
+                        Sheet.Cells[i, 4].Value = item.CompletedInterviews;
+                        Sheet.Cells[i, 5].Value = item.SelectedMeetings;
+                        Sheet.Cells[i, 6].Value = item.RejectedMeetings;
+                        Sheet.Cells[i, 7].Value = item.NotScheduledCount;
+                        Sheet.Cells[i, 8].Value = item.ReScheduledCount;
+                        Sheet.Cells[i, 9].Value = item.FutureScheduledMeetings;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
