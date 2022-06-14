@@ -2647,5 +2647,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRFCount(DateTime startDate, DateTime endDate, string Emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetAllIRFDetailsIRFCount(startDate, endDate, Emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -1,8 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.Candidate
 
 
-@using (Html.BeginForm("Add", "Candidate", FormMethod.Post, new { @id = "form", enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
-{
+<form action="@Url.Action("Add", "Candidate",new { emailids=ViewBag.emailid,id=ViewBag.id})" method="post" id="form">
     <div class="row">
         <div class="col-md-6 col-sm-6 pr-1">
             <div class="form-group">
@@ -65,6 +64,7 @@
     @Html.HiddenFor(x => x.IRFId)
     @Html.HiddenFor(x => x.IRFName)
     @Html.HiddenFor(x => x.Candidateesumeid)
+    @Html.HiddenFor(x => x.ProfileName)
     <div class="card-footer">
         <div class="row">
             <div class="col-md-12 mc-button-area">
@@ -72,5 +72,5 @@
             </div>
         </div>
     </div>
-}
+</form>
 
