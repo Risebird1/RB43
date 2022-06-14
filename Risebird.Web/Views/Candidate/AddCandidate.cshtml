@@ -10,34 +10,30 @@
                 @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
-                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.EncodedResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.EditorFor(model => model.EncodedResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.EncodedResumeLink, "", new { @class = "text-danger" })
-            </div>
+
             <div class="form-group">
                 @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                 @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                 @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
             </div>
-            @if (Model.ProfileName != "Client")
-            {
-                <div class="form-group">
-                    @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
-                    @Html.CheckBoxFor(m => m.IsProctor, new { @style = "position:relative;top:-24px;" })
-                </div>
-            }
-        </div>
-        <div class="col-md-6 col-sm-6 px-1">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ProfileSource, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model.ProfileSource, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.ProfileSource, "", new { @class = "text-danger" })
+            </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                 @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Enter Whatsapp no. without country code.Ex: 999999999" })
                 @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+        <div class="col-md-6 col-sm-6 px-1">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -56,11 +52,14 @@
                 @Html.EditorFor(model => model.ClientHRAttemptContact, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                 @Html.ValidationMessageFor(model => model.ClientHRAttemptContact, "", new { @class = "text-danger" })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProfileSource, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.EditorFor(model => model.ProfileSource, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.ProfileSource, "", new { @class = "text-danger" })
-            </div>
+
+            @if (Model.ProfileName != "Client")
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
+                    @Html.CheckBoxFor(m => m.IsProctor, new { @style = "position:relative;top:-24px;" })
+                </div>
+            }
         </div>
     </div>
     @Html.HiddenFor(x => x.IRFId)

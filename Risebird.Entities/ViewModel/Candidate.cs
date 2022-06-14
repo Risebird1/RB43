@@ -14,7 +14,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Candidate's Name.")]
         public string Name { get; set; }
 
-        [Display(Name = "Candidate Email")]
+        [Display(Name = "Email")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
         [Required(ErrorMessage = "Please enter Candidate Email Id.")]
