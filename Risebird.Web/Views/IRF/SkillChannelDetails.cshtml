@@ -146,124 +146,67 @@
 
                                 </div>
                                 <div>
-
                                     <div id="tableID" class="second" style="overflow-x:scroll">
                                         <table id="irfTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <th>JD Title</th>
+                                                    <th>Risebird Channel Owner</th>
                                                     <th>Flags</th>
+                                                    <th>Skill Channels</th>
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
                                                     <th>Report Pending</th>
-                                                    @*<th>Total Scheduled Count</th>*@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
-                                                    <th>Risebird Channel Owner</th>
-                                                    <th>Skill Channel</th>
-                                                    <th>Client</th>
-                                                    <th>Country</th>
-                                                    <th>Billing Owner</th>
-
-
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th>JD Title</th>
+                                                    <th>Risebird Channel Owner</th>
                                                     <th>Flags</th>
+                                                    <th>Skill Channels</th>
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
                                                     <th>Report Pending</th>
-                                                    @*<th>Total Scheduled Count</th>*@
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
-                                                    <th>Risebird Channel Owner</th>
-                                                    <th>Skill Channel</th>
-                                                    <th>Client</th>
-                                                    <th>Country</th>
-                                                    <th>Billing Owner</th>
-
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-
                                                 @if (Model != null && Model.Count() > 0)
                                                 {
                                                     foreach (var item in Model)
                                                     {
-
                                                         <tr>
-                                                            @if (!string.IsNullOrEmpty(item.JDTiltle))
-                                                            {
-                                                                <td> @item.JDTiltle.Split('|')[0] </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
+                                                            <td> @item.RisebirdHREmail </td>
                                                             @if (item.Flags > 0)
                                                             {
-                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.IRFId', '@(item.JDTiltle != null ? item.JDTiltle.Split('|')[0] : string.Empty)', '@item.RisebirdHREmail', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
+                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
                                                             }
                                                             else
                                                             {
                                                                 <td>@item.Flags</td>
                                                             }
+                                                            <td> @item.IRFId</td>
                                                             <td> @item.CandidateCount </td>
-
                                                             <td> @item.CompletedInterviews </td>
                                                             <td> @item.SelectedMeetings </td>
                                                             <td> @item.RejectedMeetings </td>
                                                             <td> @item.PendingCount </td>
-                                                            @*<td> @item.ScheduledMeetings </td>*@
                                                             <td> @item.NotScheduledCount </td>
                                                             <td> @item.ReScheduledCount </td>
                                                             <td> @item.FutureScheduledMeetings </td>
-                                                            <td> @item.RisebirdHREmail </td>
-                                                            <td> @item.IRFId </td>
-                                                            <td> @item.ClientCompName </td>
-                                                            @if (!string.IsNullOrEmpty(item.JobCountry))
-                                                            {
-                                                                @if (item.JobCountry == "1" || item.JobCountry.ToUpper() == "INDIA")
-                                                                {
-                                                                    <td>India</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>OutSide India</td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-
-                                                            @*<td> @item.JobCountry </td>*@
-                                                            <td> @item.BillingOwnerEmailId </td>
-
-
                                                         </tr>
-
-
                                                     }
                                                 }
-
                                             </tbody>
-
                                         </table>
-
-
-
-
-
                                     </div>
                                 </div>
                                 <div id="flagsModal" class="modal modal-bg">
@@ -325,13 +268,9 @@
         $("#ResetFilter").click(function () {
             ResetFilter();
         })
-
         if ('@filter' != "") {
-
             ApplySessionFilter();
         }
-
-
     });
 
     function ResetFilter() {
@@ -444,7 +383,7 @@
         var modal = document.getElementById("flagsModal");
         modal.style.display = "none";
     }
-    function OpenModalForFlags(irfName, jdTitle, risebirdChannelOwner, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink) {
+    function OpenModalForFlags(irfName, jdTitle, scheduledPercentage, completionRate, selectionRate, unassigninterview, statuspending, candidatepending, missingVideoLink, missingzoomLink) {
         $('#flagsModalBody').html('');
 
         var modal = document.getElementById("flagsModal");
@@ -512,7 +451,7 @@
         });
         var html = '';
         html += '<table style="width:100%"><tr><td style="border:1px solid black">Unassigned Interviews</td><td style="border:1px solid black">' + unassigninterview + '</td></tr>';
-        html += '<tr><td style = "border:1px solid black" > Status Pending</td><td style="border:1px solid black">' + statuspending + '</td></tr>'; 
+        html += '<tr><td style = "border:1px solid black" > Status Pending</td><td style="border:1px solid black">' + statuspending + '</td></tr>';
         html += '<tr><td style = "border:1px solid black" > PENDING CANDIDATE FEEDBACK</td><td style="border:1px solid black">' + candidatepending + '</td></tr>';
         html += ' <tr><td style="border:1px solid black">Missing Video Link</td><td style="border:1px solid black">' + missingVideoLink + '</td></tr>';
         html += '<tr><td style="border:1px solid black">Missing Zoom Link</td><td style="border:1px solid black">' + missingzoomLink + '</td></tr>';
