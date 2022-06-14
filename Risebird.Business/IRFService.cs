@@ -2167,11 +2167,19 @@ namespace Risebird.Business
                         irf.Flags = irf.Flags + 1;
                     }
                     //Start: merging 911 dashboard
-                    if (irf.UnAssignedMeeting > 0)
+                    //if (irf.UnAssignedMeeting > 0)
+                    //{
+                    //    irf.Flags = irf.Flags + 1;
+                    //}
+                    //if (irf.UnfilledInterviewStatusCount > 0)
+                    //{
+                    //    irf.Flags = irf.Flags + 1;
+                    //}
+                    if (irf.UnassignedInterviewsCount > 0)
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.UnfilledInterviewStatusCount > 0)
+                    if (irf.UnfilledMeetingStatusCount > 0)
                     {
                         irf.Flags = irf.Flags + 1;
                     }

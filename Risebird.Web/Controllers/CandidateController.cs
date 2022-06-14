@@ -1230,7 +1230,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Add(string irfId, string irfName)
+        public async Task<IActionResult> Add(string irfId, string irfName, int id)
         {
             try
             {
@@ -1251,7 +1251,13 @@ namespace Risebird.Web.Controllers
                                          select new { ID = (int)s, Name = s.GetDescription() };
                         model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                         model.ProfileName = profileName;
-                        return View(model);
+                        if (id > 0)
+                        {
+                            model.ResumeLink = await _candidateService.FetchCandidateResumeById(id);
+                            model.Candidateesumeid = id;
+                        }
+                        return PartialView("AddCandidate", model);
+                        //return View(model);
                     }
                     else
                     {
@@ -1290,21 +1296,21 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
-                        //if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
-                        //{
-                        //    model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
-                        //}
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
+                        if (model.Candidateesumeid > 0)
+                        {
+                            await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
+                            var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailid);
+                            TempData["SuccessErrorMessageCandidateResume"] = result;
+                            return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+                        }
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
-
                     }
                     else
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-
-
                 }
                 else
                 {
@@ -1314,6 +1320,11 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                if (model.Candidateesumeid > 0)
+                {
+                    TempData["SuccessErrorMessageCandidateResume"] = "Adding candidate failed";
+                    return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+                }
                 TempData["SuccessErrorMessage"] = "Adding candidate failed";
                 return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
             }

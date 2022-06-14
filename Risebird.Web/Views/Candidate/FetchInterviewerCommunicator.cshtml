@@ -74,20 +74,20 @@
                                                     <thead>
                                                         <tr>
                                                             <th style="border-right: 0px !important;">Skill Channel</th>
-                                                            <th style="border-left: 0px !important;">Jd Title</th>
+                                                            <th style="border-left: 0px !important;">Scheduling Link</th>
                                                             <th style="text-align:left">Billing Owner</th>
                                                             <th style="text-align:left">JD-Skills</th>
-                                                            <th>JD Link</th>
+                                                            <th>JD</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
                                                             <th style="border-right: 0px !important;">Skill Channel</th>
-                                                            <th style="border-left: 0px !important;">Jd Title</th>
+                                                            <th style="border-left: 0px !important;">Scheduling Link</th>
                                                             <th style="text-align:left">Billing Owner</th>
                                                             <th style="text-align:left">JD-Skills</th>
-                                                            <th>JD Link</th>
+                                                            <th>JD</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
                                                         </tr>
 
@@ -104,7 +104,15 @@
                                                         {
                                                             <tr id=@item.id>
                                                                 <td>@item.IRFId</td>
-                                                                <td> @item.JDTiltle </td>
+                                                                <td>
+                                                                    <a>
+                                                                        Scheduling Link
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Scheduling Link" title="Scheduling Link">
+
+                                                                            <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                </td>
                                                                 <td> @item.BillingOwner </td>
                                                                 <td>
                                                                     <button type="button" class="clickhere_btn pull-left">
@@ -138,6 +146,9 @@
                                                                             </svg>
                                                                         </span>
                                                                     </button>
+                                                                    @*<button class="mdc-fab app-fab--absolute " aria-label="Scheduling Link" title="Scheduling Link">
+                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                    </button>*@
                                                                 </td>
                                                             </tr>
                                                         }
@@ -324,6 +335,41 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+<div id="CopySchedulinglinkModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Scheduling Link</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCopySchedulinglink()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Scheduling Link:  <b id="txtschedulinglink"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtschedulinglink')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeCopySchedulinglink()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -568,8 +614,24 @@
             $(".dataTables_filter input").val('');
             $(this).hide();
         });
-
     });
+    function CopySchedulinglink(schedulinglink) {
+        var modal = document.getElementById("CopySchedulinglinkModel");
+        modal.style.display = "block";
+        $("#txtschedulinglink").text(schedulinglink);
+    }
+    function closeCopySchedulinglink() {
+        var modal = document.getElementById("CopySchedulinglinkModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
 </script>
 
 

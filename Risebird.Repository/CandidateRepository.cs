@@ -541,5 +541,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<string> FetchCandidateResumeById(int id)
+        {
+            try
+            {
+                var query = "Select ResumeLink from  CandidateResume where id=@id  ";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<string>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }
