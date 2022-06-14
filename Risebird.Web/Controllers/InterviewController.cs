@@ -6770,7 +6770,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = _meetingService.GetCompletedInterviewList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                            modelList = _meetingService.GetCompletedInterviewList(DateTime.Now.Date.AddDays(-2), DateTime.Now.Date.AddDays(1));
                             modelList = modelList.Select(x =>
                             {
                                 x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
