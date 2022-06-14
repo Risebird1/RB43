@@ -1300,6 +1300,7 @@ namespace Risebird.Web.Controllers
                         if (model.Candidateesumeid > 0)
                         {
                             await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
+                            var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailid);
                             TempData["SuccessErrorMessageCandidateResume"] = result;
                             return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
                         }
