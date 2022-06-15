@@ -8,6 +8,7 @@ namespace Risebird.Entities.ViewModel
         public int Userid { get; set; }
         public string Emailid { get; set; }
         public string Profile { get; set; }
+        public string Interviewer { get; set; }
 
         //Video Quality Check
         [Display(Name = "Whether hands-on coding is present")]

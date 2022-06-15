@@ -5755,5 +5755,45 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<IEnumerable<CallCatalogueVM>> GetInterviewerCallCatalogueList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CallCatalogueVM>(con, "usp_FetchCallCatalogueInterviewer", null,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<ResumeDetailsVM>> NotifiyUploadResumeDetails(DateTime startdate, DateTime enddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", startdate);
+                    parameters.Add("@EndDate", enddate);
+                    var result = await SqlMapper.QueryAsync<ResumeDetailsVM>(con, "usp_GetResumeDetailsForNotifiction", parameters, commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
