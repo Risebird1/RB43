@@ -802,7 +802,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (jobLevelid != 0)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.ProfileType == jobLevelid).ToList();
+                    assessmentGroups = assessmentGroups.Where(x => x.ProfileType == jobLevelid.ToString()).ToList();
                 }
                 if (competencyid != 0)
                 {
