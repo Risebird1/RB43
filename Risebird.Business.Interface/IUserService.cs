@@ -65,5 +65,7 @@ namespace Risebird.Business.Interface
         Task<bool> CheckMultiSession(string emailId);
         Task<bool> ClearSessionForOthersUsers(string emailId);
         AssignmentVM GetInterviewerEntitleById(int assessmentid);
+        string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
+        List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid);
     }
 }

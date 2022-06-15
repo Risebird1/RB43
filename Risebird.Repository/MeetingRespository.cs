@@ -5755,5 +5755,21 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<IEnumerable<CallCatalogueVM>> GetInterviewerCallCatalogueList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CallCatalogueVM>(con, "usp_FetchCallCatalogueInterviewer", null,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

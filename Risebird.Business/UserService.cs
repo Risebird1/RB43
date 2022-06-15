@@ -822,5 +822,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+        {
+            try
+            {
+                return _userRepository.SaveCallRecordingInterviewer(CandidateEmail, WhoCalled, CallSid, RecordingUrl);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
+        public List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid)
+        {
+            try
+            {
+                return _userRepository.FetchCallRecordingInterviewer(Emailid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
