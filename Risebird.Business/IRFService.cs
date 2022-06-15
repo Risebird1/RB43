@@ -2665,6 +2665,50 @@ namespace Risebird.Business
             try
             {
                 var irfList = await _irfRepository.GetAllIRFDetailsIRFCount(startDate, endDate, Emailid);
+                foreach (var irf in irfList)
+                {
+                    if (irf.CandidateCount > 0)
+                    {
+                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100) / irf.CandidateCount;
+                        irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
+                    }
+                    if (irf.CompletedInterviews > 0)
+                    {
+                        irf.SelectionRate = irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CompletedInterviews : 0;
+                    }
+                    if (irf.ScheduledPercentage < 75)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.CompletionRate < 60)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.SelectionRate < 20)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnassignedInterviewsCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledMeetingStatusCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledCommentsCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingZoomLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingVideoLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                }
                 return irfList;
             }
             catch (Exception e)

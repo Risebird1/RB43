@@ -209,7 +209,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div id="flagsModal" class="modal modal-bg">
+                                <div id="flagsModal" class="modal modal-bg" style="z-index:3">
                                     <!-- Modal content -->
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
@@ -504,6 +504,7 @@
         modal.style.display = "none";
     }
     function OpenModelForIRF(HrEmail) {
+        $(".loader").show();
         $.ajax({
             type: "POST",
             url: "/IRF/SkillChannelDetailsIRFCount",
@@ -512,22 +513,35 @@
                 var modal = document.getElementById("IRFListModel");
                 modal.style.display = "block";
                 $("#IRFModalHeading").text("IRFs for " + HrEmail);
+                $(".loader").hide();
                 bindIRFList(data);
             }
         });
     }
     function bindIRFList(data) {
         var html = '';
-        html += '<table style="width:100%"><tr><td style="border:1px solid black">Skill Channel</td><td style="border:1px solid black">JdTitle</td><td style="border:1px solid black">Client</td><td style="border:1px solid black">Job Country</td></tr>';
+        html += '<table style="width:100%"><tr><td style="border:1px solid black">Skill Channel</td><td style="border:1px solid black">JdTitle</td><td style="border:1px solid black">Client</td><td style="border:1px solid black">Flags</td>';
+        html += '<td style="border:1px solid black">Total Candidates</td><td style="border:1px solid black">Completed Interviews</td><td style="border:1px solid black">Selected Interviews</td>';
+        html += '<td style="border:1px solid black">Rejected Interviews</td><td style="border:1px solid black">Report Pending</td><td style="border:1px solid black">Not Scheduled Count</td>';
+        html += '<td style="border:1px solid black">Rescheduled Count</td><td style="border:1px solid black">Future Scheduled Count</td></tr> ';
         for (var i = 0; i < data.length; i++) {
             html += '<tr><td style="border:1px solid black">' + data[i].irfId + '</td>';
             html += '<td style="border:1px solid black">' + data[i].jdTiltle + '</td>';
             html += '<td style="border:1px solid black">' + data[i].clientCompName + '</td>';
-            if (data[i].jobCountry == "1") {
-                html += '<td style="border:1px solid black">India</td></tr>';
-            } else {
-                html += '<td style="border:1px solid black">Out Side India</td></tr>';
+            if (data[i].flags > 0) {
+                html += '<td style="color:blue!important" onclick="OpenModalForFlags(' + "'" + data[i].risebirdHREmail + "'" + ',' + "''" + ',' + "'" + data[i].scheduledPercentage + "'" + ',' + "'" + data[i].completionRate + "'" + ',' + "'" + data[i].selectionRate + "'" + ',' + "'" + data[i].unassignedInterviewsCount + "'" + ',' + "'" + data[i].unfilledMeetingStatusCount + "'" + ',' + "'" + data[i].unfilledCommentsCount + "'" + ',' + "'" + data[i].missingVideoLink + "'" + ',' + "'" + data[i].missingZoomLink + "'" + ')">' + data[i].flags + '</td>';
             }
+            else {
+                html += '<td>' + data[i].flags + '</td>';
+            }
+            html += '<td style="border:1px solid black">' + data[i].candidateCount + '</td>';
+            html += '<td style="border:1px solid black">' + data[i].completedInterviews + '</td>';
+            html += '<td style="border:1px solid black">' + data[i].selectedMeetings + '</td>';
+            html += '<td style="border:1px solid black">' + data[i].rejectedMeetings + '</td>';
+            html += '<td style="border:1px solid black">' + data[i].pendingCount + '</td>';
+            html += '<td style="border:1px solid black">' + data[i].notScheduledCount + '</td>';
+            html += '<td style="border:1px solid black">' + data[i].reScheduledCount + '</td>';
+            html += '<td style="border:1px solid black">' + data[i].futureScheduledMeetings + '</td>';
         }
         html += '</table>';
         $("#IRFModalBodyCount").empty().html(html);

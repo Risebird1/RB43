@@ -73,5 +73,7 @@ namespace Risebird.Repository.Interface
         string GetUserProfileBasedOnEmailId(string emailId);
         Task<ClientUserVM> GetClientUserDetailsByIRF(string emailID, int irfid);
         AssignmentVM GetInterviewerEntitleById(int assessmentid);
+        string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
+        List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid);
     }
 }

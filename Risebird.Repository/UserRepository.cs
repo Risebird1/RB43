@@ -1628,5 +1628,57 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@RecordingUrl", RecordingUrl);
+                parameters.Add("@Sid", CallSid);
+                parameters.Add("@CandidateEmail", CandidateEmail);
+                parameters.Add("@WhoCalled", WhoCalled);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(con, "usp_AddorUpdateCallRecordingInterviewer", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return "success";
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
+        public List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Emailid", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<CallRecordingDetailsVM>(con, "usp_FetchCallRecordingInterviewer", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<CallRecordingDetailsVM>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
     }
 }
