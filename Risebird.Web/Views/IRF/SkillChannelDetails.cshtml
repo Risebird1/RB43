@@ -187,13 +187,13 @@
                                                             <td> @item.RisebirdHREmail </td>
                                                             @if (item.Flags > 0)
                                                             {
-                                                                <td style="color:blue!important" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
+                                                                <td style="color:blue!important;cursor:pointer" onclick="OpenModalForFlags('@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink)">@item.Flags</td>
                                                             }
                                                             else
                                                             {
                                                                 <td>@item.Flags</td>
                                                             }
-                                                            <td style="color:blue!important" onclick="OpenModelForIRF('@item.RisebirdHREmail')">@item.IRFId</td>
+                                                            <td style="color:blue!important;cursor:pointer" onclick="OpenModelForIRF('@item.RisebirdHREmail')">@item.IRFId</td>
                                                             <td> @item.CandidateCount </td>
                                                             <td> @item.CompletedInterviews </td>
                                                             <td> @item.SelectedMeetings </td>
@@ -528,12 +528,12 @@
             html += '<tr><td style="border:1px solid black">' + data[i].irfId + '</td>';
             html += '<td style="border:1px solid black">' + data[i].jdTiltle + '</td>';
             html += '<td style="border:1px solid black">' + data[i].clientCompName + '</td>';
-            if (data[i].flags > 0) {
-                html += '<td style="color:blue!important" onclick="OpenModalForFlags(' + "'" + data[i].risebirdHREmail + "'" + ',' + "''" + ',' + "'" + data[i].scheduledPercentage + "'" + ',' + "'" + data[i].completionRate + "'" + ',' + "'" + data[i].selectionRate + "'" + ',' + "'" + data[i].unassignedInterviewsCount + "'" + ',' + "'" + data[i].unfilledMeetingStatusCount + "'" + ',' + "'" + data[i].unfilledCommentsCount + "'" + ',' + "'" + data[i].missingVideoLink + "'" + ',' + "'" + data[i].missingZoomLink + "'" + ')">' + data[i].flags + '</td>';
-            }
-            else {
-                html += '<td>' + data[i].flags + '</td>';
-            }
+            //if (data[i].flags > 0) {
+            //    html += '<td style="color:blue!important" onclick="OpenModalForFlags(' + "'" + data[i].risebirdHREmail + "'" + ',' + "''" + ',' + "'" + data[i].scheduledPercentage + "'" + ',' + "'" + data[i].completionRate + "'" + ',' + "'" + data[i].selectionRate + "'" + ',' + "'" + data[i].unassignedInterviewsCount + "'" + ',' + "'" + data[i].unfilledMeetingStatusCount + "'" + ',' + "'" + data[i].unfilledCommentsCount + "'" + ',' + "'" + data[i].missingVideoLink + "'" + ',' + "'" + data[i].missingZoomLink + "'" + ')">' + data[i].flags + '</td>';
+            //}
+            //else {
+            html += '<td>' + data[i].flags + '</td>';
+            //}
             html += '<td style="border:1px solid black">' + data[i].candidateCount + '</td>';
             html += '<td style="border:1px solid black">' + data[i].completedInterviews + '</td>';
             html += '<td style="border:1px solid black">' + data[i].selectedMeetings + '</td>';
