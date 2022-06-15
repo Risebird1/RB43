@@ -1277,45 +1277,37 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Add(Candidate model)
+        public async Task<IActionResult> Add(Candidate model, string emailids, string id)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (String.IsNullOrEmpty(emailids))
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
+                    emailids = HttpContext.Session.GetString("email")?.Trim();
+                    emailids = emailids.Replace("\"", "");
+                }
+                if (!string.IsNullOrEmpty(model.EmailId))
+                {
+                    model.EmailId = model.EmailId.ToLower();
+                }
+                var result = _irfService.AddCandidate(model, emailids, model.ProfileName).Result;
+                if (model.Candidateesumeid > 0)
+                {
+                    await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
+                    var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailids);
+                    if (String.IsNullOrEmpty(id))
                     {
-                        if (!string.IsNullOrEmpty(model.EmailId))
-                        {
-                            model.EmailId = model.EmailId.ToLower();
-                        }
-                        var result = _irfService.AddCandidate(model, emailid, profileName).Result;
-                        if (model.Candidateesumeid > 0)
-                        {
-                            await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
-                            var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailid);
-                            TempData["SuccessErrorMessageCandidateResume"] = result;
-                            return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
-                        }
-                        TempData["SuccessErrorMessageCandidate"] = result;
-                        return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                        TempData["SuccessErrorMessageCandidateResume"] = result;
+                        return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
                     }
                     else
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        return RedirectToAction("ResumesPublicly", new { irfId = model.IRFId, irfName = model.IRFName, emailid = emailids, id = id });
                     }
                 }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                TempData["SuccessErrorMessageCandidate"] = result;
+                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
             }
             catch (Exception ex)
             {
@@ -1323,7 +1315,14 @@ namespace Risebird.Web.Controllers
                 if (model.Candidateesumeid > 0)
                 {
                     TempData["SuccessErrorMessageCandidateResume"] = "Adding candidate failed";
-                    return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+                    if (String.IsNullOrEmpty(id))
+                    {
+                        return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ResumesPublicly", new { irfId = model.IRFId, irfName = model.IRFName, emailid = emailids, id = id });
+                    }
                 }
                 TempData["SuccessErrorMessage"] = "Adding candidate failed";
                 return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
@@ -4431,6 +4430,59 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Failed to upload Resume(s)!");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResumesPublicly(int irfId, string irfName, string emailid, string id)
+        {
+            try
+            {
+                var model = new ResumeListViewModel();
+                model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
+                model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
+                model.IRFName = irfName;
+                model.IRFId = irfId;
+                model.Profile = "Client";
+                ViewBag.emailid = emailid;
+                ViewBag.id = id;
+                if (TempData["SuccessErrorMessageCandidateResume"] != null)
+                {
+                    model.Message = TempData["SuccessErrorMessageCandidateResume"].ToString();
+                    TempData.Remove("SuccessErrorMessageCandidateResume");
+                }
+                ViewBag.backbutton = true;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("FetchInterviewerCommunicator", new { emailid = emailid, id = id });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> AddPublicly(string irfId, string irfName, int Candidateesumeid, string emailids, string id)
+        {
+            try
+            {
+                var model = new Candidate
+                {
+                    IRFId = Convert.ToInt32(irfId),
+                    IRFName = irfName
+                };
+                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                model.ProfileName = "Client";
+                model.ResumeLink = await _candidateService.FetchCandidateResumeById(Candidateesumeid);
+                model.Candidateesumeid = Candidateesumeid;
+                ViewBag.emailid = emailids;
+                ViewBag.id = id;
+                return PartialView("AddCandidate", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("ResumesPublicly", new { irfId = irfId, irfName = irfName, emailid = emailids, id = id });
             }
         }
     }
