@@ -1,10 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -34,6 +33,10 @@ namespace Risebird.MicroService
                 DateTime _enddate = DateTime.Now;
                 DateTime _startdate = DateTime.Now.AddHours(-8);
                 var _list = await _meetingRespository.NotifiyUploadResumeDetails(_startdate, _enddate);
+                if (_list == null)
+                {
+                    _list = new List<ResumeDetailsVM>();
+                }
                 var _listChannelowner = _list.Select(x => x.EmailId).Distinct().ToList();
                 foreach (var item in _listChannelowner)
                 {
