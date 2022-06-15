@@ -6997,5 +6997,29 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SkillChannelDetailsIRFCount(string HrEmail)
+        {
+            var irfList = new List<IRF>();
+            if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
+            {
+                irfList = (await _irfService.GetAllIRFDetailsIRFCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), HrEmail))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetAllIRFDetailsIRFCount(filter.StartDate.Value, filter.EndDate.Value, HrEmail))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetAllIRFDetailsIRFCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), HrEmail))?.ToList();
+                }
+            }
+            return Json(irfList);
+        }
     }
 }
