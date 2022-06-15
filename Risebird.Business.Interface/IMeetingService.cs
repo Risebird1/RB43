@@ -182,5 +182,6 @@ namespace Risebird.Business.Interface
         List<MeetingVM> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
         QCFormVM FetchQCFormDetailsById(int interviewid);
         bool AddorUpdateQCFormReport(QCFormVM model);
+        List<CallCatalogueVM> GetInterviewerCallCatalogueList();
     }
 }

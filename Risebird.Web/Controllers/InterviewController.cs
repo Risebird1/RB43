@@ -6852,7 +6852,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Create QCForm
-        public async Task<IActionResult> QCReportForm(int interviewid)
+        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer)
         {
             try
             {
@@ -6870,6 +6870,7 @@ namespace Risebird.Web.Controllers
                         {
                             model = new QCFormVM();
                         }
+                        model.Interviewer = interviewer;
                         model.Profile = profileName;
                         return View(model);
                     }

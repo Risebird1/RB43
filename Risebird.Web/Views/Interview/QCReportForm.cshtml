@@ -41,6 +41,7 @@
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/Interview/QCReportForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
                             @Html.HiddenFor(m => m.Interviewid)
+                            @Html.HiddenFor(m => m.Interviewer)
                             <div class="canvas_div_pdf">
                                 <div class="report-full-wrap">
                                     <div class="row">
