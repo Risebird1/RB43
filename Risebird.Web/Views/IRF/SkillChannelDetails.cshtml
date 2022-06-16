@@ -421,11 +421,11 @@
             CreateChartAxes(chart);
         });
         var html = '';
-        html += '<table style="width:100%"><tr><td style="border:1px solid black">Unassigned Interviews</td><td style="border:1px solid black">' + unassigninterview + '</td></tr>';
-        html += '<tr><td style = "border:1px solid black" > Status Pending</td><td style="border:1px solid black">' + statuspending + '</td></tr>';
-        html += '<tr><td style = "border:1px solid black" > PENDING CANDIDATE FEEDBACK</td><td style="border:1px solid black">' + candidatepending + '</td></tr>';
-        html += ' <tr><td style="border:1px solid black">Missing Video Link</td><td style="border:1px solid black">' + missingVideoLink + '</td></tr>';
-        html += '<tr><td style="border:1px solid black">Missing Zoom Link</td><td style="border:1px solid black">' + missingzoomLink + '</td></tr>';
+        html += '<table style="width:100%"><tr><td >Unassigned Interviews</td><td >' + unassigninterview + '</td></tr>';
+        html += '<tr><td style = "border:1px solid black" > Status Pending</td><td >' + statuspending + '</td></tr>';
+        html += '<tr><td style = "border:1px solid black" > PENDING CANDIDATE FEEDBACK</td><td >' + candidatepending + '</td></tr>';
+        html += ' <tr><td >Missing Video Link</td><td >' + missingVideoLink + '</td></tr>';
+        html += '<tr><td >Missing Zoom Link</td><td >' + missingzoomLink + '</td></tr>';
         html += '</table>';
         $("#flagsModalBodyCount").empty().html(html);
     }
@@ -504,7 +504,7 @@
         modal.style.display = "none";
     }
     function OpenModelForIRF(HrEmail) {
-        $(".loader").show();
+        Startloader();
         $.ajax({
             type: "POST",
             url: "/IRF/SkillChannelDetailsIRFCount",
@@ -513,38 +513,46 @@
                 var modal = document.getElementById("IRFListModel");
                 modal.style.display = "block";
                 $("#IRFModalHeading").text("IRFs for " + HrEmail);
-                $(".loader").hide();
+                Stoploader();
                 bindIRFList(data);
             }
         });
     }
     function bindIRFList(data) {
         var html = '';
-        html += '<table style="width:100%"><tr><td style="border:1px solid black">Skill Channel</td><td style="border:1px solid black">JdTitle</td><td style="border:1px solid black">Client</td><td style="border:1px solid black">Flags</td>';
-        html += '<td style="border:1px solid black">Total Candidates</td><td style="border:1px solid black">Completed Interviews</td><td style="border:1px solid black">Selected Interviews</td>';
-        html += '<td style="border:1px solid black">Rejected Interviews</td><td style="border:1px solid black">Report Pending</td><td style="border:1px solid black">Not Scheduled Count</td>';
-        html += '<td style="border:1px solid black">Rescheduled Count</td><td style="border:1px solid black">Future Scheduled Count</td></tr> ';
+        html += '<table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%"><tr><th>Skill Channel</th><th>JdTitle</th><th>Client</th><th>Flags</th>';
+        html += '<th>Total Candidates</th><th>Completed Interviews</th><th>Selected Interviews</th>';
+        html += '<th>Rejected Interviews</th><th>Report Pending</th><th>Not Scheduled Count</th>';
+        html += '<th>Rescheduled Count</th><th>Future Scheduled Count</th></tr> ';
         for (var i = 0; i < data.length; i++) {
-            html += '<tr><td style="border:1px solid black">' + data[i].irfId + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].jdTiltle + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].clientCompName + '</td>';
+            html += '<tr><td >' + data[i].irfId + '</td>';
+            html += '<td >' + data[i].jdTiltle + '</td>';
+            html += '<td >' + data[i].clientCompName + '</td>';
             //if (data[i].flags > 0) {
             //    html += '<td style="color:blue!important" onclick="OpenModalForFlags(' + "'" + data[i].risebirdHREmail + "'" + ',' + "''" + ',' + "'" + data[i].scheduledPercentage + "'" + ',' + "'" + data[i].completionRate + "'" + ',' + "'" + data[i].selectionRate + "'" + ',' + "'" + data[i].unassignedInterviewsCount + "'" + ',' + "'" + data[i].unfilledMeetingStatusCount + "'" + ',' + "'" + data[i].unfilledCommentsCount + "'" + ',' + "'" + data[i].missingVideoLink + "'" + ',' + "'" + data[i].missingZoomLink + "'" + ')">' + data[i].flags + '</td>';
             //}
             //else {
             html += '<td>' + data[i].flags + '</td>';
             //}
-            html += '<td style="border:1px solid black">' + data[i].candidateCount + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].completedInterviews + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].selectedMeetings + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].rejectedMeetings + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].pendingCount + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].notScheduledCount + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].reScheduledCount + '</td>';
-            html += '<td style="border:1px solid black">' + data[i].futureScheduledMeetings + '</td>';
+            html += '<td >' + data[i].candidateCount + '</td>';
+            html += '<td >' + data[i].completedInterviews + '</td>';
+            html += '<td >' + data[i].selectedMeetings + '</td>';
+            html += '<td >' + data[i].rejectedMeetings + '</td>';
+            html += '<td >' + data[i].pendingCount + '</td>';
+            html += '<td >' + data[i].notScheduledCount + '</td>';
+            html += '<td >' + data[i].reScheduledCount + '</td>';
+            html += '<td >' + data[i].futureScheduledMeetings + '</td>';
         }
         html += '</table>';
         $("#IRFModalBodyCount").empty().html(html);
+    }
+    function Startloader() {
+        $(".loader").show();
+        $(".dataloading").hide();
+    }
+    function Stoploader() {
+        $(".loader").hide();
+        $(".dataloading").show();
     }
 </script>
 
