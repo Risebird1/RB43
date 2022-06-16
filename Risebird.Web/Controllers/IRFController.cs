@@ -4428,6 +4428,8 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.ProfileType = modeldata.ProfileType;
                 model._skilldetails.CompetencyLevel = modeldata.CompetencyLevel;
                 model._skilldetails.PerHourRate = modeldata.PerHourRate;
+                model._skilldetails.SeniorityLevel = modeldata.SeniorityLevel;
+                model._skilldetails.EmploymentType = modeldata.EmploymentType;
             }
             else
             {
@@ -4438,12 +4440,74 @@ namespace Risebird.Web.Controllers
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
             model._skilldetails.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-            var profiletype = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.ProfileTypeList = new SelectList(profiletype, "ID", "Name");
-            var CompetencyLevel = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.CompetencyLevellist = new SelectList(CompetencyLevel, "ID", "Name");
+            //var profiletype = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+            //                  select new { ID = (int)s, Name = s.GetDescription() };
+            //ViewBag.ProfileTypeList = new SelectList(profiletype, "ID", "Name");
+            //var CompetencyLevel = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+            //                      select new { ID = (int)s, Name = s.GetDescription() };
+            //ViewBag.CompetencyLevellist = new SelectList(CompetencyLevel, "ID", "Name");
+            //var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+            //                      select new { ID = (int)s, Name = s.GetDescription() };
+            //ViewBag.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
+
+
+            if (!string.IsNullOrEmpty(model._skilldetails.ProfileType))
+            {
+                model._skilldetails.ProfileTypeArray = model._skilldetails.ProfileType.Split(',');
+            }
+            var DifficultyLevelTypes = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforDifficultyLevel = new List<SelectListItem>();
+            foreach (var item in DifficultyLevelTypes)
+            {
+                bool selected = false;
+                if (model._skilldetails.ProfileTypeArray != null && model._skilldetails.ProfileTypeArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.ID), selected);
+                selectListforDifficultyLevel.Add(selectItem);
+            }
+            model._skilldetails.ProfileTypeList = selectListforDifficultyLevel;
+
+            if (!string.IsNullOrEmpty(model._skilldetails.SeniorityLevel))
+            {
+                model._skilldetails.SeniorityLevelArray = model._skilldetails.SeniorityLevel.Split(',');
+            }
+            var seniorityLevelTypes = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforSeniorityLevel = new List<SelectListItem>();
+            foreach (var item in seniorityLevelTypes)
+            {
+                bool selected = false;
+                if (model._skilldetails.SeniorityLevelArray != null && model._skilldetails.SeniorityLevelArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.ID), selected);
+                selectListforSeniorityLevel.Add(selectItem);
+            }
+            model._skilldetails.SeniorityLevelList = selectListforSeniorityLevel;
+
+            if (!string.IsNullOrEmpty(model._skilldetails.EmploymentType))
+            {
+                model._skilldetails.EmploymentTypeArray = model._skilldetails.EmploymentType.Split(',');
+            }
+            var employementTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforEmployementTypes = new List<SelectListItem>();
+            foreach (var item in employementTypes)
+            {
+                bool selected = false;
+                if (model._skilldetails.EmploymentTypeArray != null && model._skilldetails.EmploymentTypeArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.ID), selected);
+                selectListforEmployementTypes.Add(selectItem);
+            }
+            model._skilldetails.EmploymentTypeList = selectListforEmployementTypes;
+
             return PartialView(model);
         }
 
@@ -6932,6 +6996,30 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessage"] = $"Failed to update Skills Channel '{model.IRFId}'!";
                 return RedirectToAction("Index");
             }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SkillChannelDetailsIRFCount(string HrEmail)
+        {
+            var irfList = new List<IRF>();
+            if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
+            {
+                irfList = (await _irfService.GetAllIRFDetailsIRFCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), HrEmail))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetAllIRFDetailsIRFCount(filter.StartDate.Value, filter.EndDate.Value, HrEmail))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetAllIRFDetailsIRFCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), HrEmail))?.ToList();
+                }
+            }
+            return Json(irfList);
         }
     }
 }

@@ -47,9 +47,17 @@ namespace Risebird.Entities.ViewModel
         public int Categoryid { get; set; }
         public SelectList AssessmentGroupsList { get; set; }
         public string ClientCompanyName { get; set; }
-        [Display(Name = "Company Types")]
+
+        [Display(Name = "Company Type")]
         public int CompanyTypes { get; set; }
+
         [Display(Name = "Competency Level")]
         public int CompetencyLevel { get; set; }
+
+        [Display(Name = "Difficulty Level")]
+        public int DifficultyLevel { get; set; }  //referred to as Profile Type at a few places
+
+        [Display(Name = "Employment Type")]
+        public int EmploymentType { get; set; }
     }
 }

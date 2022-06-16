@@ -35,7 +35,8 @@ namespace Risebird.Entities.ViewModel
         public string Title { get; set; }
         public int QuestionCount { get; set; }
         public string Timer { get; set; }
-        public int ProfileType { get; set; }
+        //public int ProfileType { get; set; }
+        public string ProfileType { get; set; } // changed to difficulty level now
         public string ProfileTypeName { get; set; }
         public string PrimarySkills { get; set; }
         public string SecondarySkill { get; set; }
@@ -43,6 +44,11 @@ namespace Risebird.Entities.ViewModel
         public string CompentencyLevelName { get; set; }
         public string PartitionKey { get; set; }
         public int id { get; set; }
+        public string SeniorityLevel { get; set; }
+        public string EmploymentType { get; set; }
+        public int? CompanyType { get; set; }
+        public int? CountryType { get; set; }
+        //public int PerHourRate { get; set; }
     }
     public class QuestionList
     {
@@ -99,11 +105,13 @@ namespace Risebird.Entities.ViewModel
     public class ProfileTypeSkills
     {
         public SelectList ProfileTypeList { get; set; }
-        public int ProfileType { get; set; }
+        public int ProfileType { get; set; } //Now changed to difficulty level 
         public string ProfileTypeName { get; set; }
         public SelectList PrimarySkillsList { get; set; }
         public string PrimarySkills { get; set; }
         public SelectList CompentencyLevelList { get; set; }
+        public SelectList SeniorityLevelList { get; set; }
+        public SelectList EmploymentTypeOptions { get; set; }
     }
     public class MCQDropdowndetails
     {

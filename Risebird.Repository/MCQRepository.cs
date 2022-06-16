@@ -32,13 +32,18 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@PartitionKey", _lstset.PartitionKey);
                     parameters.Add("@Title", _lstset.Title);
-                    parameters.Add("@CompentencyLevel", _lstset.CompentencyLevel);
+                    //parameters.Add("@CompentencyLevel", _lstset.CompentencyLevel);
                     parameters.Add("@PrimarySkills", _lstset.PrimarySkills);
                     parameters.Add("@ProfileType", _lstset.ProfileType);
                     parameters.Add("@SecondarySkill", _lstset.SecondarySkill);
                     parameters.Add("@Timer", _lstset.Timer);
                     parameters.Add("@QuestionCount", _lstset.QuestionCount);
                     parameters.Add("@id", _lstset.id);
+                    parameters.Add("@SeniorityLevel", _lstset.SeniorityLevel);
+                    parameters.Add("@EmploymentType", _lstset.EmploymentType);
+                    parameters.Add("@CountryType", _lstset.CountryType != 0 ? _lstset.CountryType  : null);
+                    parameters.Add("@CompanyType", _lstset.CompanyType != 0 ? _lstset.CompanyType : null);
+                    //parameters.Add("@PerHourRate", _lstset.PerHourRate);
                     parameters.Add("@mcqid", dbType: DbType.Int32, direction: ParameterDirection.Output);
                     await SqlMapper.QueryAsync(con, "usp_AddorUpdateMCQSet", parameters,
                          commandType: CommandType.StoredProcedure);

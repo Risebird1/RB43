@@ -3425,12 +3425,36 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.AddorUpdateQCFormReport(model).Result;
+                if (_meetingRespository.AddorUpdateQCFormReport(model).Result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCDone;
+                    activityTrackerModel.Particulars = "QC for Interviewer: " + model.Interviewer + " For Interviewid :" + model.Interviewid;
+                    activityTrackerModel.PerformedBy = model.Emailid;
+                    activityTrackerModel.Summary = "QC Form Filled";
+                    activityTrackerModel.ResourceUrl = "";
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public List<CallCatalogueVM> GetInterviewerCallCatalogueList()
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetInterviewerCallCatalogueList().Result.ToList();
+                return meetings ?? new List<CallCatalogueVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

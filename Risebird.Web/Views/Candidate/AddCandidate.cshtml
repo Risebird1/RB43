@@ -1,8 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.Candidate
 
 
-@using (Html.BeginForm("Add", "Candidate", FormMethod.Post, new { @id = "form", enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
-{
+<form action="@Url.Action("Add", "Candidate",new { emailids=ViewBag.emailid,id=ViewBag.id})" method="post" id="form">
     <div class="row">
         <div class="col-md-6 col-sm-6 pr-1">
             <div class="form-group">
@@ -52,11 +51,10 @@
                 @Html.EditorFor(model => model.ClientHRAttemptContact, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                 @Html.ValidationMessageFor(model => model.ClientHRAttemptContact, "", new { @class = "text-danger" })
             </div>
-
             @if (Model.ProfileName != "Client")
             {
                 <div class="form-group">
-                    @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:8px;" })
+                    @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:20px;" })
                     @Html.CheckBoxFor(m => m.IsProctor, new { @style = "position:relative;top:-24px;" })
                 </div>
             }
@@ -65,6 +63,7 @@
     @Html.HiddenFor(x => x.IRFId)
     @Html.HiddenFor(x => x.IRFName)
     @Html.HiddenFor(x => x.Candidateesumeid)
+    @Html.HiddenFor(x => x.ProfileName)
     <div class="card-footer">
         <div class="row">
             <div class="col-md-12 mc-button-area">
@@ -72,5 +71,5 @@
             </div>
         </div>
     </div>
-}
+</form>
 

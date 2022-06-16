@@ -129,7 +129,7 @@ namespace Risebird.Repository
             {
                 //Set the parameters to be passed to store procedure
                 var model = new InstaMeetingVM();
-                var query = "Select * from InstaRequests Where Id=@id";
+                var query = "Select ir.*, ag.AssessmentGroup as AssessmentGroupName from InstaRequests ir join AssessmentGroup ag on ag.id = ir.AssessmentGroup Where ir.Id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

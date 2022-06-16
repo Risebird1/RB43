@@ -30,9 +30,10 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IMCQService _mCQService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -42,6 +43,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _mCQService = mCQService;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         [Authorize]
@@ -57,37 +59,160 @@ namespace Risebird.Web.Controllers
                     var result = _mCQService.FetchAllMCQSets();
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
-                    var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
+                    var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    //var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                    //                  select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
 
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
-                    resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
+                    resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
+                    resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
+                    //resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
 
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
-                        item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
-                        item.CompentencyLevelName = Enum.GetName(typeof(CompetencyLevel), item.CompentencyLevel);
+                        if(!string.IsNullOrEmpty(item.ProfileType))
+                        {
+                            var listProfileTypes = new List<string>();
+                            foreach (var profile in item.ProfileType.Split(','))
+                            {
+                                var name = Enum.GetName(typeof(Heuristicsscorelevel), Convert.ToInt16(profile));
+                                listProfileTypes.Add(name);
+                            }
+                            item.ProfileTypeName = string.Join(",", listProfileTypes);
+                        }
+                        //item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
+                        //item.CompentencyLevelName = Enum.GetName(typeof(CompetencyLevel), item.CompentencyLevel);
                     }
                     if (HttpContext.Session.GetString("MCQSetList") != null)
                     {
-                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQSetList"));
+                        var filter = JsonConvert.DeserializeObject<MCQFilter>(HttpContext.Session.GetString("MCQSetList"));
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = result.Select(x => x.PrimarySkills).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                        filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = result.Select(x => x.ProfileTypeName).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
                         filter.SecondarySkill = filter.SecondarySkill == null ? filter.SecondarySkill = result.Select(x => x.SecondarySkill).ToArray() : filter.SecondarySkill = filter.SecondarySkill;
-                        filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = result.Select(x => x.CompentencyLevelName).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
-                        result = result.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.PrimarySkills) : c.PrimarySkills == null)
-                                && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ProfileTypeName) : c.ProfileTypeName == null)
-                                && (filter.SecondarySkill.Count() > 0 ? filter.SecondarySkill.Contains(c.SecondarySkill) : c.SecondarySkill == null)
-                                && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevelName) : c.CompentencyLevelName == null)).ToList();
+
+
+                        if (result != null && result.Count() > 0)
+                        {
+                            bool continueApplyingFilter = true;
+
+                            if (filter.PrimarySkill != null)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByPrimarySkill = null;
+
+                                resultFilteredByPrimarySkill = result.Where(c => filter.PrimarySkill.Contains(c.PrimarySkills));
+                                if (resultFilteredByPrimarySkill != null)
+                                {
+                                    result = resultFilteredByPrimarySkill;
+                                }
+                            }
+                            if (filter.SecondarySkill != null)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredBySecondarySkill = null;
+
+                                resultFilteredBySecondarySkill = result.Where(c => filter.SecondarySkill.Contains(c.SecondarySkill));
+                                
+                                
+                                if (resultFilteredBySecondarySkill != null && resultFilteredBySecondarySkill.Count() > 0)//filtering only if there is nmore than one in the resultFilteredBySecondarySkill variable  
+                                {
+                                    result = resultFilteredBySecondarySkill;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(filter.CountryType))
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByCountryType = null;
+
+                                resultFilteredByCountryType = result.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
+                                //result = resultFilteredByCountryType;
+                                if (resultFilteredByCountryType != null && resultFilteredByCountryType.Count() > 0)
+                                {
+                                    result = resultFilteredByCountryType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.CompanyType) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByCompanyType = null;
+
+                                resultFilteredByCompanyType = result.Where(c => c.CompanyType.HasValue && c.CompanyType.Value == Convert.ToInt16(filter.CompanyType));
+                                if (resultFilteredByCompanyType != null && resultFilteredByCompanyType.Count() > 0)
+                                {
+                                    result = resultFilteredByCompanyType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.SeniorityLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredBySeniority = null;
+
+                                resultFilteredBySeniority = result.Where(c => c.SeniorityLevel != null && c.SeniorityLevel.Contains(filter.SeniorityLevel));
+                                if (resultFilteredBySeniority != null && resultFilteredBySeniority.Count() > 0)
+                                {
+                                    result = resultFilteredBySeniority;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.DifficultyLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByDifficulty = null;
+
+                                resultFilteredByDifficulty = result.Where(c => c.ProfileType != null && c.ProfileType.Contains(filter.DifficultyLevel));
+                                if (resultFilteredByDifficulty != null && resultFilteredByDifficulty.Count() > 0)
+                                {
+                                    result = resultFilteredByDifficulty;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.EmploymentType) && continueApplyingFilter)
+                            {
+                                IEnumerable<MCQVMset> resultFilteredByEmploymentType = null;
+
+                                resultFilteredByEmploymentType = result.Where(c => c.EmploymentType != null && c.EmploymentType.Contains(filter.EmploymentType));
+                                if (resultFilteredByEmploymentType != null && resultFilteredByEmploymentType.Count() > 0)
+                                {
+                                    result = resultFilteredByEmploymentType;
+                                }
+                            }
+
+                        }
+
+                        result = result?.ToList();
+                        //result = result.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.PrimarySkills) : c.PrimarySkills == null)
+                        //        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ProfileTypeName) : c.ProfileTypeName == null)
+                        //        && (filter.SecondarySkill.Count() > 0 ? filter.SecondarySkill.Contains(c.SecondarySkill) : c.SecondarySkill == null)
+                        //        && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevelName) : c.CompentencyLevelName == null)).ToList();
                     }
-                    resultset._MCQVMset = (List<MCQVMset>)result;
-                    ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
-                    ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
-                    ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
-                    ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
+                    resultset._MCQVMset = result != null ? (List<MCQVMset>)result : new List<MCQVMset>();
+
+                    //ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
+                    //ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
+                    //ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
+                    //ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     ViewBag.Profile = profileName;
                     return View(resultset);
@@ -106,27 +231,35 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Index(InterviewFilter filter)
+        public async Task<IActionResult> Index(MCQFilter filter)
         {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            try
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (filter != null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        HttpContext.Session.SetString("MCQSetList", JsonConvert.SerializeObject(filter));
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("MCQSetList", JsonConvert.SerializeObject(filter));
+                        }
+                        return RedirectToAction("Index");
                     }
-                    return RedirectToAction("Index");
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            else
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
         }
@@ -147,8 +280,9 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
 
@@ -204,10 +338,17 @@ namespace Risebird.Web.Controllers
             var time = Request.Form["time"].ToString();
             var status = Request.Form["status"].ToString();
             var partialid = Request.Form["PartialId"].ToString();
-            var ProfileType = Convert.ToInt32(Request.Form["ProfileType"].ToString());
+            //var ProfileType = Convert.ToInt32(Request.Form["ProfileType"].ToString());
+            var ProfileType = Request.Form["ProfileType"].ToString();
             var PrimarySkill = Request.Form["PrimarySkill"].ToString();
             var SecondarySkill = Request.Form["SecondarySkill"].ToString();
-            var CompentencyLevel = Convert.ToInt32(Request.Form["CompentencyLevel"].ToString());
+            var SeniorityLevel = Request.Form["SeniorityLevel"].ToString();
+            var EmploymentType = Request.Form["EmploymentType"].ToString();
+            var CompanyType = Convert.ToInt32(Request.Form["CompanyType"].ToString());
+            var CountryType = Convert.ToInt32(Request.Form["CountryType"].ToString());
+            //var PerHourRate = Convert.ToInt32(Request.Form["PerHourRate"].ToString());
+            //var id = Convert.ToInt32(Request.Form["id"].ToString());
+            //var CompentencyLevel = Convert.ToInt32(Request.Form["CompentencyLevel"].ToString());
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
             var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -216,11 +357,19 @@ namespace Risebird.Web.Controllers
             _lstset.Timer = time;
             _lstset.ProfileType = ProfileType;
             _lstset.PrimarySkills = PrimarySkill;
-            _lstset.CompentencyLevel = CompentencyLevel;
+            //_lstset.CompentencyLevel = CompentencyLevel;
             _lstset.SecondarySkill = SecondarySkill;
+            _lstset.SeniorityLevel = SeniorityLevel;
+            _lstset.EmploymentType = EmploymentType;
+            _lstset.CompanyType = CompanyType;
+            _lstset.CountryType = CountryType;
+            //_lstset.PerHourRate = PerHourRate;
             if (status == "Edit")
             {
+                var id = Convert.ToInt32(Request.Form["id"].ToString());
+
                 _lstset.PartitionKey = partialid;
+                _lstset.id = id;
             }
             if (Request.Form.Files.Count() > 0)
             {

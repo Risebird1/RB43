@@ -10,10 +10,12 @@ CREATE TABLE [dbo].[AssessmentGroup](
     [Categoryid][int] NULL,
     [CompanyType][bit] NULL,
     [IsRelevant][int] NULL,
-    [ProfileType][int] NULL,
+    [ProfileType][varchar](50) NULL,
     [CompetencyLevel][int] NULL,
     [Country][int] NULL,
     [PerHourRate][int] NULL,
+    [SeniorityLevel][varchar](50) NULL,
+    [EmploymentType][varchar](20) NULL,
  CONSTRAINT [PK_AssessmentGroup] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -63,7 +65,16 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'AssessmentGroup'))
 BEGIN
     ALTER TABLE AssessmentGroup
-    Add ProfileType int NULL 
+    Add ProfileType varchar(50) NULL 
+END
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ProfileType')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    alter column ProfileType varchar(50) NULL 
 END
 IF NOT EXISTS(
     SELECT *
@@ -91,6 +102,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE AssessmentGroup
     Add PerHourRate int NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SeniorityLevel')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add SeniorityLevel varchar(50) NULL 
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'EmploymentType')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add EmploymentType varchar(20) NULL 
 END
 GO
 

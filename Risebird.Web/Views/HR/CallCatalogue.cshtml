@@ -46,6 +46,18 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Call Catalogue</h4></div>
                     </div>
+                    <div class="pull-left">
+                        @if (ViewBag.type == "Interviewer")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
+                        }
+                    </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -83,7 +95,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("CallCatalogue","HR")" method="post" id="form">
+                                        <form action="@Url.Action("CallCatalogue","HR",new { type=ViewBag.type})" method="post" id="form">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -106,46 +118,30 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                    @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">
-                                                                Skill Channel Id
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                    @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                        @*
+                                                    @if (ViewBag.type != "Interviewer")
+                                                    {
+                                                        <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Client">
-                                                                    Client
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                        @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">
+                                                                    Skill Channel Id
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="Client" name="Client" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.ClientCompName).Distinct().ToList())
+                                                                    <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -154,26 +150,11 @@
                                                                         }
                                                                     </select>
                                                                 </div>
-                                                            </div>*@
-
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        @*<div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
-                                                                Client HR
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.ClientHr).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
                                                             </div>
-                                                        </div>*@
+                                                        </div>
+                                                    }
+
+                                                    <div class="col-md-6 col-sm-6">
                                                         @if (ViewBag.Profile != "Client")
                                                         {
                                                             <div class="form-group">
@@ -225,11 +206,19 @@
                                                             <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th id='start'>Skill Channel</th>
-                                                                        <th>Candidate Name</th>
-                                                                        <th>Candidate Email</th>
-                                                                        <th>JD Title</th>
-                                                                        <th>Client</th>
+                                                                        @if (ViewBag.type != "Interviewer")
+                                                                        {
+                                                                            <th id='start'>Skill Channel</th>
+                                                                            <th>Candidate Name</th>
+                                                                            <th>Candidate Email</th>
+                                                                            <th>JD Title</th>
+                                                                            <th>Client</th>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <th>Name</th>
+                                                                            <th>Interviewer</th>
+                                                                        }
                                                                         <th>Last Called At</th>
                                                                         <th>Last Called By</th>
                                                                         <th>Action</th>
@@ -237,24 +226,34 @@
                                                                 </thead>
                                                                 <tfoot>
                                                                     <tr>
-                                                                        <th id='start'>Skill Channel</th>
-                                                                        <th>Candidate Name</th>
-                                                                        <th>Candidate Email</th>
-                                                                        <th>JD Title</th>
-                                                                        <th>Client</th>
+                                                                        @if (ViewBag.type != "Interviewer")
+                                                                        {
+                                                                            <th id='start'>Skill Channel</th>
+                                                                            <th>Candidate Name</th>
+                                                                            <th>Candidate Email</th>
+                                                                            <th>JD Title</th>
+                                                                            <th>Client</th>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <th>Name</th>
+                                                                            <th>Interviewer</th>
+                                                                        }
                                                                         <th>Last Called At</th>
                                                                         <th>Last Called By</th>
                                                                         <th>Action</th>
                                                                     </tr>
                                                                 </tfoot>
                                                                 <tbody>
-                                                                  
+
                                                                     @foreach (var item in Model)
                                                                     {
                                                                         <tr>
-                                                                            <td>@item.IRFId</td>
+                                                                            @if (ViewBag.type != "Interviewer")
+                                                                            {
+                                                                                <td>@item.IRFId</td>
+                                                                            }
                                                                             <td>@item.CandidateName</td>
-                                                                            
                                                                             <td>
                                                                                 @if (item.CandidateEmail != null && item.CandidateEmail != "")
                                                                                 {
@@ -269,31 +268,33 @@
                                                                                 }
                                                                                 else
                                                                                 {
-
                                                                                 }
                                                                             </td>
-                                                                            <td>
-                                                                                 @if (item.JDTiltle != null && item.JDTiltle != ""){
-                                                                                     @if (item.JDTiltle.Length > 15)
+                                                                            @if (ViewBag.type != "Interviewer")
+                                                                            {
+                                                                                <td>
+                                                                                    @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                     {
-                                                                                         <a onclick="" data-tooltip="@item.JDTiltle"><span class="skillname">  @item.JDTiltle</span> </a>
-                                                                                       }
-                                                                                      else
-                                                                                       {
-                                                                                         <a onclick=""> @item.JDTiltle </a>
-                                                                                   }
-                                                                                 }
-                                                                                 else
-                                                                                 {
-
-                                                                                 }
-                                                                                 </td>
-                                                                            <td>@item.ClientName</td>
+                                                                                        @if (item.JDTiltle.Length > 15)
+                                                                                        {
+                                                                                            <a onclick="" data-tooltip="@item.JDTiltle"><span class="skillname">  @item.JDTiltle</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a onclick=""> @item.JDTiltle </a>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                    }
+                                                                                </td>
+                                                                                <td>@item.ClientName</td>
+                                                                            }
                                                                             <td>@item.CalledOn</td>
                                                                             <td>@item.WhoCalled</td>
                                                                             <td>
                                                                                 <button class="mdc-fab app-fab--absolute record-btn trash-btn" aria-label="Call Record">
-                                                                                    <span onclick="FetchRecording('@item.CandidateEmail','@item.id')" title="Call Record">
+                                                                                    <span onclick="FetchRecording('@item.CandidateEmail','@item.id','@ViewBag.type')" title="Call Record">
                                                                                         <i class="fa fa-dot-circle"></i>
                                                                                     </span>
                                                                                 </button>
@@ -611,11 +612,11 @@
         var modal = document.getElementById("myCallRecords");
         modal.style.display = "none";
     }
-    function FetchRecording(candidateEmailid, Irfid) {
+    function FetchRecording(candidateEmailid, Irfid, type) {
         $.ajax({
             type: "POST",
             url: "/User/FetchRecordings",
-            data: { 'candidateEmailid': candidateEmailid, 'irfid': Irfid },
+            data: { 'candidateEmailid': candidateEmailid, 'irfid': Irfid, 'type': type },
             success: function (data) {
                 bindCallData(data);
                 var modal = document.getElementById("myCallRecords");
@@ -637,6 +638,9 @@
             html = '<td colspan="3" style="text-align:center">No call records founds.</td>';
         }
         $("#tblcallrecdetails").empty().html(html);
+    }
+    function Changeurldetails(type) {
+        window.location.href = "/HR/CallCatalogue?type=" + type;
     }
 </script>
 

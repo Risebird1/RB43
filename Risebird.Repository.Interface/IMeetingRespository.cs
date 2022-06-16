@@ -219,6 +219,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
         Task<QCFormVM> FetchQCFormDetailsById(int interviewid);
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
-
+        Task<IEnumerable<CallCatalogueVM>> GetInterviewerCallCatalogueList();
+        Task<IEnumerable<ResumeDetailsVM>> NotifiyUploadResumeDetails(DateTime startdate, DateTime enddate);
     }
 }
