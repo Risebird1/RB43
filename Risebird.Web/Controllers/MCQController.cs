@@ -346,8 +346,8 @@ namespace Risebird.Web.Controllers
             var EmploymentType = Request.Form["EmploymentType"].ToString();
             var CompanyType = Convert.ToInt32(Request.Form["CompanyType"].ToString());
             var CountryType = Convert.ToInt32(Request.Form["CountryType"].ToString());
-            var PerHourRate = Convert.ToInt32(Request.Form["PerHourRate"].ToString());
-            var id = Convert.ToInt32(Request.Form["id"].ToString());
+            //var PerHourRate = Convert.ToInt32(Request.Form["PerHourRate"].ToString());
+            //var id = Convert.ToInt32(Request.Form["id"].ToString());
             //var CompentencyLevel = Convert.ToInt32(Request.Form["CompentencyLevel"].ToString());
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
@@ -363,9 +363,11 @@ namespace Risebird.Web.Controllers
             _lstset.EmploymentType = EmploymentType;
             _lstset.CompanyType = CompanyType;
             _lstset.CountryType = CountryType;
-            _lstset.PerHourRate = PerHourRate;
+            //_lstset.PerHourRate = PerHourRate;
             if (status == "Edit")
             {
+                var id = Convert.ToInt32(Request.Form["id"].ToString());
+
                 _lstset.PartitionKey = partialid;
                 _lstset.id = id;
             }
