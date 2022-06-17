@@ -823,10 +823,16 @@ namespace Risebird.Web.Controllers
         //}
 
         [HttpGet]
-        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int employmentType, int difficultyLevel)
+        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int employmentType, int difficultyLevel, bool isInstaInterviewRequest = false)
         {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName?.Replace("\"", "");
             var list = new List<SelectListItem>();
             var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
+            if(isInstaInterviewRequest == true && !string.IsNullOrEmpty(profileName) && profileName == "SeniorHR" && assessmentGroups != null)
+            {
+                assessmentGroups = assessmentGroups.Where(x => x.Isinstaavailable == true);
+            }
             if (assessmentGroups != null && assessmentGroups.Count() > 0)
             {
                 if (countryid != 0)
