@@ -34,7 +34,18 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Skill Channel Stats</h4></div>
                 </div>
-
+                <div class="pull-left">
+                    @if (ViewBag.Type == "ChannelOwner")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('ChannelOwner')"><strong>Channel Owner</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('IRF')"><strong>Skill Channel</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('ChannelOwner')"><strong>Channel Owner</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('IRF')"><strong>Skill Channel</strong></div>
+                    }
+                </div>
                 <div class="pull-right">
                     <div>
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -53,7 +64,7 @@
                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='/Dashboard'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF")'"></i></span>
+                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF",new { type=ViewBag.Type})'"></i></span>
                     </div>
                 </div>
             </div>
@@ -83,7 +94,7 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("SkillChannelDetails","IRF")" method="post" id="form">
+                                            <form action="@Url.Action("SkillChannelDetails","IRF",new { type=ViewBag.Type})" method="post" id="form">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -150,9 +161,16 @@
                                         <table id="irfTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
+                                                    @if (ViewBag.Type != "ChannelOwner")
+                                                    {
+                                                        <th>Skill Channel</th>
+                                                    }
                                                     <th>Risebird Channel Owner</th>
                                                     <th>Flags</th>
-                                                    <th>Skill Channels</th>
+                                                    @if (ViewBag.Type == "ChannelOwner")
+                                                    {
+                                                        <th>Skill Channels</th>
+                                                    }
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -165,9 +183,16 @@
                                             </thead>
                                             <tfoot>
                                                 <tr>
+                                                    @if (ViewBag.Type != "ChannelOwner")
+                                                    {
+                                                        <th>Skill Channel</th>
+                                                    }
                                                     <th>Risebird Channel Owner</th>
                                                     <th>Flags</th>
-                                                    <th>Skill Channels</th>
+                                                    @if (ViewBag.Type == "ChannelOwner")
+                                                    {
+                                                        <th>Skill Channels</th>
+                                                    }
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
@@ -184,6 +209,10 @@
                                                     foreach (var item in Model)
                                                     {
                                                         <tr>
+                                                            @if (ViewBag.Type != "ChannelOwner")
+                                                            {
+                                                                <td>@item.IRFId</td>
+                                                            }
                                                             <td> @item.RisebirdHREmail </td>
                                                             @if (item.Flags > 0)
                                                             {
@@ -193,7 +222,11 @@
                                                             {
                                                                 <td>@item.Flags</td>
                                                             }
-                                                            <td style="color:blue!important;cursor:pointer" onclick="OpenModelForIRF('@item.RisebirdHREmail')">@item.IRFId</td>
+                                                            @*<td style="color:blue!important;cursor:pointer" onclick="OpenModelForIRF('@item.RisebirdHREmail')">@item.IRFId</td>*@
+                                                            @if (ViewBag.Type == "ChannelOwner")
+                                                            {
+                                                                <td> @item.IRFId</td>
+                                                            }
                                                             <td> @item.CandidateCount </td>
                                                             <td> @item.CompletedInterviews </td>
                                                             <td> @item.SelectedMeetings </td>
@@ -421,11 +454,11 @@
             CreateChartAxes(chart);
         });
         var html = '';
-        html += '<table style="width:100%"><tr><td >Unassigned Interviews</td><td >' + unassigninterview + '</td></tr>';
-        html += '<tr><td style = "border:1px solid black" > Status Pending</td><td >' + statuspending + '</td></tr>';
-        html += '<tr><td style = "border:1px solid black" > PENDING CANDIDATE FEEDBACK</td><td >' + candidatepending + '</td></tr>';
-        html += ' <tr><td >Missing Video Link</td><td >' + missingVideoLink + '</td></tr>';
-        html += '<tr><td >Missing Zoom Link</td><td >' + missingzoomLink + '</td></tr>';
+        html += '<table style="width:100%"><tr><td style="border: 1px solid black;">Unassigned Interviews</td><td style="border: 1px solid black;">' + unassigninterview + '</td></tr>';
+        html += '<tr><td style = "border:1px solid black"> Status Pending</td><td style="border: 1px solid black">' + statuspending + '</td></tr>';
+        html += '<tr><td style = "border:1px solid black"> PENDING CANDIDATE FEEDBACK</td><td style="border: 1px solid black">' + candidatepending + '</td></tr>';
+        html += ' <tr><td style="border: 1px solid black">Missing Video Link</td><td style="border: 1px solid black">' + missingVideoLink + '</td></tr>';
+        html += '<tr><td style="border: 1px solid black">Missing Zoom Link</td><td style="border: 1px solid black">' + missingzoomLink + '</td></tr>';
         html += '</table>';
         $("#flagsModalBodyCount").empty().html(html);
     }
@@ -553,6 +586,9 @@
     function Stoploader() {
         $(".loader").hide();
         $(".dataloading").show();
+    }
+    function Changeurldetails(type) {
+        window.location.href = "/IRF/SkillChannelDetails?type=" + type;
     }
 </script>
 
