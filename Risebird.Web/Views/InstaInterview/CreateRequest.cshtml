@@ -318,7 +318,7 @@
         $.ajax({
             type: "GET",
             url: "/InterviewRequest/GetAssessmentGroupsByCategory",
-            data: { 'categoryId': categoryId, 'companytype': companytype, 'countryid': countryid, 'jobLevelid': jobLevelid, 'employmentType': employmentType, 'difficultyLevel': difficultyLevel },
+            data: { 'categoryId': categoryId, 'companytype': companytype, 'countryid': countryid, 'jobLevelid': jobLevelid, 'employmentType': employmentType, 'difficultyLevel': difficultyLevel, 'isInstaInterviewRequest': true},
             success: function (data) {
                 if (data != null) {
                     document.getElementById('error_AssessmentGroup').innerHTML = '';
