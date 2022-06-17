@@ -10,6 +10,6 @@ namespace Risebird.Entities.Data
         public string meetingAgent { get; set; }
         public string meetingAttendee { get; set; }
         public string videoUrl { get; set; }
-        public int videoDuration { get; set; }
+        public float duration { get; set; }
     }
 }
