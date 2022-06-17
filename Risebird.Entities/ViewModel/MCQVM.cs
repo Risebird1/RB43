@@ -48,7 +48,7 @@ namespace Risebird.Entities.ViewModel
         public string EmploymentType { get; set; }
         public int? CompanyType { get; set; }
         public int? CountryType { get; set; }
-        public int PerHourRate { get; set; }
+        //public int PerHourRate { get; set; }
     }
     public class QuestionList
     {

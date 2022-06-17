@@ -1,4 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.InstaMeetingVM
+@using Risebird.Entities.Enum
 
 @{
     ViewData["Title"] = "Edit Request";
@@ -34,22 +35,96 @@
                                     <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Insta Interview</h4></div>
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
-                                <div class="edit_request">
-                                    <div class="col-lg-4  col-md-4 col-sm-12 pl-1 pull-left mob-mb-0">
-                                        <div class="form-group  mob-mb-0">
-                                            @Html.HiddenFor(model => model.id)
-                                            @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.AssessmentGroup, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @disabled = "disabled" })
-                                            @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
+                                @*<div class="edit_request">
+
+
+
+                                </div>*@
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.CategoryId, (SelectList)ViewBag.AssessmentCategory, "Select", new { @class = "form-control br-g", @required = "required", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    <div class="col-lg-8  col-md-8 col-sm-12 pl-1 pull-left">
-                                        <div class="form-group mob-mb-0">
-                                            @*@Html.Label("Assessment Group Skills", "Assessment Group Skills", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })*@
-                                            <label class="form-control" id="txtAssessmentSkills"></label>
-                                            @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.CompanyTypes, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @*@Html.DropDownListFor(model => model.CompanyTypes, (SelectList)ViewBag.CompanyTypeList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
+                                            @Html.DropDownListFor(model => model.CompanyTypes, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "form-control br-g", @required = "required", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.CompanyTypes, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
+                                            @Html.DropDownListFor(model => model.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select Country", new { @class = "form-control br-g", @required = "required", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.CountryType, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-10">
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
+                                            @Html.DropDownListFor(model => model.EmploymentType, Html.GetEnumSelectList<EmploymentTypeOptions>(), "Select Country", new { @class = "form-control br-g", @*@required = "required",*@ @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.EmploymentType, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.DifficultyLevel, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select", new { @class = "form-control br-g", @required = "required", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.DifficultyLevel, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @*@Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
+                                            @Html.DropDownListFor(model => model.JobLevel, Html.GetEnumSelectList<JobLevels>(), "Select", new { @class = "form-control br-g", @required = "required", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.JobLevel, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1 mt-10">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.TextBoxFor(model => model.AssessmentGroupName, new { @class = "form-control br-g", @readonly = "@readonly" })
+                                            @Html.HiddenFor(m=>m.AssessmentGroup)
+                                            @*@Html.DropDownListFor(model => model.AssessmentGroup, new List<SelectListItem>(), "Select", new { @class = "form-control br-g", @required = "required", @disabled = "disabled" })*@
+                                            @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger", @id = "error_AssessmentGroup" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-10">
                                     <div class="col-lg-4  col-md-4 col-sm-12 pl-1 pull-left">
                                         <div class="form-group mb-40">
                                             @Html.LabelFor(model => model.InstaRequestName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -158,9 +233,9 @@
 
 
 <script>
-    $(document).ready(function () {
-        AssessmentGroupChanged();
-    });
+    //$(document).ready(function () {
+    //    AssessmentGroupChanged();
+    //});
     function AddRow() {
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
@@ -225,17 +300,17 @@
             }
         }
     }
-    function AssessmentGroupChanged() {
-        var val = $("#AssessmentGroup").val();
-        $.ajax({
-            type: "GET",
-            url: "/InstaInterview/FetchAssessmentGroupSkills",
-            data: { 'id': val },
-            success: function (data) {
-                $("#txtAssessmentSkills").text(data);
-            }
-        })
-    }
+    //function AssessmentGroupChanged() {
+    //    var val = $("#AssessmentGroup").val();
+    //    $.ajax({
+    //        type: "GET",
+    //        url: "/InstaInterview/FetchAssessmentGroupSkills",
+    //        data: { 'id': val },
+    //        success: function (data) {
+    //            $("#txtAssessmentSkills").text(data);
+    //        }
+    //    })
+    //}
     function checkRowcount() {
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
