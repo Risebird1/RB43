@@ -198,8 +198,8 @@ namespace Risebird.MicroService
                         var convertedResponse = JsonConvert.DeserializeObject<RBMeetCreateMeetingResponse>(content);
                         
                         string rbMeetVideoLink = convertedResponse.videoUrl;
-                        float rbMeetVideoDurationInSeconds = convertedResponse.duration;
-                        int rbMeetVideoDurationInMinutes = ((int)rbMeetVideoDurationInSeconds / 60);
+                        int rbMeetVideoDurationInSeconds = convertedResponse.duration;
+                        int rbMeetVideoDurationInMinutes = (rbMeetVideoDurationInSeconds / 60);
 
                         _ = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, rbMeetVideoLink, rbMeetVideoDurationInMinutes).Result;
 
