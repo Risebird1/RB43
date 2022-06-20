@@ -439,7 +439,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                
+
                 return View("CandidateFeedBack", modelData);
             }
             else

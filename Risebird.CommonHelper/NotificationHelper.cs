@@ -2184,9 +2184,9 @@ namespace Risebird.CommonHelper
                 str.AppendLine("VERSION:2.0");
                 str.AppendLine("METHOD:REQUEST");
                 str.AppendLine("BEGIN:VEVENT");
-                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset)));
+                str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow.AddMinutes(offset)));
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
+                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow.AddMinutes(offset + 60)));
                 str.AppendLine("LOCATION:" + meetingurl);
                 str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
                 str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
@@ -2224,6 +2224,54 @@ namespace Risebird.CommonHelper
                 }
                 object[] parameters = new object[] { meetingDate };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "UnassignedInterviewNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return SendMail(msg).Result;
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+        public string SendResumeUploadCounts(Mail model, DataTable dt, string Name)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                var ccMails = model.CC.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                foreach (var mail in ccMails)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
+                sb.Append("<tr>");
+                foreach (DataColumn column in dt.Columns)
+                {
+                    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
+                }
+                sb.Append("</tr>");
+                foreach (DataRow row in dt.Rows)
+                {
+                    sb.Append("<tr>");
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
+                    }
+                    sb.Append("</tr>");
+                }
+                sb.Append("</table>");
+
+                object[] parameters = new object[] { Name, sb };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeDetailsCountNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return SendMail(msg).Result;

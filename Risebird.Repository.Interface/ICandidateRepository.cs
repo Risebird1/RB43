@@ -24,5 +24,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateTimelineData>> GetCandidateTimelinebyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null);
         Task<bool> AddEditFitmentReport(FitmentReportModel model);
         Task<Candidate> GetCandidateForFitmentReport(int candidateMasterId, int irfId);
+        Task<bool> ProcessCandidateResume(int id);
+        Task<string> FetchCandidateResumeById(int id);
     }
 }

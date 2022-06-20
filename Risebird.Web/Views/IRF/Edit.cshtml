@@ -49,7 +49,7 @@
                                             <li><a href="#" class="active text-center" rel="tab-1" id="rtab-1">Event Details</a></li>
                                             <li><a href="#" rel="tab-2" class="" id="rtab-2">Tech Skill</a><span id="count_SkillCollection" class="skillcount">@(Model.SkillCollection != null ? Model.SkillCollection.Count() : 0)</span></li>
                                             <li><a href="#" rel="tab-3" class="text-center" id="rtab-3">Client User</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection != null ? Model.ClientCollection.Count() : 0)</span></li>
-                                            <li><a href="#" rel="tab-4" class="" id="rtab-4">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
+                                            @*<li><a href="#" rel="tab-4" class="" id="rtab-4">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>*@
                                         </ul>
 
                                     </div>
@@ -96,7 +96,7 @@
                                                     <div class="col-md-4 col-sm-4">
                                                         <div class="form-group">
                                                             <div class="mandate">
-                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="JDTiltle">Job Profile</label>
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="JDTiltle">Job Title</label>
                                                             </div>
                                                             @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "Add Primary Skill and Role(max 40 char)" } })
                                                             @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @id = "error_JDTiltle", @class = "text-danger" })
@@ -348,7 +348,7 @@
                                             </div>
                                         </div>
                                         <h3 class="tab_drawer_heading" rel="tab-4">Interviewer</h3>
-                                        
+
                                         <div class="tab-box" id="tab-4">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -361,7 +361,7 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="20%" class="table_heading">Pseudonym</th>
-                                                                        
+
                                                                         <th width="50%" class="table_heading">Skills</th>
 
                                                                         <th width="10%" class="table_heading"> Select </th>
@@ -488,7 +488,9 @@
                                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded  pull-left" style="margin-right:5px" id="btnUpload" value="Save" onclick="CheckConditionsOnClientFormSubmit()">Save</button>
 
                                                 }
-                                                @Html.ActionLink("Back", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+
+                                                @Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
+                                                @*@Html.ActionLink("Back", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })*@
 
                                                 <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
@@ -564,12 +566,12 @@
         var val = document.getElementById("JDTiltle").value;
         if (val == null || val == "") {
             document.getElementById("JDTiltle").focus();
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile field is required.";
+            document.getElementById("error_JDTiltle").innerHTML = "Job Title field is required.";
             return true;
         }
         else if (val.length > 40) {
             document.getElementById("JDTiltle").focus();
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            document.getElementById("error_JDTiltle").innerHTML = "Job Title should not be more than 40 characters long.";
             return true;
         }
         else {
@@ -1067,17 +1069,17 @@
                 $("#rtab-2").addClass("active");
                 document.getElementById("tab-2").style.display = "block";
                 document.getElementById("tab-3").style.display = "none";
-            }
-            else if (activeTab.trim() == "Interviewer") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-3").addClass("active");
-                document.getElementById("tab-3").style.display = "block";
-                document.getElementById("tab-4").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
-                if ('@Model.Profile' != "Client") {
-                    document.getElementById("btnUpload").style.display = "none";
-                }
+                document.getElementById("btnUpload").style.display = "none";
             }
+            //else if (activeTab.trim() == "Interviewer") {
+            //    $(".tab-menu li a").removeClass("active");
+            //    $("#rtab-3").addClass("active");
+            //    document.getElementById("tab-3").style.display = "block";
+            //    document.getElementById("tab-4").style.display = "none";
+            //    document.getElementById("btnNext").style.display = "block";
+            //    document.getElementById("btnUpload").style.display = "none";
+            //}
 
         });
         $("#btnNext").click(function () {
@@ -1104,7 +1106,7 @@
                 //}
 
                 if ($('#ClientName').val() == "") {
-                    $('#error_ClientName').text("The End Client Name field is required.");
+                    $('#error_ClientName').text("Project Name field is required.");
                     flag = true;
                 }
                 else {
@@ -1135,23 +1137,22 @@
                     $("#rtab-3").addClass("active");
                     document.getElementById("tab-3").style.display = "block";
                     document.getElementById("tab-2").style.display = "none";
-
-                }
-            }
-
-            else if (activeTab.trim() == "Client User") {
-                flag = checkClientDetails();
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-4").addClass("active");
-                    document.getElementById("tab-4").style.display = "block";
-                    document.getElementById("tab-3").style.display = "none";
                     document.getElementById("btnNext").style.display = "none";
-                    if ('@Model.Profile' != "Client") {
-                        document.getElementById("btnUpload").style.display = "block";
-                    }
+                    document.getElementById("btnUpload").style.display = "block";
+
                 }
             }
+            //else if (activeTab.trim() == "Client User") {
+            //    flag = checkClientDetails();
+            //    if (!flag) {
+            //        $(".tab-menu li a").removeClass("active");
+            //        $("#rtab-4").addClass("active");
+            //        document.getElementById("tab-4").style.display = "block";
+            //        document.getElementById("tab-3").style.display = "none";
+            //        document.getElementById("btnNext").style.display = "none";
+            //        document.getElementById("btnUpload").style.display = "block";
+            //    }
+            //}
 
         });
     });
@@ -1169,7 +1170,7 @@
         }
 
         if ($('#ClientName').val() == "") {
-            $('#error_ClientName').text("The End Client Name field is required.");
+            $('#error_ClientName').text("Project Name field is required.");
             flag = true;
         }
         else {

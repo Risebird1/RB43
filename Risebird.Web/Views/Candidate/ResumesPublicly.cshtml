@@ -1,0 +1,298 @@
+﻿@model Risebird.Entities.ViewModel.ResumeListViewModel
+@{
+    ViewData["Title"] = "Candidate Resume List";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+<script>
+    var Header = "Resume(s) for <strong>@(Model.IRFName)</strong>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+
+<div id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Resume(s) for <strong>@(Model.IRFName)</strong></h4></div>
+                </div>
+                <input type="hidden" value="@ViewBag.emailid" id="hiddemailid" />
+                <input type="hidden" value="@ViewBag.id" id="hidduniqueid" />
+                <div class="pull-right">
+                    @Html.ActionLink("Back", "FetchInterviewerCommunicator", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="candidate_resume">
+                                <div id="tableID">
+                                    <table id="resumeTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>File Name</th>
+                                                <th class="text-center">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>File Name</th>
+                                                <th class="text-center">Actions</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in Model.ResumeList)
+                                            {
+                                                <tr id=@item.id>
+                                                    <td> @item.AddedOn</td>
+                                                    <td>
+                                                        @{
+                                                            var fileName = string.Empty;
+                                                            if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
+                                                            {
+                                                                fileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
+                                                            }
+                                                            else
+                                                            {
+                                                                fileName = item.ResumeLink.Split('/')?.Last();
+
+                                                            }
+                                                        }
+                                                        <a id="resumeLink_@item.id" target="_blank" title="Resume" href=@item.ResumeLink.ToString().Replace(" ","%20")>@fileName</a>
+                                                        <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
+                                                            <p class="special-text">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                                                <span id="special_text_@item.id" class="special-text__tooltip">
+                                                                    Copy Link
+                                                                </span>
+                                                            </p>
+                                                        </button>
+                                                    </td>
+                                                    <td class="text-center action">
+                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR")
+                                                        {
+                                                            @if (!item.IsProcessed)
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Processed">
+                                                                    <span onclick="javascript:ProcessedResume('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
+                                                                            <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+                                                                            <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                    @Html.HiddenFor(m => m.IRFId)
+                                    @Html.HiddenFor(m => m.IRFName)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="AddCandidateModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="rgb(255, 255, 255)" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Add Candidate <label id="txtmodelheader"></label></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAddCandidateModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" style="padding-bottom:0px" id="addCandidatelist">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful",'@Model.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+
+        }
+
+    </script>
+}
+<script>
+    function SetUploadInputFileName() {
+        $('.custom-file-input').on("change", function () {
+            var fileLabel = $(this).next('.custom-file-label');
+            var files = $(this)[0].files;
+            if (files.length > 1) {
+                fileLabel.html(files.length + ' files selected');
+            }
+            else if (files.length == 1) {
+                fileLabel.html(files[0].name);
+            }
+        });
+    }
+
+    function CheckIfFileSelected() {
+        var files = document.getElementById("ResumeFiles").value;
+        if (files == null || files == "") {
+            swal.fire("Error!", "Kindly select atleast one file to upload!", "error");
+            return false;
+        }
+        return true;
+    }
+
+</script>
+<script>
+
+    function RefreshSearch() {
+        $('#resumeTable').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+
+        applyDataTable();
+        SetUploadInputFileName();
+
+    });
+
+    function applyDataTable() {
+        $('#resumeTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#resumeTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#resumeTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#resumeTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+<script>
+    function ProcessedResume(candidateid, fileName) {
+        var irfId = $("#IRFId").val();
+        var irfName = $("#IRFName").val();
+        var emailid = $("#hiddemailid").val();
+        var id = $("#hidduniqueid").val();
+        $.ajax({
+            url: '/Candidate/AddPublicly',
+            data: { 'irfId': irfId, 'irfName': irfName, 'Candidateesumeid': candidateid, 'emailids': emailid, 'id': id },
+            success: function (data) {
+                $("#txtmodelheader").text();
+                $('#addCandidatelist').html('');
+                $('#addCandidatelist').html(data);
+                openAddCandidateModel();
+            }
+        });
+    }
+    function openAddCandidateModel() {
+        var modal = document.getElementById("AddCandidateModel");
+        modal.style.display = "block";
+    }
+    function closeAddCandidateModel() {
+        var modal = document.getElementById("AddCandidateModel");
+        modal.style.display = "none";
+    }
+</script>
+<script>
+    function copyToClipboard(elementId, indicatorId) {
+        var element = document.getElementById(elementId);
+        var href = element.href;
+        var temp = $("<input>");
+        $("body").append(temp);
+        //temp.val($(element).href).select();
+        temp.val(href).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#' + indicatorId).text('Copied');
+    }
+</script>
+
+

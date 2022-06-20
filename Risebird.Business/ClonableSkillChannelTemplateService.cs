@@ -9,7 +9,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -25,7 +24,7 @@ namespace Risebird.Business
         private readonly ISkillService _skillService;
         private readonly IClientRepository _clientRepository;
 
-        public ClonableSkillChannelTemplateService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,IConfiguration configuration, ISkillService skillService, 
+        public ClonableSkillChannelTemplateService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, ISkillService skillService,
             IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IActivityTrackerRepository activityTrackerRepository, IClientRepository clientRepository)
         {
             _irfRepository = irfRepository;
@@ -67,12 +66,78 @@ namespace Risebird.Business
                 model.IRFRecommendations.AssessmentGroupId = assessmentGroupId != 0 ? assessmentGroupId : 1;
 
                 var assessmentGroupData = await _irfRepository.GetAssessmentGroupDetails(model.IRFRecommendations.AssessmentGroupId.Value);
+
+                SetSelectListForMultiSelectRecommendationValues(model.IRFRecommendations, assessmentGroupData);
+
+                model.IRFRecommendations.AssessmentGroupName = assessmentGroupData.AssessmentGroup;
                 model.IRFRecommendations.CompanyType = assessmentGroupData.CompanyType;
-                model.IRFRecommendations.CompetencyLevelId = assessmentGroupData.CompetencyLevel;
+                //model.IRFRecommendations.CompetencyLevelId = assessmentGroupData.CompetencyLevel;
                 model.IRFRecommendations.CountryType = assessmentGroupData.Country;
+                model.IRFRecommendations.PerHourRate = assessmentGroupData.PerHourRate;
                 //model.IRFRecommendations.SeniorityLevelId = assessmentGroupData.ProfileType;
+
+
+                //if (!string.IsNullOrEmpty(assessmentGroupData.ProfileType))
+                //{
+                //    model.IRFRecommendations.DifficultyLevelArray = assessmentGroupData.ProfileType.Split(',');
+                //}
+                //var DifficultyLevelTypes = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                //                           select new { ID = (int)s, Name = s.GetDescription() };
+                //var selectListforDifficultyLevel = new List<SelectListItem>();
+                //foreach (var item in DifficultyLevelTypes)
+                //{
+                //    bool selected = false;
+                //    if (model.IRFRecommendations.DifficultyLevelArray != null && model.IRFRecommendations.DifficultyLevelArray.Contains(Convert.ToString(item.ID)))
+                //    {
+                //        selected = true;
+                //    }
+                //    var selectItem = new SelectListItem { Text = item.Name, Value = Convert.ToString(item.ID), Selected = selected};
+                //    selectListforDifficultyLevel.Add(selectItem);
+                //}
+                //model.IRFRecommendations.DifficultyLevelList = selectListforDifficultyLevel;
+
+                //if (!string.IsNullOrEmpty(assessmentGroupData.SeniorityLevel))
+                //{
+                //    model.IRFRecommendations.SeniorityLevelArray = assessmentGroupData.SeniorityLevel.Split(',');
+                //}
+                //var seniorityLevelTypes = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                //                          select new { ID = (int)s, Name = s.GetDescription() };
+                //var selectListforSeniorityLevel = new List<SelectListItem>();
+                //foreach (var item in seniorityLevelTypes)
+                //{
+                //    bool selected = false;
+                //    if (model.IRFRecommendations.SeniorityLevelArray != null && model.IRFRecommendations.SeniorityLevelArray.Contains(Convert.ToString(item.ID)))
+                //    {
+                //        selected = true;
+                //    }
+                //    var selectItem = new SelectListItem { Text = item.Name, Value = Convert.ToString(item.ID), Selected = selected };
+
+                //    selectListforSeniorityLevel.Add(selectItem);
+                //}
+                //model.IRFRecommendations.SeniorityLevelList = selectListforSeniorityLevel;
+
+                //if (!string.IsNullOrEmpty(assessmentGroupData.EmploymentType))
+                //{
+                //    model.IRFRecommendations.EmploymentTypeArray = assessmentGroupData.EmploymentType.Split(',');
+                //}
+                //var employementTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
+                //                       select new { ID = (int)s, Name = s.GetDescription() };
+                //var selectListforEmployementTypes = new List<SelectListItem>();
+                //foreach (var item in employementTypes)
+                //{
+                //    bool selected = false;
+                //    if (model.IRFRecommendations.EmploymentTypeArray != null && model.IRFRecommendations.EmploymentTypeArray.Contains(Convert.ToString(item.ID)))
+                //    {
+                //        selected = true;
+                //    }
+                //    var selectItem = new SelectListItem { Text = item.Name, Value = Convert.ToString(item.ID), Selected = selected };
+
+                //    selectListforEmployementTypes.Add(selectItem);
+                //}
+                //model.IRFRecommendations.EmploymentTypeList = selectListforEmployementTypes;
+
                 PopulateDropDownsForTemplate(model);
-                
+
                 return model;
             }
             catch (Exception ex)
@@ -84,7 +149,7 @@ namespace Risebird.Business
 
         public ClonableSkillChannelVM PopulateDropDownsForTemplate(ClonableSkillChannelVM model, bool isEdit = false)
         {
-            if(!isEdit)
+            if (!isEdit)
             {
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
 
@@ -96,8 +161,9 @@ namespace Risebird.Business
                     model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
                     model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
                 }
+
             }
-            
+
             //populate the dropdowns for levels, types etc.
             model.JoinabilityTypeList = new SelectList(_irfRepository.GetJoinabilityMatrix(), "id", "Name");
             model.SkillGeneralTypeList = new SelectList(_irfRepository.GetGeneralSkillMatrix(), "id", "Name");
@@ -110,9 +176,9 @@ namespace Risebird.Business
             var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                   select new { ID = (int)s, Name = s.GetDescription() };
             model.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
-            var competencyLevels = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
-                                   select new { ID = (int)s, Name = s.GetDescription() };
-            model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");//Heuristicsscorelevel
+            //var competencyLevels = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+            //                       select new { ID = (int)s, Name = s.GetDescription() };
+            //model.CompetencyLevelList = new SelectList(competencyLevels, "ID", "Name");//Heuristicsscorelevel
 
             model.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -145,6 +211,20 @@ namespace Risebird.Business
                 }
                 model.InterviewerCollection = model.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection?.Where(x => x.IsSelected)?.ToList();
+
+
+                if (model.IRFRecommendations.SeniorityLevelArray != null)
+                {
+                    model.IRFRecommendations.SeniorityLevelId = string.Join(',', model.IRFRecommendations.SeniorityLevelArray);
+                }
+                if (model.IRFRecommendations.DifficultyLevelArray != null)
+                {
+                    model.IRFRecommendations.DifficultyLevel = string.Join(',', model.IRFRecommendations.DifficultyLevelArray);
+                }
+                if (model.IRFRecommendations.EmploymentTypeArray != null)
+                {
+                    model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
+                }
                 var result = await _clonableSkillChannelTemplateRepository.CreateClonableSkillChannel(model);
                 if (result)
                 {
@@ -187,8 +267,10 @@ namespace Risebird.Business
                 if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
                 {
                     model.IRFRecommendations.AssessmentGroupsList = new SelectList(_skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value).Result, "id", "AssessmentGroup");
-                    model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
+                    //model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
                 }
+
+                SetSelectListForMultiSelectRecommendationValues(model.IRFRecommendations);
 
                 IEnumerable<ClonableTemplateQuestion> transQuestions = new List<ClonableTemplateQuestion>();
                 transQuestions = _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value).Result;
@@ -246,6 +328,19 @@ namespace Risebird.Business
                 }
                 model.InterviewerCollection = model.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection?.Where(x => x.IsSelected)?.ToList();
+
+                if (model.IRFRecommendations.SeniorityLevelArray != null)
+                {
+                    model.IRFRecommendations.SeniorityLevelId = string.Join(',', model.IRFRecommendations.SeniorityLevelArray);
+                }
+                if (model.IRFRecommendations.DifficultyLevelArray != null)
+                {
+                    model.IRFRecommendations.DifficultyLevel = string.Join(',', model.IRFRecommendations.DifficultyLevelArray);
+                }
+                if (model.IRFRecommendations.EmploymentTypeArray != null)
+                {
+                    model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
+                }
                 var result = await _clonableSkillChannelTemplateRepository.UpdateClonableSkillChannel(model);
                 if (result)
                 {
@@ -283,23 +378,24 @@ namespace Risebird.Business
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
 
-                if(model.IRFRecommendations != null)
+                if (model.IRFRecommendations != null)
                 {
                     model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
                     model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
                     model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
-                    model.JobLevel = model.IRFRecommendations.SeniorityLevelId;
+                    //model.JobLevel = model.IRFRecommendations.SeniorityLevelId;
+                    model.JobLevel = (int)JobLevels.SE;
                     model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
-                    model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore ;
+                    model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
                 }
-                
+
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 
                 model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
 
                 PopulateDropDownsForSkillChannel(model, clientEmailId);
-                
+
                 return model;
 
             }
@@ -323,14 +419,14 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    if(model.ClientId == 0)
+                    if (model.ClientId == 0)
                     {
                         model.ClientId = _clientRepository.GetClientByEmailId(clientEmailId).Result;
                     }
                     model.ClientUser = new SelectList(_irfRepository.GetClientUser(model.ClientId), "id", "EmailId");
                     int clientUserId = _irfRepository.GetUserId(clientEmailId);
                     model.ClientCollection = new List<TransClientUser>();
-                    model.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = clientEmailId, Role = _irfRepository.GetClientUserRole(clientUserId)});
+                    model.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = clientEmailId, Role = _irfRepository.GetClientUserRole(clientUserId) });
                     model.BillingOwner = clientUserId;
                 }
                 model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -368,6 +464,82 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+
+        private IRFRecommendations SetSelectListForMultiSelectRecommendationValues(IRFRecommendations model, AssignmentVM assessmentGroupData = null)
+        {
+            if (assessmentGroupData != null && !string.IsNullOrEmpty(assessmentGroupData.ProfileType))
+            {
+                model.DifficultyLevelArray = assessmentGroupData.ProfileType.Split(',');
+            }
+            else if(!string.IsNullOrEmpty(model.DifficultyLevel))
+            {
+                model.DifficultyLevelArray = model.DifficultyLevel.Split(',');
+            }
+            var DifficultyLevelTypes = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforDifficultyLevel = new List<SelectListItem>();
+            foreach (var item in DifficultyLevelTypes)
+            {
+                bool selected = false;
+                if (model.DifficultyLevelArray != null && model.DifficultyLevelArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem { Text = item.Name, Value = Convert.ToString(item.ID), Selected = selected };
+                selectListforDifficultyLevel.Add(selectItem);
+            }
+            model.DifficultyLevelList = selectListforDifficultyLevel;
+
+            if (assessmentGroupData != null && !string.IsNullOrEmpty(assessmentGroupData.SeniorityLevel))
+            {
+                model.SeniorityLevelArray = assessmentGroupData.SeniorityLevel.Split(',');
+            }
+            else if (!string.IsNullOrEmpty(model.SeniorityLevelId))
+            {
+                model.SeniorityLevelArray = model.SeniorityLevelId.Split(',');
+            }
+            var seniorityLevelTypes = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforSeniorityLevel = new List<SelectListItem>();
+            foreach (var item in seniorityLevelTypes)
+            {
+                bool selected = false;
+                if (model.SeniorityLevelArray != null && model.SeniorityLevelArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem { Text = item.Name, Value = Convert.ToString(item.ID), Selected = selected };
+
+                selectListforSeniorityLevel.Add(selectItem);
+            }
+            model.SeniorityLevelList = selectListforSeniorityLevel;
+
+            if (assessmentGroupData != null && !string.IsNullOrEmpty(assessmentGroupData.EmploymentType))
+            {
+                model.EmploymentTypeArray = assessmentGroupData.EmploymentType.Split(',');
+            }
+            else if (!string.IsNullOrEmpty(model.EmploymentType))
+            {
+                model.EmploymentTypeArray = model.EmploymentType.Split(',');
+            }
+            var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforEmploymentTypes = new List<SelectListItem>();
+            foreach (var item in employmentTypes)
+            {
+                bool selected = false;
+                if (model.EmploymentTypeArray != null && model.EmploymentTypeArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem { Text = item.Name, Value = Convert.ToString(item.ID), Selected = selected };
+
+                selectListforEmploymentTypes.Add(selectItem);
+            }
+            model.EmploymentTypeList = selectListforEmploymentTypes;
+
+            return model;
         }
 
         public async Task<string> GetClonableSkillChannelMeetingPlatformById(int id)

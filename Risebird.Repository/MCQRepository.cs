@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -33,13 +32,18 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@PartitionKey", _lstset.PartitionKey);
                     parameters.Add("@Title", _lstset.Title);
-                    parameters.Add("@CompentencyLevel", _lstset.CompentencyLevel);
+                    //parameters.Add("@CompentencyLevel", _lstset.CompentencyLevel);
                     parameters.Add("@PrimarySkills", _lstset.PrimarySkills);
                     parameters.Add("@ProfileType", _lstset.ProfileType);
                     parameters.Add("@SecondarySkill", _lstset.SecondarySkill);
                     parameters.Add("@Timer", _lstset.Timer);
                     parameters.Add("@QuestionCount", _lstset.QuestionCount);
                     parameters.Add("@id", _lstset.id);
+                    parameters.Add("@SeniorityLevel", _lstset.SeniorityLevel);
+                    parameters.Add("@EmploymentType", _lstset.EmploymentType);
+                    parameters.Add("@CountryType", _lstset.CountryType != 0 ? _lstset.CountryType  : null);
+                    parameters.Add("@CompanyType", _lstset.CompanyType != 0 ? _lstset.CompanyType : null);
+                    //parameters.Add("@PerHourRate", _lstset.PerHourRate);
                     parameters.Add("@mcqid", dbType: DbType.Int32, direction: ParameterDirection.Output);
                     await SqlMapper.QueryAsync(con, "usp_AddorUpdateMCQSet", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -159,9 +163,10 @@ namespace Risebird.Repository
                     parameters.Add("@EmailAddress", _list.EmailAddress);
                     parameters.Add("@MCQId", _list.MCQId);
                     parameters.Add("@MCQSet", _list.MCQSet);
-                    parameters.Add("@Videorecording", _list.Videorecording);
+                    parameters.Add("@Videorecording", 0);
                     parameters.Add("@status", _list.status);
                     parameters.Add("@roomId", _list.roomId);
+                    parameters.Add("@Expiretime", _list.Expiretime);
 
                     await SqlMapper.QueryAsync(con, "usp_AddMCQSetShareCandidate", parameters,
                          commandType: CommandType.StoredProcedure);
@@ -464,6 +469,30 @@ namespace Risebird.Repository
                 {
                     var results = await con.QueryAsync<MCQVM>(query, dynamicParameters);
                     return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model)
+        {
+            try
+            {
+                var query = "Update MCQCandidates set VideoLink=@VideoLink where PartitionKey=@PartitionKey";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@PartitionKey", model.Id);
+                dynamicParameters.Add("@VideoLink", model.VideoLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync(query, dynamicParameters);
+                    return "Success";
                 }
             }
             catch (SqlException ex)

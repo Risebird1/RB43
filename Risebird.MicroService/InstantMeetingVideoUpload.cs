@@ -1,9 +1,6 @@
-using Azure.Storage.Blobs;
-using Azure.Storage.Sas;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.CommonHelper.Interface;
@@ -11,11 +8,9 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
@@ -86,7 +81,7 @@ namespace Risebird.MicroService
                         }
                         meeting.ZoomMeetingId = zoommeetingId;
 
-                        
+
 
                         //create HTTP Rest Client
                         var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings"));

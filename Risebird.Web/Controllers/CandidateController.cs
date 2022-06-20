@@ -1,5 +1,4 @@
-﻿using FileTypeInterrogator;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -1231,7 +1230,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Add(string irfId, string irfName)
+        public async Task<IActionResult> Add(string irfId, string irfName, int id)
         {
             try
             {
@@ -1252,7 +1251,13 @@ namespace Risebird.Web.Controllers
                                          select new { ID = (int)s, Name = s.GetDescription() };
                         model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                         model.ProfileName = profileName;
-                        return View(model);
+                        if (id > 0)
+                        {
+                            model.ResumeLink = await _candidateService.FetchCandidateResumeById(id);
+                            model.Candidateesumeid = id;
+                        }
+                        return PartialView("AddCandidate", model);
+                        //return View(model);
                     }
                     else
                     {
@@ -1272,49 +1277,53 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Add(Candidate model)
+        public async Task<IActionResult> Add(Candidate model, string emailids, string id)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (String.IsNullOrEmpty(emailids))
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "SeniorHR")
+                    emailids = HttpContext.Session.GetString("email")?.Trim();
+                    emailids = emailids.Replace("\"", "");
+                }
+                if (!string.IsNullOrEmpty(model.EmailId))
+                {
+                    model.EmailId = model.EmailId.ToLower();
+                }
+                var result = _irfService.AddCandidate(model, emailids, model.ProfileName).Result;
+                if (model.Candidateesumeid > 0)
+                {
+                    await _candidateService.ProcessCandidateResume(model.Candidateesumeid);
+                    var sendinvitetocandidate = await _irfService.SendInvite(model.IRFId, model.EmailId, emailids);
+                    if (String.IsNullOrEmpty(id))
                     {
-                        if (!string.IsNullOrEmpty(model.EmailId))
-                        {
-                            model.EmailId = model.EmailId.ToLower();
-                        }
-                        if (!string.IsNullOrEmpty(model.ClientHRAttemptContact))
-                        {
-                            model.ClientHRAttemptContact = model.ClientHRAttemptContact.ToLower();
-                        }
-                        var result = _irfService.AddCandidate(model, emailid, profileName).Result;
-                        TempData["SuccessErrorMessageCandidate"] = result;
-                        return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
-
+                        TempData["SuccessErrorMessageCandidateResume"] = result;
+                        return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
                     }
                     else
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        return RedirectToAction("ResumesPublicly", new { irfId = model.IRFId, irfName = model.IRFName, emailid = emailids, id = id });
                     }
-
-
                 }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                TempData["SuccessErrorMessageCandidate"] = result;
+                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                if (model.Candidateesumeid > 0)
+                {
+                    TempData["SuccessErrorMessageCandidateResume"] = "Adding candidate failed";
+                    if (String.IsNullOrEmpty(id))
+                    {
+                        return RedirectToAction("Resumes", new { irfId = model.IRFId, irfName = model.IRFName });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ResumesPublicly", new { irfId = model.IRFId, irfName = model.IRFName, emailid = emailids, id = id });
+                    }
+                }
                 TempData["SuccessErrorMessage"] = "Adding candidate failed";
                 return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
             }
@@ -3402,7 +3411,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Resumes(int irfId, string irfName)
+        public async Task<IActionResult> Resumes(int irfId, string irfName, int actiontype)
         {
             try
             {
@@ -3415,6 +3424,7 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new ResumeListViewModel();
                         model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
+                        model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
                         model.IRFName = irfName;
                         model.IRFId = irfId;
                         model.Profile = profileName;
@@ -3423,6 +3433,14 @@ namespace Risebird.Web.Controllers
                         {
                             model.Message = TempData["SuccessErrorMessageCandidateResume"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidateResume");
+                        }
+                        if (actiontype == 1)
+                        {
+                            ViewBag.backbutton = false;
+                        }
+                        else
+                        {
+                            ViewBag.backbutton = true;
                         }
                         return View(model);
                     }
@@ -3598,7 +3616,7 @@ namespace Risebird.Web.Controllers
                 HttpContext.Session.Remove("PublicCandidateStatusfilters");
                 var candidateData = new List<CandidateTimelineData>();
                 //candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
-                candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now, 2, emailid)).ToList();
+                candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1), 2, emailid)).ToList();
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -3724,11 +3742,11 @@ namespace Risebird.Web.Controllers
                 int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 2;
                 if (filter.StartDate != null && filter.EndDate != null)
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), datatype, emailid)).ToList();
                 }
                 else
                 {
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now, datatype, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1), datatype, emailid)).ToList();
                 }
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
@@ -3904,17 +3922,17 @@ namespace Risebird.Web.Controllers
                     int datatype = !String.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 2;
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value, datatype, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), datatype, emailid)).ToList();
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now, datatype, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1), datatype, emailid)).ToList();
                     }
                 }
                 else
                 {
                     //candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
-                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now, 2, emailid)).ToList();
+                    candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1), 2, emailid)).ToList();
                 }
 
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
@@ -4302,6 +4320,170 @@ namespace Risebird.Web.Controllers
             var handler = new JwtSecurityTokenHandler();
             var tokenString = handler.WriteToken(secToken);
             return tokenString;
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ProcessingResume(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    {
+                        var result = await _candidateService.ProcessCandidateResume(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadResumesPublicly(UploadCandidateResumesViewModel model)
+        {
+            try
+            {
+                model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
+                model.IRFName = Request.Form["IRFName"].ToString();
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (Request.Form.Files.Count() > 0)
+                {
+                    var addedByUserId = _irfService.GetUserId(emailId);
+                    if (addedByUserId > 0)
+                    {
+                        var resumeList = new List<CandidateResume>();
+                        foreach (var file in Request.Form.Files)
+                        {
+                            var fileName = file.FileName.Replace(" ", "_");
+                            FileInfo fi = new FileInfo(fileName);
+                            if (fi.Extension.ToLower() == ".docx" || fi.Extension.ToLower() == ".doc" || fi.Extension.ToLower() == ".pdf")
+                            {
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                                {
+
+                                    await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                    var blob = containerRef.GetBlockBlobReference(fileName);
+                                    string uploadedaudioFileURL = blob.Uri.ToString();
+                                    string sasUrl = string.Empty;
+                                    if (uploadedaudioFileURL == null)
+                                    {
+                                        return Json("Resume upload has failed.");
+                                    }
+                                    else
+                                    {
+                                        var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                        sasUrl = uploadedaudioFileURL + "?" + sas;
+                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                    }
+                                }
+                                else
+                                {
+                                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
+                            }
+                            else
+                            {
+                                return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                            }
+                        }
+                        var result = await _candidateService.AddResume(resumeList);
+                        if (result)
+                        {
+                            return Json("Resume(s) has been uploaded Successfully!");
+                        }
+                        else
+                        {
+                            return Json("Failed to upload Resume(s)!");
+                        }
+                    }
+                    else
+                    {
+                        return Json("Failed to upload Resume(s)!");
+                    }
+                }
+                else
+                {
+                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to upload Resume(s)!");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResumesPublicly(int irfId, string irfName, string emailid, string id)
+        {
+            try
+            {
+                var model = new ResumeListViewModel();
+                model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
+                model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
+                model.IRFName = irfName;
+                model.IRFId = irfId;
+                model.Profile = "Client";
+                ViewBag.emailid = emailid;
+                ViewBag.id = id;
+                if (TempData["SuccessErrorMessageCandidateResume"] != null)
+                {
+                    model.Message = TempData["SuccessErrorMessageCandidateResume"].ToString();
+                    TempData.Remove("SuccessErrorMessageCandidateResume");
+                }
+                ViewBag.backbutton = true;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("FetchInterviewerCommunicator", new { emailid = emailid, id = id });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> AddPublicly(string irfId, string irfName, int Candidateesumeid, string emailids, string id)
+        {
+            try
+            {
+                var model = new Candidate
+                {
+                    IRFId = Convert.ToInt32(irfId),
+                    IRFName = irfName
+                };
+                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                model.ProfileName = "Client";
+                model.ResumeLink = await _candidateService.FetchCandidateResumeById(Candidateesumeid);
+                model.Candidateesumeid = Candidateesumeid;
+                ViewBag.emailid = emailids;
+                ViewBag.id = id;
+                return PartialView("AddCandidate", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("ResumesPublicly", new { irfId = irfId, irfName = irfName, emailid = emailids, id = id });
+            }
         }
     }
 }

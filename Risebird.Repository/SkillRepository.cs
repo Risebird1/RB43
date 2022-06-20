@@ -350,7 +350,7 @@ namespace Risebird.Repository
                 {
                     var results = await SqlMapper.QueryAsync<AssignmentVM>(con, "[usp_GetAssessmentGroupsByCategory]", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return results ;
+                    return results;
                 }
             }
 
@@ -376,7 +376,7 @@ namespace Risebird.Repository
                 parameters.Add("@assessmentGroupId", assessmentGroupId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await SqlMapper.QueryAsync<int>(con, "[usp_GetAssessmentGroupCategory]", parameters,
+                    var results = await SqlMapper.QueryAsync<int?>(con, "[usp_GetAssessmentGroupCategory]", parameters,
                         commandType: CommandType.StoredProcedure);
                     return results?.FirstOrDefault();
                 }

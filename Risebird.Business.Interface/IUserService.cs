@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
 {
     public interface IUserService
     {
-        List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId=null);
+        List<Menu> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null);
         List<UserList> GetRisebirdUsers();
         List<ClientUserVM> GetClientUsers(string EmailId);
         List<InterviewerVM> GetInterviewers();
@@ -65,5 +65,7 @@ namespace Risebird.Business.Interface
         Task<bool> CheckMultiSession(string emailId);
         Task<bool> ClearSessionForOthersUsers(string emailId);
         AssignmentVM GetInterviewerEntitleById(int assessmentid);
+        string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
+        List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid);
     }
 }

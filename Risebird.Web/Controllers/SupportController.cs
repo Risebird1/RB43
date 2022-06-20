@@ -234,7 +234,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Delete(int id)

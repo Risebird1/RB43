@@ -183,27 +183,22 @@
                             <table width="100%">
                                 <tr>
                                     <td class="un-right">
-                                        @*<span class="label-num-unassigned" style="cursor:pointer" onclick="OpenRibbonDetails('QcPending')"><strong title="Unassigned Interview Count: 0"><span id="ribbonunfilledinterviewstatuscount">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</span></strong></span>*@
-
-
                                         <div class="flipper">
-                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QcPending')">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
                                                 <div class="card-image">
                                                     <div class="header-front"></div>
-                                                    <span style="cursor:pointer" id="ribbonunfilledinterviewstatuscount" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</span>
+                                                    <span style="cursor:pointer" id="ribbonnotprocessedcandidateresume" class="card-title">@Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span>
                                                 </div>
                                             </div>
-                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QcPending')">
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
                                                 <div class="card-image">
                                                     <div class="header-back"></div>
-                                                    <span style="cursor:pointer" id="ribbonunfilledinterviewstatuscount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledInterviewStatusCount</span>
+                                                    <span style="cursor:pointer" id="ribbonnotprocessedcandidateresume_1" class="card-title">@Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span>
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </td>
-                                    <td class="text-left un-left"><strong>QC Pending</strong></td>
+                                    <td class="text-left un-left"><strong>Not Processed Resume</strong></td>
 
                                 </tr>
                             </table>
@@ -473,86 +468,86 @@
                             </div>
                             <div id="slotsId">
                                 @*<div class="panel-body panel-body-table">
-                                    @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
-                                    {
-                                        <div class="sb-container scroller">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered table-striped ">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
-                                                            <th width="20%" class="text-center"><strong>Morning Interviews</strong></th>
-                                                            <th width="20%" class="text-center"><strong>Evening Interviews</strong></th>
-                                                            <th width="50%" class="text-center"><strong>Status</strong></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
+                                        @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
+                                        {
+                                            <div class="sb-container scroller">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped ">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="30%" class="text-center"><strong>Skill Channel</strong></th>
+                                                                <th width="20%" class="text-center"><strong>Morning Interviews</strong></th>
+                                                                <th width="20%" class="text-center"><strong>Evening Interviews</strong></th>
+                                                                <th width="50%" class="text-center"><strong>Status</strong></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
 
-                                                        @{
-                                                            foreach (var item in Model.DailyInterviewSlots)
-                                                            {
-                                                                <tr>
-                                                                    <td class="text-center"><strong>@item.IRFnSkill</strong></td>
-                                                                    <td class="text-center">
-                                                                        <span class="label-num"><strong title="Total Interview: @item.Morning">@item.Morning</strong></span>/
-                                                                        @if (item.MorningUnassinged == 0)
-                                                                        {
+                                                            @{
+                                                                foreach (var item in Model.DailyInterviewSlots)
+                                                                {
+                                                                    <tr>
+                                                                        <td class="text-center"><strong>@item.IRFnSkill</strong></td>
+                                                                        <td class="text-center">
+                                                                            <span class="label-num"><strong title="Total Interview: @item.Morning">@item.Morning</strong></span>/
+                                                                            @if (item.MorningUnassinged == 0)
+                                                                            {
 
-                                                                            <span class="label-num" style="color: green"><strong title="Unassigned Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
+                                                                                <span class="label-num" style="color: green"><strong title="Unassigned Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
 
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <span class="label-num" style="color: red"><strong title="Unassigned Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
-                                                                        }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="label-num" style="color: red"><strong title="Unassigned Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
+                                                                            }
 
 
-                                                                    </td>
-                                                                    <td class="text-center">
-                                                                        <span class="label-num"><strong title="Total Interview: @item.Evening">@item.Evening</strong></span>/
-                                                                        @if (item.EveningUnassinged == 0)
-                                                                        {
-                                                                            <span class="label-num" style="color: green"><strong title="Unassigned Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <span class="label-num" style="color: red"><strong title="Unassigned Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
-                                                                        }
-                                                                    </td>
-                                                                    <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="QC Pending : @item.QCPending"><span><strong>@item.QCPending</strong></span></a></td>
-                                                                </tr>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <span class="label-num"><strong title="Total Interview: @item.Evening">@item.Evening</strong></span>/
+                                                                            @if (item.EveningUnassinged == 0)
+                                                                            {
+                                                                                <span class="label-num" style="color: green"><strong title="Unassigned Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="label-num" style="color: red"><strong title="Unassigned Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
+                                                                            }
+                                                                        </td>
+                                                                        <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="QC Pending : @item.QCPending"><span><strong>@item.QCPending</strong></span></a></td>
+                                                                    </tr>
 
+                                                                }
                                                             }
-                                                        }
 
 
-                                                    </tbody>
-                                                </table>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+
                                             </div>
+                                            <div class="legend">
 
+                                                <ul>
+                                                    <li><div class="g color"></div>Selected: @Model.DailyInterviewSlots.Select(x => x.Selected).Sum()</li>
+                                                    <li><div class="r color"></div>Rejected: @Model.DailyInterviewSlots.Select(x => x.Rejected).Sum()</li>
+                                                    <li><div class="b color"></div>BorderLine: @Model.DailyInterviewSlots.Select(x => x.BorderLine).Sum()</li>
+                                                    <li><div class="pr color"></div>Proxy: @Model.DailyInterviewSlots.Select(x => x.Proxy).Sum()</li>
+                                                    <li><div class="ns color"></div>NoShow: @Model.DailyInterviewSlots.Select(x => x.NoShowCount).Sum()</li>
+                                                    <li><div class="sch color"></div>Scheduled: @Model.DailyInterviewSlots.Select(x => x.ScheduledCount).Sum()</li>
+                                                    <li><div class="dr color"></div>Dropped: @Model.DailyInterviewSlots.Select(x => x.DroppedCount).Sum()</li>
+                                                    <li><div class="pe color"></div>Status Pending: @Model.DailyInterviewSlots.Select(x => x.Pending).Sum()</li>
+                                                    <li><div class="pe color"></div>QC Pending: @Model.DailyInterviewSlots.Select(x => x.QCPending).Sum()</li>
 
-                                        </div>
-                                        <div class="legend">
-
-                                            <ul>
-                                                <li><div class="g color"></div>Selected: @Model.DailyInterviewSlots.Select(x => x.Selected).Sum()</li>
-                                                <li><div class="r color"></div>Rejected: @Model.DailyInterviewSlots.Select(x => x.Rejected).Sum()</li>
-                                                <li><div class="b color"></div>BorderLine: @Model.DailyInterviewSlots.Select(x => x.BorderLine).Sum()</li>
-                                                <li><div class="pr color"></div>Proxy: @Model.DailyInterviewSlots.Select(x => x.Proxy).Sum()</li>
-                                                <li><div class="ns color"></div>NoShow: @Model.DailyInterviewSlots.Select(x => x.NoShowCount).Sum()</li>
-                                                <li><div class="sch color"></div>Scheduled: @Model.DailyInterviewSlots.Select(x => x.ScheduledCount).Sum()</li>
-                                                <li><div class="dr color"></div>Dropped: @Model.DailyInterviewSlots.Select(x => x.DroppedCount).Sum()</li>
-                                                <li><div class="pe color"></div>Status Pending: @Model.DailyInterviewSlots.Select(x => x.Pending).Sum()</li>
-                                                <li><div class="pe color"></div>QC Pending: @Model.DailyInterviewSlots.Select(x => x.QCPending).Sum()</li>
-
-                                            </ul>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div>No interviews for this day!</div>
-                                    }
-                                </div>*@
+                                                </ul>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div>No interviews for this day!</div>
+                                        }
+                                    </div>*@
                             </div>
 
 
@@ -634,147 +629,147 @@
                     <!--<div class="col-md-8">
 
                         <!-- START INTERVIEW BLOCK -->
-                        <!--<div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3>Skill Channel Activity</h3>
-
-                                </div>
-                                <ul class="panel-controls" style="margin-top: 2px;">
-                                    <li>
-                                        <div class="col-md-12 col-sm-12 nopad interview-date">
-                                            <input id="ProgressDate" name="ProgressDate" type="date" class="form-control">-->
-                                            @*@Html.EditorFor(model => model.ProgressDate.Date, new { htmlAttributes = new { @class = "form-control" } })*@
-
-                                        <!--</div>
-                                    </li>
-                                    <li>
-                                        <button onclick="getIRFProgress()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                    </li>
-                                </ul>
+                    <!--<div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="panel-title-box">
+                                <h3>Skill Channel Activity</h3>
 
                             </div>
+                            <ul class="panel-controls" style="margin-top: 2px;">
+                                <li>
+                                    <div class="col-md-12 col-sm-12 nopad interview-date">
+                                        <input id="ProgressDate" name="ProgressDate" type="date" class="form-control">-->
+                    @*@Html.EditorFor(model => model.ProgressDate.Date, new { htmlAttributes = new { @class = "form-control" } })*@
 
-                            <div id="progressTableId">
-                                <div class="panel-body panel-body-table">
-                                    if (Model.IrfProgressList != null && Model.IrfProgressList.Count() != 0)
-                                    {
-                                        <div class="scrollbox">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="40%">Skill Channel</th>
-                                                            <th width="30%">Status</th>
-                                                            <th width="30%">Activity</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
+                    <!--</div>
+                            </li>
+                            <li>
+                                <button onclick="getIRFProgress()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
+                            </li>
+                        </ul>
 
-                                                        foreach (var item in Model.IrfProgressList)
-                                                        {
-                                                            var label = "";
-                                                            var statuslabel = "";
+                    </div>
 
+                    <div id="progressTableId">
+                        <div class="panel-body panel-body-table">
+                            if (Model.IrfProgressList != null && Model.IrfProgressList.Count() != 0)
+                            {
+                                <div class="scrollbox">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th width="40%">Skill Channel</th>
+                                                    <th width="30%">Status</th>
+                                                    <th width="30%">Activity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
-                                                            if (item.idProgress >= 1 && item.idProgress <= 4)
-                                                            {
-
-                                                                label = "progress-bar-danger";
-                                                                statuslabel = "label-danger";
-
-
-                                                            }
-                                                            else if (item.idProgress >= 5 && item.idProgress <= 8)
-                                                            {
-                                                                label = "progress-bar-yellow";
-                                                                statuslabel = "label-yellow";
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                label = "progress-bar-green";
-                                                                statuslabel = "label-green";
-                                                            }
-                                                            <tr>
-                                                                <td title="item.Comment"><strong>item.IRFnSkill</strong></td>
-                                                                <td onclick="openProgressModal()" style="cursor: pointer;"><span class="label statuslabel">item.ProgressStatus</span></td>
-                                                                <td>
-                                                                    <div class="progress progress-small progress-striped active">
-                                                                        <div class="progress-bar label" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" title="" style="width: ((item.idProgress * 100)/11)%;"><a href="#" data-toggle="tooltip" title="((item.idProgress * 100) / 11)%"> <span>((item.idProgress * 100) / 11)%</span></a></div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        }
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        <div id="statusModal" class="modal modal-bg">-->
-                                            <!-- Modal content -->
-                                            <!--<div class="modal-dialog modal-lg" role="document">
-                                                <div class="modal-content" style="width:900px">
+                                                foreach (var item in Model.IrfProgressList)
+                                                {
+                                                    var label = "";
+                                                    var statuslabel = "";
 
 
-                                                    <div class="filheader">
-                                                        <div class="filavatar">
-                                                            <span class="publicsharing-icon fas fa-question fa-2x"></span>
-                                                        </div>
-                                                        <h5 class="modal-title pull-left" id="statusHeading">Status</h5>
-                                                    </div>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true" id="statusPopUp" style="cursor:pointer;">&times;</span>
-                                                    </button>
+                                                    if (item.idProgress >= 1 && item.idProgress <= 4)
+                                                    {
 
-                                                    <form action="Url.Action("UpdateIRFProgress","Dashboard")" method="post" id="idFormProgress">
-                                                        <div class="modal-body">
-
-                                                            <table class="table table-bordered table-striped" id="progressTable" style="width:100%">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th width="50%">Skill Channel</th>
-                                                                        <th width="20%">Activity Type</th>
-                                                                        <th>Assigned To</th>
-                                                                        <th>Status</th>
-                                                                        <th width="30%">Comment</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
+                                                        label = "progress-bar-danger";
+                                                        statuslabel = "label-danger";
 
 
-                                                                    for (var i = 0; i < Model.IrfProgressList.Count(); i++)
-                                                                    {
-                                                                        <tr>
-                                                                            <td><strong>Model.IrfProgressList[i].IRFnSkill</strong></td>
-                                                                            <td>
-                                                                                Html.DropDownListFor(m => m.IrfProgressList[i].idProgress, Model.ProgressOptions, new { class = "form-control", onchange = "ChangeAssignvalues(" + Model.IrfProgressList[i].id + "," + i + ")" })
+                                                    }
+                                                    else if (item.idProgress >= 5 && item.idProgress <= 8)
+                                                    {
+                                                        label = "progress-bar-yellow";
+                                                        statuslabel = "label-yellow";
+                                                    }
 
-                                                                            </td>
-                                                                            <td>Html.TextBoxFor(m => m.IrfProgressList[i].AssignTo, new { htmlAttributes = new { class = "form-control text-box single-line" } })</td>
-                                                                            <td>Html.DropDownListFor(m => m.IrfProgressList[i].AssignStatus, Model.AssassinationList, "Select", new { class = "form-control text-box single-line" })</td>
-                                                                            <td>
-                                                                                Html.EditorFor(m => m.IrfProgressList[i].Comment, new { htmlAttributes = new { class = "form-control text-box single-line" } })
 
-                                                                            </td>
-                                                                            Html.HiddenFor(m => m.IrfProgressList[i].id)
+                                                    else
+                                                    {
+                                                        label = "progress-bar-green";
+                                                        statuslabel = "label-green";
+                                                    }
+                                                    <tr>
+                                                        <td title="item.Comment"><strong>item.IRFnSkill</strong></td>
+                                                        <td onclick="openProgressModal()" style="cursor: pointer;"><span class="label statuslabel">item.ProgressStatus</span></td>
+                                                        <td>
+                                                            <div class="progress progress-small progress-striped active">
+                                                                <div class="progress-bar label" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" title="" style="width: ((item.idProgress * 100)/11)%;"><a href="#" data-toggle="tooltip" title="((item.idProgress * 100) / 11)%"> <span>((item.idProgress * 100) / 11)%</span></a></div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
 
-                                                                        </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
-                                                                    }
-                                                                    Html.HiddenFor(m => Model.ProgressDate)-->
-                                                                    @*@Html.Hidden("ProgressDate", Model.ProgressDate)*@
+                                <div id="statusModal" class="modal modal-bg">-->
+                    <!-- Modal content -->
+                    <!--<div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content" style="width:900px">
 
-                                                                <!--</tbody>
-                                                            </table>
-                                                            <hr style="margin:10px 0px;" />
-                                                            <div class="form-group clearfix">
-                                                                <div>
-                                                                    <div class="col-md-12 col-sm-12">-->
-                                                                        @*<input type="button" onclick="updateIRFProgress()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">*@
-                                                                        @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Save">Save</button>
+
+                            <div class="filheader">
+                                <div class="filavatar">
+                                    <span class="publicsharing-icon fas fa-question fa-2x"></span>
+                                </div>
+                                <h5 class="modal-title pull-left" id="statusHeading">Status</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true" id="statusPopUp" style="cursor:pointer;">&times;</span>
+                            </button>
+
+                            <form action="Url.Action("UpdateIRFProgress","Dashboard")" method="post" id="idFormProgress">
+                                <div class="modal-body">
+
+                                    <table class="table table-bordered table-striped" id="progressTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th width="50%">Skill Channel</th>
+                                                <th width="20%">Activity Type</th>
+                                                <th>Assigned To</th>
+                                                <th>Status</th>
+                                                <th width="30%">Comment</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                            for (var i = 0; i < Model.IrfProgressList.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td><strong>Model.IrfProgressList[i].IRFnSkill</strong></td>
+                                                    <td>
+                                                        Html.DropDownListFor(m => m.IrfProgressList[i].idProgress, Model.ProgressOptions, new { class = "form-control", onchange = "ChangeAssignvalues(" + Model.IrfProgressList[i].id + "," + i + ")" })
+
+                                                    </td>
+                                                    <td>Html.TextBoxFor(m => m.IrfProgressList[i].AssignTo, new { htmlAttributes = new { class = "form-control text-box single-line" } })</td>
+                                                    <td>Html.DropDownListFor(m => m.IrfProgressList[i].AssignStatus, Model.AssassinationList, "Select", new { class = "form-control text-box single-line" })</td>
+                                                    <td>
+                                                        Html.EditorFor(m => m.IrfProgressList[i].Comment, new { htmlAttributes = new { class = "form-control text-box single-line" } })
+
+                                                    </td>
+                                                    Html.HiddenFor(m => m.IrfProgressList[i].id)
+
+                                                </tr>
+
+                                            }
+                                            Html.HiddenFor(m => Model.ProgressDate)-->
+                    @*@Html.Hidden("ProgressDate", Model.ProgressDate)*@
+
+                    <!--</tbody>
+                    </table>
+                    <hr style="margin:10px 0px;" />
+                    <div class="form-group clearfix">
+                        <div>
+                            <div class="col-md-12 col-sm-12">-->
+                    @*<input type="button" onclick="updateIRFProgress()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">*@
+                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Save">Save</button>
                                                                     </div>
                                                                 </div>
 
@@ -794,8 +789,7 @@
 
 
                         </div>-->*@
-                        <!-- END INTERVIEW BLOCK -->
-
+                    <!-- END INTERVIEW BLOCK -->
                     <!--</div>-->
                 </div>
                 <!--End Channel Management-->
@@ -852,7 +846,7 @@
 
                             <div class="card mob_canvas-height">
                                 <div class="card-body">
-                                    <p class="card-text">Total Meetings : <span ><strong id="id_totalMeetingsCount"></strong></span></p>@*@Model.MeetingResultCountObj.TotalMeetingsCount*@
+                                    <p class="card-text">Total Meetings : <span><strong id="id_totalMeetingsCount"></strong></span></p>@*@Model.MeetingResultCountObj.TotalMeetingsCount*@
                                     <div>
                                         <div id="meetingsCountId" class="PieId"></div>
                                     </div>
@@ -962,7 +956,7 @@
                 });
             })
         }
-        
+
         RenderMeetingsResultsBreakdownChart()
             .then((data) => {
                 document.getElementById('id_totalMeetingsCount').innerHTML = data.totalMeetingsCount;
@@ -993,10 +987,10 @@
                     }]
                 });
                 chart.render();
-      
+
             })
             .catch((error) => {
-                
+
             })
 
         setDate();
@@ -1006,20 +1000,20 @@
     });
 </script>
 @*<script>
-    var closeStatus = document.getElementById("statusPopUp");
-    // When the user clicks on <span> (x), close the modal
-    closeStatus.onclick = function () {
-        var modal = document.getElementById("statusModal");
-        modal.style.display = "none";
-    }
+        var closeStatus = document.getElementById("statusPopUp");
+        // When the user clicks on <span> (x), close the modal
+        closeStatus.onclick = function () {
+            var modal = document.getElementById("statusModal");
+            modal.style.display = "none";
+        }
 
-    function openProgressModal() {
-        var modal = document.getElementById("statusModal");
-        modal.style.display = "block";
-    }
+        function openProgressModal() {
+            var modal = document.getElementById("statusModal");
+            modal.style.display = "block";
+        }
 
 
-</script>*@
+    </script>*@
 
 
 <script>
@@ -1327,11 +1321,11 @@
         }
         $.ajax({
             url: '/Dashboard/FetchRibbonValues',
-            data: { 'section': 0, 'getDeletedZoomMeetingsCount': getDeletedZoomMeetingsCount},
+            data: { 'section': 0, 'getDeletedZoomMeetingsCount': getDeletedZoomMeetingsCount },
             success: function (data) {
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
-                $("#ribbonunfilledinterviewstatuscount").text(data.unfilledInterviewStatusCount);
+                $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
                 $("#ribbonunfilledcommentscount").text(data.unfilledCommentsCount);
                 $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
@@ -1353,7 +1347,7 @@
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
-                $("#ribbonunfilledinterviewstatuscount_1").text(data.unfilledInterviewStatusCount);
+                $("#ribbonnotprocessedcandidateresume_1").text(data.notProcessedCandidateResume);
                 $("#ribbonunfilledcommentscount_1").text(data.unfilledCommentsCount);
                 $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
@@ -1381,6 +1375,9 @@
     }
     function OpenRibbonDetails(actionstatus) {
         window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus;
+    }
+    function OpenRibbonDetailsUnProcessedResume(actionstatus) {
+        window.location.href = "/Dashboard/UnProcessedResume";
     }
 </script>
 <script>

@@ -20,7 +20,7 @@ namespace Risebird.Web.Controllers
             _generalskillService = generalskillService;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -47,7 +47,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(GeneralSkillMatrix model)
@@ -86,7 +86,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Add()
         {
@@ -108,7 +108,7 @@ namespace Risebird.Web.Controllers
                 return View();
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -172,7 +172,7 @@ namespace Risebird.Web.Controllers
                 return View("Index");
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> DeleteGeneralSkill(int id)
         {

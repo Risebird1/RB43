@@ -26,11 +26,14 @@ GO
 @RecommendationStatus bit,
 @RecommendationAssessmentGroupId int = null,
 @RecommendationCategoryId int = null,
-@RecommendationCompetencyLevelId int = null,
-@RecommendationSeniorityLevelId int = null,
+--@RecommendationCompetencyLevelId int = null,
+@RecommendationSeniorityLevelId varchar(50) = null,
 @RecommendationCountryType int = null,
 @RecommendationCompanyType int = null,
-@RecommendationCreatedOn datetime
+@RecommendationCreatedOn datetime,
+@RecommendationDifficultyLevel varchar(50) = null,
+@RecommendationEmploymentType varchar(20) = null,
+@RecommendationPerHourRate int = null
             
 AS            
 Begin  
@@ -144,11 +147,15 @@ begin try
 			[Status],
 			[AssessmentGroupId],
 			CategoryId,
-			CompetencyLevelId,
+			--CompetencyLevelId,
 			SeniorityLevelId,
 			CountryType,
 			CompanyType,
+			DifficultyLevel,
+			EmploymentType,
+			PerHourRate,
 			CreatedOn
+			
 		)
 
 		values
@@ -157,10 +164,13 @@ begin try
 			@RecommendationStatus,
 			@RecommendationAssessmentGroupId,
 			@RecommendationCategoryId,
-			@RecommendationCompetencyLevelId,
+			--@RecommendationCompetencyLevelId,
 			@RecommendationSeniorityLevelId,
 			@RecommendationCountryType,
 			@RecommendationCompanyType,
+			@RecommendationDifficultyLevel,
+			@RecommendationEmploymentType,
+			@RecommendationPerHourRate,
 			@RecommendationCreatedOn
 		)
 

@@ -262,7 +262,7 @@ namespace Risebird.Web.Controllers
                                 uploadedFileURL = blob.Uri.ToString();
                                 InterviewerSkillsDetails.JDLink = uploadedFileURL;
                             }
-                            
+
                         }
                         if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
                         {
@@ -386,7 +386,7 @@ namespace Risebird.Web.Controllers
 
                                 model.JDLink = uploadedFileURL;
                             }
-                            
+
                         }
                         else if (model.JDLink == null || model.JDLink == "")
                         {
@@ -452,7 +452,7 @@ namespace Risebird.Web.Controllers
             var name = _iInterviewerSkillsService.GetInterviewerSkills(id);
             return name;
         }
-        
+
         [Authorize]
         [HttpGet]
         public SelectList GetInterviewers(string skills)
@@ -516,7 +516,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult UnArchiveISC(int id)
@@ -558,7 +558,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult GetISCInterviewers(int id, string InterviewerSkillidName)
@@ -605,7 +605,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         public IActionResult DeleteISCInterviewer(int id, int iscId, string iscName)
         {
@@ -750,7 +750,7 @@ namespace Risebird.Web.Controllers
             ViewBag.CalendlyLink = calendlyLink;
             return View();
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult PauseInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName)
@@ -789,7 +789,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult PlayInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName)
@@ -877,7 +877,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult CancelInvite(int iscId, string iscName, string emailId)
@@ -923,7 +923,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [HttpGet]
         public IActionResult InterviewerSearch(int? Page, string searchvalue)
         {
@@ -1048,7 +1048,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpPost]
         public IActionResult InterviewerSearch(int? Page, InterviewFilter filter, string searchvalue)
         {
@@ -1169,7 +1169,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> ResetInterviewerRisetubeFilter()
         {
@@ -1192,7 +1192,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> InterviewerVideoPage(int id, string irfid, string actionstatus)
@@ -1535,7 +1535,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [HttpPost]
         public JsonResult CandidateShortList(int videoid, string status)
         {
@@ -1550,14 +1550,14 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
-        
+
         [HttpPost]
         public JsonResult FetchCandidateShortList()
         {
             string currenturl = Request.Host.ToString() + "/InterviewerSkills/InterviewerVideoPage";
             return Json(new { result = Shortlistvideoids, currenturl = currenturl });
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> CandidateShortListNotification(string videoids, string email, string comment)
         {
@@ -1580,7 +1580,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to Shortlist");
             }
         }
-        
+
         [HttpGet]
         private void GetStatusList(InterviewReport model, int irfId = 0)
         {
@@ -1601,7 +1601,7 @@ namespace Risebird.Web.Controllers
 
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> ISCInterviewMeetings(string id, string irfId, int? Page, string searchValue)
         {
@@ -1726,7 +1726,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ISCSelectedInterviewMeetings(string id, string irfId, int? Page, string searchValue)
@@ -1864,7 +1864,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public SelectList GetInterviewersByAssessmentGroup(string assessmentgroupid)

@@ -27,7 +27,7 @@ namespace Risebird.Entities.Enum
 
         [Description("QC Failed")]
         QCFailed = 8,
-        
+
         [Description("Create ClonableSkillChannel")]
         CreateClonableSkillChannel = 9,
 
@@ -35,8 +35,10 @@ namespace Risebird.Entities.Enum
         UpdateClonableSkillChannel = 10,
 
         [Description("Meeting Cancelled")]
-        MeetingCancelled = 11
-
+        MeetingCancelled = 11,
+        
+        [Description("QC Done")]
+        QCDone = 12,
 
     }
 }

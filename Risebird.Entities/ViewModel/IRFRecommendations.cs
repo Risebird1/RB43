@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -15,11 +14,14 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Assessment Group Category")]
         public int? CategoryId { get; set; }
 
-        [DisplayName("Competency Level")]
+        //[DisplayName("Difficulty Level")]
         public int? CompetencyLevelId { get; set; }
 
         [DisplayName("Seniority Level")]
-        public int? SeniorityLevelId { get; set; }
+        //public int? SeniorityLevelId { get; set; }
+        public string SeniorityLevelId { get; set; }//based on Job Profile Enum
+        public string[] SeniorityLevelArray { get; set; }
+        public List<SelectListItem> SeniorityLevelList { get; set; }
 
         [DisplayName("Country Type")]
         public int? CountryType { get; set; }
@@ -42,6 +44,18 @@ namespace Risebird.Entities.ViewModel
 
         public string AssessmentGroupName { get; set; }
 
+        [DisplayName("Difficulty Level")]
+        public string DifficultyLevel { get; set; }
+        public string[] DifficultyLevelArray { get; set; }
+        public List<SelectListItem> DifficultyLevelList { get; set; }
+
+        [DisplayName("Employment Type")]
+        public string EmploymentType { get; set; }
+        public string[] EmploymentTypeArray { get; set; }
+        public List<SelectListItem> EmploymentTypeList { get; set; }
+
+        [DisplayName("Per Hour Rate")]
+        public int? PerHourRate { get; set; }
 
     }
 }

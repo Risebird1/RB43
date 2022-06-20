@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -10,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -81,7 +79,7 @@ namespace Risebird.Repository
                         interviewerDt.Rows.Add(item.UserId, item.IsSelected);
                     }
 
-                   
+
 
                     SqlCommand cmdAddTemplate = new SqlCommand("usp_AddTemplate", con);
                     cmdAddTemplate.CommandType = CommandType.StoredProcedure;
@@ -174,7 +172,7 @@ namespace Risebird.Repository
                     parameters.Add("@templateId", templateId);
                     return await SqlMapper.QueryAsync<TransTemplateInterviewer>(con, "usp_GetTemplateInterviewers", parameters,
                          commandType: CommandType.StoredProcedure);
-                   
+
                 }
             }
             catch (SqlException ex)

@@ -185,5 +185,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailID, string profileName, IRFFilter filterModel = null);
         IEnumerable<TransInterviewer> GetIRFInterviewerSkillsByAssessmentGroup(string assessmentgroupid);
         Task<IEnumerable<string>> GetIRFInterviewersAndEmergencyInterviewersEmail(int irfId);
+        Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate);
     }
 }

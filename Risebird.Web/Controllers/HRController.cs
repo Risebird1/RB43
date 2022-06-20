@@ -637,7 +637,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> HRUnassignYourself(int id)
@@ -985,7 +985,7 @@ namespace Risebird.Web.Controllers
                                 return false;
                             }
                         }
-                        
+
                     }
                     else
                     {
@@ -1021,10 +1021,10 @@ namespace Risebird.Web.Controllers
 
 
         }
-        
+
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CallCatalogue()
+        public async Task<IActionResult> CallCatalogue(string type)
         {
             try
             {
@@ -1034,6 +1034,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.type = "Candidate";
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
@@ -1041,7 +1042,16 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
-                        var meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
+                        var meetings = new List<CallCatalogueVM>();
+                        if (type == "Interviewer")
+                        {
+                            ViewBag.type = "Interviewer";
+                            meetings = _meetingService.GetInterviewerCallCatalogueList();
+                        }
+                        else
+                        {
+                            meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
+                        }
                         if (HttpContext.Session.GetString("CallCataloguefilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
@@ -1093,10 +1103,10 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CallCatalogue(InterviewFilter filter)
+        public async Task<IActionResult> CallCatalogue(InterviewFilter filter, string type)
         {
             try
             {
@@ -1113,32 +1123,7 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("CallCataloguefilters", JsonConvert.SerializeObject(filter));
                         }
-                        var meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                            meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
-                        }
-                        else if (filter.StartDate != null && filter.EndDate == null)
-                        {
-                            meetings = meetings.Where(t => t.CalledOn >= filter.StartDate).ToList();
-                        }
-                        else if (filter.StartDate == null && filter.EndDate != null)
-                        {
-                            filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                            meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
-                        }
-
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                        filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                        filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHr).ToArray() : filter.ClientHR = filter.ClientHR;
-                        filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-
-                        meetings = meetings.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                                                && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHr) : c.ClientHr == null)
-                                                && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                                                && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)).ToList();
-                        return View(meetings);
+                        return RedirectToAction("CallCatalogue", new { type = type });
                     }
                     else
                     {
@@ -1156,7 +1141,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> ResetCallCatalogueFilter()
@@ -1233,7 +1218,7 @@ namespace Risebird.Web.Controllers
                             meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
                         }
 
-                        if( meetings != null && meetings.Count() > 0)
+                        if (meetings != null && meetings.Count() > 0)
                         {
                             Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
                             Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
@@ -1278,7 +1263,7 @@ namespace Risebird.Web.Controllers
                             Rng.Value = "No data available in table !!!";
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
-                        
+
 
                     }
                     else
@@ -1286,7 +1271,7 @@ namespace Risebird.Web.Controllers
                         return null;
                     }
                 }
-                
+
                 else
                 {
                     return null;

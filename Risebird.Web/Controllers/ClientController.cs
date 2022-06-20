@@ -1251,13 +1251,6 @@ namespace Risebird.Web.Controllers
                 {
                     m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                 }
-                if (m.IsQCRequired)
-                {
-                    if (m.QCStatus.HasValue)
-                    {
-                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                    }
-                }
                 if (m.IsApproved.HasValue && m.IsApproved != -1)
                 {
                     m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
@@ -1286,28 +1279,9 @@ namespace Risebird.Web.Controllers
 
                 }
 
-                if (m.IsQCRequired)
+                if (m.InterviewStatus.HasValue)
                 {
-                    if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == null || m.QCInterview == 0))
-                    {
-                        m.intervieweStatusStatDesc = "QC Pending(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
-                    }
-                    else if ((m.InterviewStatus == 4 || m.InterviewStatus == 2) && (m.QCStatus == 2))
-                    {
-                        m.intervieweStatusStatDesc = "QC Failed(" + ((InterviewStatus)(m.InterviewStatus)).GetDescription() + ")";
-                    }
-                    else if (m.InterviewStatus.HasValue)
-                    {
-                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-
-                    }
-                }
-                else
-                {
-                    if (m.InterviewStatus.HasValue)
-                    {
-                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                    }
+                    m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                 }
 
                 if (m.intervieweStatusStatDesc == null)
@@ -1534,7 +1508,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Meeting Status";
                 if (roleId != (int)ClientRoleEnum.RestrictedIRFowner)
                 {
-                    Sheet.Cells[1, 7].Value = "End Client Name";
+                    Sheet.Cells[1, 7].Value = "Project Name";
                     Sheet.Cells[1, 8].Value = "Primary Skill";
                     Sheet.Cells[1, 9].Value = "Interview Status";
                     Sheet.Cells[1, 10].Value = "Video Link";
@@ -2177,13 +2151,6 @@ namespace Risebird.Web.Controllers
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                             }
-                            if (m.IsQCRequired)
-                            {
-                                if (m.QCStatus.HasValue)
-                                {
-                                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                                }
-                            }
                             if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
@@ -2355,13 +2322,6 @@ namespace Risebird.Web.Controllers
                             if (m.MeetingStatus.HasValue)
                             {
                                 m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                            }
-                            if (m.IsQCRequired)
-                            {
-                                if (m.QCStatus.HasValue)
-                                {
-                                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                                }
                             }
                             if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
@@ -2818,13 +2778,6 @@ namespace Risebird.Web.Controllers
                     {
                         m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                     }
-                    if (m.IsQCRequired)
-                    {
-                        if (m.QCStatus != null && m.QCStatus.HasValue)
-                        {
-                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                        }
-                    }
                     if (m.IsApproved != null && m.IsApproved.HasValue)
                     {
                         m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
@@ -2878,7 +2831,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Candidate Name";
                 Sheet.Cells[1, 3].Value = "Candidate Email";
                 Sheet.Cells[1, 4].Value = "Client HR";
-                Sheet.Cells[1, 5].Value = "End Client Name";
+                Sheet.Cells[1, 5].Value = "Project Name";
                 Sheet.Cells[1, 6].Value = "Primary Skill";
                 Sheet.Cells[1, 7].Value = "Video";
                 //Sheet.Cells[1, 8].Value = "Report Link";
@@ -3621,7 +3574,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Candidate Name";
                 Sheet.Cells[1, 3].Value = "Candidate Email";
                 Sheet.Cells[1, 4].Value = "Client HR";
-                Sheet.Cells[1, 5].Value = "End Client Name";
+                Sheet.Cells[1, 5].Value = "Project Name";
                 Sheet.Cells[1, 6].Value = "Primary Skill";
                 Sheet.Cells[1, 7].Value = "Video";
                 Sheet.Cells[1, 8].Value = "Interviewer Comment";

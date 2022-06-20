@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -548,7 +547,7 @@ namespace Risebird.Business
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
                 if (result)
                 {
-                    if(!string.IsNullOrEmpty(meetingToUpdate.confirmationStatus) && Convert.ToInt16(meetingToUpdate.confirmationStatus) == (int)ReceiveMeetingStatus.Cancelled)
+                    if (!string.IsNullOrEmpty(meetingToUpdate.confirmationStatus) && Convert.ToInt16(meetingToUpdate.confirmationStatus) == (int)ReceiveMeetingStatus.Cancelled)
                     {
                         _ = await _irfRepository.UpdateCancellationSource(meetingToUpdate.imid, meetingToUpdate.LoggedInUser);
                         _ = await _irfService.AddCandidateStatus(meetingToUpdate.LoggedInUser, meetingToUpdate.CandidateMasterId, meetingToUpdate.irfIntId, "Meeting Cancelled", (int)CandidateStatusOptions.Cancelled, meetingToUpdate.imid);
@@ -1414,31 +1413,10 @@ namespace Risebird.Business
 
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
-                                    if (!reportModel.IsQCRequired)
-                                    {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                    }
-                                    else
-                                    {
-                                        if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                        }
-                                        else
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
-
-                                        }
-                                    }
-
+                                    await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
                                 }
-
                             }
-
                         }
-
                         activityTrackerModel.ActivityType = (int)ActivityTypes.CreateCandidateFeedback;
                         activityTrackerModel.Particulars = "Feedback for: " + reportModel.CandidateEmail;
                         activityTrackerModel.PerformedBy = emailId;
@@ -1475,29 +1453,10 @@ namespace Risebird.Business
 
                                 if (reportModel.InterviewStatus.HasValue)
                                 {
-                                    if (!reportModel.IsQCRequired)
-                                    {
-                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                    }
-                                    else
-                                    {
-                                        if (reportModel.InterviewStatus.Value == (int)InterviewStatus.Proxy || reportModel.InterviewStatus.Value == (int)InterviewStatus.Rejected)
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
-
-                                        }
-                                        else
-                                        {
-                                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, CandidateStatusOptions.QCPending.GetDescription(), (int)CandidateStatusOptions.QCPending, reportModel.InterviewId);
-                                        }
-                                    }
-
+                                    await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
                                 }
-
                             }
                         }
-
                         activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateCandidateFeedback;
                         activityTrackerModel.Particulars = "Feedback for: " + reportModel.CandidateEmail;
                         activityTrackerModel.PerformedBy = emailId;
@@ -3206,7 +3165,7 @@ namespace Risebird.Business
                     var meetingDetails = _meetingRespository.GetMeetingDetails(meetingid).Result;
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.MeetingCancelled;
-                    activityTrackerModel.Particulars = "Meeting with: " + meetingDetails.candidateEmail ;
+                    activityTrackerModel.Particulars = "Meeting with: " + meetingDetails.candidateEmail;
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = "Meeting with: " + meetingDetails.candidateEmail + "scheduled for :" + meetingDetails.interviewDate.ToString();
                     _ = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
@@ -3436,6 +3395,66 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public List<MeetingVM> GetCompletedInterviewList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return _meetingRespository.GetCompletedInterviewList(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public QCFormVM FetchQCFormDetailsById(int interviewid)
+        {
+            try
+            {
+                return _meetingRespository.FetchQCFormDetailsById(interviewid).Result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public bool AddorUpdateQCFormReport(QCFormVM model)
+        {
+            try
+            {
+                if (_meetingRespository.AddorUpdateQCFormReport(model).Result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCDone;
+                    activityTrackerModel.Particulars = "QC for Interviewer: " + model.Interviewer + " For Interviewid :" + model.Interviewid;
+                    activityTrackerModel.PerformedBy = model.Emailid;
+                    activityTrackerModel.Summary = "QC Form Filled";
+                    activityTrackerModel.ResourceUrl = "";
+                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public List<CallCatalogueVM> GetInterviewerCallCatalogueList()
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetInterviewerCallCatalogueList().Result.ToList();
+                return meetings ?? new List<CallCatalogueVM>();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

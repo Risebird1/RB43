@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.SchedulingLinkVM>
 @using Microsoft.AspNetCore.Http
 @{
-    ViewData["Title"] = "Interviewer Communicator";
+    ViewData["Title"] = "Manage Interviews";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 <script>
-    var Header = "<div id='myinterview_1'>Interviewer Communicator</div>";
+    var Header = "<div id='myinterview_1'>Manage Interviews</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <style>
@@ -33,11 +33,13 @@
             <div class="row card-header bg-w clearfix">
                 <div class="col-md-8 pull-left">
                     <div class="pull-left myinterview">
-                        <div class="mobile-view"> <h4 class="card-title"> Interviewer Communicator</h4></div>
+                        <div class="mobile-view"> <h4 class="card-title"> Manage Interviews</h4></div>
                     </div>
                 </div>
                 <div class="col-md-4 pull-left">
                     <div class="pull-right">
+                        <input type="hidden" value="@ViewBag.emailid" id="hiddemailid" />
+                        <input type="hidden" value="@ViewBag.id" id="hidduniqueid" />
                         @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                     </div>
                 </div>
@@ -74,20 +76,20 @@
                                                     <thead>
                                                         <tr>
                                                             <th style="border-right: 0px !important;">Skill Channel</th>
-                                                            <th style="border-left: 0px !important;">Jd Title</th>
+                                                            <th style="border-left: 0px !important;">Scheduling Link</th>
                                                             <th style="text-align:left">Billing Owner</th>
                                                             <th style="text-align:left">JD-Skills</th>
-                                                            <th>JD Link</th>
+                                                            <th>JD</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
                                                             <th style="border-right: 0px !important;">Skill Channel</th>
-                                                            <th style="border-left: 0px !important;">Jd Title</th>
+                                                            <th style="border-left: 0px !important;">Scheduling Link</th>
                                                             <th style="text-align:left">Billing Owner</th>
                                                             <th style="text-align:left">JD-Skills</th>
-                                                            <th>JD Link</th>
+                                                            <th>JD</th>
                                                             <th class="disabled-sorting text-left">Actions</th>
                                                         </tr>
 
@@ -104,7 +106,15 @@
                                                         {
                                                             <tr id=@item.id>
                                                                 <td>@item.IRFId</td>
-                                                                <td> @item.JDTiltle </td>
+                                                                <td>
+                                                                    <a>
+                                                                        Scheduling Link
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Scheduling Link" title="Scheduling Link">
+
+                                                                            <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                </td>
                                                                 <td> @item.BillingOwner </td>
                                                                 <td>
                                                                     <button type="button" class="clickhere_btn pull-left">
@@ -130,6 +140,16 @@
                                                                         <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
                                                                         </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Upload Resumes">
+                                                                        <span onclick="javascript:OpenuploadResumesModal('@item.id', '@item.IRFId');" title="Upload Resumes" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up-fill" viewBox="0 0 16 16">
+                                                                                <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Candidate Resumes" title="Candidate Resumes">
+                                                                        <span title="Candidate Resumes" onclick="location.href='@Url.Action("ResumesPublicly", "Candidate",  new { irfId = item.id, irfName = item.IRFId,emailid = ViewBag.emailid, id = ViewBag.id })'" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                                                                     </button>
                                                                 </td>
                                                             </tr>
@@ -277,6 +297,78 @@
                                 </table>
                             </div>
                         </div><!--end of col-md-12-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="uploadResumesModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Upload Resume(s)</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;" onclick="closeuploadResumesModal()">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 col-sm-12">
+                    <input type="hidden" id="txtIRFId" />
+                    <input type="hidden" id="txtIRFName" />
+                    <div class="form-group">
+                        <label class="form-label"></label>
+                        <div class="col-sm-12">
+                            <div class="custom-file">
+                                <input type="file" class="choose-file" multiple accept=".pdf, .docx, .doc" id="ResumeFiles" style="margin-bottom: 10px;" />
+                                @*<input asp-for="ResumeFiles" multiple class="form-control custom-file-input" accept=".pdf, .docx, .doc">*@
+                                <label class="custom-file-label">Choose File(s)...</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 text-right">
+                    <button type="button" onclick="UploadCandidateResume()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Upload</button>
+                    <button type="button" onclick="closeuploadResumesModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="CopySchedulinglinkModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Scheduling Link</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCopySchedulinglink()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Scheduling Link:  <b id="txtschedulinglink"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtschedulinglink')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeCopySchedulinglink()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -441,6 +533,44 @@
         html += '</div>';
         $("#divIRFaudioRecording").empty().html(html);
     }
+    function closeuploadResumesModal() {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "none";
+    }
+    function OpenuploadResumesModal(irfid, Irfname) {
+        var modalBct = document.getElementById("uploadResumesModal");
+        modalBct.style.display = "block";
+        $("#txtIRFId").val(irfid);
+        $("#txtIRFName").val(Irfname);
+    }
+    function UploadCandidateResume() {
+        if ($("#txtIRFId").val().trim() != "" && $("#txtIRFName").val().trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
+            $(".loader").show();
+            var files = $("#ResumeFiles").prop("files");
+            var form_data = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                form_data.append(files[i].name, files[i]);
+            }
+            form_data.append("IRFId", $("#txtIRFId").val());
+            form_data.append("IRFName", $("#txtIRFName").val());
+
+            $.ajax({
+                type: "POST",
+                url: "/Candidate/UploadResumesPublicly",
+                data: form_data,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                processData: false,
+                success: function (data) {
+                    $(".loader").hide();
+                    alert(data);
+                    closeuploadResumesModal();
+                }
+            });
+        } else {
+            alert("Please fill all the fields.");
+        }
+    }
 </script>
 <script>
     function searchResult() {
@@ -486,8 +616,24 @@
             $(".dataTables_filter input").val('');
             $(this).hide();
         });
-
     });
+    function CopySchedulinglink(schedulinglink) {
+        var modal = document.getElementById("CopySchedulinglinkModel");
+        modal.style.display = "block";
+        $("#txtschedulinglink").text(schedulinglink);
+    }
+    function closeCopySchedulinglink() {
+        var modal = document.getElementById("CopySchedulinglinkModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
 </script>
 
 

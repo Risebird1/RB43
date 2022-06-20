@@ -64,4 +64,4 @@ namespace Risebird.Entities.ViewModel
     }
 
 
-    }
+}

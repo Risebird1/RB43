@@ -1,7 +1,5 @@
 ﻿using Risebird.Entities.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Business.Interface
 {
@@ -23,5 +21,6 @@ namespace Risebird.Business.Interface
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQId(string MCQPId);
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
         IEnumerable<MCQVM> GetMCQCandidateQuestions(string CandidateId);
+        string UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model);
     }
 }

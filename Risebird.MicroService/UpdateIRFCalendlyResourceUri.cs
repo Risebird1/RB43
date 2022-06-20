@@ -1,11 +1,10 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
+using System;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -22,10 +21,10 @@ namespace Risebird.MicroService
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _calendlyHelper = calendlyHelper;
-           
+
         }
         [FunctionName("UpdateIRFCalendlyResourceUri")]
-        public async Task Run([TimerTrigger("0 */2 * * * *")]TimerInfo myTimer, ILogger log)//runs every 2 minutes
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log)//runs every 2 minutes
         {
             try
             {

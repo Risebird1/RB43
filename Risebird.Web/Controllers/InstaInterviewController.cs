@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OfficeOpenXml;
+using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -12,16 +16,11 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using RestSharp;
-using OfficeOpenXml;
-using Microsoft.AspNetCore.Authorization;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 
@@ -39,7 +38,9 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper)
+        private readonly ISkillService _skillService;
+
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, ISkillService skillService)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -51,6 +52,7 @@ namespace Risebird.Web.Controllers
             _irfRepository = irfRepository;
             _userService = userService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _skillService = skillService;
         }
         [Authorize]
         [HttpGet]
@@ -112,9 +114,10 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
                     {
                         var model = new InstaMeetingVM();
-                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                        model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                        //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        //Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                        //model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                         var Skillset = skills;
@@ -171,7 +174,7 @@ namespace Risebird.Web.Controllers
 
                                 int virusScanResult = 0;
 
-                                if(profileName == "Client")
+                                if (profileName == "Client")
                                 {
                                     if ((await _instaInterviewService.GetClientPasswordResetStatus(emailid)) == (int)BooleanResultsEnum.True)
                                     {
@@ -204,10 +207,12 @@ namespace Risebird.Web.Controllers
                                             if (virusScanResult > 0)
                                             {
                                                 ModelState.AddModelError(string.Empty, "File upload failed. Virus Detected!");
-                                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                                if (profileName == "SeniorHR")
-                                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                                //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                                //if (profileName == "SeniorHR")
+                                                //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                                //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                                 return View(meeting);
                                             }
 
@@ -215,7 +220,7 @@ namespace Risebird.Web.Controllers
 
                                     }
                                 }
-                                
+
 
                                 if (fi.Extension == ".docx" || fi.Extension == ".doc" || fi.Extension == ".pdf")
                                 {
@@ -231,30 +236,36 @@ namespace Risebird.Web.Controllers
                                     else
                                     {
                                         ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
-                                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                        if (profileName == "SeniorHR")
-                                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                        meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                        //if (profileName == "SeniorHR")
+                                        //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                        //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                        ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                         return View(meeting);
                                     }
                                 }
                                 else
                                 {
                                     ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
-                                    var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                    if (profileName == "SeniorHR")
-                                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                    meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                    //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                    //if (profileName == "SeniorHR")
+                                    //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                    //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                    ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                    ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                     return View(meeting);
                                 }
                             }
                             if (meeting.TechSkill.Count() < 2)
                             {
                                 ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
-                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                if (profileName == "SeniorHR")
-                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                //if (profileName == "SeniorHR")
+                                //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                 return View(meeting);
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
@@ -271,10 +282,12 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            if (profileName == "SeniorHR")
-                                Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                            meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                            //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            //if (profileName == "SeniorHR")
+                            //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                            //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                            ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                             return View("CreateRequest", meeting);
                         }
                     }
@@ -310,9 +323,11 @@ namespace Risebird.Web.Controllers
                     {
                         var model = new InstaMeetingVM();
                         model = _instaInterviewService.FetchRequestById(id);
-                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                        model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+
+                        //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                        //Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                        //model.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
                         var skills = _irfRepository.GetSkills();
                         ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                         var Skillset = skills;
@@ -401,10 +416,12 @@ namespace Risebird.Web.Controllers
                                             if (virusScanResult > 0)
                                             {
                                                 ModelState.AddModelError(string.Empty, "File upload failed. Virus Detected!");
-                                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                                if (profileName == "SeniorHR")
-                                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                                //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                                //if (profileName == "SeniorHR")
+                                                //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                                //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                                 return View(meeting);
                                             }
 
@@ -427,30 +444,36 @@ namespace Risebird.Web.Controllers
                                     else
                                     {
                                         ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
-                                        var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                        if (profileName == "SeniorHR")
-                                            Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                        meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                        //if (profileName == "SeniorHR")
+                                        //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                        //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                        ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                        ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                         return View("EditRequest", meeting);
                                     }
                                 }
                                 else
                                 {
                                     ModelState.AddModelError(string.Empty, "Please select valid file for import(.pdf, .doc, .docx)!");
-                                    var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                    if (profileName == "SeniorHR")
-                                        Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                    meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                    //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                    //if (profileName == "SeniorHR")
+                                    //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                    //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                    ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                    ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                     return View("EditRequest", meeting);
                                 }
                             }
                             if (meeting.TechSkill.Count() < 2)
                             {
                                 ModelState.AddModelError(string.Empty, "Please Add atleast 2 skills!");
-                                var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                                if (profileName == "SeniorHR")
-                                    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                                meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                                //if (profileName == "SeniorHR")
+                                //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                                //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                                ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                                 return View(meeting);
                             }
                             if (_instaInterviewService.CreateRequest(meeting))
@@ -467,10 +490,12 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
-                            if (profileName == "SeniorHR")
-                                Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
-                            meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                            //var Assessmentgroups = _interviewerService.FetchAssessmentGroups();
+                            //if (profileName == "SeniorHR")
+                            //    Assessmentgroups = Assessmentgroups.Where(x => x.Isinstaavailable == true).ToList();
+                            //meeting.AssessmentGroupList = new SelectList(Assessmentgroups, "id", "AssessmentGroup");
+                            ViewBag.AssessmentCategory = new SelectList(_skillService.GetAssessmentGroupCategory(), "id", "Name");
+                            ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                             return View("EditRequest", meeting);
                         }
                     }

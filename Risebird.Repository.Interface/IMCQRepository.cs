@@ -1,7 +1,5 @@
 ﻿using Risebird.Entities.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
@@ -24,5 +22,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQId(string MCQPId);
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
         Task<IEnumerable<MCQVM>> GetMCQCandidateQuestions(string CandidateId);
+        Task<string> UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model);
     }
 }

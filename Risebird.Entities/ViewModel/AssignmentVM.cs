@@ -60,10 +60,14 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Is Relevant")]
         public bool IsRelevant { get; set; }
         public int CompanyType { get; set; }
-        public int ProfileType { get; set; }
+        //public int ProfileType { get; set; }
+        public string ProfileType { get; set; }
         public int CompetencyLevel { get; set; }
         public int Country { get; set; }
         public int PerHourRate { get; set; }
+        //public int SeniorityLevel { get; set; } //based on Job Profile Enum
+        public string SeniorityLevel { get; set; } //based on Job Profile Enum
+        public string EmploymentType { get; set; } //based on Job Profile Enum
     }
     public class Assessment
     {
@@ -91,16 +95,36 @@ namespace Risebird.Entities.ViewModel
         public int Category { get; set; }
         [DisplayName("Is Relevant")]
         public bool IsRelevant { get; set; }
-        [DisplayName("Category Type")]
+
+        [DisplayName("Company Type")]
         public int CompanyType { get; set; }
         public SelectList CompanyTypeList { get; set; }
-        [DisplayName("Profile Type")]
-        public int ProfileType { get; set; }
+
+        //[DisplayName("Difficulty Level")]
+        //public int ProfileType { get; set; }
+
+        [DisplayName("Difficulty Level")]
+        public string ProfileType { get; set; }
+        public string[] ProfileTypeArray { get; set; }
+        public List<SelectListItem> ProfileTypeList { get; set; }
+
         [DisplayName("Competency Level")]
         public int CompetencyLevel { get; set; }
         public int Country { get; set; }
         [DisplayName("Per Hour Rate")]
         public int PerHourRate { get; set; }
+
+        [DisplayName("Seniority Level")]
+        //public int SeniorityLevel { get; set; } //based on Job Profile Enum
+        public string SeniorityLevel { get; set; } //based on Job Profile Enum
+        public string[] SeniorityLevelArray { get; set; }
+        public List<SelectListItem> SeniorityLevelList { get; set; }
+
+        [DisplayName("Employment Type")]
+        public string EmploymentType { get; set; } 
+        public string[] EmploymentTypeArray { get; set; }
+        public List<SelectListItem> EmploymentTypeList { get; set; }
+
     }
     public class AssessmentQuestions
     {

@@ -1623,6 +1623,18 @@ namespace Risebird.Business
         {
             try
             {
+                if (_skilldetails.SeniorityLevelArray != null)
+                {
+                    _skilldetails.SeniorityLevel = string.Join(',', _skilldetails.SeniorityLevelArray);
+                }
+                if (_skilldetails.ProfileTypeArray != null)
+                {
+                    _skilldetails.ProfileType = string.Join(',', _skilldetails.ProfileTypeArray);
+                }
+                if (_skilldetails.EmploymentTypeArray != null)
+                {
+                    _skilldetails.EmploymentType = string.Join(',', _skilldetails.EmploymentTypeArray);
+                }
                 return _irfRepository.Addassignmentgroup(_skilldetails).Result;
             }
 
@@ -2169,11 +2181,19 @@ namespace Risebird.Business
                         irf.Flags = irf.Flags + 1;
                     }
                     //Start: merging 911 dashboard
-                    if (irf.UnAssignedMeeting > 0)
+                    //if (irf.UnAssignedMeeting > 0)
+                    //{
+                    //    irf.Flags = irf.Flags + 1;
+                    //}
+                    //if (irf.UnfilledInterviewStatusCount > 0)
+                    //{
+                    //    irf.Flags = irf.Flags + 1;
+                    //}
+                    if (irf.UnassignedInterviewsCount > 0)
                     {
                         irf.Flags = irf.Flags + 1;
                     }
-                    if (irf.UnfilledInterviewStatusCount > 0)
+                    if (irf.UnfilledMeetingStatusCount > 0)
                     {
                         irf.Flags = irf.Flags + 1;
                     }
@@ -2551,7 +2571,8 @@ namespace Risebird.Business
                 {
                     irfDetails.AssessmentGroupName = irfRecommendations.AssessmentGroupName;
                     irfDetails.JobCountry = irfRecommendations.CountryType?.ToString();
-                    irfDetails.JobLevel = irfRecommendations.SeniorityLevelId;
+                    //irfDetails.JobLevel = irfRecommendations.SeniorityLevelId;
+                    irfDetails.JobLevel = (int)JobLevels.SE;
                     irfDetails.CompanyType = irfRecommendations.CompanyType?.ToString();
                     irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
                 }
@@ -2647,6 +2668,63 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetAllIRFDetailsIRF(startDate, endDate);
+                foreach (var irf in irfList)
+                {
+                    if (irf.CandidateCount > 0)
+                    {
+                        irf.ScheduledPercentage = ((irf.CompletedInterviews + irf.ReScheduledCount + irf.FutureScheduledMeetings + irf.PendingCount) * 100) / irf.CandidateCount;
+                        irf.CompletionRate = (irf.CompletedInterviews * 100) / irf.CandidateCount;
+                    }
+                    if (irf.CompletedInterviews > 0)
+                    {
+                        irf.SelectionRate = irf.SelectedMeetings.HasValue ? (irf.SelectedMeetings.Value * 100) / irf.CompletedInterviews : 0;
+                    }
+                    if (irf.ScheduledPercentage < 75)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.CompletionRate < 60)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.SelectionRate < 20)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnassignedInterviewsCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledMeetingStatusCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.UnfilledCommentsCount > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingZoomLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                    if (irf.MissingVideoLink > 0)
+                    {
+                        irf.Flags = irf.Flags + 1;
+                    }
+                }
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
     }

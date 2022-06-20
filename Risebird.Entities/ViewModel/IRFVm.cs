@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -24,12 +23,12 @@ namespace Risebird.Entities.ViewModel
         //[RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         public string IRFId { get; set; }
 
-        [DisplayName("End Client Name")]
+        [DisplayName("Project Name")]
         [Required]
         public string ClientName { get; set; }
 
-        [DisplayName("Job Profile")]
-        [Required(ErrorMessage = "This Job Profile is required.")]
+        [DisplayName("Job Title")]
+        [Required(ErrorMessage = "Job Title is required.")]
         public string JDTiltle { get; set; }
 
         [DisplayName("Company Type")]

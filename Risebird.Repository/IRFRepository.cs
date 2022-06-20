@@ -4511,6 +4511,8 @@ namespace Risebird.Repository
                     parameters.Add("@CompetencyLevel", _skilldetails.CompetencyLevel);
                     parameters.Add("@Country", _skilldetails.Country);
                     parameters.Add("@PerHourRate", _skilldetails.PerHourRate);
+                    parameters.Add("@SeniorityLevel", _skilldetails.SeniorityLevel);
+                    parameters.Add("@EmploymentType", _skilldetails.EmploymentType);
                     await SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
@@ -5119,7 +5121,7 @@ namespace Risebird.Repository
                     parameters.Add("@startDate", startDate);
                     parameters.Add("@endDate", endDate);
                     parameters.Add("@timeNow", DateTime.Now);
-                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStats", parameters, //usp_GetAllIRFDetails
+                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStats", parameters, commandTimeout: 600, //usp_GetAllIRFDetails
                         commandType: CommandType.StoredProcedure);
                 }
             }
@@ -6126,6 +6128,30 @@ namespace Risebird.Repository
                          commandType: CommandType.StoredProcedure);
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStatsIRFCount", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
             }
             catch (SqlException ex)
             {

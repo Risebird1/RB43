@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -13,7 +12,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Primary Skill")]
         public string PrimarySkill { get; set; }
         public SelectList PrimarySkillsList { get; set; }
-        [Display(Name = "Job Profile")]
+        [Display(Name = "Job Title")]
         public string JdTitle { get; set; }
         [Display(Name = "Requested By")]
         public string RequestedBy { get; set; }
@@ -38,7 +37,7 @@ namespace Risebird.Entities.ViewModel
         public string CalendlyLink { get; set; }
         public string uniqueid { get; set; }
 
-        [Display(Name = "End Client Name")]
+        [Display(Name = "Project Name")]
         public string ClientName { get; set; }
         public int BillingOwner { get; set; }
         [Display(Name = "Assessment Group")]
@@ -48,9 +47,17 @@ namespace Risebird.Entities.ViewModel
         public int Categoryid { get; set; }
         public SelectList AssessmentGroupsList { get; set; }
         public string ClientCompanyName { get; set; }
-        [Display(Name = "Company Types")]
+
+        [Display(Name = "Company Type")]
         public int CompanyTypes { get; set; }
+
         [Display(Name = "Competency Level")]
         public int CompetencyLevel { get; set; }
+
+        [Display(Name = "Difficulty Level")]
+        public int DifficultyLevel { get; set; }  //referred to as Profile Type at a few places
+
+        [Display(Name = "Employment Type")]
+        public int EmploymentType { get; set; }
     }
 }

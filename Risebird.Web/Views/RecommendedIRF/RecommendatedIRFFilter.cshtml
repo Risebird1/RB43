@@ -10,11 +10,16 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
     dynamic filter = null;
-    string[] CompetencyLevel = new string[] { };
-    string[] SeniorityLevel = new string[] { };
-    string[] CountryType = new string[] { };
-    string[] CompanyType = new string[] { };
+    //string[] CompetencyLevel = new string[] { };
+    //string[] SeniorityLevel = new string[] { };
+    //string[] CountryType = new string[] { };
+    //string[] CompanyType = new string[] { };
     string[] AssessmentGroup = new string[] { };
+    string SeniorityLevel = string.Empty;
+    string CountryType = string.Empty;
+    string CompanyType = string.Empty;
+    string EmploymentType = string.Empty;
+    string DifficultyLevel = string.Empty;
 }
 <script>
     var Header = "Recommendation Skill Channel";
@@ -24,10 +29,12 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("ClonableRTemplatesFilters") != null)
 {
     filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClonableRTemplatesFilters"));
-    CompetencyLevel = filter.CompetencyLevel != null ? filter.CompetencyLevel : new string[] { };
-    SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : new string[] { };
-    CountryType = filter.CountryType != null ? filter.CountryType : new string[] { };
-    CompanyType = filter.CompanyType != null ? filter.CompanyType : new string[] { };
+    //CompetencyLevel = filter.CompetencyLevel != null ? filter.CompetencyLevel : new string[] { };
+    SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : string.Empty;
+    CountryType = filter.CountryType != null ? filter.CountryType : string.Empty;
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : string.Empty;
+    EmploymentType = filter.EmploymentType != null ? filter.EmploymentType : string.Empty;
+    DifficultyLevel = filter.DifficultyLevel != null ? filter.DifficultyLevel : string.Empty;
     AssessmentGroup = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
 }
 
@@ -94,67 +101,6 @@
 
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompetencyLevel">Competency Level</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="CompetencyLevel" name="CompetencyLevel" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
-                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="SeniorityLevel" name="SeniorityLevel" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
-                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType">Country Type</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="CountryType" name="CountryType" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
-                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.CountryTypeDesc).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="CompanyType" name="CompanyType" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
-                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.CompanyTypeDesc).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroup">Assessment Group</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="AssessmentGroup" name="AssessmentGroup" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
@@ -169,6 +115,71 @@
                                                                 </div>
                                                             </div>
 
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+
+                                                                    <select id="SeniorityLevel" name="SeniorityLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<JobLevels>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType">Country Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CountryType" name="CountryType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<CountryTypeEnum>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType">Employment Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="EmploymentType" name="EmploymentType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                             <div class="form-group">
 
                                                                 <div>
@@ -389,7 +400,7 @@
                 <form action="@Url.Action("CreateInterviewLink","RecommendedIRF",new { emailid=ViewBag.emailid,uniqueid=ViewBag.uniqueid})" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
                     @Html.AntiForgeryToken()
                     <div class="mb-3 mt-3">
-                        <label for="JDTiltle" class="form-label">Job Profile:</label>
+                        <label for="JDTiltle" class="form-label">Job Title:</label>
                         <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
                         <label id="error_JDTiltle" class="text-danger"></label>
                     </div>
@@ -404,7 +415,7 @@
                         <label id="error_BillingOwner" class="text-danger"></label>
                     </div>
                     <div class="mb-3 mt-3">
-                        <label for="ClientName" class="form-label">End Client Name:</label>
+                        <label for="ClientName" class="form-label">Project Name:</label>
                         <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
                         <label id="error_ClientName" class="text-danger"></label>
                     </div>
@@ -428,7 +439,16 @@
         function my_code() {
             var msg = '@Model.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("Successful",'@Model.Message', "success");
+                //swal.fire("Successful",'@Model.Message', "success");
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'info',
+                    html:
+                        '@Model.Message' +
+                        '<br/> Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a> ',
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
             }
             else {
                 swal.fire("Failed", '@Model.Message', "error");
@@ -441,7 +461,6 @@
 }
 
 <script>
-
     function searchResult() {
         $('#cloneTemplateTable').DataTable();
     }
@@ -536,16 +555,21 @@
     }
 
     function ApplySessionFilter() {
-        var competencyLevel =  @Html.Raw(Json.Serialize(CompetencyLevel));
+        @*var competencyLevel =  @Html.Raw(Json.Serialize(CompetencyLevel));*@
         var seniorityLevel =  @Html.Raw(Json.Serialize(SeniorityLevel));
         var countryType =  @Html.Raw(Json.Serialize(CountryType));
         var companyType =  @Html.Raw(Json.Serialize(CompanyType));
+        var employmentType =  @Html.Raw(Json.Serialize(EmploymentType));
+        var difficultyLevel =  @Html.Raw(Json.Serialize(DifficultyLevel));
         var assessmentGroup =  @Html.Raw(Json.Serialize(AssessmentGroup));
 
-        $("#CompetencyLevel").val(competencyLevel);
+        //$("#TemplateName").val(templateName);
+        //$("#CompetencyLevel").val(competencyLevel);
         $("#SeniorityLevel").val(seniorityLevel);
         $("#CountryType").val(countryType);
         $("#CompanyType").val(companyType);
+        $("#EmploymentType").val(employmentType);
+        $("#DifficultyLevel").val(difficultyLevel);
         $("#AssessmentGroup").val(assessmentGroup);
     }
 
@@ -721,11 +745,11 @@
         var billingOwner = $('#BillingOwner').val();
         var flag = true;
         if (jobProfile == null || jobProfile == '') {
-            document.getElementById('error_JDTiltle').innerHTML = "Job Profile is required.";
+            document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
             flag = false;
         }
         else if (jobProfile.length > 40) {
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Profile should not be more than 40 characters long.";
+            document.getElementById("error_JDTiltle").innerHTML = "Job Title should not be more than 40 characters long.";
             flag = false;
         }
         else {

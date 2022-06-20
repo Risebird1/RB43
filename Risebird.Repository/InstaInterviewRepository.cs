@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static System.Data.CommandType;
 
@@ -130,7 +129,7 @@ namespace Risebird.Repository
             {
                 //Set the parameters to be passed to store procedure
                 var model = new InstaMeetingVM();
-                var query = "Select * from InstaRequests Where Id=@id";
+                var query = "Select ir.*, ag.AssessmentGroup as AssessmentGroupName from InstaRequests ir join AssessmentGroup ag on ag.id = ir.AssessmentGroup Where ir.Id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -550,7 +549,7 @@ namespace Risebird.Repository
                     parameters.Add("@emailId", emailId);
                     var result = (await SqlMapper.QueryAsync<bool>(con, "usp_GetClientPasswordResetStatus", parameters,
                         commandType: CommandType.StoredProcedure)).FirstOrDefault();
-                    if(result)
+                    if (result)
                     {
                         return (int)BooleanResultsEnum.True;
                     }

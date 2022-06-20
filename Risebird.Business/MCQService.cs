@@ -5,7 +5,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Business
 {
@@ -203,6 +202,18 @@ namespace Risebird.Business
             try
             {
                 return _mCQRepository.GetMCQCandidateQuestions(CandidateId).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model)
+        {
+            try
+            {
+                return _mCQRepository.UpdateVideoURLForCandidate(model).Result;
             }
             catch (Exception e)
             {

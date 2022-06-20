@@ -251,7 +251,7 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
-                                                                    End Client Name
+                                                                    Project Name
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="ClientName" name="ClientName" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
@@ -399,7 +399,7 @@
                                                     <th>JD Link</th>
                                                     <th>Zoom ID</th>
                                                     <th>Client HR</th>
-                                                    <th>End Client Name</th>
+                                                    <th>Project Name</th>
                                                     <th>Video Link</th>
                                                     <th>Video Duration</th>
                                                     <th>Emergency Interview</th>
@@ -446,7 +446,7 @@
                                                     <th>JD Link</th>
                                                     <th>Zoom ID</th>
                                                     <th>Client HR</th>
-                                                    <th>End Client Name</th>
+                                                    <th>Project Name</th>
                                                     <th>Video Link</th>
                                                     <th>Video Duration</th>
                                                     <th>Emergency Interview</th>
@@ -519,7 +519,7 @@
                                                             </span>
                                                             @if (item.MeetingStatusStatusDesc == "Scheduled")
                                                             {
-                                                                <span class="call" id = @(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
+                                                                <span class="call" id=@(item.imid + "_cancelInviteId") data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.imid,'@item.interviewDate','@item.candidateEmail','@item.irfIntId', '@item.IRFId', '@item.ZoomMeetingId', this.id)" data-original-title="Tooltip on top"><span class="btn-call trash-btn" style="top: -3px;position: relative;cursor: pointer;" title="Cancel Interview"><span class="fal fa-times" style="font-size:14px;line-height:28px;"></span></span></span>
                                                             }
 
                                                             @if (item.IsBiometricEnabled == true)
@@ -666,81 +666,22 @@
                                                             <td>@item.MeetingStatusStatusDesc</td>
 
                                                         }
-                                                        @if (item.IsQCRequired)
+
+                                                        @if (item.InterviewStatus == 2)
                                                         {
-                                                            @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
-                                                            {
-                                                                <td class="text-center"> @item.intervieweStatusStatDesc</td>
-                                                            }
-                                                            else if (item.QCStatus == 1 && item.InterviewStatus == 4)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
-                                                            else if (item.QCStatus == 1 && item.InterviewStatus == 2)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
-                                                            else if (item.InterviewStatus == 4 && item.QCStatus == null)
-                                                            {
-                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                                @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                                <td class="text-center">@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
-
-                                                            }
-                                                            else if (item.InterviewStatus == 2 && item.QCStatus == null)
-                                                            {
-                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                                @*<td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                                <td class="text-center">@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
-
-                                                            }
-                                                            else if (item.QCStatus == 2 && item.InterviewStatus == 4)
-                                                            {
-                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                                <td class="text-center">
-                                                                    @*QC Failed(<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
-                                                                    @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
-                                                                </td>
-                                                            }
-                                                            else if (item.QCStatus == 2 && item.InterviewStatus == 2)
-                                                            {
-                                                                int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                                int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                                <td class="text-center">
-                                                                    @*QC Failed(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
-                                                                    @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
+                                                        <td class="text-center">
+                                                            <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                        </td>
+                                                        }
+                                                        else if (item.InterviewStatus == 4)
+                                                        {
+                                                        <td class="text-center">
+                                                            <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                        </td>
                                                         }
                                                         else
                                                         {
-                                                            if (item.InterviewStatus == 2)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
-                                                            else if (item.InterviewStatus == 4)
-                                                            {
-                                                                <td class="text-center">
-                                                                    <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-center">@item.intervieweStatusStatDesc</td>
-                                                            }
+                                                        <td class="text-center">@item.intervieweStatusStatDesc</td>
                                                         }
 
                                                         @if (item.IsCandidateResponsed)
@@ -1612,16 +1553,16 @@
 
 
     function Cancelinvite(id, interviewdate, CandidateEmail, IRFid, skillChannelName, zoomMeetingId, elementId) {
-        
+
         swal.fire({
             title: 'Are you sure?',
-            text: "The Interview for " + CandidateEmail + " under skill channel " + skillChannelName + " dated " + interviewdate +  " will be cancelled! Cancelled meetings cannot be confirmed back.",
+            text: "The Interview for " + CandidateEmail + " under skill channel " + skillChannelName + " dated " + interviewdate + " will be cancelled! Cancelled meetings cannot be confirmed back.",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, cancel it!',
-            cancelButtonText : "Don't",
+            cancelButtonText: "Don't",
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
@@ -1637,7 +1578,7 @@
                                 swal.fire("Error cancelling!", "Please try again", "error");
 
                             }
-                            
+
                         }
                     });
 

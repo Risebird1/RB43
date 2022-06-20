@@ -179,5 +179,9 @@ namespace Risebird.Business.Interface
         bool FetchInterviewerNotificationStatus(string emailID);
         bool CheckInterviewerCodedResume(string emailID);
         Task<bool> SendsMailsAfterCancellingInterview(int meetingId, int irfId, string candidateEmail);
+        List<MeetingVM> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
+        QCFormVM FetchQCFormDetailsById(int interviewid);
+        bool AddorUpdateQCFormReport(QCFormVM model);
+        List<CallCatalogueVM> GetInterviewerCallCatalogueList();
     }
 }

@@ -27,8 +27,13 @@ namespace Risebird.Entities.ViewModel
         public string CompanyTypeDesc { get; set; }
         public int? CompanyTypeId { get; set; }
         public int? CompetencyLevelId { get; set; }
-        public int? SeniorityLevelId { get; set; }
+        //public int? SeniorityLevelId { get; set; }
         public int? CountryType { get; set; }
+        public string SeniorityLevelId { get; set; }
+        public string DifficultyLevel { get; set; }
+        public string EmploymentType { get; set; }
+        public int? PerHourRate { get; set; }
+
 
         [BindProperty]
         public string MeetingPlatform { get; set; } = MeetingPlatforms.Zoom;

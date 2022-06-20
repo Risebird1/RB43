@@ -1,0 +1,75 @@
+﻿@model Risebird.Entities.ViewModel.Candidate
+
+
+<form action="@Url.Action("Add", "Candidate",new { emailids=ViewBag.emailid,id=ViewBag.id})" method="post" id="form">
+    <div class="row">
+        <div class="col-md-6 col-sm-6 pr-1">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ProfileSource, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model.ProfileSource, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.ProfileSource, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Enter Whatsapp no. without country code.Ex: 999999999" })
+                @Html.ValidationMessageFor(model => model.WhatsappNumber, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+        <div class="col-md-6 col-sm-6 px-1">
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @if (Model.Candidateesumeid > 0)
+                {
+                    @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @ReadOnly = "Readonly" } })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                }
+                @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ClientHRAttemptContact, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.EditorFor(model => model.ClientHRAttemptContact, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.ClientHRAttemptContact, "", new { @class = "text-danger" })
+            </div>
+            @if (Model.ProfileName != "Client")
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsProctor, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-left:20px;" })
+                    @Html.CheckBoxFor(m => m.IsProctor, new { @style = "position:relative;top:-24px;" })
+                </div>
+            }
+        </div>
+    </div>
+    @Html.HiddenFor(x => x.IRFId)
+    @Html.HiddenFor(x => x.IRFName)
+    @Html.HiddenFor(x => x.Candidateesumeid)
+    @Html.HiddenFor(x => x.ProfileName)
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-md-12 mc-button-area">
+                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+

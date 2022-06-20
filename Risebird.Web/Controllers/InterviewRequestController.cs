@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +9,11 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -553,6 +553,12 @@ namespace Risebird.Web.Controllers
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                    ViewBag.Message2 = "";
+                    if (TempData["SuccessErrorMessageInterview2"] != null)
+                    {
+                        ViewBag.Message2 = TempData["SuccessErrorMessageInterview2"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterview2");
+                    }
                     TempData.Remove("SuccessErrorMessageInterview");
                 }
                 if (!String.IsNullOrEmpty(emailid))
@@ -658,6 +664,7 @@ namespace Risebird.Web.Controllers
                     if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailId, "Client"))
                     {
                         TempData["SuccessErrorMessageInterview"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                        TempData["SuccessErrorMessageInterview2"] = model.CalendlyLink;
                         return RedirectToAction("PublicCreateInterviewRequest", new { emailid = emailId, id = meeting.uniqueid });
                     }
                     else
@@ -778,42 +785,93 @@ namespace Risebird.Web.Controllers
             }
             return "";
         }
+        //[HttpGet]
+        //public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int competencyid)
+        //{
+        //    var list = new List<SelectListItem>();
+        //    var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
+        //    if (assessmentGroups != null && assessmentGroups.Count() > 0)
+        //    {
+        //        if (companytype != 0)
+        //        {
+        //            assessmentGroups = assessmentGroups.Where(x => x.CompanyType == companytype).ToList();
+        //        }
+        //        if (countryid != 0)
+        //        {
+        //            assessmentGroups = assessmentGroups.Where(x => x.Country == countryid).ToList();
+        //        }
+        //        if (jobLevelid != 0)
+        //        {
+        //            assessmentGroups = assessmentGroups.Where(x => x.ProfileType == jobLevelid.ToString()).ToList();
+        //        }
+        //        if (competencyid != 0)
+        //        {
+        //            assessmentGroups = assessmentGroups.Where(x => x.CompetencyLevel == competencyid).ToList();
+        //        }
+        //        if (assessmentGroups.Count() == 0)
+        //        {
+        //            list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
+        //            return new SelectList(list, "Value", "Text");
+        //        }
+        //        return new SelectList(assessmentGroups, "id", "AssessmentGroup");
+        //    }
+        //    else
+        //    {
+        //        list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
+        //    }
+        //    return new SelectList(list, "Value", "Text");
+        //}
+
         [HttpGet]
-        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int competencyid)
+        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int employmentType, int difficultyLevel, bool isInstaInterviewRequest = false)
         {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName?.Replace("\"", "");
             var list = new List<SelectListItem>();
             var assessmentGroups = await _skillService.GetAssessmentGroupsByCategory(categoryId);
+            if(isInstaInterviewRequest == true && !string.IsNullOrEmpty(profileName) && profileName == "SeniorHR" && assessmentGroups != null)
+            {
+                assessmentGroups = assessmentGroups.Where(x => x.Isinstaavailable == true);
+            }
             if (assessmentGroups != null && assessmentGroups.Count() > 0)
             {
-                if (companytype != 0)
-                {
-                    assessmentGroups = assessmentGroups.Where(x => x.CompanyType == companytype).ToList();
-                }
                 if (countryid != 0)
                 {
                     assessmentGroups = assessmentGroups.Where(x => x.Country == countryid).ToList();
                 }
+                if (companytype != 0)
+                {
+                    assessmentGroups = assessmentGroups.Where(x => x.CompanyType == companytype).ToList();
+                }
+                
                 if (jobLevelid != 0)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.ProfileType == jobLevelid).ToList();
+                    assessmentGroups = assessmentGroups.Where(x => x.SeniorityLevel != null && x.SeniorityLevel.Contains(jobLevelid.ToString())).ToList();
                 }
-                if (competencyid != 0)
+                if (difficultyLevel != 0)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.CompetencyLevel == competencyid).ToList();
+                    assessmentGroups = assessmentGroups.Where(x => x.ProfileType != null && x.ProfileType.Contains(difficultyLevel.ToString())).ToList();
                 }
-                if (assessmentGroups.Count() == 0)
+                if (employmentType != 0)
                 {
-                    list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
-                    return new SelectList(list, "Value", "Text");
+                    assessmentGroups = assessmentGroups.Where(x => x.EmploymentType != null && x.EmploymentType.Contains(employmentType.ToString())).ToList();
+                }
+
+                if ( assessmentGroups == null || assessmentGroups.Count() == 0)
+                {
+                    //list.Add(new SelectListItem { Text = "No Assessment Groups for the selected combination above!", Value = "" });
+                    //return new SelectList(list, "Value", "Text");
+                    return null;
                 }
                 return new SelectList(assessmentGroups, "id", "AssessmentGroup");
             }
             else
             {
-                list.Add(new SelectListItem { Text = "No Assessment Groups for this Category", Value = "" });
+                return null;
+                //list.Add(new SelectListItem { Text = "No Assessment Groups for the selected combination above!", Value = "" });
             }
-            return new SelectList(list, "Value", "Text");
         }
+
         [HttpGet]
         public async Task<SelectList> GetSkillsByAssessmentGroups(int assessmentgroupid)
         {

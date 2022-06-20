@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -73,7 +72,7 @@ namespace Risebird.Repository
                     }
 
                     DataTable selectabilityDt = new DataTable();
-                    if (templateDetails.Selectability != null && templateDetails.Selectability.Count() > 0 )
+                    if (templateDetails.Selectability != null && templateDetails.Selectability.Count() > 0)
                     {
                         selectabilityDt.Columns.Add("IRFId", typeof(int));
                         selectabilityDt.Columns.Add("LevelId", typeof(int));
@@ -89,7 +88,7 @@ namespace Risebird.Repository
                     }
 
                     DataTable skillGeneralDt = new DataTable();
-                    if (templateDetails.SkillGeneral != null && templateDetails.SkillGeneral.Count() > 0 )
+                    if (templateDetails.SkillGeneral != null && templateDetails.SkillGeneral.Count() > 0)
                     {
                         skillGeneralDt.Columns.Add("IRFId", typeof(int));
                         skillGeneralDt.Columns.Add("LevelId", typeof(int));
@@ -184,10 +183,10 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCategoryId", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@RecommendationCategoryId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.CategoryId : null;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCompetencyLevelId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RecommendationCompetencyLevelId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.CompetencyLevelId : null;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCompetencyLevelId", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@RecommendationCompetencyLevelId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.CompetencyLevelId : null;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationSeniorityLevelId", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationSeniorityLevelId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@RecommendationSeniorityLevelId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.SeniorityLevelId : null;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCountryType", SqlDbType.Int));
@@ -198,6 +197,16 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@RecommendationCreatedOn"].Value = DateTime.Now;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationDifficultyLevel", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@RecommendationDifficultyLevel"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.DifficultyLevel : null;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationEmploymentType", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@RecommendationEmploymentType"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.EmploymentType : null;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationPerHourRate", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@RecommendationPerHourRate"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.PerHourRate : null;
+
 
                     if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
                     {
@@ -412,10 +421,10 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCategoryId", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@RecommendationCategoryId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.CategoryId : null;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCompetencyLevelId", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RecommendationCompetencyLevelId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.CompetencyLevelId : null;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCompetencyLevelId", SqlDbType.Int));
+                    //cmdUpdateIRF.Parameters["@RecommendationCompetencyLevelId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.CompetencyLevelId : null;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationSeniorityLevelId", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationSeniorityLevelId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@RecommendationSeniorityLevelId"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.SeniorityLevelId : null;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationCountryType", SqlDbType.Int));
@@ -426,6 +435,16 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationModifiedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@RecommendationModifiedOn"].Value = DateTime.Now;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationDifficultyLevel", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@RecommendationDifficultyLevel"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.DifficultyLevel : null;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationEmploymentType", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@RecommendationEmploymentType"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.EmploymentType : null;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationPerHourRate", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@RecommendationPerHourRate"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.PerHourRate : null;
+
 
                     if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
                     {

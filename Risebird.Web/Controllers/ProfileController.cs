@@ -20,7 +20,7 @@ namespace Risebird.Web.Controllers
             _profileService = profileService;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {

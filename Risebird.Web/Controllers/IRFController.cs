@@ -4431,6 +4431,8 @@ namespace Risebird.Web.Controllers
                 model._skilldetails.ProfileType = modeldata.ProfileType;
                 model._skilldetails.CompetencyLevel = modeldata.CompetencyLevel;
                 model._skilldetails.PerHourRate = modeldata.PerHourRate;
+                model._skilldetails.SeniorityLevel = modeldata.SeniorityLevel;
+                model._skilldetails.EmploymentType = modeldata.EmploymentType;
             }
             else
             {
@@ -4441,12 +4443,74 @@ namespace Risebird.Web.Controllers
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
             model._skilldetails.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-            var profiletype = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.ProfileTypeList = new SelectList(profiletype, "ID", "Name");
-            var CompetencyLevel = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.CompetencyLevellist = new SelectList(CompetencyLevel, "ID", "Name");
+            //var profiletype = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+            //                  select new { ID = (int)s, Name = s.GetDescription() };
+            //ViewBag.ProfileTypeList = new SelectList(profiletype, "ID", "Name");
+            //var CompetencyLevel = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+            //                      select new { ID = (int)s, Name = s.GetDescription() };
+            //ViewBag.CompetencyLevellist = new SelectList(CompetencyLevel, "ID", "Name");
+            //var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+            //                      select new { ID = (int)s, Name = s.GetDescription() };
+            //ViewBag.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
+
+
+            if (!string.IsNullOrEmpty(model._skilldetails.ProfileType))
+            {
+                model._skilldetails.ProfileTypeArray = model._skilldetails.ProfileType.Split(',');
+            }
+            var DifficultyLevelTypes = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforDifficultyLevel = new List<SelectListItem>();
+            foreach (var item in DifficultyLevelTypes)
+            {
+                bool selected = false;
+                if (model._skilldetails.ProfileTypeArray != null && model._skilldetails.ProfileTypeArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.ID), selected);
+                selectListforDifficultyLevel.Add(selectItem);
+            }
+            model._skilldetails.ProfileTypeList = selectListforDifficultyLevel;
+
+            if (!string.IsNullOrEmpty(model._skilldetails.SeniorityLevel))
+            {
+                model._skilldetails.SeniorityLevelArray = model._skilldetails.SeniorityLevel.Split(',');
+            }
+            var seniorityLevelTypes = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforSeniorityLevel = new List<SelectListItem>();
+            foreach (var item in seniorityLevelTypes)
+            {
+                bool selected = false;
+                if (model._skilldetails.SeniorityLevelArray != null && model._skilldetails.SeniorityLevelArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.ID), selected);
+                selectListforSeniorityLevel.Add(selectItem);
+            }
+            model._skilldetails.SeniorityLevelList = selectListforSeniorityLevel;
+
+            if (!string.IsNullOrEmpty(model._skilldetails.EmploymentType))
+            {
+                model._skilldetails.EmploymentTypeArray = model._skilldetails.EmploymentType.Split(',');
+            }
+            var employementTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            var selectListforEmployementTypes = new List<SelectListItem>();
+            foreach (var item in employementTypes)
+            {
+                bool selected = false;
+                if (model._skilldetails.EmploymentTypeArray != null && model._skilldetails.EmploymentTypeArray.Contains(Convert.ToString(item.ID)))
+                {
+                    selected = true;
+                }
+                var selectItem = new SelectListItem(item.Name, Convert.ToString(item.ID), selected);
+                selectListforEmployementTypes.Add(selectItem);
+            }
+            model._skilldetails.EmploymentTypeList = selectListforEmployementTypes;
+
             return PartialView(model);
         }
 
@@ -6010,7 +6074,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> SkillChannelDetails()
+        public async Task<IActionResult> SkillChannelDetails(string type)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -6019,30 +6083,51 @@ namespace Risebird.Web.Controllers
                 ViewBag.Profile = profileName;
                 //var emailid = HttpContext.Session.GetString("email")?.Trim();
                 //emailid = emailid.Replace("\"", "");
+                ViewBag.Type = "ChannelOwner";
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                 {
                     var irfList = new List<IRF>();
                     if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
-
+                        if (type == "IRF")
+                        {
+                            ViewBag.Type = "IRF";
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        }
+                        else
+                        {
+                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        }
                     }
                     else
                     {
                         var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                            if (type == "IRF")
+                            {
+                                ViewBag.Type = "IRF";
+                                irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                            }
+                            else
+                            {
+                                irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                            }
                         }
                         else
                         {
-                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                            if (type == "IRF")
+                            {
+                                ViewBag.Type = "IRF";
+                                irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                            }
+                            else
+                            {
+                                irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                            }
                         }
-
                     }
-
                     return View(irfList);
-
                 }
                 else
                 {
@@ -6057,7 +6142,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> SkillChannelDetails(SkillChannelDetailsFilter filter)
+        public async Task<IActionResult> SkillChannelDetails(SkillChannelDetailsFilter filter, string type)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -6065,23 +6150,36 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("SkillChannelDetailsFilters", JsonConvert.SerializeObject(filter));
                 }
-
-
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 ViewBag.Profile = profileName;
-                //var emailid = HttpContext.Session.GetString("email")?.Trim();
-                //emailid = emailid.Replace("\"", "");
+                ViewBag.Type = "ChannelOwner";
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR")
                 {
                     var irfList = new List<IRF>();
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                        if (type == "IRF")
+                        {
+                            ViewBag.Type = "IRF";
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                        }
+                        else
+                        {
+                            irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                        }
                     }
                     else
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        if (type == "IRF")
+                        {
+                            ViewBag.Type = "IRF";
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        }
+                        else
+                        {
+                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        }
                     }
                     return View(irfList);
                 }
@@ -6130,7 +6228,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                 {
-                    var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrEmpty(x.AssessmentGroup));
+                    var irfList = _irfService.GetAllSkillChannelDetails()?.Where(x => !string.IsNullOrWhiteSpace(x.AssessmentGroup));
                     if (HttpContext.Session.GetString("CloneSkillChannelfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("CloneSkillChannelfilters"));
@@ -6228,7 +6326,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<FileContentResult> SkillChannelDetailstoExcel()
+        public async Task<FileContentResult> SkillChannelDetailstoExcel(string type)
         {
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
@@ -6242,18 +6340,39 @@ namespace Risebird.Web.Controllers
                 var irfList = new List<IRF>();
                 if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
                 {
-                    irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                    if (type == "IRF")
+                    {
+                        irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                    }
+                    else
+                    {
+                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                    }
                 }
                 else
                 {
                     var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                        if (type == "IRF")
+                        {
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                        }
+                        else
+                        {
+                            irfList = (await _irfService.GetAllIRFDetails(filter.StartDate.Value, filter.EndDate.Value))?.ToList();
+                        }
                     }
                     else
                     {
-                        irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        if (type == "IRF")
+                        {
+                            irfList = (await _irfService.GetAllIRFDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        }
+                        else
+                        {
+                            irfList = (await _irfService.GetAllIRFDetails(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7)))?.ToList();
+                        }
                     }
                 }
 
@@ -6265,37 +6384,29 @@ namespace Risebird.Web.Controllers
                 {
                     Sheet.Column(a).Width = 40;
                 }
-                Sheet.Cells[1, 1].Value = "JD Title";
-                Sheet.Cells[1, 2].Value = "Total Candidates";
-                Sheet.Cells[1, 3].Value = "Completed Interviews";
-                Sheet.Cells[1, 4].Value = "Selected Interviews";
-                Sheet.Cells[1, 5].Value = "Rejected Interviews";
-                Sheet.Cells[1, 6].Value = "Not Scheduled Count";
-                Sheet.Cells[1, 7].Value = "Rescheduled Count";
-                Sheet.Cells[1, 8].Value = "Future Scheduled Count";
-                Sheet.Cells[1, 9].Value = "Risebird Channel Owner";
-                Sheet.Cells[1, 10].Value = "Skill Channel";
-                Sheet.Cells[1, 11].Value = "Client";
-                Sheet.Cells[1, 12].Value = "Country";
-                Sheet.Cells[1, 13].Value = "Billing Owner";
+                Sheet.Cells[1, 1].Value = "Billing Owner";
+                Sheet.Cells[1, 2].Value = "Skill Channels";
+                Sheet.Cells[1, 3].Value = "Total Candidates";
+                Sheet.Cells[1, 4].Value = "Completed Interviews";
+                Sheet.Cells[1, 5].Value = "Selected Interviews";
+                Sheet.Cells[1, 6].Value = "Rejected Interviews";
+                Sheet.Cells[1, 7].Value = "Not Scheduled Count";
+                Sheet.Cells[1, 8].Value = "Rescheduled Count";
+                Sheet.Cells[1, 9].Value = "Future Scheduled Count";
                 int i = 2;
                 if (irfList.Count() > 0)
                 {
                     foreach (var item in irfList)
                     {
-                        Sheet.Cells[i, 1].Value = item.JDTiltle.Split('|')[0];
-                        Sheet.Cells[i, 2].Value = item.CandidateCount;
-                        Sheet.Cells[i, 3].Value = item.CompletedInterviews;
-                        Sheet.Cells[i, 4].Value = item.SelectedMeetings;
-                        Sheet.Cells[i, 5].Value = item.RejectedMeetings;
-                        Sheet.Cells[i, 6].Value = item.NotScheduledCount;
-                        Sheet.Cells[i, 7].Value = item.ReScheduledCount;
-                        Sheet.Cells[i, 8].Value = item.FutureScheduledMeetings;
-                        Sheet.Cells[i, 9].Value = item.RisebirdHREmail;
-                        Sheet.Cells[i, 10].Value = item.IRFId;
-                        Sheet.Cells[i, 11].Value = item.ClientCompName;
-                        Sheet.Cells[i, 12].Value = item.JobCountry;
-                        Sheet.Cells[i, 13].Value = item.BillingOwnerEmailId;
+                        Sheet.Cells[i, 1].Value = item.RisebirdHREmail;
+                        Sheet.Cells[i, 2].Value = item.IRFId;
+                        Sheet.Cells[i, 3].Value = item.CandidateCount;
+                        Sheet.Cells[i, 4].Value = item.CompletedInterviews;
+                        Sheet.Cells[i, 5].Value = item.SelectedMeetings;
+                        Sheet.Cells[i, 6].Value = item.RejectedMeetings;
+                        Sheet.Cells[i, 7].Value = item.NotScheduledCount;
+                        Sheet.Cells[i, 8].Value = item.ReScheduledCount;
+                        Sheet.Cells[i, 9].Value = item.FutureScheduledMeetings;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -6737,7 +6848,8 @@ namespace Risebird.Web.Controllers
                     {
 
                         string uploadedFileURL = string.Empty;
-
+                        if (model.ClientId == 0)
+                            model.ClientId = await _clientService.GetClientByEmailId(emailId);
                         if (model.JDFile != null)
                         {
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
@@ -6954,5 +7066,29 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<JsonResult> SkillChannelDetailsIRFCount(string HrEmail)
+        //{
+        //    var irfList = new List<IRF>();
+        //    if (HttpContext.Session.GetString("SkillChannelDetailsFilters") == null)
+        //    {
+        //        irfList = (await _irfService.GetAllIRFDetailsIRFCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), HrEmail))?.ToList();
+        //    }
+        //    else
+        //    {
+        //        var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+        //        if (filter.StartDate != null && filter.EndDate != null)
+        //        {
+        //            irfList = (await _irfService.GetAllIRFDetailsIRFCount(filter.StartDate.Value, filter.EndDate.Value, HrEmail))?.ToList();
+        //        }
+        //        else
+        //        {
+        //            irfList = (await _irfService.GetAllIRFDetailsIRFCount(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), HrEmail))?.ToList();
+        //        }
+        //    }
+        //    return Json(irfList);
+        //}
     }
 }

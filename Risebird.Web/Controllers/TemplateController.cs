@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
@@ -167,10 +166,10 @@ namespace Risebird.Web.Controllers
                     {
                         ClonableTemplateListVM model = new ClonableTemplateListVM();
                         model.LoggedInUser = emailid;
-                        if(profileName == "Client")
+                        if (profileName == "Client")
                         {
                             model.ClientId = await _clientService.GetClientByEmailId(emailid);
-                            if(model.ClientId.HasValue)
+                            if (model.ClientId.HasValue)
                             {
                                 model.ClientCompanyName = _clientService.GetClient(model.ClientId.Value).Name;
                             }
@@ -181,25 +180,106 @@ namespace Risebird.Web.Controllers
                         }
                         model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
 
-                        model.ClonableTemplates?.ToList().ForEach(x => { x.CompetencyLevelDesc = ((Heuristicsscorelevel)x.CompetencyLevelId.Value).GetDescription(); x.SeniorityLevelDesc = ((JobLevels)x.SeniorityLevelId.Value).GetDescription(); x.CountryTypeDesc = ((CountryTypeEnum)x.CountryType.Value).GetDescription(); x.CompanyTypeDesc = ((CompanyType)x.CompanyTypeId.Value).GetDescription(); });
 
                         if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
 
                             //filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
-                            filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
-                            filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
-                            filter.CompanyType = filter.CompanyType ?? model.ClonableTemplates.Select(x => x.CompanyTypeDesc).ToArray();
-                            filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
-                            filter.SeniorityLevel = filter.SeniorityLevel ?? model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).ToArray();
+                            //filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
+                            //filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
+                            //filter.CompanyType = filter.CompanyType ?? model.ClonableTemplates.Select(x => x.CompanyTypeDesc).ToArray();
+                            //filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
+                            //filter.SeniorityLevel = filter.SeniorityLevel ?? model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).ToArray();
 
-                            model.ClonableTemplates = model.ClonableTemplates.Where(c => /*filter.TemplateName.Contains(c.Name)*/
-                            /*&& */(filter.AssessmentGroup != null ? filter.AssessmentGroup.Contains(c.AssessmentGroupName) : c.AssessmentGroupName == null)
-                            && (filter.CompetencyLevel != null ? filter.CompetencyLevel.Contains(c.CompetencyLevelDesc) : c.CompetencyLevelDesc == null)
-                            && (filter.CountryType != null ? filter.CountryType.Contains(c.CountryTypeDesc) : c.CountryTypeDesc == null)
-                            && (filter.CompanyType != null ? filter.CompanyType.Contains(c.CompanyTypeDesc) : c.CompanyTypeDesc == null)
-                            && (filter.SeniorityLevel != null ? filter.SeniorityLevel.Contains(c.SeniorityLevelDesc) : c.SeniorityLevelDesc == null)).ToList();
+                            
+                            if(model.ClonableTemplates != null  && model.ClonableTemplates.Count()>0)
+                            {
+                                bool continueApplyingFilter = true;
+
+                                //if (filter.AssessmentGroup != null )
+                                //{
+                                //    IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
+
+                                //    templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName));
+                                //    if(templatesFilteredByAssessmentGroup != null)
+                                //    {
+                                //        model.ClonableTemplates = templatesFilteredByAssessmentGroup;
+                                //    }
+                                //}
+
+
+                                if (!string.IsNullOrEmpty(filter.CountryType))
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByCountryType = null;
+
+                                    templatesFilteredByCountryType = model.ClonableTemplates.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
+                                    model.ClonableTemplates = templatesFilteredByCountryType;
+                                }
+
+
+                                if (!string.IsNullOrEmpty(filter.CompanyType))
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByCompanyType = null;
+
+                                    templatesFilteredByCompanyType = model.ClonableTemplates.Where(c => c.CompanyTypeId.HasValue && c.CompanyTypeId.Value == Convert.ToInt16(filter.CompanyType));
+                                    if(templatesFilteredByCompanyType != null && templatesFilteredByCompanyType.Count()>0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredByCompanyType;
+                                    }
+                                    else
+                                    {
+                                        continueApplyingFilter = false;
+                                    }
+                                }
+
+
+                                if (!string.IsNullOrEmpty(filter.SeniorityLevel) && continueApplyingFilter)
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredBySeniority = null;
+
+                                    templatesFilteredBySeniority = model.ClonableTemplates.Where(c => c.SeniorityLevelId != null && c.SeniorityLevelId.Contains(filter.SeniorityLevel));
+                                    if (templatesFilteredBySeniority != null && templatesFilteredBySeniority.Count() > 0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredBySeniority;
+                                    }
+                                    else
+                                    {
+                                        continueApplyingFilter = false;
+                                    }
+                                }
+
+
+                                if (!string.IsNullOrEmpty(filter.DifficultyLevel) && continueApplyingFilter)
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByDifficulty = null;
+
+                                    templatesFilteredByDifficulty = model.ClonableTemplates.Where(c => c.DifficultyLevel != null && c.DifficultyLevel.Contains(filter.DifficultyLevel));
+                                    if (templatesFilteredByDifficulty != null && templatesFilteredByDifficulty.Count() > 0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredByDifficulty;
+                                    }
+                                    else
+                                    {
+                                        continueApplyingFilter = false;
+                                    }
+                                }
+
+
+                                if (!string.IsNullOrEmpty(filter.EmploymentType) && continueApplyingFilter)
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByEmploymentType = null;
+
+                                    templatesFilteredByEmploymentType = model.ClonableTemplates.Where(c => c.EmploymentType != null && c.EmploymentType.Contains(filter.EmploymentType));
+                                    if (templatesFilteredByEmploymentType != null && templatesFilteredByEmploymentType.Count() > 0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredByEmploymentType;
+                                    }
+                                }
+
+                            }
+
+                            model.ClonableTemplates = model.ClonableTemplates?.ToList();
                         }
 
                         if (TempData["SuccessErrorCloneTemplateMessage"] != null)
@@ -352,7 +432,7 @@ namespace Risebird.Web.Controllers
             model.Skills = new SelectList(_irfService.GetSkills(), "id", "Name");
             model.LevelTech = new SelectList(_irfService.GetLevelTech(), "id", "Name");
         }
-        
+
         [HttpGet]
         private void SetEditTemplateParameters(EditSkillChannelTemplateVM model)
         {
@@ -362,7 +442,7 @@ namespace Risebird.Web.Controllers
             model.InterviewerList = new SelectList(_irfService.GetInterviewers(model.AssessmentGroupId?.ToString()), "UserId", "EmailId");
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public SelectList GetInterviewers(string assessmentgroupid)
@@ -380,7 +460,7 @@ namespace Risebird.Web.Controllers
             //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
             return new SelectList(list, "Value", "Text");
         }
-        
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]

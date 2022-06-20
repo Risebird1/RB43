@@ -1611,7 +1611,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "select ag.id,AssessmentGroup,PrimarySkills,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate,(Select count(*) from InterviewerProfile cross Apply string_split(AssessmentGroupId,',') where value =ag.id ) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName,Count(IRF.id) as IrfCount from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid left join IRF on IRF.AssessmentGroupId=ag.id where ag.id=@assessmentid group by ag.id,AssessmentGroup,PrimarySkills,ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate";
+                    var query = "select ag.id,AssessmentGroup,PrimarySkills,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel, ag.SeniorityLevel, ag.Country,ag.PerHourRate,(Select count(*) from InterviewerProfile cross Apply string_split(AssessmentGroupId,',') where value =ag.id ) as Assessmentcount,ag.Isinstaavailable,agc.CategoryName,Count(IRF.id) as IrfCount, ag.EmploymentType from AssessmentGroup ag left join AssessmentGroupCategory agc on agc.id=ag.Categoryid left join IRF on IRF.AssessmentGroupId=ag.id where ag.id=@assessmentid group by ag.id,AssessmentGroup,PrimarySkills,ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate, ag.SeniorityLevel, ag.EmploymentType";
                     var parameters = new DynamicParameters();
                     parameters.Add("@assessmentid", assessmentid);
                     var results = con.Query<AssignmentVM>(query, parameters);
@@ -1625,6 +1625,58 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@RecordingUrl", RecordingUrl);
+                parameters.Add("@Sid", CallSid);
+                parameters.Add("@CandidateEmail", CandidateEmail);
+                parameters.Add("@WhoCalled", WhoCalled);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(con, "usp_AddorUpdateCallRecordingInterviewer", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return "success";
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
+        public List<CallRecordingDetailsVM> FetchCallRecordingInterviewer(string Emailid)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Emailid", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<CallRecordingDetailsVM>(con, "usp_FetchCallRecordingInterviewer", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<CallRecordingDetailsVM>)result;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
             return null;
         }
