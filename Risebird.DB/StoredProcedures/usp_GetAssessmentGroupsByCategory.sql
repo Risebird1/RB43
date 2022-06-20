@@ -15,8 +15,14 @@ CREATE PROCEDURE [dbo].[usp_GetAssessmentGroupsByCategory]
 AS
 Begin
 
-select * from AssessmentGroup where Categoryid=@categoryId
-
+if(@categoryId != 0)
+begin
+	select * from AssessmentGroup where Categoryid=@categoryId
+end
+else
+begin
+	select * from AssessmentGroup
+end
 End
 GO
 
