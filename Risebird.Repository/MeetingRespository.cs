@@ -5795,5 +5795,55 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", interviewid);
+                    parameters.Add("@interviewer", interviewer);
+                    parameters.Add("@redflags", redflags);
+
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_ApplyPenaltyForQCForm", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<string> GetClientHRContactByInterviewid(int interviewid)
+        {
+            try
+            {
+                var query = "Select ClientHrContact from InterviewMeetings where id=@interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
     }
 }

@@ -6905,8 +6905,27 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Quality Controller")
                     {
                         model.Emailid = emailId;
+                        var redflag = await CheckFlagCount(model);
                         if (_meetingService.AddorUpdateQCFormReport(model))
                         {
+                            _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            var _clienthr = _meetingService.GetClientHRContactByInterviewid(model.Interviewid);
+                            int rating = 0;
+                            if (redflag > 16)
+                            {
+                                rating = 0;
+                            }
+                            else
+                            {
+                                rating = 5 - (redflag / 4);
+                            }
+                            var _model = new InterviewerRating();
+                            _model.StarRating = rating;
+                            _model.Comment = "QC Form rating biased on redflags: " + redflag;
+                            _model.Emailid = _clienthr;
+                            _model.Interviewid = model.Interviewid;
+                            _model.ClientAction = "";
+                            var result = await _meetingService.SaveRatingDetails(_model);
                             TempData["SuccessErrorMessageQCForm"] = "QC Form successfully saved.";
                         }
                         else
@@ -6933,6 +6952,95 @@ namespace Risebird.Web.Controllers
             }
         }
         //Save QCForm
+        public async Task<int> CheckFlagCount(QCFormVM model)
+        {
+            int flags = 0;
+            if (!model.IsCodingPresent)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsVideoClearQuality)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsInterviewerCommunicationClear)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsSufficientVideoDuration)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsInterviewStructured)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (!model.IsScoringrubriccorrect)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsQuestionswithtime)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsCommentfilled)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsMeetingStatusfilled)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsRelevancequestions)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (model.IsDelayresuminginterview)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsBackgroundnoise)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsPoorinterviewerinfrastructure)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (model.IsPoorhandlingcandidatequery)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsPersonalquestions)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsAugmenting)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsBiasedView)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsLettingcandidatespeak)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (model.IsSuspiciousappfound)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsLipsyncissue)
+            {
+                flags = flags + 1;
+            }
+            return flags;
+        }
         #endregion
     }
 }

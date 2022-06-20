@@ -2717,5 +2717,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> UpdateIntervieweravailbilityDetails(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.UpdateIntervieweravailbilityDetails(irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

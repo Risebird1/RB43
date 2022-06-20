@@ -183,5 +183,7 @@ namespace Risebird.Business.Interface
         QCFormVM FetchQCFormDetailsById(int interviewid);
         bool AddorUpdateQCFormReport(QCFormVM model);
         List<CallCatalogueVM> GetInterviewerCallCatalogueList();
+        bool ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags);
+        string GetClientHRContactByInterviewid(int interviewid);
     }
 }

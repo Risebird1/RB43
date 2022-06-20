@@ -6463,35 +6463,43 @@ namespace Risebird.Web.Controllers
             {
                 var model = await _irfService.GetIRFInterviewerMembers(irfId);
                 model = model.Where(x => x.Type == "Interviewer").ToList();
-                var skills = _irfService.GetTechSkillswithWeightage(irfId);
-                StringBuilder sb = new StringBuilder();
-                sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
-                sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
-                foreach (var item in skills)
+                if (model.FirstOrDefault().AvailbilityHour >= 86400 || model.FirstOrDefault().AvailbilityHour == 0)
                 {
-                    sb.Append("<tr><td style='border: 1px solid black'>");
-                    sb.Append(item.SkillName);
-                    sb.Append("</td>");
-                    sb.Append("<td style='border: 1px solid black'>");
-                    sb.Append(item.Weightage);
-                    sb.Append("</td></tr>");
-                }
-                sb.Append("</table>");
-                foreach (var item in model)
-                {
-                    if (!String.IsNullOrEmpty(item.EmailId))
+                    await _irfService.UpdateIntervieweravailbilityDetails(irfId);
+                    var skills = _irfService.GetTechSkillswithWeightage(irfId);
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
+                    sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+                    foreach (var item in skills)
                     {
-                        string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
-                        string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
-                        Mail _mail = new Mail
-                        {
-                            TO = item.EmailId,
-                            Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
-                        };
-                        var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName);
+                        sb.Append("<tr><td style='border: 1px solid black'>");
+                        sb.Append(item.SkillName);
+                        sb.Append("</td>");
+                        sb.Append("<td style='border: 1px solid black'>");
+                        sb.Append(item.Weightage);
+                        sb.Append("</td></tr>");
                     }
+                    sb.Append("</table>");
+                    foreach (var item in model)
+                    {
+                        if (!String.IsNullOrEmpty(item.EmailId))
+                        {
+                            string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                            string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                            Mail _mail = new Mail
+                            {
+                                TO = item.EmailId,
+                                Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
+                            };
+                            var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName);
+                        }
+                    }
+                    return Json("Emails sent successfully.");
                 }
-                return Json("Success");
+                else
+                {
+                    return Json("Already Emails sent successfully, please try after 24 hours from privious notification.");
+                }
             }
             catch (Exception ex)
             {

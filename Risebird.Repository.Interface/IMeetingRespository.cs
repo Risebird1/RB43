@@ -221,5 +221,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
         Task<IEnumerable<CallCatalogueVM>> GetInterviewerCallCatalogueList();
         Task<IEnumerable<ResumeDetailsVM>> NotifiyUploadResumeDetails(DateTime startdate, DateTime enddate);
+        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags);
+        Task<string> GetClientHRContactByInterviewid(int interviewid);
     }
 }
