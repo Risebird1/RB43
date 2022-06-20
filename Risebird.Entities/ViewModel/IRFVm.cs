@@ -303,6 +303,7 @@ namespace Risebird.Entities.ViewModel
         public int CompetencyLevelId { get; set; }
         public int CountryType { get; set; }
         public int SeniorityLevelId { get; set; }
+        public int? CreatedFromTemplateId { get; set; }
 
     }
 }

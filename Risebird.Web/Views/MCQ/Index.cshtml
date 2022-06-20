@@ -11,7 +11,7 @@
     dynamic filter = null;
     string[] PrimarySkill = new string[] { };
     //string[] SelectionStatus = new string[] { };
-    string[] SecondarySkill = new string[] { };
+    //string[] SecondarySkill = new string[] { };
     //string[] CompentencyLevel = new string[] { };
     string SeniorityLevel = string.Empty;
     string CountryType = string.Empty;
@@ -25,7 +25,7 @@
     filter = JsonConvert.DeserializeObject<MCQFilter>(HttpContextAccessor.HttpContext.Session.GetString("MCQSetList"));
     //SelectionStatus = filter.SelectionStatus != null ? filter.SelectionStatus : new string[] { };
     PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    SecondarySkill = filter.SecondarySkill != null ? filter.SecondarySkill : new string[] { };
+    //SecondarySkill = filter.SecondarySkill != null ? filter.SecondarySkill : new string[] { };
     //CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
     SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : string.Empty;
     CountryType = filter.CountryType != null ? filter.CountryType : string.Empty;
@@ -114,19 +114,6 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
-                                                        <div class="col-md-12 col-sm-12">
-
-                                                            <select id="SeniorityLevel" name="SeniorityLevel" @*data-placeholder="None Selected"*@ class="form-control">
-                                                                <option value="">Select</option>
-                                                                @foreach (var item in Html.GetEnumSelectList<JobLevels>())
-                                                                {
-                                                                    <option value="@item.Value">@item.Text</option>
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
 
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType">Country Type</label>
@@ -140,34 +127,19 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
+                                                        <div class="col-md-12 col-sm-12">
 
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
-                                                        <div class="col-md-12 col-sm-12">
-                                                            <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                            <select id="SeniorityLevel" name="SeniorityLevel" @*data-placeholder="None Selected"*@ class="form-control">
                                                                 <option value="">Select</option>
-                                                                @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                                                @foreach (var item in Html.GetEnumSelectList<JobLevels>())
                                                                 {
                                                                     <option value="@item.Value">@item.Text</option>
                                                                 }
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
-                                                        <div class="col-md-12 col-sm-12">
-                                                            <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
-                                                                <option value="">Select</option>
-                                                                @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
-                                                                {
-                                                                    <option value="@item.Value">@item.Text</option>
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType">Employment Type</label>
                                                         <div class="col-md-12 col-sm-12">
@@ -180,28 +152,41 @@
                                                             </select>
                                                         </div>
                                                     </div>
+
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                <option value="">Select</option>
+                                                                @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                <option value="">Select</option>
+                                                                @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">
                                                             Primary Skills
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
                                                             <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                @foreach (var item in Model._MCQVMset.Select(x => x.PrimarySkills).Distinct().ToList()) 
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
-                                                            Secondary Skills
-                                                        </label>
-                                                        <div class="col-md-12 col-sm-12">
-                                                            <select id="SecondarySkill" name="SecondarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
                                                                 @foreach (var item in Model._MCQVMset.Select(x => x.PrimarySkills).Distinct().ToList())
                                                                 {
                                                                     @if (item != null && item != "")
@@ -212,6 +197,7 @@
                                                             </select>
                                                         </div>
                                                     </div>
+
                                                 </div>
 
 
@@ -409,51 +395,6 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ProfileType" style="margin-bottom:0px;">
-                                Difficulty Level@*Profile Type*@
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;margin-top:10px">
-                                    @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
-                                    {
-                                        <option value="@item.Value">@item.Text</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel" style="margin-bottom:0px;">
-                                Seniority Level
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                <select class="form-control" id="ddlSeniorityLevel" style="margin-bottom: 10px;margin-top:10px">
-                                    @foreach (var item in Model._ProfileTypeSkills.SeniorityLevelList)
-                                    {
-                                        <option value="@item.Value">@item.Text</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType" style="margin-bottom:0px;">
-                                Employment Type
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                <select class="form-control" id="ddlEmploymentType" style="margin-bottom: 10px;margin-top:10px">
-                                    @foreach (var item in Model._ProfileTypeSkills.EmploymentTypeOptions)
-                                    {
-                                        <option value="@item.Value">@item.Text</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType" style="margin-bottom:0px;">
                                 Country Type
                             </label>
@@ -482,31 +423,53 @@
                             </div>
                         </div>
                     </div>
-                    <!--<div class="col-md-6">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PerHourRate" style="margin-bottom:0px;">
-                                Per Hour Rate
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel" style="margin-bottom:0px;">
+                                Seniority Level
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <input type="number" class="form-control" placeholder="Per Hour Rate" id="txtPerHourRate" style="margin-bottom: 10px;" />
+                                <select class="form-control" id="ddlSeniorityLevel" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.SeniorityLevelList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
                             </div>
                         </div>
-                    </div>-->
-                    @*<div class="col-md-6">
-            <div class="form-group">
-                <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill" style="margin-bottom:0px;">
-                    Competency Level
-                </label>
-                <div class="col-md-12 col-sm-12">
-                    <select class="form-control" id="ddlCompentencyLevel" style="margin-bottom: 10px;margin-top:10px">
-                        @foreach (var item in Model._ProfileTypeSkills.CompentencyLevelList)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                    </select>
-                </div>
-            </div>
-        </div>*@
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ProfileType" style="margin-bottom:0px;">
+                                Difficulty Level@*Profile Type*@
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType" style="margin-bottom:0px;">
+                                Employment Type
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlEmploymentType" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.EmploymentTypeOptions)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Screen+ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
                     <div class="col-md-12">
                         <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
@@ -888,7 +851,7 @@
     function ApplySessionFilter() {
 
         var skillsset = @Html.Raw(Json.Serialize(PrimarySkill));
-        var Secondaryskills =  @Html.Raw(Json.Serialize(SecondarySkill));
+        @*var Secondaryskills =  @Html.Raw(Json.Serialize(SecondarySkill));*@
         @*var CompentencyLevels=  @Html.Raw(Json.Serialize(CompentencyLevel));
         var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));*@
 
@@ -900,7 +863,7 @@
 
         //$("#SelectionStatus").val(levelset);
         $("#PrimarySkill").val(skillsset);
-        $("#SecondarySkill").val(Secondaryskills);
+        //$("#SecondarySkill").val(Secondaryskills);
         //$("#CompentencyLevel").val(CompentencyLevels);
         $("#SeniorityLevel").val(seniorityLevel);
         $("#CountryType").val(countryType);

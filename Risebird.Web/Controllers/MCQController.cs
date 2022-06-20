@@ -110,18 +110,18 @@ namespace Risebird.Web.Controllers
                                     result = resultFilteredByPrimarySkill;
                                 }
                             }
-                            if (filter.SecondarySkill != null)
-                            {
-                                IEnumerable<MCQVMset> resultFilteredBySecondarySkill = null;
+                            //if (filter.SecondarySkill != null)
+                            //{
+                            //    IEnumerable<MCQVMset> resultFilteredBySecondarySkill = null;
 
-                                resultFilteredBySecondarySkill = result.Where(c => filter.SecondarySkill.Contains(c.SecondarySkill));
+                            //    resultFilteredBySecondarySkill = result.Where(c => filter.SecondarySkill.Contains(c.SecondarySkill));
                                 
                                 
-                                if (resultFilteredBySecondarySkill != null && resultFilteredBySecondarySkill.Count() > 0)//filtering only if there is nmore than one in the resultFilteredBySecondarySkill variable  
-                                {
-                                    result = resultFilteredBySecondarySkill;
-                                }
-                            }
+                            //    if (resultFilteredBySecondarySkill != null && resultFilteredBySecondarySkill.Count() > 0)//filtering only if there is nmore than one in the resultFilteredBySecondarySkill variable  
+                            //    {
+                            //        result = resultFilteredBySecondarySkill;
+                            //    }
+                            //}
 
                             if (!string.IsNullOrEmpty(filter.CountryType))
                             {
