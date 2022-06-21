@@ -39,11 +39,12 @@
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.Categoryid, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @Html.DropDownListFor(model => model.Categoryid, (SelectList)ViewBag.AssessmentCategory, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
-                                            @Html.ValidationMessageFor(model => model.Categoryid, "", new { @class = "text-danger" })
+                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
+                                            @Html.DropDownListFor(model => model.Country, Html.GetEnumSelectList<CountryTypeEnum>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
@@ -61,31 +62,18 @@
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
-                                            @Html.DropDownListFor(model => model.Country, Html.GetEnumSelectList<CountryTypeEnum>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
-                                            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                                            @*@Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
+                                            @Html.DropDownListFor(model => model.JobLevel, Html.GetEnumSelectList<JobLevels>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @Html.ValidationMessageFor(model => model.JobLevel, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    
                                 </div>
                                 
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-10" >
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-10">
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
-                                        <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                <span class="red">*</span>
-                                            </div>
-                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
-                                            @Html.DropDownListFor(model => model.EmploymentType, Html.GetEnumSelectList<EmploymentTypeOptions>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
-                                            @Html.ValidationMessageFor(model => model.EmploymentType, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
-                                       
                                         <div class="form-group">
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -98,12 +86,22 @@
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                         <div class="form-group">
                                             <div class="mandate">
-                                                @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @*@Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
-                                            @Html.DropDownListFor(model => model.JobLevel, Html.GetEnumSelectList<JobLevels>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
-                                            @Html.ValidationMessageFor(model => model.JobLevel, "", new { @class = "text-danger" })
+                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
+                                            @Html.DropDownListFor(model => model.EmploymentType, Html.GetEnumSelectList<EmploymentTypeOptions>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @Html.ValidationMessageFor(model => model.EmploymentType, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.Categoryid, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @Html.DropDownListFor(model => model.Categoryid, (SelectList)ViewBag.AssessmentCategory, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @Html.ValidationMessageFor(model => model.Categoryid, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1 mt-10">
