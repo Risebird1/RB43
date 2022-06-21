@@ -3481,6 +3481,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return await _meetingRespository.FetchAllQCFormDetails(startDate, endDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 

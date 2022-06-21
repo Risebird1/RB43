@@ -185,5 +185,6 @@ namespace Risebird.Business.Interface
         List<CallCatalogueVM> GetInterviewerCallCatalogueList();
         bool ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags);
         string GetClientHRContactByInterviewid(int interviewid);
+        Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
     }
 }

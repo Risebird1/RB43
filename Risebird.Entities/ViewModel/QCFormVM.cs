@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -9,6 +10,10 @@ namespace Risebird.Entities.ViewModel
         public string Emailid { get; set; }
         public string Profile { get; set; }
         public string Interviewer { get; set; }
+        public string QCFormedBy { get; set; }
+        public string IRFId { get; set; }
+        public string Client { get; set; }
+        public DateTime InterviewDate { get; set; }
 
         //Video Quality Check
         [Display(Name = "Whether hands-on coding is present")]

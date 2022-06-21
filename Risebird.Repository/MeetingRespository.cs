@@ -5845,5 +5845,30 @@ namespace Risebird.Repository
             }
             return "";
         }
+        public async Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var query = "Select ul.EmailId as QCFormedBy,im.IRFId,cl.Name as Client,im.InterviewDate,im.interviewer as Interviewer,im.candidateEmail as Emailid,.* from Trans_QCFormReport tq join InterviewMeetings im on im.id=tq.Interviewid join UserList ul on ul.id=tq.Userid join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.interviewDate>=@Startdate and im.interviewDate<=@Enddate";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Startdate", startDate);
+                dynamicParameters.Add("@Enddate", endDate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var results = con.Query<QCFormVM>(query, dynamicParameters);
+                    return (List<QCFormVM>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
