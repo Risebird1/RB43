@@ -6498,7 +6498,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return Json("Already Emails sent successfully, please try after 24 hours from privious notification.");
+                    return Json("Emails have already been sent. Please try notifying(email) at least 24 hours after the last successful notification attempt.");
                 }
             }
             catch (Exception ex)
