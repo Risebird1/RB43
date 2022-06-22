@@ -5715,6 +5715,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Interviewid", model.Interviewid);
                     parameters.Add("@Emailid", model.Emailid);
+                    parameters.Add("@Redflags", model.Redflags);
                     parameters.Add("@IsCodingPresent", model.IsCodingPresent);
                     parameters.Add("@IsVideoClearQuality", model.IsVideoClearQuality);
                     parameters.Add("@IsInterviewerCommunicationClear", model.IsInterviewerCommunicationClear);
@@ -5849,7 +5850,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ul.EmailId as QCFormedBy,im.IRFId,cl.Name as Client,im.InterviewDate,im.interviewer as Interviewer,im.candidateEmail as Emailid,.* from Trans_QCFormReport tq join InterviewMeetings im on im.id=tq.Interviewid join UserList ul on ul.id=tq.Userid join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.interviewDate>=@Startdate and im.interviewDate<=@Enddate";
+                var query = "Select ul.EmailId as QCFormedBy,im.IRFId,cl.Name as Client,im.InterviewDate,im.interviewer as Interviewer,im.candidateEmail as Emailid,tq.* from Trans_QCFormReport tq join InterviewMeetings im on im.id=tq.Interviewid join UserList ul on ul.id=tq.Userid join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.interviewDate>=@Startdate and im.interviewDate<=@Enddate";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Startdate", startDate);
                 dynamicParameters.Add("@Enddate", endDate);
@@ -5858,6 +5859,30 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     var results = con.Query<QCFormVM>(query, dynamicParameters);
                     return (List<QCFormVM>)results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MeetingVM>> QCReportDetailsByInterviewer(string emailId)
+        {
+            try
+            {
+                var query = "Select im.id as imid,im.IRFId,im.InterviewDate,im.candidateName,im.candidateEmail,IRF.JDTiltle,cl.Name as ClientName,ul.EmailId as QCFormedBy,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,ic.VideoDuration,ISNULL(tq.Redflags,0) Redflags from Trans_QCFormReport tq join InterviewMeetings im on im.id=tq.Interviewid join InterviewComments ic on ic.InterviewId=im.id join UserList ul on ul.id=tq.Userid join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.interviewer=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var results = con.Query<MeetingVM>(query, dynamicParameters);
+                    return results;
                 }
             }
             catch (SqlException ex)

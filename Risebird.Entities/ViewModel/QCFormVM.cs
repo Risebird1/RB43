@@ -14,6 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string IRFId { get; set; }
         public string Client { get; set; }
         public DateTime InterviewDate { get; set; }
+        public int Redflags { get; set; }
 
         //Video Quality Check
         [Display(Name = "Whether hands-on coding is present")]

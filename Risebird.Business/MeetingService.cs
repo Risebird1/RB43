@@ -3493,6 +3493,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<MeetingVM> QCReportDetailsByInterviewer(string emailId)
+        {
+            try
+            {
+                return _meetingRespository.QCReportDetailsByInterviewer(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 

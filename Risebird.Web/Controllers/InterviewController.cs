@@ -6906,6 +6906,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.Emailid = emailId;
                         var redflag = await CheckFlagCount(model);
+                        model.Redflags = redflag;
                         if (_meetingService.AddorUpdateQCFormReport(model))
                         {
                             _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
@@ -7151,6 +7152,48 @@ namespace Risebird.Web.Controllers
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> QCReportDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Interviewer" || profileName == "Admin")
+                    {
+                        ViewBag.profile = profileName;
+                        List<MeetingVM> modelList = new List<MeetingVM>();
+                        modelList = _meetingService.QCReportDetailsByInterviewer(emailId);
+                        modelList = modelList.Select(x =>
+                        {
+                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
         #endregion
