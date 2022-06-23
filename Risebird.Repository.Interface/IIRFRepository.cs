@@ -186,5 +186,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransInterviewer> GetIRFInterviewerSkillsByAssessmentGroup(string assessmentgroupid);
         Task<IEnumerable<string>> GetIRFInterviewersAndEmergencyInterviewersEmail(int irfId);
         Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate);
+        Task<bool> UpdateIntervieweravailbilityDetails(int irfId);
     }
 }

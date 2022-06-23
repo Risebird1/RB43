@@ -6909,8 +6909,28 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Quality Controller")
                     {
                         model.Emailid = emailId;
+                        var redflag = await CheckFlagCount(model);
+                        model.Redflags = redflag;
                         if (_meetingService.AddorUpdateQCFormReport(model))
                         {
+                            _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            var _clienthr = _meetingService.GetClientHRContactByInterviewid(model.Interviewid);
+                            int rating = 0;
+                            if (redflag > 16)
+                            {
+                                rating = 0;
+                            }
+                            else
+                            {
+                                rating = 5 - (redflag / 4);
+                            }
+                            var _model = new InterviewerRating();
+                            _model.StarRating = rating;
+                            _model.Comment = "QC Form rating biased on redflags: " + redflag;
+                            _model.Emailid = _clienthr;
+                            _model.Interviewid = model.Interviewid;
+                            _model.ClientAction = "";
+                            var result = await _meetingService.SaveRatingDetails(_model);
                             TempData["SuccessErrorMessageQCForm"] = "QC Form successfully saved.";
                         }
                         else
@@ -6937,6 +6957,249 @@ namespace Risebird.Web.Controllers
             }
         }
         //Save QCForm
+        public async Task<int> CheckFlagCount(QCFormVM model)
+        {
+            int flags = 0;
+            if (!model.IsCodingPresent)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsVideoClearQuality)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsInterviewerCommunicationClear)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsSufficientVideoDuration)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsInterviewStructured)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (!model.IsScoringrubriccorrect)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsQuestionswithtime)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsCommentfilled)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsMeetingStatusfilled)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsRelevancequestions)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (model.IsDelayresuminginterview)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsBackgroundnoise)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsPoorinterviewerinfrastructure)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (model.IsPoorhandlingcandidatequery)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsPersonalquestions)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsAugmenting)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsBiasedView)
+            {
+                flags = flags + 1;
+            }
+            if (!model.IsLettingcandidatespeak)
+            {
+                flags = flags + 1;
+            }
+            //
+            if (model.IsSuspiciousappfound)
+            {
+                flags = flags + 1;
+            }
+            if (model.IsLipsyncissue)
+            {
+                flags = flags + 1;
+            }
+            return flags;
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> ExportQCReportCompleted()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("QC Report Form");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                List<QCFormVM> modelList = new List<QCFormVM>();
+                if (HttpContext.Session.GetString("CompletedInterviewfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CompletedInterviewfilters"));
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        modelList = await _meetingService.FetchAllQCFormDetails(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
+                    }
+                }
+                else
+                {
+                    modelList = await _meetingService.FetchAllQCFormDetails(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                }
+                Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 40;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "IRF ID";
+                Sheet.Cells[1, 2].Value = "Client";
+                Sheet.Cells[1, 3].Value = "Interviewer";
+                Sheet.Cells[1, 4].Value = "QCFormedBy";
+                Sheet.Cells[1, 5].Value = "Candidate Email";
+                Sheet.Cells[1, 6].Value = "Interview Date";
+
+                Sheet.Cells[1, 7].Value = "Whether hands-on coding is present";
+                Sheet.Cells[1, 8].Value = "Whether candidate video is clearly visible";
+                Sheet.Cells[1, 9].Value = "Clarity in Interviewer’s communication";
+                Sheet.Cells[1, 10].Value = "Whether video duration is sufficient";
+                Sheet.Cells[1, 11].Value = "Is the interview properly structured";
+                Sheet.Cells[1, 12].Value = "Whether scoring rubrics is filled correctly";
+                Sheet.Cells[1, 13].Value = "Whether questions are filled with timeline";
+                Sheet.Cells[1, 14].Value = "Whether appropriate/fitting comments are filled";
+                Sheet.Cells[1, 15].Value = "Whether appropriate meeting and interview status are filled";
+                Sheet.Cells[1, 16].Value = "Relevance of the questions asked";
+                Sheet.Cells[1, 17].Value = "Delay in resuming an interview";
+                Sheet.Cells[1, 18].Value = "Background Noise";
+                Sheet.Cells[1, 19].Value = "Poor interviewer infrastructure";
+                Sheet.Cells[1, 20].Value = "Poor handling of candidate’s queries";
+                Sheet.Cells[1, 21].Value = "Asking personal questions or making personal remarks";
+                Sheet.Cells[1, 22].Value = "Getting into arguments";
+                Sheet.Cells[1, 23].Value = "Biased View";
+                Sheet.Cells[1, 24].Value = "Letting candidate speak";
+                Sheet.Cells[1, 25].Value = "Suspicious app found";
+                Sheet.Cells[1, 26].Value = "Lip-sync issue noticed";
+                Sheet.Cells[1, 27].Value = "Total Red Flags";
+                int i = 2;
+                if (modelList.Count() > 0)
+                {
+                    foreach (var item in modelList)
+                    {
+                        Sheet.Cells[i, 1].Value = item.IRFId;
+                        Sheet.Cells[i, 2].Value = item.Client;
+                        Sheet.Cells[i, 3].Value = item.Interviewer;
+                        Sheet.Cells[i, 4].Value = item.QCFormedBy;
+                        Sheet.Cells[i, 5].Value = item.Emailid;
+                        Sheet.Cells[i, 6].Value = item.InterviewDate.ToString("MM/dd/yyyy HH:mm");
+
+                        Sheet.Cells[i, 7].Value = item.IsCodingPresent;
+                        Sheet.Cells[i, 8].Value = item.IsVideoClearQuality;
+                        Sheet.Cells[i, 9].Value = item.IsInterviewerCommunicationClear;
+                        Sheet.Cells[i, 10].Value = item.IsSufficientVideoDuration;
+                        Sheet.Cells[i, 11].Value = item.IsInterviewStructured;
+                        Sheet.Cells[i, 12].Value = item.IsScoringrubriccorrect;
+                        Sheet.Cells[i, 13].Value = item.IsQuestionswithtime;
+                        Sheet.Cells[i, 14].Value = item.IsCommentfilled;
+                        Sheet.Cells[i, 15].Value = item.IsMeetingStatusfilled;
+                        Sheet.Cells[i, 16].Value = item.IsRelevancequestions;
+                        Sheet.Cells[i, 17].Value = item.IsDelayresuminginterview;
+                        Sheet.Cells[i, 18].Value = item.IsBackgroundnoise;
+                        Sheet.Cells[i, 19].Value = item.IsPoorinterviewerinfrastructure;
+                        Sheet.Cells[i, 20].Value = item.IsPoorhandlingcandidatequery;
+                        Sheet.Cells[i, 21].Value = item.IsPersonalquestions;
+                        Sheet.Cells[i, 22].Value = item.IsAugmenting;
+                        Sheet.Cells[i, 23].Value = item.IsBiasedView;
+                        Sheet.Cells[i, 24].Value = item.IsLettingcandidatespeak;
+                        Sheet.Cells[i, 25].Value = item.IsSuspiciousappfound;
+                        Sheet.Cells[i, 26].Value = item.IsLipsyncissue;
+                        Sheet.Cells[i, 27].Value = CheckFlagCount(item);
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> QCReportDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    if (profileName == "Interviewer" || profileName == "Admin")
+                    {
+                        ViewBag.profile = profileName;
+                        List<MeetingVM> modelList = new List<MeetingVM>();
+                        modelList = _meetingService.QCReportDetailsByInterviewer(emailId);
+                        modelList = modelList.Select(x =>
+                        {
+                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         #endregion
     }
 }

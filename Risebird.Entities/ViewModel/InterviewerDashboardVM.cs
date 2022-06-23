@@ -6,5 +6,6 @@
         public int OpenInterviewCount { get; set; }
         public int PendingReportCount { get; set; }
         public string CodedName { get; set; }
+        public int QCReportCount { get; set; }
     }
 }
