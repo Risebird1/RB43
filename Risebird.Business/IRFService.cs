@@ -30,9 +30,10 @@ namespace Risebird.Business
         private readonly ICandidateRepository _candidateRepository;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
         private readonly ISkillService _skillService;
+        private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
-            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository, IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService)
+            INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository, IInterviewSchedulerRepository interviewSchedulerRepository, ISkillService skillService, IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -46,6 +47,7 @@ namespace Risebird.Business
             _candidateRepository = candidateRepository;
             _interviewSchedulerRepository = interviewSchedulerRepository;
             _skillService = skillService;
+            _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
         }
 
         #region IRF Functions
@@ -2546,6 +2548,14 @@ namespace Risebird.Business
                     irfDetails.RisebirdHr = GetUserId(loggedInUser);
                 }
 
+                //get meeting platform from template by Id
+                if(string.IsNullOrEmpty(irfDetails.MeetingPlatform))
+                {
+                    var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(irfDetails.CreatedFromTemplateId);
+                    irfDetails.MeetingPlatform = meetingPlatform;
+                }
+                
+
                 irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
                 irfDetails.CompanyDetails = string.Empty;
                 irfDetails.PerMintuteRate = 0;
@@ -2715,6 +2725,19 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<bool> UpdateIntervieweravailbilityDetails(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.UpdateIntervieweravailbilityDetails(irfId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

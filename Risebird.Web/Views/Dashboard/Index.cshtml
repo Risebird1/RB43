@@ -350,8 +350,29 @@
                                 </tr>
                             </table>
                         </li>
-
-
+                        <li style="border: 0px; padding: 0px;  line-height: 30px;">
+                            <table width="100%">
+                                <tr>
+                                    <td class="un-right">
+                                        <div class="flipper">
+                                            <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QCPendingReport')">
+                                                <div class="card-image">
+                                                    <div class="header-front"></div>
+                                                    <span style="cursor:pointer" id="ribbonQCPendingReportCount" class="card-title">@Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>
+                                                </div>
+                                            </div>
+                                            <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('QCPendingReport')">
+                                                <div class="card-image">
+                                                    <div class="header-back"></div>
+                                                    <span style="cursor:pointer" id="ribbonQCPendingReportCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-left un-left"><strong>QC Report Pending</strong></td>
+                                </tr>
+                            </table>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -1330,6 +1351,7 @@
                 $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount").text(data.unAttendedZoomLink);
+                $("#ribbonQCPendingReportCount").text(data.qCPendingReportCount);
 
                 if (getDeletedZoomMeetingsCount) {
                     var classList = $("#ribbonDeletedZoomMeetingCount").attr("class");
@@ -1339,12 +1361,9 @@
                         $("#ribbonDeletedZoomMeetingCount").addClass("card-title");
                         $("#ribbonDeletedZoomMeetingCount_1").addClass("card-title");
                     }
-
                     $("#ribbonDeletedZoomMeetingCount").text(data.upcomingMeetingsDeletedFromZoom);
                     $("#ribbonDeletedZoomMeetingCount_1").text(data.upcomingMeetingsDeletedFromZoom);
-
                 }
-
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume_1").text(data.notProcessedCandidateResume);
@@ -1352,6 +1371,7 @@
                 $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
                 $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
                 $("#ribbonUnAttendedZoomLinkcount_1").text(data.unAttendedZoomLink);
+                $("#ribbonQCPendingReportCount_1").text(data.qCPendingReportCount);
 
                 if (parseInt(data.unAttendedZoomLink) > 0) {
                     var bipsoundcount = localStorage.getItem("bipsoundcount");

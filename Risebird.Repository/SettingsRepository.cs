@@ -52,10 +52,11 @@ namespace Risebird.Repository
                 parameters.Add("@InterviewWindupReminderMinutes", settings.InterviewWindupReminderMinutes);
                 parameters.Add("@InterviewReportReminderMinutes", settings.InterviewReportReminderMinutes);
                 parameters.Add("@QCCommentReminderMinutes", settings.QCCommentReminderMinutes);
+                parameters.Add("@QCFormdeductionRate", settings.QCFormdeductionRate);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.QueryAsync(con, "usp_UpdateSettings", parameters,
+                    SqlMapper.Query(con, "usp_UpdateSettings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
 

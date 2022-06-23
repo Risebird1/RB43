@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[dtCreatedOn] [DateTime] NOT NULL CONSTRAINT [DF_InterviewMeetings_dtCreatedOn] DEFAULT ('NA'),	
 	[sModifiedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sModifiedBy]  DEFAULT ('NA'),	
 	[dtModifiedOn] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_dtModifiedOn]  DEFAULT ('NA'),	
-    [ZoomMeetingId][bigint] NULL,
+    [ZoomMeetingId][varchar] (200),
     [IsMeetingNotificationSent][bit] NULL,
 	[NotificationSentDate] [DateTime] NULL,	
     [IsNotificationSentToEI][bit] NULL,
@@ -164,8 +164,9 @@ IF NOT EXISTS(
     WHERE Name IN (N'ZoomMeetingId')
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
+
     ALTER TABLE InterviewMeetings
-    Add ZoomMeetingId BIGINT
+    ADD ZoomMeetingId varchar(200)
 END
 
 IF NOT EXISTS(
@@ -267,6 +268,26 @@ BEGIN
     ALTER TABLE InterviewMeetings
     Add Cancellationsource varchar(100)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RoomId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add RoomId varchar(35)
+END
+
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ZoomMeetingId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    alter column ZoomMeetingId varchar(200)
+END
+
 END
 GO
 

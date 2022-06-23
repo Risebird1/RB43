@@ -41,6 +41,7 @@ GO
 @IsJoinabilitySelectabilityRequired bit,
 @IsGeneralSkillRequired bit,    
 @CreatedFromTemplateId int,
+@MeetingPlatform varchar(25),
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
 @InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY
@@ -86,7 +87,8 @@ begin try
 		,[IsQCRequired]
 		,[IsJoinabilitySelectabilityRequired]
 		,[IsGeneralSkillRequired]
-		,[CreatedFromTemplateId])            
+		,[CreatedFromTemplateId]
+		,[MeetingPlatform])            
 		VALUES            
 		(@IRFId,            
 		@clientName,            
@@ -116,7 +118,8 @@ begin try
 		@IsQCRequired,
 		@IsJoinabilitySelectabilityRequired,
 		@IsGeneralSkillRequired,
-		@CreatedFromTemplateId)																																																																			      
+		@CreatedFromTemplateId,
+		@MeetingPlatform)																																																																			      
        
     
 		select @irfIntId = SCOPE_IDENTITY()    

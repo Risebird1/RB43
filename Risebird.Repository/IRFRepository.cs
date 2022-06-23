@@ -5737,6 +5737,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;
+
 
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
@@ -6159,6 +6162,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> UpdateIntervieweravailbilityDetails(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", irfId);
+                    await SqlMapper.QueryAsync(con, "usp_UpdateIntervieweravailbilityDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

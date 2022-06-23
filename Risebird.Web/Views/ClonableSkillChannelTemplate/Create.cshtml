@@ -61,11 +61,28 @@
                                                     </div>
                                                 </div>
                                                 <br />
+                                                <h5>Select Meeting Platform</h5>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        @foreach (var platform in Model.MeetingPlatformOptions)
+                                                        {
+                                                            <label class="radio-inline">
+                                                                <input type="radio" asp-for="MeetingPlatform" value="@platform" style="position: relative; top: 3px; margin: 0px 5px;" />@platform<br />
+                                                            </label>
+                                                        }
+                                                        
+                                                    </div>
+                                                </div>
+
                                                 <h5>Recommendation Details</h5>
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
-                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
+                                                        </label>
 
                                                     </div>
                                                 </div>

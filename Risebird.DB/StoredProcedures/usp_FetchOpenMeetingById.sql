@@ -8,7 +8,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 Create Procedure usp_FetchOpenMeetingById    
-@meetingid bigint    
+@meetingid varchar(200)    
 AS    
 BEGIN    
 select Distinct im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,        

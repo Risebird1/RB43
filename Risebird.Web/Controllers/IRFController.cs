@@ -48,10 +48,12 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
+        private readonly ICalendlyHelper _calendlyHelper;
+
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -71,6 +73,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _interviewSchedulerservice = interviewSchedulerservice;
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
+            _calendlyHelper = calendlyHelper;
         }
 
 
@@ -6423,7 +6426,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
+        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string meetingPlatform = null)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -6447,6 +6450,7 @@ namespace Risebird.Web.Controllers
             model_report.duration = 60;
             model_report.Concurrency = 10;
             model_report.BufferTime = 12;
+            model_report.MeetingPlatform = meetingPlatform;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -6463,35 +6467,43 @@ namespace Risebird.Web.Controllers
             {
                 var model = await _irfService.GetIRFInterviewerMembers(irfId);
                 model = model.Where(x => x.Type == "Interviewer").ToList();
-                var skills = _irfService.GetTechSkillswithWeightage(irfId);
-                StringBuilder sb = new StringBuilder();
-                sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
-                sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
-                foreach (var item in skills)
+                if (model.FirstOrDefault().AvailbilityHour >= 86400 || model.FirstOrDefault().AvailbilityHour == 0)
                 {
-                    sb.Append("<tr><td style='border: 1px solid black'>");
-                    sb.Append(item.SkillName);
-                    sb.Append("</td>");
-                    sb.Append("<td style='border: 1px solid black'>");
-                    sb.Append(item.Weightage);
-                    sb.Append("</td></tr>");
-                }
-                sb.Append("</table>");
-                foreach (var item in model)
-                {
-                    if (!String.IsNullOrEmpty(item.EmailId))
+                    await _irfService.UpdateIntervieweravailbilityDetails(irfId);
+                    var skills = _irfService.GetTechSkillswithWeightage(irfId);
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
+                    sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+                    foreach (var item in skills)
                     {
-                        string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
-                        string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
-                        Mail _mail = new Mail
-                        {
-                            TO = item.EmailId,
-                            Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
-                        };
-                        var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName);
+                        sb.Append("<tr><td style='border: 1px solid black'>");
+                        sb.Append(item.SkillName);
+                        sb.Append("</td>");
+                        sb.Append("<td style='border: 1px solid black'>");
+                        sb.Append(item.Weightage);
+                        sb.Append("</td></tr>");
                     }
+                    sb.Append("</table>");
+                    foreach (var item in model)
+                    {
+                        if (!String.IsNullOrEmpty(item.EmailId))
+                        {
+                            string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                            string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
+                            Mail _mail = new Mail
+                            {
+                                TO = item.EmailId,
+                                Subject = "Risebird: Availbility check for Skill Channel " + IRFName + " Interviews"
+                            };
+                            var emailresult = _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), IRFName);
+                        }
+                    }
+                    return Json("Emails sent successfully.");
                 }
-                return Json("Success");
+                else
+                {
+                    return Json("Emails have already been sent. Please try notifying(email) at least 24 hours after the last successful notification attempt.");
+                }
             }
             catch (Exception ex)
             {
@@ -6792,7 +6804,9 @@ namespace Risebird.Web.Controllers
                         //Start: Auto Generate Scheduling Link 
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
-                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName))
@@ -6862,7 +6876,11 @@ namespace Risebird.Web.Controllers
                         //Start: Auto Generate Scheduling Link 
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
-                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+
+                        model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName))
