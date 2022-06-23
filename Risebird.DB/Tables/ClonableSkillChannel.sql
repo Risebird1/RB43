@@ -8,9 +8,9 @@ CREATE TABLE [dbo].[ClonableSkillChannel](
 			[CreatedOn][DATETIME] NULL,
 			[ModifiedOn][DATETIME] NULL,
 			[IsJoinSelectGenskillsRequired][bit] NULL,
-			[CreatedBy][varchar(50)] NULL,
-			[ModifiedBy][varchar(50)] NULL,
-			[MeetingPlatform][varchar(25)] NULL,
+			[CreatedBy][varchar](50) NULL,
+			[ModifiedBy][varchar](50) NULL,
+			[MeetingPlatform][varchar](25) NULL,
  CONSTRAINT UC_ClonableSkillChannel_Name UNIQUE ([Name]),
  CONSTRAINT [PK_ClonableSkillChannel] PRIMARY KEY CLUSTERED 					
 (					
