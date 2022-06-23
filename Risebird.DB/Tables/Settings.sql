@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[Settings](
 	[InterviewWindupReminderMinutes] [int] null,
 	[InterviewReportReminderMinutes] [int] null,
 	[QCCommentReminderMinutes] [int] null,
+	[QCFormdeductionRate] [int] null,
  CONSTRAINT [PK_Settings] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -17,6 +18,18 @@ CREATE TABLE [dbo].[Settings](
 ) ON [PRIMARY]
 
 End
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'QCFormdeductionRate')
+      AND Object_ID = Object_ID(N'Settings'))
+BEGIN
+    ALTER TABLE Settings
+    Add QCFormdeductionRate int
+END
+END
 GO
 
 

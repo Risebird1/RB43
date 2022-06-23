@@ -26,11 +26,25 @@ CREATE TABLE [dbo].[Trans_QCFormReport](
 	[IsSuspiciousappfound] [bit] NULL,
 	[IsLipsyncissue] [bit] NULL,
 	[Addedon] [datetime] NULL,
+	[Redflags] [int] NULL,
  CONSTRAINT [PK_Trans_QCFormReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+Else
+
+Begin
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Redflags')
+      AND Object_ID = Object_ID(N'Trans_QCFormReport'))
+BEGIN
+    ALTER TABLE Trans_QCFormReport
+    Add Redflags int
+END
 END
 GO
 

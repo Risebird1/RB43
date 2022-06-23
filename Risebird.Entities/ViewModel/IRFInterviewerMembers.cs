@@ -15,6 +15,7 @@
         public bool IsActive { get; set; }
         public bool IsAvailable { get; set; }
         public string AvailableStatus { get; set; }
+        public int AvailbilityHour { get; set; }
     }
     public class AssessmentIRFListVM
     {

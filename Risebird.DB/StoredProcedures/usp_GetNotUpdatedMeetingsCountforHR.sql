@@ -42,12 +42,16 @@ union
 select im.id from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id join IRF on irf.irfid=im.IRFId where irf.RisebirdHr =@userid and confirmationStatus = 1 and ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and DATEDIFF(DAY, interviewDate, @currentdate)<7)tb1) as MissingVideoLink,
 (Select Count(*) as Countunion from (select cr.id from CandidateResume cr join IRF on irf.id=cr.IRFId join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId  where th.HRId=@hrId
 union    
-select cr.id from CandidateResume cr join IRF on irf.id=cr.IRFId where irf.RisebirdHr =@userid )tb1) as NotProcessedCandidateResume        
+select cr.id from CandidateResume cr join IRF on irf.id=cr.IRFId where irf.RisebirdHr =@userid )tb1) as NotProcessedCandidateResume,
+(Select Count(*) as Countunion from (Select im.id from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId
+join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId left join Trans_QCFormReport tq on tq.Interviewid=im.id 
+where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and th.HRId=@hrId
+Union
+Select im.id from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId
+left join Trans_QCFormReport tq on tq.Interviewid=im.id 
+where (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and irf.RisebirdHr =@userid )tb1) as QCPendingReportCount
 End     
-
-
-
-    GO
+GO
   
               
 

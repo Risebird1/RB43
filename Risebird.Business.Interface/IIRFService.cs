@@ -115,5 +115,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailId, string profileName, IRFFilter filterModel = null);
         Task<bool> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile);
         Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate);
+        Task<bool> UpdateIntervieweravailbilityDetails(int irfId);
     }
 }
