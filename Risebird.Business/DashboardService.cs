@@ -361,7 +361,7 @@ namespace Risebird.Business
                         var zoomToken = _zoomHelper.ZoomToken();
                         foreach (var meeting in upcomingMeetings)
                         {
-                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
+                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId, zoomToken);
                             if (responseStatusCode != HttpStatusCode.OK)
                             {
                                 deletedZoomMeetingsCount = deletedZoomMeetingsCount + 1;
@@ -495,7 +495,7 @@ namespace Risebird.Business
                         var zoomToken = _zoomHelper.ZoomToken();
                         foreach (var meeting in upcomingMeetings)
                         {
-                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
+                            var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId, zoomToken);
                             if (responseStatusCode != HttpStatusCode.OK)
                             {
                                 deletedZoomMeetingsCount = deletedZoomMeetingsCount + 1;
@@ -572,7 +572,7 @@ namespace Risebird.Business
                     var zoomToken = _zoomHelper.ZoomToken();
                     foreach (var meeting in upcomingMeetings)
                     {
-                        var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId.ToString(), zoomToken);
+                        var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId, zoomToken);
                         if (responseStatusCode != HttpStatusCode.OK)
                         {
                             deletedZoomMeetingList.Add(meeting);

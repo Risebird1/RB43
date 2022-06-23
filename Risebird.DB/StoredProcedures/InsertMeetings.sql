@@ -27,7 +27,7 @@ CREATE PROCEDURE [dbo].[InsertMeetings]
 @interviewOnDevice varchar(500),      
 @currentEmployerName varchar(200),      
 @textreminder nvarchar(200),      
-@zoomMeetingId bigint,    
+@zoomMeetingId varchar(200), 
 @interviewIdOutput int out      
 AS      
 Begin 

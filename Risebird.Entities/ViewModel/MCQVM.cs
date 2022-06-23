@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -148,17 +149,17 @@ namespace Risebird.Entities.ViewModel
         public List<MCQVM> QuestionDetails { get; set; }
         public string roomId { get; set; }
     }
-    public class ShareMCQRisebirdMeeting
+    public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {
-        public string agentname { get; set; }
-        public string visitorName { get; set; }
-        public string datetime { get; set; }
+        //public string agentname { get; set; }
+        //public string visitorName { get; set; }
+        //public string datetime { get; set; }
     }
-    public class ShareMCQRisebirdMeetingResponse
+    public class ShareMCQRisebirdMeetingResponse : RBMeetCreateMeetingResponse
     {
-        public string roomId { get; set; }
-        public string meetingAgent { get; set; }
-        public string meetingAttendee { get; set; }
-        public string videoUrl { get; set; }
+        //public string roomId { get; set; }
+        //public string meetingAgent { get; set; }
+        //public string meetingAttendee { get; set; }
+        //public string videoUrl { get; set; }
     }
 }

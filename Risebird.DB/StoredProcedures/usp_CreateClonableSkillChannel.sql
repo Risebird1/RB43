@@ -16,6 +16,7 @@ GO
 @CreatedFromIRFId int,                        
 @CreatedOn date,  
 @CreatedBy varchar(50),
+@MeetingPlatform varchar(25),
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
@@ -50,13 +51,14 @@ begin try
 		   ([Name]            
 		   ,[CreatedOn]            
 		   ,[CreatedFromIRFId]
-		   ,[CreatedBy]) 
-		   
+		   ,[CreatedBy] 
+		   ,[MeetingPlatform])
 		VALUES            
 		  (@Name,            
 		   @CreatedOn,            
 		   @CreatedFromIRFId, 
-		   @CreatedBy)      
+		   @CreatedBy,
+		   @MeetingPlatform)      
        
 		select @idClonableIrf = SCOPE_IDENTITY()    
   End
