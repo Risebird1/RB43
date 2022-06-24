@@ -72,47 +72,36 @@ namespace Risebird.Web.Controllers
             model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
 
             //model.ClonableTemplates?.ToList().ForEach(x => { x.CompetencyLevelDesc = ((Heuristicsscorelevel)x.CompetencyLevelId.Value).GetDescription(); x.SeniorityLevelDesc = ((JobLevels)x.SeniorityLevelId.Value).GetDescription(); x.CountryTypeDesc = ((CountryTypeEnum)x.CountryType.Value).GetDescription(); x.CompanyTypeDesc = ((CompanyType)x.CompanyTypeId.Value).GetDescription(); });
-
             if (HttpContext.Session.GetString("ClonableRTemplatesFilters") != null)
             {
                 var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableRTemplatesFilters"));
-                
                 filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
                 //filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
                 //filter.CompanyType = filter.CompanyType ?? model.ClonableTemplates.Select(x => x.CompanyTypeDesc).ToArray();
                 //filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
                 //filter.SeniorityLevel = filter.SeniorityLevel ?? model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).ToArray();
 
-
                 if (model.ClonableTemplates != null && model.ClonableTemplates.Count() > 0)
                 {
                     bool continueApplyingFilter = true;
-
                     if (filter.AssessmentGroup != null)
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
-
                         templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName));
                         if (templatesFilteredByAssessmentGroup != null)
                         {
                             model.ClonableTemplates = templatesFilteredByAssessmentGroup;
                         }
                     }
-
-
                     if (!string.IsNullOrEmpty(filter.CountryType))
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredByCountryType = null;
-
                         templatesFilteredByCountryType = model.ClonableTemplates.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
                         model.ClonableTemplates = templatesFilteredByCountryType;
                     }
-
-
                     if (!string.IsNullOrEmpty(filter.CompanyType))
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredByCompanyType = null;
-
                         templatesFilteredByCompanyType = model.ClonableTemplates.Where(c => c.CompanyTypeId.HasValue && c.CompanyTypeId.Value == Convert.ToInt16(filter.CompanyType));
                         if (templatesFilteredByCompanyType != null && templatesFilteredByCompanyType.Count() > 0)
                         {
@@ -123,12 +112,9 @@ namespace Risebird.Web.Controllers
                             continueApplyingFilter = false;
                         }
                     }
-
-
                     if (!string.IsNullOrEmpty(filter.SeniorityLevel) && continueApplyingFilter)
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredBySeniority = null;
-
                         templatesFilteredBySeniority = model.ClonableTemplates.Where(c => c.SeniorityLevelId != null && c.SeniorityLevelId.Contains(filter.SeniorityLevel));
                         if (templatesFilteredBySeniority != null && templatesFilteredBySeniority.Count() > 0)
                         {
@@ -139,12 +125,9 @@ namespace Risebird.Web.Controllers
                             continueApplyingFilter = false;
                         }
                     }
-
-
                     if (!string.IsNullOrEmpty(filter.DifficultyLevel) && continueApplyingFilter)
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredByDifficulty = null;
-
                         templatesFilteredByDifficulty = model.ClonableTemplates.Where(c => c.DifficultyLevel != null && c.DifficultyLevel.Contains(filter.DifficultyLevel));
                         if (templatesFilteredByDifficulty != null && templatesFilteredByDifficulty.Count() > 0)
                         {
@@ -155,23 +138,18 @@ namespace Risebird.Web.Controllers
                             continueApplyingFilter = false;
                         }
                     }
-
-
                     if (!string.IsNullOrEmpty(filter.EmploymentType) && continueApplyingFilter)
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredByEmploymentType = null;
-
                         templatesFilteredByEmploymentType = model.ClonableTemplates.Where(c => c.EmploymentType != null && c.EmploymentType.Contains(filter.EmploymentType));
                         if (templatesFilteredByEmploymentType != null && templatesFilteredByEmploymentType.Count() > 0)
                         {
                             model.ClonableTemplates = templatesFilteredByEmploymentType;
                         }
                     }
-
                 }
 
                 model.ClonableTemplates = model.ClonableTemplates.ToList();
-
                 //model.ClonableTemplates = model.ClonableTemplates.Where(c => (filter.AssessmentGroup != null ? filter.AssessmentGroup.Contains(c.AssessmentGroupName) : c.AssessmentGroupName == null)
                 //&& (filter.CompetencyLevel != null ? filter.CompetencyLevel.Contains(c.CompetencyLevelDesc) : c.CompetencyLevelDesc == null)
                 //&& (filter.CountryType != null ? filter.CountryType.Contains(c.CountryTypeDesc) : c.CountryTypeDesc == null)

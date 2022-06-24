@@ -16,6 +16,6 @@ namespace Risebird.Entities.ViewModel
         public List<string> RoleList { get; set; }
         public int MaxPageCount { get; set; }
         public IEnumerable<IRFFilterViewModel> IRFFilterData { get; set; }
-
+        public string Message2 { get; set; }
     }
 }
