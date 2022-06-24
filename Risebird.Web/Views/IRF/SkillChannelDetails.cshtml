@@ -164,6 +164,7 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
+                                                        <th>Client</th>
                                                     }
                                                     <th>Risebird Channel Owner</th>
                                                     <th>Flags</th>
@@ -186,6 +187,7 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
+                                                        <th>Client</th>
                                                     }
                                                     <th>Risebird Channel Owner</th>
                                                     <th>Flags</th>
@@ -212,6 +214,7 @@
                                                             @if (ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td>@item.IRFId</td>
+                                                                <td>@item.ClientCompName</td>
                                                             }
                                                             <td> @item.RisebirdHREmail </td>
                                                             @if (item.Flags > 0)
