@@ -244,6 +244,8 @@ namespace Risebird.Web.Controllers
                             model.EndDate = DateTime.Now.AddMonths(3);
                             var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                             model.CalendlyLink = _schedulinglink;
+                            if (model.ClientId == 0)
+                                model.ClientId = await _clientService.GetClientByEmailId(emailid);
                             if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailid, "Client"))
                             {
                                 TempData["SuccessMessageInterviewCreation"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
