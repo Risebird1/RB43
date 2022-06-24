@@ -135,18 +135,19 @@ namespace Risebird.Web.Controllers
                     {
                         model.IsClientUser = true;
                     }
-
                     if (TempData["SuccessErrorMessage"] != null)
                     {
                         model.Message = TempData["SuccessErrorMessage"].ToString();
+                        if (TempData["SuccessErrorMessage2"] != null)
+                        {
+                            model.Message2 = TempData["SuccessErrorMessage2"].ToString();
+                            TempData.Remove("SuccessErrorMessage2");
+                        }
                         TempData.Remove("SuccessErrorMessage");
                     }
-
                     HttpContext.Session.SetString("IRFSearchValue", searchValue ?? string.Empty);
-
                     model.Profile = profileName;
                     return View(model);
-
                 }
                 else
                 {
@@ -6819,7 +6820,8 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName))
                         {
-                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorMessage2"] = model.CalendlyLink;
                             return RedirectToAction("Index");
                         }
                         else
@@ -6893,7 +6895,8 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName))
                         {
-                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorMessage2"] = model.CalendlyLink;
                             return RedirectToAction("Index");
                         }
                         else
@@ -7056,7 +7059,8 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.EditSkillChannelCreatedFromTemplate(model, emailId))
                         {
-                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' updated Successfully! Scheduling Link : {model.CalendlyLink} ";
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorMessage2"] = model.CalendlyLink;
                             return RedirectToAction("Index");
                         }
                         else
