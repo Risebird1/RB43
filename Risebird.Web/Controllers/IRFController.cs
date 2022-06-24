@@ -6384,7 +6384,7 @@ namespace Risebird.Web.Controllers
                 {
                     Sheet.Column(a).Width = 40;
                 }
-                Sheet.Cells[1, 1].Value = "Billing Owner";
+                Sheet.Cells[1, 1].Value = "Channel Owner";
                 Sheet.Cells[1, 2].Value = "Skill Channels";
                 Sheet.Cells[1, 3].Value = "Total Candidates";
                 Sheet.Cells[1, 4].Value = "Completed Interviews";
@@ -6393,6 +6393,10 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 7].Value = "Not Scheduled Count";
                 Sheet.Cells[1, 8].Value = "Rescheduled Count";
                 Sheet.Cells[1, 9].Value = "Future Scheduled Count";
+                if (type == "IRF")
+                {
+                    Sheet.Cells[1, 10].Value = "Client";
+                }
                 int i = 2;
                 if (irfList.Count() > 0)
                 {
@@ -6407,6 +6411,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 7].Value = item.NotScheduledCount;
                         Sheet.Cells[i, 8].Value = item.ReScheduledCount;
                         Sheet.Cells[i, 9].Value = item.FutureScheduledMeetings;
+                        if (type == "IRF")
+                        {
+                            Sheet.Cells[1, 10].Value = item.ClientCompName;
+                        }
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
