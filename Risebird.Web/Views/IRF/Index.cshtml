@@ -1345,7 +1345,7 @@
 
 </script>
 
-@if (Model.Message != null)
+@if (Model.Message != null && Model.Message2 != null)
 {
     <script type="text/javascript">
         $(document).ready(function () {
@@ -1363,6 +1363,23 @@
                     confirmButtonText: "Close",
                     allowOutsideClick: false
                 });
+            }
+            else {
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+        }
+    </script>
+}
+@if (Model.Message != null && Model.Message2 == null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful",'@Model.Message', "success");
             }
             else {
                 swal.fire("Failed", '@Model.Message', "error");
