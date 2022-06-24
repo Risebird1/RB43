@@ -32,7 +32,7 @@ Create PROCEDURE [dbo].[usp_UpdateMeeting]
 @MobileNumber nvarchar(200),
 @HRCoordinatorEmailId varchar(100),
 @QCInterviewer varchar(200),
-@zoomMeetingId bigint,
+@zoomMeetingId varchar(200),
 @IsEmergency bit
 
 AS

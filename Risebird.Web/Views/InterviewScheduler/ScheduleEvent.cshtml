@@ -107,7 +107,7 @@
             <h3>This Schedule Interview Link is expired or no longer in use.</h3>
         </div>
         <div id="divconfirm" style="display:none">
-            <h3>Your Interview is scheduled successfully on @ViewBag.interviewDate</h3>
+            <h3>Your Interview is scheduled successfully for @ViewBag.interviewDate</h3>
         </div>
 
         <div id="divcalenderdetails">
@@ -423,6 +423,8 @@
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
+
+                                @Html.HiddenFor(m=> m.MeetingPlatform)
                                 <div class="form-group">
                                     <input type="submit" value="Schedule Event" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
                                 </div>

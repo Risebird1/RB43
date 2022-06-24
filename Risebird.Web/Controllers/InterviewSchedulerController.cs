@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -28,8 +29,9 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IRisebirdMeetingsRepository _risebirdMeetings;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IRBMeetHelper _rBMeetHelper;
 
-        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper)
+        public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper, IRBMeetHelper rBMeetHelper)
         {
             _interviewSchedulerservice = interviewSchedulerservice;
             _azureStorageHelper = azureStorageHelper;
@@ -37,6 +39,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _risebirdMeetings = risebirdMeetings;
             _notificationHelper = notificationHelper;
+            _rBMeetHelper = rBMeetHelper;
         }
         public IActionResult Index()
         {
@@ -218,6 +221,7 @@ namespace Risebird.Web.Controllers
                     model._IRFDetails = new ScheculeInterviewIRFVM();
                 }
                 model.ClientName = model._IRFDetails.Name;
+                model.MeetingPlatform = result.FirstOrDefault().MeetingPlatform;
             }
             else
             {
@@ -316,13 +320,34 @@ namespace Risebird.Web.Controllers
                 var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(indianTime, model.InterviewChannelId, model.Uniqueid);
                 if (_checkdetails)
                 {
-                    var zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
+                    //string meetingLink;// = string.Empty;
+                    var zoomLink = new InstaZoomMeetingResponse();
+                    var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
+                    if(string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    {
+                        zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
+                        //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
+
+                    }
+                    else if(model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    {
+                        rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting( "Risebird", model.Name, indianTime);
+                    }
                     string textreminder = string.Empty;
                     textreminder = model.CountryCode + model.MobileNumber;
-                    var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
+
+                    bool result = false;
+                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    {
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
+                    }
+                    else if(model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    {
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, rbMeetingLinkResponse.meetingAgent, model.InterviewChannelId, rbMeetingLinkResponse.roomId, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
+                    }
                     if (result)
                     {
-                        var updatelinkDetails = _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
+                        _ = _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                         string timezonevalue = string.Empty;
                         string hh = string.Empty;
                         var valuecheck = (-model.offset / 60);
@@ -344,18 +369,26 @@ namespace Risebird.Web.Controllers
                                 break;
                             }
                         }
-                        if (zoomLink.accountemail == "me")
-                        {
-                            zoomLink.accountemail = "host@risebird.io";
-                        }
+                        //if (zoomLink.accountemail == "me")
+                        //{
+                        //    zoomLink.accountemail = "host@risebird.io";
+                        //}
+                        string accountEmail = "host@risebird.io";
                         //Send Mail Notification
                         Mail _mail = new Mail
                         {
                             TO = model.Email,
-                            CC = zoomLink.accountemail,
+                            CC = accountEmail,//zoomLink.accountemail,
                             Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
                         };
-                        var resultset = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
+                        if(string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                        {
+                            _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
+                        }
+                        else if(model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                        {
+                            _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
+                        }
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
                         return View(model);

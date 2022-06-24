@@ -48,10 +48,12 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IInterviewSchedulerService _interviewSchedulerservice;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
+        private readonly ICalendlyHelper _calendlyHelper;
+
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -71,6 +73,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _interviewSchedulerservice = interviewSchedulerservice;
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
+            _calendlyHelper = calendlyHelper;
         }
 
 
@@ -6431,7 +6434,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
+        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string meetingPlatform = null)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -6455,6 +6458,7 @@ namespace Risebird.Web.Controllers
             model_report.duration = 60;
             model_report.Concurrency = 10;
             model_report.BufferTime = 12;
+            model_report.MeetingPlatform = meetingPlatform;
             var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report);
             var model = _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
@@ -6808,7 +6812,9 @@ namespace Risebird.Web.Controllers
                         //Start: Auto Generate Scheduling Link 
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
-                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName))
@@ -6878,7 +6884,11 @@ namespace Risebird.Web.Controllers
                         //Start: Auto Generate Scheduling Link 
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
-                        var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+
+                        model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
                         model.CalendlyLink = _schedulinglink;
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName))

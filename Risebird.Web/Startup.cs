@@ -363,6 +363,7 @@ namespace Risebird.Web
             services.AddScoped<IClonableSkillChannelTemplateRepository, ClonableSkillChannelTemplateRepository>();
             services.AddScoped<IMCQService, MCQService>();
             services.AddScoped<IMCQRepository, MCQRepository>();
+            services.AddScoped<IRBMeetHelper, RBMeetHelper>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts

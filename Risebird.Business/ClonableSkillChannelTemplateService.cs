@@ -368,7 +368,13 @@ namespace Risebird.Business
             {
                 var model = new IRFVm();
                 model.CreatedFromTemplateId = id;
+
                 //get all values from database
+                //var templateDetails = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelById(id);
+                var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(id);
+
+                model.MeetingPlatform = meetingPlatform;
+
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
 
@@ -534,6 +540,19 @@ namespace Risebird.Business
             model.EmploymentTypeList = selectListforEmploymentTypes;
 
             return model;
+        }
+
+        public async Task<string> GetClonableSkillChannelMeetingPlatformById(int id)
+        {
+            try
+            {
+                return await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }

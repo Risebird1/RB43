@@ -48,12 +48,15 @@ namespace Risebird.MicroService
                 //get all the completed meetings where video upload is pending
 
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
+                
+                var pendingZoomMeetings = pendingVideoMeetings?.Where(x=>x.MeetingPlatform == null || x.MeetingPlatform == MeetingPlatforms.Zoom);
+                var pendingRBMeetings = pendingVideoMeetings?.Where(x=>x.MeetingPlatform == MeetingPlatforms.RisebirdMeet);
 
                 //get jwt authentication token 
                 //string token = ZoomToken();
                 string token = _zoomHelper.ZoomToken();
-
-                Parallel.ForEach(pendingVideoMeetings, meeting =>
+                // zoom : upload video and dump video link in db
+                Parallel.ForEach(pendingZoomMeetings, meeting =>
                 {
 
                     try
@@ -62,24 +65,29 @@ namespace Risebird.MicroService
                         {
                             if (meeting.ZoomMeetingId == "0" && !string.IsNullOrEmpty(meeting.zoomLink))
                             {
-                                long zoommeetingId = 0;
+                                //long zoommeetingId = 0;
+                                string zoommeetingId;
                                 try
                                 {
-                                    zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                                    //zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                                    zoommeetingId = meeting.zoomLink.Split('/').Last();
                                 }
                                 catch (Exception)
                                 {
                                     try
                                     {
                                         var link = meeting.zoomLink.Split('?').First();
-                                        zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                        //zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                        zoommeetingId = link.Split('/').Last();
                                     }
                                     catch (Exception)
                                     {
-                                        zoommeetingId = 0;
+                                        //zoommeetingId = 0;
+                                        zoommeetingId = null;
                                     }
                                 }
-                                meeting.ZoomMeetingId = zoommeetingId.ToString();
+                                //meeting.ZoomMeetingId = zoommeetingId.ToString();
+                                meeting.ZoomMeetingId = zoommeetingId;
                             }
 
 
@@ -167,6 +175,34 @@ namespace Risebird.MicroService
                     {
                         _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                        return;
+                    }
+                });
+
+
+                // RBMeet : fetch video link and dump in db
+                Parallel.ForEach(pendingRBMeetings, meeting =>
+                {
+                    try
+                    {
+                        var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + meeting.ZoomMeetingId);
+                        var request = new RestRequest(Method.GET);
+                        request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);//"v7sy3J8cAFdEJp5S");
+                        IRestResponse response = _meeting.Execute(request);
+                        var content = response.Content;
+                        var convertedResponse = JsonConvert.DeserializeObject<RBMeetCreateMeetingResponse>(content);
+                        
+                        string rbMeetVideoLink = convertedResponse.videoUrl;
+                        int rbMeetVideoDurationInSeconds = convertedResponse.duration;
+                        int rbMeetVideoDurationInMinutes = (rbMeetVideoDurationInSeconds / 60);
+
+                        _ = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, rbMeetVideoLink, rbMeetVideoDurationInMinutes).Result;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        log.LogError($"RBMeet : Video Link error for meeting with id: {meeting.imid} and RoomId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
                         return;
                     }
                 });

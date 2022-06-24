@@ -4564,7 +4564,8 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@meetingid", Convert.ToInt64(id));
+                    //parameters.Add("@meetingid", Convert.ToInt64(id));
+                    parameters.Add("@meetingid", id);
                     return await SqlMapper.QueryAsync<Meeting>(con, "usp_FetchOpenMeetingById", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
@@ -5681,6 +5682,32 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> DumpRbMeetVideoLink(int interviewId, string videoLink, int? videoDuration)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@videoLink", videoLink);
+                    parameters.Add("@videoDuration", videoDuration);
+                    var result = SqlMapper.Query(con, "usp_DumpRbMeetVideoLink", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
         public async Task<QCFormVM> FetchQCFormDetailsById(int interviewid)
         {
