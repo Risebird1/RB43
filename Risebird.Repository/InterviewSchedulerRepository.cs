@@ -301,6 +301,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
                 dynamicParameters.Add("@Concurrency", model.Concurrency);
                 dynamicParameters.Add("@BufferTime", model.BufferTime);
+                dynamicParameters.Add("@MeetingPlatform", model.MeetingPlatform);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = SqlMapper.Query<int>(con, "usp_AddscheduleInterviewEvent", dynamicParameters,

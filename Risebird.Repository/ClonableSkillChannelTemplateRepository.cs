@@ -171,6 +171,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedBy", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@CreatedBy"].Value = templateDetails.CreatedBy;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = templateDetails.MeetingPlatform;
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationStatus", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@RecommendationStatus"].Value = templateDetails.IRFRecommendations.Status;
 
@@ -499,6 +502,24 @@ namespace Risebird.Repository
                 return false;
             }
         }
-
+        public async Task<string> GetClonableSkillChannelMeetingPlatformById(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<string>(con, "usp_GetClonableSkillChannelMeetingPlatformById", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

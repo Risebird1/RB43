@@ -3457,6 +3457,54 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags)
+        {
+            try
+            {
+                return _meetingRespository.ApplyPenaltyQCForm(interviewid, interviewer, redflags).Result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public string GetClientHRContactByInterviewid(int interviewid)
+        {
+            try
+            {
+                return _meetingRespository.GetClientHRContactByInterviewid(interviewid).Result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return await _meetingRespository.FetchAllQCFormDetails(startDate, endDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<MeetingVM> QCReportDetailsByInterviewer(string emailId)
+        {
+            try
+            {
+                return _meetingRespository.QCReportDetailsByInterviewer(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 

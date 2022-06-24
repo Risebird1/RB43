@@ -8,8 +8,9 @@ CREATE TABLE [dbo].[ClonableSkillChannel](
 			[CreatedOn][DATETIME] NULL,
 			[ModifiedOn][DATETIME] NULL,
 			[IsJoinSelectGenskillsRequired][bit] NULL,
-			[CreatedBy][varchar(50)] NULL,
-			[ModifiedBy][varchar(50)] NULL,
+			[CreatedBy][varchar](50) NULL,
+			[ModifiedBy][varchar](50) NULL,
+			[MeetingPlatform][varchar](25) NULL,
  CONSTRAINT UC_ClonableSkillChannel_Name UNIQUE ([Name]),
  CONSTRAINT [PK_ClonableSkillChannel] PRIMARY KEY CLUSTERED 					
 (					
@@ -50,6 +51,16 @@ IF NOT EXISTS(
 BEGIN
     alter table ClonableSkillChannel
     add ModifiedBy varchar(50)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MeetingPlatform')
+      AND Object_ID = Object_ID(N'ClonableSkillChannel'))
+BEGIN
+    alter table ClonableSkillChannel
+    add MeetingPlatform varchar(25)
 END
 
 END

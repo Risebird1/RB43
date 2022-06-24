@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[ScheduleInterviewEvent](
 	[SkillChannelRelation] [varchar](50) NULL,
 	[Concurrency] [int] NULL,
 	[BufferTime] [int] default 12,
+	[MeetingPlatform] [varchar](25) null,
  CONSTRAINT [PK_ScheduleInterviewEvent] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -66,7 +67,15 @@ IF NOT EXISTS(
 		ALTER TABLE [ScheduleInterviewEvent]
 		Add BufferTime int default 12
 	END
-
+	IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MeetingPlatform')
+      AND Object_ID = Object_ID(N'ScheduleInterviewEvent'))
+	BEGIN
+		ALTER TABLE [ScheduleInterviewEvent]
+		Add MeetingPlatform varchar(25)
+	END
 GO
 
 
