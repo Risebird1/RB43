@@ -1345,8 +1345,6 @@
 
 </script>
 
-
-
 @if (Model.Message != null)
 {
     <script type="text/javascript">
@@ -1356,15 +1354,20 @@
         function my_code() {
             var msg = '@Model.Message';
             if (msg.toLowerCase().includes("success")) {
-                swal.fire("Successful",'@Model.Message', "success");
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'info',
+                    html:
+                        '@Model.Message' +
+                        '<br/> Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a> ',
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
             }
             else {
                 swal.fire("Failed", '@Model.Message', "error");
             }
-
         }
-
-        //window.onload = my_code();
     </script>
 }
 
