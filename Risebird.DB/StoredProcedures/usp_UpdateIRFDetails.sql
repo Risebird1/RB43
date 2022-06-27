@@ -37,7 +37,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@PrimarySkillInvite varchar(100),  
 	@BillingOwner int,  
 	@AssessmentGroupId varchar(100),
-	@IsQCRequired bit,
+	--@IsQCRequired bit,
 	@IsJoinabilitySelectabilityRequired bit,
 	@IsGeneralSkillRequired bit,
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
@@ -47,7 +47,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
-	@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
+	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 	@HRBulkData AS [dbo].[TransHR_TableType] READONLY
 	--@idRecommendation int,
 	--@RecommendationStatus bit,
@@ -98,7 +98,7 @@ BEGIN
 	,[PrimarySkillInvite]=@PrimarySkillInvite    
 	,[BillingOwner]=@BillingOwner
 	,[AssessmentGroupId]=@AssessmentGroupId
-	,[IsQCRequired] = @IsQCRequired
+	--,[IsQCRequired] = @IsQCRequired
 	,[IsJoinabilitySelectabilityRequired] = @IsJoinabilitySelectabilityRequired
 	,[IsGeneralSkillRequired] = @IsGeneralSkillRequired
 	Where id =@id        
@@ -196,16 +196,16 @@ BEGIN
 	SELECT cubd.*, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd left join ClientUser on cubd.ClientUserId= ClientUser.UserId  
  
     --quality controllers
- 	delete from TransQualityController where IRFId=@id        
+ --	delete from TransQualityController where IRFId=@id        
 
-	INSERT INTO [dbo].[TransQualityController](  
-	[IRFId] ,  
-	[UserId],  
-	[PerSuccessRate],
-	[IsActive],
-	[InterviewerId])  
+	--INSERT INTO [dbo].[TransQualityController](  
+	--[IRFId] ,  
+	--[UserId],  
+	--[PerSuccessRate],
+	--[IsActive],
+	--[InterviewerId])  
      
-	SELECT qcbd.*, InterviewerProfile.id as InterviewerId FROM @QCBulkData qcbd left join InterviewerProfile on qcbd.UserId = InterviewerProfile.UserId  
+	--SELECT qcbd.*, InterviewerProfile.id as InterviewerId FROM @QCBulkData qcbd left join InterviewerProfile on qcbd.UserId = InterviewerProfile.UserId  
  
     --HRs
 	delete from TransHR where IRFId=@id 

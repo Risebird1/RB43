@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[usp_GetClientCandidatesCount]    Script Date: 10-08-2020 6.18.17 PM ******/
+/****** Object:  StoredProcedure [dbo].[usp_GetClientCandidatesCurrentStatus]    Script Date: 10-08-2020 6.18.17 PM ******/
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetClientCandidatesCurrentStatus'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetClientCandidatesCurrentStatus

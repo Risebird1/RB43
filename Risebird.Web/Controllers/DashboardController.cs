@@ -301,7 +301,7 @@ namespace Risebird.Web.Controllers
                         //var funnelData = await _dashboardService.GetClientFunnelData(emailid);
                         //var slotsDetails = await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now.Date, emailid);
                         //model = GetDateWiseClientInterviews(DateTime.Now.Date, emailid);
-                        model.CandidatesCountObj = await _dashboardService.GetClientCandidatesCurrentStatusCount(emailid);
+                        //model.CandidatesCountObj = await _dashboardService.GetClientCandidatesCurrentStatusCount(emailid);
                         model.EmailId = emailid;
                         //model.FunnelData = JsonConvert.SerializeObject(funnelData);
                         //model.DailyMeetingResultsSlots = slotsDetails;

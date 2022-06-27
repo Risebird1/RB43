@@ -12,24 +12,22 @@ GO
 CREATE PROCEDURE [dbo].[usp_UpdateInterviewComments](
 		@interviewId int, 
 		@interviewStatus int = null,
-			@interviewerComment varchar(max) = null,   
-             @fraudCheckStatus int = null,
-			  @hrComment varchar(500) = null,
-			  @ClientInterviewStatus int = null,
-			   @QCStatus int = null,
-			    @QCComment varchar(max) = null,   
-             @trainingStatus int = null,
-			  @trainerComment varchar(500) = null,
-			   @audiolink varchar(max) = null,
-			    @videolink varchar(max) = null, 
-				@MeetingStatus int = null, 
-				@OfferStatus int = null, 
-				@PreparationStatus int = null, 
-				@JoiningStatus int =  null,
-				@ThumbnailImage varchar(Max),
-				@FeedbackAudioLink nvarchar(max) =null,
-				@AadharFileLink nvarchar(max) = null,
-				@CandidateAvailable bit)  
+		@interviewerComment varchar(max) = null,   
+        @fraudCheckStatus int = null,
+		@hrComment varchar(500) = null,
+		@ClientInterviewStatus int = null,
+        @trainingStatus int = null,
+		@trainerComment varchar(500) = null,
+		@audiolink varchar(max) = null,
+		@videolink varchar(max) = null, 
+		@MeetingStatus int = null, 
+		@OfferStatus int = null, 
+		@PreparationStatus int = null, 
+		@JoiningStatus int =  null,
+		@ThumbnailImage varchar(Max),
+		@FeedbackAudioLink nvarchar(max) =null,
+		@AadharFileLink nvarchar(max) = null,
+		@CandidateAvailable bit)  
 AS  
 Begin Try  
   BEGIN TRAN UpdateUser   
@@ -38,27 +36,27 @@ Begin Try
 		BEGIN  
 		IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)  
 			BEGIN  
-     UPDATE [InterviewComments] SET interviewStatus = ISNULL(@InterviewStatus,interviewStatus) ,  
-          interviewerComment =  ISNULL(@interviewerComment,interviewerComment),   
-          FraudCheckStatus =  ISNULL(@FraudCheckStatus,FraudCheckStatus),  
-          HRComment =  ISNULL(@HRComment,HRComment),           
-          TrainingStatus = ISNULL(@TrainingStatus,TrainingStatus),  
-          TrainerComment = ISNULL(@TrainerComment,TrainerComment),  
-          MeetingStatus = ISNULL(@MeetingStatus,MeetingStatus),  
-          OfferStatus = ISNULL(@OfferStatus,OfferStatus),  
-          PreparationStatus = ISNULL(@PreparationStatus,PreparationStatus),  
-          JoiningStatus = ISNULL(@JoiningStatus,JoiningStatus) ,  
-		   ClientInterviewStatus = ISNULL(@ClientInterviewStatus,ClientInterviewStatus), 
-          AudioLink = ISNULL(@audiolink,AudioLink) ,  
-          VideoLink = ISNULL(@videolink, VideoLink) ,
-		  ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
-		  FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink),
-		  AadharFileLink = ISNULL(@AadharFileLink, AadharFileLink),
-		  CandidateAvailable = @CandidateAvailable
-      WHERE        interviewId = @InterviewId  
+				UPDATE [InterviewComments] SET interviewStatus = ISNULL(@InterviewStatus,interviewStatus) ,  
+					interviewerComment =  ISNULL(@interviewerComment,interviewerComment),   
+					FraudCheckStatus =  ISNULL(@FraudCheckStatus,FraudCheckStatus),  
+					HRComment =  ISNULL(@HRComment,HRComment),           
+					TrainingStatus = ISNULL(@TrainingStatus,TrainingStatus),  
+					TrainerComment = ISNULL(@TrainerComment,TrainerComment),  
+					MeetingStatus = ISNULL(@MeetingStatus,MeetingStatus),  
+					OfferStatus = ISNULL(@OfferStatus,OfferStatus),  
+					PreparationStatus = ISNULL(@PreparationStatus,PreparationStatus),  
+					JoiningStatus = ISNULL(@JoiningStatus,JoiningStatus) ,  
+					ClientInterviewStatus = ISNULL(@ClientInterviewStatus,ClientInterviewStatus), 
+					AudioLink = ISNULL(@audiolink,AudioLink) ,  
+					VideoLink = ISNULL(@videolink, VideoLink) ,
+					ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
+					FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink),
+					AadharFileLink = ISNULL(@AadharFileLink, AadharFileLink),
+					CandidateAvailable = @CandidateAvailable
+				WHERE        interviewId = @InterviewId  
   
                       
-     END  
+			END  
 		ELSE  
 			BEGIN  
 				INSERT INTO [InterviewComments]  
@@ -120,17 +118,7 @@ Begin Try
         
 			END  
 
-		IF EXISTS(SELECT 1 FROM QCFeedbackReport where InterviewId= @InterviewId)
-			Begin
-				Update QCFeedbackReport set QCStatus = @QCStatus, QCComment=@QCComment where InterviewId=@interviewId
-			End
-		Else
-			Begin
-				if @QCStatus is not null
-					Insert into QCFeedbackReport (InterviewId, QCStatus, QCComment)
-					values
-					(@interviewId, @QCStatus, @QCStatus)
-			End
+		
         END 
 		
 		
