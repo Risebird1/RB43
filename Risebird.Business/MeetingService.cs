@@ -1038,61 +1038,61 @@ namespace Risebird.Business
             try
             {
                 var result = _meetingRespository.UpdateComments(comments).Result;
-                if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Failed)
-                {
-                    //add to activity tracker
-                    var activityTrackerModel = new ActivityTrackerVM();
-                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCFailed;
-                    activityTrackerModel.Particulars = "QC Failed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
-                    activityTrackerModel.PerformedBy = performedBy;
+                //if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Failed)
+                //{
+                //    //add to activity tracker
+                //    var activityTrackerModel = new ActivityTrackerVM();
+                //    activityTrackerModel.ActivityType = (int)ActivityTypes.QCFailed;
+                //    activityTrackerModel.Particulars = "QC Failed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
+                //    activityTrackerModel.PerformedBy = performedBy;
 
-                    activityTrackerModel.Summary = "QC Failed";
-                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+                //    activityTrackerModel.Summary = "QC Failed";
+                //    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
 
-                    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
-                }
+                //    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
+                //}
 
-                if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
-                {
-                    //add to activity tracker
-                    var activityTrackerModel = new ActivityTrackerVM();
-                    activityTrackerModel.ActivityType = (int)ActivityTypes.QCPassed;
-                    activityTrackerModel.Particulars = "QC Passed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
-                    activityTrackerModel.PerformedBy = performedBy;
+                //if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed && (comments.OldQCStatus == null || comments.OldQCStatus != (int)QCStatus.Passed))
+                //{
+                //    //add to activity tracker
+                //    var activityTrackerModel = new ActivityTrackerVM();
+                //    activityTrackerModel.ActivityType = (int)ActivityTypes.QCPassed;
+                //    activityTrackerModel.Particulars = "QC Passed for: " + comments.candidateEmail + " dated " + comments.interviewDate.ToString();
+                //    activityTrackerModel.PerformedBy = performedBy;
 
-                    activityTrackerModel.Summary = "QC Passed";
-                    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
+                //    activityTrackerModel.Summary = "QC Passed";
+                //    //activityTrackerModel.ResourceUrl = meetingToUpdate.ResourceUrl;
 
-                    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
+                //    var activityUpdate = _activityTrackerRepository.AddActivity(activityTrackerModel).Result;
 
 
-                    //add candidate status
-                    _irfRepository.AddQCCandidateStatus(comments.InterviewId, performedBy);
+                //    //add candidate status
+                //    _irfRepository.AddQCCandidateStatus(comments.InterviewId, performedBy);
 
-                }
-                if (result && ((comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed) || (comments.FinalInterviewMeetingStatus.HasValue && (comments.FinalInterviewMeetingStatus == (int)FinalInterviewMeetingStatus.Selected || comments.FinalInterviewMeetingStatus == (int)FinalInterviewMeetingStatus.Completed))))
-                {
-                    //notify clients
-                    var clientEmails = _meetingRespository.GetIRFClientsEmails(comments.irfIntId).Result;
+                //}
+                //if (result && ((comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed) || (comments.FinalInterviewMeetingStatus.HasValue && (comments.FinalInterviewMeetingStatus == (int)FinalInterviewMeetingStatus.Selected || comments.FinalInterviewMeetingStatus == (int)FinalInterviewMeetingStatus.Completed))))
+                //{
+                //    //notify clients
+                //    var clientEmails = _meetingRespository.GetIRFClientsEmails(comments.irfIntId).Result;
 
-                    var interviewStatus = string.Empty;
-                    if (comments.InterviewStatus.HasValue && (comments.InterviewStatus == (int)InterviewStatus.Selected || comments.InterviewStatus == (int)InterviewStatus.BorderLine))
-                    {
-                        interviewStatus = ((InterviewStatus)comments.InterviewStatus).GetDescription();
-                    }
-                    if (clientEmails != null && clientEmails.Any() && !string.IsNullOrEmpty(interviewStatus))
-                    {
-                        _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
-                        //WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                        //_whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
-                        //_whatsAppVM.InterviewDate = comments.PrimarySkill;
-                        //_whatsAppVM.UserName = comments.candidateEmail;
-                        //_whatsAppVM.Event = "ClientCandidateConfirmation";
-                        //_whatsAppVM.MessageValue = interviewStatus;
-                        //_whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
-                        //_whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
-                    }
-                }
+                //    var interviewStatus = string.Empty;
+                //    if (comments.InterviewStatus.HasValue && (comments.InterviewStatus == (int)InterviewStatus.Selected || comments.InterviewStatus == (int)InterviewStatus.BorderLine))
+                //    {
+                //        interviewStatus = ((InterviewStatus)comments.InterviewStatus).GetDescription();
+                //    }
+                //    if (clientEmails != null && clientEmails.Any() && !string.IsNullOrEmpty(interviewStatus))
+                //    {
+                //        _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
+                //        //WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                //        //_whatsAppVM.Emailid = string.Join(";", clientEmails.ToList());
+                //        //_whatsAppVM.InterviewDate = comments.PrimarySkill;
+                //        //_whatsAppVM.UserName = comments.candidateEmail;
+                //        //_whatsAppVM.Event = "ClientCandidateConfirmation";
+                //        //_whatsAppVM.MessageValue = interviewStatus;
+                //        //_whatsAppVM.buttonlink = "Risetube/VideoPage/" + comments.InterviewId;
+                //        //_whatsAppHelper.WhatsAppSendClientCandidateConfirmation(_whatsAppVM);
+                //    }
+                //}
                 return result;
             }
             catch (Exception ex)
@@ -1504,17 +1504,17 @@ namespace Risebird.Business
                     if (reportModel.InterviewStatus.Value == 2 || reportModel.InterviewStatus.Value == 4)
                     {
 
-                        var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
-                        var mailIds = new List<string>();
-                        foreach (var item in irfQualityControllers ?? new List<TransQualityController>())
-                        {
-                            if (item.EmailId != null && item.IsActive)
-                            {
-                                mailIds.Add(item.EmailId);
-                            }
-                        }
+                        //var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
+                        //var mailIds = new List<string>();
+                        //foreach (var item in irfQualityControllers ?? new List<TransQualityController>())
+                        //{
+                        //    if (item.EmailId != null && item.IsActive)
+                        //    {
+                        //        mailIds.Add(item.EmailId);
+                        //    }
+                        //}
 
-                        _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
+                        //_notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
 
                         if (reportModel.InterviewStatus.Value == 2)
                         {

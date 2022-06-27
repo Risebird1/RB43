@@ -58,7 +58,7 @@
                                             <li id="li_generalSkill"><a href="#" rel="tab-6" class="" id="rtab-6">General Skill</a><span id="count_SkillGeneral" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-7" class="text-center" id="rtab-7">Client</a><span id="count_ClientTable" class="skillcount">0</span></li>
                                             <li><a href="#" rel="tab-8" class="" id="rtab-8">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection != null ? Model.InterviewerCollection.Count() : 0)</span></li>
-                                            <li id="qc"><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>
+                                            @*<li id="qc"><a href="#" rel="tab-9" class="text-center" id="rtab-9">QC</a><span id="count_qc" class="skillcount">@(Model.QualityController != null ? Model.QualityController.Count() : 0)</span></li>*@
                                             <li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
                                             @*<li><a href="#" rel="tab-11" class="text-center" id="rtab-11">Recommendation</a></li>*@
@@ -189,7 +189,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-3 col-sm-3 pull-left">
+                                                @*<div class="col-md-3 col-sm-3 pull-left">
 
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
 
@@ -214,7 +214,7 @@
                                                         @Html.LabelFor(model => model.IsQCRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                     </div>
 
-                                                </div>
+                                                </div>*@
 
                                                 <div class="col-md-3 col-sm-3 pull-left">
 
@@ -1354,23 +1354,23 @@
         }
     }
 
-    $('#IsQCRequired').on('change', function () {
-        CheckQCRequired()
-    });
+    //$('#IsQCRequired').on('change', function () {
+    //    CheckQCRequired()
+    //});
 
-    function CheckQCRequired() {
-        var value = document.getElementById("IsQCRequired").checked;
-        if (value) {
-            document.getElementById('qc').style.display = "block";
-            document.getElementById('rtab-9').style.display = "block";
-            document.getElementById('count_qc').style.display = "block";
-        }
-        else {
-            document.getElementById('qc').style.display = "none";
-            document.getElementById('rtab-9').style.display = "none";
-            document.getElementById('count_qc').style.display = "none";
-        }
-    }
+    //function CheckQCRequired() {
+    //    var value = document.getElementById("IsQCRequired").checked;
+    //    if (value) {
+    //        document.getElementById('qc').style.display = "block";
+    //        document.getElementById('rtab-9').style.display = "block";
+    //        document.getElementById('count_qc').style.display = "block";
+    //    }
+    //    else {
+    //        document.getElementById('qc').style.display = "none";
+    //        document.getElementById('rtab-9').style.display = "none";
+    //        document.getElementById('count_qc').style.display = "none";
+    //    }
+    //}
 
     $('#IsGeneralSkillRequired').on('change', function () {
         CheckGeneralSkillRequired()
@@ -2681,7 +2681,7 @@
         document.getElementById('CompanyType').value = 2;
 
 
-        CheckQCRequired();
+        //CheckQCRequired();
         CheckJoinabilitySelectabilityRequired();
         CheckGeneralSkillRequired();
         if (@Model.TemplateId == null || @Model.TemplateId== 0) {
@@ -3077,24 +3077,26 @@
                 document.getElementById("tab-7").style.display = "block";
                 document.getElementById("tab-8").style.display = "none";
             }
-            else if (activeTab.trim() == "QC") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-8").addClass("active");
-                document.getElementById("tab-8").style.display = "block";
-                document.getElementById("tab-9").style.display = "none";
-            }
+            //else if (activeTab.trim() == "QC") {
+            //    $(".tab-menu li a").removeClass("active");
+            //    $("#rtab-8").addClass("active");
+            //    document.getElementById("tab-8").style.display = "block";
+            //    document.getElementById("tab-9").style.display = "none";
+            //}
 
             else if (activeTab.trim() == "E.Interviewer") {
                 $(".tab-menu li a").removeClass("active");
-                var isQcRequired = document.getElementById('IsQCRequired').checked;
-                if (isQcRequired) {
-                    $("#rtab-9").addClass("active");
-                    document.getElementById("tab-9").style.display = "block";
-                }
-                else {
-                    $("#rtab-8").addClass("active");
-                    document.getElementById("tab-8").style.display = "block";
-                }
+                //var isQcRequired = document.getElementById('IsQCRequired').checked;
+                //if (isQcRequired) {
+                //    $("#rtab-9").addClass("active");
+                //    document.getElementById("tab-9").style.display = "block";
+                //}
+                //else {
+                //    $("#rtab-8").addClass("active");
+                //    document.getElementById("tab-8").style.display = "block";
+                //}
+                $("#rtab-8").addClass("active");
+                document.getElementById("tab-8").style.display = "block";
                 document.getElementById("tab-10").style.display = "none";
 
 
@@ -3374,29 +3376,32 @@
                 flag = checkInterviewerDetails();
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
-                    var isQcRequired = document.getElementById('IsQCRequired').checked;
-                    if (isQcRequired) {
-                        $("#rtab-9").addClass("active");
-                        document.getElementById("tab-9").style.display = "block";
-                        document.getElementById("tab-8").style.display = "none";
-                    }
-                    else {
-                        $("#rtab-10").addClass("active");
-                        document.getElementById("tab-10").style.display = "block";
-                        document.getElementById("tab-8").style.display = "none";
-                    }
+                    //var isQcRequired = document.getElementById('IsQCRequired').checked;
+                    //if (isQcRequired) {
+                    //    $("#rtab-9").addClass("active");
+                    //    document.getElementById("tab-9").style.display = "block";
+                    //    document.getElementById("tab-8").style.display = "none";
+                    //}
+                    //else {
+                    //    $("#rtab-10").addClass("active");
+                    //    document.getElementById("tab-10").style.display = "block";
+                    //    document.getElementById("tab-8").style.display = "none";
+                    //}
+                    $("#rtab-10").addClass("active");
+                    document.getElementById("tab-10").style.display = "block";
+                    document.getElementById("tab-8").style.display = "none";
 
                 }
             }
-            else if (activeTab.trim() == "QC") {
-                flag = checkQcDetails();
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-10").addClass("active");
-                    document.getElementById("tab-10").style.display = "block";
-                    document.getElementById("tab-9").style.display = "none";
-                }
-            }
+            //else if (activeTab.trim() == "QC") {
+            //    flag = checkQcDetails();
+            //    if (!flag) {
+            //        $(".tab-menu li a").removeClass("active");
+            //        $("#rtab-10").addClass("active");
+            //        document.getElementById("tab-10").style.display = "block";
+            //        document.getElementById("tab-9").style.display = "none";
+            //    }
+            //}
             else if (activeTab.trim() == "E.Interviewer") {
                 flag = checkEmergencyDetails();
                 if (!flag) {

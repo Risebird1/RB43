@@ -1001,31 +1001,31 @@ namespace Risebird.Repository
                         }
 
                         //update trans QC table
-                        if (irfDetails.QualityController != null && irfDetails.QualityController.Count() > 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
-                        {
-                            DataTable qualityControllerDt = new DataTable();
-                            qualityControllerDt.Columns.Add("IRFId", typeof(int));
-                            qualityControllerDt.Columns.Add("UserId", typeof(int));
-                            qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
-                            qualityControllerDt.Columns.Add("IsActive", typeof(bool));
+                        //if (irfDetails.QualityController != null && irfDetails.QualityController.Count() > 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
+                        //{
+                        //    DataTable qualityControllerDt = new DataTable();
+                        //    qualityControllerDt.Columns.Add("IRFId", typeof(int));
+                        //    qualityControllerDt.Columns.Add("UserId", typeof(int));
+                        //    qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
+                        //    qualityControllerDt.Columns.Add("IsActive", typeof(bool));
 
 
-                            foreach (var item in irfDetails.QualityController)
-                            {
-                                qualityControllerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
-                            }
+                        //    foreach (var item in irfDetails.QualityController)
+                        //    {
+                        //        qualityControllerDt.Rows.Add(irfID, item.UserId, item.PerSuccessRate, irfDetails.IsClone ? item.IsActive : true);
+                        //    }
 
-                            SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
-                            cmdQualityController.CommandType = CommandType.StoredProcedure;
-                            cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
-                            cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
-                            con.Open();
-                            if (cmdQualityController.ExecuteNonQuery() != 0)
-                            {
-                                con.Close();
-                            }
+                        //    SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
+                        //    cmdQualityController.CommandType = CommandType.StoredProcedure;
+                        //    cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+                        //    cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
+                        //    con.Open();
+                        //    if (cmdQualityController.ExecuteNonQuery() != 0)
+                        //    {
+                        //        con.Close();
+                        //    }
 
-                        }
+                        //}
 
 
                         //DataTable resumeEvaluatorDt = new DataTable();
@@ -1825,20 +1825,20 @@ namespace Risebird.Repository
                         }
                     }
 
-                    DataTable qualityControllerDt = new DataTable();
+                    //DataTable qualityControllerDt = new DataTable();
 
-                    if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
-                    {
-                        qualityControllerDt.Columns.Add("IRFId", typeof(int));
-                        qualityControllerDt.Columns.Add("UserId", typeof(int));
-                        qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        qualityControllerDt.Columns.Add("IsActive", typeof(bool));
+                    //if (irfDetails.QualityController != null && irfDetails.QualityController.Count() != 0 && !(irfDetails.QualityController.Where(x => x.UserId == 0).Any()) && irfDetails.IsQCRequired)
+                    //{
+                    //    qualityControllerDt.Columns.Add("IRFId", typeof(int));
+                    //    qualityControllerDt.Columns.Add("UserId", typeof(int));
+                    //    qualityControllerDt.Columns.Add("PerSuccessRate", typeof(int));
+                    //    qualityControllerDt.Columns.Add("IsActive", typeof(bool));
 
-                        foreach (var item in irfDetails.QualityController)
-                        {
-                            qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
-                        }
-                    }
+                    //    foreach (var item in irfDetails.QualityController)
+                    //    {
+                    //        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive);
+                    //    }
+                    //}
 
                     DataTable hRDt = new DataTable();
                     hRDt.Columns.Add("IRFId", typeof(int));
@@ -1927,8 +1927,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@AssessmentGroupId"].Value = irfDetails.AssessmentGroupId;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
+                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
+                    //cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsJoinabilitySelectabilityRequired", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsJoinabilitySelectabilityRequired"].Value = irfDetails.IsJoinabilitySelectabilityRequired;
@@ -2006,11 +2006,11 @@ namespace Risebird.Repository
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@ClientUserBulkData"].Value = clientUserDt;
                     }
-                    if (qualityControllerDt != null && qualityControllerDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@QCBulkData"].Value = qualityControllerDt;
-                    }
+                    //if (qualityControllerDt != null && qualityControllerDt.Rows.Count > 0)
+                    //{
+                    //    cmdUpdateIRF.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+                    //    cmdUpdateIRF.Parameters["@QCBulkData"].Value = qualityControllerDt;
+                    //}
                     if (hRDt != null && hRDt.Rows.Count > 0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
@@ -2780,7 +2780,7 @@ namespace Risebird.Repository
             parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@BillingOwner", entity.BillingOwner);
             parameters.Add("@AssessmentGroupId", entity.AssessmentGroupId);
-            parameters.Add("@IsQCRequired", entity.IsQCRequired);
+            //parameters.Add("@IsQCRequired", entity.IsQCRequired);
             parameters.Add("@IsJoinabilitySelectabilityRequired", entity.IsJoinabilitySelectabilityRequired);
             parameters.Add("@IsGeneralSkillRequired", entity.IsGeneralSkillRequired);
             parameters.Add("@idIrf", dbType: DbType.Int32, direction: ParameterDirection.Output);

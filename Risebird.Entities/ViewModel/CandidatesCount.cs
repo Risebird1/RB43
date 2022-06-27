@@ -11,6 +11,6 @@
         public int NoShowCount { get; set; }
         public int ScheduledCount { get; set; }
         public int DroppedCount { get; set; }
-        public int QCPending { get; set; }
+        //public int QCPending { get; set; }
     }
 }

@@ -27,11 +27,11 @@ declare @CandidateStatusGrouped table (IRFId int, CandidateId int)
     select IRFId, CandidateId from CandidateStatus where [Status]=@addedStatusId and cast([Date] as date) <= cast (@endDate as date) and cast([Date] as date) >= cast (@startDate as date)              
               
               
-declare  @meetingStatusId int, @interviewStatusId int, @qcPendingId int;              
+declare  @meetingStatusId int, @interviewStatusId int--, @qcPendingId int;              
               
  set @meetingStatusId = (select id from CandidateStatusOptionsMst where StatusValue='Meeting Status')              
  set @interviewStatusId = (select id from CandidateStatusOptionsMst where StatusValue='Interview Status')              
- set @qcPendingId = (select id from CandidateStatusOptionsMst where StatusValue='QC Pending')--19             
+ --set @qcPendingId = (select id from CandidateStatusOptionsMst where StatusValue='QC Pending')--19             
              
  declare @allStatustable table (CandidateMasterId int, IRFId int, [Date] datetime, StatusValue varchar(50), Comments varchar(max))              
     insert into @allStatustable               
@@ -48,7 +48,7 @@ declare  @meetingStatusId int, @interviewStatusId int, @qcPendingId int;
  declare @interviewStatusTable table (CandidateMasterId int, IRFId int, [Date] datetime, Comments varchar(max))              
     insert into @interviewStatusTable               
     select cs.CandidateId, cs.IRFId, [Date], Comments from CandidateStatus cs join @CandidateStatusGrouped csg on (csg.CandidateId=cs.CandidateId and csg.IRFId=cs.IRFId)             
- where ([Status]=@interviewStatusId  or [Status]= @qcPendingId)            
+ where ([Status]=@interviewStatusId) --or [Status]= @qcPendingId            
               
                
 if @EmailId is not null              
@@ -68,7 +68,7 @@ if @EmailId is not null
  ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,              
     ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,              
     mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
-    ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
+    ic.InterviewStatus as CurrentInterviewStatus, --qcfr.QCStatus,              
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,             
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill, im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName           
              
@@ -80,7 +80,7 @@ if @EmailId is not null
     left join UserList ulc on tcu.ClientUserId = ulc.id              
     left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId =IRF.IRFId              
     left join InterviewComments ic on ic.InterviewId = im.id              
-    left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id     
+    --left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id     
     join @allStatustable ast on ca.CandidateMasterId = ast.CandidateMasterId and ca.IRFId=ast.IRFId               
     left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId              
     left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId              
@@ -97,7 +97,7 @@ if @EmailId is not null
  ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,              
     ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,              
     mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
-    ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
+    ic.InterviewStatus as CurrentInterviewStatus, --qcfr.QCStatus,              
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,             
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName          
              
@@ -109,10 +109,10 @@ if @EmailId is not null
     left join UserList ulc on tcu.ClientUserId = ulc.id              
     left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId =IRF.IRFId              
     left join InterviewComments ic on ic.InterviewId = im.id              
-    left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id    
+    --left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id    
     join @allStatustable ast on ca.CandidateMasterId = ast.CandidateMasterId and ca.IRFId=ast.IRFId               
     left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId              
-    left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId                  where ulc.EmailId LIKE @EmailId AND ulc.IsActive=1 and (ca.ProfileSource=@EmailId or im.staffingAgency=@EmailId)             
+    left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId where ulc.EmailId LIKE @EmailId AND ulc.IsActive=1 and (ca.ProfileSource=@EmailId or im.staffingAgency=@EmailId)             
     and irf.IsDeleted=0              
             
   End            
@@ -126,7 +126,7 @@ if @EmailId is not null
     ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,              
     ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,              
     mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
-    ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
+    ic.InterviewStatus as CurrentInterviewStatus, --qcfr.QCStatus,              
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone,  im.interviewDate,            
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName          
             
@@ -138,7 +138,7 @@ if @EmailId is not null
     left join UserList ulc on tcu.ClientUserId = ulc.id              
     left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId =IRF.IRFId              
     left join InterviewComments ic on ic.InterviewId = im.id              
-    left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id  
+    --left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id  
      join @allStatustable ast on ca.CandidateMasterId = ast.CandidateMasterId and ca.IRFId=ast.IRFId               
     left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId              
     left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId              
@@ -156,7 +156,7 @@ Else
   ca.ClientHRAttemptContact as HREmail, ca.IRFId, ca.ProfileSource, im.id as InterviewId,              
   ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,              
   mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,              
-  ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,              
+  ic.InterviewStatus as CurrentInterviewStatus, --qcfr.QCStatus,              
   ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone,  im.interviewDate,            
   (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill , im.staffingAgency,Irf.CalendlyLink,ic.InterviewerNickName          
   from Candidate ca               
@@ -165,7 +165,7 @@ Else
   join IRF on IRF.id=ca.IRFId              
   left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId =IRF.IRFId              
   left join InterviewComments ic on ic.InterviewId = im.id              
-  left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id   
+  --left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id   
   join @allStatustable ast on ca.CandidateMasterId = ast.CandidateMasterId and ca.IRFId=ast.IRFId               
   left join @meetingStatusTable mst on ca.CandidateMasterId= mst.CandidateMasterId and ca.IRFId= mst.IRFId              
   left join @interviewStatusTable ist on ca.CandidateMasterId= ist.CandidateMasterId and ca.IRFId= ist.IRFId              

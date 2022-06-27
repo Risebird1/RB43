@@ -2009,8 +2009,8 @@ namespace Risebird.Repository
             parameters.Add("@fraudCheckStatus", entity.FraudCheckStatus);
             parameters.Add("@hrComment", entity.HRComment);
             parameters.Add("@ClientInterviewStatus", entity.FinalInterviewMeetingStatus);
-            parameters.Add("@QCStatus", entity.QCStatus);
-            parameters.Add("@QCComment", entity.QCComment);
+            //parameters.Add("@QCStatus", entity.QCStatus);
+            //parameters.Add("@QCComment", entity.QCComment);
             parameters.Add("@trainingStatus", entity.TrainingStatus);
             parameters.Add("@trainerComment", entity.TrainerComment);
             parameters.Add("@audiolink", entity.AudioLink);

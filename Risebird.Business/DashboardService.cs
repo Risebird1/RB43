@@ -209,12 +209,12 @@ namespace Risebird.Business
                     countObj.NotYetScheduled = obj.Where(x => x.Status != (int)CandidateStatusOptions.Scheduled && x.Comments != "Meeting Status" && x.Comments != "Interview Status" && x.Status != (int)CandidateStatusOptions.QCPending)?.Count();
 
                     countObj.Scheduled = obj.Where(x => x.Status == (int)CandidateStatusOptions.Scheduled)?.Count();
-                    countObj.QCPending = obj.Where(x => x.Status == (int)CandidateStatusOptions.QCPending)?.Count();
+                    //countObj.QCPending = obj.Where(x => x.Status == (int)CandidateStatusOptions.QCPending)?.Count();
 
 
                     countObj.TotalCount = countObj.NoShow + countObj.Dropped + countObj.Scheduled + countObj.Completed
                                          + countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy
-                                         + countObj.QCPending + countObj.NotYetScheduled;
+                                         /*+ countObj.QCPending +*/  + countObj.NotYetScheduled;
                 }
                 return countObj;
             }

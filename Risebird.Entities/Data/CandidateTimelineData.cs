@@ -18,7 +18,7 @@ namespace Risebird.Entities.Data
         public string CurrentStatus { get; set; }
         //public DateTime CurrentStatusDate { get; set; }
         public int? CurrentInterviewStatus { get; set; }
-        public int? QCStatus { get; set; }
+        //public int? QCStatus { get; set; }
         public int? CurrentMeetingStatus { get; set; }
         public int? confirmationStatus { get; set; }
         public string ScheduleStatusComments { get; set; }
