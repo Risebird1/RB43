@@ -83,5 +83,6 @@ namespace Risebird.CommonHelper.Interface
         string SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, int offset);
         string SendUnassignedInterviewsNotifications(List<string> interviwers, string meetingDate);
         string SendResumeUploadCounts(Mail model, DataTable dt,string Name);
+        string SendQCFormDetails(Mail model, DataTable dt);
     }
 }
