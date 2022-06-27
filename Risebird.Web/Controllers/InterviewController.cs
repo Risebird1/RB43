@@ -6737,7 +6737,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller")
+                    if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
@@ -6811,7 +6811,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller")
+                    if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         if (filter != null)
                         {
@@ -6867,12 +6867,17 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller" || profileName == "Interviewer")
+                    if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin")
                     {
                         var model = _meetingService.FetchQCFormDetailsById(interviewid);
                         if (model == null)
                         {
                             model = new QCFormVM();
+                            model.Isedit = false;
+                        }
+                        else
+                        {
+                            model.Isedit = true;
                         }
                         model.Interviewer = interviewer;
                         model.Profile = profileName;
@@ -6906,14 +6911,24 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller")
+                    if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         model.Emailid = emailId;
                         var redflag = await CheckFlagCount(model);
                         model.Redflags = redflag;
                         if (_meetingService.AddorUpdateQCFormReport(model))
                         {
-                            _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            if (!model.Isedit)
+                            {
+                                if (redflag > 0)
+                                {
+                                    _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                                }
+                            }
+                            else
+                            {
+                                _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            }
                             var _clienthr = _meetingService.GetClientHRContactByInterviewid(model.Interviewid);
                             int rating = 0;
                             if (redflag > 16)

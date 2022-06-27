@@ -5922,5 +5922,29 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<MeetingVM>> QCReportDetailsByDate(DateTime Startdate, DateTime Enddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", Startdate);
+                    parameters.Add("@EndDate", Enddate);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_FetchQCFormsOnDate", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

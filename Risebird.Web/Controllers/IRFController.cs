@@ -6887,7 +6887,7 @@ namespace Risebird.Web.Controllers
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
 
-                        model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
+                        //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
 
                         string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
 
