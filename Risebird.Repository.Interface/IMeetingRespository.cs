@@ -225,5 +225,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         Task<IEnumerable<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
+        Task<IEnumerable<MeetingVM>> QCReportDetailsByDate(DateTime Startdate,DateTime Enddate);
     }
 }
