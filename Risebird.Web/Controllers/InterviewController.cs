@@ -6873,6 +6873,11 @@ namespace Risebird.Web.Controllers
                         if (model == null)
                         {
                             model = new QCFormVM();
+                            model.Isedit = false;
+                        }
+                        else
+                        {
+                            model.Isedit = true;
                         }
                         model.Interviewer = interviewer;
                         model.Profile = profileName;
@@ -6913,7 +6918,14 @@ namespace Risebird.Web.Controllers
                         model.Redflags = redflag;
                         if (_meetingService.AddorUpdateQCFormReport(model))
                         {
-                            if (redflag > 0)
+                            if (!model.Isedit)
+                            {
+                                if (redflag > 0)
+                                {
+                                    _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                                }
+                            }
+                            else
                             {
                                 _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
                             }
