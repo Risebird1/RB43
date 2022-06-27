@@ -6913,7 +6913,10 @@ namespace Risebird.Web.Controllers
                         model.Redflags = redflag;
                         if (_meetingService.AddorUpdateQCFormReport(model))
                         {
-                            _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            if (redflag > 0)
+                            {
+                                _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, redflag);
+                            }
                             var _clienthr = _meetingService.GetClientHRContactByInterviewid(model.Interviewid);
                             int rating = 0;
                             if (redflag > 16)

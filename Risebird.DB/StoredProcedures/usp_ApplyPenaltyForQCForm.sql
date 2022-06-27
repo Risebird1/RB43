@@ -53,7 +53,7 @@ end
 else  
 begin  
 Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId) values  
-(@interviewid,@Userid,@Points,'Penalty QC','QC Penalty '+@CandidateEmail,'Pending',Getdate(),0,0)  
+(@interviewid,@Userid,@Points,'Penalty QC','QC '+@CandidateEmail,'Pending',Getdate(),0,0)  
 end  
 END  
   
