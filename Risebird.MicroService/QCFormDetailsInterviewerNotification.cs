@@ -31,8 +31,10 @@ namespace Risebird.MicroService
             try
             {
                 log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-                DateTime _startdate = DateTime.Now.Date;
-                DateTime _enddate = _startdate.AddDays(1);
+                //DateTime _startdate = DateTime.Now.Date;
+                //DateTime _enddate = _startdate.AddDays(1);
+                DateTime _enddate = DateTime.Now;
+                DateTime _startdate = _enddate.AddHours(-24);
                 var _list = await _meetingRespository.QCReportDetailsByDate(_startdate, _enddate);
                 if (_list == null)
                 {
