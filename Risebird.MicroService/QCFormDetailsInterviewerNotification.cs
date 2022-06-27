@@ -26,7 +26,7 @@ namespace Risebird.MicroService
             _notificationHelper = notificationHelper;
         }
         [FunctionName("QCFormDetailsInterviewerNotification")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 59 23 * * *")] TimerInfo myTimer, ILogger log)
         {
             try
             {
