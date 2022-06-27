@@ -38,7 +38,7 @@ GO
 @PrimarySkillInvite varchar(100),        
 @BillingOwner int,     
 @AssessmentGroupId varchar(100),
-@IsQCRequired bit,
+--@IsQCRequired bit,
 @IsJoinabilitySelectabilityRequired bit,
 @IsGeneralSkillRequired bit,
 @idIrf int output            
@@ -73,7 +73,7 @@ Begin
    ,[PrimarySkillInvite]      
    ,[BillingOwner]    
    ,[AssessmentGroupId]
-   ,[IsQCRequired]
+   --,[IsQCRequired]
    ,[IsJoinabilitySelectabilityRequired]
    ,[IsGeneralSkillRequired])            
        VALUES            
@@ -102,7 +102,7 @@ Begin
    @PrimarySkillInvite,      
    @BillingOwner,    
    @AssessmentGroupId,
-   @IsQCRequired,
+   --@IsQCRequired,
    @IsJoinabilitySelectabilityRequired,
    @IsGeneralSkillRequired)      
        

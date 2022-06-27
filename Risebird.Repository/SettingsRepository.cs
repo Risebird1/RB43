@@ -51,7 +51,7 @@ namespace Risebird.Repository
                 parameters.Add("@ClientReportingMailMinutes", settings.ClientReportingMailMinutes);
                 parameters.Add("@InterviewWindupReminderMinutes", settings.InterviewWindupReminderMinutes);
                 parameters.Add("@InterviewReportReminderMinutes", settings.InterviewReportReminderMinutes);
-                parameters.Add("@QCCommentReminderMinutes", settings.QCCommentReminderMinutes);
+                //parameters.Add("@QCCommentReminderMinutes", settings.QCCommentReminderMinutes);
                 parameters.Add("@QCFormdeductionRate", settings.QCFormdeductionRate);
 
                 using (SqlConnection con = new SqlConnection(connectionString))

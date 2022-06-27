@@ -3086,7 +3086,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterviewComment"];
                     InterviewComments comments = _meetingService.GetInterviewComments(interviewId);
-                    comments.OldQCStatus = comments.QCStatus;
+                    //comments.OldQCStatus = comments.QCStatus;
                     string prof = HttpContext.Session.GetString("profileName");
                     if (prof != null && prof.Contains("Client"))
                     {
@@ -3199,7 +3199,7 @@ namespace Risebird.Web.Controllers
 
                             if (_meetingService.UpdateComments(interviewComments, emailid))
                             {
-                                TempData["SuccessErrorMessageInterviewComment"] = "Comments has been added Successfully!";
+                                TempData["SuccessErrorMessageInterviewComment"] = "Comments added Successfully!";
                                 return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                             }
                             else
@@ -3759,9 +3759,9 @@ namespace Risebird.Web.Controllers
                                      select new { ID = (int)s, Name = s.GetDescription() };
             model.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
-            var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
-                             select new { ID = (int)s, Name = s.GetDescription() };
-            model.QCStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+            //var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
+            //                 select new { ID = (int)s, Name = s.GetDescription() };
+            //model.QCStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
             var trainingStatuses = from Entities.Enum.TrainingStatus s in Enum.GetValues(typeof(Entities.Enum.TrainingStatus))
                                    select new { ID = (int)s, Name = s.GetDescription() };
