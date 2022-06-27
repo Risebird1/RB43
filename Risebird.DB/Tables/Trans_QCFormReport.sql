@@ -27,6 +27,8 @@ CREATE TABLE [dbo].[Trans_QCFormReport](
 	[IsLipsyncissue] [bit] NULL,
 	[Addedon] [datetime] NULL,
 	[Redflags] [int] NULL,
+	[ModifiedOn] [datetime] NULL,
+	[ModifiedBy] [int] NULL,
  CONSTRAINT [PK_Trans_QCFormReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -44,6 +46,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Trans_QCFormReport
     Add Redflags int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedOn')
+      AND Object_ID = Object_ID(N'Trans_QCFormReport'))
+BEGIN
+    ALTER TABLE Trans_QCFormReport
+    Add ModifiedOn Datetime
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedBy')
+      AND Object_ID = Object_ID(N'Trans_QCFormReport'))
+BEGIN
+    ALTER TABLE Trans_QCFormReport
+    Add ModifiedBy int
 END
 END
 GO

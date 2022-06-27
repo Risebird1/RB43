@@ -6737,7 +6737,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller")
+                    if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         if (TempData["SuccessErrorMessageQCForm"] != null)
                         {
@@ -6811,7 +6811,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller")
+                    if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         if (filter != null)
                         {
@@ -6867,7 +6867,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller" || profileName == "Interviewer")
+                    if (profileName == "Quality Controller" || profileName == "Interviewer" || profileName == "Admin")
                     {
                         var model = _meetingService.FetchQCFormDetailsById(interviewid);
                         if (model == null)
@@ -6906,7 +6906,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Quality Controller")
+                    if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         model.Emailid = emailId;
                         var redflag = await CheckFlagCount(model);
