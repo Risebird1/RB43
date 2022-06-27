@@ -299,7 +299,7 @@
                                                                 @if (Model.Profile == "Client")
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
-                                                                        <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.Name', '@item.AssessmentGroupName', '@item.AssessmentGroupId')" title="Create Interview Link" class="mdc-fab__icon material-icons">
+                                                                        <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.Name', '@item.AssessmentGroupName', '@item.AssessmentGroupId', '@item.MeetingPlatform')" title="Create Interview Link" class="mdc-fab__icon material-icons">
                                                                             @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
                                                                                 <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
@@ -353,23 +353,17 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
 
+                <div class="filheader">
+                    <h5 class="modal-title pull-left" id="interviewLinkModalHeading">Generate Interview Link<span class="popup-text" id="skill_id_pop"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseIRFPopup()">
+                        <span aria-hidden="true" id="interviewLinkModalClose" style="cursor:pointer;">&times;</span>
+                    </button>
+                </div>
 
-                <!--<div class="filheader">-->
-                    @*<div class="filavatar">
-                        <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
-                    </div>*@
-                    <!--<div class="filavatar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
-                            <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
-                        </svg>
-                    </div>
-                    <h5 class="modal-title pull-left" id="interviewLinkModalHeading"></h5>
-                </div>-->
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" id="interviewLinkModalClose" style="cursor:pointer;">&times;</span>
-                </button>
+
 
                 <div class="modal-body" id="interviewLinkModalBody">
+
                     <form action="@Url.Action("CreateInterviewLink","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
                         @Html.AntiForgeryToken()
                         <div class="mb-3 mt-3">
@@ -379,7 +373,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="JDFile" class="form-label">Job Description:</label>
-                            <input type="file" for="JDFile" accept=".pdf,.txt" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
+                            <input type="file" for="JDFile" accept=".pdf,.txt,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
                             <label id="error_JDFile" class="text-danger"></label>
                         </div>
 
@@ -399,6 +393,7 @@
                         <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
                         <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
                         <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
+                        <input type="hidden" for="MeetingPlatform" name="MeetingPlatform" id="MeetingPlatform" />
 
                         <button type="submit" class="btn btn-primary">Generate Interview Link</button>
                     </form>
@@ -411,7 +406,7 @@
     </div>
 
     <div id="TemplateSkillModel" class="modal modal-bg" style="z-index:3">
-
+        
         <!-- Modal content -->
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -505,18 +500,24 @@
         //window.onload = my_code();
     </script>
 }
+<script>
 
+    function CloseIRFPopup() {
+        var modal = document.getElementById("interviewLinkModal");
+        modal.style.display = "none";
+    }
+</script>
 <script>
     let clientCompanyName = '@Model.ClientCompanyName';
     let clientId = '@Model.ClientId';
     let isBillingOwnerPopulated = false;
     let isModalOpened = false;
-    var closeMember = document.getElementById("interviewLinkModalClose");
-    closeMember.onclick = function () {
-        var modal = document.getElementById("interviewLinkModal");
-        modal.style.display = "none";
-    }
-    function OpenModalForCreatingInterviewLink(templateId, templateName, assessmentGroupName, assessmentGroupId) {
+    //var closeMember = document.getElementById("interviewLinkModalClose");
+    //closeMember.onclick = function () {
+    //    var modal = document.getElementById("interviewLinkModal");
+    //    modal.style.display = "none";
+    //}
+    function OpenModalForCreatingInterviewLink(templateId, templateName, assessmentGroupName, assessmentGroupId, meetingPlatform) {
         var modal = document.getElementById("interviewLinkModal");
         modal.style.display = "block";
         var modalHeading = '';
@@ -538,6 +539,7 @@
         $('#interviewLinkModalHeading').text(modalHeading);
         $('#CreatedFromTemplateId').val(templateId);
         $('#AssessmentGroupId').val(assessmentGroupId);
+        $('#MeetingPlatform').val(meetingPlatform);
 
         if (!isBillingOwnerPopulated) {
             PopulateBillingOwner();
