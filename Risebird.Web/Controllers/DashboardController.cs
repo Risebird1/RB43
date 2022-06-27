@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -1084,7 +1085,6 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "911 Dashboard / Status Pending";
                         }
-
                         else if (actionstatus == "QcPending")
                         {
                             ViewBag.PageHeader = "911 Dashboard / Qc Pending";
@@ -1108,14 +1108,12 @@ namespace Risebird.Web.Controllers
                         else if (actionstatus == "VideoLink")
                         {
                             ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
-
                         }
-                        else if (actionstatus == "QCPendingReport")
+                        else if (actionstatus == "QCPendingReport" || actionstatus == "QCReport")
                         {
                             ViewBag.PageHeader = "911 Dashboard / QC Report";
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
                     }
@@ -1189,7 +1187,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.PageHeader = "911 Dashboard / Missing Video Link";
                         }
-                        else if (actionstatus == "QCPendingReport")
+                        else if (actionstatus == "QCPendingReport" || actionstatus == "QCReport")
                         {
                             ViewBag.PageHeader = "911 Dashboard / QC Report";
                         }
@@ -1285,7 +1283,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-
         }
 
         [Authorize]
@@ -1562,6 +1559,124 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> UnassignedInterviewsExportToExcel(string actionstatus, int actiontype)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("QC Report Details");
+            string fileName = "Risebird_" + DateTime.Now.ToString("dd/MM/yyyy") + "_QCReport" + ".xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
+                    {
+                        var modelList = new List<MeetingVM>();
+                        var filter = new UnassignedInterviewsFilter();
+                        if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
+                        {
+                            filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
+                        }
+                        else
+                        {
+                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
+                        }
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
+                        if (filter != null)
+                        {
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                if (actionstatus == "UnAttendedZoomLink")
+                                {
+                                    filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                                }
+                                modelList = modelList.Where(x => x.interviewDate >= filter.StartDate && x.interviewDate <= filter.EndDate).ToList();
+                            }
+                            filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Name).ToArray() : filter.Client = filter.Client;
+                            filter.ClientHREmail = filter.ClientHREmail == null ? filter.ClientHREmail = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHREmail = filter.ClientHREmail;
+                            modelList = modelList.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.Name) : c.Name == null)
+                            && (filter.ClientHREmail.Count() > 0 ? filter.ClientHREmail.Contains(c.ClientHrContact) : c.ClientHrContact == null)).ToList();
+                        }
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+                        if (modelList != null && modelList.Count() > 0)
+                        {
+                            Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                            Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                            Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                            int startColumn = 1; int endColumn = 12;
+                            for (int a = startColumn; a <= endColumn; a++)
+                            {
+                                Sheet.Column(a).Width = 40;
+                            }
+                            Sheet.Cells[1, 1].Value = "Skill Channel";
+                            Sheet.Cells[1, 2].Value = "Interview Date";
+                            Sheet.Cells[1, 3].Value = "Candidate Name";
+                            Sheet.Cells[1, 4].Value = "Candidate Email";
+                            Sheet.Cells[1, 5].Value = "Interviewer";
+                            Sheet.Cells[1, 6].Value = "Meeting Status";
+                            Sheet.Cells[1, 7].Value = "Interview Status";
+                            Sheet.Cells[1, 8].Value = "Client";
+                            if (actionstatus == "QCReport")
+                            {
+                                Sheet.Cells[1, 9].Value = "Red Flags";
+                            }
+                            int i = 2;
+                            foreach (var item in modelList)
+                            {
+                                Sheet.Cells[i, 1].Value = item.IRFId;
+                                Sheet.Cells[i, 2].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
+                                Sheet.Cells[i, 3].Value = item.candidateName;
+                                Sheet.Cells[i, 4].Value = item.candidateEmail;
+                                Sheet.Cells[i, 5].Value = item.interviewer;
+                                Sheet.Cells[i, 6].Value = item.MeetingStatusStatusDesc;
+                                Sheet.Cells[i, 7].Value = item.intervieweStatusStatDesc;
+                                Sheet.Cells[i, 8].Value = item.Name;
+                                if (actionstatus == "QCReport")
+                                {
+                                    Sheet.Cells[i, 9].Value = item.Redflags;
+                                }
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "No data available in table !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "No data available in table !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
     }
