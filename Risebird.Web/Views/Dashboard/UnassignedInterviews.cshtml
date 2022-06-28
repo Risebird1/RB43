@@ -75,7 +75,10 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard",new {actionstatus=ViewBag.actionstatus,actiontype=ViewBag.Actiontype })'"></i></span>
+                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                        {
+                            <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
+                        }
                     </div>
                 </div>
             </div>
