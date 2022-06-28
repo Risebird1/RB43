@@ -41,7 +41,21 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
-
+                <div class="pull-left">
+                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                    {
+                        if (ViewBag.actionstatus == "QCPendingReport")
+                        {
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                        }
+                        else
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                        }
+                    }
+                </div>
                 <div class="pull-right">
                     <div>
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -61,6 +75,10 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
+                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                        {
+                            <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
+                        }
                     </div>
                 </div>
             </div>
@@ -78,6 +96,7 @@
 
                             <div class="toolbar">
                                 <input type="hidden" value="@ViewBag.actionstatus" id="hidactionstatus" />
+                                <input type="hidden" value="@ViewBag.Actiontype" id="hidactiontype" />
                                 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
@@ -220,6 +239,10 @@
                                                         <th>Client HR</th>
                                                         <th>Client HR Contact</th>
                                                     }
+                                                    @if (ViewBag.actionstatus == "QCReport")
+                                                    {
+                                                        <th>Red Flags</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
                                                         <th>Channel Owner</th>
@@ -263,6 +286,10 @@
                                                     {
                                                         <th>Client HR</th>
                                                         <th>Client HR Contact</th>
+                                                    }
+                                                    @if (ViewBag.actionstatus == "QCReport")
+                                                    {
+                                                        <th>Red Flags</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                     {
@@ -375,7 +402,10 @@
                                                             <td>@item.ClientHrContact</td>
                                                             <td>@item.ClientMobileNumber</td>
                                                         }
-
+                                                        @if (ViewBag.actionstatus == "QCReport")
+                                                        {
+                                                            <td>@item.Redflags</td>
+                                                        }
                                                         <td>@item.HRCoordinatorEmailId</td>
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
@@ -664,6 +694,10 @@
     function closeZoomMeetingHistory() {
         var modal = document.getElementById("ZoomMeetingHistory");
         modal.style.display = "none";
+    }
+    function Changeurldetails(type) {
+        var actiontype = $("#hidactiontype").val();
+        window.location.href = "/DashBoard/UnassignedInterviews?actionstatus=" + type + "&actiontype=" + actiontype;
     }
 </script>
 

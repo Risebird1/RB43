@@ -1217,7 +1217,6 @@ namespace Risebird.Web.Controllers
                             DateTime EndDate = DateTime.Now.Date.AddDays(1);
                             meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
                         }
-
                         if (meetings != null && meetings.Count() > 0)
                         {
                             Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
@@ -1253,9 +1252,7 @@ namespace Risebird.Web.Controllers
 
                                 i++;
                             }
-
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
-
                         }
                         else
                         {
@@ -1263,20 +1260,16 @@ namespace Risebird.Web.Controllers
                             Rng.Value = "No data available in table !!!";
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
-
-
                     }
                     else
                     {
                         return null;
                     }
                 }
-
                 else
                 {
                     return null;
                 }
-
             }
             catch (Exception)
             {
@@ -1284,7 +1277,6 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
-
         }
     }
 }

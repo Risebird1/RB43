@@ -1,12 +1,23 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.UserList>
 @using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Data
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Users";
     ViewBag.PageHeader = "Risebird Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string[] Profile = new string[] { };
+    bool[] IsActive = new bool[] { };
 }
-
+@if (HttpContextAccessor.HttpContext.Session.GetString("RiseBirdUserfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContextAccessor.HttpContext.Session.GetString("RiseBirdUserfilters"));
+    Profile = filter.Profile != null ? filter.Profile : new string[] { };
+    IsActive = filter.IsActive != null ? filter.IsActive : new bool[] { };
+}
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -27,6 +38,10 @@
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add","User")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Risebird User</font></span>
                     </button>
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
 
 
                 </div>
@@ -45,7 +60,70 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-
+                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("Index","User")" method="post" id="form">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv ">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsActive">
+                                                                Status
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="IsActive" name="IsActive" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="true">Active</option>
+                                                                    <option value="false">InActive</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group col-md-12">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Profile">
+                                                                    Profile
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Profile" name="Profile" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in (List<Profile>)ViewBag.profiles)
+                                                                        {
+                                                                            @if (item.Name != null && item.Name != "")
+                                                                            {
+                                                                                <option value="@item.Name">@item.Name</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
                             <table id="risebirduser" class="table table-striped table-bordered dt-responsive dataTable dtr-inline" cellspacing="0" width="100%">
                                 <thead>
@@ -470,5 +548,31 @@
             $("#secret_" + id).addClass('hide');
             $("#secret_" + id).removeClass('show');
         }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+         $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+
+        //$("#ClientName").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
+    });
+    function ResetFilter() {
+        window.location.href = "/User/ResetIndex";
+    }
+     function ApplySessionFilter() {
+         var profile =  @Html.Raw(Json.Serialize(Profile));
+         var isActive =  @Html.Raw(Json.Serialize(IsActive));
+         $("#Profile").val(profile);
+         $("#IsActive").val(isActive);
     }
 </script>
