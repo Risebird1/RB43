@@ -835,26 +835,73 @@ namespace Risebird.Web.Controllers
             }
             if (assessmentGroups != null && assessmentGroups.Count() > 0)
             {
+                bool continueApplyingFilter = true;
                 if (countryid != 0)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.Country == countryid).ToList();
+                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByCountry = null;
+
+                    assessmentGroupsFilteredByCountry = assessmentGroups.Where(x => x.Country == countryid).ToList();
+                    assessmentGroups = assessmentGroupsFilteredByCountry;
+                    if(assessmentGroupsFilteredByCountry == null || assessmentGroupsFilteredByCountry.Count()==0)
+                    {
+                        continueApplyingFilter = false;
+                    }
                 }
-                if (companytype != 0)
+                if (companytype != 0 && continueApplyingFilter == true)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.CompanyType == companytype).ToList();
+                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByCompany = null;
+                    assessmentGroupsFilteredByCompany = assessmentGroups.Where(x => x.CompanyType == companytype).ToList();
+                    
+                    if(assessmentGroupsFilteredByCompany != null && assessmentGroupsFilteredByCompany.Count() > 0)
+                    {
+                        assessmentGroups = assessmentGroupsFilteredByCompany;
+                    }
+                    else
+                    {
+                        continueApplyingFilter = false;
+                    }
                 }
                 
                 if (jobLevelid != 0)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.SeniorityLevel != null && x.SeniorityLevel.Contains(jobLevelid.ToString())).ToList();
+                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByJobLevel = null;
+                    assessmentGroupsFilteredByJobLevel = assessmentGroups.Where(x => x.SeniorityLevel != null && x.SeniorityLevel.Contains(jobLevelid.ToString())).ToList();
+                    //assessmentGroups = assessmentGroups.Where(x => x.SeniorityLevel != null && x.SeniorityLevel.Contains(jobLevelid.ToString())).ToList();
+
+                    if (assessmentGroupsFilteredByJobLevel != null && assessmentGroupsFilteredByJobLevel.Count() > 0)
+                    {
+                        assessmentGroups = assessmentGroupsFilteredByJobLevel;
+                    }
+                    else
+                    {
+                        continueApplyingFilter = false;
+                    }
                 }
                 if (difficultyLevel != 0)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.ProfileType != null && x.ProfileType.Contains(difficultyLevel.ToString())).ToList();
+                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByDifficultyLevel= null;
+                    assessmentGroupsFilteredByDifficultyLevel = assessmentGroups.Where(x => x.ProfileType != null && x.ProfileType.Contains(difficultyLevel.ToString())).ToList();
+                    //assessmentGroups = assessmentGroups.Where(x => x.ProfileType != null && x.ProfileType.Contains(difficultyLevel.ToString())).ToList();
+
+                    if (assessmentGroupsFilteredByDifficultyLevel != null && assessmentGroupsFilteredByDifficultyLevel.Count() > 0)
+                    {
+                        assessmentGroups = assessmentGroupsFilteredByDifficultyLevel;
+                    }
+                    else
+                    {
+                        continueApplyingFilter = false;
+                    }
                 }
                 if (employmentType != 0)
                 {
-                    assessmentGroups = assessmentGroups.Where(x => x.EmploymentType != null && x.EmploymentType.Contains(employmentType.ToString())).ToList();
+                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByEmploymentType = null;
+                    assessmentGroupsFilteredByEmploymentType = assessmentGroups.Where(x => x.EmploymentType != null && x.EmploymentType.Contains(employmentType.ToString())).ToList();
+                    //assessmentGroups = assessmentGroups.Where(x => x.EmploymentType != null && x.EmploymentType.Contains(employmentType.ToString())).ToList();
+
+                    if (assessmentGroupsFilteredByEmploymentType != null && assessmentGroupsFilteredByEmploymentType.Count() > 0)
+                    {
+                        assessmentGroups = assessmentGroupsFilteredByEmploymentType;
+                    }
                 }
 
                 if ( assessmentGroups == null || assessmentGroups.Count() == 0)

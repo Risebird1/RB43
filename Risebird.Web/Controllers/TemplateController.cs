@@ -208,13 +208,28 @@ namespace Risebird.Web.Controllers
                                 //    }
                                 //}
 
+                                if (!string.IsNullOrEmpty(filter.Category))
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByCategory = null;
+
+                                    templatesFilteredByCategory = model.ClonableTemplates.Where(c => !string.IsNullOrEmpty(c.CategoryName) && c.CategoryName == filter.Category);
+                                    model.ClonableTemplates = templatesFilteredByCategory;
+                                }
+
 
                                 if (!string.IsNullOrEmpty(filter.CountryType))
                                 {
                                     IEnumerable<ClonableSkillChannelVM> templatesFilteredByCountryType = null;
 
                                     templatesFilteredByCountryType = model.ClonableTemplates.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
-                                    model.ClonableTemplates = templatesFilteredByCountryType;
+                                    if (templatesFilteredByCountryType != null && templatesFilteredByCountryType.Count() > 0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredByCountryType;
+                                    }
+                                    else
+                                    {
+                                        continueApplyingFilter = false;
+                                    }
                                 }
 
 
@@ -274,6 +289,17 @@ namespace Risebird.Web.Controllers
                                     if (templatesFilteredByEmploymentType != null && templatesFilteredByEmploymentType.Count() > 0)
                                     {
                                         model.ClonableTemplates = templatesFilteredByEmploymentType;
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(filter.AssessmentGroupTemplate))
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
+
+                                    templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => c.AssessmentGroupName!=null && c.AssessmentGroupName.Contains(filter.AssessmentGroupTemplate));
+                                    if (templatesFilteredByAssessmentGroup != null && templatesFilteredByAssessmentGroup.Count() > 0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredByAssessmentGroup;
                                     }
                                 }
 
@@ -401,7 +427,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         var model = new SkillChannelTemplateVM();
                         SetTemplateParameters(model);
@@ -474,7 +500,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         //check duplicates for interviewer, emergency interviewer and quality controllers
                         bool isDuplicate = false;
@@ -592,7 +618,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         var model = new EditSkillChannelTemplateVM();
                         model = await _templateService.GetTemplateById(id);
@@ -630,7 +656,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         //check duplicates for interviewer, emergency interviewer and quality controllers
                         bool isDuplicate = false;
@@ -709,7 +735,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         var result = await _templateService.DeleteTemplate(id);
                         return Json(result);
@@ -742,7 +768,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
                         var result = await _templateService.RestoreTemplate(id);
                         return Json(result);
