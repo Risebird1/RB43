@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -62,7 +63,19 @@ namespace Risebird.Web.Controllers
                         ViewBag.Message = TempData["SuccessErrorMessageUser"].ToString();
                         TempData.Remove("SuccessErrorMessageUser");
                     }
-                    return View(_userService.GetRisebirdUsers());
+                    var model = _userService.GetRisebirdUsers();
+                    List<Profile> profiles = _profileService.GetProfile();
+                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
+                    ViewBag.profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
+                    if (HttpContext.Session.GetString("RiseBirdUserfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("RiseBirdUserfilters"));
+                        filter.Profile = filter.Profile == null ? filter.Profile = model.Select(x => x.ProfileName).ToArray() : filter.Profile = filter.Profile;
+                        filter.IsActive = filter.IsActive == null ? filter.IsActive = model.Select(x => x.IsActive).ToArray() : filter.IsActive = filter.IsActive;
+                        model = model.Where(c => filter.Profile.Contains(c.ProfileName)
+                        && ((filter.IsActive != null && filter.IsActive.Count() > 0) ? filter.IsActive.Contains(c.IsActive) : c.IsActive == false)).ToList();
+                    }
+                    return View(model);
                 }
                 else
                 {
@@ -72,6 +85,51 @@ namespace Risebird.Web.Controllers
             catch (Exception)
             {
                 return null;
+            }
+        }
+        [HttpPost]
+        public IActionResult Index(SelectedPriorityViewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("RiseBirdUserfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetIndex()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("RiseBirdUserfilters");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
             }
         }
 

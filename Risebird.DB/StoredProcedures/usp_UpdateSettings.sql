@@ -17,7 +17,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateSettings]
 @ClientReportingMailMinutes int, 
 @InterviewWindupReminderMinutes int, 
 @InterviewReportReminderMinutes int, 
-@QCCommentReminderMinutes int,
+--@QCCommentReminderMinutes int,
 @QCFormdeductionRate int
 
 AS
@@ -29,7 +29,7 @@ set
 [ClientReportingMailMinutes]=@ClientReportingMailMinutes,
 [InterviewWindupReminderMinutes]=@InterviewWindupReminderMinutes,
 [InterviewReportReminderMinutes]=@InterviewReportReminderMinutes,
-[QCCommentReminderMinutes]=@QCCommentReminderMinutes,
+--[QCCommentReminderMinutes]=@QCCommentReminderMinutes,
 [QCFormdeductionRate]=@QCFormdeductionRate
 
 END

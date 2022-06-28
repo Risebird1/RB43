@@ -15,5 +15,7 @@ namespace Risebird.Entities.ViewModel
         public string[] SelectionStatus { get; set; }
         public string[] JoiningStatus { get; set; }
         public string[] OfferStatus { get; set; }
+        public string[] Profile { get; set; }
+        public bool[] IsActive { get; set; }
     }
 }
