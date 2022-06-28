@@ -72,7 +72,6 @@
                         <span class="interview_3">
 
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
@@ -405,7 +404,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                    <th>QC Status</th>*@
+                                                        <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -452,7 +451,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                    <th>QC Status</th>*@
+                                                        <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -669,19 +668,19 @@
 
                                                         @if (item.InterviewStatus == 2)
                                                         {
-                                                        <td class="text-center">
-                                                            <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                        </td>
+                                                            <td class="text-center">
+                                                                <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
                                                         }
                                                         else if (item.InterviewStatus == 4)
                                                         {
-                                                        <td class="text-center">
-                                                            <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                        </td>
+                                                            <td class="text-center">
+                                                                <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
+                                                            </td>
                                                         }
                                                         else
                                                         {
-                                                        <td class="text-center">@item.intervieweStatusStatDesc</td>
+                                                            <td class="text-center">@item.intervieweStatusStatDesc</td>
                                                         }
 
                                                         @if (item.IsCandidateResponsed)
@@ -765,16 +764,16 @@
                                                         }
                                                         <td>@item.interviewSlot</td>
                                                         @*<td>@item.QCInterviewer</td>
-                                                        @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
-                                                        {
-                                                            <td>@item.QCStatusStatusDesc</td>
+                                                            @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
+                                                            {
+                                                                <td>@item.QCStatusStatusDesc</td>
 
-                                                        }
-                                                        else
-                                                        {
-                                                            <td></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
 
-                                                        }*@
+                                                            }*@
                                                         <td>@item.HRCoordinatorEmailId</td>
 
                                                         <td class="interview-com">
