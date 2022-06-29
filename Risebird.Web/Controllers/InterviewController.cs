@@ -6871,6 +6871,7 @@ namespace Risebird.Web.Controllers
                         if (model == null)
                         {
                             model = new QCFormVM();
+                            setDefaultFlagsValue(model);
                             model.Isedit = false;
                         }
                         else
@@ -7302,6 +7303,33 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public void setDefaultFlagsValue(QCFormVM model)
+        {
+            model.IsCodingPresent = true;
+            model.IsVideoClearQuality = true;
+            model.IsInterviewerCommunicationClear = true;
+            model.IsSufficientVideoDuration = true;
+            model.IsInterviewStructured = true;
+
+            model.IsScoringrubriccorrect = true;
+            model.IsQuestionswithtime = true;
+            model.IsCommentfilled = true;
+            model.IsMeetingStatusfilled = true;
+            model.IsRelevancequestions = true;
+
+            model.IsDelayresuminginterview = false;
+            model.IsBackgroundnoise = false;
+            model.IsPoorinterviewerinfrastructure = false;
+
+            model.IsPoorhandlingcandidatequery = false;
+            model.IsPersonalquestions = false;
+            model.IsAugmenting = false;
+            model.IsBiasedView = false;
+            model.IsLettingcandidatespeak = true;
+
+            model.IsSuspiciousappfound = false;
+            model.IsLipsyncissue = false;
         }
         #endregion
     }
