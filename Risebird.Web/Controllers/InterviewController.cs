@@ -6737,6 +6737,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
+                    ViewBag.PageFrom = "Completed";
                     if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         if (TempData["SuccessErrorMessageQCForm"] != null)
@@ -6808,9 +6809,6 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
-                    emailId = emailId.Replace("\"", "");
-                    ViewBag.emailid = emailId;
                     if (profileName == "Quality Controller" || profileName == "Admin")
                     {
                         if (filter != null)
@@ -6856,7 +6854,7 @@ namespace Risebird.Web.Controllers
             }
         }
         //Create QCForm
-        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer)
+        public async Task<IActionResult> QCReportForm(int interviewid, string interviewer, string type)
         {
             try
             {
@@ -6881,6 +6879,7 @@ namespace Risebird.Web.Controllers
                         }
                         model.Interviewer = interviewer;
                         model.Profile = profileName;
+                        model.Type = type;
                         return View(model);
                     }
                     else
@@ -6952,7 +6951,14 @@ namespace Risebird.Web.Controllers
                         {
                             TempData["SuccessErrorMessageQCForm"] = "Fail to save QC Form.";
                         }
-                        return RedirectToAction("CompletedInterviews");
+                        if (model.Type == "Completed")
+                        {
+                            return RedirectToAction("CompletedInterviews");
+                        }
+                        else
+                        {
+                            return RedirectToAction("ResolvedRedFlagsInterviews");
+                        }
                     }
                     else
                     {
@@ -6968,7 +6974,14 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageQCForm"] = "Fail to save QC Form.";
-                return RedirectToAction("CompletedInterviews");
+                if (model.Type == "Completed")
+                {
+                    return RedirectToAction("CompletedInterviews");
+                }
+                else
+                {
+                    return RedirectToAction("ResolvedRedFlagsInterviews");
+                }
             }
         }
         //Save QCForm
@@ -7198,6 +7211,81 @@ namespace Risebird.Web.Controllers
                             return x;
                         }).ToList();
                         return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public JsonResult QCReportRedFlagsResolved(int interviewid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer" || profileName == "Admin")
+                    {
+                        var _updatelist = _meetingService.UpdateQCReportRedFlagsResolved(interviewid);
+                        return Json("Successfully Updated");
+                    }
+                    else
+                    {
+                        return Json("failed");
+                    }
+                }
+                else
+                {
+                    return Json("failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResolvedRedFlagsInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    ViewBag.emailid = emailId;
+                    ViewBag.PageFrom = "Resloved";
+                    if (profileName == "Quality Controller" || profileName == "Admin")
+                    {
+                        if (TempData["SuccessErrorMessageQCForm"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                            TempData.Remove("SuccessErrorMessageQCForm");
+                        }
+                        List<MeetingVM> modelList = new List<MeetingVM>();
+                        modelList = _meetingService.GetReslovedRedFlagsInterviewList();
+                        modelList = modelList.Select(x =>
+                        {
+                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        return View("CompletedInterviews", modelList);
                     }
                     else
                     {
