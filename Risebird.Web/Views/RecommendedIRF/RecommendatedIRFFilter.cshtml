@@ -14,12 +14,13 @@
     //string[] SeniorityLevel = new string[] { };
     //string[] CountryType = new string[] { };
     //string[] CompanyType = new string[] { };
-    string[] AssessmentGroup = new string[] { };
+    string AssessmentGroupTemplate = string.Empty;
     string SeniorityLevel = string.Empty;
     string CountryType = string.Empty;
     string CompanyType = string.Empty;
     string EmploymentType = string.Empty;
     string DifficultyLevel = string.Empty;
+    string Category = string.Empty;
 }
 <script>
     var Header = "Recommendation Skill Channel";
@@ -29,13 +30,13 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("ClonableRTemplatesFilters") != null)
 {
     filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClonableRTemplatesFilters"));
-    //CompetencyLevel = filter.CompetencyLevel != null ? filter.CompetencyLevel : new string[] { };
     SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : string.Empty;
     CountryType = filter.CountryType != null ? filter.CountryType : string.Empty;
     CompanyType = filter.CompanyType != null ? filter.CompanyType : string.Empty;
     EmploymentType = filter.EmploymentType != null ? filter.EmploymentType : string.Empty;
     DifficultyLevel = filter.DifficultyLevel != null ? filter.DifficultyLevel : string.Empty;
-    AssessmentGroup = filter.AssessmentGroup != null ? filter.AssessmentGroup : new string[] { };
+    AssessmentGroupTemplate = filter.AssessmentGroupTemplate != null ? filter.AssessmentGroupTemplate : string.Empty;
+    Category = filter.Category != null ? filter.Category : string.Empty;
 }
 
 
@@ -100,30 +101,15 @@
                                                     <div class="row">
 
                                                         <div class="col-md-6 col-sm-6 border-rv">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroup">Assessment Group</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="AssessmentGroup" name="AssessmentGroup" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
-                                                                        @foreach (var item in Model.ClonableTemplates.Select(x => x.AssessmentGroupName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
 
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Category">Category</label>
                                                                 <div class="col-md-12 col-sm-12">
-
-                                                                    <select id="SeniorityLevel" name="SeniorityLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                    <select id="Category" name="Category" class="form-control" onchange="CategoryChanged(this.value)">
                                                                         <option value="">Select</option>
-                                                                        @foreach (var item in Html.GetEnumSelectList<JobLevels>())
+                                                                        @foreach (var item in Model.ClonableTemplates?.Select(x => x.CategoryName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
                                                                         {
-                                                                            <option value="@item.Value">@item.Text</option>
+                                                                            <option value="@item">@item</option>
                                                                         }
                                                                     </select>
                                                                 </div>
@@ -142,26 +128,13 @@
                                                                 </div>
                                                             </div>
 
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+
+                                                                    <select id="SeniorityLevel" name="SeniorityLevel" @*data-placeholder="None Selected"*@ class="form-control">
                                                                         <option value="">Select</option>
-                                                                        @foreach (var item in Html.GetEnumSelectList<CompanyType>())
-                                                                        {
-                                                                            <option value="@item.Value">@item.Text</option>
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
-                                                                        <option value="">Select</option>
-                                                                        @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                        @foreach (var item in Html.GetEnumSelectList<JobLevels>())
                                                                         {
                                                                             <option value="@item.Value">@item.Text</option>
                                                                         }
@@ -180,6 +153,52 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
+
+
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupTemplate">Assessment Group</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="AssessmentGroupTemplate" name="AssessmentGroupTemplate" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @*@foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }*@
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
                                                             <div class="form-group">
 
                                                                 <div>
@@ -219,7 +238,7 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Tech Skills</th>
-                                                    <th>Interviewers</th>
+                                                    @*<th>Interviewers</th>*@
                                                     <th>Actions</th>
 
                                                 </tr>
@@ -228,7 +247,7 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Tech Skills</th>
-                                                    <th>Interviewers</th>
+                                                    @*<th>Interviewers</th>*@
                                                     <th>Actions</th>
 
                                                 </tr>
@@ -256,11 +275,11 @@
                                                                 </button>
                                                             </td>
 
-                                                            <td>
+                                                            @*<td>
                                                                 <button type="button" class="clickhere_btn pull-left">
                                                                     <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
                                                                 </button>
-                                                            </td>
+                                                            </td>*@
 
                                                             <td>
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
@@ -528,7 +547,9 @@
     };
     //// script for loader ends here
 </script>
+<script src="~/js/TemplateFilter.js"></script>
 <script>
+    var assessmentGroupCategoryMapArray;
 
     $(document).ready(function () {
 
@@ -540,6 +561,11 @@
             ApplySessionFilter();
         }
 
+        var assessmentGroupsMappedToCurrentTemplates = '@Model.AssessmentGroupsMappedToCurrentTemplates';
+        if (assessmentGroupsMappedToCurrentTemplates != null) {
+            assessmentGroupCategoryMapArray = JSON.parse(assessmentGroupsMappedToCurrentTemplates.replace(/&quot;/g, '"'));
+        }
+        FilterAssessmentGroupDropDown($("#Category").val(), assessmentGroupCategoryMapArray);
     });
 
     function ResetFilter() {
@@ -561,7 +587,8 @@
         var companyType =  @Html.Raw(Json.Serialize(CompanyType));
         var employmentType =  @Html.Raw(Json.Serialize(EmploymentType));
         var difficultyLevel =  @Html.Raw(Json.Serialize(DifficultyLevel));
-        var assessmentGroup =  @Html.Raw(Json.Serialize(AssessmentGroup));
+        var assessmentGroupTemplate =  @Html.Raw(Json.Serialize(AssessmentGroupTemplate));
+        var category =  @Html.Raw(Json.Serialize(Category));
 
         //$("#TemplateName").val(templateName);
         //$("#CompetencyLevel").val(competencyLevel);
@@ -571,6 +598,7 @@
         $("#EmploymentType").val(employmentType);
         $("#DifficultyLevel").val(difficultyLevel);
         $("#AssessmentGroup").val(assessmentGroup);
+        $("#Category").val(category);
     }
 
 </script>
@@ -772,5 +800,9 @@
         return flag;
     }
 </script>
-
+<script>
+    function CategoryChanged(categorySelected) {
+        FilterAssessmentGroupDropDown(categorySelected, assessmentGroupCategoryMapArray)
+    }
+</script>
 
