@@ -105,7 +105,7 @@
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="Category">Category</label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="Category" name="Category" class="form-control">
+                                                                    <select id="Category" name="Category" class="form-control" onchange="CategoryChanged(this.value)">
                                                                         <option value="">Select</option>
                                                                         @foreach (var item in Model.ClonableTemplates?.Select(x => x.CategoryName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
                                                                         {
@@ -162,13 +162,13 @@
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="AssessmentGroupTemplate" name="AssessmentGroupTemplate" @*data-placeholder="None Selected"*@ class="form-control">
                                                                         <option value="">Select</option>
-                                                                        @foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
+                                                                        @*@foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
                                                                                 <option value="@item">@item</option>
                                                                             }
-                                                                        }
+                                                                        }*@
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -713,7 +713,7 @@
     //// script for loader ends here
 </script>
 <script>
-
+    var currentAsessmentGroupsAndCategoryMappingArray;
     $(document).ready(function () {
 
         $("#ResetFilter").click(function () {
@@ -724,6 +724,11 @@
             ApplySessionFilter();
         }
 
+        var assessmentGroupsMappedToCurrentTemplates = '@Model.AssessmentGroupsMappedToCurrentTemplates';
+        if (assessmentGroupsMappedToCurrentTemplates != null) {
+            currentAsessmentGroupsAndCategoryMappingArray = JSON.parse(assessmentGroupsMappedToCurrentTemplates.replace(/&quot;/g, '"'));
+        }
+        CategoryChanged($("#Category").val());
     });
 
     function ResetFilter() {
@@ -852,6 +857,59 @@
     }
 
 </script>
+<script>
+    function CategoryChanged(categorySelected) {
+        $("#AssessmentGroupTemplate option").remove();
+        if (categorySelected != null && categorySelected != '') {
+            
+            if (currentAsessmentGroupsAndCategoryMappingArray != null) {
+                const result = currentAsessmentGroupsAndCategoryMappingArray.filter(checkForCorrespondingAssessmentGroup);
 
+                function checkForCorrespondingAssessmentGroup(arrayItem) {
+                    if (arrayItem != null) {
+                        if (arrayItem.Item2 != null && arrayItem.Item2.toLowerCase() == categorySelected.toLowerCase() && arrayItem.Item1 != null) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                AppendOptionsToAssessmentGroupsFilterDropDown(result);
+            }
+
+
+        }
+        else {
+            
+            if (currentAsessmentGroupsAndCategoryMappingArray != null) {
+
+                AppendOptionsToAssessmentGroupsFilterDropDown(currentAsessmentGroupsAndCategoryMappingArray);
+            }
+        }
+        return;
+    }
+
+    function AppendOptionsToAssessmentGroupsFilterDropDown(data) {
+        if (data != null) {
+            var drpAssessmentGroups = $("#AssessmentGroupTemplate");
+            var option = $("<option />");
+            option.html("Select");
+            option.val();
+            drpAssessmentGroups.append(option);
+            if (data.length > 0) {
+                $(data).each(function () {
+                    if (this.Item1 != null && this.Item1 != '') {
+                        var option = $("<option />");
+                        option.html(this.Item1);
+                        option.val(this.Item1);
+                        drpAssessmentGroups.append(option);
+                    }
+                    
+                });
+            }
+        }
+        return;
+    }
+</script>
 
 
