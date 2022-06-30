@@ -187,5 +187,7 @@ namespace Risebird.Business.Interface
         string GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         List<MeetingVM> QCReportDetailsByInterviewer(string emailId);
+        bool UpdateQCReportRedFlagsResolved(int interviewid);
+        List<MeetingVM> GetReslovedRedFlagsInterviewList();
     }
 }

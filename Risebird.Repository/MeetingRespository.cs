@@ -5768,7 +5768,7 @@ namespace Risebird.Repository
                     parameters.Add("@IsSuspiciousappfound", model.IsSuspiciousappfound);
                     parameters.Add("@IsLipsyncissue", model.IsLipsyncissue);
 
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_AddorUpdateQCFormReport", parameters, commandTimeout: 600,
+                    var result = SqlMapper.Query(con, "usp_AddorUpdateQCFormReport", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -5932,6 +5932,50 @@ namespace Risebird.Repository
                     parameters.Add("@StartDate", Startdate);
                     parameters.Add("@EndDate", Enddate);
                     var result = SqlMapper.Query<MeetingVM>(con, "usp_FetchQCFormsOnDate", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateQCReportRedFlagsResolved(int interviewid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(
+                        con, "update [dbo].[Trans_QCFormReport] set InterviewerAction=1 where Interviewid = @value", new { value = interviewid }, commandType: Text);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IEnumerable<MeetingVM>> GetReslovedRedFlagsInterviewList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    var parameters = new DynamicParameters();
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetReslovedRedFlagsInterviewMeetings", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return result;
                 }
