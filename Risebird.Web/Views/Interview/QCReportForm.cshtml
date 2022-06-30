@@ -43,6 +43,7 @@
                             @Html.HiddenFor(m => m.Interviewid)
                             @Html.HiddenFor(m => m.Interviewer)
                             @Html.HiddenFor(m => m.Isedit)
+                            @Html.HiddenFor(m => m.Type)
                             <div class="canvas_div_pdf">
                                 <div class="report-full-wrap">
                                     <div class="row">
@@ -309,7 +310,14 @@
                                 <div class="card-footer ">
                                     <div class="row">
                                         <div class="col-md-12 mc-button-area">
-                                            <a href="/Interview/CompletedInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            @if (Model.Type == "Completed")
+                                            {
+                                                <a href="/Interview/CompletedInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="/Interview/ResolvedRedFlagsInterviews" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                                            }
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
                                         </div>
                                     </div>

@@ -3505,6 +3505,34 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool UpdateQCReportRedFlagsResolved(int interviewid)
+        {
+            try
+            {
+                if (_meetingRespository.UpdateQCReportRedFlagsResolved(interviewid).Result)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public List<MeetingVM> GetReslovedRedFlagsInterviewList()
+        {
+            try
+            {
+                return _meetingRespository.GetReslovedRedFlagsInterviewList().Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
