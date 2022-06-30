@@ -54,15 +54,18 @@
                 </div>
 
                 <div class="pull-right">
-                    <div>
-                        <span class="interview_3">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
-                        </span>
-                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExportQCReportCompleted", "Interview")'"></i></span>
-                    </div>
+                    @if (ViewBag.PageFrom == "Completed")
+                    {
+                        <div>
+                            <span class="interview_3">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            </span>
+                            <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExportQCReportCompleted", "Interview")'"></i></span>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -268,16 +271,27 @@
                                                         {
                                                             <td>No</td>
                                                         }
-                                                        <td>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                <a style="color:white" target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a>
-                                                            </button>
+                                                    <td>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                            <a style="color:white" target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a>
+                                                        </button>
+                                                        @if (ViewBag.PageFrom == "Completed")
+                                                        {
                                                             <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
-                                                                <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid,interviewer=item.interviewer})'" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="Completed" })'" title="QC Form" class="mdc-fab__icon material-icons">
                                                                     <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
                                                                 </span>
                                                             </button>
-                                                        </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
+                                                                <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="Resloved" })'" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                                </span>
+                                                            </button>
+                                                        }
+                                                    </td>
                                                     </tr>
                                                 }
                                             </tbody>
