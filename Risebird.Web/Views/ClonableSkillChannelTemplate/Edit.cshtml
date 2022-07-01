@@ -86,286 +86,353 @@
 
                                                     </div>
                                                 </div>
-                                                <div class="row" id="recommendationFields">
+                                                <div id="recommendationFields">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
 
-                                                    <div class="col-md-6 col-sm-6 pr-1">
-
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @if (Model.IRFRecommendations.CategoryId.HasValue)
-                                                            {
-                                                                @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line", @disabled = "disabled" @*, @onchange = "AssessmentGroupCategoryChanged(this.value)"*@})@*(SelectList)ViewBag.CategoryList*@
-
-                                                            }
-                                                            else
-                                                            {
-                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Category has not been specified for this Assessment Group</label>
-
-                                                            }
-
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
-
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-
-                                                            @if (Model.IRFRecommendations.AssessmentGroupsList != null && Model.IRFRecommendations.AssessmentGroupsList.Count() > 0)
-                                                            {
-                                                                @Html.DropDownListFor(model => model.IRFRecommendations.AssessmentGroupId, Model.IRFRecommendations.AssessmentGroupsList, new { @class = "select-css form-control text-box single-line", @disabled = "disabled" })
-
-                                                            }
-                                                            else
-                                                            {
-                                                                @Html.EditorFor(m => m.IRFRecommendations.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-
-                                                            }
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
-
-
-                                                        </div>
-                                                        <div class="form-group">
-
-
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            
-                                                            <select class="form-control" asp-for="IRFRecommendations.DifficultyLevelArray" multiple">
-                                                                @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                @if (Model.IRFRecommendations.AssessmentGroupsList != null && Model.IRFRecommendations.AssessmentGroupsList.Count() > 0)
                                                                 {
-                                                                    <option value="@item.Value">@item.Text</option>
+                                                                    @Html.DropDownListFor(model => model.IRFRecommendations.AssessmentGroupId, Model.IRFRecommendations.AssessmentGroupsList, new { @class = "select-css form-control text-box single-line", @disabled = "disabled" })
+
                                                                 }
-                                                            </select>
-
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.DifficultyLevel, "", new { @class = "text-danger" })
-
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-
-                                                            <select class="form-control" asp-for="IRFRecommendations.EmploymentTypeArray" multiple">
-                                                                @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
+                                                                else
                                                                 {
-                                                                    <option value="@item.Value">@item.Text</option>
+                                                                    @Html.EditorFor(m => m.IRFRecommendations.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+
                                                                 }
-                                                            </select>
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
 
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
 
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @if (Model.IRFRecommendations.CategoryId.HasValue)
+                                                                {
+                                                                    @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line", @disabled = "disabled" @*, @onchange = "AssessmentGroupCategoryChanged(this.value)"*@})@*(SelectList)ViewBag.CategoryList*@
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Category has not been specified for this Assessment Group</label>
+
+                                                                }
+
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
+
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6 pr-1">
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+
+                                                                @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CountryType, "", new { @id = "error_CountryType", @class = "text-danger" })
+
                                                             </div>
-
-                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CountryType, "", new { @id = "error_CountryType", @class = "text-danger" })
-
                                                         </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.DropDownListFor(model => model.IRFRecommendations.CompanyType, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "select-css form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
                                                             </div>
-
-                                                            <select class="form-control" asp-for="IRFRecommendations.SeniorityLevelArray" multiple">
-                                                                @foreach (var item in Html.GetEnumSelectList<JobLevels>())
-                                                                {
-                                                                    <option value="@item.Value">@item.Text</option>
-                                                                }
-                                                            </select>
-
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
-
                                                         </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.DropDownListFor(model => model.IRFRecommendations.CompanyType, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <div class="mandate">
-                                                                @Html.LabelFor(model => model.IRFRecommendations.PerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
-
-                                                            @*@Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { @class = "form-control text-box single-line" })*@
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.PerHourRate, "", new { @id = "error_PerHourRate", @class = "text-danger" })
-                                                        </div>
-
-                                                            @*@Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { @class = "form-control text-box single-line" })*@
-                                                            @Html.ValidationMessageFor(model => model.IRFRecommendations.PerHourRate, "", new { @id = "error_PerHourRate", @class = "text-danger" })
-                                                        </div>
-
-                                                        @Html.HiddenFor(m => m.IRFRecommendations.id)
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
 
+                                                                <select class="form-control" asp-for="IRFRecommendations.SeniorityLevelArray" multiple">
+                                                                    @foreach (var item in Html.GetEnumSelectList<JobLevels>())
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+
+
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+
+                                                                <select class="form-control" asp-for="IRFRecommendations.DifficultyLevelArray" multiple">
+                                                                    @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.DifficultyLevel, "", new { @class = "text-danger" })
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+
+                                                                <select class="form-control" asp-for="IRFRecommendations.EmploymentTypeArray" multiple">
+                                                                    @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.PerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-bottom : -5px" })<span class="red">*</span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.PerHourRate, "", new { @id = "error_PerHourRate", @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    @Html.HiddenFor(m => m.IRFRecommendations.id)
                                                 </div>
+
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <h3 class="tab_drawer_heading" rel="tab-2">Tech Skill</h3>
-                                        <div class="tab-box" id="tab-2">
-                                            <div class="tab-main-box">
-                                                <div class="row">
+                                    <h3 class="tab_drawer_heading" rel="tab-2">Tech Skill</h3>
+                                    <div class="tab-box" id="tab-2">
+                                        <div class="tab-main-box">
+                                            <div class="row">
 
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <div class="table-responsive-sm">
-                                                            <table class="table table-bordered mbn" id="SkillTable">
-                                                                <thead>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="table-responsive-sm">
+                                                        <table class="table table-bordered mbn" id="SkillTable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                    <th width="30%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                                                    <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                    <th width="20%" class="table_heading">Concepts</th>
+                                                                    <th width="30%" class="table_heading">Nature of questions</th>
+                                                                    <th width="10%" class="table_heading">Time limit</th>
+                                                                    <th width="10%" class="table_heading text-center">Action</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
+                                                                {
                                                                     <tr>
-                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                                                        <th width="30%" class="table_heading">Skill Name<span class="red">*</span></th>
-                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                                                        <th width="20%" class="table_heading">Concepts</th>
-                                                                        <th width="30%" class="table_heading">Nature of questions</th>
-                                                                        <th width="10%" class="table_heading">Time limit</th>
-                                                                        <th width="10%" class="table_heading text-center">Action</th>
+                                                                        <td>
+                                                                            @Html.DropDownList("SkillCollection[0].LevelId", Model.LevelTech, new { @class = "select-css form-control " })
 
+                                                                        </td>
+                                                                        <td>
+                                                                            @Html.DropDownList("SkillCollection[0].SkillId", Model.Skills, new { @class = "select-css form-control " })
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                                                                        </td>
+                                                                        <td class="action text-center">
+
+                                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+
+                                                                        </td>
                                                                     </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    for (int i = 0; i < Model.SkillCollection.Count(); i++)
                                                                     {
                                                                         <tr>
+
                                                                             <td>
-                                                                                @Html.DropDownList("SkillCollection[0].LevelId", Model.LevelTech, new { @class = "select-css form-control " })
+                                                                                @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, Model.LevelTech, new { @class = "form-control select-css" })
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, Model.Skills, new { @class = "select-css form-control" })
+                                                                            </td>
+
+                                                                            <td>
+                                                                                @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
                                                                             </td>
                                                                             <td>
-                                                                                @Html.DropDownList("SkillCollection[0].SkillId", Model.Skills, new { @class = "select-css form-control " })
+                                                                                @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                                                             </td>
                                                                             <td>
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                                @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                                                             </td>
                                                                             <td>
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
-                                                                            </td>
-                                                                            <td>
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
-                                                                            </td>
-                                                                            <td>
-                                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="1">
+                                                                                @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
                                                                             </td>
                                                                             <td class="action text-center">
-
-                                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-
+                                                                                <div>
+                                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                </div>
                                                                             </td>
                                                                         </tr>
+
                                                                     }
+                                                                }
 
-                                                                    else
-                                                                    {
-                                                                        for (int i = 0; i < Model.SkillCollection.Count(); i++)
-                                                                        {
-                                                                            <tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red!important; margin-left:807px;font-size:12px!important;"></label>
+                                                        <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
+                                                    </div>
+                                                </div><!--end of col-md-12-->
 
-                                                                                <td>
-                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, Model.LevelTech, new { @class = "form-control select-css" })
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, Model.Skills, new { @class = "select-css form-control" })
-                                                                                </td>
-
-                                                                                <td>
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "1" } })
-                                                                                </td>
-                                                                                <td class="action text-center">
-                                                                                    <div>
-                                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                    </div>
-                                                                                </td>
-                                                                            </tr>
-
-                                                                        }
-                                                                    }
-
-                                                                </tbody>
-                                                            </table>
-                                                            <label class="text-danger" id="SkillCollection_WeightageError" style="color:red!important; margin-left:807px;font-size:12px!important;"></label>
-                                                            <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
-                                                        </div>
-                                                    </div><!--end of col-md-12-->
-
-                                                </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <h3 class="tab_drawer_heading" rel="tab-3">Interviewer</h3>
-                                        <div class="tab-box" id="tab-3">
-                                            <div class="tab-main-box">
-                                                <div class="row">
+                                    <h3 class="tab_drawer_heading" rel="tab-3">Interviewer</h3>
+                                    <div class="tab-box" id="tab-3">
+                                        <div class="tab-main-box">
+                                            <div class="row">
 
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <div class="table-responsive-sm">
-                                                            <table class="table table-bordered mbn" id="InterviewerTable">
-                                                                <thead>
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="table-responsive-sm">
+                                                        <table class="table table-bordered mbn" id="InterviewerTable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th width="20%" class="table_heading">EmailId <span class="red">*</span></th>
+                                                                    <th width="40%" class="table_heading">Skills</th>
+                                                                    <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
+
+                                                                    <th width="10%" class="table_heading"> Relevant </th>
+                                                                    <th width="10%" class="table_heading">Resume</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
+                                                                {
                                                                     <tr>
-                                                                        <th width="20%" class="table_heading">EmailId <span class="red">*</span></th>
-                                                                        <th width="40%" class="table_heading">Skills</th>
-                                                                        <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
+                                                                        <td>
+                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                            @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
+                                                                        </td>
+                                                                        <td>
+                                                                            @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                        </td>
+                                                                        <td>
+                                                                            @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
+                                                                            {
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                            }
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                        </td>
 
-                                                                        <th width="10%" class="table_heading"> Relevant </th>
-                                                                        <th width="10%" class="table_heading">Resume</th>
+                                                                        @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
+                                                                        {
+                                                                            @if (Model.InterviewerCollection[0].ResumeLink.Length > 40)
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
+                                                                                </td>
+
+                                                                            }
+
+                                                                            else
+                                                                            {
+                                                                                <td class="cadName">
+                                                                                    <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank">Resume</a>
+                                                                                </td>
+
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="cadName">
+                                                                                <a onclick="">No Resume</a>
+                                                                            </td>
+                                                                        }
 
                                                                     </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
+                                                                }
+                                                                else
+                                                                {
+                                                                    for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[0].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                @Html.HiddenFor(m => m.InterviewerCollection[0].UserId)
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                             </td>
                                                                             <td>
-                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
                                                                             </td>
                                                                             <td>
                                                                                 @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
                                                                                 {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1" })
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
                                                                                 }
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                @Html.CheckBox("InterviewerCollection[0].IsActive", new { @checked = "checked" })
+                                                                                @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                             </td>
 
-                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[0].ResumeLink))
+                                                                            @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                             {
-                                                                                @if (Model.InterviewerCollection[0].ResumeLink.Length > 40)
+                                                                                @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[0].ResumeLink">Resume</a>
+                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
                                                                                     </td>
 
                                                                                 }
@@ -373,7 +440,7 @@
                                                                                 else
                                                                                 {
                                                                                     <td class="cadName">
-                                                                                        <a href="@Model.InterviewerCollection[0].ResumeLink" target="_blank">Resume</a>
+                                                                                        <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank">Resume</a>
                                                                                     </td>
 
                                                                                 }
@@ -385,416 +452,357 @@
                                                                                 </td>
                                                                             }
 
+
+                                                                        </tr>
+                                                                    }
+
+                                                                }
+
+
+
+                                                            </tbody>
+                                                        </table>
+                                                        <label class="text-danger" id="noInterviewer"></label>
+
+                                                    </div>
+                                                </div><!--end of col-md-12-->
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <h3 class="tab_drawer_heading" rel="tab-4">Questions</h3>
+                                    <div class="tab-box" id="tab-4">
+                                        <div class="tab-main-box">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    @if (Model.ClonableTemplateQuestionsCollection == null || Model.ClonableTemplateQuestionsCollection.Count() == 0)
+                                                    {
+                                                        <p>No sample questions for the selected Assessment Group.</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="table-responsive-sm">
+                                                            <table class="table table-bordered mbn" id="QuestionsTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="30%" class="table_heading">Skill</th>
+                                                                        <th width="60%" class="table_heading">Question</th>
+                                                                        <th width="10%" class="table_heading">Select</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @for (int i = 0; i < Model.ClonableTemplateQuestionsCollection.Count(); i++)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.EditorFor(m => m.ClonableTemplateQuestionsCollection[i].SkillName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                                @Html.HiddenFor(m => m.ClonableTemplateQuestionsCollection[i].SkillId)
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.EditorFor(m => m.ClonableTemplateQuestionsCollection[i].Question, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                @Html.CheckBoxFor(m => m.ClonableTemplateQuestionsCollection[i].IsSelected)
+                                                                            </td>
+                                                                        </tr>
+
+                                                                    }
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+
+                                                    }
+
+
+                                                </div><!--end of col-md-12--><!--end of col-md-12-->
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    @if (Model.IsTemplateJoinSelectGenskillsRequired)
+                                    {
+                                        <h3 class="tab_drawer_heading" rel="tab-5">Joinability</h3>
+                                        <div class="tab-box" id="tab-5">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="table-responsive-sm">
+                                                            <table class="table table-bordered mbn" id="JoinabilityTable">
+                                                                <thead>
+                                                                    <tr>
+
+                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="25%" class="table_heading">Type<span class="red">*</span></th>
+                                                                        <th width="40%" class="table_heading">Value<span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading text-center">Action</th>
+                                                                    </tr>
+                                                                </thead>
+
+
+                                                                <tbody>
+                                                                    @if (Model.Joinability == null || Model.Joinability.Count() == 0)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("Joinability[0].LevelId", Model.Level, new { @class = "select-css form-control " })
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.DropDownList("Joinability[0].Type", Model.JoinabilityTypeList, new { @class = "select-css form-control " })
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                            </td>
+
+                                                                            <td class="action text-center">
+
+                                                                                <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                            </td>
                                                                         </tr>
                                                                     }
                                                                     else
                                                                     {
-                                                                        for (int i = 0; i < Model.InterviewerCollection.Count(); i++)
+                                                                        for (int i = 0; i < Model.Joinability.Count(); i++)
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+                                                                                    @Html.DropDownListFor(m => m.Joinability[i].LevelId, Model.Level, new { @class = "form-control select-css " })
+
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    @Html.DropDownListFor(m => m.Joinability[i].Type, Model.JoinabilityTypeList, new { @class = "form-control select-css " })
+
                                                                                 </td>
                                                                                 <td>
-                                                                                    @if (Model.LoggedEmail == "talent@risebird.io" || Model.LoggedEmail == "vaibhaw_sachan@risebird.io" || Model.LoggedEmail == "shahkar_alam@risebird.io" || Model.LoggedEmail == "parvathi_sg@risebird.io")
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1" })
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
-                                                                                    }
+                                                                                    @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+
                                                                                 </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.Joinability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
                                                                                 </td>
+                                                                                <td class="action text-center">
 
-                                                                                @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
-                                                                                {
-                                                                                    @if (Model.InterviewerCollection[i].ResumeLink.Length > 40)
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank" data-tooltip="@Model.InterviewerCollection[i].ResumeLink">Resume</a>
-                                                                                        </td>
+                                                                                    <div>
+                                                                                        <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                                    }
-
-                                                                                    else
-                                                                                    {
-                                                                                        <td class="cadName">
-                                                                                            <a href="@Model.InterviewerCollection[i].ResumeLink" target="_blank">Resume</a>
-                                                                                        </td>
-
-                                                                                    }
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="">No Resume</a>
-                                                                                    </td>
-                                                                                }
-                                                                    
-
+                                                                                    </div>
+                                                                                </td>
                                                                             </tr>
                                                                         }
-
                                                                     }
 
 
 
                                                                 </tbody>
                                                             </table>
-                                                            <label class="text-danger" id="noInterviewer"></label>
+                                                            <label class="text-danger" id="Joinability_WeightageError"></label>
+                                                            <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
 
                                                         </div>
                                                     </div><!--end of col-md-12-->
-                                                </div>
 
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <h3 class="tab_drawer_heading" rel="tab-4">Questions</h3>
-                                        <div class="tab-box" id="tab-4">
+                                        <h3 class="tab_drawer_heading" rel="tab-6">Selectability</h3>
+                                        <div class="tab-box" id="tab-6">
                                             <div class="tab-main-box">
                                                 <div class="row">
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        @if (Model.ClonableTemplateQuestionsCollection == null || Model.ClonableTemplateQuestionsCollection.Count() == 0)
-                                                        {
-                                                            <p>No sample questions for the selected Assessment Group.</p>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div class="table-responsive-sm">
-                                                                <table class="table table-bordered mbn" id="QuestionsTable">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th width="30%" class="table_heading">Skill</th>
-                                                                            <th width="60%" class="table_heading">Question</th>
-                                                                            <th width="10%" class="table_heading">Select</th>
+                                                        <div class="table-responsive-sm">
+                                                            <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="25%" class="table_heading">Type<span class="red">*</span></th>
+                                                                        <th width="40%" class="table_heading">Value<span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading text-center">Action</th>
+                                                                    </tr>
+                                                                </thead>
 
+
+                                                                <tbody>
+                                                                    @if (Model.Selectability == null || Model.Selectability.Count() == 0)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("Selectability[0].LevelId", Model.Level, new { @class = "select-css form-control " })
+
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.DropDownList("Selectability[0].Type", Model.SelectabilityTypeList, new { @class = "select-css form-control  " })
+
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                            </td>
+
+                                                                            <td class="action text-center">
+
+                                                                                <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                            </td>
                                                                         </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @for (int i = 0; i < Model.ClonableTemplateQuestionsCollection.Count(); i++)
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        for (int i = 0; i < Model.Selectability.Count(); i++)
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.EditorFor(m => m.ClonableTemplateQuestionsCollection[i].SkillName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                                                                    @Html.HiddenFor(m => m.ClonableTemplateQuestionsCollection[i].SkillId)
+                                                                                    @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)Model.Level, new { @class = "form-control select-css " })
+
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.EditorFor(m => m.ClonableTemplateQuestionsCollection[i].Question, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                                                                    @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css " })
+
                                                                                 </td>
-                                                                                <td class="text-center">
-                                                                                    @Html.CheckBoxFor(m => m.ClonableTemplateQuestionsCollection[i].IsSelected)
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.EditorFor(m => m.Selectability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                </td>
+                                                                                <td class="action text-center">
+                                                                                    <div>
+
+                                                                                        <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                                    </div>
                                                                                 </td>
                                                                             </tr>
-
                                                                         }
-
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-
-                                                        }
+                                                                    }
 
 
-                                                    </div><!--end of col-md-12--><!--end of col-md-12-->
+
+                                                                </tbody>
+                                                            </table>
+                                                            <label class="text-danger" id="Selectability_WeightageError"></label>
+                                                            <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
+                                                        </div>
+                                                    </div><!--end of col-md-12-->
+
                                                 </div>
-
                                             </div>
                                         </div>
-                                        @if (Model.IsTemplateJoinSelectGenskillsRequired)
-                                        {
-                                            <h3 class="tab_drawer_heading" rel="tab-5">Joinability</h3>
-                                            <div class="tab-box" id="tab-5">
-                                                <div class="tab-main-box">
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="table-responsive-sm">
-                                                                <table class="table table-bordered mbn" id="JoinabilityTable">
-                                                                    <thead>
+                                        <h3 class="tab_drawer_heading" rel="tab-7">General Skill</h3>
+                                        <div class="tab-box" id="tab-7">
+                                            <div class="tab-main-box">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="table-responsive-sm">
+                                                            <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                        <th width="25%" class="table_heading">Type<span class="red">*</span></th>
+                                                                        <th width="40%" class="table_heading">Value<span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                        <th width="10%" class="table_heading text-center">Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (Model.SkillGeneral == null || Model.SkillGeneral.Count() == 0)
+                                                                    {
                                                                         <tr>
+                                                                            <td>
+                                                                                @Html.DropDownList("SkillGeneral[0].LevelId", Model.Level, new { @class = "select-css form-control " })
 
-                                                                            <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                                                            <th width="25%" class="table_heading">Type<span class="red">*</span></th>
-                                                                            <th width="40%" class="table_heading">Value<span class="red">*</span></th>
-                                                                            <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                                                            <th width="10%" class="table_heading text-center">Action</th>
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.DropDownList("SkillGeneral[0].Type", Model.SkillGeneralTypeList, new { @class = "select-css form-control " })
+
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                            </td>
+
+                                                                            <td class="action text-center">
+                                                                                <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                            </td>
                                                                         </tr>
-                                                                    </thead>
-
-
-                                                                    <tbody>
-                                                                        @if (Model.Joinability == null || Model.Joinability.Count() == 0)
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        for (int i = 0; i < Model.SkillGeneral.Count(); i++)
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownList("Joinability[0].LevelId", Model.Level, new { @class = "select-css form-control " })
+                                                                                    @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, Model.Level, new { @class = "form-control select-css " })
+
                                                                                 </td>
                                                                                 <td>
-                                                                                    @Html.DropDownList("Joinability[0].Type", Model.JoinabilityTypeList, new { @class = "select-css form-control " })
+                                                                                    @Html.DropDownListFor(m => m.SkillGeneral[i].Type, Model.SkillGeneralTypeList, new { @class = "form-control select-css " })
+
                                                                                 </td>
                                                                                 <td>
-                                                                                    <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
+                                                                                    @Html.EditorFor(m => m.SkillGeneral[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+
                                                                                 </td>
+
                                                                                 <td>
-                                                                                    <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
+                                                                                    @Html.EditorFor(m => m.SkillGeneral[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
                                                                                 </td>
 
                                                                                 <td class="action text-center">
 
-                                                                                    <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    <div>
+                                                                                        <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
+                                                                                    </div>
                                                                                 </td>
                                                                             </tr>
                                                                         }
-                                                                        else
-                                                                        {
-                                                                            for (int i = 0; i < Model.Joinability.Count(); i++)
-                                                                            {
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        @Html.DropDownListFor(m => m.Joinability[i].LevelId, Model.Level, new { @class = "form-control select-css " })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.DropDownListFor(m => m.Joinability[i].Type, Model.JoinabilityTypeList, new { @class = "form-control select-css " })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.EditorFor(m => m.Joinability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
-                                                                                    </td>
-                                                                                    <td class="action text-center">
-
-                                                                                        <div>
-                                                                                            <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                                        </div>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            }
-                                                                        }
+                                                                    }
 
 
 
-                                                                    </tbody>
-                                                                </table>
-                                                                <label class="text-danger" id="Joinability_WeightageError"></label>
-                                                                <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
 
-                                                            </div>
-                                                        </div><!--end of col-md-12-->
+                                                                </tbody>
+                                                            </table>
+                                                            <label class="text-danger" id="SkillGeneral_WeightageError"></label>
+                                                            <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
+                                                        </div>
+                                                    </div><!--end of col-md-12-->
 
-                                                    </div>
                                                 </div>
                                             </div>
-                                            <h3 class="tab_drawer_heading" rel="tab-6">Selectability</h3>
-                                            <div class="tab-box" id="tab-6">
-                                                <div class="tab-main-box">
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="table-responsive-sm">
-                                                                <table class="table table-bordered mbn" id="SelectabilityTable">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                                                            <th width="25%" class="table_heading">Type<span class="red">*</span></th>
-                                                                            <th width="40%" class="table_heading">Value<span class="red">*</span></th>
-                                                                            <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                                                            <th width="10%" class="table_heading text-center">Action</th>
-                                                                        </tr>
-                                                                    </thead>
+                                        </div>
+                                    }
 
 
-                                                                    <tbody>
-                                                                        @if (Model.Selectability == null || Model.Selectability.Count() == 0)
-                                                                        {
-                                                                            <tr>
-                                                                                <td>
-                                                                                    @Html.DropDownList("Selectability[0].LevelId", Model.Level, new { @class = "select-css form-control " })
-
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.DropDownList("Selectability[0].Type", Model.SelectabilityTypeList, new { @class = "select-css form-control  " })
-
-                                                                                </td>
-                                                                                <td>
-                                                                                    <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
-                                                                                </td>
-                                                                                <td>
-                                                                                    <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
-                                                                                </td>
-
-                                                                                <td class="action text-center">
-
-                                                                                    <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                                </td>
-                                                                            </tr>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            for (int i = 0; i < Model.Selectability.Count(); i++)
-                                                                            {
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)Model.Level, new { @class = "form-control select-css " })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css " })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.EditorFor(m => m.Selectability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-                                                                                    </td>
-                                                                                    <td class="action text-center">
-                                                                                        <div>
-
-                                                                                            <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                                        </div>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            }
-                                                                        }
-
-
-
-                                                                    </tbody>
-                                                                </table>
-                                                                <label class="text-danger" id="Selectability_WeightageError"></label>
-                                                                <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
-                                                            </div>
-                                                        </div><!--end of col-md-12-->
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h3 class="tab_drawer_heading" rel="tab-7">General Skill</h3>
-                                            <div class="tab-box" id="tab-7">
-                                                <div class="tab-main-box">
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="table-responsive-sm">
-                                                                <table class="table table-bordered mbn" id="SkillGeneralTable">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                                                            <th width="25%" class="table_heading">Type<span class="red">*</span></th>
-                                                                            <th width="40%" class="table_heading">Value<span class="red">*</span></th>
-                                                                            <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                                                            <th width="10%" class="table_heading text-center">Action</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @if (Model.SkillGeneral == null || Model.SkillGeneral.Count() == 0)
-                                                                        {
-                                                                            <tr>
-                                                                                <td>
-                                                                                    @Html.DropDownList("SkillGeneral[0].LevelId", Model.Level, new { @class = "select-css form-control " })
-
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.DropDownList("SkillGeneral[0].Type", Model.SkillGeneralTypeList, new { @class = "select-css form-control " })
-
-                                                                                </td>
-                                                                                <td>
-                                                                                    <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
-                                                                                </td>
-
-                                                                                <td>
-                                                                                    <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
-                                                                                </td>
-
-                                                                                <td class="action text-center">
-                                                                                    <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                                </td>
-                                                                            </tr>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            for (int i = 0; i < Model.SkillGeneral.Count(); i++)
-                                                                            {
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, Model.Level, new { @class = "form-control select-css " })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.DropDownListFor(m => m.SkillGeneral[i].Type, Model.SkillGeneralTypeList, new { @class = "form-control select-css " })
-
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        @Html.EditorFor(m => m.SkillGeneral[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
-
-                                                                                    </td>
-
-                                                                                    <td>
-                                                                                        @Html.EditorFor(m => m.SkillGeneral[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
-                                                                                    </td>
-
-                                                                                    <td class="action text-center">
-
-                                                                                        <div>
-                                                                                            <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                                                        </div>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            }
-                                                                        }
-
-
-
-
-                                                                    </tbody>
-                                                                </table>
-                                                                <label class="text-danger" id="SkillGeneral_WeightageError"></label>
-                                                                <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
-                                                            </div>
-                                                        </div><!--end of col-md-12-->
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-
-
-
-
-                                    </div>
 
 
                                 </div>
 
 
                             </div>
-
-
-
                             <div class="card-footer mt-20 clearfix">
                                 <div class="row  mc-button-area pull-right">
                                     <div class="col-md-12">
@@ -812,23 +820,21 @@
 
                             @Html.HiddenFor(m => m.UserId)
                             @*@Html.HiddenFor(m => m.IRFRecommendations.AssessmentGroupId)
-                                @Html.HiddenFor(m => m.IRFRecommendations.CategoryId)*@
+        @Html.HiddenFor(m => m.IRFRecommendations.CategoryId)*@
                             @Html.HiddenFor(m => m.ClonableSkillChannelId)
                             @*@Html.HiddenFor(m => m.CreatedFromIRFId)*@
                             @Html.HiddenFor(m => m.IsTemplateJoinSelectGenskillsRequired)
 
                         </form>
 
+                            
                     </div>
 
-
-
                 </div>
+
             </div>
         </div>
     </div>
-
-
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>

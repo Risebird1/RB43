@@ -75,7 +75,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("ClonableRTemplatesFilters") != null)
             {
                 var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableRTemplatesFilters"));
-                filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
+                //filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
                 //filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
                 //filter.CompanyType = filter.CompanyType ?? model.ClonableTemplates.Select(x => x.CompanyTypeDesc).ToArray();
                 //filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
@@ -84,20 +84,37 @@ namespace Risebird.Web.Controllers
                 if (model.ClonableTemplates != null && model.ClonableTemplates.Count() > 0)
                 {
                     bool continueApplyingFilter = true;
-                    if (filter.AssessmentGroup != null)
+                    //if (filter.AssessmentGroup != null)
+                    //{
+                    //    IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
+                    //    templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName));
+                    //    if (templatesFilteredByAssessmentGroup != null)
+                    //    {
+                    //        model.ClonableTemplates = templatesFilteredByAssessmentGroup;
+                    //    }
+                    //}
+
+                    if (!string.IsNullOrEmpty(filter.Category))
                     {
-                        IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
-                        templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName));
-                        if (templatesFilteredByAssessmentGroup != null)
-                        {
-                            model.ClonableTemplates = templatesFilteredByAssessmentGroup;
-                        }
+                        IEnumerable<ClonableSkillChannelVM> templatesFilteredByCategory = null;
+
+                        templatesFilteredByCategory = model.ClonableTemplates.Where(c => !string.IsNullOrEmpty(c.CategoryName) && c.CategoryName == filter.Category);
+                        model.ClonableTemplates = templatesFilteredByCategory;
                     }
+
                     if (!string.IsNullOrEmpty(filter.CountryType))
                     {
                         IEnumerable<ClonableSkillChannelVM> templatesFilteredByCountryType = null;
                         templatesFilteredByCountryType = model.ClonableTemplates.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
-                        model.ClonableTemplates = templatesFilteredByCountryType;
+                        //model.ClonableTemplates = templatesFilteredByCountryType;
+                        if (templatesFilteredByCountryType != null && templatesFilteredByCountryType.Count() > 0)
+                        {
+                            model.ClonableTemplates = templatesFilteredByCountryType;
+                        }
+                        else
+                        {
+                            continueApplyingFilter = false;
+                        }
                     }
                     if (!string.IsNullOrEmpty(filter.CompanyType))
                     {
@@ -155,6 +172,11 @@ namespace Risebird.Web.Controllers
                 //&& (filter.CountryType != null ? filter.CountryType.Contains(c.CountryTypeDesc) : c.CountryTypeDesc == null)
                 //&& (filter.CompanyType != null ? filter.CompanyType.Contains(c.CompanyTypeDesc) : c.CompanyTypeDesc == null)
                 //&& (filter.SeniorityLevel != null ? filter.SeniorityLevel.Contains(c.SeniorityLevelDesc) : c.SeniorityLevelDesc == null)).ToList();
+            }
+            var assessmentGroupsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName))?.Distinct();
+            if (assessmentGroupsMappedToCurrentTemplates != null)
+            {
+                model.AssessmentGroupsMappedToCurrentTemplates = JsonConvert.SerializeObject(assessmentGroupsMappedToCurrentTemplates);
             }
             if (TempData["SuccessErrorCloneSkillChannnelMessage"] != null)
             {

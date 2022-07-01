@@ -306,8 +306,13 @@ namespace Risebird.Web.Controllers
                             }
 
                             model.ClonableTemplates = model.ClonableTemplates?.ToList();
+                            
                         }
-
+                        var assessmentGroupsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName))?.Distinct();
+                        if(assessmentGroupsMappedToCurrentTemplates != null)
+                        {
+                            model.AssessmentGroupsMappedToCurrentTemplates = JsonConvert.SerializeObject(assessmentGroupsMappedToCurrentTemplates);
+                        }
                         if (TempData["SuccessErrorCloneTemplateMessage"] != null)
                         {
                             model.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
