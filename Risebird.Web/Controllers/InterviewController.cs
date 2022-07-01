@@ -3539,10 +3539,15 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
+
                     emailid = emailid.Replace("\"", "");
+                    if(emailid.ToLower() == "parvathi_sg@risebird.io")
+                    {
+                        profileName = "Admin";
+                    }
+
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller" || profileName == "SeniorHR")
+                    if (profileName == "Admin"  || profileName == "Interviewer")
                     {
 
                         if (model.AudioFile != null)
@@ -3722,7 +3727,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        return RedirectToAction("Index", "Interview");
                     }
                 }
                 else
