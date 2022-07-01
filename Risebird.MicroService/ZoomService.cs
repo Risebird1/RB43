@@ -70,7 +70,7 @@ namespace Risebird.MicroService
                                 try
                                 {
                                     //zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
-                                    zoommeetingId = meeting.zoomLink.Split('/').Last();
+                                    zoommeetingId = (meeting.zoomLink.Split('/').LastOrDefault()).Split('?').FirstOrDefault();
                                 }
                                 catch (Exception)
                                 {

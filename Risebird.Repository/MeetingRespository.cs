@@ -506,32 +506,6 @@ namespace Risebird.Repository
             return null;
         }
 
-
-        public async Task<IEnumerable<Meeting>> GetQCOpenInterviews(string emailID)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("emailID", emailID);
-                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyQCOpenInterviews", parameters,
-                         commandType: CommandType.StoredProcedure);
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-
-
         public async Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailID)
         {
             try
@@ -666,32 +640,6 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("emailID", emailID);
                     return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyCandidateInterviews", parameters,
-                         commandType: CommandType.StoredProcedure);
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-
-        }
-
-
-        public async Task<IEnumerable<Meeting>> GetQualityControlInterview(string emailID)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("emailID", emailID);
-                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyQualityControlInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -912,32 +860,6 @@ namespace Risebird.Repository
             }
         }
 
-
-        public string QCAssignYourself(int meetingid, string interviewerMail)
-        {
-            try
-            {
-                var query = "update [dbo].[InterviewMeetings] set QCInterviewer=@value where id = @meetingid";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@meetingid", meetingid);
-                dynamicParameters.Add("@value", interviewerMail);
-
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = con.Query<TransClientUser>(query, dynamicParameters);
-                    return "QC assigned successfully.";
-                }
-
-            }
-            catch (SqlException ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to assigned interview, Please contact Risebird HR.";
-            }
-
-        }
-
-
         public bool CancelInterview(int meetingid)
         {
             try
@@ -972,31 +894,6 @@ namespace Risebird.Repository
                 {
                     SqlMapper.Query<string>(
                         con, "usp_UnAssignInterviewer", parameters, commandType: CommandType.StoredProcedure);
-                    return true;
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-        }
-
-        public async Task<bool> QCUnassignYourself(int meetingid)
-        {
-            try
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@id", meetingid);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    SqlMapper.Query<string>(
-                        con, "usp_UnAssignQCInterviewer", parameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -5902,14 +5799,13 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select im.id as imid,im.IRFId,im.InterviewDate,im.candidateName,im.candidateEmail,IRF.JDTiltle,cl.Name as ClientName,ul.EmailId as QCFormedBy,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,ic.VideoDuration,ISNULL(tq.Redflags,0) Redflags from Trans_QCFormReport tq join InterviewMeetings im on im.id=tq.Interviewid join InterviewComments ic on ic.InterviewId=im.id join UserList ul on ul.id=tq.Userid join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId where im.interviewer=@Emailid";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@Emailid", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    var results = con.Query<MeetingVM>(query, dynamicParameters);
-                    return results;
+                    parameters.Add("@Emailid", emailId);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetQCReportDetailsByInterviewer", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
                 }
             }
             catch (SqlException ex)

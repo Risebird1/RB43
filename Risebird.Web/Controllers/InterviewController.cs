@@ -1633,7 +1633,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -1649,8 +1649,7 @@ namespace Risebird.Web.Controllers
     new { ID = "Tomorrow", Name = "Tomorrow"  },
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
-},
-"ID", "Name", "All");
+}, "ID", "Name", "All");
 
                         ViewData["list"] = list;
                         if (TempData["SuccessErrorMessage"] != null)
@@ -1685,10 +1684,8 @@ namespace Risebird.Web.Controllers
                                 ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
                             }
-
                         }
                         return View(meetings.ToPagedList(Page ?? 1, 10));
-
                     }
                     else
                     {
@@ -1717,7 +1714,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -1769,7 +1766,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -1834,7 +1831,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -1996,7 +1993,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -2113,105 +2110,9 @@ namespace Risebird.Web.Controllers
                     }
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
-                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
-                        ViewBag.CodedName = codedname;
-                        ViewBag.isNotificationAccepted = true;
-                        ViewBag.isCodedResumePresent = true;
-                        // myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
-                        foreach (var item in myInterview)
-                        {
-                            if (item.InterviewStatus.HasValue)
-                            {
-                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            }
-                            if (item.MeetingStatus.HasValue)
-                            {
-                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-                            }
-                        }
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                        }
-                        else if (filter.StartDate != null && filter.EndDate == null)
-                        {
-                            //filter.EndDate = filter.StartDate;
-                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate /*&& t.interviewDate.Date <= filter.EndDate*/).ToList();
-                        }
-                        else if (filter.StartDate == null && filter.EndDate != null)
-                        {
-                            //filter.StartDate = filter.EndDate;
-                            myInterview = myInterview.Where(t => /*t.interviewDate.Date >= filter.StartDate &&*/ t.interviewDate.Date <= filter.EndDate).ToList();
-                        }
-                        //filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
-                        filter.InterviewSlot = filter.InterviewSlot == null ? filter.InterviewSlot = myInterview.Select(x => x.interviewSlot).ToArray() : filter.InterviewSlot = filter.InterviewSlot;
-                        filter.JobLevel = filter.JobLevel == null ? filter.JobLevel = myInterview.Select(x => x.JobLevelDesc).ToArray() : filter.JobLevel = filter.JobLevel;
-                        filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = myInterview.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
-                        filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = myInterview.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
-                        filter.RisebirdHR = filter.RisebirdHR == null ? filter.RisebirdHR = myInterview.Select(x => x.risebirdHR).ToArray() : filter.RisebirdHR = filter.RisebirdHR;
-
-                        myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
-                        && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
-                        && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
-                       && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
-                       && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
-
-                        if (TempData["SuccessErrorMessage"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
-                            //TempData.Clear();
-                        }
-                        if (!String.IsNullOrEmpty(searchValue))
-                        {
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.Contains(searchValue) : x.MeetingStatusDesc == "")
-                            || (!String.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
-                        }
-                        ViewBag.TotalCount = myInterview.Count;
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = myInterview.Count / 10;
-                        if (myInterview.Count % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = myInterview.Count;
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                            }
-                        }
-                        if (myInterview.Count == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
-
-                        foreach (var item in myInterview)
-                        {
-                            var time = item.interviewDate.AddHours(2);
-                            var currentTime = DateTime.UtcNow;
-                            TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-                            DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(currentTime, INDIAN_ZONE);
-                            var timediff = time - indianTime;
-                            if (timediff.TotalMinutes >= 0 && (item.MeetingStatus == 2 || item.MeetingStatus == null))
-                            {
-                                item.Timer = Convert.ToInt32(timediff.TotalMinutes);
-                            }
-                        }
-                        return View(myInterview.ToPagedList(Page ?? 1, 10));
+                        return RedirectToAction("MyInterview", new { Page = Page, searchValue = searchValue });
                     }
                     else
                     {
@@ -2240,7 +2141,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -3123,8 +3024,7 @@ namespace Risebird.Web.Controllers
                         profileName = profileName.Replace("\"", "");
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
+                        if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
                         {
 
                             if (interviewComments.AadharFile != null)
@@ -3246,8 +3146,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller" || profileName == "InterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
                     {
                         var result = _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                         TempData["SuccessErrorMessage"] = result;
@@ -3274,43 +3173,6 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> QCAssignYourself(int id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (profileName == "Interviewer")
-                    {
-                        var result = _meetingService.QCAssignYourself(id, emailid.ToLower());
-                        TempData["SuccessErrorMessage"] = result;
-                        ViewBag.Message = result;
-                        return RedirectToAction("QCOpenInterviews");
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("QCOpenInterviews");
-            }
-        }
-
-        [Authorize]
-        [HttpGet]
         public async Task<IActionResult> UnassignYourself(int id, bool isPenalty)
         {
             try
@@ -3321,8 +3183,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller" || profileName == "InterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
                     {
                         if (_meetingService.UnassignYourself(id, email.ToLower(), isPenalty))
                         {
@@ -3354,50 +3215,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> UnAssignQC(int id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var email = HttpContext.Session.GetString("email");
-                    email = email.Replace("\"", "");
-                    if (profileName == "Interviewer")
-                    {
-                        if (_meetingService.QCUnassignYourself(id, email.ToLower()))
-                        {
-                            TempData["SuccessErrorMessage"] = "Successfully unassigned!";
-                            return RedirectToAction("MyQualityControlledInterviews");
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessageMyInterview"] = "Sorry! Could not unassign!";
-                            return RedirectToAction("MyQualityControlledInterviews");
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Sorry! Could not unassign!";
-                return RedirectToAction("MyQualityControlledInterviews");
-            }
-        }
-
         [HttpGet]
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
@@ -3425,7 +3242,7 @@ namespace Risebird.Web.Controllers
                     {
                         isAdminHR = true;
                     }
-                    else if ((profileName == "Interviewer" || profileName == "Quality Controller"))
+                    else if ((profileName == "Interviewer"))
                     {
                         isInterviewer = true;
                     }
@@ -3441,20 +3258,9 @@ namespace Risebird.Web.Controllers
                     }
                     else if (isInterviewer)
                     {
-                        if (isQC)
-                        {
-                            return RedirectToAction("MyQualityControlledInterviews");
-
-                        }
-                        else
-                        {
-                            return RedirectToAction("MyInterview");
-
-                        }
+                        return RedirectToAction("MyInterview");
                     }
                 }
-
-
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -3511,15 +3317,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                if (isQC)
-                {
-                    return RedirectToAction("MyQualityControlledInterviews");
-
-                }
-                else
-                {
-                    return RedirectToAction("MyInterview");
-                }
+                return RedirectToAction("MyInterview");
             }
         }
 
@@ -3541,8 +3339,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
                     {
 
                         if (model.AudioFile != null)
@@ -3691,15 +3488,7 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                            else if (model.IsQC)
-                            {
-                                return RedirectToAction("MyQualityControlledInterviews");
-                            }
-                            else
-                            {
-                                return RedirectToAction("MyInterview");
-                            }
-
+                            return RedirectToAction("MyInterview");
                         }
                         else
                         {
@@ -3708,16 +3497,7 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                            else if (model.IsQC)
-                            {
-                                return RedirectToAction("MyQualityControlledInterviews");
-
-                            }
-                            else
-                            {
-                                return RedirectToAction("MyInterview");
-
-                            }
+                            return RedirectToAction("MyInterview");
                         }
                     }
                     else
@@ -3734,11 +3514,6 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
-                if (model.IsQC)
-                {
-                    return RedirectToAction("MyQualityControlledInterviews");
-
-                }
                 return RedirectToAction("Index");
             }
         }
@@ -4506,167 +4281,6 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
 
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> MyQualityControlledInterviews()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetQualityControlInterviews(emailid).ToList().OrderByDescending(x => x.interviewDate).ToList();
-
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
-                        foreach (var item in myInterview)
-                        {
-                            if (!string.IsNullOrEmpty(item.resumeLink))
-                            {
-                                try
-                                {
-                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
-
-                                }
-                                catch (Exception)
-                                {
-                                    item.resumeLink = "";
-                                }
-                            }
-                            else
-                            {
-                                item.resumeLink = "";
-                            }
-
-                            if (item.InterviewStatus.HasValue)
-                            {
-                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            }
-                            if (item.MeetingStatus.HasValue)
-                            {
-                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-
-                            }
-                            if (item.QCStatus.HasValue)
-                            {
-                                item.QCStatusDesc = ((QCStatus)(item.QCStatus)).GetDescription();
-
-                            }
-                        }
-
-
-                        if (TempData["SuccessErrorMessage"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
-
-                        }
-                        return View(myInterview);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> QCOpenInterviews(int? Page, string searchValue)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var meetings = _meetingService.GetQCOpenInterviews(emailid);
-                        //meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
-                        meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
-                        var list = new SelectList(new[]
-{
-    new { ID = "Today", Name = "Today"},
-    new { ID = "Tomorrow", Name = "Tomorrow"  },
-    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-    new { ID = "All", Name = "All"},
-},
-"ID", "Name", "All");
-
-                        ViewData["list"] = list;
-                        if (TempData["SuccessErrorMessage"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
-                        }
-
-
-                        if (!String.IsNullOrEmpty(searchValue))
-                        {
-                            searchValue = searchValue.ToUpper();
-                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.risebirdHR) ? x.risebirdHR.ToUpper().Contains(searchValue) : x.risebirdHR == "")).ToList();
-
-                        }
-                        ViewBag.TotalCount = meetings.Count;
-
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = meetings.Count / 10;
-                        if (meetings.Count % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = meetings.Count;
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
-                            }
-
-                        }
-                        return View(meetings.ToPagedList(Page ?? 1, 10));
-
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
         }
 
         //[Authorize]
@@ -5811,7 +5425,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -6177,15 +5791,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                if (isQC)
-                {
-                    return RedirectToAction("MyQualityControlledInterviews");
-
-                }
-                else
-                {
-                    return RedirectToAction("MyInterview");
-                }
+                return RedirectToAction("MyInterview");
             }
         }
 
@@ -6255,15 +5861,7 @@ namespace Risebird.Web.Controllers
                     }
                     else if (isInterviewer)
                     {
-                        if (isQC)
-                        {
-                            return RedirectToAction("MyQualityControlledInterviews");
-
-                        }
-                        else
-                        {
-                            return RedirectToAction("MyInterview");
-                        }
+                        return RedirectToAction("MyInterview");
                     }
                 }
                 if (model.QuestionsCollection == null)
@@ -6316,15 +5914,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                if (isQC)
-                {
-                    return RedirectToAction("MyQualityControlledInterviews");
-
-                }
-                else
-                {
-                    return RedirectToAction("MyInterview");
-                }
+                return RedirectToAction("MyInterview");
             }
         }
 
@@ -6533,8 +6123,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
                     {
 
                         if (model.AudioFile != null)
@@ -6622,10 +6211,6 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                            else if (model.IsQC)
-                            {
-                                return RedirectToAction("MyQualityControlledInterviews");
-                            }
                             else
                             {
                                 return RedirectToAction("MyInterview");
@@ -6638,14 +6223,7 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                            else if (model.IsQC)
-                            {
-                                return RedirectToAction("MyQualityControlledInterviews");
-                            }
-                            else
-                            {
-                                return RedirectToAction("MyInterview");
-                            }
+                            return RedirectToAction("MyInterview");
                         }
                     }
                     else
@@ -6662,10 +6240,6 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
-                if (model.IsQC)
-                {
-                    return RedirectToAction("MyQualityControlledInterviews");
-                }
                 return RedirectToAction("Index");
             }
         }
@@ -6707,7 +6281,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Interviewer" || profileName == "Quality Controller")
+                if (profileName == "Interviewer")
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
