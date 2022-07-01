@@ -12,7 +12,8 @@ CREATE TABLE [dbo].[Client](
             [CompanyVideoLink] [varchar](MAX) NULL,
             [IsPasswordReset] [bit] NULL,
             [IsCandidateavailability] [bit] NULL,
-            [IsMeetingNotificationSend] [bit] NULL
+            [IsMeetingNotificationSend] [bit] NULL,
+            [PerInterviewRate] [int] NULL
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -125,6 +126,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add [IsMeetingNotificationSend] bit	
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PerInterviewRate')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [PerInterviewRate] int	
 END
 END
 
