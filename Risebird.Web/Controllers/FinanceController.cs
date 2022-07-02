@@ -1826,5 +1826,175 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> FNRevenue(string year, int month)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    //Start:Year
+                    List<string> _listyear = new List<string>();
+                    var currentyear = DateTime.Now.Year;
+                    var counter = currentyear - 2020;
+                    for (int i = 0; i < counter; i++)
+                    {
+                        _listyear.Add(DateTime.Now.AddYears(-i).Year.ToString());
+                    }
+                    var selectListforsize = new List<SelectListItem>();
+                    if (String.IsNullOrEmpty(year))
+                    {
+                        year = currentyear.ToString();
+                    }
+                    foreach (var item in _listyear)
+                    {
+                        bool selected = false;
+                        if (item == year)
+                        {
+                            selected = true;
+                        }
+                        var selectItem = new SelectListItem(item, Convert.ToString(item), selected);
+                        selectListforsize.Add(selectItem);
+                    }
+                    ViewBag.RevenueYears = selectListforsize;
+                    //End:Year
+                    if (month == 0)
+                    {
+                        month = DateTime.Now.Month;
+                    }
+                    ViewBag.RevenueMonth = month;
+                    int curyear = Convert.ToInt32(year);
+                    DateTime stdate = new DateTime(curyear, month, 1);
+                    DateTime endate = stdate.AddMonths(1);
+                    var model = await _meetingService.FetchRevenueDetails(stdate, endate);
+                    if (TempData["RevenueMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["RevenueMessage"].ToString();
+                        TempData.Remove("RevenueMessage");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> GetFNRevenueDetailsByClient(int id, string year, int month)
+        {
+            var model = new List<FnRevenueVM>();
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    int curyear = Convert.ToInt32(year);
+                    DateTime stdate = new DateTime(curyear, month, 1);
+                    DateTime endate = stdate.AddMonths(1);
+                    model = await _meetingService.FetchRevenueDetailsByClient(id, stdate, endate);
+                    return Json(model);
+                }
+                else
+                {
+                    return Json(model);
+                }
+            }
+            else
+            {
+                return Json(model);
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> ExportGenerateFNRevenue(string year, int month)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Revenue Details");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_RevenueDetails.xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance")
+                    {
+                        int curyear = Convert.ToInt32(year);
+                        DateTime stdate = new DateTime(curyear, month, 1);
+                        DateTime endate = stdate.AddMonths(1);
+                        var model = await _meetingService.FetchAllRevenueDetails(stdate, endate);
+                        if (model != null)
+                        {
+                            model = model.OrderBy(x => x.Name).ToList();
+                        }
+                        Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                        Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                        Sheet.Cells["A1:Z1"].Style.WrapText = true;
+
+                        int startColumn = 1; int endColumn = 25;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 25;
+                        }
+                        Sheet.Cells[1, 1].Value = "IRFID";
+                        Sheet.Cells[1, 2].Value = "Client Name";
+                        Sheet.Cells[1, 3].Value = "Per Interview Rate";
+                        Sheet.Cells[1, 4].Value = "Total Interviews";
+                        Sheet.Cells[1, 5].Value = "Amount";
+                        Sheet.Cells[1, 6].Value = "Billing Owner";
+                        int i = 2;
+                        if (model.Count() > 0)
+                        {
+                            foreach (var item in model)
+                            {
+                                Sheet.Cells[i, 1].Value = item.IRFId;
+                                Sheet.Cells[i, 2].Value = item.Name;
+                                Sheet.Cells[i, 3].Value = item.PerInterviewRate;
+                                Sheet.Cells[i, 4].Value = item.TotalCount;
+                                Sheet.Cells[i, 5].Value = item.PerInterviewRate * item.TotalCount;
+                                Sheet.Cells[i, 6].Value = item.BillingOwner;
+                                i++;
+                            }
+                        }
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "No data available in table !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
     }
 }

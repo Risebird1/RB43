@@ -212,6 +212,7 @@ namespace Risebird.Repository
             parameters.Add("@IsPasswordReset", entity.IsPasswordReset);
             parameters.Add("@IsCandidateavailability", entity.IsCandidateavailability);
             parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
+            parameters.Add("@PerInterviewRate", entity.PerInterviewRate);
             return parameters;
         }
         public async Task<string> AddClientJd(ClientJdVM _client)

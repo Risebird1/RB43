@@ -3533,6 +3533,45 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchRevenueDetails(stdate, endate);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchRevenueDetailsByClient(clientid, stdate, endate);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchAllRevenueDetails(stdate, endate);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 
