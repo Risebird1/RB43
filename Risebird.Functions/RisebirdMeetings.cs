@@ -127,7 +127,7 @@ namespace Risebird.Functions
                                     try
                                     {
                                         //zoommeetingId = Convert.ToInt64(zoomLink.Split('/').Last());
-                                        zoommeetingId = (zoomLink.Split('/').Last()).Split('?').First();
+                                        zoommeetingId = (zoomLink.Split('/').LastOrDefault()).Split('?').FirstOrDefault();
                                     }
                                     catch (Exception)
                                     {
