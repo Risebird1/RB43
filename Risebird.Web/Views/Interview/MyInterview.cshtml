@@ -477,7 +477,7 @@
 
                                                             <td class="text-left">
                                                                 @{
-                                                                    var interviewDate = @item.interviewDate.AddHours(48);
+                                                                    var interviewDate = @item.interviewDate.AddHours(18);
                                                                 }
                                                                 @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
                                                                 {
@@ -1421,7 +1421,7 @@
 
 
             html += '   <td class="text-left">';
-            if (new Date(data[i].interviewDate) <= new Date('@DateTime.Now')) {
+            if (new Date(data[i].interviewDate) <= new Date('@DateTime.Now') && new Date(data[i].interviewDate) >= new Date('@DateTime.Now.AddMinutes(-750)')) {
                 html += '  <button id="myinterview_10" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">';
                 html += ' <a href ="/Interview/AddReport?interviewId=' + data[i].id + '&irfId=' + data[i].irfIntId + '" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)"  d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></a>';
                 html += ' </button>';

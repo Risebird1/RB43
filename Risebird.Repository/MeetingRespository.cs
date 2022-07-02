@@ -5990,5 +5990,66 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", stdate);
+                    parameters.Add("@EndDate", endate);
+                    var result = SqlMapper.Query<FnRevenueVM>(con, "usp_GetRevenueDetailsByDate", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return (List<FnRevenueVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Clientid", clientid);
+                dynamicParameters.Add("@StartDate", stdate);
+                dynamicParameters.Add("@EndDate", endate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueDetailsByClient", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return (List<FnRevenueVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", stdate);
+                    parameters.Add("@EndDate", endate);
+                    var result = SqlMapper.Query<FnRevenueVM>(con, "usp_GetAllRevenueDetailsByDate", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return (List<FnRevenueVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

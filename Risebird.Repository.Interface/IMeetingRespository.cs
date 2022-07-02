@@ -228,5 +228,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> QCReportDetailsByDate(DateTime Startdate, DateTime Enddate);
         Task<bool> UpdateQCReportRedFlagsResolved(int interviewid);
         Task<IEnumerable<MeetingVM>> GetReslovedRedFlagsInterviewList();
+        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate);
+        Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate);
+        Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
     }
 }
