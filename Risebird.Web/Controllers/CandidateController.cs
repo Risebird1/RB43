@@ -258,7 +258,7 @@ namespace Risebird.Web.Controllers
                                 //candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                                 candidateTimeline.CurrentStatus = ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription();
                             }
-                            else if(firstData.CurrentMeetingStatus.HasValue)
+                            else if (firstData.CurrentMeetingStatus.HasValue)
                             {
                                 candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
 
@@ -4513,6 +4513,46 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("ResumesPublicly", new { irfId = irfId, irfName = irfName, emailid = emailids, id = id });
+            }
+        }
+        [HttpPost]
+        public JsonResult PauseIRF(int irfId, string irfName)
+        {
+            try
+            {
+                if (_irfService.PauseIRF(irfId, irfName))
+                {
+                    return Json("IRF has been paused Successfully!");
+                }
+                else
+                {
+                    return Json("Failed to pause IRF!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("IRF pause Failed");
+            }
+        }
+        [HttpPost]
+        public JsonResult PlayIRF(int irfId, string irfName)
+        {
+            try
+            {
+                if (_irfService.PlayIRF(irfId, irfName))
+                {
+                    return Json("IRF has been enabled Successfully!");
+                }
+                else
+                {
+                    return Json("Failed to enable IRF!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("IRF play Failed");
             }
         }
     }
