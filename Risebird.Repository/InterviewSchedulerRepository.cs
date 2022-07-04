@@ -433,5 +433,23 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> CheckSkillChannelPaused(string SkillChannel)
+        {
+            try
+            {
+                var query = "Select IsNull(IsPaused,0) from IRF where IRFId=@IRFId";
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@IRFId", SkillChannel);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<bool>(query, dp);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

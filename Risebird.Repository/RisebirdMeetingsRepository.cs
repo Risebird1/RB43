@@ -255,12 +255,7 @@ namespace Risebird.Repository
                     model.PerformedBy = "System";
                     var result1 = _irfRepository.AddCandidateStatus(model);
                     var result = _candidateRepository.FetchChannelOwnerandInterviewer(interviewid).Result;
-                    //List<string> interviewers = new List<string>();
-                    //if (!String.IsNullOrEmpty(result.interviewer))
-                    //{
-                    //    interviewers.Add(result.interviewer);
-                    //}
-                    //var emailresult2 = _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink);
+                    
                     var masg = new SendGridMessage();
                     masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(result.candidateEmail, null));
                     masg.Subject = "Interview has been Cancelled on date: " + interviewDate;

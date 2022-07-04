@@ -385,6 +385,7 @@ namespace Risebird.Entities.ViewModel
         public string BillingOwner { get; set; }
         public string JDLink { get; set; }
         public int id { get; set; }
+        public bool IsPaused { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {

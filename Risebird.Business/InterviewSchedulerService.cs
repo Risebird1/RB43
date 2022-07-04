@@ -214,5 +214,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> CheckSkillChannelPaused(string SkillChannel)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.CheckSkillChannelPaused(SkillChannel);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
