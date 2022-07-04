@@ -3572,6 +3572,41 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<MeetingVM> GetInterviewMeetingById(int id)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetInterviewMeetingById(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration, string CandidateEmail,string emailId)
+        {
+            try
+            {
+                var result = await _meetingRespository.SaveVideoDetailsById(interviewid, VideoURL, videoduration);
+                if (result)
+                {
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateCandidateFeedback;
+                    activityTrackerModel.Particulars = "Feedback for: " + CandidateEmail;
+                    activityTrackerModel.PerformedBy = emailId;
+                    activityTrackerModel.Summary = "Feedback Updated: Video Updated";
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 
