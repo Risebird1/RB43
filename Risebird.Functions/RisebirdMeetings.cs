@@ -546,22 +546,34 @@ namespace Risebird.Functions
         public static void RecruiterStatusCheck(int interviewid, string CandidateEmailid, string IRFName, DateTime interviewDate)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-            bool flag;
+            bool isActive;
+            bool isPaused;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 DynamicParameters dp = new DynamicParameters();
                 dp.Add("@interviewid", interviewid);
                 var result = SqlMapper.Query<bool>(
                     con, "Select tc.IsActive from interviewmeetings im join IRF on IRF.IRFId=im.IRFId Left join UserList ul on ul.EmailId=im.ClientHrContact left join TransClientUser tc on tc.ClientUserId=ul.id and tc.IRFId=IRF.id where im.id=@interviewid", dp, commandType: Text);
-                flag = result.FirstOrDefault();
+                isActive = result.FirstOrDefault();
+                var resultset = SqlMapper.Query<bool>(
+                    con, "Select IRF.IsPaused from interviewmeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@interviewid", dp, commandType: Text);
+                isPaused = resultset.FirstOrDefault();
             }
-            if (!flag)
+            if (!isActive || isPaused)
             {
                 var query = "update [dbo].[InterviewMeetings] set confirmationStatus=@value where id = @meetingid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", interviewid);
                 dynamicParameters.Add("@value", 2);
-                var query1 = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Recruiter Disabled' where id=@meetingid and confirmationStatus=2";
+                var query1 = string.Empty;
+                if (!isActive)
+                {
+                    query1 = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Recruiter Disabled' where id=@meetingid and confirmationStatus=2";
+                }
+                else if (isPaused)
+                {
+                    query1 = "Update InterviewMeetings set isAutoCancelled=1,Cancellationsource='Skill Channel Paused' where id=@meetingid and confirmationStatus=2";
+                }
                 var dynamicParameters1 = new DynamicParameters();
                 dynamicParameters1.Add("@meetingid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -591,7 +603,14 @@ namespace Risebird.Functions
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", irfid); // Normal parametersmeters           
                 parameters.Add("@CandidateId", candidateId);
-                parameters.Add("@Comments", "Recruiter Disabled");
+                if (!isActive)
+                {
+                    parameters.Add("@Comments", "Recruiter Disabled");
+                }
+                else
+                {
+                    parameters.Add("@Comments", "Skill Channel Paused");
+                }
                 parameters.Add("@Date", DateTime.Now);
                 parameters.Add("@AudioFileLink", "");
                 parameters.Add("@Status", 18);
