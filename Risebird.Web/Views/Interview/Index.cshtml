@@ -404,7 +404,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                    <th>QC Status</th>*@
+                                                        <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -451,7 +451,7 @@
                                                     <th>Emergency Interview</th>
                                                     <th>Interview Slot</th>
                                                     @*<th>QC Interviewer</th>
-                                                    <th>QC Status</th>*@
+                                                        <th>QC Status</th>*@
                                                     <th>Co-ordinating HR</th>
                                                     <th>HR Comments</th>
                                                     <th>Staffing Agency</th>
@@ -506,11 +506,19 @@
                                                                     <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                 </button>
                                                             </span>
-                                                            <span class="interview_8">
-                                                                <button class="mdc-fab app-fab--absolute " aria-label="Comment">
-                                                                    <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
-                                                                </button>
-                                                            </span>
+                                                            @*<span class="interview_8">
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Comment">
+                                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                                    </button>
+                                                                </span>*@
+                                                            @if (String.IsNullOrEmpty(item.VideoLink) || (!String.IsNullOrEmpty(item.VideoLink) && item.VideoDuration <= 1))
+                                                            {
+                                                                <span class="interview_8">
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Update Video Details">
+                                                                        <span onclick="UpdateVideoDetails(@item.imid,'@item.candidateEmail')" title="Update Video Details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg></span>
+                                                                    </button>
+                                                                </span>
+                                                            }
                                                             <span class="interview_9">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
@@ -764,16 +772,16 @@
                                                         }
                                                         <td>@item.interviewSlot</td>
                                                         @*<td>@item.QCInterviewer</td>
-                                                        @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
-                                                        {
-                                                            <td>@item.QCStatusStatusDesc</td>
-
-                                                            }
-                                                            else
+                                                            @if (!(string.IsNullOrEmpty(item.QCStatusStatusDesc)))
                                                             {
-                                                                <td></td>
+                                                                <td>@item.QCStatusStatusDesc</td>
 
-                                                        }*@
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+
+                                                            }*@
                                                         <td>@item.HRCoordinatorEmailId</td>
 
                                                         <td class="interview-com">
@@ -1158,10 +1166,55 @@
                 <div>
                     <div class="col-md-12 text-right nopad">
                         <div>
-                            <div style="display: inline-block!important;margin-bottom:10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="ResendFeedbackForm()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Send Feedback"></div>
+                            <div style="display: inline-block!important;margin-bottom:10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="ResendFeedbackForm()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Send Feedback"></div>
                             <div style="        display: inline-block !important;
         margin-bottom: 10px;
 "><input style="color: #fff;line-height: 13px;" type="button" onclick="closeCandidateFeedbackModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="UpdateVideoDetailsModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Video Details </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeUpdateVideoDetailsModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <input type="hidden" id="txtvideointerviewid" />
+                    <input type="hidden" id="txtVideoCandidateEmaild" />
+                    <div style="padding:10px">
+                        <input type="text" id="txtVideoURL" class="form-control" placeholder="Video URL Link" />
+                    </div>
+                    <div style="padding:10px">
+                        <input type="number" id="txtVideoduration" class="form-control" placeholder="Video Duration(Minutes)" />
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-12 text-right nopad">
+                        <div>
+                            <div style="display: inline-block!important;margin-bottom:10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="SaveVideoDetailsById()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                            </div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="closeUpdateVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1722,6 +1775,44 @@
             success: function (data) {
                 alert(data);
                 closeCandidateFeedbackModel();
+            }
+        });
+    }
+    function openUpdateVideoDetailsModel() {
+        var modal = document.getElementById("UpdateVideoDetailsModel");
+        modal.style.display = "block";
+    }
+    function closeUpdateVideoDetailsModel() {
+        var modal = document.getElementById("UpdateVideoDetailsModel");
+        modal.style.display = "none";
+    }
+    function UpdateVideoDetails(interviewid, candidateEmailid) {
+        $.ajax({
+            type: "POST",
+            url: "/Interview/FetchInterviewVideoDetails",
+            data: { interviewid: interviewid },
+            success: function (data) {
+                openUpdateVideoDetailsModel();
+                $("#txtvideointerviewid").val(interviewid);
+                $("#txtVideoCandidateEmaild").val(candidateEmailid);
+                $("#txtVideoURL").val(data.videoLink);
+                $("#txtVideoduration").val(data.videoDuration);
+            }
+        });
+    }
+    function SaveVideoDetailsById() {
+        var videourl = $("#txtVideoURL").val();
+        var videoduration = $("#txtVideoduration").val();
+        var interviewid = $("#txtvideointerviewid").val();
+        var CandidateEmail = $("#txtVideoCandidateEmaild").val();
+        $.ajax({
+            type: "POST",
+            url: "/Interview/SaveVideoDetails",
+            data: { interviewid: interviewid, VideoURL: videourl, videoduration: videoduration, CandidateEmail: CandidateEmail },
+            success: function (data) {
+                alert(data);
+                closeUpdateVideoDetailsModel();
+                window.location.href = "/Interview/Index";
             }
         });
     }

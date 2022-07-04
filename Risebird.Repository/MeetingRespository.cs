@@ -6051,5 +6051,26 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", interviewid);
+                    parameters.Add("@VideoURL", VideoURL);
+                    parameters.Add("@videoduration", videoduration);
+                    var result = SqlMapper.Query(con, "usp_UpdatevideoDetailsById", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
