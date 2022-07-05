@@ -3374,7 +3374,6 @@ namespace Risebird.Web.Controllers
                 HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
                 HttpContext.Session.Remove("PublicCandidateStatusfilters");
                 var candidateData = new List<CandidateTimelineData>();
-                //candidateData = (await _candidateService.GetCandidateTimelinebyDate(DateTime.Now.AddDays(-30), DateTime.Now, emailid)).ToList();
                 candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(1), 2, emailid)).ToList();
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
@@ -3391,12 +3390,7 @@ namespace Risebird.Web.Controllers
                     {
                         firstData = data.FirstOrDefault();
                     }
-                    //if (data.Select(x => x.interviewDate).Count() > 1)
-                    //{
-                    //    firstData = data.Where(x => x.InterviewId == lastvalue.InterviewId).FirstOrDefault();
-                    //}
                     var candidateTimeline = new CandidateTimelineVM();
-
                     candidateTimeline.HREmail = firstData.HREmail;
                     candidateTimeline.CandidateEmailId = firstData.EmailId;
                     candidateTimeline.CandidateName = firstData.Name;
@@ -3422,7 +3416,6 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
                     //schedule status
-
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
@@ -3442,13 +3435,11 @@ namespace Risebird.Web.Controllers
                     {
                         if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
                         {
-                            //candidateTimeline.CurrentStatus = candidateTimeline.CurrentStatus + "(" + ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription() + ")";
                             candidateTimeline.CurrentStatus = ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription();
                         }
                         else if (firstData.CurrentMeetingStatus.HasValue)
                         {
                             candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
-
                         }
                     }
                     if (firstData.confirmationStatus != 2)

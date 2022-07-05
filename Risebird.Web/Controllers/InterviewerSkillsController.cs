@@ -145,57 +145,7 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("InterviewerSkillsFilter", JsonConvert.SerializeObject(filter));
                 }
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
-                {
-                    var model = new InterviewerSkillsViewModel();
-                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
-
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        InterviewerSkillsList = InterviewerSkillsList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
-                    }
-                    else
-                    {
-                        InterviewerSkillsList = InterviewerSkillsList.Where(x => x.EndDate.Date > DateTime.Now);
-                    }
-
-                    filter.ISID = filter.ISID == null ? filter.ISID = InterviewerSkillsList.Select(x => x.InterviewerSkillId).ToArray() : filter.ISID = filter.ISID;
-                    InterviewerSkillsList = InterviewerSkillsList.Where(c => filter.ISID.Contains(c.InterviewerSkillId)).ToList();
-
-                    if (InterviewerSkillsList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
-                        InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid).Where(x => x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
-                    foreach (var item in InterviewerSkillsList)
-                    {
-                        if (item.IsPaused)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
-                            item.InterviewerSkillStatus = "Paused";
-                        }
-                        else if (item.EndDate >= DateTime.Now)
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                            item.InterviewerSkillStatus = "Active";
-                        }
-                        else
-                        {
-                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                            item.InterviewerSkillStatus = "Archived";
-                        }
-                    }
-                    model.InterviewerSkillsChannelModelList = InterviewerSkillsList.OrderByDescending(x => x.EndDate).ToList();
-                    model.InterviewerSkillsChannelModelList = model.InterviewerSkillsChannelModelList.Select(x => { x.HeuristicProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
-                    model.Profile = profileName;
-                    return View(model);
-
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                return RedirectToAction("Index");
             }
             else
             {
@@ -1056,107 +1006,11 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (filter != null)
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        if (TempData["SuccessErrorMessageInterview"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
-                            TempData.Remove("SuccessErrorMessageInterview");
-                        }
-                        var modelList = new List<MeetingVM>();
-                        if (Page == null || Page == 0)
-                        {
-                            Page = 1;
-                        }
-                        int totalMeetings = 0;
-                        if (filter != null)
-                        {
-                            HttpContext.Session.SetString("InterviewerRiseTubefilters", JsonConvert.SerializeObject(filter));
-                        }
-                        modelList = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value, searchvalue).Result;
-                        modelList = modelList.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                        }
-                        filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
-                        filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = modelList.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
-                        filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = modelList.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
-                        filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = modelList.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
-                        filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = modelList.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
-                        filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
-                        filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = modelList.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
-                        filter.Domain = filter.Domain == null ? filter.Domain = modelList.Select(x => x.Domain).ToArray() : filter.Domain = filter.Domain;
-
-                        modelList = modelList.Where(c =>
-                           (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroup) : c.AssessmentGroup == null)
-                          && (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
-                          && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
-                          && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
-                          && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
-                          && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
-                           && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
-                            && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Domain) : c.Domain == null)).ToList();
-
-                        //totalMeetings = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsCount(searchvalue).Result;
-                        var Senioritylevel = _iRFRepository.GetSenioritylevel();
-                        foreach (var item in modelList)
-                        {
-                            if (!String.IsNullOrEmpty(item.Senioritylevel))
-                            {
-                                int Seniorityid = Convert.ToInt32(item.Senioritylevel);
-                                item.Senioritylevel = Senioritylevel.Where(x => x.Id == Seniorityid).FirstOrDefault().Name;
-                            }
-                        }
-                        ViewBag.Senioritylevel = modelList.Select(x => x.Senioritylevel).Distinct();
-                        ViewBag.ProfileType = modelList.Where(x => x.ProfileType != "0").Select(x => x.ProfileType).Distinct();
-                        ViewBag.CompentencyLevel = modelList.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
-                        ViewBag.AssessmentGroup = modelList.Select(x => x.AssessmentGroup).Distinct();
-                        ViewBag.IndianRate = modelList.Select(x => x.PerHourRateIndia).Distinct();
-                        ViewBag.OutSideIndiaRate = modelList.Select(x => x.PerHourRateOutside).Distinct();
-                        ViewBag.CompanyType = modelList.Select(x => x.CompanyType).Distinct();
-                        ViewBag.Domain = modelList.Select(x => x.Domain).Distinct();
-
-                        modelList = modelList.Take(12).ToList();
-                        totalMeetings = modelList.Count();
-
-
-                        ViewBag.ProfileName = profileName;
-                        if (!String.IsNullOrEmpty(searchvalue))
-                        {
-                            ViewBag.searchvalue = searchvalue;
-                        }
-                        else
-                        {
-                            ViewBag.searchvalue = "";
-                        }
-
-
-                        var remainder = totalMeetings % 12;
-                        if (remainder == 0)
-                        {
-                            ViewBag.Pages = totalMeetings / 12;
-
-                        }
-                        else
-                        {
-                            ViewBag.Pages = (totalMeetings / 12) + 1;
-
-                        }
-
-                        ViewBag.Page = Page.Value;
-                        ViewBag.MeetingsCount = totalMeetings;
-                        ViewBag.Remainder = remainder;
-                        return View(modelList);
+                        HttpContext.Session.SetString("InterviewerRiseTubefilters", JsonConvert.SerializeObject(filter));
                     }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    return RedirectToAction("InterviewerSearch", new { Page = Page, searchvalue = searchvalue });
                 }
                 else
                 {
