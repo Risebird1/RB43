@@ -8,6 +8,7 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -31,7 +32,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("InterviewerCommonInterviewNotification")]
-        public async void Run([TimerTrigger("0 0 8,16,21 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 8,16,21 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try

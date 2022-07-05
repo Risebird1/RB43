@@ -10,6 +10,7 @@
     "TenantId": "1e4b595b-d20a-49dd-83c5-19ca3ccd87d1",
     "ClientId": "bde4b6c7-33c6-424f-bceb-4089674ed596",
     "ClientSecret": "ALm9N3_9vv_~OSJGeifw2Te.OxK0-bLR.2",
-    "GraphEndpoint": "https://graph.microsoft.com/v1.0/"
+    "GraphEndpoint": "https://graph.microsoft.com/v1.0/",
+    "proctoringreport": "DefaultEndpointsProtocol=https;AccountName=proctoringreport;AccountKey=pgjapV78VBe7w2MuGgs2FcLAY4g7UJEuSbt4Ljz+/hO0ENtohdokzIqVuO5xHNZ1V+2+hajnjbfJFcQQcCin3A==;EndpointSuffix=core.windows.net"
   }
 }

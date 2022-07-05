@@ -1255,7 +1255,8 @@ namespace Risebird.Web.Controllers
                                 try
                                 {
                                     //meeting.ZoomMeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
-                                    meeting.ZoomMeetingId = meeting.zoomLink.Split('/').Last();
+                                    //meeting.ZoomMeetingId = meeting.zoomLink.Split('/').Last();
+                                    meeting.ZoomMeetingId = (meeting.zoomLink.Split('/').LastOrDefault()).Split('?').FirstOrDefault();
                                 }
                                 catch (Exception)
                                 {

@@ -6,6 +6,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -32,7 +33,7 @@ namespace Risebird.MicroService
             _twilioHelper = twilioHelper;
         }
         [FunctionName("CandidateMeetingReminder")]
-        public async void Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             //Fetch Interview 24 hours,6 hours and 2 hours before
