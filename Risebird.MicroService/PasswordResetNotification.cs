@@ -6,6 +6,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -28,7 +29,7 @@ namespace Risebird.MicroService
             _interviewerService = interviewerService;
         }
         [FunctionName("PasswordResetNotification")]
-        public async void Run([TimerTrigger("0 0 8 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 8 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger(PasswordResetNotification) function executed at: {DateTime.Now}");
             try

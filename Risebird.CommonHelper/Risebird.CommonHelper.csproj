@@ -17,8 +17,6 @@
     <PackageReference Include="Sendgrid" Version="9.11.0" />
     <PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
     <PackageReference Include="Twilio" Version="5.31.4" />
-    <PackageReference Include="windowsazure.mediaservices" Version="4.2.0" />
-    <PackageReference Include="windowsazure.mediaservices.extensions" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
