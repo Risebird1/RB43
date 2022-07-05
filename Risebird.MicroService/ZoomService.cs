@@ -41,7 +41,7 @@ namespace Risebird.MicroService
 
         }
         [FunctionName("ZoomService")]
-        public async Task Run([TimerTrigger("0 0 */10 * * *")] TimerInfo myTimer, ILogger log) //after every 6 hours
+        public async Task Run([TimerTrigger("0 0 */1 * * *")] TimerInfo myTimer, ILogger log) //after every 6 hours
         {
             try
             {
