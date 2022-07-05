@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -32,7 +33,7 @@ namespace Risebird.MicroService
             _connection = _configuration["ConnectionString:DBConnectionString"];
         }
         [FunctionName("InterviewerFeedbackRemainder")]
-        public async void Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
