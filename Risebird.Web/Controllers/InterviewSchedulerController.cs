@@ -206,22 +206,39 @@ namespace Risebird.Web.Controllers
             var model = new ScheculeInterview();
             var result = _interviewSchedulerservice.FetchDetailsByUniqueId(id);
             ViewBag.id = id;
+            bool isPaused = false;
             if (result != null && result.Count() > 0)
             {
-                model.InterviewChannelId = result.FirstOrDefault().SkillChannel;
-                if (String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
+                if (!String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
                 {
-                    model.InterviewChannelId = result.FirstOrDefault().SkillChannelRelation;
+                    isPaused = await _interviewSchedulerservice.CheckSkillChannelPaused(result.FirstOrDefault().SkillChannel);
                 }
-                model.Uniqueid = result.FirstOrDefault().Uniqueid;
-                ViewBag.Start = 1;
-                model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
-                if (model._IRFDetails == null)
+                else if (!String.IsNullOrEmpty(result.FirstOrDefault().SkillChannelRelation))
+                {
+                    isPaused = await _interviewSchedulerservice.CheckSkillChannelPaused(result.FirstOrDefault().SkillChannelRelation);
+                }
+                if (!isPaused)
+                {
+                    model.InterviewChannelId = result.FirstOrDefault().SkillChannel;
+                    if (String.IsNullOrEmpty(result.FirstOrDefault().SkillChannel))
+                    {
+                        model.InterviewChannelId = result.FirstOrDefault().SkillChannelRelation;
+                    }
+                    model.Uniqueid = result.FirstOrDefault().Uniqueid;
+                    ViewBag.Start = 1;
+                    model._IRFDetails = _interviewSchedulerservice.fetchIRFClientDetails(model.InterviewChannelId);
+                    if (model._IRFDetails == null)
+                    {
+                        model._IRFDetails = new ScheculeInterviewIRFVM();
+                    }
+                    model.ClientName = model._IRFDetails.Name;
+                    model.MeetingPlatform = result.FirstOrDefault().MeetingPlatform;
+                }
+                else
                 {
                     model._IRFDetails = new ScheculeInterviewIRFVM();
+                    ViewBag.Start = 3;
                 }
-                model.ClientName = model._IRFDetails.Name;
-                model.MeetingPlatform = result.FirstOrDefault().MeetingPlatform;
             }
             else
             {
@@ -323,15 +340,15 @@ namespace Risebird.Web.Controllers
                     //string meetingLink;// = string.Empty;
                     var zoomLink = new InstaZoomMeetingResponse();
                     var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
-                    if(string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
                         zoomLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
 
                     }
-                    else if(model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
-                        rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting( "Risebird", model.Name, indianTime);
+                        rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
                     }
                     string textreminder = string.Empty;
                     textreminder = model.CountryCode + model.MobileNumber;
@@ -341,7 +358,7 @@ namespace Risebird.Web.Controllers
                     {
                         result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
                     }
-                    else if(model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                    else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
                         result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, rbMeetingLinkResponse.meetingAgent, model.InterviewChannelId, rbMeetingLinkResponse.roomId, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
                     }
@@ -381,11 +398,11 @@ namespace Risebird.Web.Controllers
                             CC = accountEmail,//zoomLink.accountemail,
                             Subject = "Invitation: " + model.Name + " @ " + interviewdatetime + "(" + timezonevalue + ")"
                         };
-                        if(string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                        if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                         {
                             _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
                         }
-                        else if(model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
+                        else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                         {
                             _ = _notificationHelper.SendInterviewInvite(_mail, model.Email, rbMeetingLinkResponse.meetingAttendee, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.offset);
                         }

@@ -48,9 +48,9 @@ namespace Risebird.MicroService
                 //get all the completed meetings where video upload is pending
 
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
-                
-                var pendingZoomMeetings = pendingVideoMeetings?.Where(x=>x.MeetingPlatform == null || x.MeetingPlatform == MeetingPlatforms.Zoom);
-                var pendingRBMeetings = pendingVideoMeetings?.Where(x=>x.MeetingPlatform == MeetingPlatforms.RisebirdMeet);
+
+                var pendingZoomMeetings = pendingVideoMeetings?.Where(x => x.MeetingPlatform == null || x.MeetingPlatform == MeetingPlatforms.Zoom);
+                var pendingRBMeetings = pendingVideoMeetings?.Where(x => x.MeetingPlatform == MeetingPlatforms.RisebirdMeet);
 
                 //get jwt authentication token 
                 //string token = ZoomToken();
@@ -191,7 +191,7 @@ namespace Risebird.MicroService
                         IRestResponse response = _meeting.Execute(request);
                         var content = response.Content;
                         var convertedResponse = JsonConvert.DeserializeObject<RBMeetCreateMeetingResponse>(content);
-                        
+
                         string rbMeetVideoLink = convertedResponse.videoUrl;
                         int rbMeetVideoDurationInSeconds = convertedResponse.duration;
                         int rbMeetVideoDurationInMinutes = (rbMeetVideoDurationInSeconds / 60);

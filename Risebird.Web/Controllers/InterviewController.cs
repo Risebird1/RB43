@@ -6906,5 +6906,33 @@ namespace Risebird.Web.Controllers
             model.IsLipsyncissue = false;
         }
         #endregion
+        [HttpPost]
+        public async Task<JsonResult> FetchInterviewVideoDetails(int interviewid)
+        {
+            var model = await _meetingService.GetInterviewMeetingById(interviewid);
+            return Json(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> SaveVideoDetails(int interviewid, string VideoURL, int videoduration, string CandidateEmail)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var model = await _meetingService.SaveVideoDetailsById(interviewid, VideoURL, videoduration, CandidateEmail, emailId);
+                if (model)
+                {
+                    return Json("Video details are updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update video details, please try again.");
+                }
+            }
+            else
+            {
+                return Json("Failed to update video details, please try again.");
+            }
+        }
     }
 }

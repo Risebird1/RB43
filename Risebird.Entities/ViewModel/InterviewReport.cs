@@ -385,6 +385,7 @@ namespace Risebird.Entities.ViewModel
         public string BillingOwner { get; set; }
         public string JDLink { get; set; }
         public int id { get; set; }
+        public bool IsPaused { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {
@@ -397,5 +398,14 @@ namespace Risebird.Entities.ViewModel
         public string PAN { get; set; }
         public string IFSCCode { get; set; }
         public string AccountName { get; set; }
+    }
+    public class FnRevenueVM
+    {
+        public int id { get; set; }
+        public string Name { get; set; }
+        public int TotalCount { get; set; }
+        public int PerInterviewRate { get; set; }
+        public string IRFId { get; set; }
+        public string BillingOwner { get; set; }
     }
 }

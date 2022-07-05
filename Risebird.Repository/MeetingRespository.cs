@@ -4955,7 +4955,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
                 //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
-                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
+                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
@@ -5885,6 +5885,88 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", stdate);
+                    parameters.Add("@EndDate", endate);
+                    var result = SqlMapper.Query<FnRevenueVM>(con, "usp_GetRevenueDetailsByDate", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return (List<FnRevenueVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Clientid", clientid);
+                dynamicParameters.Add("@StartDate", stdate);
+                dynamicParameters.Add("@EndDate", endate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueDetailsByClient", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return (List<FnRevenueVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@StartDate", stdate);
+                    parameters.Add("@EndDate", endate);
+                    var result = SqlMapper.Query<FnRevenueVM>(con, "usp_GetAllRevenueDetailsByDate", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return (List<FnRevenueVM>)result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewid", interviewid);
+                    parameters.Add("@VideoURL", VideoURL);
+                    parameters.Add("@videoduration", videoduration);
+                    var result = SqlMapper.Query(con, "usp_UpdatevideoDetailsById", parameters, commandTimeout: 600,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }

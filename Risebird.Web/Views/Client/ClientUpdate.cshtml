@@ -161,7 +161,13 @@
                                             @Html.CheckBoxFor(model => model.IsMeetingNotificationSend) Risebird Meeting waiting Notification.
                                         </div>
                                     </div>
-
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.PerInterviewRate, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.PerInterviewRate, new { @class = "form-control", type = "number" })
+                                            @Html.ValidationMessageFor(model => model.PerInterviewRate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
                                 </div>
 
                                 @Html.HiddenFor(x => x.IsPasswordReset)
