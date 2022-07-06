@@ -405,42 +405,62 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (ModelState.IsValid)
+                    string OrginalProfileName = string.Empty;
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+
+                    emailid = emailid.Replace("\"", "");
+                    if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
                     {
-                        if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                        OrginalProfileName = profileName;
+                        profileName = "Admin";
+                    }
+                    if (profileName == "Admin")
+                    {
+                        if (ModelState.IsValid)
                         {
-                            clientUserVM.FirstName = clientUserVM.FirstName.Trim();
-                        }
-                        if (!string.IsNullOrEmpty(clientUserVM.LastName))
-                        {
-                            clientUserVM.LastName = clientUserVM.LastName.Trim();
-                        }
-                        if (!string.IsNullOrEmpty(clientUserVM.EmailId))
-                        {
-                            clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
-                        }
-                        if (_userService.AddClientUser(clientUserVM))
-                        {
-                            TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
-                            return RedirectToAction("ClientUsers");
+                            if (!string.IsNullOrEmpty(clientUserVM.FirstName))
+                            {
+                                clientUserVM.FirstName = clientUserVM.FirstName.Trim();
+                            }
+                            if (!string.IsNullOrEmpty(clientUserVM.LastName))
+                            {
+                                clientUserVM.LastName = clientUserVM.LastName.Trim();
+                            }
+                            if (!string.IsNullOrEmpty(clientUserVM.EmailId))
+                            {
+                                clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
+                            }
+
+                            if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                            {                               
+                                profileName = OrginalProfileName;
+                            }
+
+                            if (_userService.AddClientUser(clientUserVM))
+                            {
+                                TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
+                                return RedirectToAction("ClientUsers");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageClientUser"] = "Client User addition is Failed";
+                                return RedirectToAction("ClientUsers");
+                            }
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageClientUser"] = "Client User addition is Failed";
-                            return RedirectToAction("ClientUsers");
+
+                            var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                            profilename = profilename.Replace("\"", "");
+                            var model = new ClientUserVM();
+                            model.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
+                            model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
+                            return View("ClientUserAdd", model);
                         }
                     }
-                    else
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var profilename = HttpContext.Session.GetString("profileName")?.Trim();
-                        profilename = profilename.Replace("\"", "");
-                        var model = new ClientUserVM();
-                        model.Clients = new SelectList(_clientService.GetClients(emailid, profilename), "id", "Name");
-                        model.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
-                        return View("ClientUserAdd", model);
-                    }
+                    return RedirectToAction("ClientUsers");
                 }
                 else
                 {
