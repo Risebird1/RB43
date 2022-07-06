@@ -274,122 +274,11 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    bool isClientUser = false;
-                    int ClientId = 0;
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Client")
+                    if (filter != null)
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        if (profileName == "Client")
-                        {
-                            var client = await _userRepository.GetClientUserDetails(emailid);
-                            ClientId = client.ClientId;
-                            isClientUser = true;
-                        }
-                        if (TempData["SuccessErrorMessageInterview"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
-                            TempData.Remove("SuccessErrorMessageInterview");
-                        }
-                        if (filter != null)
-                        {
-                            HttpContext.Session.SetString("CommonPoolfilters", JsonConvert.SerializeObject(filter));
-                        }
-                        var modelList = new List<MeetingVM>();
-
-                        if (isClientUser)
-                        {
-                            modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailid);
-                        }
-
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                        }
-
-
-                        modelList = modelList.Select(x =>
-                        {
-                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
-
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                        filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
-                        filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                        filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = modelList.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
-                        filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = modelList.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
-                        filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = modelList.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
-                        filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                        filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = modelList.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
-                        filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
-                        filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
-                        filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
-                        filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
-
-                        modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                        && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                          && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
-                        && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
-                           && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
-                            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
-                             && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                              && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
-                        && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                        && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
-                        && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)
-                        && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == string.Empty)).ToList();
-                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                        ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                        ViewBag.NextLevelApprovalStatusList = modelList.Select(x => x.NextLevelApprovalStat).ToArray();
-                        ViewBag.JoiningStatusList = modelList.Select(x => x.JoiningStatusStatDesc).ToArray();
-                        ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
-                        ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
-                        ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
-                        ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
-
-
-                        ViewBag.ProfileName = profileName;
-                        if (!String.IsNullOrEmpty(filter.SearchFillter))
-                        {
-                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(filter.SearchFillter.ToUpper()) || x.JDTiltle.ToUpper().Contains(filter.SearchFillter.ToUpper())).ToList();
-                            ViewBag.searchvalue = filter.SearchFillter;
-                        }
-                        else
-                        {
-                            ViewBag.searchvalue = "";
-                        }
-
-                        for (int i = 0; i < modelList.Count; i++)
-                        {
-                            Page = Page == null ? 1 : Page;
-                            modelList[i].interviewVediosequence = modelList.Count;
-                            var totalpage = modelList.Count / 12;
-                            int? initail = 12 * (Page - 1) + 1;
-                            int? endvalue = 0;
-                            if (totalpage >= Page)
-                            {
-
-                                endvalue = 12 * Page;
-                            }
-                            else
-                            {
-                                endvalue = modelList.Count;
-                            }
-                            modelList[i].PageNumber = initail.ToString() + " - " + endvalue.ToString();
-
-                        }
-                        return View(modelList.ToPagedList(Page ?? 1, 12));
+                        HttpContext.Session.SetString("CommonPoolfilters", JsonConvert.SerializeObject(filter));
                     }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    return RedirectToAction("Index", new { Page = Page });
                 }
                 else
                 {
@@ -401,7 +290,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-
         }
 
         /// <summary>
@@ -1361,14 +1249,6 @@ namespace Risebird.Web.Controllers
                             {
                                 item.MeetingStatusStatusDesc = string.Empty;
                             }
-                            if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                            {
-                                item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                            }
-                            else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                            {
-                                item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
-                            }
                         }
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         filter.RFID = filter.RFID == null ? filter.RFID = modelList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -1410,14 +1290,6 @@ namespace Risebird.Web.Controllers
                             {
                                 item.MeetingStatusStatusDesc = string.Empty;
                             }
-                            if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                            {
-                                item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                            }
-                            else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                            {
-                                item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
-                            }
                         }
                     }
                     return View(modelList);
@@ -1439,78 +1311,11 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var email = HttpContext.Session.GetString("email")?.Trim();
-                email = email.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "SeniorHR")
+                if (filter != null)
                 {
-                    if (filter != null)
-                    {
-                        HttpContext.Session.SetString("CommonPoolSelectedCandidatefilters", JsonConvert.SerializeObject(filter));
-                    }
-                    List<MeetingVM> modelList = new List<MeetingVM>();
-
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        modelList = _meetingService.GetAllSelectedCandidateInterviewList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), email);
-                    }
-                    else
-                    {
-                        modelList = _meetingService.GetAllSelectedCandidateInterviewList(DateTime.Now.Date.AddMonths(-1), DateTime.Now.Date.AddDays(1), email);
-                    }
-                    modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-                    foreach (var item in modelList)
-                    {
-                        item.NextLevelApprovalStat = item.IsApproved.HasValue ? ((NextLevelApprovalStatus)item.IsApproved).GetDescription() : string.Empty;
-
-                        if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                        {
-                            if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                            {
-                                item.MeetingStatusStatusDesc = "Status Pending";
-                            }
-                        }
-                        else
-                        {
-                            item.MeetingStatusStatusDesc = string.Empty;
-                        }
-                        if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == null)
-                        {
-                            item.intervieweStatusStatDesc = "QC Pending(" + item.intervieweStatusStatDesc + ")";
-                        }
-                        else if ((item.InterviewStatus == 4 || item.InterviewStatus == 2) && item.QCStatus == 2)
-                        {
-                            item.intervieweStatusStatDesc = "QC Failed(" + item.intervieweStatusStatDesc + ")";
-                        }
-                    }
-                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                    filter.RFID = filter.RFID == null ? filter.RFID = modelList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                    filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
-                    filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = modelList.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-                    filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = modelList.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-                    filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                    filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-                    filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                    filter.Client = filter.Client == null ? filter.Client = modelList.Select(x => x.Client).ToArray() : filter.Client = filter.Client;
-
-                    modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                    && filter.RFID.Contains(c.IRFId)
-                    && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                    && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
-                    && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
-                    && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                    && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)
-                    && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                    && ((filter.Client != null && filter.Client.Count() > 0) ? filter.Client.Contains(c.Client) : c.Client == null)).ToList();
-
-
-                    return View(modelList);
+                    HttpContext.Session.SetString("CommonPoolSelectedCandidatefilters", JsonConvert.SerializeObject(filter));
                 }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                return RedirectToAction("SelectedCandidate");
             }
             else
             {

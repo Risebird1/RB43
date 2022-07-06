@@ -75,7 +75,6 @@ namespace Risebird.Web.Controllers
                             {
                                 vm.StatusDesc = "Deallocating";
                             }
-
                         }
                         else
                         {
@@ -108,7 +107,6 @@ namespace Risebird.Web.Controllers
                     model.VMList.AddRange(vmList.Where(x => !x.Status.HasValue || x.Status != (int)VMState.running).ToList());
                     model.Profile = profileName;
                     return View(model);
-
                 }
                 else
                 {
