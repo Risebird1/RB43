@@ -3534,6 +3534,7 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.PageStatus = "Mainurl";
                 ViewBag.ClientDetails = "";
+                string OrginalProfileName = string.Empty;
                 if (HttpContext.Session.GetString("email") != null &&
                     HttpContext.Session.GetString("profileName") != null)
                 {
@@ -3542,8 +3543,9 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
 
                     emailid = emailid.Replace("\"", "");
-                    if(emailid.ToLower() == "parvathi_sg@risebird.io")
+                    if(emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
                     {
+                        OrginalProfileName = profileName;
                         profileName = "Admin";
                     }
 
@@ -3693,6 +3695,12 @@ namespace Risebird.Web.Controllers
                                 _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
+
+                            if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                            {
+                                profileName = OrginalProfileName;
+                            }
+
                             if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
@@ -3710,6 +3718,11 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
+                            if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                            {
+                                profileName = OrginalProfileName;
+                            }
+
                             if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
