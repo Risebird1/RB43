@@ -7346,6 +7346,14 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
+                if (!String.IsNullOrEmpty(VideoURL))
+                {
+                    VideoURL = "";
+                }
+                if (!String.IsNullOrEmpty(CandidateEmail))
+                {
+                    CandidateEmail = "";
+                }
                 var model = await _meetingService.SaveVideoDetailsById(interviewid, VideoURL, videoduration, CandidateEmail, emailId);
                 if (model)
                 {
