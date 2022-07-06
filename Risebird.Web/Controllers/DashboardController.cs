@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -32,8 +33,14 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IUserRepository _userRepository;
         private readonly IInterviewerService _interviewerService;
+        private readonly IMeetingRespository _meetingRespository;
+        private readonly IZoomHelper _zoomHelper;
 
-        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IUserService userService, IConfiguration configuration, IMeetingService meetingService, IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService)
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger, 
+            IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, 
+            IUserService userService, IConfiguration configuration, IMeetingService meetingService,
+            IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
+            IMeetingRespository meetingRespository, IZoomHelper zoomHelper)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,6 +52,8 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _userRepository = userRepository;
             _interviewerService = interviewerService;
+            _meetingRespository = meetingRespository;
+            _zoomHelper = zoomHelper;
         }
 
         [Authorize]
@@ -61,6 +70,7 @@ namespace Risebird.Web.Controllers
                     Emailid = Emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                     {
+                        await DeleteOldZoomMeetings();
                         var model = new DashboardVM();
 
                         //daily interview tracking first chart
@@ -116,6 +126,200 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task DeleteOldZoomMeetings()
+        {
+            try
+            {
+                //get all the meetings older than 45 days
+
+                var meetingsToBeDeleted = await _meetingRespository.GetZoomMeetingsToBeDeleted();
+
+                //get jwt authentication token 
+
+                string token = _zoomHelper.ZoomToken();
+
+                // delete zoom meeting and its recording from Zoom
+                //Parallel.ForEach(meetingsToBeDeleted, meeting =>
+                //{
+                //    try
+                //    {
+                //        if (!string.IsNullOrEmpty(meeting.ZoomMeetingId))
+                //        {
+                //            if (meeting.ZoomMeetingId == "0" && !string.IsNullOrEmpty(meeting.zoomLink))
+                //            {
+                //                //long zoommeetingId = 0;
+                //                string zoommeetingId;
+                //                try
+                //                {
+                //                    //zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                //                    zoommeetingId = (meeting.zoomLink.Split('/').LastOrDefault()).Split('?').FirstOrDefault();
+                //                }
+                //                catch (Exception)
+                //                {
+                //                    try
+                //                    {
+                //                        var link = meeting.zoomLink.Split('?').First();
+                //                        //zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                //                        zoommeetingId = link.Split('/').Last();
+                //                    }
+                //                    catch (Exception)
+                //                    {
+                //                        //zoommeetingId = 0;
+                //                        zoommeetingId = null;
+                //                    }
+                //                }
+                //                //meeting.ZoomMeetingId = zoommeetingId.ToString();
+                //                meeting.ZoomMeetingId = zoommeetingId;
+                //            }
+
+
+                //            //Delete meeting
+                //            //create HTTP Rest Client
+                //            var clientDeleteMeeting = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}"));
+
+                //            //create HTTP Request 
+                //            var requestDeleteMeeting = new RestRequest(Method.DELETE);
+                //            requestDeleteMeeting.AddHeader("content-type", "application/json");
+                //            requestDeleteMeeting.AddHeader("authorization", "Bearer " + token);
+                //            IRestResponse responseDeleteMeeting = clientDeleteMeeting.Execute(requestDeleteMeeting);
+
+                //            //var content = response.Content;
+                //            if(responseDeleteMeeting.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
+                //            {
+                //                log.LogInformation($"Zoom : Meeting with ZoomMeetingId : {meeting.ZoomMeetingId} deleted at: {DateTime.Now}");
+                //            }
+                //            else
+                //            {
+                //                log.LogInformation($"Error! Zoom : Meeting with ZoomMeetingId : {meeting.ZoomMeetingId} could not be deleted! Message : {responseDeleteMeeting.Content ?? responseDeleteMeeting.StatusDescription}");
+
+                //            }
+
+                //            //Delete video recordings for the meeting
+                //            //create HTTP Request 
+
+                //            var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"/meetings/{meeting.ZoomMeetingId}/recordings?action=delete"));
+
+                //            var requestDeleteMeetingRecordings = new RestRequest(Method.DELETE);
+                //            requestDeleteMeetingRecordings.AddHeader("content-type", "application/json");
+                //            requestDeleteMeetingRecordings.AddHeader("authorization", "Bearer " + token);
+                //            IRestResponse responseDeleteMeetingRecordings = clientDeleteMeetingRecordings.Execute(requestDeleteMeetingRecordings);
+                //            //var content = response.Content;
+                //            if (responseDeleteMeetingRecordings.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
+                //            {
+                //                log.LogInformation($"Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} deleted at: {DateTime.Now}");
+                //            }
+                //            else
+                //            {
+                //                log.LogInformation($"Error! Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} could not be deleted! Message : {responseDeleteMeetingRecordings.Content ?? responseDeleteMeetingRecordings.StatusDescription}");
+
+                //            }
+
+
+                //        }
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //        log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                //        return;
+                //    }
+                //});
+
+
+                foreach (var meeting in meetingsToBeDeleted)
+                {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(meeting.ZoomMeetingId))
+                        {
+                            if (meeting.ZoomMeetingId == "0" && !string.IsNullOrEmpty(meeting.zoomLink))
+                            {
+                                //long zoommeetingId = 0;
+                                string zoommeetingId;
+                                try
+                                {
+                                    //zoommeetingId = Convert.ToInt64(meeting.zoomLink.Split('/').Last());
+                                    zoommeetingId = (meeting.zoomLink.Split('/').LastOrDefault()).Split('?').FirstOrDefault();
+                                }
+                                catch (Exception)
+                                {
+                                    try
+                                    {
+                                        var link = meeting.zoomLink.Split('?').First();
+                                        //zoommeetingId = Convert.ToInt64(link.Split('/').Last());
+                                        zoommeetingId = link.Split('/').Last();
+                                    }
+                                    catch (Exception)
+                                    {
+                                        //zoommeetingId = 0;
+                                        zoommeetingId = null;
+                                    }
+                                }
+                                //meeting.ZoomMeetingId = zoommeetingId.ToString();
+                                meeting.ZoomMeetingId = zoommeetingId;
+                            }
+
+
+                            //Delete meeting
+                            //create HTTP Rest Client
+                            var clientDeleteMeeting = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}"));
+
+                            //create HTTP Request 
+                            var requestDeleteMeeting = new RestRequest(Method.DELETE);
+                            requestDeleteMeeting.AddHeader("content-type", "application/json");
+                            requestDeleteMeeting.AddHeader("authorization", "Bearer " + token);
+                            IRestResponse responseDeleteMeeting = clientDeleteMeeting.Execute(requestDeleteMeeting);
+
+                            //var content = response.Content;
+                            if (responseDeleteMeeting.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
+                            {
+                                string status = "success";
+
+                            }
+                            else
+                            {
+                                string status = "fail";
+
+                            }
+
+                            //Delete video recordings for the meeting
+                            //create HTTP Request 
+
+                            //var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=delete"));
+                            var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings"));
+
+                            var requestDeleteMeetingRecordings = new RestRequest(Method.DELETE);
+                            requestDeleteMeetingRecordings.AddHeader("content-type", "application/json");
+                            requestDeleteMeetingRecordings.AddHeader("authorization", "Bearer " + token);
+                            IRestResponse responseDeleteMeetingRecordings = clientDeleteMeetingRecordings.Execute(requestDeleteMeetingRecordings);
+                            //var content = response.Content;
+                            if (responseDeleteMeetingRecordings.StatusCode == System.Net.HttpStatusCode.NoContent) //status code 204, indicates success
+                            {
+                                string status = "success";
+                                //log.LogInformation($"Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} deleted at: {DateTime.Now}");
+                            }
+                            else
+                            {
+                                string status = "success";
+                                //log.LogInformation($"Error! Zoom : Meeting Recordings with ZoomMeetingId : {meeting.ZoomMeetingId} could not be deleted! Message : {responseDeleteMeetingRecordings.Content ?? responseDeleteMeetingRecordings.StatusDescription}");
+
+                            }
+
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetMeetingResultCount()

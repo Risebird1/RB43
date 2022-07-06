@@ -228,5 +228,6 @@ namespace Risebird.Repository.Interface
         Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate);
         Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
         Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration);
+        Task<IEnumerable<ZoomMeetingsToBeDeleted>> GetZoomMeetingsToBeDeleted();
     }
 }

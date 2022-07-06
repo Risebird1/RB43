@@ -5968,5 +5968,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<ZoomMeetingsToBeDeleted>> GetZoomMeetingsToBeDeleted()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@cutOffDate", DateTime.Now.AddDays(-45));
+                    var result = SqlMapper.Query<ZoomMeetingsToBeDeleted>(con, "usp_GetZoomMeetingsToBeDeleted", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }
