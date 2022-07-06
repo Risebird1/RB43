@@ -3332,15 +3332,23 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.PageStatus = "Mainurl";
                 ViewBag.ClientDetails = "";
+                string OrginalProfileName = string.Empty;
                 if (HttpContext.Session.GetString("email") != null &&
                     HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
+
                     emailid = emailid.Replace("\"", "");
+                    if(emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                    {
+                        OrginalProfileName = profileName;
+                        profileName = "Admin";
+                    }
+
                     model.UserDetails = emailid;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR")
+                    if (profileName == "Admin"  || profileName == "Interviewer")
                     {
 
                         if (model.AudioFile != null)
@@ -3485,6 +3493,12 @@ namespace Risebird.Web.Controllers
                                 _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
+
+                            if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                            {
+                                profileName = OrginalProfileName;
+                            }
+
                             if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
@@ -3494,6 +3508,11 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
+                            if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                            {
+                                profileName = OrginalProfileName;
+                            }
+
                             if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
                             {
                                 return RedirectToAction("Index");
@@ -3503,7 +3522,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        return RedirectToAction("Index", "Interview");
                     }
                 }
                 else
@@ -6350,7 +6369,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = _meetingService.GetCompletedInterviewList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                            modelList = _meetingService.GetCompletedInterviewList(DateTime.Now.Date.AddDays(-2), DateTime.Now.Date.AddDays(1));
                             modelList = modelList.Select(x =>
                             {
                                 x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;

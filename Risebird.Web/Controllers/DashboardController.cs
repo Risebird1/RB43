@@ -69,8 +69,7 @@ namespace Risebird.Web.Controllers
                     var Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR")
-                    {
-                        await DeleteOldZoomMeetings();
+                    {                       
                         var model = new DashboardVM();
 
                         //daily interview tracking first chart

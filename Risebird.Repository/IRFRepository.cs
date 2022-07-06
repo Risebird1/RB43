@@ -5738,7 +5738,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform ?? "Zoom";
 
 
                     DataTable techSkillDt = new DataTable();
