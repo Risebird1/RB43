@@ -452,14 +452,7 @@
     });
 
     function ResetFilter() {
-
-             $.ajax({
-            type: "POST",
-            url: "/Account/Index",
-                 success: function (data) {
-                    window.location.href = "/Account/ResetAccountFilter";
-                 }
-                });
+        window.location.href = "/Account/ResetAccountFilter";
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -477,13 +470,6 @@
             $("#ArchiveStatus").val(archiveStatus);
             $("#Location").val(location);
             var form = $("#form").serialize();
-             $.ajax({
-            type: "POST",
-                 url: "/Account/Index",
-            data: form,
-                 success: function (data) {
-                 }
-                });
     }
 
 </script>

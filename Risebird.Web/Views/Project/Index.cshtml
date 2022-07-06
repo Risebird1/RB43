@@ -32,7 +32,7 @@
 
 
 <div class="main-panel" id="main-panel">
-  
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin-bottom:0px;">
             <div class="card-header bg-w clearfix">
@@ -497,14 +497,7 @@
     });
 
     function ResetFilter() {
-
-             $.ajax({
-            type: "POST",
-            url: "/Project/Index",
-                 success: function (data) {
                     window.location.href = "/Project/ResetProjectFilter";
-                 }
-                });
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -513,22 +506,12 @@
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
             var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
             var location =  @Html.Raw(Json.Serialize(Location));
-
-
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
             $("#ProjectID").val(projectID);
             $("#ClientName").val(clientName);
             $("#ArchiveStatus").val(archiveStatus);
             $("#Location").val(location);
-            var form = $("#form").serialize();
-             $.ajax({
-            type: "POST",
-                 url: "/Project/Index",
-            data: form,
-                 success: function (data) {
-                 }
-                });
     }
 
 </script>

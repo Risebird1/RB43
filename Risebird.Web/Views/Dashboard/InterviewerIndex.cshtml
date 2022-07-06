@@ -66,7 +66,13 @@
                                         </div>
                                         <div id="slotsId">
                                             <div class="panel-body panel-body-table">
-                                                @*<b>Important Announcement:</b>*@ <ul><li>All the interviews will be assessed for Quality by our QC Team. Kindly ensure you adhere to standard practices to avoid attracting penalty. <a target="_blank" href="https://risebirdportal.blob.core.windows.net/regulatorycompliancedocuments/Risebird_QC_Guidelines.docx">Click Here</a> to know all standard points.</li></ul>
+                                                <ul>
+                                                    <li>All the interviews will be assessed for Quality by our QC Team. Kindly ensure you adhere to standard practices to avoid attracting penalty. <a target="_blank" href="https://risebirdportal.blob.core.windows.net/regulatorycompliancedocuments/Risebird_QC_Guidelines.docx">Click Here</a> to know all standard points.</li>
+                                                    <li>
+                                                        Kindly Upload your latest Resume. To upload resume please follow the navigation.<br />
+                                                        <strong>Menu --> My Profile </strong> or <strong>Click on Right top account menu -->My Profile</strong>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -303,30 +309,6 @@
         </div>
     </div>
 </div>
-<div id="CodedResumeNotificationModel" class="modal modal-bg" style="z-index:3;padding-top:5vw !important">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 200 250"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Urgent Resume Upload Notification!!! <span class="popup-text" id="skill_id_pop"></span></h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeCodedResumeNotificationModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-
-            <input type="text" hidden id="txtinterviewid" />
-            <div class="modal-body">
-                Kindly Upload your latest Resume.<br />
-                To upload resume please follow the navigation.<br />
-                <strong>Menu --> My Profile </strong> or <strong>Click on Right top account menu -->My Profile</strong>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
@@ -382,21 +364,7 @@
             }
         });
     });
-    function closeCodedResumeNotificationModel() {
-        var model = document.getElementById("CodedResumeNotificationModel");
-        model.style.display = "none";
-    }
-    function openCodedResumeNotificationModel() {
-        var model = document.getElementById("CodedResumeNotificationModel");
-        model.style.display = "block";
-    }
 </script>
-@if (!ViewBag.isCodedResumePresent)
-{
-    <script>
-        openCodedResumeNotificationModel();
-    </script>
-}
 <script>
     function GenerateclientpaiChart(client) {
         var interviewerCountObj = [{ y: client, label: "Client" }, { y: (5 - parseFloat(client)) }]
