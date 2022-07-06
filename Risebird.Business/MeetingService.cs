@@ -707,20 +707,6 @@ namespace Risebird.Business
             }
         }
 
-        public List<Meeting> GetQCOpenInterviews(string emailId)
-        {
-            try
-            {
-                var openMeeting = _meetingRespository.GetQCOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList().Where(x => x.QCInterviewer == null).ToList();
-                return openMeeting;
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
         public List<Meeting> GetAllQCInterviews(string emailId)
         {
             try
@@ -774,23 +760,6 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-
-        public List<Meeting> GetQualityControlInterviews(string emailID)
-        {
-            try
-            {
-                //var finalList = new List<Meeting>();
-                var assignedMeeting = _meetingRespository.GetQualityControlInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
-
-                return assignedMeeting;
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -892,21 +861,6 @@ namespace Risebird.Business
             //    return "Failed to assigned interview, Please contact Risebird HR.";
             //}
         }
-        public string QCAssignYourself(int meetingid, string interviewerMail)
-        {
-            try
-            {
-
-                return _meetingRespository.QCAssignYourself(meetingid, interviewerMail);
-
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to assigned interview, Please contact Risebird HR.";
-            }
-
-        }
 
         public bool UnassignYourself(int meetingid, string email, bool isPenalty)
         {
@@ -961,19 +915,6 @@ namespace Risebird.Business
             }
         }
 
-        public bool QCUnassignYourself(int meetingid, string email)
-        {
-            try
-            {
-                return _meetingRespository.QCUnassignYourself(meetingid).Result;
-
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-        }
         public bool CancelInterview(int meetingid, string interviewDate, string candidateEmail)
         {
             try

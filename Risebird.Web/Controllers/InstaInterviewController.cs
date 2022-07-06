@@ -600,47 +600,11 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
-                    emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                    if (filter != null)
                     {
-                        ViewBag.profile = profileName;
-                        if (filter != null)
-                        {
-                            HttpContext.Session.SetString("InstaInterviewfilters", JsonConvert.SerializeObject(filter));
-                        }
-                        List<InstaMeetingVM> modelList = new List<InstaMeetingVM>();
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            modelList = _instaInterviewService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), id, emailId);
-                        }
-                        modelList = modelList.Select(x =>
-                        {
-                            x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
-                            x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription();
-                            return x;
-                        }).ToList();
-
-                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.RequiredSkill.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                        filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = modelList.Select(x => x.ConfirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-                        filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = modelList.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-                        filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                        filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.Interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-
-                        modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.RequiredSkill.Split("|")[0])
-                        && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(c.ConfirmationStatus) : c.ConfirmationStatus == null)
-                        && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
-                        && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                        && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.Interviewer) : c.Interviewer == null)).ToList();
-                        ViewBag.Requestid = id;
-                        return View(modelList);
+                        HttpContext.Session.SetString("InstaInterviewfilters", JsonConvert.SerializeObject(filter));
                     }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    return RedirectToAction("Index", new { id = id });
                 }
                 else
                 {
@@ -946,7 +910,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -986,7 +950,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var checkforAssign = _instaInterviewService.CheckForInstaAssign(id);
                         if (String.IsNullOrEmpty(checkforAssign))
@@ -1055,7 +1019,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -1132,51 +1096,7 @@ namespace Risebird.Web.Controllers
                     {
                         HttpContext.Session.SetString("MyInstaInterviewfilters", JsonConvert.SerializeObject(filter));
                     }
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var myInterview = _instaInterviewService.GetAllInstaAssignedInterviews(emailid);
-                        var codedname = _meetingService.FetchInterviewerCodedName(emailid);
-                        ViewBag.CodedName = codedname;
-                        myInterview = myInterview.Select(x => { x.ConfirmationStatus = ((InstaReceiveMeetingStatus)Convert.ToInt32(x.ConfirmationStatus)).GetDescription(); return x; }).ToList();
-                        foreach (var item in myInterview)
-                        {
-                            if (item.InterviewStatus > 0)
-                            {
-                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            }
-                            if (item.MeetingStatus > 0)
-                            {
-                                item.MeetingStatusStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-                            }
-                        }
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            myInterview = myInterview.Where(t => t.RequestedDate.Date >= filter.StartDate && t.RequestedDate.Date <= filter.EndDate).ToList();
-                        }
-                        else if (filter.StartDate != null && filter.EndDate == null)
-                        {
-                            myInterview = myInterview.Where(t => t.RequestedDate.Date >= filter.StartDate /*&& t.interviewDate.Date <= filter.EndDate*/).ToList();
-                        }
-                        else if (filter.StartDate == null && filter.EndDate != null)
-                        {
-                            myInterview = myInterview.Where(t => /*t.interviewDate.Date >= filter.StartDate &&*/ t.RequestedDate.Date <= filter.EndDate).ToList();
-                        }
-
-                        filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = myInterview.Select(x => Convert.ToString(x.RequestedDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
-                        filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = myInterview.Select(x => x.CandidateName).ToArray() : filter.CandidateName = filter.CandidateName;
-
-                        myInterview = myInterview.Where(c => (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.RequestedDate)) : c.RequestedDate == null)
-                       && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.CandidateName) : c.CandidateName == null)).ToList();
-                        return View(myInterview);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    return RedirectToAction("MyInterview");
                 }
                 else
                 {
@@ -1233,7 +1153,7 @@ namespace Risebird.Web.Controllers
                         {
                             isAdminHR = true;
                         }
-                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "SeniorHR")
+                        else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SeniorHR")
                         {
                             isInterviewer = true;
                         }
@@ -1300,7 +1220,7 @@ namespace Risebird.Web.Controllers
                             {
                                 isAdminHR = true;
                             }
-                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "Quality Controller" || profileName == "SeniorHR")
+                            else if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SeniorHR")
                             {
                                 isInterviewer = true;
                             }

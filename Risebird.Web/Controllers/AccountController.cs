@@ -82,11 +82,8 @@ namespace Risebird.Web.Controllers
                         {
                             accountModel.AccountList = accountList;
                             accountModel.AccountList = accountModel.AccountList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
-
                         }
-
                     }
-
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         accountModel.IsClientUser = true;
@@ -113,56 +110,8 @@ namespace Risebird.Web.Controllers
                 if (filter != null)
                 {
                     HttpContext.Session.SetString("AccountFilters", JsonConvert.SerializeObject(filter));
-
                 }
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
-                {
-                    var model = new AccountViewModel();
-                    var accountList = _accountService.GetAccounts(emailid, profileName).ToList();
-                    accountList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt32(x.IsDeleted)).GetDescription());
-                    model.AccountList = accountList;
-
-                    if (TempData["SuccessErrorMessage"] != null)
-                    {
-                        model.Message = TempData["SuccessErrorMessage"].ToString();
-                        TempData.Remove("SuccessErrorMessage");
-                    }
-
-                    filter = JsonConvert.DeserializeObject<AccountFilter>(HttpContext.Session.GetString("AccountFilters"));
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        model.AccountList = model.AccountList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
-                    }
-
-                    filter.Location = filter.Location == null ? filter.Location = model.AccountList.Select(x => x.Location).ToArray() : filter.Location = filter.Location;
-                    filter.AccountId = filter.AccountId == null ? filter.AccountId = model.AccountList.Select(x => x.Name).ToArray() : filter.AccountId = filter.AccountId;
-                    filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.AccountList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
-                    filter.ClientName = filter.ClientName == null ? filter.ClientName = model.AccountList.Select(x => x.EndClient).ToArray() : filter.ClientName = filter.ClientName;
-
-                    model.AccountList = model.AccountList.Where(c => filter.Location.Contains(c.Location)
-                    && filter.AccountId.Contains(c.Name)
-                    && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
-                    && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.EndClient) : c.EndClient == null)).ToList();
-
-                    if (model.AccountList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
-                    {
-                        model.AccountList = accountList;
-                        model.AccountList = model.AccountList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
-                    }
-                    if (profileName != null && profileName.Contains("Client"))
-                    {
-                        model.IsClientUser = true;
-                    }
-                    return View(model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                return RedirectToAction("Index");
             }
             else
             {

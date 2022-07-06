@@ -60,7 +60,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Interviewer" || profileName == "Quality Controller")
+                if (profileName == "Interviewer")
                 {
                     var model = await _meetingService.RBDetails(emailid);
                     model = model.Select(x => { x.InterviewStatusDetails = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusDetails = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
@@ -143,7 +143,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer")
                     {
 
                         var model = _meetingService.RBDetails(emailid);
@@ -292,7 +292,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Interviewer" || profileName == "Quality Controller")
+                if (profileName == "Interviewer")
                 {
 
                     var model = await _meetingService.RBUpdateStatusDetails(emailid);

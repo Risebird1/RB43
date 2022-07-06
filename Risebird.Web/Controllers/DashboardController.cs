@@ -339,7 +339,6 @@ namespace Risebird.Web.Controllers
                 {
                     var funnelData = await _dashboardService.GetClientFunnelData(emailid);
                     return JsonConvert.SerializeObject(funnelData);
-
                 }
                 else
                     return string.Empty;
