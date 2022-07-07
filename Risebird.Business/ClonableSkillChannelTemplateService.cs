@@ -554,5 +554,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<ClonableSkillChannelVM> GetClonableTempStatsbyId(int id)
+        {
+            try
+            {
+                return _irfRepository.GetClonableTempStatsbyId(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -163,12 +163,12 @@
                                                                     <select id="AssessmentGroupTemplate" name="AssessmentGroupTemplate" @*data-placeholder="None Selected"*@ class="form-control">
                                                                         <option value="">Select</option>
                                                                         @*@foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
                                                                             {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }*@
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }*@
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -237,6 +237,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
+                                                    <th>Skill Channels</th>
                                                     <th>Tech Skills</th>
                                                     @if (Model.Profile != "Client")
                                                     {
@@ -249,6 +250,7 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Name</th>
+                                                    <th>Skill Channels</th>
                                                     <th>Tech Skills</th>
                                                     @if (Model.Profile != "Client")
                                                     {
@@ -274,7 +276,14 @@
                                                             {
                                                                 <td></td>
                                                             }
-
+                                                            @if (item.SkillChannelCounts > 0)
+                                                            {
+                                                                <td title="Template Stats" style="color:blue!important;cursor:pointer" onclick="openTemplatestats('@item.ClonableSkillChannelId', '@item.Name')">@item.SkillChannelCounts</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@item.SkillChannelCounts</td>
+                                                            }
                                                             <td>
                                                                 <button type="button" class="clickhere_btn pull-left">
                                                                     <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
@@ -493,7 +502,43 @@
         </div>
     </div>
 </div>
+<div id="TemplateStatsModel" class="modal modal-bg" style="z-index:3">
 
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
+                        </svg>
+                    </span>
+
+                </div>
+
+                <h5 class="modal-title pull-left">Template Stats <span class="popup-text" id="Template_id_model"></span></h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeTemplateStatsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body">
+                <div style="padding:10px" id="divTemstatsBody">
+
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeTemplateStatsModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 @if (Model.Message != null)
 {
     <script type="text/javascript">
@@ -861,6 +906,23 @@
 <script>
     function CategoryChanged(categorySelected) {
         FilterAssessmentGroupDropDown(categorySelected, assessmentGroupCategoryMapArray)
+    }
+    function openTemplatestats(id, templateName) {
+        $.ajax({
+            type: "POST",
+            url: "/ClonableSkillChannelTemplate/FetchTemplateStatsDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("TemplateStatsModel");
+                $("#Template_id_model").text(templateName);
+                modal.style.display = "block";
+                $("#divTemstatsBody").empty().html(data);
+            }
+        });
+    }
+    function closeTemplateStatsModel() {
+        var model = document.getElementById("TemplateStatsModel");
+        model.style.display = "none";
     }
 </script>
 
