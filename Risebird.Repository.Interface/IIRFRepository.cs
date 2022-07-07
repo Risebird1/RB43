@@ -187,5 +187,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> GetIRFInterviewersAndEmergencyInterviewersEmail(int irfId);
         Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate);
         Task<bool> UpdateIntervieweravailbilityDetails(int irfId);
+        IEnumerable<ClonableSkillChannelVM> GetClonableTempStatsbyId(int id);
     }
 }
