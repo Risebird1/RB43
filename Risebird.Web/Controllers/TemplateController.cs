@@ -179,8 +179,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-
-
+                        
                         if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
@@ -192,8 +191,8 @@ namespace Risebird.Web.Controllers
                             //filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
                             //filter.SeniorityLevel = filter.SeniorityLevel ?? model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).ToArray();
 
-                            
-                            if(model.ClonableTemplates != null  && model.ClonableTemplates.Count()>0)
+
+                            if (model.ClonableTemplates != null && model.ClonableTemplates.Count() > 0)
                             {
                                 bool continueApplyingFilter = true;
 
@@ -238,7 +237,7 @@ namespace Risebird.Web.Controllers
                                     IEnumerable<ClonableSkillChannelVM> templatesFilteredByCompanyType = null;
 
                                     templatesFilteredByCompanyType = model.ClonableTemplates.Where(c => c.CompanyTypeId.HasValue && c.CompanyTypeId.Value == Convert.ToInt16(filter.CompanyType));
-                                    if(templatesFilteredByCompanyType != null && templatesFilteredByCompanyType.Count()>0)
+                                    if (templatesFilteredByCompanyType != null && templatesFilteredByCompanyType.Count() > 0)
                                     {
                                         model.ClonableTemplates = templatesFilteredByCompanyType;
                                     }
@@ -296,7 +295,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
 
-                                    templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => c.AssessmentGroupName!=null && c.AssessmentGroupName.Contains(filter.AssessmentGroupTemplate));
+                                    templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => c.AssessmentGroupName != null && c.AssessmentGroupName.Contains(filter.AssessmentGroupTemplate));
                                     if (templatesFilteredByAssessmentGroup != null && templatesFilteredByAssessmentGroup.Count() > 0)
                                     {
                                         model.ClonableTemplates = templatesFilteredByAssessmentGroup;
@@ -306,10 +305,10 @@ namespace Risebird.Web.Controllers
                             }
 
                             model.ClonableTemplates = model.ClonableTemplates?.ToList();
-                            
+
                         }
                         var assessmentGroupsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName))?.Distinct();
-                        if(assessmentGroupsMappedToCurrentTemplates != null)
+                        if (assessmentGroupsMappedToCurrentTemplates != null)
                         {
                             model.AssessmentGroupsMappedToCurrentTemplates = JsonConvert.SerializeObject(assessmentGroupsMappedToCurrentTemplates);
                         }
@@ -319,6 +318,10 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorCloneTemplateMessage");
                         }
                         model.Profile = profileName;
+                        if (model.ClonableTemplates != null)
+                        {
+                            model.ClonableTemplates = model.ClonableTemplates.OrderByDescending(x => x.SkillChannelCounts).ToList();
+                        }
                         return View(model);
                     }
                     else

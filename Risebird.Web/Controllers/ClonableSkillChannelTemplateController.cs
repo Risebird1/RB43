@@ -319,5 +319,20 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Failed to retrive Data.");
             }
         }
+
+        [HttpPost]
+        public IActionResult FetchTemplateStatsDetails(int id)
+        {
+            try
+            {
+                var transTempStats = _clonableSkillChannelTemplateService.GetClonableTempStatsbyId(id);
+                return PartialView(transTempStats);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Failed to retrive Data.");
+            }
+        }
     }
 }

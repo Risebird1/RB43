@@ -34,12 +34,11 @@ namespace Risebird.Entities.ViewModel
         public string EmploymentType { get; set; }
         public int? PerHourRate { get; set; }
 
-
         [BindProperty]
         public string MeetingPlatform { get; set; } = MeetingPlatforms.Zoom;
-
         public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.RisebirdMeet };
+        public int SkillChannelCounts { get; set; }
+        public int InterviewCounts { get; set; }
     }
-
 }
 

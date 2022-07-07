@@ -3838,7 +3838,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select id, EmailId from UserList where idProfile in (1,2,28,31)";
+                var query = "select id, EmailId from UserList where idProfile in (2,31) and isactive=1";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return con.Query<Users>(query);
@@ -6185,6 +6185,25 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public IEnumerable<ClonableSkillChannelVM> GetClonableTempStatsbyId(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    var result = SqlMapper.Query<ClonableSkillChannelVM>(con, "usp_FetchClonableTempStatsDetailsbyId", parameters,
+                          commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
