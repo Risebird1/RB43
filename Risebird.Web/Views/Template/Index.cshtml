@@ -237,7 +237,6 @@
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-
                                                     <th>Tech Skills</th>
                                                     @if (Model.Profile != "Client")
                                                     {
@@ -251,7 +250,6 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Name</th>
-
                                                     <th>Tech Skills</th>
                                                     @if (Model.Profile != "Client")
                                                     {
@@ -526,31 +524,6 @@
                 <span onclick="closeTemplateStatsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
 
-            </div>
-        </div>
-    </div>
-</div>
-<div id="TemplateStatsModel" class="modal modal-bg" style="z-index:3">
-
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
-                        </svg>
-                    </span>
-
-                </div>
-
-                <h5 class="modal-title pull-left">Template Stats <span class="popup-text" id="Template_id_model"></span></h5>
-            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span onclick="closeTemplateStatsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-
             <div class="modal-body">
                 <div style="padding:10px" id="divTemstatsBody">
 
@@ -732,12 +705,12 @@
         applyDataTable();
     });
     function applyDataTable() {
-
         var table = $('#cloneTemplateTable').DataTable({
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
-            }
+            },
+            order: [[2, 'desc']]
         });
         $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
 
