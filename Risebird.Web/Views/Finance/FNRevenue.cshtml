@@ -15,6 +15,11 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Revenue</h4></div>
+                    <div>
+                        <label id="txtAmount" style="padding:0 0 0 0">Total Revenue: @ViewBag.TotalRevenue </label> |
+                        <label id="txtTdsdeducted" style="padding:0 0 0 0">Total Pending PO Amount: @ViewBag.PendingPOAmount</label> |
+                        <label id="txtPayableAmount" style="padding:0 0 0 0">Total Invoice Raised Amount: @ViewBag.InvoiceAmount</label>
+                    </div>
                 </div>
                 <input type="hidden" value="@ViewBag.RevenueMonth" id="hiddrevenuemonth" />
                 <div class="pull-right client-ms">
@@ -214,8 +219,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-
-            order: [],
+            order: [[1, 'desc']],
             responsive: true,
             language: {
                 search: "_INPUT_",
