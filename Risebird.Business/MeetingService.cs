@@ -540,10 +540,10 @@ namespace Risebird.Business
                 {
                     meetingToUpdate.interviewer = meetingToUpdate.NewActiveInterviewer;
                 }
-                if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveQCInterviewer))
-                {
-                    meetingToUpdate.QCInterviewer = meetingToUpdate.NewActiveQCInterviewer;
-                }
+                //if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveQCInterviewer))
+                //{
+                //    meetingToUpdate.QCInterviewer = meetingToUpdate.NewActiveQCInterviewer;
+                //}
                 var result = await _meetingRespository.UpdateMeeting(meetingToUpdate);
                 if (result)
                 {
@@ -629,17 +629,17 @@ namespace Risebird.Business
                             summary.Append("Skill Channel changed");
                         }
                     }
-                    if (meetingToUpdate.OldQCInterviewer != meetingToUpdate.QCInterviewer)
-                    {
-                        if (summary.Length > 0)
-                        {
-                            summary.Append("; QC Interviewer changed");
-                        }
-                        else
-                        {
-                            summary.Append("QC Interviewer changed");
-                        }
-                    }
+                    //if (meetingToUpdate.OldQCInterviewer != meetingToUpdate.QCInterviewer)
+                    //{
+                    //    if (summary.Length > 0)
+                    //    {
+                    //        summary.Append("; QC Interviewer changed");
+                    //    }
+                    //    else
+                    //    {
+                    //        summary.Append("QC Interviewer changed");
+                    //    }
+                    //}
 
                     if (meetingToUpdate.OldrisebirdHR != meetingToUpdate.risebirdHR)
                     {

@@ -142,7 +142,7 @@
 
                                     </div>
 
-                                    <div class="form-group">
+                                    @*<div class="form-group">
                                         @Html.LabelFor(model => model.QCInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @if ((Model.QualityControllersList.Any(x => x.Text == Model.QCInterviewer)) || string.IsNullOrEmpty(Model.QCInterviewer))
@@ -158,7 +158,7 @@
                                         }
                                         @Html.ValidationMessageFor(model => model.QCInterviewer, "", new { @class = "text-danger" })
 
-                                    </div>
+                                    </div>*@
                                     <div style=" margin-top: -9px;">
                                         Upload Resume
 
@@ -315,7 +315,7 @@
                             @Html.HiddenFor(m => m.OldinterviewDate)
                             @Html.HiddenFor(m => m.OldInterviewer)
                             @Html.HiddenFor(m => m.OldIRFId)
-                            @Html.HiddenFor(m => m.OldQCInterviewer)
+                            @*@Html.HiddenFor(m => m.OldQCInterviewer)*@
                             @Html.HiddenFor(m => m.OldrisebirdHR)
                             @Html.HiddenFor(m => m.OldzoomLink)
                             @Html.HiddenFor(m => m.CandidateMasterId)
@@ -440,7 +440,7 @@
             success: function (data) {
 
                 $("#interviewer option").remove();
-                $("#QCInterviewer option").remove();
+                //$("#QCInterviewer option").remove();
                 $("#ChannelOwner").val('');
 
                 if (data != null && data.length > 0) {
@@ -457,19 +457,19 @@
 
                         $("#interviewer").append(option);
                     }
-                    if (data.some(d => d.type === 'Q')) {
-                        var option = $("<option />");
+                    //if (data.some(d => d.type === 'Q')) {
+                    //    var option = $("<option />");
 
-                        //Set Text part.
-                        option.html("Select Quality Controller");
+                    //    //Set Text part.
+                    //    option.html("Select Quality Controller");
 
-                        //Set Value part.
-                        option.val('');
+                    //    //Set Value part.
+                    //    option.val('');
 
-                        //Add the Option element to DropDownList.
+                    //    //Add the Option element to DropDownList.
 
-                        $("#QCInterviewer").append(option);
-                    }
+                    //    //$("#QCInterviewer").append(option);
+                    //}
                     $(data).each(function () {
 
                         if (this.type.toUpperCase() == 'I') {
@@ -485,19 +485,19 @@
 
                             $("#interviewer").append(option);
                         }
-                        else if (this.type.toUpperCase() == 'Q') {
-                            var option = $("<option />");
+                        //else if (this.type.toUpperCase() == 'Q') {
+                        //    var option = $("<option />");
 
-                            //Set Text part.
-                            option.html(this.emailId);
+                        //    //Set Text part.
+                        //    option.html(this.emailId);
 
-                            //Set Value part.
-                            option.val(this.emailId);
+                        //    //Set Value part.
+                        //    option.val(this.emailId);
 
-                            //Add the Option element to DropDownList.
+                        //    //Add the Option element to DropDownList.
 
-                            $("#QCInterviewer").append(option);
-                        }
+                        //    //$("#QCInterviewer").append(option);
+                        //}
 
                         else if (this.type.toUpperCase() == 'O') {
                             $("#ChannelOwner").val(this.emailId);

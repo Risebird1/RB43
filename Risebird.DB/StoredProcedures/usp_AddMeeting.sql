@@ -34,7 +34,7 @@ CREATE PROCEDURE [dbo].[usp_AddMeeting]
 @staffingAgency varchar(200),  
 @currentEmployerName varchar(200),  
 @MobileNumber nvarchar(200),  
-@QCInterviewer varchar(200),  
+--@QCInterviewer varchar(200),  
 @zoomMeetingId varchar(200) 
 AS  
 Begin  
@@ -71,7 +71,6 @@ Begin
       ,[sCreatedBy]  
       ,[dtCreatedOn]  
       ,[MobileNumber]  
-      ,[QCInterviewer]  
       ,[ZoomMeetingId]  
       )  
    VALUES  
@@ -95,7 +94,6 @@ Begin
  'System',  
  GETUTCDATE(),  
  @MobileNumber,  
- @QCInterviewer,  
  @zoomMeetingId  
  )  
   
