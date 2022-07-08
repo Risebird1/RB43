@@ -6939,7 +6939,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                if (String.IsNullOrEmpty(VideoURL))
+                if (string.IsNullOrEmpty(VideoURL))
                 {
                     VideoURL = "";
                 }
