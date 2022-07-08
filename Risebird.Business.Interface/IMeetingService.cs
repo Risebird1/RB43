@@ -185,10 +185,12 @@ namespace Risebird.Business.Interface
         List<MeetingVM> QCReportDetailsByInterviewer(string emailId);
         bool UpdateQCReportRedFlagsResolved(int interviewid);
         List<MeetingVM> GetReslovedRedFlagsInterviewList();
-        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate);
-        Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate);
+        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate,string year,int month);
+        Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month);
         Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
         Task<MeetingVM> GetInterviewMeetingById(int id);
-        Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration,string CandidateEmail,string emailId);
+        Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration, string CandidateEmail, string emailId);
+        Task<FnRevenueVM> FetchRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid);
+        Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid);
     }
 }

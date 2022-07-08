@@ -3474,11 +3474,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month)
         {
             try
             {
-                var result = _meetingRespository.FetchRevenueDetails(stdate, endate);
+                var result = _meetingRespository.FetchRevenueDetails(stdate, endate, year, month);
                 return result.Result;
             }
             catch (Exception e)
@@ -3487,11 +3487,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month)
         {
             try
             {
-                var result = _meetingRespository.FetchRevenueDetailsByClient(clientid, stdate, endate);
+                var result = _meetingRespository.FetchRevenueDetailsByClient(clientid, stdate, endate, billingType, year, month);
                 return result.Result;
             }
             catch (Exception e)
@@ -3526,7 +3526,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration, string CandidateEmail,string emailId)
+        public async Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration, string CandidateEmail, string emailId)
         {
             try
             {
@@ -3540,6 +3540,32 @@ namespace Risebird.Business
                     activityTrackerModel.Summary = "Feedback Updated: Video Updated";
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<FnRevenueVM> FetchRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid)
+        {
+            try
+            {
+                var result = await _meetingRespository.FetchRevenueStatusDetails(clientid, year, month, billingType, Detailid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid)
+        {
+            try
+            {
+                var result = await _meetingRespository.SaveRevenueStatusDetails(clientid, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, Emailid);
                 return result;
             }
             catch (Exception e)

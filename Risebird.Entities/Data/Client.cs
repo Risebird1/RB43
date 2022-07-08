@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.Data
@@ -47,6 +49,9 @@ namespace Risebird.Entities.Data
         public bool IsMeetingNotificationSend { get; set; }
         [Display(Name = "Per Interview Rate")]
         public int PerInterviewRate { get; set; }
-
+        [Display(Name = "Billing Type")]
+        public string BillingType { get; set; }
+        public List<SelectListItem> BillingTypeDrop { get; set; }
+        public string LoggedEmail { get; set; }
     }
 }

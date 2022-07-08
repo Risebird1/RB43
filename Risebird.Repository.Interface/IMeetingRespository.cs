@@ -224,10 +224,12 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> QCReportDetailsByDate(DateTime Startdate, DateTime Enddate);
         Task<bool> UpdateQCReportRedFlagsResolved(int interviewid);
         Task<IEnumerable<MeetingVM>> GetReslovedRedFlagsInterviewList();
-        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate);
-        Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate);
+        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month);
+        Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month);
         Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
         Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration);
         Task<IEnumerable<ZoomMeetingsToBeDeleted>> GetZoomMeetingsToBeDeleted();
+        Task<FnRevenueVM> FetchRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid);
+        Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid);
     }
 }

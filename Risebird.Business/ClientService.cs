@@ -321,5 +321,17 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public async Task<int> GetClientBillingType(int Clientid)
+        {
+            try
+            {
+                return await _clientRepository.GetClientBillingType(Clientid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
     }
 }

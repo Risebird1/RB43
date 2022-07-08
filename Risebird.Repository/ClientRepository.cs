@@ -213,6 +213,7 @@ namespace Risebird.Repository
             parameters.Add("@IsCandidateavailability", entity.IsCandidateavailability);
             parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
             parameters.Add("@PerInterviewRate", entity.PerInterviewRate);
+            parameters.Add("@BillingType", entity.BillingType);
             return parameters;
         }
         public async Task<string> AddClientJd(ClientJdVM _client)
@@ -678,6 +679,29 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<int> GetClientBillingType(int Clientid)
+        {
+            try
+            {
+                var query = "Select ISNULL(BillingType,1) From Client where id=@Clientid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Clientid", Clientid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return 0;
         }
     }
 }

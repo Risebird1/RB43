@@ -407,5 +407,11 @@ namespace Risebird.Entities.ViewModel
         public int PerInterviewRate { get; set; }
         public string IRFId { get; set; }
         public string BillingOwner { get; set; }
+        public int BillingType { get; set; }
+        public int CurrentStatus { get; set; }
+        public int POPendingAmount { get; set; }
+        public int InvoiceAmount { get; set; }
+        public int BillingOwnerid { get; set; }
+        public string CurrentStatusDesc { get; set; }
     }
 }

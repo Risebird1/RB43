@@ -5891,15 +5891,18 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    var currentyear = Convert.ToInt32(year);
                     var parameters = new DynamicParameters();
                     parameters.Add("@StartDate", stdate);
                     parameters.Add("@EndDate", endate);
+                    parameters.Add("@year", currentyear);
+                    parameters.Add("@month", month);
                     var result = SqlMapper.Query<FnRevenueVM>(con, "usp_GetRevenueDetailsByDate", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return (List<FnRevenueVM>)result;
@@ -5911,19 +5914,31 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month)
         {
             try
             {
+                var currentyear = Convert.ToInt32(year);
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Clientid", clientid);
                 dynamicParameters.Add("@StartDate", stdate);
                 dynamicParameters.Add("@EndDate", endate);
+                dynamicParameters.Add("@year", currentyear);
+                dynamicParameters.Add("@month", month);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueDetailsByClient", dynamicParameters,
-                      commandType: CommandType.StoredProcedure);
-                    return (List<FnRevenueVM>)result;
+                    if (billingType == 2)//For IRF Baised
+                    {
+                        var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueDetailsByClient", dynamicParameters,
+                          commandType: CommandType.StoredProcedure);
+                        return (List<FnRevenueVM>)result;
+                    }
+                    else//For Channel Owner Baised
+                    {
+                        var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueDetailsByClientBillingOwner", dynamicParameters,
+                          commandType: CommandType.StoredProcedure);
+                        return (List<FnRevenueVM>)result;
+                    }
                 }
             }
             catch (SqlException ex)
@@ -5996,6 +6011,55 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public async Task<FnRevenueVM> FetchRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Clientid", clientid);
+                dynamicParameters.Add("@year", year);
+                dynamicParameters.Add("@month", month);
+                dynamicParameters.Add("@billingType", billingType);
+                dynamicParameters.Add("@Detailid", Detailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueStatusDetails", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Clientid", clientid);
+                dynamicParameters.Add("@year", year);
+                dynamicParameters.Add("@month", month);
+                dynamicParameters.Add("@billingType", billingType);
+                dynamicParameters.Add("@Detailid", Detailid);
+                dynamicParameters.Add("@currentStatus", currentStatus);
+                dynamicParameters.Add("@invoiceamount", invoiceamount);
+                dynamicParameters.Add("@poPending", poPending);
+                dynamicParameters.Add("@Emailid", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_AddOrUpdateRevenueStatusDetails", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
