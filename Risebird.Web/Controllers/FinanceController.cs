@@ -711,7 +711,7 @@ namespace Risebird.Web.Controllers
                 var totalpaidamount = Convert.ToInt32((from ad in _totalpaidamount
                                                        select Math.Round(ad.Points * .9)).ToList().Sum());
                 var totalamountforstatus = await _meetingService.FNFetchToalAmountStatus(st, se.AddDays(1));
-                var totalqcamount = await _meetingService.FNFetchToalQCAmountStatus(st, se.AddDays(1));
+                //var totalqcamount = await _meetingService.FNFetchToalQCAmountStatus(st, se.AddDays(1));
                 //int totalinterviewamount = totalamountforstatus.Where(x => x.MeetingStatus == 4).Sum(x => x.Points * 90 / 100);
                 var totalinterviewamount = Convert.ToInt32((from ad in totalamountforstatus
                                                             where ad.MeetingStatus == 4
@@ -738,8 +738,8 @@ namespace Risebird.Web.Controllers
                 var payableAmount = totalpaidamount + pendingAmount;
                 var Tds = totalAmount - payableAmount;
                 //int qcamount = totalqcamount.Sum(x => x.Points * 90 / 100);
-                int qcamount = Convert.ToInt32((from ad in totalqcamount
-                                                select Math.Round(ad.Points * .9)).ToList().Sum());
+                //int qcamount = Convert.ToInt32((from ad in totalqcamount
+                //                                select Math.Round(ad.Points * .9)).ToList().Sum());
                 int totalcount = model.Count;
                 int Pagestart = 0;
                 int Pageend = 0;
@@ -769,7 +769,7 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
                 HttpContext.Session.SetString("financemodel", JsonConvert.SerializeObject(model));
-                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds, totalpaidamount = totalpaidamount, totalinterviewamount = totalinterviewamount, totaldroppedamount = totaldroppedamount, totalNoShowamount = totalNoShowamount, pendingAmount = pendingAmount, qcamount = qcamount });
+                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds, totalpaidamount = totalpaidamount, totalinterviewamount = totalinterviewamount, totaldroppedamount = totaldroppedamount, totalNoShowamount = totalNoShowamount, pendingAmount = pendingAmount });
             }
             catch (Exception ex)
             {
@@ -1873,6 +1873,22 @@ namespace Risebird.Web.Controllers
                     DateTime stdate = new DateTime(curyear, month, 1);
                     DateTime endate = stdate.AddMonths(1);
                     var model = await _meetingService.FetchRevenueDetails(stdate, endate, year, month);
+                    int totalamount = 0;
+                    foreach (var item in model)
+                    {
+                        totalamount = totalamount + (item.TotalCount * item.PerInterviewRate);
+                    }
+                    ViewBag.TotalRevenue = totalamount;
+                    if (model != null)
+                    {
+                        ViewBag.PendingPOAmount = model.Sum(x => x.POPendingAmount);
+                        ViewBag.InvoiceAmount = model.Sum(x => x.InvoiceAmount);
+                    }
+                    else
+                    {
+                        ViewBag.PendingPOAmount = 0;
+                        ViewBag.InvoiceAmount = 0;
+                    }
                     if (TempData["RevenueMessage"] != null)
                     {
                         ViewBag.Message = TempData["RevenueMessage"].ToString();

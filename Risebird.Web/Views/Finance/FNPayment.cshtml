@@ -132,8 +132,7 @@
                                             <label id="txtinterviewamount" style="padding:0 0 0 0">Interview Amount: 0</label> |
                                             <label id="txtnoshowamount" style="padding:0 0 0 0">No Show Amount: 0</label> |
                                             <label id="txtdroppedamount" style="padding:0 0 0 0">Dropped Amount: 0</label> |
-                                            <label id="txtpendingamount" style="padding:0 0 0 0">Pending Amount: 0</label> |
-                                            <label id="txtqcamount" style="padding:0 0 0 0">QC Amount: 0</label>
+                                            <label id="txtpendingamount" style="padding:0 0 0 0">Pending Amount: 0</label> 
                                         </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
@@ -884,7 +883,6 @@
                     $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
                     $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                     $("#txtpendingamount").text("Pending Amount: " + data.pendingAmount);
-                    $("#txtqcamount").text("QC Amount: " + data.qcamount);
                 }
             }
         });
@@ -925,7 +923,6 @@
                             $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
                             $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                             $("#txtpendingamount").text("Pending Amount: " + data.pendingAmount);
-                            $("#txtqcamount").text("QC Amount: " + data.qcamount);
                         }
                     }
                 });
@@ -964,7 +961,6 @@
         $("#txtnoshowamount").text("No Show Amount: 0");
         $("#txtdroppedamount").text("Dropped Amount: 0");
         $("#txtpendingamount").text("Pending Amount: 0");
-        $("#txtqcamount").text("QC Amount: 0");
     }
     function bindtableDataChangeMonth() {
         var html = '';
