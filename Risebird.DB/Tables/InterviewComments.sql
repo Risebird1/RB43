@@ -39,7 +39,11 @@ CREATE TABLE [dbo].[InterviewComments](
     [ClientUserid] [int] NULL,
     [ThumbnailTimeSeconds][int] NULL,
     [VideoDuration][int] NULL,
-    [InterviewerNickName][varchar](10) NULL
+    [InterviewerNickName][varchar](10) NULL,
+    [CreatedOn] [datetime] NULL,
+	[ModifiedOn] [datetime] NULL,
+	[CreatedBy] [varchar](100) NULL,
+	[ModifiedBy] [varchar](100) NULL,
 
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
@@ -170,6 +174,46 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewComments
     Add InterviewerNickName varchar(10)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreatedOn')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add CreatedOn datetime
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedOn')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add ModifiedOn datetime
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreatedBy')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add CreatedBy varchar(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifiedBy')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add ModifiedBy varchar(100)
 END
 
 End

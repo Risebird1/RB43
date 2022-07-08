@@ -29,7 +29,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<SkillComment>> GetTechSkillComments(int id, int userId);
         Task<IEnumerable<Level>> GetLevels();
         Task<IEnumerable<Skill>> GetSkills();
-        Task<bool> AddInterviewReport(InterviewReport reportDetails);
+        Task<bool> AddInterviewReport(InterviewReport reportDetails, string loggedInEmailId);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId = 0);
 

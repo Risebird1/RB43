@@ -1262,7 +1262,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
+        public async Task<bool> AddInterviewReport(InterviewReport reportDetails, string loggedInEmailId)
         {
             try
             {
@@ -1277,6 +1277,8 @@ namespace Risebird.Repository
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@confirmationStatus", reportDetails.confirmationStatus != null ? reportDetails.confirmationStatus : string.Empty);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
+                    paramx.Add("@PerformedBy", loggedInEmailId);
+                    paramx.Add("@PerformedAt", DateTime.Now);
                     //paramx.Add("@Rating", reportDetails.Rating);
                     paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
                     paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
@@ -1293,6 +1295,9 @@ namespace Risebird.Repository
                     parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
                     parameters.Add("@ThumbnailTimeSeconds", reportDetails.ThumbnailTimeSeconds);
                     parameters.Add("@VideoDuration", reportDetails.VideoDuration);
+                    parameters.Add("@PerformedBy", loggedInEmailId);
+                    parameters.Add("@PerformedAt", DateTime.Now);
+
                     DynamicParameters parametersPoints = new DynamicParameters();
 
                     if (reportDetails.MeetingStatus == 1 || reportDetails.MeetingStatus == 3)

@@ -1330,7 +1330,7 @@ namespace Risebird.Business
                 {
                     reportModel.InterviewStatus = (int)InterviewStatus.BorderLine;
                 }
-                var result = await _meetingRespository.AddInterviewReport(reportModel);
+                var result = await _meetingRespository.AddInterviewReport(reportModel, emailId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();

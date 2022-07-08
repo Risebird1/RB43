@@ -28,9 +28,6 @@ BEGIN
 		insert into TransCalendlyLinkAddedUpdated values (@IRFId, getdate())
 	end
 
-	
-    
-
 END
 GO
 
