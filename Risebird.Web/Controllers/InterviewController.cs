@@ -1,4 +1,4 @@
-ï»¿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -3341,14 +3341,14 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
 
                     emailid = emailid.Replace("\"", "");
-                    if(emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                    if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
                     {
                         OrginalProfileName = profileName;
                         profileName = "Admin";
                     }
 
                     model.UserDetails = emailid;
-                    if (profileName == "Admin"  || profileName == "Interviewer")
+                    if (profileName == "Admin" || profileName == "Interviewer")
                     {
 
                         if (model.AudioFile != null)
@@ -6711,7 +6711,7 @@ namespace Risebird.Web.Controllers
 
                 Sheet.Cells[1, 7].Value = "Whether hands-on coding is present";
                 Sheet.Cells[1, 8].Value = "Whether candidate video is clearly visible";
-                Sheet.Cells[1, 9].Value = "Clarity in Interviewerâ€™s communication";
+                Sheet.Cells[1, 9].Value = "Clarity in Interviewer’s communication";
                 Sheet.Cells[1, 10].Value = "Whether video duration is sufficient";
                 Sheet.Cells[1, 11].Value = "Is the interview properly structured";
                 Sheet.Cells[1, 12].Value = "Whether scoring rubrics is filled correctly";
@@ -6722,7 +6722,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 17].Value = "Delay in resuming an interview";
                 Sheet.Cells[1, 18].Value = "Background Noise";
                 Sheet.Cells[1, 19].Value = "Poor interviewer infrastructure";
-                Sheet.Cells[1, 20].Value = "Poor handling of candidateâ€™s queries";
+                Sheet.Cells[1, 20].Value = "Poor handling of candidate’s queries";
                 Sheet.Cells[1, 21].Value = "Asking personal questions or making personal remarks";
                 Sheet.Cells[1, 22].Value = "Getting into arguments";
                 Sheet.Cells[1, 23].Value = "Biased View";
@@ -6939,13 +6939,9 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                if (!String.IsNullOrEmpty(VideoURL))
+                if (String.IsNullOrEmpty(VideoURL))
                 {
                     VideoURL = "";
-                }
-                if (!String.IsNullOrEmpty(CandidateEmail))
-                {
-                    CandidateEmail = "";
                 }
                 var model = await _meetingService.SaveVideoDetailsById(interviewid, VideoURL, videoduration, CandidateEmail, emailId);
                 if (model)
