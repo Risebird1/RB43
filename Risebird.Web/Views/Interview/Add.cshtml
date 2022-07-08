@@ -145,7 +145,7 @@
                                         @Html.ValidationMessageFor(model => model.interviewer, "", new { @class = "text-danger" })
                                     </div>
 
-                                    <div class="form-group">
+                                    @*<div class="form-group">
                                         @Html.LabelFor(model => model.QCInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @if (Model.InterviewingMembersList != null && Model.InterviewingMembersList.Count() != 0)
                                         {
@@ -157,7 +157,7 @@
                                         }
 
                                         @Html.ValidationMessageFor(model => model.QCInterviewer, "", new { @class = "text-danger" })
-                                    </div>
+                                    </div>*@
 
                                     <div class="col-md-10">
                                         Upload Resume
@@ -432,7 +432,7 @@
             success: function (data) {
 
                 $("#interviewer option").remove();
-                $("#QCInterviewer option").remove();
+                //$("#QCInterviewer option").remove();
                 $("#ChannelOwner").val('');
 
                 if (data != null && data.length > 0) {
@@ -449,19 +449,19 @@
 
                         $("#interviewer").append(option);
                     }
-                    if (data.some(d => d.type === 'Q')) {
-                        var option = $("<option />");
+                    //if (data.some(d => d.type === 'Q')) {
+                    //    var option = $("<option />");
 
-                        //Set Text part.
-                        option.html("Select Quality Controller");
+                    //    //Set Text part.
+                    //    option.html("Select Quality Controller");
 
-                        //Set Value part.
-                        option.val('');
+                    //    //Set Value part.
+                    //    option.val('');
 
-                        //Add the Option element to DropDownList.
+                    //    //Add the Option element to DropDownList.
 
-                        $("#QCInterviewer").append(option);
-                    }
+                    //    $("#QCInterviewer").append(option);
+                    //}
                     $(data).each(function () {
                         if (this.type.toUpperCase() == 'I') {
                             var option = $("<option />");
@@ -476,19 +476,19 @@
 
                             $("#interviewer").append(option);
                         }
-                        else if (this.type.toUpperCase() == 'Q') {
-                            var option = $("<option />");
+                        //else if (this.type.toUpperCase() == 'Q') {
+                        //    var option = $("<option />");
 
-                            //Set Text part.
-                            option.html(this.emailId);
+                        //    //Set Text part.
+                        //    option.html(this.emailId);
 
-                            //Set Value part.
-                            option.val(this.emailId);
+                        //    //Set Value part.
+                        //    option.val(this.emailId);
 
-                            //Add the Option element to DropDownList.
+                        //    //Add the Option element to DropDownList.
 
-                            $("#QCInterviewer").append(option);
-                        }
+                        //    $("#QCInterviewer").append(option);
+                        //}
 
                         else if (this.type.toUpperCase() == 'O') {
                             $("#ChannelOwner").val(this.emailId);

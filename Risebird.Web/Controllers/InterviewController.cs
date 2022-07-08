@@ -6006,6 +6006,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
             var role = await _meetingService.GetUniqueInterviewerByEmailId(Emailid, id);
             if (role > 0)
             {

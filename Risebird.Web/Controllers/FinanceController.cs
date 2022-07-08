@@ -32,9 +32,9 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IProjectService _projectService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IClientService _clientService;
 
-
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,6 +45,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _projectService = projectService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _clientService = clientService;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -1871,7 +1872,7 @@ namespace Risebird.Web.Controllers
                     int curyear = Convert.ToInt32(year);
                     DateTime stdate = new DateTime(curyear, month, 1);
                     DateTime endate = stdate.AddMonths(1);
-                    var model = await _meetingService.FetchRevenueDetails(stdate, endate);
+                    var model = await _meetingService.FetchRevenueDetails(stdate, endate, year, month);
                     if (TempData["RevenueMessage"] != null)
                     {
                         ViewBag.Message = TempData["RevenueMessage"].ToString();
@@ -1887,35 +1888,6 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
-            }
-        }
-        [Authorize]
-        [HttpPost]
-        public async Task<JsonResult> GetFNRevenueDetailsByClient(int id, string year, int month)
-        {
-            var model = new List<FnRevenueVM>();
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
-                {
-                    int curyear = Convert.ToInt32(year);
-                    DateTime stdate = new DateTime(curyear, month, 1);
-                    DateTime endate = stdate.AddMonths(1);
-                    model = await _meetingService.FetchRevenueDetailsByClient(id, stdate, endate);
-                    return Json(model);
-                }
-                else
-                {
-                    return Json(model);
-                }
-            }
-            else
-            {
-                return Json(model);
             }
         }
         [Authorize]
@@ -1994,6 +1966,76 @@ namespace Risebird.Web.Controllers
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> FNRevenueByClient(int id, string year, int month)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var model = new List<FnRevenueVM>();
+                    var billingType = await _clientService.GetClientBillingType(id);
+                    int curyear = Convert.ToInt32(year);
+                    DateTime stdate = new DateTime(curyear, month, 1);
+                    DateTime endate = stdate.AddMonths(1);
+                    model = await _meetingService.FetchRevenueDetailsByClient(id, stdate, endate, billingType, year, month);
+                    model = model.Select(x =>
+                    {
+                        x.CurrentStatusDesc = x.CurrentStatus != 0 ? ((Revenueenum)Convert.ToInt32(x.CurrentStatus)).GetDescription() : string.Empty;
+                        return x;
+                    }).ToList();
+                    ViewBag.BillingType = billingType;
+                    ViewBag.Year = year;
+                    ViewBag.Month = month;
+                    var Statuses = from Revenueenum s in Enum.GetValues(typeof(Revenueenum))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.CurrentStatus = new SelectList(Statuses, "ID", "Name");
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> FNRevenueStatusDetails(int id, string year, int month, int billingType, string Detailid)
+        {
+            var model = await _meetingService.FetchRevenueStatusDetails(id, year, month, billingType, Detailid);
+            if (model == null)
+            {
+                model = new FnRevenueVM();
+            }
+            return Json(new { currentStatus = model.CurrentStatus, poPending = model.POPendingAmount, invoiceamount = model.InvoiceAmount });
+        }
+        [HttpPost]
+        public async Task<JsonResult> SaveRevenueStatusDetails(int id, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var model = await _meetingService.SaveRevenueStatusDetails(id, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, emailid);
+                if (model)
+                {
+                    return Json("Save Successfully!");
+                }
+                return Json("Fail to save, Please try again!");
+            }
+            else
+            {
+                return Json("Fail to save, Please relogin again!");
             }
         }
     }

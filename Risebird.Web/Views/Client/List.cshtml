@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
-    
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -20,11 +20,12 @@
                 </div>
 
                 <div class="pull-right">
-
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top"  onclick="location.href='@Url.Action("AddClient","Client")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Client</font></span>
-                    </button>
-
+                    @if (ViewBag.LoggedEmail == "parvathi_sg@risebird.io" || ViewBag.LoggedEmail == "ambika_ratkalle@risebird.io" || ViewBag.Profile == "Admin")
+                    {
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddClient", "Client")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Client</font></span>
+                        </button>
+                    }
                 </div>
             </div>
         </div>
@@ -47,7 +48,7 @@
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>GST</th>
-                                        <th>Address</th>
+                                        <th>Billing Type</th>
                                         <th>Per Interview Rate</th>
                                         <th>Logo</th>
                                         <th>URL</th>
@@ -63,7 +64,7 @@
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>GST</th>
-                                        <th>Address</th>
+                                        <th>Billing Type</th>
                                         <th>Per Interview Rate</th>
                                         <th>Logo</th>
                                         <th>URL</th>
@@ -76,106 +77,113 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr id=@item.id>
+                                        <tr id=@item.id>
 
-                                        <td>@item.Name</td>
-                                        <td>
-                                            <div id="section">
-                                                @if (item.Description != null && item.Description != "")
-                                                {
-                                                    @if (item.Description.Length > 24)
+                                            <td>@item.Name</td>
+                                            <td>
+                                                <div id="section">
+                                                    @if (item.Description != null && item.Description != "")
                                                     {
-                                                        <div class="article">
-                                                            <p style="margin-bottom:0px;">
-                                                                @item.Description.Substring(0, 24)
-                                                            </p>
-                                                            <p class="moretext_@item.id moretext">
-                                                                @item.Description.Substring(24, @item.Description.Length - 24)
-                                                            </p>
-                                                        </div> <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                    }
+                                                        @if (item.Description.Length > 24)
+                                                        {
+                                                            <div class="article">
+                                                                <p style="margin-bottom:0px;">
+                                                                    @item.Description.Substring(0, 24)
+                                                                </p>
+                                                                <p class="moretext_@item.id moretext">
+                                                                    @item.Description.Substring(24, @item.Description.Length - 24)
+                                                                </p>
+                                                            </div> <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="article">
+
+                                                                <p>
+                                                                    @item.Description.Substring(0, @item.Description.Length)
+                                                                </p>
+                                                            </div>
+                                                        }}
                                                     else
-                                                    {
-                                                        <div class="article">
-
-                                                            <p>
-                                                                @item.Description.Substring(0, @item.Description.Length)
-                                                            </p>
-                                                        </div>
-                                                    }}
-                                                else
-                                                { <div></div>}
+                                                    { <div></div>}
 
 
 
 
 
-                                            </div>
-                                        </td>
-                                        <td>@item.GST</td>
-                                        <td style="white-space:normal;">@item.OfficeAddress</td>
-                                        <td>@item.PerInterviewRate</td>
-                                        @if (item.LogoLink != null && item.LogoLink != "")
-                                        {
-                                            <td>
-
-                                                <a target="_blank" title="Logo" href=@item.LogoLink>Logo</a>
+                                                </div>
                                             </td>
-                                        }
-                                        else
-                                        {
-                                            <td>No Logo</td>
-                                        }
+                                            <td>@item.GST</td>
+                                            @if (item.BillingType == "2")
+                                            {
+                                                <td style="white-space:normal;">Skill Channel</td>
+                                            }
+                                            else
+                                            {
+                                                <td style="white-space:normal;">Billing Owner</td>
+                                            }
+                                            <td>@item.PerInterviewRate</td>
+                                            @if (item.LogoLink != null && item.LogoLink != "")
+                                            {
+                                                <td>
 
-                                        @if (item.CompanyLink != null && item.CompanyLink != "")
-                                        {
-                                            <td>
+                                                    <a target="_blank" title="Logo" href=@item.LogoLink>Logo</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Logo</td>
+                                            }
 
-                                                <a target="_blank" title="Company URL" href=@item.CompanyLink>Company URL</a>
+                                            @if (item.CompanyLink != null && item.CompanyLink != "")
+                                            {
+                                                <td>
+
+                                                    <a target="_blank" title="Company URL" href=@item.CompanyLink>Company URL</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No URL</td>
+                                            }
+
+                                            @if (item.CompanyVideoLink != null && item.CompanyVideoLink != "")
+                                            {
+                                                <td>
+
+                                                    <a target="_blank" title="Company Video URL(GIF)" href=@item.CompanyVideoLink>Video URL(GIF)</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Video(GIF)</td>
+                                            }
+
+                                            <td class="text-right" style="padding-right:30px;">
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                    <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
+                                                </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
+                                                    <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
+                                                </button>
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="View Details">
+                                                    <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
+                                                </button>
+                                                @if (ViewBag.LoggedEmail == "parvathi_sg@risebird.io" || ViewBag.LoggedEmail == "ambika_ratkalle@risebird.io" || ViewBag.Profile == "Admin")
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
+                                                        <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+                                                }
+                                                @*<button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
+                                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                    </button>*@
                                             </td>
-                                        }
-                                        else
-                                        {
-                                            <td>No URL</td>
-                                        }
 
-                                        @if (item.CompanyVideoLink != null && item.CompanyVideoLink != "")
-                                        {
-                                            <td>
-
-                                                <a target="_blank" title="Company Video URL(GIF)" href=@item.CompanyVideoLink>Video URL(GIF)</a>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td>No Video(GIF)</td>
-                                        }
-
-                                        <td class="text-right" style="padding-right:30px;">
-
-                                            <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
-                                                <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
-                                            </button>
-                                            <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
-                                                <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
-                                            </button>
-
-                                            <button class="mdc-fab app-fab--absolute" aria-label="View Details">
-                                                <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
-                                            </button>
-
-                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
-                                                <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                            </button>
-                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
-                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                            </button>
-
-
-                                        </td>
-
-                                        <td hidden>@item.id</td>
-                                    </tr>
+                                            <td hidden>@item.id</td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>

@@ -31,5 +31,6 @@ namespace Risebird.Business.Interface
         //bool UpdateRecruiterStatus(int userid, int clientid, bool status);
         bool UpdateRecruiterStatus(int userid, int clientid, int Irfid, bool status);
         Task<int> GetClientByEmailId(string emailId);
+        Task<int> GetClientBillingType(int Clientid);
     }
 }

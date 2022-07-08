@@ -108,12 +108,9 @@
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
                                                         <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                     </button>
-
-
-
-                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
-                                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                    </button>
+                                                    @*<button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
+                                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>*@
 
                                                     <button class="mdc-fab app-fab--absolute " aria-label="Click here to reset your navigation history">
                                                         <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
