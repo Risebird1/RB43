@@ -19,7 +19,9 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewReportComments](
   @ThumbnailImage varchar(Max),  
   @FeedbackAudioLink nvarchar(max) =null,  
   @ThumbnailTimeSeconds int = null,  
-  @VideoDuration int = null)  
+  @VideoDuration int = null,
+  @PerformedBy varchar(100),
+  @PerformedAt datetime)  
 AS    
 Begin Try    
   BEGIN TRAN UpdateUser     
@@ -39,7 +41,9 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
         FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink),  
      ThumbnailTimeSeconds = ISNULL(@ThumbnailTimeSeconds, ThumbnailTimeSeconds),  
      VideoDuration = ISNULL(@VideoDuration, VideoDuration),
-	 InterviewerNickName=ISNULL(@NickName,InterviewerNickName)
+	 InterviewerNickName=ISNULL(@NickName,InterviewerNickName),
+	 ModifiedBy = @PerformedBy,
+	 ModifiedOn = @PerformedAt
      WHERE interviewId = @InterviewId    
     
                         
@@ -57,7 +61,9 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
         FeedbackAudioLink,  
         ThumbnailTimeSeconds,  
         VideoDuration,
-		InterviewerNickName)     
+		InterviewerNickName,
+		CreatedBy,
+		CreatedOn)     
      VALUES    
        (@interviewId,    
         @InterviewStatus,    
@@ -69,7 +75,9 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
         @FeedbackAudioLink,  
         @ThumbnailTimeSeconds,  
         @VideoDuration,
-		@NickName)    
+		@NickName,
+		@PerformedBy,
+		@PerformedAt)    
   
      IF NOT EXISTS(SELECT 1 FROM InterviewReport where InterviewId= @InterviewId)  
      BEGIN  
@@ -77,13 +85,16 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
       InterviewReport   
        (IRFId,   
        InterviewId,   
-       CandidateName)  
+       CandidateName,
+	   CreatedBy,
+	   CreatedOn)  
          
        values  
        (  
         (select ir.id from IRF ir join InterviewMeetings im on ir.irfid = im.irfid where im.id = @interviewId),  
         @interviewId,  
-        (select im.CandidateName from InterviewMeetings im where im.id = @interviewId)    
+        (select im.CandidateName from InterviewMeetings im where im.id = @interviewId),
+		@PerformedBy, @PerformedAt
        )  
   
      END  

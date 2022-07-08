@@ -10,53 +10,58 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-   CREATE PROCEDURE [dbo].[usp_AddClient]        
+   CREATE PROCEDURE [dbo].[usp_AddClient]          
+          
+@clientName varchar(150),          
+@clientDescr varchar(250),          
+@GST varchar(MAX),          
+@officeAddress varchar(MAX),        
+@Createdby varchar(200),      
+@LogoLink varchar(max),      
+@CompanyLink varchar(max),      
+@CompanyVideoLink varchar(max),      
+@IsPasswordReset bit,    
+@IsCandidateavailability bit,    
+@IsMeetingNotificationSend bit,    
+@PerInterviewRate int,
+@BillingType int
+AS          
+Begin          
         
-@clientName varchar(150),        
-@clientDescr varchar(250),        
-@GST varchar(MAX),        
-@officeAddress varchar(MAX),      
-@Createdby varchar(200),    
-@LogoLink varchar(max),    
-@CompanyLink varchar(max),    
-@CompanyVideoLink varchar(max),    
-@IsPasswordReset bit,  
-@IsCandidateavailability bit,  
-@IsMeetingNotificationSend bit,  
-@PerInterviewRate int  
-AS        
-Begin        
+ Declare @Clientid int        
+ Declare @Userid int      
+ Select @Userid=id from USerList where Emailid=@Createdby      
+ INSERT INTO [dbo].[Client]          
+       ([Name]          
+       ,[Description]          
+       ,[GST]          
+       ,[OfficeAddress]       
+       ,[LogoLink]      
+       ,[CompanyLink]      
+       ,[CompanyVideoLink]      
+       ,[IsPasswordReset]    
+    ,[IsCandidateavailability]    
+    ,[IsMeetingNotificationSend]   
+ ,[PerInterviewRate]
+ ,[BillingType])        
+     VALUES          
+     (@clientName          
+     ,@clientDescr          
+     ,@GST          
+     ,@officeAddress      
+     ,@LogoLink      
+     ,@CompanyLink      
+     ,@CompanyVideoLink      
+     ,@IsPasswordReset    
+  ,@IsCandidateavailability    
+  ,@IsMeetingNotificationSend  
+  ,@PerInterviewRate
+  ,@BillingType)          
       
- Declare @Clientid int      
- Declare @Userid int    
- Select @Userid=id from USerList where Emailid=@Createdby    
- INSERT INTO [dbo].[Client]        
-       ([Name]        
-       ,[Description]        
-       ,[GST]        
-       ,[OfficeAddress]     
-       ,[LogoLink]    
-       ,[CompanyLink]    
-       ,[CompanyVideoLink]    
-       ,[IsPasswordReset]  
-    ,[IsCandidateavailability]  
-    ,[IsMeetingNotificationSend] 
-	,[PerInterviewRate]
-   )      
-     VALUES        
-     (@clientName        
-     ,@clientDescr        
-     ,@GST        
-     ,@officeAddress    
-     ,@LogoLink    
-     ,@CompanyLink    
-     ,@CompanyVideoLink    
-     ,@IsPasswordReset  
-  ,@IsCandidateavailability  
-  ,@IsMeetingNotificationSend
-  ,@PerInterviewRate)        
-    
-End         
+End           
+
+
+
     
 
 GO

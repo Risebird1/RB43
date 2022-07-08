@@ -64,7 +64,10 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profilename = HttpContext.Session.GetString("profileName")?.Trim();
                     profilename = profilename.Replace("\"", "");
-                    return View(_clientService.GetClients(emailid, profilename));
+                    var model = _clientService.GetClients(emailid, profilename);
+                    ViewBag.LoggedEmail = emailid.ToLower();
+                    ViewBag.Profile = profilename;
+                    return View(model);
                 }
                 else
                 {
@@ -88,6 +91,7 @@ namespace Risebird.Web.Controllers
                     var model = new Client();
                     model.IsMeetingNotificationSend = true;
                     model.IsCandidateavailability = true;
+                    SetBillingTypeDropDown(model);
                     return View("ClientAdd", model);
                 }
                 catch (Exception ex)
@@ -159,6 +163,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
+                        SetBillingTypeDropDown(client);
                         return View("ClientAdd");
                     }
                 }
@@ -183,7 +188,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     Client clientToUpdate = _clientService.GetClient(id);
-
+                    SetBillingTypeDropDown(clientToUpdate);
                     if (clientToUpdate != null)
                         return View("ClientUpdate", clientToUpdate);
                     else
@@ -255,6 +260,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
+                        SetBillingTypeDropDown(client);
                         return View("ClientUpdate");
                     }
                 }
@@ -4250,6 +4256,16 @@ namespace Risebird.Web.Controllers
                 TempData["RecruiterSuccessErrorMessage"] = "Recruiter active Failed";
                 return Json("Failed");
             }
+        }
+
+        public void SetBillingTypeDropDown(Client model)
+        {
+            var _list = new List<SelectListItem>();
+            var selectItem = new SelectListItem { Text = "Billing Owner", Value = Convert.ToString(1) };
+            _list.Add(selectItem);
+            var selectItem1 = new SelectListItem { Text = "Skill Channel", Value = Convert.ToString(2) };
+            _list.Add(selectItem1);
+            model.BillingTypeDrop = _list;
         }
     }
 }

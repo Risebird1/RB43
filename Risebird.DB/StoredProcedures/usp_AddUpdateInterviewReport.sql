@@ -22,7 +22,9 @@ CREATE PROCEDURE [dbo].[usp_AddUpdateInterviewReport]
 @SkillGeneralComments nvarchar(300),
 @SelectabilityComments nvarchar(300),
 @JoinabilityComments nvarchar(300),
-@ProctoringCount int
+@ProctoringCount int,
+@PerformedBy varchar(100),
+@PerformedAt datetime
 
 AS
 Begin
@@ -38,7 +40,8 @@ BEGIN
 	,[SelectabilityComments]=@SelectabilityComments
 	,[JoinabilityComments]=@JoinabilityComments
 	,[ProctoringCount]=   @ProctoringCount    
-
+	,[ModifiedBy] = @PerformedBy
+	,[ModifiedOn] = @PerformedAt
 	Where InterviewId =@InterviewId
 
 
@@ -54,12 +57,12 @@ BEGIN
  Insert into InterviewReport 
 
  (IRFId, InterviewId, CandidateName, confirmationStatus, OverallScore, TechSkillComments, SkillGeneralComments, 
-  SelectabilityComments, JoinabilityComments, ProctoringCount)
+  SelectabilityComments, JoinabilityComments, ProctoringCount, CreatedBy, CreatedOn)
 
   values
 
   (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @TechSkillComments, @SkillGeneralComments,
-  @SelectabilityComments, @JoinabilityComments, @ProctoringCount)
+  @SelectabilityComments, @JoinabilityComments, @ProctoringCount, @PerformedBy, @PerformedAt)
 
 END
 
