@@ -63,7 +63,7 @@ namespace Risebird.Web.Controllers
             var mon = new List<perdaytime>();
             sun.Add(new perdaytime { Start = "8", End = "23" });
             mon.Add(new perdaytime { Start = "6", End = "9" });
-            mon.Add(new perdaytime { Start = "19", End = "24" });
+            mon.Add(new perdaytime { Start = "18", End = "23" });
             model_Second.Add(new daytimes_second { Daytype = "sunday", dayCheck = true, dayvalue = sun });
             model_Second.Add(new daytimes_second { Daytype = "monday", dayCheck = true, dayvalue = mon });
             model_Second.Add(new daytimes_second { Daytype = "tuesday", dayCheck = true, dayvalue = mon });

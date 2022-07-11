@@ -16,11 +16,24 @@ CREATE TABLE [dbo].[RevenueDetails](
 	[IRFId] [varchar](10) NULL,
 	[BillingType] [int] NULL,
 	[BillingOwner] [int] NULL,
+	[invoicerealization] [int] NULL,
  CONSTRAINT [PK_RevenueDetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'invoicerealization')
+      AND Object_ID = Object_ID(N'RevenueDetails'))
+BEGIN
+    ALTER TABLE RevenueDetails
+    Add invoicerealization INT
+END
 END
 GO
 

@@ -413,5 +413,6 @@ namespace Risebird.Entities.ViewModel
         public int InvoiceAmount { get; set; }
         public int BillingOwnerid { get; set; }
         public string CurrentStatusDesc { get; set; }
+        public int invoicerealization { get; set; }
     }
 }
