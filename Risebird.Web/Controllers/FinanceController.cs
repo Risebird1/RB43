@@ -1894,6 +1894,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.Message = TempData["RevenueMessage"].ToString();
                         TempData.Remove("RevenueMessage");
                     }
+                    var relizationstatus = from Invoicerealized s in Enum.GetValues(typeof(Invoicerealized))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.RelizationStatus = new SelectList(relizationstatus, "ID", "Name");
                     return View(model);
                 }
                 else
@@ -2013,6 +2016,9 @@ namespace Risebird.Web.Controllers
                     var Statuses = from Revenueenum s in Enum.GetValues(typeof(Revenueenum))
                                    select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.CurrentStatus = new SelectList(Statuses, "ID", "Name");
+                    var relizationstatus = from Invoicerealized s in Enum.GetValues(typeof(Invoicerealized))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.RelizationStatus = new SelectList(relizationstatus, "ID", "Name");
                     return View(model);
                 }
                 else
@@ -2033,16 +2039,24 @@ namespace Risebird.Web.Controllers
             {
                 model = new FnRevenueVM();
             }
-            return Json(new { currentStatus = model.CurrentStatus, poPending = model.POPendingAmount, invoiceamount = model.InvoiceAmount });
+            return Json(new { currentStatus = model.CurrentStatus, poPending = model.POPendingAmount, invoiceamount = model.InvoiceAmount, invoicerealization = model.invoicerealization });
         }
         [HttpPost]
-        public async Task<JsonResult> SaveRevenueStatusDetails(int id, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending)
+        public async Task<JsonResult> SaveRevenueStatusDetails(int id, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, int invoicerealization)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var model = await _meetingService.SaveRevenueStatusDetails(id, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, emailid);
+                if (currentStatus == 1)
+                {
+                    poPending = 0;
+                }
+                else
+                {
+                    invoiceamount = 0;
+                }
+                var model = await _meetingService.SaveRevenueStatusDetails(id, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, emailid, invoicerealization);
                 if (model)
                 {
                     return Json("Save Successfully!");

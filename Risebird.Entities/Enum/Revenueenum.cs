@@ -9,4 +9,11 @@ namespace Risebird.Entities.Enum
         [Description("PO Pending")]
         POPending = 2
     }
+    public enum Invoicerealized
+    {
+        [Description("Received")]
+        Received = 1,
+        [Description("Not Received")]
+        NotReceived = 2
+    }
 }
