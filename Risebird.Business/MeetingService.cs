@@ -3561,11 +3561,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid)
+        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid,int invoicerealization)
         {
             try
             {
-                var result = await _meetingRespository.SaveRevenueStatusDetails(clientid, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, Emailid);
+                var result = await _meetingRespository.SaveRevenueStatusDetails(clientid, year, month, billingType, Detailid, currentStatus, invoiceamount, poPending, Emailid, invoicerealization);
                 return result;
             }
             catch (Exception e)

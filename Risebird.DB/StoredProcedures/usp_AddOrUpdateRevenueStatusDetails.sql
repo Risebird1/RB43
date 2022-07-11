@@ -8,45 +8,51 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE usp_AddOrUpdateRevenueStatusDetails
-@Clientid int,
-@year int,
-@month int,
-@billingType int,
-@Detailid varchar(10),
-@currentStatus int,
-@invoiceamount int,
-@poPending int,
-@Emailid varchar(150)
-AS
-BEGIN
-Declare @Count int
-Declare @id int
-Declare @Userid int
-Declare @IRFId varchar(10)
-Declare @BillingOwner int=0
-Select @Userid=id from UserList where EmailId=@Emailid
-if(@billingType=2)
-BEGIN
-Select @Count=Count(*) from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and IRFId=@Detailid
-Select @id=id from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and IRFId=@Detailid
-Set @IRFId=@Detailid
-END
-else
-BEGIN
-Select @Count=Count(*) from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and BillingOwner=@Detailid
-Select @id=id from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and BillingOwner=@Detailid
-Set @BillingOwner=@Detailid
-END
-if(@Count>0)
-BEGIN
-Update RevenueDetails set POPendingAmount=@poPending,InvoiceAmount=@invoiceamount,CurrentStatus=@currentStatus,ModifiedOn=Getdate(),MOdifiedBy=@Userid where id=@id
-END
-else
-BEGIN
-Insert into RevenueDetails (Clientid,Months,Years,POPendingAmount,InvoiceAmount,CurrentStatus,CreatedOn,CreadtedBy,
-ModifiedOn,MOdifiedBy,IRFId,BillingType,BillingOwner) values(@Clientid,@month,@year,@poPending,@invoiceamount,@currentStatus,Getdate(),@Userid,
-Getdate(),@Userid,@IRFId,@billingType,@BillingOwner)
-END
+CREATE PROCEDURE usp_AddOrUpdateRevenueStatusDetails    
+@Clientid int,    
+@year int,    
+@month int,    
+@billingType int,    
+@Detailid varchar(10),    
+@currentStatus int,    
+@invoiceamount int,    
+@poPending int,    
+@Emailid varchar(150),
+@invoicerealization int
+AS    
+BEGIN    
+Declare @Count int    
+Declare @id int    
+Declare @Userid int    
+Declare @IRFId varchar(10)    
+Declare @BillingOwner int=0    
+Select @Userid=id from UserList where EmailId=@Emailid    
+if(@billingType=3)    
+BEGIN    
+Select @Count=Count(*) from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year  
+Select @id=id from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year   
+END    
+else if(@billingType=2)    
+BEGIN    
+Select @Count=Count(*) from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and IRFId=@Detailid    
+Select @id=id from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and IRFId=@Detailid    
+Set @IRFId=@Detailid    
+END    
+else    
+BEGIN    
+Select @Count=Count(*) from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and BillingOwner=@Detailid    
+Select @id=id from RevenueDetails where Clientid=@Clientid and Months=@month and Years=@year and BillingOwner=@Detailid    
+Set @BillingOwner=@Detailid    
+END    
+if(@Count>0)    
+BEGIN    
+Update RevenueDetails set POPendingAmount=@poPending,InvoiceAmount=@invoiceamount,CurrentStatus=@currentStatus,ModifiedOn=Getdate(),MOdifiedBy=@Userid,invoicerealization=@invoicerealization where id=@id    
+END    
+else    
+BEGIN    
+Insert into RevenueDetails (Clientid,Months,Years,POPendingAmount,InvoiceAmount,CurrentStatus,CreatedOn,CreadtedBy,    
+ModifiedOn,MOdifiedBy,IRFId,BillingType,BillingOwner,invoicerealization) values(@Clientid,@month,@year,@poPending,@invoiceamount,@currentStatus,Getdate(),@Userid,    
+Getdate(),@Userid,@IRFId,@billingType,@BillingOwner,@invoicerealization)    
+END    
 END
 GO

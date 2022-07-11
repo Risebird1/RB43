@@ -6034,7 +6034,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid)
+        public async Task<bool> SaveRevenueStatusDetails(int clientid, string year, int month, int billingType, string Detailid, int currentStatus, int invoiceamount, int poPending, string Emailid,int invoicerealization)
         {
             try
             {
@@ -6048,6 +6048,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@invoiceamount", invoiceamount);
                 dynamicParameters.Add("@poPending", poPending);
                 dynamicParameters.Add("@Emailid", Emailid);
+                dynamicParameters.Add("@invoicerealization", invoicerealization);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_AddOrUpdateRevenueStatusDetails", dynamicParameters,
