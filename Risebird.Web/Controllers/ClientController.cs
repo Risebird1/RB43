@@ -55,6 +55,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    string OrginalProfileName = string.Empty;
                     if (TempData["SuccessErrorMessage"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -64,10 +65,24 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profilename = HttpContext.Session.GetString("profileName")?.Trim();
                     profilename = profilename.Replace("\"", "");
-                    var model = _clientService.GetClients(emailid, profilename);
-                    ViewBag.LoggedEmail = emailid.ToLower();
-                    ViewBag.Profile = profilename;
-                    return View(model);
+                    if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                    {
+                        OrginalProfileName = profilename;
+                        profilename = "Admin";
+                    }
+                    if (profilename == "Admin")
+                    {
+                        var model = _clientService.GetClients(emailid, profilename);
+                        ViewBag.LoggedEmail = emailid.ToLower();
+                        ViewBag.Profile = profilename;
+                        profilename = OrginalProfileName;
+                        return View(model);
+                    }
+                    else
+                    {
+                        return View(new List<Client>());
+                    }                     
+                   
                 }
                 else
                 {
