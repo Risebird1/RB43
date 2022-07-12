@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Risebird.CommonHelper
 {
+
     public class TelemetryInitializer : ITelemetryInitializer
     {
         private IHttpContextAccessor _httpContextAccessor;
