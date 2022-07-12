@@ -41,8 +41,8 @@
                                                 @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
 
-                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
-                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @maxlength = "100"@*, @onblur = "checkSkillNameLength(this.id)"*@ } })
+                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger", @id="error_SkillName" })
 
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@
                                         <div class="form-group">
                                             <div class="mandate">  @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span></div>
 
-                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
+                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @maxlength = "100" } })
                                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
 
                                         </div>
@@ -86,5 +86,24 @@
 
 </div>
 
+<script>
+    function checkSkillNameLength(elementId) {
+        debugger;
+        var val = document.getElementById(elementId).value;
+        var errorElementId = "error_SkillName";
+
+        if (val != null && val.length > 100) {
+            document.getElementById(errorElementId).innerHTML = "The Skill Name should not exceed 100 characters.";
+            document.getElementById("btnUpload").disabled = true;
+            document.getElementById(elementId).focus();
+            return;
+        }
+        else {
+            document.getElementById(errorElementId).innerHTML = "";
+            document.getElementById("btnUpload").disabled = false;
+            return;
+        }
+    }
+</script>
 
 

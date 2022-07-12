@@ -1174,7 +1174,8 @@ namespace Risebird.Web.Controllers
                     //    techSkills.Add(new Skill { id = skill.id, Name = skill.Name?.Replace("\t", "").Replace("\n", "").Replace("\r", ""), Description = skill.Description?.Replace("\t", "").Replace("\n", "").Replace("\r", "") });
                     //}
                     ViewBag.Skills = new SelectList(skills, "id", "Name");
-                    model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                    //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                    //model.SkillsOptionsData = model.SkillsOptionsData?.Replace("\t", "").Replace("\n", "").Replace("\r", "");
                     //ViewBag.Skills = new SelectList(skills, "id", "Name");
                     //model.SkillsOptionsData = JsonConvert.SerializeObject(techSkills);
                     model.IRFId = id;
@@ -1227,7 +1228,7 @@ namespace Risebird.Web.Controllers
                                 ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
                                 var skills = _irfService.GetTechSkills(model.IRFId);
                                 ViewBag.Skills = new SelectList(skills, "id", "Name");
-                                model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                                //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
                                 model.Profile = profileName;
                                 return View(model);
                             }
@@ -1247,7 +1248,7 @@ namespace Risebird.Web.Controllers
                         {
                             var skills = _irfService.GetTechSkills(model.IRFId);
                             ViewBag.Skills = new SelectList(skills, "id", "Name");
-                            model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                            //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
 
                             model.Profile = profileName;
                             //ModelState.AddModelError
