@@ -457,251 +457,237 @@
                                                                         {
                                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                                            <tr id=@item.imid data-changes="1">
-                                                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                                                <td class="interviewdate"> @item.interviewDate </td>
-                                                                                @if (item.candidateName != null && item.candidateName != "")
-                                                                                {
-                                                                                    @if (item.IsOnline == 1)
-                                                                                    {
-                                                                                        <td class="candidate-details">
-                                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span><strong>Name:</strong>@item.candidateName</a>
+                                                                    <tr id=@item.imid data-changes="1">
+                                                                        <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                        <td class="interviewdate"> @item.interviewDate </td>
+                                                                        @if (item.candidateName != null && item.candidateName != "")
+                                                                        {
+                                                                            @if (item.IsOnline == 1)
+                                                                            {
+                                                                                <td class="candidate-details">
+                                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span><strong>Name:</strong>@item.candidateName</a>
 
-                                                                                            <div class="mtop-5">
-                                                                                                @if (item.candidateEmail != null && item.candidateEmail != "")
-                                                                                                {
-                                                                                                    @if (item.candidateEmail.Length > 30)
-                                                                                                    {
-                                                                                                        <a onclick="" data-tooltip="@item.candidateEmail"><strong>Email:</strong><span class="hrname">  @item.candidateEmail</span> </a>
-                                                                                                    }
-                                                                                                    else
-                                                                                                    {
-                                                                                                        <a onclick=""><strong>Email:</strong> @item.candidateEmail </a>
-                                                                                                    }
-                                                                                                }
-                                                                                                else
-                                                                                                {
-
-                                                                                                }
-                                                                                            </div>
-
-                                                                                            <div class="mtop-5">
-                                                                                                @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
-                                                                                                {
-
-                                                                                                    @if (item.JDTiltle.Split("|")[0].Length > 38)
-                                                                                                    {
-                                                                                                        <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
-                                                                                                    }
-                                                                                                    else
-                                                                                                    {
-                                                                                                        <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
-                                                                                                    }
-
-
-
-                                                                                                }
-                                                                                                else
-                                                                                                {
-
-                                                                                                }
-                                                                                            </div>
-
-
-                                                                                        </td>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-
-                                                                                        <td class="candidate-details">
-                                                                                            <a onclick=""><span class="dot"></span>@item.candidateName</a>
-                                                                                            <div class="mtop-5">
-                                                                                                @if (item.candidateEmail != null && item.candidateEmail != "")
-                                                                                                {
-                                                                                                    @if (item.candidateEmail.Length > 30)
-                                                                                                    {
-                                                                                                        <a onclick="" data-tooltip="@item.candidateEmail"><strong>Email:</strong><span class="hrname">  @item.candidateEmail</span> </a>
-                                                                                                    }
-                                                                                                    else
-                                                                                                    {
-                                                                                                        <a onclick=""><strong>Email:</strong> @item.candidateEmail </a>
-                                                                                                    }
-                                                                                                }
-                                                                                                else
-                                                                                                {
-
-                                                                                                }
-                                                                                            </div>
-                                                                                            <div class="mtop-5">
-                                                                                                @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
-                                                                                                {
-
-                                                                                                    @if (item.JDTiltle.Split("|")[0].Length > 38)
-                                                                                                    {
-                                                                                                        <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
-                                                                                                    }
-                                                                                                    else
-                                                                                                    {
-                                                                                                        <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
-                                                                                                    }
-
-
-
-                                                                                                }
-                                                                                                else
-                                                                                                {
-
-                                                                                                }
-                                                                                            </div>
-                                                                                        </td>
-
-
-                                                                                    }
-
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td></td>
-                                                                                }
-
-
-
-
-                                                                                @if (item.ClientHrContact != null && item.ClientHrContact != "")
-                                                                                {
-                                                                                    @if (item.IsHrOnline == 1)
-                                                                                    {
-                                                                                        <td class="candidate-client">
-                                                                                            <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span><span class="s_cname">@item.ClientHrContact</span></a>
-                                                                                        </td>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <td class="candidate-client">
-                                                                                            <a onclick=""><span class="dot"></span><span class="s_cname">@item.ClientHrContact </span></a>
-                                                                                        </td>
-                                                                                    }
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td></td>
-                                                                                }
-
-                                                                                @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "")
-                                                                                {
-                                                                                    <td><span id="selectedcandidate_6"> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a></span> </td>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <td>No Video</td>
-                                                                                }
-
-
-                                                                                <td class="interview-com">
-                                                                                    <div id="section">
-                                                                                        @if (item.InterviewerComment != null && item.InterviewerComment != "")
+                                                                                    <div class="mtop-5">
+                                                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
                                                                                         {
-                                                                                            @if (item.InterviewerComment.Length > 26)
+                                                                                            @if (item.candidateEmail.Length > 30)
                                                                                             {
-                                                                                                <div class="article">
-                                                                                                    <p style="margin-bottom:0px;">
-                                                                                                        @item.InterviewerComment.Substring(0, 26)
-                                                                                                    </p>
-                                                                                                    <p class="moretext_@item.imid moretext">
-                                                                                                        @item.InterviewerComment.Substring(26, @item.InterviewerComment.Length - 26)
-                                                                                                    </p>
-                                                                                                </div>
+                                                                                                <a onclick="" data-tooltip="@item.candidateEmail"><strong>Email:</strong><span class="hrname">  @item.candidateEmail</span> </a>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                <div class="article">
-
-                                                                                                    <p>
-                                                                                                        @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
-                                                                                                    </p>
-                                                                                                </div>
-                                                                                            }}
+                                                                                                <a onclick=""><strong>Email:</strong> @item.candidateEmail </a>
+                                                                                            }
+                                                                                        }
                                                                                         else
-                                                                                        { <div></div>}
+                                                                                        {
 
-
-
-
-
-
-
-                                                                                        <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
-
-
+                                                                                        }
                                                                                     </div>
 
+                                                                                    <div class="mtop-5">
+                                                                                        @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                                                        {
+
+                                                                                            @if (item.JDTiltle.Split("|")[0].Length > 38)
+                                                                                            {
+                                                                                                <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
+                                                                                            }
+
+
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+
+                                                                                        }
+                                                                                    </div>
+
+
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                <td class="candidate-details">
+                                                                                    <a onclick=""><span class="dot"></span>@item.candidateName</a>
+                                                                                    <div class="mtop-5">
+                                                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                                        {
+                                                                                            @if (item.candidateEmail.Length > 30)
+                                                                                            {
+                                                                                                <a onclick="" data-tooltip="@item.candidateEmail"><strong>Email:</strong><span class="hrname">  @item.candidateEmail</span> </a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <a onclick=""><strong>Email:</strong> @item.candidateEmail </a>
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+
+                                                                                        }
+                                                                                    </div>
+                                                                                    <div class="mtop-5">
+                                                                                        @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                                                        {
+
+                                                                                            @if (item.JDTiltle.Split("|")[0].Length > 38)
+                                                                                            {
+                                                                                                <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"><strong>Jd Title:</strong><span class="hrname"> @item.JDTiltle.Split("|")[0]</span> </a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <a onclick=""><strong>Jd Title:</strong> @item.JDTiltle.Split("|")[0] </a>
+                                                                                            }
+
+
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+
+                                                                                        }
+                                                                                    </div>
                                                                                 </td>
 
 
+                                                                            }
 
-                                                                                @if (item.MeetingStatus == 4)
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td></td>
+                                                                        }
+
+
+
+
+                                                                        @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                                        {
+                                                                            @if (item.IsHrOnline == 1)
+                                                                            {
+                                                                                <td class="candidate-client">
+                                                                                    <a data-tooltip="@item.ClientHrContact" onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span><span class="s_cname">@item.ClientHrContact</span></a>
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td class="candidate-client">
+                                                                                    <a onclick=""><span class="dot"></span><span class="s_cname">@item.ClientHrContact </span></a>
+                                                                                </td>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td></td>
+                                                                        }
+
+                                                                        @if ((item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus==8) && item.VideoLink != null && item.VideoLink != "")
+                                                                        {
+                                                                            <td><span id="selectedcandidate_6"> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a></span> </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>No Video</td>
+                                                                        }
+
+
+                                                                        <td class="interview-com">
+                                                                            <div id="section">
+                                                                                @if (item.InterviewerComment != null && item.InterviewerComment != "")
                                                                                 {
-                                                                                    @if (!item.IsQCRequired)
+                                                                                    @if (item.InterviewerComment.Length > 26)
                                                                                     {
-                                                                                        <td>
-                                                                                            <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
-                                                                                        </td>
-                                                                                    }
-
-                                                                                    else if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.IsQCRequired && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                                    {
-                                                                                        <td>
-                                                                                            <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
-                                                                                        </td>
+                                                                                        <div class="article">
+                                                                                            <p style="margin-bottom:0px;">
+                                                                                                @item.InterviewerComment.Substring(0, 26)
+                                                                                            </p>
+                                                                                            <p class="moretext_@item.imid moretext">
+                                                                                                @item.InterviewerComment.Substring(26, @item.InterviewerComment.Length - 26)
+                                                                                            </p>
+                                                                                        </div>
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <td>No Report</td>
-                                                                                    }
-                                                                                }
+                                                                                        <div class="article">
+
+                                                                                            <p>
+                                                                                                @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    }}
                                                                                 else
-                                                                                {
-                                                                                    <td>No Report</td>
-                                                                                }
-                                                                                <td class="text-center action">
-
-
-                                                                                    <button id="selectedcandidate_9" class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
-                                                                                        <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                                    </button>
-
-                                                                                    @if (item.IsBiometricEnabled)
-                                                                                    {
-
-                                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Verify">
-                                                                                            <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                                                        </button>
+                                                                                { <div></div>}
 
 
 
 
 
-                                                                                    }
-                                                                                </td>
-                                                                                <td>
+
+
+                                                                                <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+
+
+                                                                            </div>
+
+                                                                        </td>
 
 
 
-                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                    {
-                                                                                        <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+                                                                        @if ((item.InterviewStatus == 4 && item.InterviewStatus == 2))
+                                                                        {
+                                                                            <td>
+                                                                                <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>No Report</td>
+                                                                        }
+                                                                        <td class="text-center action">
 
 
-                                                                                        <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                                                            <button id="selectedcandidate_9" class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
+                                                                                <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                            </button>
+
+                                                                            @if (item.IsBiometricEnabled)
+                                                                            {
+
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Verify">
+                                                                                    <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Client", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                                </button>
 
 
 
 
 
-                                                                                    }
+                                                                            }
+                                                                        </td>
+                                                                        <td>
 
-                                                                                </td>
-                                                                            </tr>
+
+
+                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                            {
+                                                                                <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+
+                                                                                <span id="selectedcandidate_10" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+
+
+
+
+
+                                                                            }
+
+                                                                        </td>
+                                                                    </tr>
 
                                                                             <tr class="collapse @item.imid">
 
@@ -1616,17 +1602,12 @@
                 }
             }
             else { html += '<td></td>'; } if (data[i].clientHrContact != null && data[i].clientHrContact != "") { if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 15) { html += '<td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span><span class="s_cname">' + data[i].clientHrContact + '</span> </a></td>'; } else { html += '<td><a onclick=""><span class="dot"></span><span class="s_cname">' + data[i].clientHrContact + ' </span></a></td>'; } }
-            else { html += '<td></td>'; } if ((data[i].meetingStatus == 4) && data[i].videoLink != null && data[i].videoLink != "") { html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>'; } else { html += '<td>No Video</td>'; }
+            else { html += '<td></td>'; } if ((data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 8) && data[i].videoLink != null && data[i].videoLink != "") { html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>'; } else { html += '<td>No Video</td>'; }
             html += '<td class="interview-com">'; html += ' <div id="section">'; if (data[i].interviewerComment != null && data[i].interviewerComment != "") { if (data[i].interviewerComment.length > 28) { html += ' <div class="article">'; html += ' <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 28) + '</p>'; html += '<p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(28, data[i].interviewerComment.length - 28) + '</p>'; html += '</div>'; } else { html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>'; } }
             else { html += '<div></div>'; } html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>'; html += '</div>'; html += ' </td>';
-            if (data[i].meetingStatus == 4) {
-                if (!data[i].isQCRequired) {
-                    html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>';
-                }
-                else if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && data[i].meetingStatus == 4 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; }
-                else { html += '   <td>No Report</td>'; }
-            }
-            else { html += '   <td>No Report</td>'; } html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
+            if (data[i].interviewStatus == 4 || data[i].interviewStatus == 2) { html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>'; }
+            else { html += '   <td>No Report</td>'; }
+            html += '   <td class="text-center action">'; html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
             html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>'; html += '</button>'; if (data[i].isBiometricEnabled) {
                 html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
                 html += '<a href ="/Client/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255) d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></a>'; html += '</button>';

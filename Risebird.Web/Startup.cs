@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -365,6 +366,7 @@ namespace Risebird.Web
             services.AddScoped<IMCQService, MCQService>();
             services.AddScoped<IMCQRepository, MCQRepository>();
             services.AddScoped<IRBMeetHelper, RBMeetHelper>();
+            services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
         }
     }
     //Global level antiforgery token security to stop malicious scripts
