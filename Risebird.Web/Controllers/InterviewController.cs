@@ -5983,6 +5983,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PublicOpenInterviewInvite(string id)
         {
+            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
             var model = new List<Meeting>();
             ViewBag.Id = id;
             ViewBag.PageType = "Public";

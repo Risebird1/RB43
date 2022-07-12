@@ -424,7 +424,18 @@
                         {
 
                             <div class="support">
+                                <div class="pull-left" title="Customer Service Number" style="font-size: 16px; padding-right: 3vw; padding-top: 1vw; ">
 
+                                    @if (profileName == "Interviewer")
+                                    {
+                                    <c>For Support Tool Free Number - </c>
+                                    <span class="fa fa-phone">
+                                        18001207846
+                                    </span>
+                                    <c style="font-size:18px"> | </c>
+                                    }
+
+                                </div>
                                 <div class="desktop-view" style="float:left">
                                     <span class="divider-rm"> | </span>
                                     <a style="cursor:pointer" onclick="GetSupportModal()">
@@ -789,20 +800,20 @@
 }
 <script>
 
-    document.onkeypress = function (event) {
-    event = (event || window.event);
-    if (event.keyCode == 123) {
-    return false;
-    }
-    }
-       document.onkeydown = function (event) {
-    event = (event || window.event);
-    if (event.keyCode == 123) {
-    return false;
-    }
-    }
-document.addEventListener("contextmenu", function(event){
-event.preventDefault();
+        document.onkeypress = function (event) {
+        event = (event || window.event);
+        if (event.keyCode == 123) {
+        return false;
+        }
+        }
+           document.onkeydown = function (event) {
+        event = (event || window.event);
+        if (event.keyCode == 123) {
+        return false;
+        }
+        }
+    document.addEventListener("contextmenu", function(event){
+    event.preventDefault();
 
-}, false);
-</script>
+    }, false);
+    </script>
