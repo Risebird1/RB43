@@ -30,6 +30,7 @@ namespace Risebird.Entities.ViewModel
         public bool OnWhatsapp { get; set; }
         public bool OnEmail { get; set; }
         public int IsOnline { get; set; }
+        public int? applicableToProfileId { get; set; }
     }
 
     public class SupportList

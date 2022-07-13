@@ -21,11 +21,11 @@ namespace Risebird.Business
 
         }
 
-        public List<Support> GetAllSupportHR()
+        public List<Support> GetAllSupportHR(string emailId = null)
         {
             try
             {
-                return _supportRespository.GetAllSupportHR().ToList();
+                return _supportRespository.GetAllSupportHR(emailId).ToList();
             }
             catch (Exception ex)
             {

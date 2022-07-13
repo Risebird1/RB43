@@ -32,17 +32,17 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid?.Replace("\"", "");
                     if (HttpContext.Session.GetString("NavigationShow") == "true")
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
+                        
                         _userService.UpdateUserSigInDetails(emailid);
                         HttpContext.Session.SetString("NavigationShow", "false");
                     }
 
                     var model = new SupportList();
-                    model.Supports = _supportService.GetAllSupportHR();
+                    model.Supports = _supportService.GetAllSupportHR(emailid);
                     ViewBag.Profile = profileName;
                     if (TempData["SuccessErrorMessageSupport"] != null)
                     {
@@ -90,8 +90,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                string emailId = null;
+                if(HttpContext.Session.GetString("email") != null)
+                {
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId?.Replace("\"", "");
+                }
+                
                 var model = new SupportList();
-                model.Supports = _supportService.GetAllSupportHR();
+                model.Supports = _supportService.GetAllSupportHR(emailId);
                 return PartialView("SupportIndex", model);
             }
             catch (Exception ex)

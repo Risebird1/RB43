@@ -86,7 +86,7 @@
                                             <tr>
                                                 <th id='start'>Name</th>
                                                 <th id="support_2">Email Id</th>
-                                                <!-- <th>Mobile Number</th>-->
+                                                 <th>Mobile Number</th>
                                                 <th>Whatsapp Number</th>
                                                 <th>Voice Call</th>
                                                 <th>Whatsapp Voice Call</th>
@@ -100,7 +100,7 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>Email Id</th>
-                                                <!--<th>Mobile Number</th-->
+                                                <th>Mobile Number</th>
                                                 <th>Whatsapp Number</th>
                                                 <th>Voice Call</th>
                                                 <th>Whatsapp Voice Call</th>
@@ -114,106 +114,115 @@
                                             @foreach (var item in Model.Supports)
                                             {
 
-                                                <tr id="@item.id">
-                                                    <td width="30%">
-                                                        @if (item.IsOnline == 1)
-                                                        {
-                                                            <span class="dot dot-p" style="background-color:green"></span><a onclick="directopenChat('@item.EmailId')"><span> @item.Name </span></a>
-                                                        }
-                                                        else
-                                                        {<span class="dot  dot-p"></span>
-                                                            @item.Name
+                                            <tr id="@item.id">
+                                                <td width="30%">
+                                                    @*@if (item.IsOnline == 1)
+                                                    {
+                                                        <span class="dot dot-p" style="background-color:green"></span><a onclick="directopenChat('@item.EmailId')"><span> @item.Name </span></a>
+                                                    }
+                                                    else
+                                                    {<span class="dot  dot-p"></span>
+                                                        @item.Name
 
-                                                        }
-                                                    </td>
-                                                    @if (item.EmailId != null && item.EmailId != "")
-                                                    {
-                                                        <td>@item.EmailId</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Not available</td>
-                                                    }
+                                                    }*@
+                                                    @item.Name
+                                                </td>
+                                                @if (item.EmailId != null && item.EmailId != "")
+                                                {
+                                                    <td>@item.EmailId</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not available</td>
+                                                }
+                                                @if (item.applicableToProfileId != null && item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                {
+                                                    <td>@item.MobileNumber</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not available</td>
+                                                }
 
-                                                    @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
-                                                    {
-                                                        <td>@item.WhatsappNumber</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Not available</td>
-                                                    }
+                                                @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
+                                                {
+                                                    <td>@item.WhatsappNumber</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not available</td>
+                                                }
 
 
-                                                    @if (item.OnVoiceCall)
-                                                    {
-                                                        <td>Yes</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No</td>
-                                                    }
-                                                    @if (item.OnWhatsapp)
-                                                    {
-                                                        <td>Yes</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No</td>
-                                                    }
-                                                    @if (item.OnEmail)
-                                                    {
-                                                        <td>Yes</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No</td>
-                                                    }
-                                                    @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
-                                                    {
-                                                        <td>
-                                                            <span style="font-size:12px;">  @item.AvailabilityHours </span>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td> </td>
-                                                    }
-
+                                                @if (item.OnVoiceCall)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                @if (item.OnWhatsapp)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                @if (item.OnEmail)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
+                                                {
                                                     <td>
-
-                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
-                                                        {
-                                                            <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
-
-
-
-                                                            <span id="support_3" class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone-alt"></span></span><span class="call-txt">Call HR</span></span>
-
-
-                                                        }
-
+                                                        <span style="font-size:12px;">  @item.AvailabilityHours </span>
                                                     </td>
-                                                    <td class="text-right action">
-                                                        @if (ViewBag.Profile == "Admin")
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
-                                                                <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                            </button>
+                                                }
+                                                else
+                                                {
+                                                    <td> </td>
+                                                }
+
+                                                <td>
+
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                    {
+                                                        <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
 
 
 
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
-                                                                <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                            </button>
+                                                        <span id="support_3" class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone-alt"></span></span><span class="call-txt">Call HR</span></span>
+
+
+                                                    }
+
+                                                </td>
+                                                <td class="text-right action">
+                                                    @if (ViewBag.Profile == "Admin")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
+                                                            <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
+                                                            <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
 
 
 
 
-                                                        }
+                                                    }
 
-                                                    </td>
-                                                </tr>
+                                                </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>

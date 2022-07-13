@@ -6,7 +6,7 @@ namespace Risebird.Repository.Interface
 {
     public interface ISupportRepository
     {
-        IEnumerable<Support> GetAllSupportHR();
+        IEnumerable<Support> GetAllSupportHR(string emailId = null);
         Task<bool> AddSupportHR(Support hrDetails);
         bool UpdateSupportHR(Support hrDetails);
         Support GetSupportHR(int id);
