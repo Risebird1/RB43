@@ -19,5 +19,25 @@ CREATE TABLE [dbo].[Support](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'applicableToProfileId')
+      AND Object_ID = Object_ID(N'Support'))
+BEGIN
+    ALTER TABLE Support
+    Add applicableToProfileId INT
+END
+
+END
 Go
 
+
+insert into Support values
+('Candidate Support', null, '18001207812', null, 0, 0, 0, '24*7', 23)
+insert into Support values
+('Interviewer Support', null, '18001207846', null, 0, 0, 0, '24*7', 3)
+insert into Support values
+('Client Support', null, '18001207842', null, 0, 0, 0, '24*7', 4)

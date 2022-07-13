@@ -5,7 +5,7 @@ namespace Risebird.Business.Interface
 {
     public interface ISupportService
     {
-        List<Support> GetAllSupportHR();
+        List<Support> GetAllSupportHR(string emailId = null);
         bool AddSupportHR(Support hrDetails);
         bool UpdateSupportHR(Support hrDetails);
         Support GetSupportHR(int id);

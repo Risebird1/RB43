@@ -25,20 +25,42 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public IEnumerable<Support> GetAllSupportHR()
+        public IEnumerable<Support> GetAllSupportHR(string emailId = null)
         {
+            //try
+            //{
+            //    //var query = "Select * from Support";
+            //    var query = "Select st.id,st.Name,st.EmailId,st.MobileNumber,st.WhatsappNumber,st.OnVoiceCall,st.OnWhatsapp,st.OnEmail,st.AvailabilityHours,1 from support st";
+            //    using (SqlConnection con = new SqlConnection(connectionString))
+            //    {
+            //        var results = con.Query<Support>(query);
+            //        return results;
+            //    }
+
+            //}
+            //catch (SqlException ex)
+            //{
+            //    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            //}
+
             try
             {
-                //var query = "Select * from Support";
-                var query = "Select st.id,st.Name,st.EmailId,st.MobileNumber,st.WhatsappNumber,st.OnVoiceCall,st.OnWhatsapp,st.OnEmail,st.AvailabilityHours,1 from support st";
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<Support>(query);
-                    return results;
-                }
+                    var result  = SqlMapper.QueryAsync<Support>(con, "usp_GetSupportBasedOnProfile", parameters,
+                        commandType: CommandType.StoredProcedure).Result;
+                    return result;
 
+                }
             }
             catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

@@ -48,7 +48,7 @@
                                                 <th id='start'>Name</th>
                                                 <th id="support_2">Email Id</th>
                                                 <th style="text-align:center">Call</th>
-                                                <!-- <th>Mobile Number</th>-->
+                                                 <th>Mobile Number</th>
                                                 <th>Whatsapp Number</th>
                                                 <th>Voice Call</th>
                                                 <th>Whatsapp Voice Call</th>
@@ -63,7 +63,7 @@
                                                 <th>Name</th>
                                                 <th>Email Id</th>
                                                 <th style="text-align:center">Call</th>
-                                                <!--<th>Mobile Number</th-->
+                                                <th>Mobile Number</th>
                                                 <th>Whatsapp Number</th>
                                                 <th>Voice Call</th>
                                                 <th>Whatsapp Voice Call</th>
@@ -79,7 +79,7 @@
 
                                             <tr id="@item.id">
                                                 <td width="30%">
-                                                    @if (item.IsOnline == 1)
+                                                    @*@if (item.IsOnline == 1)
                                                     {
                                                         <span class="dot dot-p" style="background-color:green"></span><a onclick="directopenChat('@item.EmailId')"><span> @item.Name </span></a>
                                                     }
@@ -87,7 +87,8 @@
                                                     {<span class="dot  dot-p"></span>
                                                         @item.Name
 
-                                                    }
+                                                    }*@
+                                                    @item.Name
                                                 </td>
                                                 @if (item.EmailId != null && item.EmailId != "")
                                                 {
@@ -111,7 +112,14 @@
                                                     }
 
                                                 </td>
-
+                                                @if (item.applicableToProfileId != null && item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                {
+                                                    <td>@item.MobileNumber</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not available</td>
+                                                } 
                                                 @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
                                                 {
                                                     <td>@item.WhatsappNumber</td>
