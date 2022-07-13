@@ -146,7 +146,9 @@ namespace Risebird.Web
                        .Allow("https://wchat.freshchat.com/")
                        .Allow("blob:")
                        .Allow("https://www.google-analytics.com/")
-                       .Allow("https://dc.services.visualstudio.com/");
+                       .Allow("https://dc.services.visualstudio.com/")
+                       .Allow("https://centralindia-0.in.applicationinsights.azure.com//v2/track")
+                       .Allow("'unsafe-inline'");
 
                 builder.Scripts
                        .AllowSelf()
@@ -174,6 +176,8 @@ namespace Risebird.Web
                        .Allow("https://az416426.vo.msecnd.net")
                        .Allow("https://cdn.rawgit.com/")
                        .Allow("https://dc.services.visualstudio.com/")
+                       .Allow("https://js.monitor.azure.com/scripts/b/ai.2.min.js")
+                       .Allow("https://centralindia-0.in.applicationinsights.azure.com//v2/track")
                        .Allow("blob:")
                        .Allow("'unsafe-inline'");
 
