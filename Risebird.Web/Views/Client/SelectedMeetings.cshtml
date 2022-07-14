@@ -587,14 +587,14 @@
                                                                             <td></td>
                                                                         }
 
-                                                                        @if ((item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus==8) && item.VideoLink != null && item.VideoLink != "")
-                                                                        {
-                                                                            <td><span id="selectedcandidate_6"> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a></span> </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No Video</td>
-                                                                        }
+                                                                                @if ((item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 8) && item.VideoLink != null && item.VideoLink != "")
+                                                                                {
+                                                                                    <td><span id="selectedcandidate_6"> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a></span> </td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td>No Video</td>
+                                                                                }
 
 
                                                                         <td class="interview-com">
@@ -639,17 +639,17 @@
 
 
 
-                                                                        @if ((item.InterviewStatus == 4 && item.InterviewStatus == 2))
-                                                                        {
-                                                                            <td>
-                                                                                <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No Report</td>
-                                                                        }
-                                                                        <td class="text-center action">
+                                                                                @if ((item.InterviewStatus == 4 || item.InterviewStatus == 2))
+                                                                                {
+                                                                                    <td>
+                                                                                        <span id="selectedcandidate_8"> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a></span>
+                                                                                    </td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td>No Report</td>
+                                                                                }
+                                                                                <td class="text-center action">
 
 
                                                                             <button id="selectedcandidate_9" class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
