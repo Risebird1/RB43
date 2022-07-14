@@ -1031,35 +1031,54 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> CandidateMCQReport(string MCQId, string EmailId)
         {
-            ViewBag.PublicLayout = false;
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            try
             {
-                ViewBag.PublicLayout = true;
-            }
-            else
-            {
-                HttpContext.Session.SetString("Logo", "");
-            }
-            var candidateset = _mCQService.GetMCQCandidateDetailsByMCQId(MCQId);
-            EmailId = EmailId.ToUpper();
-            var _candidate = candidateset.Where(x => x.CandidateEmail.ToUpper() == EmailId).FirstOrDefault();
-            var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
-            _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
-            if (String.IsNullOrEmpty(_candidate.VideoLink))
-            {
-                if (!String.IsNullOrEmpty(_candidate.roomId))
+                ViewBag.PublicLayout = false;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
-                    var request = new RestRequest(Method.GET);
-                    request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
-                    IRestResponse response = _meeting.Execute(request);
-                    var content = response.Content;
-                    var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
-                    _candidate.VideoLink = convertedResponse.videoUrl;
-                    _mCQService.UpdateVideoURLForCandidate(_candidate);
+                    ViewBag.PublicLayout = true;
                 }
+                else
+                {
+                    HttpContext.Session.SetString("Logo", "");
+                }
+                var candidateset = _mCQService.GetMCQCandidateDetailsByMCQId(MCQId);
+                EmailId = EmailId.ToUpper();
+                var _candidate = candidateset.Where(x => x.CandidateEmail.ToUpper() == EmailId).FirstOrDefault();
+                var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
+                _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
+                if (String.IsNullOrEmpty(_candidate.VideoLink))
+                {
+                    if (!String.IsNullOrEmpty(_candidate.roomId))
+                    {
+                        var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
+                        var request = new RestRequest(Method.GET);
+                        request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                        IRestResponse response = _meeting.Execute(request);
+                        var content = response.Content;
+                        if(!string.IsNullOrEmpty(content))
+                        {
+                            content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
+                        }
+                        try
+                        {
+                            var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
+                            _candidate.VideoLink = convertedResponse.videoUrl;
+                            _mCQService.UpdateVideoURLForCandidate(_candidate);
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+                    }
+                }
+                return View(_candidate);
             }
-            return View(_candidate);
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }
