@@ -58,11 +58,16 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    string OrginalProfileName = string.Empty;
                     if (TempData["SuccessErrorMessageUser"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageUser"].ToString();
                         TempData.Remove("SuccessErrorMessageUser");
                     }
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profilename = HttpContext.Session.GetString("profileName")?.Trim();
+                    profilename = profilename.Replace("\"", "");
                     var model = _userService.GetRisebirdUsers();
                     List<Profile> profiles = _profileService.GetProfile();
                     List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
@@ -75,7 +80,24 @@ namespace Risebird.Web.Controllers
                         model = model.Where(c => filter.Profile.Contains(c.ProfileName)
                         && ((filter.IsActive != null && filter.IsActive.Count() > 0) ? filter.IsActive.Contains(c.IsActive) : c.IsActive == false)).ToList();
                     }
-                    return View(model);
+                    if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
+                    {
+                        OrginalProfileName = profilename;
+                        profilename = "Admin";
+                    }
+                    if (profilename == "Admin")
+                    {
+                        
+                        //ViewBag.LoggedEmail = emailid.ToLower();
+                        //ViewBag.Profile = profilename;
+                        profilename = OrginalProfileName;
+                        return View(model);
+                    }
+                    else
+                    {
+                        return View(new List<UserList>());
+                    }
+                    //return View(model);
                 }
                 else
                 {
