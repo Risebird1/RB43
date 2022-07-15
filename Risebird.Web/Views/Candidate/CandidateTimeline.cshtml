@@ -110,8 +110,10 @@
                                     <div class="mdc-button__ripple"></div>
                                 </button>
                             </span>
-                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i></span>
-
+                            @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "Client")
+                            {
+                                <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateStatusExporttoExcel", "Candidate")'"></i></span>
+                            }
 
                         </div>
 

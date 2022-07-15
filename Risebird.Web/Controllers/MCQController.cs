@@ -1053,7 +1053,8 @@ namespace Risebird.Web.Controllers
                     {
                         var _meeting = new RestClient("https://meet.risebird.io/api/v1/room/" + _candidate.roomId);
                         var request = new RestRequest(Method.GET);
-                        request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                        //request.AddHeader("authorization", "v7sy3J8cAFdEJp5S");
+                        request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
                         IRestResponse response = _meeting.Execute(request);
                         var content = response.Content;
                         if(!string.IsNullOrEmpty(content))
@@ -1064,7 +1065,10 @@ namespace Risebird.Web.Controllers
                         {
                             var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
                             _candidate.VideoLink = convertedResponse.videoUrl;
-                            _mCQService.UpdateVideoURLForCandidate(_candidate);
+                            if(_candidate != null && _candidate.VideoLink != null)
+                            {
+                                _mCQService.UpdateVideoURLForCandidate(_candidate);
+                            }
                         }
                         catch (Exception ex)
                         {

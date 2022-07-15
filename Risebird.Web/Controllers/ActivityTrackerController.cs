@@ -61,7 +61,7 @@ namespace Risebird.Web.Controllers
 
                         }
 
-
+                        ViewBag.Profile = profileName;
                         return View(model);
                     }
                     else

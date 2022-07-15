@@ -189,13 +189,25 @@ namespace Risebird.MicroService
                         request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);//"v7sy3J8cAFdEJp5S");
                         IRestResponse response = _meeting.Execute(request);
                         var content = response.Content;
+                        if (!string.IsNullOrEmpty(content))
+                        {
+                            content = content.Replace("\n", "").Replace("\t", "").Replace("\r", "");
+                        }
                         var convertedResponse = JsonConvert.DeserializeObject<RBMeetCreateMeetingResponse>(content);
 
                         string rbMeetVideoLink = convertedResponse.videoUrl;
-                        int rbMeetVideoDurationInSeconds = convertedResponse.duration;
-                        int rbMeetVideoDurationInMinutes = (rbMeetVideoDurationInSeconds / 60);
+                        int? rbMeetVideoDurationInSeconds = convertedResponse.duration;
+                        int rbMeetVideoDurationInMinutes = 0;
+                        if (rbMeetVideoDurationInSeconds.HasValue)
+                        {
+                            rbMeetVideoDurationInMinutes = (rbMeetVideoDurationInSeconds.Value / 60);
+                        }
 
-                        _ = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, rbMeetVideoLink, rbMeetVideoDurationInMinutes).Result;
+                        if(!string.IsNullOrEmpty(rbMeetVideoLink))
+                        {
+                            _ = _meetingRespository.UpdateUploadedVideoLink(meeting.imid, rbMeetVideoLink, rbMeetVideoDurationInMinutes).Result;
+                            log.LogInformation($"RBMeet : Video link updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
+                        }
 
                     }
                     catch (Exception ex)
