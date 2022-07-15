@@ -356,7 +356,7 @@ namespace Risebird.Web.Controllers
                     bool result = false;
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
-                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator);
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, zoomLink.accountemail);
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
@@ -712,7 +712,8 @@ namespace Risebird.Web.Controllers
             var succeresult = _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
         }
-        public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
+
+        private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
         {
             _zoommetingobject.type = 2;
             _zoommetingobject.duration = 60;
@@ -735,6 +736,7 @@ namespace Risebird.Web.Controllers
             var content = response.Content;
             var convertedResponse = JsonConvert.DeserializeObject<InstaZoomMeetingResponse>(content);
             convertedResponse.InterviewDate = indianTime;
+            convertedResponse.accountemail = accountEmail;
             return convertedResponse;
         }
         public string ZoomToken()

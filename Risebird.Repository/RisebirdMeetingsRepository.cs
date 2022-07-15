@@ -39,7 +39,7 @@ namespace Risebird.Repository
             _candidateRepository = candidateRepository;
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact)
+            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, string zoomAccountEmail= null)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -55,7 +55,7 @@ namespace Risebird.Repository
 
             //string candidateName = string.Empty;
             //string candidateEmail = string.Empty;
-            string hrRiseBirdAssinged = string.Empty;
+            string hrRiseBirdAssinged = string.IsNullOrWhiteSpace(zoomAccountEmail)? string.Empty: zoomAccountEmail;
 
             //string resumeLink = string.Empty;
             string comfirmationStatus = "1";
