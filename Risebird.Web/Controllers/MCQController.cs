@@ -835,7 +835,7 @@ namespace Risebird.Web.Controllers
                             {
                                 clientname = client.Result.ClientName.ToUpper();
                                 isclient = true;
-                                candidateset = candidateset.Where(x => x.ApplyingCompany.ToUpper() == clientname).ToList();
+                                candidateset = candidateset.Where(x => (x.ApplyingCompany.ToUpper() == clientname) || (x.ClientHR.ToUpper() == emailid.ToUpper())).ToList();
                             }
                         }
                         if (HttpContext.Session.GetString("MCQCandidateList") != null)

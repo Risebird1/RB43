@@ -470,7 +470,7 @@
                     </div>
 
 
-                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Screen+ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
+                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="Phone Interview Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
                     <div class="col-md-12">
                         <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     </div>
@@ -820,7 +820,7 @@
                             data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), MeetingDate: $("#txtmeetingdatetime").val(), Expiretime: $("#txtExpireTime").val() },
                             success: function (data) {
                                 if (data == "success") {
-                                    alert("Successfully share the Phone Screen+ set.");
+                                    alert("Successfully share the Phone Interview set.");
                                     closeSharePopUp();
 
                                 } else {

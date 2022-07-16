@@ -168,12 +168,12 @@
                                                 @*<th>Video Link</th>*@
                                                 <th>Skills</th>
                                                 <th>Score</th>
-                                                @if (ViewBag.Isclient == false)
-                                                {
+                                                @*@if (ViewBag.Isclient == false)
+                                                {*@
                                                     <th>Rating</th>
                                                     <th>Comment</th>
                                                     <th class="disabled-sorting text-right">Actions</th>
-                                                }
+                                                @*}*@
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -186,12 +186,12 @@
                                                 @*<th>Video Link</th>*@
                                                 <th>Skills</th>
                                                 <th>Score</th>
-                                                @if (ViewBag.Isclient == false)
-                                                {
+                                                @*@if (ViewBag.Isclient == false)
+                                                {*@
                                                     <th>Rating</th>
                                                     <th>Comment</th>
                                                     <th class="disabled-sorting text-right">Actions</th>
-                                                }
+                                                @*}*@
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -222,8 +222,8 @@
                                                         var valuescore = (@item.CandidateScore * 100) / @item.TotalQuestions;
                                                         <td>@valuescore%</td>
                                                     }
-                                                    @if (ViewBag.Isclient == false)
-                                                    {
+                                                    @*@if (ViewBag.Isclient == false)
+                                                    {*@
                                                         <td>@item.Feedbackreating out of 5</td>
                                                         <td>
                                                             <div class="talk-bubble tri-right border-bubble right-in">
@@ -233,9 +233,9 @@
                                                             </div>
                                                         </td>
                                                         <td class="text-right" style="padding-right:30px;">
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
+                                                            @*<button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
                                                                 <span onclick="javascript:DeleteCandidateFromTest('@item.PartitionKey','@item.Id','@item.SameID');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                            </button>
+                                                            </button>*@
                                                             @if (!String.IsNullOrEmpty(item.TotalExprience))
                                                             {
                                                                 <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.SameID, EmailId = item.CandidateEmail })'>
@@ -248,7 +248,7 @@
                                                                 </button>
                                                             }
                                                         </td>
-                                                    }
+                                                    @*}*@
                                                 </tr>
                                             }
                                         </tbody>
