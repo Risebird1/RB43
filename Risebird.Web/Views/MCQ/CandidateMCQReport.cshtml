@@ -107,10 +107,11 @@
                                             <div class="videoConplayer">
                                                 @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                 {
-                                                    string appendTime = "0";
-                                                    var src = Model.VideoLink + "#t=" + appendTime;
+                                                    //string appendTime = "0";
+                                                    //var src = Model.VideoLink + "#t=" + appendTime;
                                                     <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                        <source src='@src' type="video/mp4">
+                                                        @*<source src='@src' type="video/mp4">*@
+                                                        <source src='@Model.VideoLink' type="video/mp4">
                                                     </video>
                                                 }
                                                 else
