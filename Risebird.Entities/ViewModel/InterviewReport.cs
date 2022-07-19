@@ -113,6 +113,9 @@ namespace Risebird.Entities.ViewModel
         public SelectList QuestionsLevelList { get; set; }
         public SelectList ConfirmationTypeList { get; set; }
         public SelectList QuestionsList { get; set; }
+
+        public IEnumerable<SkillComment> QuestionsSkillMapping { get; set; }
+
         [Display(Name = "Proctoring Count")]
         public int ProctoringCount { get; set; }
 
