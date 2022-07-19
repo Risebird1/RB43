@@ -6062,5 +6062,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateSingleParticipantFlagForMeeting()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@currentTime", DateTime.Now);
+                    var result = SqlMapper.Query(con, "usp_UpdateSingleParticipantFlagForMeeting", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
