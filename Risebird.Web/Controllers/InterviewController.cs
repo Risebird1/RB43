@@ -3606,6 +3606,7 @@ namespace Risebird.Web.Controllers
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
             var questions = _meetingService.GetTechSkillComments(irfId, userId).Result;
             model.QuestionsList = new SelectList(questions, "Comment", "Comment");
+            model.QuestionsSkillMapping = questions;
             model.QuestionsListData = JsonConvert.SerializeObject(questions.Select(x => (x.Comment.Replace("\r", "").Replace("\n", ""), x.SkillName)));
         }
 

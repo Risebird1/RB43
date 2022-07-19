@@ -1961,14 +1961,26 @@
 
         var index = num[0];//id.charAt(20);
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
-        $.ajax({
+
+        var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
+        var skillName = '';
+        if (questionSkillMappingArray != null) {
+            var questionIndex = questionSkillMappingArray.findIndex(checkQuestion);
+
+            function checkQuestion(question) {
+                return question.comment == val;
+            }
+            skillName = questionSkillMappingArray[questionIndex].skillName;
+            $("#" + skillElementid).val(skillName);
+        }
+        @*$.ajax({
             type: "GET",
             url: "/IRF/GetTechSkillofSkillChannelByQuestion",
             data: { 'question': val, 'irfId' : '@Model.IRFId' },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
-        });
+        });*@
 
 
     }
@@ -2195,8 +2207,13 @@
         //Perform Ajax request.
         var count = '@ViewBag.QuestionsDiscussedCount';
         //Get Question Skills
+
         if (count == null || parseInt(count) == 0) {
-            var val = $("#QuestionsCollection_0__Comment").val();
+            var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
+            var skillName = questionSkillMappingArray[0].skillName;
+            $("#QuestionsCollection_0__SkillName").val(skillName);
+
+            @*var val = $("#QuestionsCollection_0__Comment").val();
             $.ajax({
                 type: "GET",
                 url: "/IRF/GetTechSkillofSkillChannelByQuestion",
@@ -2204,7 +2221,7 @@
                 success: function (data) {
                     $("#QuestionsCollection_0__SkillName").val(data);
                 }
-            });
+            });*@
 
         }
 
