@@ -42,7 +42,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [IsCandidateResponsed][bit] NULL,
     [CandidateResponse][bit] NULL,
     [ProctorReport][varchar](1000),
-    [Cancellationsource][varchar](100)
+    [Cancellationsource][varchar](100),
+    [HasDistinctParticipants][bit],
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -286,6 +287,16 @@ IF EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     alter column ZoomMeetingId varchar(200)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'HasDistinctParticipants')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add HasDistinctParticipants bit
 END
 
 END
