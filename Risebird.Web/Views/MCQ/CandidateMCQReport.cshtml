@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.CandidateDetailsForTestDuplicate
 
 @{
-    ViewData["Title"] = "Phone Interview Candidate Report";
+    ViewData["Title"] = "Recruiter Interview Candidate Report";
     if (ViewBag.PublicLayout)
     {
         Layout = "~/Views/Shared/_Layout.cshtml";
@@ -37,7 +37,7 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Phone Interview Candidate Report</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title"> Recruiter Interview Candidate Report</h4></div>
                 </div>
                 <div class="pull-right">
                     <div>
@@ -102,7 +102,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-wrap">
+                                    <div style=" box-shadow: 0 1px 15px 1px rgb(39 39 39 / 10%); padding: 10px; margin-bottom: 25px; background: #fff;">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="videoConplayer">
                                                 @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
