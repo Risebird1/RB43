@@ -1223,6 +1223,7 @@ namespace Risebird.Business
                     reportModel.OldMeetingStatus = reportModel.MeetingStatus;
                 }
                 reportModel.IsGeneralSkillRequired = irfDetails.IsGeneralSkillRequired;
+                reportModel.HasDistinctParticipants = interviewDetails.HasDistinctParticipants;
                 return reportModel;
             }
             catch (Exception e)
