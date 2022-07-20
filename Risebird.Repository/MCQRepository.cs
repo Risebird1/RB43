@@ -167,6 +167,7 @@ namespace Risebird.Repository
                     parameters.Add("@status", _list.status);
                     parameters.Add("@roomId", _list.roomId);
                     parameters.Add("@Expiretime", _list.Expiretime);
+                    parameters.Add("@WhoShared", _list.WhoShared);
 
                     await SqlMapper.QueryAsync(con, "usp_AddMCQSetShareCandidate", parameters,
                          commandType: CommandType.StoredProcedure);

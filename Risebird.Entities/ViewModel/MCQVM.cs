@@ -102,6 +102,7 @@ namespace Risebird.Entities.ViewModel
         public string roomId { get; set; }
         public DateTime ShareDate { get; set; }
         public int Expiretime { get; set; }
+        public string WhoShared { get; set; }
     }
     public class ProfileTypeSkills
     {

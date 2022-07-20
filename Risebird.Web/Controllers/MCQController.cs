@@ -939,21 +939,21 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     var resultset = _mCQService.FetchMCQSetById(Id);
                     var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
                     var timmer = details.Timer + " min";
                     string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest?Id=" + Id;
                     if (profileName == "Client")
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
                         var client = _userRepository.GetClientUserDetails(emailid);
                         if (client != null)
                         {
                             ClientName = client.Result.ClientName.ToUpper();
                         }
                     }
-                    if (!String.IsNullOrEmpty(ClientName))
+                    if (String.IsNullOrEmpty(ClientName))
                     {
                         ClientName = "";
                     }
@@ -962,6 +962,7 @@ namespace Risebird.Web.Controllers
                     _list.MCQSet = details.Title;
                     _list.ClientHR = ClientEmail;
                     _list.ApplyingCompany = ClientName;
+                    _list.WhoShared = emailid;
 
                     foreach (var item in Emailids.Split(";"))
                     {
