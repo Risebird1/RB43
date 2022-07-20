@@ -693,6 +693,7 @@ namespace Risebird.Repository
             {
                 parameters.Add("@interviewId", entity.imid);
                 parameters.Add("@IsEmergency", entity.IsEmergency);
+                parameters.Add("@HasDistinctParticipants", entity.HasDistinctParticipants);
 
             }
             parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           

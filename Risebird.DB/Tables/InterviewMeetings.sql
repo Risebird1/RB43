@@ -43,7 +43,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [CandidateResponse][bit] NULL,
     [ProctorReport][varchar](1000),
     [Cancellationsource][varchar](100),
-    [HasDistinctParticipants][bit],
+    [HasDistinctParticipants][bit] NOT NULL Default 1,
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -296,7 +296,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
     ALTER TABLE InterviewMeetings
-    Add HasDistinctParticipants bit
+    Add HasDistinctParticipants bit not null default 1
 END
 
 END

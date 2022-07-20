@@ -145,5 +145,8 @@ namespace Risebird.Entities.ViewModel
         public string ChannelOwner { get; set; }
         public string Message { get; set; }
         public int CandidateMasterId { get; set; }
+
+        [Display(Name = "Has Distinct Participants")]
+        public bool HasDistinctParticipants { get; set; }
     }
 }
