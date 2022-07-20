@@ -41,11 +41,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<MCQVMset> FetchAllMCQSets()
+        public IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName)
         {
             try
             {
-                return _mCQRepository.FetchAllMCQSets().Result;
+                return _mCQRepository.FetchAllMCQSets(clientname, profileName).Result;
             }
             catch (Exception e)
             {
@@ -214,6 +214,18 @@ namespace Risebird.Business
             try
             {
                 return _mCQRepository.UpdateVideoURLForCandidate(model).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetails()
+        {
+            try
+            {
+                return _mCQRepository.GetMCQCandidateDetails().Result;
             }
             catch (Exception e)
             {

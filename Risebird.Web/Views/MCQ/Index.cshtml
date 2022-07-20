@@ -79,6 +79,7 @@
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Recruiter Interview</font></span>
                                 </button>
+                                <a href="/MCQ/CandidateListDetails" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Candidates List</a>
                             }
                         }
 
@@ -180,7 +181,7 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">
                                                             Primary Skills
@@ -256,8 +257,8 @@
                                                 <div class="client-field">Time:</div> <div class="client-name" style="width:180px !important">@item.Timer Mins</div>
                                             </div>
                                             @*<div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Profile Level:</div> <div class="clientName" style="width:180px !important"> @item.ProfileTypeName</div>
-                                            </div>*@
+                                                    <div class="client-field">Profile Level:</div> <div class="clientName" style="width:180px !important"> @item.ProfileTypeName</div>
+                                                </div>*@
                                             <div class="col-md-12 col-sm-12">
                                                 @if (!String.IsNullOrEmpty(item.ProfileTypeName))
                                                 {
@@ -276,10 +277,13 @@
                                                 }
                                             </div>
                                             @*<div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-            <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px !important"> @item.CompentencyLevelName</div>
-        </div>*@
+                                                    <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px !important"> @item.CompentencyLevelName</div>
+                                                </div>*@
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
                                                 <div class="client-field">Primary Skill:</div> <div class="clientName" style="width:180px !important"> @item.PrimarySkills </div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                                <div class="client-field">Total Invite/ Attempt:</div> <div class="client-name" style="width:180px !important">@item.TotalInvite / @item.CandidateAttempt</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12">
                                                 @if (!String.IsNullOrEmpty(item.SecondarySkill))

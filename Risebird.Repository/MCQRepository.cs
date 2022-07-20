@@ -41,7 +41,7 @@ namespace Risebird.Repository
                     parameters.Add("@id", _lstset.id);
                     parameters.Add("@SeniorityLevel", _lstset.SeniorityLevel);
                     parameters.Add("@EmploymentType", _lstset.EmploymentType);
-                    parameters.Add("@CountryType", _lstset.CountryType != 0 ? _lstset.CountryType  : null);
+                    parameters.Add("@CountryType", _lstset.CountryType != 0 ? _lstset.CountryType : null);
                     parameters.Add("@CompanyType", _lstset.CompanyType != 0 ? _lstset.CompanyType : null);
                     //parameters.Add("@PerHourRate", _lstset.PerHourRate);
                     parameters.Add("@mcqid", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -106,15 +106,19 @@ namespace Risebird.Repository
             }
             return "Fail";
         }
-        public async Task<IEnumerable<MCQVMset>> FetchAllMCQSets()
+        public async Task<IEnumerable<MCQVMset>> FetchAllMCQSets(string clientname, string profileName)
         {
             try
             {
-                var query = "Select * From MCQSets";
+                //var query = "Select * From MCQSets";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<MCQVMset>(query, null);
-                    return results;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@profileName", profileName);
+                    parameters.Add("@clientname", clientname);
+                    var result = await SqlMapper.QueryAsync<MCQVMset>(con, "usp_GetMCQSets", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
                 }
             }
             catch (SqlException ex)
@@ -494,6 +498,27 @@ namespace Risebird.Repository
                 {
                     var results = await con.QueryAsync(query, dynamicParameters);
                     return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CandidateDetailsForTestDuplicate>(con, "usp_MCQCandidateDetails", null,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
                 }
             }
             catch (SqlException ex)

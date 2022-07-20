@@ -1,0 +1,543 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.CandidateDetailsForTestDuplicate>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Candidate List";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] ClientHR = new string[] { };
+    string[] SelectionStatus = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("MCQAllCandidateList") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("MCQAllCandidateList"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    SelectionStatus = filter.SelectionStatus != null ? filter.SelectionStatus : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+
+}
+<script>
+    var Header = "Candidate List";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Candidate List</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
+                    <a href="/MCQ/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row  bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card  bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("CandidateListDetails","MCQ")" method="post" id="form">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if (ViewBag.Isclient == false)
+                                                    {
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
+                                                                    Client
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                        @foreach (var item in ViewBag.Clients)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">
+                                                                    Client HR
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                        @foreach (var item in ViewBag.ClientHR)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <div class="form-group col-md-12 col-sm-12">
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 mc-button-area text-right mt-10">
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                    Reset Filter
+                                                                </button>
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                    Apply Filter
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div style="overflow-x:scroll" class="scrollbar style-2">
+                                <div id="tableID" class="second">
+                                    <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" style="width: 100%">
+                                        <thead>
+                                            <tr>
+                                                <th hidden></th>
+                                                <th>Candidate</th>
+                                                <th>Company</th>
+                                                <th>Client HR Email</th>
+                                                <th>Total Exprience</th>
+                                                @*<th>Video Link</th>*@
+                                                <th>Skills</th>
+                                                <th>Score</th>
+                                                @if (ViewBag.Isclient == false)
+                                                {
+                                                    <th>Rating</th>
+                                                    <th>Comment</th>
+                                                    <th class="disabled-sorting text-right">Actions</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th hidden></th>
+                                                <th>Candidate</th>
+                                                <th>Company</th>
+                                                <th>Client HR Email</th>
+                                                <th>Total Exprience</th>
+                                                @*<th>Video Link</th>*@
+                                                <th>Skills</th>
+                                                <th>Score</th>
+                                                @if (ViewBag.Isclient == false)
+                                                {
+                                                    <th>Rating</th>
+                                                    <th>Comment</th>
+                                                    <th class="disabled-sorting text-right">Actions</th>
+                                                }
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr id=@item.Id>
+                                                    <td hidden>@item.Id</td>
+                                                    <td>@item.CandidateEmail</td>
+                                                    <td>@item.ApplyingCompany</td>
+                                                    <td>@item.ClientHR</td>
+                                                    <td style="text-align:center">@item.TotalExprience years</td>
+                                                    @*@if (String.IsNullOrEmpty(item.VideoLink))
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td><a style="color:blue;cursor:pointer" onclick="openOnlineMeetingModel('@item.VideoLink')">Click Here</a></td>
+                                                        }*@
+                                                    <td>@item.Skills</td>
+                                                    @if (Convert.ToInt32(item.TotalQuestions) == 0)
+                                                    {
+                                                        <td>0</td>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        var valuescore = (@item.CandidateScore * 100) / @item.TotalQuestions;
+                                                        <td>@valuescore%</td>
+                                                    }
+                                                    @if (ViewBag.Isclient == false)
+                                                    {
+                                                        <td>@item.Feedbackreating out of 5</td>
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in">
+                                                                <div class="talktext">
+                                                                    <textarea> @item.FeedbackComment</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-right" style="padding-right:30px;">
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
+                                                                <span onclick="javascript:DeleteCandidateFromTest('@item.PartitionKey','@item.Id','@item.SameID');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+                                                            @if (!String.IsNullOrEmpty(item.TotalExprience))
+                                                            {
+                                                                <a target="_blank" href='@Url.Action("CandidateMCQReport", "MCQ", new { MCQId = item.SameID, EmailId = item.CandidateEmail })'>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                        <span title="Questions Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                    </button>
+                                                                </a>
+                                                                <button class="mdc-fab app-fab--absolute " aria-label="Generate URL">
+                                                                    <span onclick="javascript:GeneratePublicUrl('@item.SameID','@item.CandidateEmail');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                </button>
+                                                            }
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+
+<div id="OnlineMeetingModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Recruiter Interview Candidate Video</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeOnlineMeetingModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="divvideoarea">
+
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Questions Report Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Report Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+                    if (msg.includes("Success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Client/List';
+                    }
+                )
+                                    }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/Client/List';
+                    }
+                )
+            }
+                    }
+                window.onload = my_code();
+    </script>
+}
+
+<script>
+    function searchResult() {
+        $('#skillLevel').DataTable();
+    }
+            function RefreshSearch() {
+        $('#skillLevel').DataTable().destroy();
+
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+                applyDataTable();
+            });
+
+    function applyDataTable() {
+        $('#skillLevel').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+                                            }
+                    else { $("#x").show(); }
+                });
+            }
+                    });
+            }
+
+    $(document).ready(function () {
+                $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+            });
+
+        function closeOnlineMeetingModel() {
+        document.getElementById("vidcandidate").pause();
+        var modal = document.getElementById("OnlineMeetingModel");
+        modal.style.display = "none";
+    }
+    function openOnlineMeetingModel(videourl) {
+        var modal = document.getElementById("OnlineMeetingModel");
+        modal.style.display = "block";
+        var html = '';
+        html += ' <video controls id="vidcandidate" class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>';
+        html += '<source src = "' + videourl+'" type = "video/mp4" autoplay>';
+        html += '<source src="' + videourl +'" type="video/mp4">';
+        html += '</video>';
+        html += '<div class="col-md-12 ">';
+        html += '<div class="text-right">';
+        html += '                <input style="color: #fff; line-height: 13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">';
+        html += '   </div>';
+        html += '</div>';
+        $("#divvideoarea").empty().html(html);
+    }
+    function DeleteCandidateFromTest(id, indexid,sameid) {
+        swal.fire({
+            title: 'Are you sure you want to delete Candidate?',
+            text: "It will be permanently deleted !",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/MCQ/DeleteCandidate',
+                        data: { 'id': id, 'indexid': indexid },
+                        type: 'POST',
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>Your file has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/MCQ/CandidateTestDetails?id=" + sameid;
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
+    }
+     $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+
+        // $("#ClientHR").multiselect({
+            //includeSelectAllOption: true,
+           // selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+       // });
+
+
+        //$("#SelectionStatus").multiselect({
+           // includeSelectAllOption: true,
+            //selectedClass: 'active1',
+           // buttonWidth: '100%',
+           // maxHeight: 200
+        //});
+     });
+    function ResetFilter() {
+        window.location.href = "/MCQ/ResetMCQCandidateListFilter";
+    }
+    function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var skillsset = @Html.Raw(Json.Serialize(ClientHR));
+            var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#SelectionStatus").val(levelset);
+            $("#ClientHR").val(skillsset);
+    }
+    function GeneratePublicUrl(mcqid,candidateemail) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        urlcurrent = urlcurrent.replace("CandidateTestDetails", "CandidateMCQReport");
+        urlcurrent = urlcurrent.replace("?id", "?MCQId");
+        urlcurrent = urlcurrent + "&EmailId=" + candidateemail;
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+</script>
