@@ -279,6 +279,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientAction { get; set; }
         public int QCPresent { get; set; }
         public int Redflags { get; set; }
+        public bool HasDistinctParticipants { get; set; }
     }
     public class VedioComments
     {

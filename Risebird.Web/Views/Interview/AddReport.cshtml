@@ -12,6 +12,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var meetingStatusList = new List<SelectListItem>();
+    var hasDistinctParticipants = Model.HasDistinctParticipants;
     if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
     {
         meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
@@ -19,6 +20,12 @@
     else
     {
         meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString()).ToList();
+
+    }
+
+    if(Model.HasDistinctParticipants == false)
+    {
+        meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().Where(x => x.Value == ((int)MeetingStatus.NoShowInterviewer).ToString() || x.Value == ((int)MeetingStatus.NoShow).ToString()).ToList();
 
     }
 }
@@ -1549,6 +1556,10 @@
 
             }
 
+        }
+        var hasDistinctParticipants = '@hasDistinctParticipants';
+        if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
+            document.getElementById("InterviewStatus").disabled = true;
         }
         //$('.droprating option').wrap('<span>');
 
