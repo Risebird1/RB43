@@ -8,7 +8,7 @@ namespace Risebird.Repository.Interface
     {
         Task<string> AddorUpdateMCQSet(MCQVMset _lstset);
         Task<string> AddMCQQuestions(List<MCQVM> _lstMCQ, string MCQId);
-        Task<IEnumerable<MCQVMset>> FetchAllMCQSets();
+        Task<IEnumerable<MCQVMset>> FetchAllMCQSets(string clientname, string profileName);
         Task<IEnumerable<MCQVMset>> FetchMCQSetById(string MCQPId);
         Task<string> AddMCQSetShareList(MCQVMShare _list);
         Task<IEnumerable<MCQVMShare>> GetShareMCQEmailListByMCQId(string MCQPId);
@@ -23,5 +23,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
         Task<IEnumerable<MCQVM>> GetMCQCandidateQuestions(string CandidateId);
         Task<string> UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model);
+        Task<IEnumerable<CandidateDetailsForTestDuplicate>> GetMCQCandidateDetails();
     }
 }

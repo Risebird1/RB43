@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[MCQShareList](
 	[ShareDate] [datetime] NULL,
 	[roomId] [varchar](50) NULL,
 	[Expiretime] [int] NULL,
+	[WhoShared] [varchar](200) NULL,
  CONSTRAINT [PK_MCQShareList] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -28,5 +29,14 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE MCQShareList
     Add Expiretime int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'WhoShared')
+      AND Object_ID = Object_ID(N'MCQShareList'))
+BEGIN
+    ALTER TABLE MCQShareList
+    Add WhoShared varchar(200)
 END
 GO
