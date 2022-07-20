@@ -56,13 +56,24 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
-                    var result = _mCQService.FetchAllMCQSets();
+                    string clientname = string.Empty;
+                    if (profileName == "Client")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var client = _userRepository.GetClientUserDetails(emailid);
+                        if (client != null)
+                        {
+                            clientname = client.Result.ClientName.ToUpper();
+                        }
+                    }
+                    var result = _mCQService.FetchAllMCQSets(clientname, profileName);
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var seniorityLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
+                                          select new { ID = (int)s, Name = s.GetDescription() };
                     var employmentTypes = from EmploymentTypeOptions s in Enum.GetValues(typeof(EmploymentTypeOptions))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
+                                          select new { ID = (int)s, Name = s.GetDescription() };
                     //var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                     //                  select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
@@ -76,7 +87,7 @@ namespace Risebird.Web.Controllers
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
-                        if(!string.IsNullOrEmpty(item.ProfileType))
+                        if (!string.IsNullOrEmpty(item.ProfileType))
                         {
                             var listProfileTypes = new List<string>();
                             foreach (var profile in item.ProfileType.Split(','))
@@ -115,8 +126,8 @@ namespace Risebird.Web.Controllers
                             //    IEnumerable<MCQVMset> resultFilteredBySecondarySkill = null;
 
                             //    resultFilteredBySecondarySkill = result.Where(c => filter.SecondarySkill.Contains(c.SecondarySkill));
-                                
-                                
+
+
                             //    if (resultFilteredBySecondarySkill != null && resultFilteredBySecondarySkill.Count() > 0)//filtering only if there is nmore than one in the resultFilteredBySecondarySkill variable  
                             //    {
                             //        result = resultFilteredBySecondarySkill;
@@ -1058,7 +1069,7 @@ namespace Risebird.Web.Controllers
                         request.AddHeader("authorization", _configuration["RBMeetingDetails:apiKey"]);
                         IRestResponse response = _meeting.Execute(request);
                         var content = response.Content;
-                        if(!string.IsNullOrEmpty(content))
+                        if (!string.IsNullOrEmpty(content))
                         {
                             content = content.Replace("\n", "").Replace("\t", "").Replace("\r", ""); //.Replace("\"", "")
                         }
@@ -1066,7 +1077,7 @@ namespace Risebird.Web.Controllers
                         {
                             var convertedResponse = JsonConvert.DeserializeObject<ShareMCQRisebirdMeetingResponse>(content);
                             _candidate.VideoLink = convertedResponse.videoUrl;
-                            if(_candidate != null && _candidate.VideoLink != null)
+                            if (_candidate != null && _candidate.VideoLink != null)
                             {
                                 _mCQService.UpdateVideoURLForCandidate(_candidate);
                             }
@@ -1085,5 +1096,109 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        #region MCQ All Candidate Actions
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CandidateListDetails()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var isclient = false;
+                var clientname = string.Empty;
+                var candidateset = new List<CandidateDetailsForTestDuplicate>();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    candidateset = (List<CandidateDetailsForTestDuplicate>)_mCQService.GetMCQCandidateDetails();
+                    if (candidateset != null)
+                    {
+                        if (profileName == "Client")
+                        {
+                            var emailid = HttpContext.Session.GetString("email")?.Trim();
+                            emailid = emailid.Replace("\"", "");
+                            var client = _userRepository.GetClientUserDetails(emailid);
+                            if (client != null)
+                            {
+                                clientname = client.Result.ClientName.ToUpper();
+                                isclient = true;
+                                candidateset = candidateset.Where(x => x.ApplyingCompany.ToUpper() == clientname).ToList();
+                            }
+                        }
+                        if (HttpContext.Session.GetString("MCQAllCandidateList") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQAllCandidateList"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
+                            }
+                            if (profileName != "Client")
+                            {
+                                filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
+                                filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                                candidateset = candidateset.Where(c => (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHR) : c.ClientHR == null)
+                                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ApplyingCompany) : c.ApplyingCompany == null)).ToList();
+                            }
+                        }
+                        ViewBag.Isclient = isclient;
+                        ViewBag.Clients = candidateset.Select(x => x.ApplyingCompany).Distinct().ToList();
+                        ViewBag.ClientHR = candidateset.Select(x => x.ClientHR).Distinct().ToList();
+                        return View(candidateset);
+                    }
+                }
+                return View(candidateset);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CandidateListDetails(InterviewFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("MCQAllCandidateList", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("CandidateListDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public IActionResult ResetMCQCandidateListFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("MCQAllCandidateList");
+                    return RedirectToAction("CandidateListDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        #endregion
     }
 }

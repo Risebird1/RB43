@@ -50,6 +50,8 @@ namespace Risebird.Entities.ViewModel
         public int? CompanyType { get; set; }
         public int? CountryType { get; set; }
         //public int PerHourRate { get; set; }
+        public int TotalInvite { get; set; }
+        public int CandidateAttempt { get; set; }
     }
     public class QuestionList
     {

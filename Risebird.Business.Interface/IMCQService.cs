@@ -7,7 +7,7 @@ namespace Risebird.Business.Interface
     {
         string AddorUpdateMCQSet(MCQVMset _lstset);
         string AddMCQQuestions(List<MCQVM> _lstMCQ, string MCQId);
-        IEnumerable<MCQVMset> FetchAllMCQSets();
+        IEnumerable<MCQVMset> FetchAllMCQSets(string clientname, string profileName);
         IEnumerable<MCQVMset> FetchMCQSetById(string MCQPId);
         string AddMCQSetShareList(MCQVMShare _list);
         IEnumerable<MCQVMShare> GetShareMCQEmailListByMCQId(string MCQPId);
@@ -22,5 +22,6 @@ namespace Risebird.Business.Interface
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetailsByMCQTitle(string MCQtitle);
         IEnumerable<MCQVM> GetMCQCandidateQuestions(string CandidateId);
         string UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model);
+        IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetails();
     }
 }
