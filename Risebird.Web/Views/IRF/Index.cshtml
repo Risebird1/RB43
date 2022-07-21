@@ -1226,7 +1226,7 @@
 
         $(window).scroll(function () {
             if (!allFetched) {//maxPageCount > currentPageNumber
-                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                if ($(window).scrollTop() > ($(document).height() - $(window).height()) * 9 / 10) {
                     currentPageNumber += 1;
                     loadPageData(currentPageNumber);
                     //document.getElementById("loader").style.display = 'none';
