@@ -38,5 +38,6 @@ namespace Risebird.Entities.ViewModel
         public string[] Domain { get; set; }
         public string[] IsLeadInterviewer { get; set; }
         public bool[] IsCandidateResponsed { get; set; }
+        public string[] TemplateName { get; set; }
     }
 }
