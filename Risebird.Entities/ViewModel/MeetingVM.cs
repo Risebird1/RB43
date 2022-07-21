@@ -280,6 +280,8 @@ namespace Risebird.Entities.ViewModel
         public int QCPresent { get; set; }
         public int Redflags { get; set; }
         public bool HasDistinctParticipants { get; set; }
+        public string TemplateName { get; set; }
+
     }
     public class VedioComments
     {
