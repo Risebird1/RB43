@@ -39,7 +39,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration ,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource      
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName
   from  InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
@@ -54,7 +54,8 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId                    
   join TransHR th on th.IRFId = irf.id                
   join HR on HR.id = th.HRId                
-  join UserList ulhr on ulhr.id = HR.UserId                
+  join UserList ulhr on ulhr.id = HR.UserId
+  left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
   where interviewDate >= @startDate AND interviewDate < @endDate and ulhr.EmailId=@EmailId                
   Union              
   select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail,               
@@ -74,7 +75,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,IRF.RisebirdHr as ClientHR,      
   ca.ResumeLink as resumeLink, ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
@@ -87,7 +88,8 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id                    
   left join Client cl on cl.id = irf.ClientId                         
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId                    
-  left join UserList ulr on ulr.id = irf.RisebirdHr              
+  left join UserList ulr on ulr.id = irf.RisebirdHr
+  left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
   where interviewDate >= @startDate AND interviewDate < @endDate and ulr.EmailId=@EmailId           
                 
  End                
@@ -110,7 +112,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                   
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId
-  , im.HasDistinctParticipants
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId        
   join SeniorHR sh on sh.Clientid=IRF.ClientId      
@@ -124,7 +126,8 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id                    
   left join Client cl on cl.id = irf.ClientId                         
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId                    
-  left join Userlist ulsh on ulsh.id=sh.userid                 
+  left join Userlist ulsh on ulsh.id=sh.userid
+  left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
   where interviewDate >= @startDate AND interviewDate < @endDate and ulsh.EmailId =@EmailId               
  End                
 else                
@@ -145,7 +148,7 @@ else
   qcfr.QCStatus,ulcu.EmailId as BillingOwner, ic.VideoDuration,  ca.ResumeLink as resumeLink,      
   ca.Phone as MobileNumber, ca.ClientHRAttemptContact as CandidateClientHR, irf.IsQCRequired,im.IsCandidateResponsed  ,im.CandidateResponse,im.ProctorReport,im.Cancellationsource                  
   , itp.ResumeLink as interviewerresumeLink, itp.CodedResumeLink as encodedresumeLink,ca.IsProctor, im.ZoomMeetingId 
-  , im.HasDistinctParticipants
+  , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName
   from InterviewMeetings im                          
   inner join IRF on im.IRFId = IRF.IRFId                          
   left join UserList ulc on im.candidateEmail= ulc.EmailId                        
@@ -158,7 +161,7 @@ else
   left join QCFeedbackReport qcfr on qcfr.InterviewId=im.id                    
   left join Client cl on cl.id = irf.ClientId                         
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId                    
-                
+  left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId              
   where interviewDate >= @startDate AND interviewDate < @endDate                 
  End                          
                            
