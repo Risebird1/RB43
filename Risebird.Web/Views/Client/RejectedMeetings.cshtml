@@ -678,15 +678,10 @@
                                                                             {
                                                                                 <td></td>
                                                                             }
-                                                                            @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                                            {
+                                                                           
                                                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("Report", "Client", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No Report</td>
-                                                                            }
-                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                            
+                                                                            @if (item.VideoLink != null && item.VideoLink != "")
                                                                             {
                                                                                 <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                                                                             }
@@ -1145,12 +1140,10 @@
             else {
                 html += '<td></td>';
             }
-            if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+            
                 html += '<td> <a id="reportId" target="_blank" title="Report Link" href="/Client/Report?interviewId='+data[i].imid +'&irfId='+ data[i].irfIntId+'&isClient = true">Report</a></td>';
-            } else {
-                html += '<td>No Report</td>';
-            }
-            if (data[i].videoLink != null && data[i].videoLink != "" && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+
+            if (data[i].videoLink != null && data[i].videoLink != "") {
                 html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
             }
             else {

@@ -831,7 +831,7 @@
                                                                                             {
                                                                                                 <td>No document</td>
                                                                                             }
-                                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "")
                                                                                             {
                                                                                                 <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                                                                                             }
@@ -1545,7 +1545,7 @@ else
                                                                                             {
                                                                                                 <td>No document</td>
                                                                                             }
-                                                                                            @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                                                            @if ( item.VideoLink != null && item.VideoLink != "")
                                                                                             {
                                                                                                 <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                                                                                             }
@@ -1942,7 +1942,7 @@ else
                 } else {
                     html += '<td>No document</td>';
                 }
-                if (data[i].videoLink != null && data[i].videoLink != "" && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                if (data[i].videoLink != null && data[i].videoLink != "") {
                     html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
                 }
                 else {
