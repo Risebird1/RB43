@@ -206,6 +206,7 @@ namespace Risebird.Web.Controllers
                                 //        model.ClonableTemplates = templatesFilteredByAssessmentGroup;
                                 //    }
                                 //}
+                                
 
                                 if (!string.IsNullOrEmpty(filter.Category))
                                 {
@@ -215,6 +216,20 @@ namespace Risebird.Web.Controllers
                                     model.ClonableTemplates = templatesFilteredByCategory;
                                 }
 
+                                if (filter.PrimarySkills != null && filter.PrimarySkills.Count() > 0)
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByPrimarySkills = null;
+
+                                    templatesFilteredByPrimarySkills = model.ClonableTemplates.Where(c => !string.IsNullOrEmpty(c.PrimarySkills) && filter.PrimarySkills.Intersect(c.PrimarySkills.Split(';'))?.Count() > 0);
+                                    if (templatesFilteredByPrimarySkills != null && templatesFilteredByPrimarySkills.Count() > 0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredByPrimarySkills;
+                                    }
+                                    else
+                                    {
+                                        continueApplyingFilter = false;
+                                    }
+                                }
 
                                 if (!string.IsNullOrEmpty(filter.CountryType))
                                 {

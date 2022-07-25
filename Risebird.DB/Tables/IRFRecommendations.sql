@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[IRFRecommendations](
 	[DifficultyLevel] [varchar](50) NULL,--saved as ProfileType in Assessment Group but the display Name even there is Difficulty Level
 	[EmploymentType] [varchar](20) NULL,
 	[PerHourRate] [int] NULL,
+    [PrimarySkills][varchar](max) NULL,
 	CONSTRAINT [FK_IRFRecommendations_CategoryId] FOREIGN KEY([CategoryId]) REFERENCES [dbo].[AssessmentGroupCategory] ([id]),
 	CONSTRAINT [FK_IRFRecommendations_CloneIRFId] FOREIGN KEY([CloneIRFId]) REFERENCES [dbo].[ClonableSkillChannel] ([id]),
 	constraint [FK_IRFRecommendations_AssessmentGroupId] FOREIGN KEY([AssessmentGroupId]) REFERENCES [dbo].[AssessmentGroup] ([id]),
@@ -79,6 +80,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRFRecommendations
     Add PerHourRate INT NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PrimarySkills')
+      AND Object_ID = Object_ID(N'IRFRecommendations'))
+BEGIN
+    ALTER TABLE IRFRecommendations
+    Add PrimarySkills [varchar](max) NULL
 END
 
 END

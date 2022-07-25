@@ -31,9 +31,10 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IMCQService _mCQService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IIRFRepository _iRFRepository;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -44,6 +45,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _mCQService = mCQService;
             _applicationErrorLogger = applicationErrorLogger;
+            _iRFRepository = iRFRepository;
         }
 
         [Authorize]
@@ -568,10 +570,17 @@ namespace Risebird.Web.Controllers
             {
                 item.QuestionId = item.PartitionKey;
             }
-            HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(model));
             QuestionDetailsList modelset = new QuestionDetailsList();
             modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
             modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
+            if (HttpContext.Session.GetString("QuestionSet") != null)
+            {
+                modelset._timmerdetails.Timer = "";
+            }
+            else
+            {
+                HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(model));
+            }
             ViewBag.VideoRecording = itemshareupdate.Videorecording;
             return View(modelset);
         }
@@ -584,7 +593,12 @@ namespace Risebird.Web.Controllers
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
 
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
+
             var questionvalue = Convert.ToInt32(id);
+            if (HttpContext.Session.GetString("TestCandidateQuestion") != null)
+            {
+                questionvalue = JsonConvert.DeserializeObject<int>(HttpContext.Session.GetString("TestCandidateQuestion"));
+            }
             var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
             if (resultset.Count() == questionvalue)
             {
@@ -614,7 +628,7 @@ namespace Risebird.Web.Controllers
             var final = Request.Form["final"].ToString();
             var QuestionType = Request.Form["QuestionType"].ToString();
 
-
+            HttpContext.Session.SetString("TestCandidateQuestion", JsonConvert.SerializeObject(QuestionNumber));
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
@@ -1059,6 +1073,11 @@ namespace Risebird.Web.Controllers
                 var _candidate = candidateset.Where(x => x.CandidateEmail.ToUpper() == EmailId).FirstOrDefault();
                 var questions = _mCQService.GetMCQCandidateQuestions(_candidate.Id);
                 _candidate.QuestionDetails = (List<MCQVM>)(questions.OrderBy(x => x.QuestionNumber).ToList());
+                _candidate.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
+                _candidate.SelectabilityEvaluatorReportCollection = new List<SelectabilityEvaluatorReport>();
+                _candidate.JoinabilityHRReportCollection = new List<JoinabilityHRReport>();
+                _candidate = _mCQService.FetchMCQReportDetails(_candidate);
+                SetSelectabilityorJoniblity(_candidate);
                 if (String.IsNullOrEmpty(_candidate.VideoLink))
                 {
                     if (!String.IsNullOrEmpty(_candidate.roomId))
@@ -1088,6 +1107,11 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
+                if (TempData["SuccessErrorMCQMessage"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMCQMessage"].ToString();
+                    TempData.Remove("SuccessErrorMCQMessage");
+                }
                 return View(_candidate);
             }
             catch (Exception ex)
@@ -1096,7 +1120,52 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        [HttpPost]
+        public async Task<IActionResult> CandidateMCQReport(CandidateDetailsForTestDuplicate _candidate)
+        {
+            try
+            {
+                ViewBag.PublicLayout = false;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    ViewBag.PublicLayout = true;
+                }
+                else
+                {
+                    HttpContext.Session.SetString("Logo", "");
+                }
+                if (_mCQService.SaveMCQReportDetails(_candidate))
+                {
+                    TempData["SuccessErrorMCQMessage"] = "Report has been saved Successfully!";
+                    return RedirectToAction("CandidateMCQReport", new { MCQId = _candidate.SameID, EmailId = _candidate.CandidateEmail });
+                }
+                else
+                {
+                    TempData["SuccessErrorMCQMessage"] = "Fail to save the report!";
+                    return RedirectToAction("CandidateMCQReport", new { MCQId = _candidate.SameID, EmailId = _candidate.CandidateEmail });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public void SetSelectabilityorJoniblity(CandidateDetailsForTestDuplicate _candidate)
+        {
+            var _selectabilitycount = _candidate.SelectabilityEvaluatorReportCollection.Count();
+            var _joinabilitycount = _candidate.JoinabilityHRReportCollection.Count();
+            for (int i = 0; i < (5 - _selectabilitycount); i++)
+            {
+                var _selectability = new SelectabilityEvaluatorReport();
+                _candidate.SelectabilityEvaluatorReportCollection.Add(_selectability);
+            }
+            for (int i = 0; i < (5 - _joinabilitycount); i++)
+            {
+                var _joinability = new JoinabilityHRReport();
+                _candidate.JoinabilityHRReportCollection.Add(_joinability);
+            }
+        }
         #region MCQ All Candidate Actions
         [Authorize]
         [HttpGet]

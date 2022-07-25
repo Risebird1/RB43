@@ -218,7 +218,21 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 pr-1">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
 
+                                                                @Html.TextBoxFor(model => model.IRFRecommendations.PrimarySkills, new { @class = "form-control text-box single-line", @placeholder = "Use ';' to distinguish separate skills. Each skill should be a maximum 20 character long.", @onblur = "validatePrimarySkill(this.value)" })
+
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.PrimarySkills, "", new { @id = "error_PrimarySkills", @class = "text-danger" })
+
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </div>
                                                     @Html.HiddenFor(m => m.IRFRecommendations.id)
 
                                                 </div>
@@ -1778,6 +1792,35 @@
 
     }
 
+    function validatePrimarySkill(value) {
+        if (value == null || value == '') {
+            document.getElementById("IRFRecommendations_PrimarySkills").focus();
+            document.getElementById("error_PrimarySkills").innerHTML = "The Primary Skill(s) is/are required.(max 20 characters per skills)";
+            return false;
+        }
+
+        var skillArray = value.split(";");
+
+        if (skillArray != null && skillArray.length > 0) {
+            for (let i = 0; i < skillArray.length; i++) {
+                var skillValue = skillArray[i];
+                if (skillValue == null || skillValue == '') {
+                    document.getElementById("IRFRecommendations_PrimarySkills").focus();
+                    document.getElementById("error_PrimarySkills").innerHTML = "The Primary Skill(s) is/are required. Please ensure a skill is entered after/before every separator - ';' (max 20 characters per skills)";
+                    return false;
+                }
+                else if (skillValue.length > 20) {
+                    document.getElementById("IRFRecommendations_PrimarySkills").focus();
+                    document.getElementById("error_PrimarySkills").innerHTML = "A maximum of 20 characters is allowed per skill.";
+                    return false;
+                }
+            }
+        }
+
+        document.getElementById("error_PrimarySkills").innerHTML = "";
+        return true;
+        
+    }
 
 </script>
 

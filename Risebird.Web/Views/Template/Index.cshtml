@@ -25,6 +25,7 @@
     string EmploymentType = string.Empty;
     string DifficultyLevel = string.Empty;
     string Category = string.Empty;
+    string[] PrimarySkills = new string[] { };
 }
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
@@ -39,7 +40,7 @@
     DifficultyLevel = filter.DifficultyLevel != null ? filter.DifficultyLevel : string.Empty;
     AssessmentGroupTemplate = filter.AssessmentGroupTemplate != null ? filter.AssessmentGroupTemplate : string.Empty;
     Category = filter.Category != null ? filter.Category : string.Empty;
-
+    PrimarySkills = filter.PrimarySkills != null ? filter.PrimarySkills : string.Empty;
 }
 
 
@@ -108,6 +109,34 @@
                                                                     <select id="Category" name="Category" class="form-control" onchange="CategoryChanged(this.value)">
                                                                         <option value="">Select</option>
                                                                         @foreach (var item in Model.ClonableTemplates?.Select(x => x.CategoryName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkills">Primary Skills</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    
+                                                                    <select id="PrimarySkills" name="PrimarySkills" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
+                                                                        <option value="">Select</option>
+                                                                        @{
+                                                                            var primarySkills = new List<string>();
+                                                                            foreach (var item in Model.ClonableTemplates)
+                                                                            {
+                                                                                if (!string.IsNullOrEmpty(item.PrimarySkills))
+                                                                                {
+                                                                                    var splitSkills = item.PrimarySkills.Split(";");
+                                                                                    if (splitSkills != null && splitSkills.Count() > 0)
+                                                                                    {
+                                                                                        primarySkills.AddRange(splitSkills);
+                                                                                    }
+                                                                                }
+                                                                            }
+
+                                                                        }
+                                                                        @foreach (var item in primarySkills)
                                                                         {
                                                                             <option value="@item">@item</option>
                                                                         }
@@ -800,6 +829,7 @@
         var difficultyLevel =  @Html.Raw(Json.Serialize(DifficultyLevel));
         var assessmentGroupTemplate =  @Html.Raw(Json.Serialize(AssessmentGroupTemplate));
         var category =  @Html.Raw(Json.Serialize(Category));
+        var primarySkills =  @Html.Raw(Json.Serialize(PrimarySkills));
 
         //$("#TemplateName").val(templateName);
         //$("#CompetencyLevel").val(competencyLevel);
@@ -810,6 +840,7 @@
         $("#DifficultyLevel").val(difficultyLevel);
         $("#AssessmentGroupTemplate").val(assessmentGroupTemplate);
         $("#Category").val(category);
+        $("#PrimarySkills").val(primarySkills);
     }
 
 </script>

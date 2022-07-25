@@ -1222,10 +1222,11 @@
     var currentPageNumber = 1;
     @*var maxPageCount = parseInt('@Model.MaxPageCount');*@
     var allFetched = false;
+    var currentDataFetched = true;
     $(document).ready(function () {
 
         $(window).scroll(function () {
-            if (!allFetched) {//maxPageCount > currentPageNumber
+            if (allFetched == false && currentDataFetched == true) {//maxPageCount > currentPageNumber
                 if ($(window).scrollTop() > ($(document).height() - $(window).height()) * 9 / 10) {
                     currentPageNumber += 1;
                     loadPageData(currentPageNumber);
@@ -1238,6 +1239,7 @@
 
     });
     function loadPageData(currentPageNumber) {
+        currentDataFetched = false;
         var loader = document.getElementById("loader");
         loader.style.display = 'block';
         var searchValue = document.getElementById("idtxtSearch").value;
@@ -1251,17 +1253,18 @@
                     var irfTable = $('#irfTilesBody');
                     loader.style.display = 'none';
                     irfTable.append(response);
+                    currentDataFetched = true;
                 }
-                else if (response == null) {
+                else if (response == null || response == false) {
                     allFetched = true;
                     loader.style.display = 'none';
-
+                    currentDataFetched = false;
                 }
-                else if (response == false) {
-                    allFetched = true;
-                    loader.style.display = 'none';
-                    //$('#irfTilesBody').append("Error loading!");
-                }
+                //else if (response == false) {
+                //    allFetched = true;
+                //    loader.style.display = 'none';
+                //    //$('#irfTilesBody').append("Error loading!");
+                //}
 
             }
         });

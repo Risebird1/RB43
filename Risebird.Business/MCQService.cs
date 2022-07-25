@@ -5,6 +5,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Risebird.Business
 {
@@ -231,6 +232,54 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public bool SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate)
+        {
+            try
+            {
+                return _mCQRepository.SaveMCQReportDetails(_candidate).Result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public CandidateDetailsForTestDuplicate FetchMCQReportDetails(CandidateDetailsForTestDuplicate _candidate)
+        {
+            try
+            {
+                var selectibity = _mCQRepository.FetchMCQReportDetailsByCMCQId(_candidate.Id).Result;
+                if (selectibity == null || selectibity.Count() == 0)
+                {
+                    var selectibity2 = _mCQRepository.FetchMCQReportDetails(_candidate.SameID, _candidate.ApplyingCompany).Result;
+                    var Selectvalue = selectibity2.Select(x => x.CMCQId).FirstOrDefault();
+                    selectibity2 = selectibity2.Where(x => x.CMCQId == Selectvalue).ToList();
+                    _candidate.SelectabilityEvaluatorReportCollection = (List<SelectabilityEvaluatorReport>)selectibity2;
+                }
+                else
+                {
+                    _candidate.SelectabilityEvaluatorReportCollection = (List<SelectabilityEvaluatorReport>)selectibity;
+                }
+                var joinability = _mCQRepository.FetchMCQjoinabilityDetailsByCMCQId(_candidate.Id).Result;
+                if (joinability == null || joinability.Count() == 0)
+                {
+                    var joinability2 = _mCQRepository.FetchMCQjoinabilityDetails(_candidate.SameID, _candidate.ApplyingCompany).Result;
+                    var joinvalue = joinability2.Select(x => x.CMCQId).FirstOrDefault();
+                    joinability2 = joinability2.Where(x => x.CMCQId == joinvalue).ToList();
+                    _candidate.JoinabilityHRReportCollection = (List<JoinabilityHRReport>)joinability2;
+                }
+                else
+                {
+                    _candidate.JoinabilityHRReportCollection = (List<JoinabilityHRReport>)joinability;
+                }
+                return _candidate;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return _candidate;
             }
         }
     }
