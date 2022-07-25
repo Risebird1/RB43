@@ -151,6 +151,9 @@ namespace Risebird.Entities.ViewModel
         public string FeedbackComment { get; set; }
         public List<MCQVM> QuestionDetails { get; set; }
         public string roomId { get; set; }
+        public IList<SelectabilityEvaluatorReport> SelectabilityEvaluatorReportCollection { get; set; }
+        public IList<JoinabilityHRReport> JoinabilityHRReportCollection { get; set; }
+        public SelectList Level { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {
