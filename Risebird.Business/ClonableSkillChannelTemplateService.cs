@@ -225,6 +225,21 @@ namespace Risebird.Business
                 {
                     model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
                 }
+                if (model.IRFRecommendations.PrimarySkills != null)
+                {
+                    var primarySkillArray = model.IRFRecommendations.PrimarySkills.Split(';');//?.ToList().ForEach(x => { x = x.Trim()}) ;
+                    var newList = new List<string>();
+
+                    foreach (var skill in primarySkillArray)
+                    {
+                        var trimmedSkill = skill.Trim();
+                        if(trimmedSkill != string.Empty)
+                        {
+                            newList.Add(trimmedSkill);
+                        }
+                    }
+                    model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
+                }
                 var result = await _clonableSkillChannelTemplateRepository.CreateClonableSkillChannel(model);
                 if (result)
                 {
@@ -340,6 +355,21 @@ namespace Risebird.Business
                 if (model.IRFRecommendations.EmploymentTypeArray != null)
                 {
                     model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
+                }
+                if (model.IRFRecommendations.PrimarySkills != null)
+                {
+                    var primarySkillArray = model.IRFRecommendations.PrimarySkills.Split(';');//?.ToList().ForEach(x => { x = x.Trim()}) ;
+                    var newList = new List<string>();
+
+                    foreach (var skill in primarySkillArray)
+                    {
+                        var trimmedSkill = skill.Trim();
+                        if (trimmedSkill != string.Empty)
+                        {
+                            newList.Add(trimmedSkill);
+                        }
+                    }
+                    model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
                 }
                 var result = await _clonableSkillChannelTemplateRepository.UpdateClonableSkillChannel(model);
                 if (result)

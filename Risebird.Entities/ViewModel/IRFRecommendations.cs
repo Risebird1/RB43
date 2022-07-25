@@ -57,5 +57,8 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Per Hour Rate")]
         public int? PerHourRate { get; set; }
 
+        [DisplayName("Primary Skills")]
+        public string PrimarySkills { get; set; }
+
     }
 }

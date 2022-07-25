@@ -18,5 +18,6 @@
         public string EmploymentType { get; set; }
         public string DifficultyLevel { get; set; }//this is referred to as ProfileType at some places
         public string Category { get; set; }
+        public string[] PrimarySkills { get; set; }
     }
 }
