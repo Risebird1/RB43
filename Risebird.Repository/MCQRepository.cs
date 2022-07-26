@@ -537,6 +537,13 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    var query = "Update MCQCandidates set RecruiterComment=@RecruiterComment where PartitionKey=@CMCQId and MCQId=@MCQId";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@MCQId", _candidate.SameID);
+                    dynamicParameters.Add("@CMCQId", _candidate.Id);
+                    dynamicParameters.Add("@RecruiterComment", _candidate.RecruiterComment);
+                    var results = await con.QueryAsync(query, dynamicParameters);
+
                     if (_candidate.SelectabilityEvaluatorReportCollection != null && _candidate.SelectabilityEvaluatorReportCollection.Count > 0)
                     {
                         DataTable selectabilityDt = new DataTable();
