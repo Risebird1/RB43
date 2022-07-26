@@ -342,7 +342,6 @@
             url: '/DashBoard/InterviewerCandidateRatingDetails',
             type: 'POST',
             success: function (data) {
-                data.candidateRating = 4.8;
                 $("#divcandidaterating").text(data.candidateRating + " Out of 5");
                 GeneratecandidatepaiChart(data.candidateRating);
             }
@@ -351,7 +350,6 @@
             url: '/DashBoard/InterviewerClientRatingDetails',
             type: 'POST',
             success: function (data) {
-                data.clientRating = 4.2;
                 $("#divclientrating").text(data.clientRating + " Out of 5");
                 GenerateclientpaiChart(data.clientRating);
             }
