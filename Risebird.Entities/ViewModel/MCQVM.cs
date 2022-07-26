@@ -158,6 +158,8 @@ namespace Risebird.Entities.ViewModel
         public int Joinability { get; set; }
         [Display(Name = "Recruiter Comment")]
         public string RecruiterComment { get; set; }
+        public SelectList JoinabilityTypeList { get; set; }
+        public SelectList SelectabilityTypeList { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {

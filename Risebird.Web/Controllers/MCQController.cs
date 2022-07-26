@@ -32,9 +32,10 @@ namespace Risebird.Web.Controllers
         private readonly IMCQService _mCQService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFRepository _iRFRepository;
+        private readonly IIRFService _irfService;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper, IMCQService mCQService, IApplicationErrorLogger applicationErrorLogger, IIRFRepository iRFRepository, IIRFService irfService)
         {
             _configuration = configuration;
             _userRepository = userRepository;
@@ -46,6 +47,7 @@ namespace Risebird.Web.Controllers
             _mCQService = mCQService;
             _applicationErrorLogger = applicationErrorLogger;
             _iRFRepository = iRFRepository;
+            _irfService = irfService;
         }
 
         [Authorize]
@@ -1159,13 +1161,17 @@ namespace Risebird.Web.Controllers
             for (int i = 0; i < (5 - _selectabilitycount); i++)
             {
                 var _selectability = new SelectabilityEvaluatorReport();
+                _selectability.RequiredLevelId = 3;
                 _candidate.SelectabilityEvaluatorReportCollection.Add(_selectability);
             }
             for (int i = 0; i < (5 - _joinabilitycount); i++)
             {
                 var _joinability = new JoinabilityHRReport();
+                _joinability.RequiredLevelId = 3;
                 _candidate.JoinabilityHRReportCollection.Add(_joinability);
             }
+            _candidate.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+            _candidate.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
         }
         #region MCQ All Candidate Actions
         [Authorize]
