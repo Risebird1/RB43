@@ -609,3 +609,136 @@ function SetChartForVideoPageWithoutJoinabilitySelectability() {
 
     });
 }
+function SetChartMCQReport() {
+    var arr = [];
+    var objJoin = { y: "", legendText: "", label: "" }
+    var joinabilityItems = 5;
+    var joinabilityTotal = 0;
+    var joinablityrow = 0;
+    var fitmenttotal = 0;
+    for (i = 0; i < joinabilityItems; i++) {
+        if ($("#JoinabilityHRReportCollection_" + i + "__Value").val() != '') {
+            var valuecheck = 0;
+            joinablityrow = parseInt(joinablityrow) + 1;
+            if (parseInt($("#JoinabilityHRReportCollection_" + i + "__LevelId").val()) >= parseInt($("#JoinabilityHRReportCollection_" + i + "__RequiredLevelId").val())) {
+                valuecheck = 100;
+            } else {
+                valuecheck = 100 - ((parseInt($("#JoinabilityHRReportCollection_" + i + "__RequiredLevelId").val()) - parseInt($("#JoinabilityHRReportCollection_" + i + "__LevelId").val())) * 100 / parseInt($("#JoinabilityHRReportCollection_" + i + "__RequiredLevelId").val()));
+            }
+            joinabilityTotal = parseInt(joinabilityTotal) + parseInt(valuecheck);
+        }
+    }
+
+    if (parseInt(joinablityrow) > 0) {
+        joinabilityTotal = parseInt(joinabilityTotal) / parseInt(joinablityrow);
+    }
+    objJoin.y = parseInt(joinabilityTotal);
+    objJoin.label = "Joinability Score";
+    objJoin.legendText = "Joinability Score";
+    arr.push(objJoin.y);
+
+    var objSelect = { y: "", legendText: "", label: "" }
+    var selectabilityItems = 5;
+    var selectabilityTotal = 0;
+    var selectabilityrow = 0;
+    for (i = 0; i < selectabilityItems; i++) {
+        if ($("#SelectabilityEvaluatorReportCollection_" + i + "__Value").val() != '') {
+            var valuecheckselect = 0;
+            selectabilityrow = parseInt(selectabilityrow) + 1;
+            if (parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__LevelId").val()) >= parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__RequiredLevelId").val())) {
+                valuecheckselect = 100;
+            } else {
+                valuecheckselect = 100 - ((parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__RequiredLevelId").val()) - parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__LevelId").val())) * 100 / parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__RequiredLevelId").val()));
+            }
+            selectabilityTotal = parseInt(selectabilityTotal) + parseInt(valuecheckselect);
+        }
+    }
+
+    if (parseInt(selectabilityrow) > 0) {
+        selectabilityTotal = parseInt(selectabilityTotal) / parseInt(selectabilityrow);
+    }
+    objSelect.y = parseInt(selectabilityTotal);
+    objSelect.label = "Selectability Score";
+    objSelect.legendText = "Selectability Score";
+    arr.push(objSelect.y);
+
+    fitmenttotal = (parseInt(selectabilityTotal) + parseInt(joinabilityTotal)) / 2;
+    document.getElementById("totFitMentScore").innerHTML = fitmenttotal;
+
+    am4core.ready(function () {
+        am4core.useTheme(am4themes_animated);
+        var chart = am4core.create("scoreChart", am4charts.XYChart);
+        chart.data = [{
+            "country": "Joinability",
+            "visits": arr[0]
+        }, {
+            "country": "Selectability",
+            "visits": arr[1]
+        }];
+
+        chart.logo.disabled = true;
+        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "country";
+        categoryAxis.renderer.inside = true;
+        categoryAxis.renderer.labels.template.valign = 0;
+        categoryAxis.renderer.grid.template.location = 0;
+        //categoryAxis.renderer.minGridDistance = 30;
+        categoryAxis.renderer.minGridDistance = 100;
+        chart.fontSize = 13;
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+
+        categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+            if (target.dataItem && target.dataItem.index & 2 == 2) {
+                return dy;
+            }
+            return dy;
+        });
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+        categoryAxis.renderer.labels.template.paddingBottom = -17;
+        categoryAxis.renderer.grid.template.disabled = true;
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.grid.template.disabled = true;
+        valueAxis.min = 0;
+        //valueAxis.max = 30;
+        valueAxis.max = 100;
+        // Create series
+        var series = chart.series.push(new am4charts.ColumnSeries());
+        series.dataFields.valueY = "visits";
+        series.dataFields.categoryX = "country";
+        series.name = "Visits";
+        series.colorField = "color";
+        series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+        series.tooltip.label.adapter.add("text", function (text, target) {
+            if (target.dataItem && target.dataItem.valueY == 0) {
+                return "";
+            }
+            else {
+                return text;
+            }
+        });
+        series.columns.template.fillOpacity = .8;
+        series.columns.template.tooltipY = 0;
+        series.tooltip.background.strokeOpacity = 0
+        series.tooltip.pointerOrientation = "vertical";
+        series.columns.template.showTooltipOn = "always";
+        series.tooltip.background.filters.clear();
+        series.tooltip.getFillFromObject = false;
+
+        series.tooltip.label.fill = am4core.color("#9a9a9a");
+        series.tooltip.background.cornerRadius = 0;
+        series.tooltip.label.textAlign = "middle";
+        series.tooltip.background.fill = 0;
+        var columnTemplate = series.columns.template;
+        columnTemplate.strokeWidth = 0;
+        columnTemplate.strokeOpacity = 1;//07BEF3
+        chart.colors.list = [
+            am4core.color("#07BEF3"),
+            am4core.color("#00F96B"),
+            am4core.color("#F64042"),
+            am4core.color("#ffbc50")
+        ];
+        series.columns.template.events.once("inited", function (event) {
+            event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+        });
+    });
+}
