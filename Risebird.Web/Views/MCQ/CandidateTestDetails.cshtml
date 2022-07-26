@@ -168,6 +168,7 @@
                                                 @*<th>Video Link</th>*@
                                                 <th>Skills</th>
                                                 <th>Score</th>
+                                                <th>Fitment Score</th>
                                                 @if (ViewBag.Isclient == false)
                                                 {
                                                     <th>Rating</th>
@@ -186,6 +187,7 @@
                                                 @*<th>Video Link</th>*@
                                                 <th>Skills</th>
                                                 <th>Score</th>
+                                                <th>Fitment Score</th>
                                                 @if (ViewBag.Isclient == false)
                                                 {
                                                     <th>Rating</th>
@@ -202,15 +204,22 @@
                                                     <td>@item.CandidateEmail</td>
                                                     <td>@item.ApplyingCompany</td>
                                                     <td>@item.ClientHR</td>
-                                                    <td style="text-align:center">@item.TotalExprience years</td>
-                                                    @*@if (String.IsNullOrEmpty(item.VideoLink))
+                                                    @if (item.TotalExprience != null && item.TotalExprience != "")
                                                     {
-                                                        <td></td>
+                                                        <td style="text-align:center">@item.TotalExprience years</td>
                                                     }
                                                     else
                                                     {
-                                                        <td><a style="color:blue;cursor:pointer" onclick="openOnlineMeetingModel('@item.VideoLink')">Click Here</a></td>
-                                                    }*@
+                                                        <td></td>
+                                                    }
+                                                    @*@if (String.IsNullOrEmpty(item.VideoLink))
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td><a style="color:blue;cursor:pointer" onclick="openOnlineMeetingModel('@item.VideoLink')">Click Here</a></td>
+                                                        }*@
                                                     <td>@item.Skills</td>
                                                     @if (Convert.ToInt32(item.TotalQuestions) == 0)
                                                     {
@@ -218,10 +227,10 @@
                                                     }
                                                     else
                                                     {
-
                                                         var valuescore = (@item.CandidateScore * 100) / @item.TotalQuestions;
                                                         <td>@valuescore%</td>
                                                     }
+                                                    <td>@((item.Selectability+item.Joinability)/2) %</td>
                                                     @if (ViewBag.Isclient == false)
                                                     {
                                                         <td>@item.Feedbackreating out of 5</td>

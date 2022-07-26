@@ -154,6 +154,8 @@ namespace Risebird.Entities.ViewModel
         public IList<SelectabilityEvaluatorReport> SelectabilityEvaluatorReportCollection { get; set; }
         public IList<JoinabilityHRReport> JoinabilityHRReportCollection { get; set; }
         public SelectList Level { get; set; }
+        public int Selectability { get; set; }
+        public int Joinability { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {
