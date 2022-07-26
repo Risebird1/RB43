@@ -156,6 +156,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList Level { get; set; }
         public int Selectability { get; set; }
         public int Joinability { get; set; }
+        [Display(Name = "Recruiter Comment")]
+        public string RecruiterComment { get; set; }
     }
     public class ShareMCQRisebirdMeeting : RBMeetCreateMeetingObject
     {

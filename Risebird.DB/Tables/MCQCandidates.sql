@@ -22,4 +22,16 @@ CREATE TABLE [dbo].[MCQCandidates](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RecruiterComment')
+      AND Object_ID = Object_ID(N'MCQCandidates'))
+BEGIN
+    ALTER TABLE MCQCandidates
+    Add RecruiterComment varchar(500) NULL
+END
+END
 GO
