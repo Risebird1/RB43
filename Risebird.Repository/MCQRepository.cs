@@ -531,5 +531,181 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Update MCQCandidates set RecruiterComment=@RecruiterComment where PartitionKey=@CMCQId and MCQId=@MCQId";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@MCQId", _candidate.SameID);
+                    dynamicParameters.Add("@CMCQId", _candidate.Id);
+                    dynamicParameters.Add("@RecruiterComment", _candidate.RecruiterComment);
+                    var results = await con.QueryAsync(query, dynamicParameters);
+
+                    if (_candidate.SelectabilityEvaluatorReportCollection != null && _candidate.SelectabilityEvaluatorReportCollection.Count > 0)
+                    {
+                        DataTable selectabilityDt = new DataTable();
+                        selectabilityDt.Columns.Add("MCQId", typeof(string));
+                        selectabilityDt.Columns.Add("CMCQId", typeof(string));
+                        selectabilityDt.Columns.Add("CandidateEmail", typeof(string));
+                        selectabilityDt.Columns.Add("ApplyingCompany", typeof(string));
+                        selectabilityDt.Columns.Add("Type", typeof(string));
+                        selectabilityDt.Columns.Add("Value", typeof(string));
+                        selectabilityDt.Columns.Add("LevelId", typeof(int));
+                        selectabilityDt.Columns.Add("RequiredLevelId", typeof(int));
+                        foreach (var item in _candidate.SelectabilityEvaluatorReportCollection)
+                        {
+                            if (item.Value != null && item.Value != "")
+                            {
+                                selectabilityDt.Rows.Add(_candidate.SameID, _candidate.Id, _candidate.CandidateEmail, _candidate.ApplyingCompany, item.Type, item.Value, item.LevelId, item.RequiredLevelId);
+                            }
+                        }
+                        SqlCommand cmdSelectability = new SqlCommand("usp_MCQSelectabilityBulkInsert", con);
+                        cmdSelectability.CommandType = CommandType.StoredProcedure;
+                        cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
+                        cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
+                        con.Open();
+                        if (cmdSelectability.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+                    if (_candidate.JoinabilityHRReportCollection != null && _candidate.JoinabilityHRReportCollection.Count > 0)
+                    {
+                        DataTable joinabilityDt = new DataTable();
+                        joinabilityDt.Columns.Add("MCQId", typeof(string));
+                        joinabilityDt.Columns.Add("CMCQId", typeof(string));
+                        joinabilityDt.Columns.Add("CandidateEmail", typeof(string));
+                        joinabilityDt.Columns.Add("ApplyingCompany", typeof(string));
+                        joinabilityDt.Columns.Add("Type", typeof(string));
+                        joinabilityDt.Columns.Add("Value", typeof(string));
+                        joinabilityDt.Columns.Add("LevelId", typeof(int));
+                        joinabilityDt.Columns.Add("RequiredLevelId", typeof(int));
+                        foreach (var item in _candidate.JoinabilityHRReportCollection)
+                        {
+                            if (item.Value != null && item.Value != "")
+                            {
+                                joinabilityDt.Rows.Add(_candidate.SameID, _candidate.Id, _candidate.CandidateEmail, _candidate.ApplyingCompany, item.Type, item.Value, item.LevelId, item.RequiredLevelId);
+                            }
+                        }
+                        SqlCommand cmdjoinability = new SqlCommand("usp_MCQJoinabilityBulkInsert", con);
+                        cmdjoinability.CommandType = CommandType.StoredProcedure;
+                        cmdjoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
+                        cmdjoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
+                        con.Open();
+                        if (cmdjoinability.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IEnumerable<SelectabilityEvaluatorReport>> FetchMCQReportDetailsByCMCQId(string CMCQId)
+        {
+            try
+            {
+                var query = "Select * from MCQ_TransSelectability where CMCQId=@CMCQId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CMCQId", CMCQId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<SelectabilityEvaluatorReport>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<SelectabilityEvaluatorReport>> FetchMCQReportDetails(string MCQId, string ApplyingCompany)
+        {
+            try
+            {
+                var query = "Select distinct mts.* from MCQ_TransSelectability mts join MCQShareList ms on ms.MCQId=mts.MCQId where mts.MCQId=@MCQId and ms.ApplyingCompany=@ApplyingCompany";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@MCQId", MCQId);
+                dynamicParameters.Add("@ApplyingCompany", ApplyingCompany);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<SelectabilityEvaluatorReport>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetailsByCMCQId(string CMCQId)
+        {
+            try
+            {
+                var query = "Select * from MCQ_TransJoinability where CMCQId=@CMCQId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CMCQId", CMCQId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<JoinabilityHRReport>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<JoinabilityHRReport>> FetchMCQjoinabilityDetails(string MCQId, string ApplyingCompany)
+        {
+            try
+            {
+                var query = "Select distinct mts.* from MCQ_TransJoinability mts join MCQShareList ms on ms.MCQId=mts.MCQId where mts.MCQId=@MCQId and ms.ApplyingCompany=@ApplyingCompany";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@MCQId", MCQId);
+                dynamicParameters.Add("@ApplyingCompany", ApplyingCompany);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<JoinabilityHRReport>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -13,19 +13,17 @@ CREATE PROCEDURE usp_GetMCQSets
 @clientname varchar(150)
 AS
 BEGIN
-if(@profileName='Client')
-begin
-Select ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt
-From MCQSets ms left join MCQShareList msl on msl.MCQId=ms.PartitionKey left join MCQCandidates msc on msc.MCQId=ms.PartitionKey and msc.CandidateEmail=msl.EmailAddress
-where msl.ApplyingCompany=@clientname
-group by ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount
-end
-else
-begin
-Select ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt
-From MCQSets ms left join MCQShareList msl on msl.MCQId=ms.PartitionKey left join MCQCandidates msc on msc.MCQId=ms.PartitionKey and msc.CandidateEmail=msl.EmailAddress
-group by ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount
-end
+if(@profileName='Client')  
+begin  
+Select ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt  
+From MCQSets ms left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.ApplyingCompany=@clientname left join MCQCandidates msc on msc.MCQId=ms.PartitionKey and msc.CandidateEmail=msl.EmailAddress  
+group by ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount  
+end  
+else  
+begin  
+Select ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount,Count(msl.id) TotalInvite,Count(msc.id) CandidateAttempt  
+From MCQSets ms left join MCQShareList msl on msl.MCQId=ms.PartitionKey left join MCQCandidates msc on msc.MCQId=ms.PartitionKey and msc.CandidateEmail=msl.EmailAddress  
+group by ms.PartitionKey,ms.Title,ms.CompentencyLevel,ms.PrimarySkills,ms.ProfileType,ms.SecondarySkill,ms.Timer,ms.QuestionCount  
+end  
 END
-GO
-
+Go

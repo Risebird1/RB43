@@ -32,7 +32,8 @@ GO
 @RecommendationModifiedOn datetime,
 @RecommendationDifficultyLevel varchar(50) = null,
 @RecommendationEmploymentType varchar(20) = null,
-@RecommendationPerHourRate int = null
+@RecommendationPerHourRate int = null,
+@RecommendationPrimarySkills varchar(max) = null
             
 AS            
 Begin  
@@ -148,7 +149,8 @@ begin try
 		ModifiedOn = @RecommendationModifiedOn,
 		DifficultyLevel = @RecommendationDifficultyLevel,
 		EmploymentType = @RecommendationEmploymentType,
-		PerHourRate = @RecommendationPerHourRate
+		PerHourRate = @RecommendationPerHourRate,
+		PrimarySkills = @RecommendationPrimarySkills
 		Where CloneIRFId = @id
 	
 	End

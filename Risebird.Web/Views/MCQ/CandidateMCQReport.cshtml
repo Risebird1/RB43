@@ -20,13 +20,13 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-    .sidebar-mini .sidebar:hover {
+    /*.sidebar-mini .sidebar:hover {
         width: 80px !important;
-    }
+    }*/
 
-    .sidebar .navbar-minimize .btn {
+    /*   .sidebar .navbar-minimize .btn {
         display: none !important
-    }
+    }*/
 </style>
 <script>
     document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
@@ -55,125 +55,257 @@
                     <div class="mdc-card-wrapper__text-section">
                         <div class="ng-pristine ng-valid form" id="reportForm">
                             <div class="canvas_div_pdf">
-                                <div class="report-full-wrap">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Candidate Details</span></h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-wrap">
+                                <form action="/MCQ/CandidateMCQReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+                                    <div class="report-full-wrap">
                                         <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.CandidateScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CandidateScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>Candidate Details</span></h3>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="card-wrap">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                    <div class="form-group">
+                                                        @Html.HiddenFor(m => m.Id)
+                                                        @Html.HiddenFor(m => m.SameID)
+                                                        @Html.HiddenFor(m => m.ApplyingCompany)
+                                                        @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.CandidateScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.CandidateScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.Skills, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.TotalQuestions, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.TotalQuestions, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="report-full-wrap">
                                         <div class="row">
-                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Skills, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.TotalQuestions, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.TotalQuestions, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>MCQ Video</span></h3>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="report-full-wrap">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>MCQ Video</span></h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style=" box-shadow: 0 1px 15px 1px rgb(39 39 39 / 10%); padding: 10px; margin-bottom: 25px; background: #fff;">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="videoConplayer">
-                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                                {
-                                                    //string appendTime = "0";
-                                                    //var src = Model.VideoLink + "#t=" + appendTime;
-                                                    <video width="600" controls="controls" preload="metadata" class="vjs-tech">
-                                                        @*<source src='@src' type="video/mp4">*@
-                                                        <source src='@Model.VideoLink' type="video/mp4">
-                                                    </video>
-                                                }
-                                                else
-                                                {
-                                                    <label>No Video found</label>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="report-full-wrap">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Questions Report</span></h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-wrap">
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="mdc-card card  bl-bg">
-                                                <div class="mdc-card-wrapper__text-section">
-                                                    @foreach (var item in Model.QuestionDetails)
+                                        <div style=" box-shadow: 0 1px 15px 1px rgb(39 39 39 / 10%); padding: 10px; margin-bottom: 25px; background: #fff;">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="videoConplayer">
+                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                     {
-                                                        <div>
-                                                            <div class="x-text">
-                                                                <!--button: Start-->
-                                                            </div>
-                                                            <div class="man">@item.QuestionNumber ) @item.Question </div>
-                                                            <div>
-                                                                @if (item.QuestionType == "Multiple")
-                                                                {
-                                                                    <p class="calloption"><input type="checkbox" /> @item.Option1</p>
-                                                                    <p class="calloption"><input type="checkbox" /> @item.Option2</p>
-                                                                    <p class="calloption"><input type="checkbox" /> @item.Option3</p>
-                                                                    <p class="calloption"><input type="checkbox" /> @item.Option4</p>
-                                                                    <hr />
-                                                                }
-                                                                else
-                                                                {
-                                                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option1</p>
-                                                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option2</p>
-                                                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option3</p>
-                                                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option4</p>
-                                                                }
-                                                                <p class="calloption">Answer: <c style="color:green">@item.Answer</c></p>
-                                                                @if (item.Rating == 1)
-                                                                {
-                                                                    <p class="calloption">Candidate Answer: <c style="color:green">@item.QuestionAnswer</c></p>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <p class="calloption">Candidate Answer: <c style="color:red">@item.QuestionAnswer</c></p>
-                                                                }
-                                                            </div>
-                                                        </div>
+                                                        //string appendTime = "0";
+                                                        //var src = Model.VideoLink + "#t=" + appendTime;
+                                                        <video width="600" controls="controls" preload="metadata" class="vjs-tech">
+                                                            @*<source src='@src' type="video/mp4">*@
+                                                            <source src='@Model.VideoLink' type="video/mp4">
+                                                        </video>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>No Video found</label>
                                                     }
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Selectability Report</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="15%">Required Level</th>
+                                                            <th width="25%">Type</th>
+                                                            <th width="40%">Value</th>
+                                                            <th width="20%">Actual Level</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.SelectabilityEvaluatorReportCollection != null && Model.SelectabilityEvaluatorReportCollection.Count() > 0)
+                                                        {
+                                                            @for (int i = 0; i < Model.SelectabilityEvaluatorReportCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].RequiredLevelId, (SelectList)Model.Level, new { @class = "form-control text-box single-line", @onchange = "OnjoinabilityorselectabilityChange()" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].LevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "OnjoinabilityorselectabilityChange()" })
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Joinability Report</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="15%">Required Level</th>
+                                                            <th width="25%">Type</th>
+                                                            <th width="40%">Value</th>
+                                                            <th width="20%">Actual Level</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.JoinabilityHRReportCollection != null && Model.JoinabilityHRReportCollection.Count() > 0)
+                                                        {
+                                                            @for (int i = 0; i < Model.JoinabilityHRReportCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].RequiredLevelId, (SelectList)Model.Level, new { @class = "form-control text-box single-line", @onchange = "OnjoinabilityorselectabilityChange()" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].Value, new { @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].LevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "OnjoinabilityorselectabilityChange()" })
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Report Details</span></h3>
+                                            </div><!--end of multiple location-->
+                                        </div>
+                                        <div class="report-wrap">
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="chart-box">
+                                                    <div>
+                                                        <p class="card-text">Fitment Score: <span class="totScore" id="totFitMentScore"></span></p>
+                                                        <div>
+                                                            <div id="scoreChart" style="height: 200px; width:100%;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="col-md-12 col-sm-12 border-rv pull-left">
+                                                    <div class="form-group" style="margin-bottom:0px;margin-top:10px">
+                                                        <strong>@Html.LabelFor(model => model.RecruiterComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })</strong>
+                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                            <div class="talktext">
+                                                                @Html.TextAreaFor(m => m.RecruiterComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Recruiter Comments here, maxmium 500 characters", @spellcheck = "true", @onpaste = "return false", @maxlength = "500" })
+                                                                <div id="words"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="report-full-wrap">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h3 class="mb-0"><span>Questions Report</span></h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-wrap">
+                                            <div class="col-md-8 offset-md-2">
+                                                <div class="mdc-card card  bl-bg">
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        @foreach (var item in Model.QuestionDetails)
+                                                        {
+                                                            <div>
+                                                                <div class="x-text">
+                                                                    <!--button: Start-->
+                                                                </div>
+                                                                <div class="man">@item.QuestionNumber ) @item.Question </div>
+                                                                <div>
+                                                                    @if (item.QuestionType == "Multiple")
+                                                                    {
+                                                                        <p class="calloption"><input type="checkbox" /> @item.Option1</p>
+                                                                        <p class="calloption"><input type="checkbox" /> @item.Option2</p>
+                                                                        <p class="calloption"><input type="checkbox" /> @item.Option3</p>
+                                                                        <p class="calloption"><input type="checkbox" /> @item.Option4</p>
+                                                                        <hr />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option1</p>
+                                                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option2</p>
+                                                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option3</p>
+                                                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option4</p>
+                                                                    }
+                                                                    <p class="calloption">Answer: <c style="color:green">@item.Answer</c></p>
+                                                                    @if (item.Rating == 1)
+                                                                    {
+                                                                        <p class="calloption">Candidate Answer: <c style="color:green">@item.QuestionAnswer</c></p>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p class="calloption">Candidate Answer: <c style="color:red">@item.QuestionAnswer</c></p>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer ">
+                                        <div class="row">
+                                            <div class="col-md-12 mc-button-area">
+                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Save">Save</button>
+                                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -182,3 +314,32 @@
         </div>
     </div>
 </div>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful",'@ViewBag.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        }
+    </script>
+}
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script>
+    $(document).ready(function () {
+        SetChartMCQReport();
+    });
+    function OnjoinabilityorselectabilityChange() {
+        SetChartMCQReport();
+    }
+</script>

@@ -120,7 +120,9 @@
 <script>
     var target_date = new Date().getTime() + (1000 * parseInt($("#ztimmerdetails_Timer").val()));
     var days, hours, minutes, seconds;
-
+    if (localStorage.getItem('localStoragefortimer') != null && $("#ztimmerdetails_Timer").val() == '') {
+        target_date = new Date().getTime() + (1000 * parseInt(localStorage.getItem('localStoragefortimer')));
+    }
     var countdown = document.getElementById("tiles");
     getCountdown();
     var myVar = setInterval(function () { getCountdown(); }, 1000);
@@ -151,6 +153,7 @@
             document.getElementById('btnStop').click();
         }
         $("#ztimmerdetails_Timer").val(timmertime);
+        localStorage.setItem('localStoragefortimer', timmertime);
     }
     function pad(n) {
         return (n < 10 ? '0' : '') + n;
@@ -271,6 +274,7 @@
         form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
         form_data.append("final", $("#zquestion_final").val());
         form_data.append("QuestionType", $("#zquestion_QuestionType").val());
+
         if ($("#zquestion_final").val() == "true") {
             form_data.append("file", file);
         }

@@ -23,5 +23,7 @@ namespace Risebird.Business.Interface
         IEnumerable<MCQVM> GetMCQCandidateQuestions(string CandidateId);
         string UpdateVideoURLForCandidate(CandidateDetailsForTestDuplicate model);
         IEnumerable<CandidateDetailsForTestDuplicate> GetMCQCandidateDetails();
+        bool SaveMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
+        CandidateDetailsForTestDuplicate FetchMCQReportDetails(CandidateDetailsForTestDuplicate _candidate);
     }
 }

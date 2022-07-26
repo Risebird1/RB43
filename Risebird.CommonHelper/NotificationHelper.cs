@@ -2160,7 +2160,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public string SharedTestLinkClient(Mail model, string title, string timeduration, string url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, int offset)
+        public string SharedTestLinkClient(Mail model, string title, string timeduration, string url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset)
         {
             try
             {
@@ -2173,7 +2173,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
 
-                object[] parameters = new object[] { title, timeduration, url, CandidateEmail, meetingurl };
+                object[] parameters = new object[] { title, timeduration, url, CandidateEmail, meetingurl, Reporturl };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInvitationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
