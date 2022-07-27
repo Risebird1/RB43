@@ -27,7 +27,7 @@ BEGIN
  InterviewBiometryScore,	JoiningBiometryScore,	HRCoordinatorEmailId,	HRComment	,HRImageFileURL,
  ZoomMeetingId,	IsMeetingNotificationSent,	NotificationSentDate,	IsNotificationSentToEI,
  IsRescheduleNotificationSent,	EIAssigned,	IsNotificationSentToCandidate,	isAutoCancelled,
- IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource)
+ IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, ActionType, PerformedAt, PerformedBy)
 
  (select id,	IRFId,	interviewDate,	interviewSlot,	interviewDuration,	candidateEmail,	ClientHrContact, resumeLink,
  confirmationStatus,	zoomLink,	risebirdHR,	interviewer,	IntervIewOnDevice,	PreferredLocation,
@@ -36,6 +36,8 @@ BEGIN
  InterviewBiometryScore,	JoiningBiometryScore,	HRCoordinatorEmailId,	HRComment	,HRImageFileURL,
  ZoomMeetingId,	IsMeetingNotificationSent,	NotificationSentDate,	IsNotificationSentToEI,
  IsRescheduleNotificationSent,	EIAssigned,	IsNotificationSentToCandidate,	isAutoCancelled,
- IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource
+ IsCandidateResponsed,	CandidateResponse,	ProctorReport,	Cancellationsource, 'Inserted', DATEADD(MINUTE, 330, getdate()), sCreatedBy
  from InterviewMeetings where id = @id)
 END
+
+

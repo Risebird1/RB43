@@ -394,5 +394,34 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<IEnumerable<string>> GetPrimarySkillsBasedOnCategory(int categoryId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@categoryId", categoryId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<string>(con, "[usp_GetPrimarySkillsBasedOnCategory]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

@@ -59,5 +59,8 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Employment Type")]
         public int EmploymentType { get; set; }
+
+        [Display(Name = "Primary Skills")]
+        public string[] PrimarySkills { get; set; }
     }
 }

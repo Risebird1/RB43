@@ -825,7 +825,7 @@ namespace Risebird.Web.Controllers
         //}
 
         [HttpGet]
-        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int employmentType, int difficultyLevel, bool isInstaInterviewRequest = false)
+        public async Task<SelectList> GetAssessmentGroupsByCategory(int categoryId, int companytype, int countryid, int jobLevelid, int employmentType, int difficultyLevel, bool isInstaInterviewRequest = false, string primarySkills = null)
         {
             var profileName = HttpContext.Session.GetString("profileName")?.Trim();
             profileName = profileName?.Replace("\"", "");
@@ -849,6 +849,22 @@ namespace Risebird.Web.Controllers
                         continueApplyingFilter = false;
                     }
                 }
+                if (!string.IsNullOrEmpty(primarySkills) && continueApplyingFilter == true)
+                {
+                    var primarySkillsArray = primarySkills.Split(',');
+                    IEnumerable<AssignmentVM> assessmentGroupsFilteredByPrimarySkills = null;
+                    assessmentGroupsFilteredByPrimarySkills = assessmentGroups.Where(x => !string.IsNullOrEmpty(x.PrimarySkills) && primarySkillsArray.Intersect(x.PrimarySkills.Split(","))?.Count()>0).ToList();
+
+                    if (assessmentGroupsFilteredByPrimarySkills != null && assessmentGroupsFilteredByPrimarySkills.Count() > 0)
+                    {
+                        assessmentGroups = assessmentGroupsFilteredByPrimarySkills;
+                    }
+                    else
+                    {
+                        continueApplyingFilter = false;
+                    }
+                }
+
                 if (companytype != 0 && continueApplyingFilter == true)
                 {
                     IEnumerable<AssignmentVM> assessmentGroupsFilteredByCompany = null;
@@ -948,6 +964,19 @@ namespace Risebird.Web.Controllers
                 list.Add(new SelectListItem { Text = "No Skills for selected Assessment Group", Value = "" });
             }
             return new SelectList(list, "Value", "Text");
+        }
+
+        public async Task<List<string>> GetPrimarySkillsBasedOnCategory(int categoryId)
+        {
+            try
+            {
+                return (await _skillService.GetPrimarySkillsBasedOnCategory(categoryId))?.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}");
+                return null;
+            }
         }
     }
 }
