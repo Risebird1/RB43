@@ -1158,6 +1158,16 @@ namespace Risebird.Web.Controllers
         {
             var _selectabilitycount = _candidate.SelectabilityEvaluatorReportCollection.Count();
             var _joinabilitycount = _candidate.JoinabilityHRReportCollection.Count();
+            foreach (var item in _candidate.SelectabilityEvaluatorReportCollection)
+            {
+                item.Value = "";
+                item.LevelId = "0";
+            }
+            foreach (var item in _candidate.JoinabilityHRReportCollection)
+            {
+                item.Value = "";
+                item.LevelId = "0";
+            }
             for (int i = 0; i < (5 - _selectabilitycount); i++)
             {
                 var _selectability = new SelectabilityEvaluatorReport();

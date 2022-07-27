@@ -7,7 +7,7 @@
 @{
     ViewData["Title"] = "Open Interviews";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 
 <!-- Keep the Page Content Here.-->
@@ -15,13 +15,28 @@
     var Header = "<div id='openinterview_1'>Open Interviews</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+<style>
+    .hopscotch-arrow.down {
+        transform: rotate( 1deg );
+        top: 7.9rem;
+        right: -.3rem;
+    }
+
+    .sidebar-mini .sidebar:hover {
+        width: 80px !important;
+    }
+
+    /*.mob_h {
+        display: none !important
+    }*/
+</style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
-<div class="main-panel" id="main-panel">
+<div id="main-panel">
     <div class="mt50">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -400,9 +415,6 @@
 
                 });
                 var table = $('#OpeninterviewList').DataTable();
-
-
-
             },
             error: function (err) {
                 alert(err.responseText);
