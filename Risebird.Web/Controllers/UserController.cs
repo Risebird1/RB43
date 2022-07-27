@@ -68,6 +68,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var profilename = HttpContext.Session.GetString("profileName")?.Trim();
                     profilename = profilename.Replace("\"", "");
+                    ViewBag.ProfileName = profilename;
                     var model = _userService.GetRisebirdUsers();
                     List<Profile> profiles = _profileService.GetProfile();
                     List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
@@ -87,7 +88,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (profilename == "Admin")
                     {
-                        
+
                         //ViewBag.LoggedEmail = emailid.ToLower();
                         //ViewBag.Profile = profilename;
                         profilename = OrginalProfileName;
@@ -162,12 +163,18 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
                     List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Trainer", "Candidate", "ResumeEvaluator" };
+                    List<String> profilesToInclude = new List<string> { "HR", "SeniorHR", "Quality Controller" };
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
-
+                    if (profileName == "SeniorHR")
+                    {
+                        profiles = profiles.Where(x => profilesToInclude.Contains(x.Name.ToString())).ToList();
+                    }
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
                     GetClientsSelectList(model);
                     return View("UserAdd", model);
@@ -244,7 +251,9 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     UserList user = _userService.GetUser(id);
-
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.ProfileName = profileName;
                     if (user != null)
                     {
                         List<Profile> profiles = _profileService.GetProfile();
@@ -305,7 +314,9 @@ namespace Risebird.Web.Controllers
                         List<Profile> profiles = _profileService.GetProfile();
                         profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
                         profiles = profiles.Where(x => x.Name != "Client").ToList();
-
+                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                        profileName = profileName.Replace("\"", "");
+                        ViewBag.ProfileName = profileName;
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
                         GetClientsSelectList(user);
                         return View("UserUpdate", user);
@@ -456,7 +467,7 @@ namespace Risebird.Web.Controllers
                             }
 
                             if (emailid.ToLower() == "parvathi_sg@risebird.io" || emailid.ToLower() == "ambika_ratkalle@risebird.io")
-                            {                               
+                            {
                                 profileName = OrginalProfileName;
                             }
 

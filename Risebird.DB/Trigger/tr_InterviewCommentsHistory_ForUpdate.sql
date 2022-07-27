@@ -25,14 +25,14 @@ BEGIN
  OfferStatus, PreparationStatus,	JoiningStatus,	IsApproved,	IsSelected,	ApprovalComments,	FinalComments,
  JoiningComments,	OfferComments, ThumbnailImage,	TotalView,	IsShared,	FeedbackAudioLink,	AadharFileLink,
  MoveToCP,	CandidateAvailable,	IsLock,	ClientUserid,	ThumbnailTimeSeconds,	VideoDuration,	InterviewerNickName,
- CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, PerformedAt, PerformedBy)
+ CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, PerformedAt, PerformedBy, ActionType)
 
  (select id,	InterviewId,	InterviewStatus	,InterviewerComment	,FraudCheckStatus,	HRComment,	QCStatus,	QCComment,
  TrainingStatus,	TrainerComment,	AudioLink,	VideoLink,	L2InterviewStatus,	ClientInterviewStatus,	MeetingStatus,
  OfferStatus, PreparationStatus,	JoiningStatus,	IsApproved,	IsSelected,	ApprovalComments,	FinalComments,
  JoiningComments,	OfferComments, ThumbnailImage,	TotalView,	IsShared,	FeedbackAudioLink,	AadharFileLink,
  MoveToCP,	CandidateAvailable,	IsLock,	ClientUserid,	ThumbnailTimeSeconds,	VideoDuration,	InterviewerNickName,
- CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, ModifiedOn, ModifiedBy
+ CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, DATEADD(minute, 330, getdate()), ModifiedBy, 'Updated'
  from InterviewComments where id = @id )
 
 END

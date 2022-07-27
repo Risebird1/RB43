@@ -21,10 +21,25 @@ CREATE TABLE [dbo].[InterviewReportHistory](
 	[CreatedBy] [varchar](100) NULL,
 	[ModifiedBy] [varchar](100) NULL,
 	[PerformedAt][datetime] NULL,
-	[PerformedBy][varchar](100) NULL
+	[PerformedBy][varchar](100) NULL,
+	[ActionType][varchar](15) NULL
 )
 
 END
+
+Else
+Begin
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ActionType')
+      AND Object_ID = Object_ID(N'InterviewReportHistory'))
+BEGIN
+    ALTER TABLE InterviewReportHistory
+    Add ActionType varchar(15)
+END
+
+End
 
 GO
 

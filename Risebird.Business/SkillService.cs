@@ -208,5 +208,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<string>> GetPrimarySkillsBasedOnCategory(int categoryId)
+        {
+            try
+            {
+                return await _skillRepository.GetPrimarySkillsBasedOnCategory(categoryId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
