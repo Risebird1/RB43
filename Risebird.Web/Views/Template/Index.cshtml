@@ -115,10 +115,56 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType">Employment Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="EmploymentType" name="EmploymentType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkills">Primary Skills</label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    
+
                                                                     <select id="PrimarySkills" name="PrimarySkills" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
                                                                         <option value="">Select</option>
                                                                         @{
@@ -143,6 +189,7 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
+
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType">Country Type</label>
@@ -170,63 +217,22 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType">Employment Type</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="EmploymentType" name="EmploymentType" @*data-placeholder="None Selected"*@ class="form-control">
-                                                                        <option value="">Select</option>
-                                                                        @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
-                                                                        {
-                                                                            <option value="@item.Value">@item.Text</option>
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
 
-
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupTemplate">Assessment Group</label>
                                                                 <div class="col-md-12 col-sm-12">
                                                                     <select id="AssessmentGroupTemplate" name="AssessmentGroupTemplate" @*data-placeholder="None Selected"*@ class="form-control">
                                                                         <option value="">Select</option>
                                                                         @*@foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
                                                                             {
-                                                                                @if (item != null && item != "")
-                                                                                {
-                                                                                    <option value="@item">@item</option>
-                                                                                }
-                                                                            }*@
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }*@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
-                                                                        <option value="">Select</option>
-                                                                        @foreach (var item in Html.GetEnumSelectList<CompanyType>())
-                                                                        {
-                                                                            <option value="@item.Value">@item.Text</option>
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
-                                                                        <option value="">Select</option>
-                                                                        @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
-                                                                        {
-                                                                            <option value="@item.Value">@item.Text</option>
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
 
                                                             <div class="form-group">
 

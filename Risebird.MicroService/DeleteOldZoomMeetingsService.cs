@@ -97,7 +97,7 @@ namespace Risebird.MicroService
                         //Delete video recordings for the meeting
                         //create HTTP Request 
 
-                        var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=delete"));
+                        var clientDeleteMeetingRecordings = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings?action=trash"));
 
                         var requestDeleteMeetingRecordings = new RestRequest(Method.DELETE);
                         requestDeleteMeetingRecordings.AddHeader("content-type", "application/json");

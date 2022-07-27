@@ -22,11 +22,11 @@ BEGIN
  insert into InterviewReportHistory
  (id,	IRFId,	InterviewId, CandidateName,	confirmationStatus,	OverallScore, Rating, TechSkillComments,
  SkillGeneralComments,	JoinabilityComments, SelectabilityComments,	ProctoringCount, CreatedOn,	ModifiedOn,
- CreatedBy,	ModifiedBy,	PerformedAt, PerformedBy)
+ CreatedBy,	ModifiedBy,	PerformedAt, PerformedBy, ActionType)
 
  (select id,	IRFId,	InterviewId, CandidateName,	confirmationStatus,	OverallScore, Rating, TechSkillComments,
  SkillGeneralComments,	JoinabilityComments, SelectabilityComments,	ProctoringCount, CreatedOn,	ModifiedOn,
- CreatedBy,	ModifiedBy,	CreatedOn, CreatedBy
+ CreatedBy,	ModifiedBy,	DATEADD(minute, 330, getdate()), CreatedBy, 'Inserted'
  from InterviewReport where id = @id )
  
  

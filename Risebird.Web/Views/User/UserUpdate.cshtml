@@ -39,8 +39,16 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.UserProfiles, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-
-                                            @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "ClientblockActive()" })
+                                            @if (ViewBag.ProfileName == "Admin")
+                                            {
+                                                @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "ClientblockActive()" })
+                                                @Html.HiddenFor(m => m.IdProfile)
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.IdProfile)
+                                            }
                                             @Html.ValidationMessageFor(model => model.IdProfile, "", new { @class = "text-danger" })
 
                                         </div>
@@ -103,7 +111,22 @@
                                     </div>
                                     <div class="col-md-4 col-sm-4 pr-1 pull-left">
                                         <div class="form-group">
-                                            @Html.CheckBoxFor(model => model.IsActive)
+                                            @if (Model.IdProfile == 1)
+                                            {
+                                                @if (ViewBag.ProfileName == "Admin")
+                                                {
+                                                    @Html.CheckBoxFor(model => model.IsActive)
+                                                }
+                                                else
+                                                {
+                                                    @Html.CheckBoxFor(model => model.IsActive, new { @disabled = "disabled" })
+                                                    @Html.HiddenFor(m => m.IsActive)
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @Html.CheckBoxFor(model => model.IsActive)
+                                            }
                                             @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label desp-label" })
                                             @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                         </div>
@@ -143,7 +166,7 @@
                                     </div>
                                 </div>
                             </div>
-                            @Html.HiddenFor(m=>m.Id)
+                            @Html.HiddenFor(m => m.Id)
                         }
                     </div>
                 </div>
