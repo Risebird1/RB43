@@ -12,8 +12,12 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 
+
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
 <div class="main-panel" id="main-panel">
 
     <div class="mt50">
@@ -43,8 +47,24 @@
                                                 @Html.LabelFor(model => model.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @Html.DropDownListFor(model => model.CategoryId, (SelectList)ViewBag.AssessmentCategory, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @Html.DropDownListFor(model => model.CategoryId, (SelectList)ViewBag.AssessmentCategory, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup(true)" })
                                             @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+
+                                        <div class="form-group">
+                                            <div class="mandate">
+                                                @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+
+                                            <select id="PrimarySkills" name="PrimarySkills" class="select-css form-control text-box single-line" multiple onblur="UpdateAssessmentGroup(false)">
+                                                <option value="">Please select a category for relevant options here.</option>
+                                            </select>
+
+                                            @Html.ValidationMessageFor(model => model.PrimarySkills, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
 
@@ -54,23 +74,13 @@
                                                 @Html.LabelFor(model => model.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
-                                            @Html.DropDownListFor(model => model.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup()" })*@
+                                            @Html.DropDownListFor(model => model.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup(false)" })
                                             @Html.ValidationMessageFor(model => model.CountryType, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
-                                        <div class="form-group">
-                                            <div class="mandate">
-                                                @Html.LabelFor(model => model.CompanyTypes, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                <span class="red">*</span>
-                                            </div>
-                                            @*@Html.DropDownListFor(model => model.CompanyTypes, (SelectList)ViewBag.CompanyTypeList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
-                                            @Html.DropDownListFor(model => model.CompanyTypes, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
-                                            @Html.ValidationMessageFor(model => model.CompanyTypes, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-                                    
+
+
 
 
                                 </div>
@@ -78,11 +88,23 @@
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                         <div class="form-group">
                                             <div class="mandate">
+                                                @Html.LabelFor(model => model.CompanyTypes, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <span class="red">*</span>
+                                            </div>
+                                            @*@Html.DropDownListFor(model => model.CompanyTypes, (SelectList)ViewBag.CompanyTypeList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup()" })*@
+                                            @Html.DropDownListFor(model => model.CompanyTypes, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup(false)" })
+                                            @Html.ValidationMessageFor(model => model.CompanyTypes, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
+                                        <div class="form-group">
+                                            <div class="mandate">
                                                 @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @*@Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
-                                            @Html.DropDownListFor(model => model.JobLevel, Html.GetEnumSelectList<JobLevels>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @*@Html.DropDownListFor(model => model.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup()" })*@
+                                            @Html.DropDownListFor(model => model.JobLevel, Html.GetEnumSelectList<JobLevels>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup(false)" })
                                             @Html.ValidationMessageFor(model => model.JobLevel, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -93,7 +115,7 @@
                                                 @Html.LabelFor(model => model.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @Html.DropDownListFor(model => model.DifficultyLevel, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @Html.DropDownListFor(model => model.DifficultyLevel, Html.GetEnumSelectList<Heuristicsscorelevel>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup(false)" })
                                             @Html.ValidationMessageFor(model => model.DifficultyLevel, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -103,8 +125,8 @@
                                                 @Html.LabelFor(model => model.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })*@
-                                            @Html.DropDownListFor(model => model.EmploymentType, Html.GetEnumSelectList<EmploymentTypeOptions>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "AssessmentGroupCategoryChanged()" })
+                                            @*@Html.DropDownListFor(model => model.Country, (SelectList)ViewBag.CountryList, "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup()" })*@
+                                            @Html.DropDownListFor(model => model.EmploymentType, Html.GetEnumSelectList<EmploymentTypeOptions>(), "Select Country", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup(false)" })
                                             @Html.ValidationMessageFor(model => model.EmploymentType, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -124,22 +146,22 @@
                                 <hr />
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mt-10">
                                     @*<div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                    @Html.DropDownListFor(model => model.AssessmentGroup, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "AssessmentGroupChanged()" })
-                    @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-lg-8  col-md-8 col-sm-8 pull-left pl-1">
-                <div class="form-group">
-                    <label class="form-control" id="txtAssessmentSkills"></label>
-                    @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.DropDownListFor(model => model.AssessmentGroup, Model.AssessmentGroupList, "Select Assessment Group", new { @class = "select-css form-control", @onchange = "AssessmentGroupChanged()" })
+                                                @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8  col-md-8 col-sm-8 pull-left pl-1">
+                                            <div class="form-group">
+                                                <label class="form-control" id="txtAssessmentSkills"></label>
+                                                @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>*@
                                     <div class="col-lg-4  col-md-4 col-sm-4 pull-left pl-1">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InstaRequestName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(model => model.InstaRequestName, new { @class = "form-control br-g" @*, @onchange = "AssessmentGroupChanged()"*@, @required = "required" })
+                                            @Html.TextBoxFor(model => model.InstaRequestName, new { @class = "form-control br-g"@*, @onchange = "AssessmentGroupChanged()"*@, @required = "required" })
                                             @Html.ValidationMessageFor(model => model.InstaRequestName, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -244,7 +266,16 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#PrimarySkills").select2({ multiple: true });
+    });
 
+    $(document).ready(function () {
+        $(".select2-selection.select2-selection--multiple").css("margin-top", "-25px").css("height", "40px");
+    });
+</script>
 <script>
     function AddRow() {
         var table = document.getElementById("SkillTable");
@@ -311,25 +342,34 @@
         }
     }
 
-    function AssessmentGroupCategoryChanged() {
+    function UpdateAssessmentGroup(isCategoryChanged) {
         var categoryId = $("#CategoryId").val();
+        if (isCategoryChanged == true && (categoryId != null && categoryId != '0' && categoryId != 0)) {
+            GetPrimarySkillsBasedOnCategory(categoryId);
+        }
         var companytype = $("#CompanyTypes").val();
         var countryid = $("#CountryType").val();
         var jobLevelid = $("#JobLevel").val();
         //var competencyid = $("#CompetencyLevel").val();
         var employmentType = $("#EmploymentType").val();
         var difficultyLevel = $("#DifficultyLevel").val();
+        var primarySkills = $("#PrimarySkills").val();
+        var primarySkillJoined = '';
+
+        if (primarySkills != null) {
+            primarySkillJoined = primarySkills.join();
+        }
         $.ajax({
             type: "GET",
             url: "/InterviewRequest/GetAssessmentGroupsByCategory",
-            data: { 'categoryId': categoryId, 'companytype': companytype, 'countryid': countryid, 'jobLevelid': jobLevelid, 'employmentType': employmentType, 'difficultyLevel': difficultyLevel, 'isInstaInterviewRequest': true},
+            data: { 'categoryId': categoryId, 'companytype': companytype, 'countryid': countryid, 'jobLevelid': jobLevelid, 'employmentType': employmentType, 'difficultyLevel': difficultyLevel, 'isInstaInterviewRequest': true, 'primarySkills': primarySkillJoined },
             success: function (data) {
                 if (data != null) {
                     document.getElementById('error_AssessmentGroup').innerHTML = '';
                     bindAssessmentGroupDropDown(data);
                 }
                 else {
-                    $("#AssessmentGroup option").remove(); 
+                    $("#AssessmentGroup option").remove();
                     document.getElementById('error_AssessmentGroup').innerHTML = 'No Assessment Groups for the selected combination above!';
                 }
 
@@ -352,7 +392,30 @@
             });
         }
     }
-
+    function GetPrimarySkillsBasedOnCategory(categoryId) {
+        $.ajax({
+            type: "GET",
+            url: "/InterviewRequest/GetPrimarySkillsBasedOnCategory",
+            data: { 'categoryId': categoryId },
+            async: false,
+            success: function (data) {
+                var drpPrimarySkills = $("#PrimarySkills");
+                $("#PrimarySkills option").remove();
+                //var option = $("<option />");
+                //option.html("Select");
+                //option.val();
+                //drpPrimarySkills.append(option);
+                if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        option.html(this);
+                        option.val(this);
+                        drpPrimarySkills.append(option);
+                    });
+                }
+            }
+        });
+    }
     function AssessmentGroupChanged() {
         var val = $("#AssessmentGroup").val();
         $.ajax({

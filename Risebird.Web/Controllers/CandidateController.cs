@@ -2679,6 +2679,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    StringBuilder result = new StringBuilder();
 
                     if (Request != null && formCollection.Files.Count > 0)
                     {
@@ -2709,35 +2710,49 @@ namespace Risebird.Web.Controllers
                                         {
                                             if (workSheet.Cells[rowIterator, 2].Value != null)
                                             {
-                                                var candidate = new CandidateQuickAddModel
+                                                try
                                                 {
-                                                    Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
-                                                    EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
-                                                    ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
-                                                        ? workSheet.Cells[rowIterator, 3].Value.ToString()
-                                                        : string.Empty,
-                                                    Phone = (workSheet.Cells[rowIterator, 4].Value != null)
-                                                        ? ("+" + workSheet.Cells[rowIterator, 4].Value)
-                                                        : string.Empty,
-                                                    WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                                        ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                                        : string.Empty,
-                                                    //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
-                                                    //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
-                                                    //    : string.Empty,
-                                                    ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
+                                                    var candidate = new CandidateQuickAddModel
+                                                    {
+                                                        Name = workSheet.Cells[rowIterator, 1] != null ? workSheet.Cells[rowIterator, 1].Value.ToString() : string.Empty,
+                                                        EmailId = workSheet.Cells[rowIterator, 2].Value.ToString().Trim().ToLower(),
+                                                        ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null)
+                                                                                                    ? workSheet.Cells[rowIterator, 3].Value.ToString()
+                                                                                                    : string.Empty,
+                                                        Phone = (workSheet.Cells[rowIterator, 4].Value != null)
+                                                                                                    ? ("+" + workSheet.Cells[rowIterator, 4].Value)
+                                                                                                    : string.Empty,
+                                                        WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                                                                                    ? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                                                                                    : string.Empty,
+                                                        //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
+                                                        //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
+                                                        //    : string.Empty,
+                                                        ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
 
-                                                    ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
-                                                    IRFId = IRFId
+                                                        ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
+                                                        IRFId = IRFId
 
-                                                };
+                                                    };
 
-                                                candidateList.Add(candidate);
+                                                    candidateList.Add(candidate);
+
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    if(workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null
+                                                        || workSheet.Cells[rowIterator, 6] == null || workSheet.Cells[rowIterator, 6].Value == null)
+                                                    {
+                                                        result.Append("Failed! Candidate EmailId and Client HR EmailId are mandatory. Please check for the missing entries.");
+                                                        return result.ToString();
+                                                    }
+                                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                }
+
                                             }
                                         }
 
                                     }
-                                    StringBuilder result = new StringBuilder();
                                     if (candidateList != null && candidateList.Any())
                                     {
                                         result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite).Result;
