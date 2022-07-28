@@ -29,7 +29,14 @@
 
                     <div class="pull-left" style="margin-right:10px;">
                         <span class="interviewer_3">
-                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</a>
+                            @if (ViewBag.retureParameter == "IRF")
+                            {
+                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</a>
+                            }
+                            else
+                            {
+                                <a href="/Interviewer/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Back</a>
+                            }
                         </span>
                     </div>
                 </div>
@@ -326,7 +333,7 @@
         loader.style.top = top + "px";
         loader.style.left = left + "px";
     };
-    ShowProgress();    window.onload = function () {
+    ShowProgress(); window.onload = function () {
         setTimeout(function () {
             loader.style.display = "none";
             $(".dataloading").show();
