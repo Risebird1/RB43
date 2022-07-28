@@ -84,6 +84,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Seniority Level")]
         public int JobLevel { get; set; }
         public string AssessmentGroupName { get; set; }
+        public string[] PrimarySkills { get; set; }
     }
     public class InstaTechSkill
     {

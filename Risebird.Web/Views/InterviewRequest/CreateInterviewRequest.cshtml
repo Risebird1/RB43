@@ -11,6 +11,8 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
@@ -51,11 +53,7 @@
                                                 @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 <span class="red">*</span>
                                             </div>
-                                            @*@Html.DropDownListFor(model => model.PrimarySkills, new List<SelectListItem>(), "Select", new { @class = "form-control br-g", @required = "required", @onchange = "UpdateAssessmentGroup()" })*@
-                                            @*<select class="form-control" asp-for="PrimarySkills" multiple">
-                                                <option value="">Please select a category for relevant options here.</option>
-                                            </select>*@
-                                            <select id="PrimarySkills" name="PrimarySkills" class="form-select" style="height:40px; margin-top:-25px" multiple onblur = "UpdateAssessmentGroup(false)">
+                                            <select id="PrimarySkills" name="PrimarySkills" class="select-css form-control text-box single-line" multiple onblur="UpdateAssessmentGroup(false)">
                                                 <option value="">Please select a category for relevant options here.</option>
                                             </select>
 
@@ -300,6 +298,16 @@
     </div>
 
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#PrimarySkills").select2({ multiple: true });
+    });
+    $(document).ready(function () {
+        $(".select2-selection.select2-selection--multiple").css("margin-top", "-25px").css("height", "40px");
+    });
+</script>
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -563,9 +571,9 @@
     })
 </script>
 @*<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<script type="text/javascript">
-    jQuery(document).ready(function () {
-        jQuery("#PrimarySkills").select2({ multiple: true });
-    });
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            jQuery("#PrimarySkills").select2({ multiple: true });
+        });
 
-</script>*@
+    </script>*@

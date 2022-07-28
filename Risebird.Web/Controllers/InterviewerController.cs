@@ -2746,7 +2746,7 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
-        public IActionResult LeadInterviewer()
+        public IActionResult LeadInterviewer(string uniqueid)
         {
             var model = _interviewerService.GetInterviewers();
             model = model.Where(x => x.IsLeadInterviewer == true).ToList();
@@ -2771,6 +2771,14 @@ namespace Risebird.Web.Controllers
                     }
                     item.AssessmentGroupId = Assessmentgroups;
                 }
+            }
+            if (uniqueid == "74206543283756")
+            {
+                ViewBag.retureParameter = "IRF";
+            }
+            else
+            {
+                ViewBag.retureParameter = "Interview";
             }
             return View(model);
         }
