@@ -39,16 +39,24 @@ namespace Risebird.CommonHelper
                 request.AddHeader("Authorization", "Basic " + accesskey);
                 request.AddHeader("Content-Type", "application/json");
                 request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"traits\": {\r\n        \"name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"email\": \"" + _whatsAppVM.Emailid + "\"\r\n    }\r\n}", ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
-                var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                if (obj.result == "true")
+                IRestResponse response = client.ExecuteAsync(request)?.Result;
+                if(response != null)
                 {
-                    return "User Added successfully.";
+                    var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+                    if (obj.result == "true")
+                    {
+                        return "User Added successfully.";
+                    }
+                    else
+                    {
+                        return "Failed to Add User. Please check all fields and try again.";
+                    }
                 }
                 else
                 {
                     return "Failed to Add User. Please check all fields and try again.";
                 }
+                
             }
             catch (Exception ex)
             {
@@ -479,29 +487,44 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
+                if(_whatsAppVM != null)
                 {
-                    var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!String.IsNullOrEmpty(WhatsAppnumber))
+                    var Emailid = _whatsAppVM.Emailid?.Split(";");
+                    if(Emailid != null)
                     {
-                        var name = _userService.FetchNameByEmail(item);
-                        _whatsAppVM.UserName = name;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
-                        WhatsAppTrackUser(_whatsAppVM);
-                        var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
-                        client.Timeout = -1;
-                        var request = new RestRequest(Method.POST);
-                        request.AddHeader("Authorization", "Basic " + accesskey);
-                        request.AddHeader("Content-Type", "application/json");
-                        request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + name + "\",\r\n    }\r\n}", ParameterType.RequestBody);
-                        IRestResponse response = client.Execute(request);
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+                        foreach (var item in Emailid)
+                        {
+                            var WhatsAppnumber = _userService.FetchWhatsAppNumberByEmail(item);
+                            if (!string.IsNullOrEmpty(WhatsAppnumber))
+                            {
+                                var name = _userService.FetchNameByEmail(item);
+                                _whatsAppVM.UserName = name;
+                                _whatsAppVM.Emailid = item;
+                                _whatsAppVM.CountryCode = "+91";
+                                _whatsAppVM.WhatsAppNumber = WhatsAppnumber;
+                                WhatsAppTrackUser(_whatsAppVM);
+                                var client = new RestClient("https://api.interakt.ai/v1/public/track/events/");
+                                client.Timeout = -1;
+                                var request = new RestRequest(Method.POST);
+                                request.AddHeader("Authorization", "Basic " + accesskey);
+                                request.AddHeader("Content-Type", "application/json");
+                                request.AddParameter("application/json", "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + name + "\",\r\n    }\r\n}", ParameterType.RequestBody);
+                                IRestResponse response = client.Execute(request);
+                                var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+                            }
+                        }
+                        return "Message sent successfully.";
+
+                    }
+                    else
+                    {
+                        return "User EmailId missing!";
                     }
                 }
-                return "Message sent successfully.";
+                else
+                {
+                    return "User details missing!";
+                }
             }
             catch (Exception ex)
             {

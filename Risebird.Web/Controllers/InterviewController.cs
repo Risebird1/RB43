@@ -5825,54 +5825,62 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public async Task<IActionResult> ExecutiveReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
         {
             try
             {
                 bool isInterviewer = false;
                 ViewBag.IRFID = irfId;
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                if (model.QuestionsCollection == null)
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                if(model != null)
                 {
-                    ViewBag.QuestionsDiscussedCount = 0;
+                    if (model.QuestionsCollection == null)
+                    {
+                        ViewBag.QuestionsDiscussedCount = 0;
+                    }
+                    else
+                    {
+                        ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                    }
+                    ViewBag.IsClient = isClient;
+                    ViewBag.IsClientSelected = isClientSelected;
+                    model.IsInterviewer = isInterviewer;
+                    model.PreviousMeetingStatus = model.MeetingStatus;
+                    model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                    GetStatusList(model, irfId, 0);
+                    var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    if (menus != null)
+                    {
+                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                        HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                    }
+                    ViewBag.PageStatus = "PublicExternal";
+                    ViewBag.PageReport = "";
+                    if (model.IsProctor)
+                    {
+                        return View("ProctorReport", model);
+                    }
+                    else
+                    {
+                        return View("AddReport", model);
+                    }
                 }
                 else
                 {
-                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                    return RedirectToAction("AllMeetings");
                 }
-                ViewBag.IsClient = isClient;
-                ViewBag.IsClientSelected = isClientSelected;
-                model.IsInterviewer = isInterviewer;
-                model.PreviousMeetingStatus = model.MeetingStatus;
-                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                GetStatusList(model, irfId, 0);
-                var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
-                if (menus != null)
-                {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
-                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
-                }
-                ViewBag.PageStatus = "PublicExternal";
-                ViewBag.PageReport = "";
-                if (model.IsProctor)
-                {
-                    return View("ProctorReport", model);
-                }
-                else
-                {
-                    return View("AddReport", model);
-                }
+                
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllMeetings");
             }
 
         }
 
         [HttpGet]
-        public IActionResult PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        public async Task<IActionResult> PublicAddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
         {
             try
             {
@@ -5881,7 +5889,7 @@ namespace Risebird.Web.Controllers
                 bool isInterviewer = false;
                 ViewBag.actiontype = actiontype;
                 ViewBag.IRFID = irfId;
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 if (model == null)
                 {
                     if (isAdminHR)

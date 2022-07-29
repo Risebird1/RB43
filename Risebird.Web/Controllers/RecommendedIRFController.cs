@@ -813,38 +813,45 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var emailId = HttpContext.Session.GetString("email")?.Trim();
-                emailId = emailId.Replace("\"", "");
-                string uploadedFileURL = string.Empty;
-                if (model.JDFile != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
-                    if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                        || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    string uploadedFileURL = string.Empty;
+                    if (model.JDFile != null)
                     {
-                        await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-                        model.JDLink = uploadedFileURL;
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            model.JDLink = uploadedFileURL;
+                        }
                     }
-                }
-                //Start: Auto Generate Scheduling Link 
-                model.StartDate = DateTime.Now;
-                model.EndDate = DateTime.Now.AddMonths(3);
-                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
-                model.CalendlyLink = _schedulinglink;
-                //End: Auto Generate Scheduling Link
-                if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client"))
-                {
-                    TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
-                    TempData["SuccessErrorCloneSkillChannnelMessage2"] = model.CalendlyLink;
-                    return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                    //Start: Auto Generate Scheduling Link 
+                    model.StartDate = DateTime.Now;
+                    model.EndDate = DateTime.Now.AddMonths(3);
+                    var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                    model.CalendlyLink = _schedulinglink;
+                    //End: Auto Generate Scheduling Link
+                    if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client"))
+                    {
+                        TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                        TempData["SuccessErrorCloneSkillChannnelMessage2"] = model.CalendlyLink;
+                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed to create Skills Channel!";
+                        return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                    } 
                 }
                 else
                 {
-                    TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed to create Skills Channel!";
-                    return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
