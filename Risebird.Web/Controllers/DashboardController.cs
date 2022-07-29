@@ -340,17 +340,24 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "Client")
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var funnelData = await _dashboardService.GetClientFunnelData(emailid);
-                    return JsonConvert.SerializeObject(funnelData);
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        var funnelData = await _dashboardService.GetClientFunnelData(emailid);
+                        return JsonConvert.SerializeObject(funnelData);
+                    }
+                    else
+                        return string.Empty; 
                 }
                 else
-                    return string.Empty;
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {
