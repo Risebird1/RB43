@@ -842,7 +842,7 @@ namespace Risebird.Web.Controllers
                         if (profileName == "Client")
                         {
                             var client = await _userRepository.GetClientUserDetailsByIRF(emailid, id);
-                            if (!client.IsRecruiterActive)
+                            if (client == null || (client != null && !client.IsRecruiterActive))
                             {
                                 ViewBag.ButtonAccess = false;
                             }
@@ -2744,9 +2744,12 @@ namespace Risebird.Web.Controllers
                                                         || workSheet.Cells[rowIterator, 6] == null || workSheet.Cells[rowIterator, 6].Value == null)
                                                     {
                                                         result.Append("Failed! Candidate EmailId and Client HR EmailId are mandatory. Please check for the missing entries.");
-                                                        return result.ToString();
                                                     }
+
+                                                    result.Append("Failed!");
                                                     _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                                                    return result.ToString();
                                                 }
 
                                             }
