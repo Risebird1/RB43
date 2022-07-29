@@ -995,26 +995,26 @@ namespace Risebird.Web.Controllers
                     {
                         try
                         {
-                            var _meetinglinks = ShareRisebirdMeeting("Risebird", item, MeetingDate);
+                            var _meetinglinks = ShareRisebirdMeeting("Risebird", item.Trim(), MeetingDate);
                             Mail _mail = new Mail
                             {
                                 TO = item,
                                 Subject = "Invitation for " + details.Title + " : " + ClientName
                             };
-                            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, 0);
+                            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName, _meetinglinks.meetingAttendee, MeetingDate, -330);
                             string Reporturl = "https://" + Request.Host.ToString() + "/MCQ/CandidateMCQReport?MCQId=" + Id + "&EmailId=" + item;
                             Mail _mail1 = new Mail
                             {
                                 TO = ClientEmail,
                                 Subject = "Invitation for " + details.Title + " : " + item
                             };
-                            _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, 0);
+                            _notificationHelper.SharedTestLinkClient(_mail1, details.Title, timmer, currenturl, item, _meetinglinks.meetingAgent, MeetingDate, Reporturl, -330);
                             if (result.Contains("Mail sent successfully"))
                             {
                                 var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                                 _list.PartitionKey = date1;
                                 _list.MCQId = Id;
-                                _list.EmailAddress = item;
+                                _list.EmailAddress = item.Trim();
                                 _list.roomId = _meetinglinks.roomId;
                                 _list.Expiretime = Expiretime;
                                 _mCQService.AddMCQSetShareList(_list);
