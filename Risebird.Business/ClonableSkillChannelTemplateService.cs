@@ -240,6 +240,10 @@ namespace Risebird.Business
                     }
                     model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
                 }
+                if (model.IRFRecommendations.ClientArray != null)
+                {
+                    model.IRFRecommendations.Clients = string.Join(',', model.IRFRecommendations.ClientArray);
+                }
                 var result = await _clonableSkillChannelTemplateRepository.CreateClonableSkillChannel(model);
                 if (result)
                 {
@@ -370,6 +374,10 @@ namespace Risebird.Business
                         }
                     }
                     model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
+                }
+                if (model.IRFRecommendations.ClientArray != null)
+                {
+                    model.IRFRecommendations.Clients = string.Join(',', model.IRFRecommendations.ClientArray);
                 }
                 var result = await _clonableSkillChannelTemplateRepository.UpdateClonableSkillChannel(model);
                 if (result)
@@ -568,7 +576,11 @@ namespace Risebird.Business
                 selectListforEmploymentTypes.Add(selectItem);
             }
             model.EmploymentTypeList = selectListforEmploymentTypes;
-
+            model.ClientList = new SelectList(_clientRepository.GetAllClients().Result, "Name", "Name");
+            if (!string.IsNullOrEmpty(model.Clients))
+            {
+                model.ClientArray = model.Clients.Split(',');
+            }
             return model;
         }
 

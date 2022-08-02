@@ -322,10 +322,10 @@ namespace Risebird.Web.Controllers
                             model.ClonableTemplates = model.ClonableTemplates?.ToList();
 
                         }
-                        var assessmentGroupsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName))?.Distinct();
-                        if (assessmentGroupsMappedToCurrentTemplates != null)
+                        var asmtGrpsPrSkillsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName, x.PrimarySkills))?.Distinct();
+                        if (asmtGrpsPrSkillsMappedToCurrentTemplates != null)
                         {
-                            model.AssessmentGroupsMappedToCurrentTemplates = JsonConvert.SerializeObject(assessmentGroupsMappedToCurrentTemplates);
+                            model.AsmtGrpsPrSkillsMappedToCurrentTemplates = JsonConvert.SerializeObject(asmtGrpsPrSkillsMappedToCurrentTemplates);
                         }
                         if (TempData["SuccessErrorCloneTemplateMessage"] != null)
                         {
@@ -337,6 +337,30 @@ namespace Risebird.Web.Controllers
                         {
                             model.ClonableTemplates = model.ClonableTemplates.OrderByDescending(x => x.SkillChannelCounts).ToList();
                         }
+
+                        if(profileName == "Client")
+                        {
+                            int index = 0;
+                            foreach (var template in model.ClonableTemplates)
+                            {
+                                if (!string.IsNullOrEmpty(template.TaggedClients))
+                                {
+                                    var clientsMapped = template.TaggedClients.Split(",");
+                                    if (clientsMapped != null && clientsMapped.Any(x => !string.IsNullOrEmpty(x) && x.ToLower() == model.ClientCompanyName?.ToLower()))
+                                    {
+                                        var item = model.ClonableTemplates.ToList()[index];
+
+                                        item.Name = item.Name + " <span style=\"color:green;\"> (Recommended)<span>";
+                                        model.ClonableTemplates.ToList().RemoveAt(index);
+                                        model.ClonableTemplates.ToList().Insert(0, item);
+                                    }
+                                }
+
+                                index++;
+
+                            }
+                        }
+                        
                         return View(model);
                     }
                     else

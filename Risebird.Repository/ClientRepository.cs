@@ -703,5 +703,33 @@ namespace Risebird.Repository
             }
             return 0;
         }
+
+        public async Task<IEnumerable<Client>> GetAllClients()
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Client>(con, "usp_GetAllClients",
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

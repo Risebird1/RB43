@@ -549,7 +549,7 @@
 </script>
 <script src="~/js/TemplateFilter.js"></script>
 <script>
-    var assessmentGroupCategoryMapArray;
+    var asgGrpPrSkillsCategoryMapArray;
 
     $(document).ready(function () {
 
@@ -561,11 +561,11 @@
             ApplySessionFilter();
         }
 
-        var assessmentGroupsMappedToCurrentTemplates = '@Model.AssessmentGroupsMappedToCurrentTemplates';
-        if (assessmentGroupsMappedToCurrentTemplates != null) {
-            assessmentGroupCategoryMapArray = JSON.parse(assessmentGroupsMappedToCurrentTemplates.replace(/&quot;/g, '"'));
+        var asmtGrpsPrSkillsMappedToCurrentTemplates = '@Model.AsmtGrpsPrSkillsMappedToCurrentTemplates';
+        if (asmtGrpsPrSkillsMappedToCurrentTemplates != null) {
+            asgGrpPrSkillsCategoryMapArray = JSON.parse(asmtGrpsPrSkillsMappedToCurrentTemplates.replace(/&quot;/g, '"'));
         }
-        FilterAssessmentGroupDropDown($("#Category").val(), assessmentGroupCategoryMapArray);
+        FilterAsmtGrpPrSkillDropDown($("#Category").val(), asgGrpPrSkillsCategoryMapArray);
     });
 
     function ResetFilter() {
@@ -802,7 +802,7 @@
 </script>
 <script>
     function CategoryChanged(categorySelected) {
-        FilterAssessmentGroupDropDown(categorySelected, assessmentGroupCategoryMapArray)
+        FilterAssFilterAsmtGrpPrSkillDropDownessmentGroupDropDown(categorySelected, asgGrpPrSkillsCategoryMapArray)
     }
 </script>
 

@@ -234,6 +234,23 @@
 
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                </div>
+
+                                                                <select class="form-control" asp-for="IRFRecommendations.ClientArray" placeholder="Tag Client(s) you recommend this Template to." multiple">
+                                                                    @foreach (var item in Model.IRFRecommendations.ClientList)
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+
+                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.Clients, "", new { @id = "error_Clients", @class = "text-danger" })
+
+                                                            </div>
+                                                        </div>
 
                                                     </div>
                                                     @Html.HiddenFor(m => m.IRFRecommendations.id)
@@ -854,7 +871,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        jQuery("#IRFRecommendations_DifficultyLevelArray, #IRFRecommendations_EmploymentTypeArray,  #IRFRecommendations_SeniorityLevelArray").select2({ multiple: true });
+        jQuery("#IRFRecommendations_DifficultyLevelArray, #IRFRecommendations_EmploymentTypeArray,  #IRFRecommendations_SeniorityLevelArray, #IRFRecommendations_ClientArray").select2({ multiple: true });
     });
 
 </script>
