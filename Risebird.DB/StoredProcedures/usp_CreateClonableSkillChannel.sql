@@ -34,7 +34,8 @@ GO
 @RecommendationDifficultyLevel varchar(50) = null,
 @RecommendationEmploymentType varchar(20) = null,
 @RecommendationPerHourRate int = null,
-@RecommendationPrimarySkills varchar(max) = null
+@RecommendationPrimarySkills varchar(max) = null,
+@RecommendationClients varchar(max) = null
             
 AS            
 Begin  
@@ -156,7 +157,8 @@ begin try
 			EmploymentType,
 			PerHourRate,
 			CreatedOn,
-			PrimarySkills
+			PrimarySkills,
+			Clients
 			
 		)
 
@@ -174,7 +176,8 @@ begin try
 			@RecommendationEmploymentType,
 			@RecommendationPerHourRate,
 			@RecommendationCreatedOn,
-			@RecommendationPrimarySkills
+			@RecommendationPrimarySkills,
+			@RecommendationClients
 		)
 
 

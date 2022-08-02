@@ -210,6 +210,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationPrimarySkills", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@RecommendationPrimarySkills"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.PrimarySkills : null;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationClients", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@RecommendationClients"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.Clients : null;
+
 
                     if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)
                     {
@@ -450,6 +453,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationPrimarySkills", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@RecommendationPrimarySkills"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.PrimarySkills : null;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RecommendationClients", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@RecommendationClients"].Value = templateDetails.IRFRecommendations.Status == true ? templateDetails.IRFRecommendations.Clients : null;
 
 
                     if (joinabilityDt != null && joinabilityDt.Rows.Count > 0)

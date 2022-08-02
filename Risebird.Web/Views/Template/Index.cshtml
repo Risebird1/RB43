@@ -43,6 +43,8 @@
     PrimarySkills = filter.PrimarySkills != null ? filter.PrimarySkills : string.Empty;
 }
 
+@*<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />*@
+
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
@@ -165,7 +167,7 @@
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkills">Primary Skills</label>
                                                                 <div class="col-md-12 col-sm-12">
 
-                                                                    <select id="PrimarySkills" name="PrimarySkills" data-placeholder="None Selected" class="form-select test" multiple="multiple" style="display: none;">
+                                                                    <select id="PrimarySkills" name="PrimarySkills" data-placeholder="None Selected" multiple class="form-select test" @*multiple="multiple"*@ @*style="display: none;"*@>
                                                                         <option value="">Select</option>
                                                                         @{
                                                                             var primarySkills = new List<string>();
@@ -224,12 +226,12 @@
                                                                     <select id="AssessmentGroupTemplate" name="AssessmentGroupTemplate" @*data-placeholder="None Selected"*@ class="form-control">
                                                                         <option value="">Select</option>
                                                                         @*@foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
                                                                             {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }*@
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }*@
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -302,75 +304,76 @@
                                                     foreach (var item in Model.ClonableTemplates)
                                                     {
 
-                                                <tr>
-                                                    @if (!string.IsNullOrEmpty(item.Name))
-                                                    {
-                                                        <td> @item.Name </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
+                                                        <tr>
+                                                            @if (!string.IsNullOrEmpty(item.Name))
+                                                            {
+                                                                @*<td> @item.Name </td>*@
+                                                                <td> @Html.Raw(item.Name)</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
 
-                                                    <td>
-                                                        <button type="button" class="clickhere_btn pull-left">
-                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
-                                                        </button>
-                                                    </td>
+                                                            <td>
+                                                                <button type="button" class="clickhere_btn pull-left">
+                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                                </button>
+                                                            </td>
 
-                                                    @if (Model.Profile != "Client")
-                                                    {
-                                                        @if (item.SkillChannelCounts > 0)
-                                                        {
-                                                            <td title="Template Stats" style="color:blue!important;cursor:pointer" onclick="openTemplatestats('@item.ClonableSkillChannelId', '@item.Name')">@item.SkillChannelCounts</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>@item.SkillChannelCounts</td>
-                                                        }
-                                                        <td>
-                                                            <button type="button" class="clickhere_btn pull-left">
-                                                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
-                                                            </button>
-                                                        </td>
-                                                    }
-
-
-                                                    <td>
-                                                        @if (Model.Profile == "Admin")
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute mb-40" aria-label="Edit the Template">
-                                                                <span onclick="location.href = '@Url.Action("Edit", "ClonableSkillChannelTemplate", new { id = item.ClonableSkillChannelId })'" title="Edit the Template" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                            </button>
-                                                        }
-
-                                                        @if (Model.Profile != "Client")
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
-                                                                <span onclick="location.href='@Url.Action("Create", "IRF", new { templateId = item.ClonableSkillChannelId })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
-                                                                    @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
-                                                                        <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
-                                                                    </svg>
-                                                                </span>
-                                                            </button>
-                                                        }
-                                                        @if (Model.Profile == "Client")
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
-                                                                <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.Name', '@item.AssessmentGroupName', '@item.AssessmentGroupId', '@item.MeetingPlatform')" title="Create Interview Link" class="mdc-fab__icon material-icons">
-                                                                    @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
-                                                                        <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
-                                                                    </svg>
-                                                                </span>
-                                                            </button>
-                                                        }
-
-                                                    </td>
+                                                            @if (Model.Profile != "Client")
+                                                            {
+                                                                @if (item.SkillChannelCounts > 0)
+                                                                {
+                                                                    <td title="Template Stats" style="color:blue!important;cursor:pointer" onclick="openTemplatestats('@item.ClonableSkillChannelId', '@item.Name')">@item.SkillChannelCounts</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>@item.SkillChannelCounts</td>
+                                                                }
+                                                                <td>
+                                                                    <button type="button" class="clickhere_btn pull-left">
+                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                                    </button>
+                                                                </td>
+                                                            }
 
 
-                                                </tr>
+                                                            <td>
+                                                                @if (Model.Profile == "Admin")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute mb-40" aria-label="Edit the Template">
+                                                                        <span onclick="location.href = '@Url.Action("Edit", "ClonableSkillChannelTemplate", new { id = item.ClonableSkillChannelId })'" title="Edit the Template" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                    </button>
+                                                                }
+
+                                                                @if (Model.Profile != "Client")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Create Skills Channel">
+                                                                        <span onclick="location.href='@Url.Action("Create", "IRF", new { templateId = item.ClonableSkillChannelId })'" title="Create Skills Channel" class="mdc-fab__icon material-icons">
+                                                                            @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+                                                                @if (Model.Profile == "Client")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
+                                                                        <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.Name', '@item.AssessmentGroupName', '@item.AssessmentGroupId', '@item.MeetingPlatform')" title="Create Interview Link" class="mdc-fab__icon material-icons">
+                                                                            @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+
+                                                            </td>
+
+
+                                                        </tr>
 
 
                                                     }
@@ -595,6 +598,14 @@
         //window.onload = my_code();
     </script>
 }
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#PrimarySkills").select2({ multiple: true });
+    });
+
+</script>*@
 <script>
 
     function CloseIRFPopup() {
@@ -795,8 +806,9 @@
 </script>
 <script src="~/js/TemplateFilter.js"></script>
 <script>
-    var assessmentGroupCategoryMapArray;
+    var asgGrpPrSkillsCategoryMapArray;
     $(document).ready(function () {
+        //$("#PrimarySkills").multiselect();
 
         $("#ResetFilter").click(function () {
             ResetFilter();
@@ -806,11 +818,11 @@
             ApplySessionFilter();
         }
 
-        var assessmentGroupsMappedToCurrentTemplates = '@Model.AssessmentGroupsMappedToCurrentTemplates';
-        if (assessmentGroupsMappedToCurrentTemplates != null) {
-            assessmentGroupCategoryMapArray = JSON.parse(assessmentGroupsMappedToCurrentTemplates.replace(/&quot;/g, '"'));
+        var asmtGrpsPrSkillsMappedToCurrentTemplates = '@Model.AsmtGrpsPrSkillsMappedToCurrentTemplates';
+        if (asmtGrpsPrSkillsMappedToCurrentTemplates != null) {
+            asgGrpPrSkillsCategoryMapArray = JSON.parse(asmtGrpsPrSkillsMappedToCurrentTemplates.replace(/&quot;/g, '"'));
         }
-        FilterAssessmentGroupDropDown($("#Category").val(), assessmentGroupCategoryMapArray);
+        FilterAsmtGrpPrSkillDropDown($("#Category").val(), asgGrpPrSkillsCategoryMapArray);
     });
 
     function ResetFilter() {
@@ -943,7 +955,7 @@
 </script>
 <script>
     function CategoryChanged(categorySelected) {
-        FilterAssessmentGroupDropDown(categorySelected, assessmentGroupCategoryMapArray)
+        FilterAsmtGrpPrSkillDropDown(categorySelected, asgGrpPrSkillsCategoryMapArray)
     }
     function openTemplatestats(id, templateName) {
         $.ajax({

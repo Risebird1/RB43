@@ -33,7 +33,8 @@ GO
 @RecommendationDifficultyLevel varchar(50) = null,
 @RecommendationEmploymentType varchar(20) = null,
 @RecommendationPerHourRate int = null,
-@RecommendationPrimarySkills varchar(max) = null
+@RecommendationPrimarySkills varchar(max) = null,
+@RecommendationClients varchar(max)=null
             
 AS            
 Begin  
@@ -150,7 +151,8 @@ begin try
 		DifficultyLevel = @RecommendationDifficultyLevel,
 		EmploymentType = @RecommendationEmploymentType,
 		PerHourRate = @RecommendationPerHourRate,
-		PrimarySkills = @RecommendationPrimarySkills
+		PrimarySkills = @RecommendationPrimarySkills,
+		Clients = @RecommendationClients
 		Where CloneIRFId = @id
 	
 	End

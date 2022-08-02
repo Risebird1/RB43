@@ -60,5 +60,11 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Primary Skills")]
         public string PrimarySkills { get; set; }
 
+        [DisplayName("Clients")]
+        public string Clients { get; set; }
+        public SelectList ClientList { get; set; }
+        public string[] ClientArray { get; set; }
+
+
     }
 }
