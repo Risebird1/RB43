@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="pull-right">
-                    @if (ViewBag.LoggedEmail == "parvathi_sg@risebird.io" || ViewBag.LoggedEmail == "ambika_ratkalle@risebird.io" || ViewBag.Profile == "Admin")
+                    @if (ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Admin")
                     {
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddClient", "Client")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Client</font></span>
@@ -171,7 +171,7 @@
                                                 <button class="mdc-fab app-fab--absolute" aria-label="View Details">
                                                     <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
                                                 </button>
-                                                @if (ViewBag.LoggedEmail == "parvathi_sg@risebird.io" || ViewBag.LoggedEmail == "ambika_ratkalle@risebird.io" || ViewBag.Profile == "Admin")
+                                                @if (ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Admin")
                                                 {
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
                                                         <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>

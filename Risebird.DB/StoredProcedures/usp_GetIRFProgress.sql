@@ -19,7 +19,7 @@ AS
 Begin     
  Declare @Role varchar(150)
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid
-if(@Role='SeniorHR')
+if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN
 select irf.id, irf.IRFId, JDTiltle, irf.idProgress, ipr.[Name] as [ProgressStatus], irf.Comment,    
 (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) != 0 THEN (SUBSTRING(JDTiltle,0, (CHARINDEX('|', JDTiltle)))) ELSE JDTiltle END +')' ) as IRFnSkill,Ias.Status as AssignStatus,ul.EmailId as AssignTo  from IRF    

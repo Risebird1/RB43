@@ -70,7 +70,7 @@
                                         <div class="mdc-button__ripple"></div>
                                     </button>*@
                             </div>
-                            @if (ViewBag.ProfileName != "HR")
+                            @if (ViewBag.profileName != "HR")
                             {
                                 <div class="pull-left" data-intro='Click here to create insta request<br/><a href="/Client/NotScheduledMeetings" class="btn btn-primary insta-next-btn">NEXT</a>'>
                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -278,7 +278,7 @@
                                                             <td>@item.IRFId</td>
                                                             <td>@item.Assignto</td>
                                                             <td class="text-center action">
-                                                                @if (ViewBag.ProfileName != "Client" && ViewBag.ProfileName != "HR" && !item.IsIRFCreated)
+                                                                @if (ViewBag.profileName != "Client" && ViewBag.profileName != "HR" && !item.IsIRFCreated)
                                                                 {
                                                                     <span class="interview_5">
                                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Assign To Co-ordinator" style=" position: relative; top: -3px;">
@@ -288,7 +288,7 @@
                                                                         </button>
                                                                     </span>
                                                                 }
-                                                                @if (!item.IsIRFCreated && ViewBag.ProfileName != "HR")
+                                                                @if (!item.IsIRFCreated && ViewBag.profileName != "HR")
                                                                 {
                                                                     <span class="interview_7">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
@@ -296,7 +296,7 @@
                                                                         </button>
                                                                     </span>
                                                                 }
-                                                                @if (item.IsSetToComplete || ViewBag.ProfileName == "Admin")
+                                                                @if (item.IsSetToComplete || ViewBag.profileName == "Admin")
                                                                 {
                                                                     <span class="interview_7">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Marked skill channel created">

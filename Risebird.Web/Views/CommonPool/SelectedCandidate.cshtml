@@ -187,7 +187,7 @@
                                                                     <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
 
                                                                         @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
-                                                                        { 
+                                                                        {
                                                                             @if (item != null && item != "")
                                                                             {
                                                                                 <option value="@item">@item</option>
@@ -415,66 +415,26 @@
                                                         }
                                                         <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         <td> @item.JDTiltle.Split("|")[0] </td>
-
-
-
-
-
                                                         @if (item.InterviewStatus != 4 && item.InterviewStatus != 2)
                                                         {
                                                             <td> @item.intervieweStatusStatDesc</td>
                                                         }
-                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 4)
+                                                        else if (item.InterviewStatus == 4)
                                                         {
                                                             <td>
                                                                 <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
                                                             </td>
                                                         }
-                                                        else if (item.QCStatus == 1 && item.InterviewStatus == 2)
+                                                        else if (item.InterviewStatus == 2)
                                                         {
                                                             <td>
                                                                 <a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.InterviewStatus == 4 && item.QCStatus == null)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            @*<td>QC Pending(<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
-
-                                                        }
-                                                        else if (item.InterviewStatus == 2 && item.QCStatus == null)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            @*<td>QC Pending(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)</td>*@
-                                                            <td>@item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a></td>
-
-                                                        }
-                                                        else if (item.QCStatus == 2 && item.InterviewStatus == 4)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            <td class="text-center">
-                                                                @*QC Failed(<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
-                                                                @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
-                                                            </td>
-                                                        }
-                                                        else if (item.QCStatus == 2 && item.InterviewStatus == 2)
-                                                        {
-                                                            int start = item.intervieweStatusStatDesc.IndexOf("(");
-                                                            int end = item.intervieweStatusStatDesc.IndexOf(")");
-                                                            <td>
-                                                                @*QC Failed(<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc</a>)*@
-                                                                @item.intervieweStatusStatDesc.Substring(0, item.intervieweStatusStatDesc.IndexOf("("))<a style="color:green;font-weight: bold"> @item.intervieweStatusStatDesc.Substring(start, (end - start + 1))</a>
                                                             </td>
                                                         }
                                                         else
                                                         {
                                                             <td></td>
                                                         }
-
 
                                                         @if (item.resumeLink != null && item.resumeLink != "")
                                                         {
@@ -511,16 +471,11 @@
                                                             <td>No Video</td>
                                                         }
 
-
-
                                                         <td class="text-center">
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
                                                                 <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-
                                                                 <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
-
-
                                                             }
 
                                                         </td>

@@ -101,7 +101,7 @@
 @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
-<input type="hidden" value="@ViewBag.ProfileName" id="hidd_profile" />
+<input type="hidden" value="@ViewBag.profileName" id="hidd_profile" />
 <div class="main-panel" id="main-panel">
     <!--  <div class="panel-header panel-header-sm"> </div>-->
     <div class="jumbotron">
@@ -329,7 +329,7 @@
                                                                         { <span></span>}*@
 
                                                                     <div class="col-md-2 col-sm-2 pull-left nopad">
-                                                                        @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
+                                                                        @if (item.MobileNumber != null && !(ViewBag.profile == "CuratedUser"))
                                                                         {
                                                                             <span>
                                                                                 <button class="call-btn" aria-label="Call">
@@ -351,7 +351,7 @@
                                                                                 }
                                                                             </div>
                                                                         }
-                                                                        @if (ViewBag.ProfileName == "Client")
+                                                                        @if (ViewBag.profileName == "Client")
                                                                         {
                                                                             <span>
                                                                                 <button class="rating-btn" aria-label="Rate Interviewer">

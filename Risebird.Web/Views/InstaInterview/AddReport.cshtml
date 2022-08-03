@@ -8,7 +8,7 @@
     ViewBag.PageHeader = "Insta Interview Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var meetingStatusList = new List<SelectListItem>();
-    if (ViewBag.Profile == "Admin")
+    if (ViewBag.profile == "Admin")
     {
         meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
@@ -64,7 +64,7 @@
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="pull-right">
-                    @if (ViewBag.isAdminHR || ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
+                    @if (ViewBag.isAdminHR || ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                     {
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Insta Public URL" onclick="GeneratePublicUrl(3)"></div>
                         <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public Url" onclick="GeneratePublicUrl(2)"></div>
@@ -140,7 +140,7 @@
                                         <div class="form-group">
 
                                             @Html.LabelFor(model => model.MeetingStatus, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @if (ViewBag.Profile != "Client")
+                                            @if (ViewBag.profile != "Client")
                                             {
                                                 @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
                                             }
@@ -157,7 +157,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatus, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @if (ViewBag.Profile != "Client")
+                                            @if (ViewBag.profile != "Client")
                                             {
                                                 @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             }
@@ -226,7 +226,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
+                                if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                 {
                                     <div class="proctor">
 
@@ -323,7 +323,7 @@
                                                             <td>
                                                                 @Html.TextBoxFor(m => m.TechSkill[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                             </td>
-                                                            @if (ViewBag.Profile != "Client")
+                                                            @if (ViewBag.profile != "Client")
                                                             {
                                                                 <td>
                                                                     @Html.DropDownListFor(m => m.TechSkill[i].ActualLevelId, (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control" })
@@ -366,7 +366,7 @@
                                         <div class="col-md-12 mc-button-area">
                                             @if (!ViewBag.isAdminHR)
                                             {
-                                                @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
+                                                @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                 {
                                                     @Html.ActionLink("Back", "Index", "InstaInterview", new { id = Model.RequestId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                 }

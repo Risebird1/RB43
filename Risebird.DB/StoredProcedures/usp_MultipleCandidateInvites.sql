@@ -17,7 +17,7 @@ AS
 Begin          
 Declare @Role varchar(150)
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@emailid
-if(@Role='SeniorHR')
+if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN
 SELECT b.InviteCount,a.id imid,a.*,IRF.JDLink as JDLink,IRF.JDTiltle, ic.InterviewStatus,ic.MeetingStatus    
 FROM [dbo].[InterviewMeetings] as a    

@@ -9,7 +9,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IClientRepository
     {
-        IEnumerable<Client> GetClients(string emailid, string profilename);
+        IEnumerable<Client> GetClients(string emailid, string profileName);
         Task<bool> AddClient(Client client);
         Task<bool> UpdateClient(Client entity);
         Task<Client> GetClient(int id);

@@ -10,8 +10,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-   CREATE PROCEDURE [dbo].[usp_AddClient]          
-          
+CREATE PROCEDURE [dbo].[usp_AddClient]          
 @clientName varchar(150),          
 @clientDescr varchar(250),          
 @GST varchar(MAX),          
@@ -27,7 +26,6 @@ GO
 @BillingType int
 AS          
 Begin          
-        
  Declare @Clientid int        
  Declare @Userid int      
  Select @Userid=id from USerList where Emailid=@Createdby      
@@ -58,11 +56,8 @@ Begin
   ,@PerInterviewRate
   ,@BillingType)          
       
+set @Clientid=SCOPE_IDENTITY()
+Insert into SeniorHR Select id as Userid,@Clientid as Clientid from UserList where idprofile=32
 End           
-
-
-
-    
-
 GO
   

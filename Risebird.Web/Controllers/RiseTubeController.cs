@@ -68,7 +68,7 @@ namespace Risebird.Web.Controllers
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -132,7 +132,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
                             ViewBag.searchvalue = searchvalue;
@@ -197,7 +197,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -254,7 +254,7 @@ namespace Risebird.Web.Controllers
                                 modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
                                 totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue);
 
-                                ViewBag.Profile = "CuratedUser";
+                                ViewBag.profile = "CuratedUser";
                             }
                             else
                             {
@@ -286,7 +286,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
                             ViewBag.searchvalue = searchvalue;
@@ -381,7 +381,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
@@ -645,7 +645,7 @@ namespace Risebird.Web.Controllers
                         }
 
 
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
                         if (profileName == "CuratedUser")
                         {
                             if (IRListModel != null)
@@ -792,7 +792,7 @@ namespace Risebird.Web.Controllers
                         }
                         NewModel.candidateName = namemodel1;
 
-                        ViewBag.ProfileName = "";
+                        ViewBag.profileName = "";
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
                         NewModel.imid = model.imid;
@@ -943,7 +943,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
@@ -1082,7 +1082,7 @@ namespace Risebird.Web.Controllers
                         {
                             NewModel.candidateName = model.candidateName;
                         }
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
                         if (profileName == "CuratedUser")
                         {
                             if (model.IsIntrested != "Interest Accepted")
@@ -1446,7 +1446,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.ProfileName = profileName;
+                    ViewBag.profileName = profileName;
                     ViewBag.CuratedGroupId = curatedGroupId;
                     if (profileName == "CuratedUser" || profileName == "Client")
                     {
@@ -1782,7 +1782,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     if (_newobject.IreportModel.VideoFile != null)
                     {
@@ -1860,7 +1860,7 @@ namespace Risebird.Web.Controllers
 
                 NewModel.candidateName = IRListModel.CandidateName.Trim();
 
-                ViewBag.ProfileName = "";
+                ViewBag.profileName = "";
                 NewModel.CandidateId = model.CandidateId;
                 NewModel.interviewDate = model.interviewDate;
                 NewModel.imid = model.imid;
@@ -1948,7 +1948,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetallVideoSumaryDetails();
@@ -2013,7 +2013,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
@@ -2152,7 +2152,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     var model = _meetingService.GetVideoIntrestDetails();
                     foreach (var item in model)
@@ -2225,7 +2225,7 @@ namespace Risebird.Web.Controllers
                     }
 
 
-                    ViewBag.ProfileName = profileName;
+                    ViewBag.profileName = profileName;
                     if (!String.IsNullOrEmpty(searchvalue))
                     {
                         ViewBag.searchvalue = searchvalue;
@@ -2346,7 +2346,7 @@ namespace Risebird.Web.Controllers
                             }
 
 
-                            ViewBag.ProfileName = profileName;
+                            ViewBag.profileName = profileName;
                             if (!String.IsNullOrEmpty(searchvalue))
                             {
                                 ViewBag.searchvalue = searchvalue;
@@ -2451,7 +2451,7 @@ namespace Risebird.Web.Controllers
                         }
 
 
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
                             ViewBag.searchvalue = searchvalue;
@@ -2601,7 +2601,7 @@ namespace Risebird.Web.Controllers
                 }
                 NewModel.candidateName = namemodel1;
 
-                ViewBag.ProfileName = "";
+                ViewBag.profileName = "";
                 NewModel.CandidateId = model.CandidateId;
                 NewModel.interviewDate = model.interviewDate;
                 NewModel.imid = model.imid;
@@ -2694,9 +2694,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
-                    ViewBag.ProfileName = profileName;
+                    ViewBag.profileName = profileName;
                     ViewBag.CuratedGroupId = ClientJdId;
-                    if (profileName == "Admin" || profileName == "Client" || profileName == "SeniorHR")
+                    if (profileName == "Admin" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var isClient = false;
                         if (profileName == "Client")
@@ -3045,7 +3045,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);

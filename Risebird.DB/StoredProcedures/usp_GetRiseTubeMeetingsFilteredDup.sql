@@ -39,7 +39,7 @@ Begin
 if @clientid = 0            
  BEGIN        
    Select @Role=pr.Name from UserList ul join Profile pr on ul.idProfile=pr.id where Emailid= @Emailid   
-   if(@Role='SeniorHR')  
+   if(@Role='SeniorHR' or @Role='SupportAdmin')  
    begin  
     if(@searchValue is not null)      
   Begin      

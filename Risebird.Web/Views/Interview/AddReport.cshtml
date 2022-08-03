@@ -13,7 +13,7 @@
 
     var meetingStatusList = new List<SelectListItem>();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
-    if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SeniorHR")
+    if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
     {
         meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
@@ -1073,7 +1073,7 @@
 
                                         </div>
                                     }
-                                    @if (ViewBag.Profile != "Interviewer" && ViewBag.Profile != "Client")
+                                    @if (ViewBag.profile != "Interviewer" && ViewBag.profile != "Client")
                                     {
                                         <div class="proctor">
 
@@ -1158,7 +1158,7 @@
                                                             @Html.LabelFor(model => model.ThumbnailTimeSeconds, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                             @Html.TextBoxFor(model => model.ThumbnailTimeSeconds, new { type = "number", @class = "form-control text-box single-line col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                                         </div>
-                                                        @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "HR" || ViewBag.Profile == "SeniorHR")
+                                                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                                                         {
 
                                                             <div class="form-group">
@@ -1408,7 +1408,7 @@
 
                             <div class="card-footer ">
                                 <div class="row">
-                                    @if (ViewBag.PageStatus != "PublicExternal" && ViewBag.Profile != "Quality Controller")
+                                    @if (ViewBag.PageStatus != "PublicExternal" && ViewBag.profile != "Quality Controller")
                                     {
                                         <div class="col-md-12 mc-button-area">
                                             @if (Model.IsInterviewer)
@@ -1451,7 +1451,7 @@
                             @Html.HiddenFor(x => x.OldInterviewStatus)
                             @Html.HiddenFor(x => x.OldMeetingStatus)
                             @Html.HiddenFor(x => x.OverallScore)
-                            @if (ViewBag.Profile == "Interviewer" || ViewBag.Profile == "Quality Controller")
+                            @if (ViewBag.profile == "Interviewer" || ViewBag.profile == "Quality Controller")
                             {
                                 @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
                                 @Html.HiddenFor(x => x.VideoDuration)

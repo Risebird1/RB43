@@ -195,7 +195,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @if (ViewBag.ProfileName != "CuratedUser")
+                                                @if (ViewBag.profileName != "CuratedUser")
                                                 {
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -584,7 +584,7 @@
                                                     </h1>
                                                 }
                                                 <div class="row counts-liks">
-                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.profileName != "CuratedUser")
                                                     {
                                                         <div class="k col-md-6">
                                                             @if (Model.IsLike == "Liked")
@@ -622,7 +622,7 @@
                                                     {
                                                         @if (ViewBag.VideoStatus != "Public")
                                                         {
-                                                            @if (ViewBag.ProfileName == "CuratedUser")
+                                                            @if (ViewBag.profileName == "CuratedUser")
                                                             {
                                                                 <div class="col-md-3 share">
                                                                     <div class="btn-group">
@@ -657,7 +657,7 @@
                                                         {
                                                             @if (ViewBag.VideoStatus != "Public")
                                                             {
-                                                                @if (ViewBag.ProfileName == "CuratedUser")
+                                                                @if (ViewBag.profileName == "CuratedUser")
                                                                 {
                                                                     @if (Model.IsIntrested == "Interest Sent")
                                                                     {
@@ -917,7 +917,7 @@
                                                                     </div>
                                                                     @if (ViewBag.VideoStatus != "Public")
                                                                     {
-                                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                                        @if (ViewBag.profileName != "CuratedUser")
                                                                         {
                                                                             <div class="row">
                                                                                 <div class="col-md-6 col-sm-6">
@@ -952,7 +952,7 @@
                                                                                 }
                                                                             </div>
                                                                         }
-                                                                        @if (Model.IsIntrested == "Interest Accepted" && ViewBag.ProfileName == "CuratedUser")
+                                                                        @if (Model.IsIntrested == "Interest Accepted" && ViewBag.profileName == "CuratedUser")
                                                                         {
                                                                             <div class="row">
                                                                                 <div class="col-md-6 col-sm-6">
@@ -1226,7 +1226,7 @@
 
                                                             </div>
                                                         </div>
-                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.profileName != "CuratedUser")
                                                         {
                                                             <div>
                                                                 <form>

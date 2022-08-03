@@ -393,7 +393,7 @@
                                     </div>
                                 </div>
 
-                                @*@if (ViewBag.Profile != "Interviewer")
+                                @*@if (ViewBag.profile != "Interviewer")
                                     {
 
 
@@ -1428,7 +1428,7 @@
                             @Html.HiddenFor(x => x.OldInterviewStatus)
                             @Html.HiddenFor(x => x.OldMeetingStatus)
                             @Html.HiddenFor(x => x.OverallScore)
-                            @if (ViewBag.Profile == "Interviewer")
+                            @if (ViewBag.profile == "Interviewer")
                             {
                                 @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
                             }

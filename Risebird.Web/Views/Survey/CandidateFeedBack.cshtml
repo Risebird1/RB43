@@ -145,7 +145,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-sm-6  border-lv">
-                                                                @if (ViewBag.ProfileName == "Admin")
+                                                                @if (ViewBag.profileName == "Admin")
                                                                 {
                                                                     <div class="form-group">
                                                                         <label class="control-label  col-md-12 col-sm-12 desp-label" for="HREmail">
@@ -194,7 +194,7 @@
                                                 <tr>
                                                     <th id="cfeedback_4">Candidate Details</th>
                                                     @*<th>Email</th>*@
-                                                    @if (ViewBag.ProfileName != "Client")
+                                                    @if (ViewBag.profileName != "Client")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -213,7 +213,7 @@
                                                 <tr>
                                                     <th>Candidate Details</th>
                                                     @*<th>Email </th>*@
-                                                    @if (ViewBag.ProfileName != "Client")
+                                                    @if (ViewBag.profileName != "Client")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
@@ -306,7 +306,7 @@
                                                             {
 
                                                             }*@
-                                                        @if (ViewBag.ProfileName != "Client")
+                                                        @if (ViewBag.profileName != "Client")
                                                         {
                                                             <td>
                                                                 @if (item.interviewerEmail != null && item.interviewerEmail != "")

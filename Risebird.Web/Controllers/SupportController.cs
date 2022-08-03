@@ -43,7 +43,7 @@ namespace Risebird.Web.Controllers
 
                     var model = new SupportList();
                     model.Supports = _supportService.GetAllSupportHR(emailid);
-                    ViewBag.Profile = profileName;
+                    ViewBag.profile = profileName;
                     if (TempData["SuccessErrorMessageSupport"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageSupport"].ToString();

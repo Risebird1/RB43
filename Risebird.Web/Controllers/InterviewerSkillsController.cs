@@ -525,7 +525,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.ISCName = InterviewerSkillidName;
                         ViewBag.ISCId = id;
-                        ViewBag.Profile = profileName;
+                        ViewBag.profile = profileName;
                         ViewBag.CurrentUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
                         var interviewerList = _iInterviewerSkillsService.GetISCInterviewers(id)?.ToList();
 
@@ -953,7 +953,7 @@ namespace Risebird.Web.Controllers
 
 
 
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
 
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
@@ -1128,7 +1128,7 @@ namespace Risebird.Web.Controllers
 
                         NewModel.candidateName = model.candidateName;
                         NewModel.AssessmentGroup = model.AssessmentGroup;
-                        ViewBag.ProfileName = profileName;
+                        ViewBag.profileName = profileName;
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
                         NewModel.imid = model.imid;
@@ -1661,7 +1661,7 @@ namespace Risebird.Web.Controllers
 "ID", "Name", "All");
 
                         ViewData["list"] = list;
-                        ViewBag.ProfileName = profileName.ToLower();
+                        ViewBag.profileName = profileName.ToLower();
                         if (!String.IsNullOrEmpty(searchValue))
                         {
                             searchValue = searchValue.ToUpper().Trim();

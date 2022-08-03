@@ -31,7 +31,7 @@ where crd.interviewid!=0 group by IRF.id,IRF.IRFId,im.candidateEmail,(IsNull(ul.
 group by CTE.id,CTE.IRFId,CTE.CandidateEmail,CTE.CandidateName,CTE.JDTiltle,CTE.ClientName) as Cd join CallRecordingDetails crd on cd.Callerid=crd.id      
 order by CalledOn desc      
 END 
-else if(@UserRole='SeniorHR')      
+else if(@UserRole='SeniorHR' or @UserRole='SupportAdmin')      
 BEGIN      
 Select cd.*,crd.WhoCalled from (Select CTE.id,CTE.IRFId,CTE.CandidateEmail,CTE.CandidateName,CTE.JDTiltle,CTE.ClientName,Max(CTE.CalledOn) as CalledOn,Max(CTE.Callerid) as Callerid from (      
 Select IRF.id,IRF.IRFId,crd.CandidateEmail,(IsNull(ul.FirstName,'')+' '+IsNull(ul.LastName,'')) as CandidateName,IRF.JDTiltle,cl.Name as ClientName,Max(crd.CalledOn) as CalledOn,Max(crd.id) as Callerid      
